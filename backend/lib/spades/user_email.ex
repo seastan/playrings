@@ -7,7 +7,7 @@ defmodule Spades.UserEmail do
   def welcome(user) do
     new()
     |> to({user.name, user.email})
-    |> from({"Spades", "admin@mg.starspades.com"})
+    |> from({"OneRingTeki", "noreply@noreply.oneringteki.com"})
     |> subject("Welcome!")
     |> html_body("<h1>Hello #{user.name}</h1>")
     |> text_body("Hello #{user.name}\n")
@@ -16,7 +16,7 @@ defmodule Spades.UserEmail do
   def another_test_email(user) do
     new()
     |> to({user.name, user.email})
-    |> from({"Spades", "admin@mg.starspades.com"})
+    |> from({"OneRingTeki", "noreply@noreply.oneringteki.com"})
     |> subject("A third email test.")
     |> html_body(
       "This is a third email test.  I don't want to send the same email over and over while testing my development out..."

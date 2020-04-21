@@ -25,7 +25,7 @@ export const RoomStaging: React.FC<Props> = ({ broadcast, gameState }) => {
   const { seats } = gameState;
   return (
     <div>
-      <div className="bg-white max-w-lg p-4 mx-auto rounded-lg mt-4">
+      <div className="bg-white max-w-none p-4 mx-px rounded-lg mt-4">
         <h2 className="text-blue-800 font-semibold">Waiting For Players</h2>
 
         <div className="mt-4" style={gridStyle}>
@@ -90,7 +90,7 @@ export const RoomStaging: React.FC<Props> = ({ broadcast, gameState }) => {
 
         <RoomStagingTimer when_seats_full={gameState.when_seats_full} />
       </div>
-      <div className=" bg-white max-w-lg p-4 mx-auto rounded-lg mt-4 ">
+      <div className=" bg-white max-w-none p-4 mx-auto rounded-lg mt-4 ">
         <Chat roomName={gameState.game_name} />
       </div>
     </div>

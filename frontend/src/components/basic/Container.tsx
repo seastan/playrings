@@ -7,6 +7,6 @@ interface Props {
 }
 
 export const Container: React.FC<Props> = ({ children }) => {
-  return <div className="container mx-auto m-4 px-2">{children}</div>;
+  return <div className="container mx-auto max-w-none m-4 px-2">{children}</div>;
 };
 export default Container;

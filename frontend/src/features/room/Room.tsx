@@ -52,7 +52,7 @@ export const Room: React.FC<Props> = ({ slug }) => {
                   <RoomGame gameUIView={gameUIView} broadcast={broadcast} />
                 </div>
                 <div className="w-full lg:w-1/4 xl:w-2/6 mb-4">
-                  <div className=" bg-white max-w-lg p-4 mx-auto rounded-lg mt-4 ">
+                  <div className=" bg-white max-w-none p-4 mx-auto rounded-lg mt-4 ">
                     <Chat roomName={gameUIView.game_ui.game_name} />
                   </div>
                 </div>
