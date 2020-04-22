@@ -98,6 +98,22 @@ defmodule SpadesGame.GameUI do
     end
   end
 
+
+  @doc """
+  play/5: A player moves a card on the table.
+  """
+  @spec move_card(GameUI.t(), number | :bot, Card.t(), number, number) :: GameUI.t()
+  def move_card(game_ui, user_id, card, newx, newy) do
+    case Game.move_card(game_ui.game, user_id, card, newx, newy) do
+      {:ok, new_game} ->
+        %{game_ui | game: new_game}
+        |> checks
+
+      {:error, _msg} ->
+        game_ui
+    end
+  end
+
   @doc """
   user_id_to_seat/2: Which seat is this user sitting in?
   If :bot, check if the active turn seat belongs to a bot, return that seat if so.

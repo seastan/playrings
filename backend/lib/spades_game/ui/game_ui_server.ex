@@ -66,6 +66,14 @@ defmodule SpadesGame.GameUIServer do
   end
 
   @doc """
+  move_card/5: A player just moved a card.
+  """
+  @spec move_card(String.t(), integer | :bot, Card.t(), integer, integer) :: GameUI.t()
+  def move_card(game_name, user_id, card, newx, newy) do
+    GenServer.call(via_tuple(game_name), {:move_card, user_id, card, newx, newy})
+  end
+
+  @doc """
   rewind_countdown_devtest/1: Make the "game start" countdown happen
   instantly.
   Works by moving back the "everyone sat down" timestamp by 10 minutes.
@@ -120,7 +128,7 @@ defmodule SpadesGame.GameUIServer do
 
   @doc """
   bot_notify/1: Notify other players to get new state.
-  Should this be reworked, so the caller doesn't need to care about 
+  Should this be reworked, so the caller doesn't need to care about
   using this after a bot move?
   """
   def bot_notify(game_name) do
