@@ -49,7 +49,9 @@ defmodule SpadesGame.Game do
           score: GameScore.t(),
           round_number: integer,
           winner: nil | :north_south | :east_west,
-          hand_size: integer
+          hand_size: integer,
+          cardx: number,
+          cardy: number
         }
 
   @doc """
@@ -86,7 +88,9 @@ defmodule SpadesGame.Game do
       score: GameScore.new(),
       round_number: 1,
       winner: nil,
-      hand_size: 13
+      hand_size: 13,
+      cardx: 0,
+      cardy: 0
     }
   end
 
@@ -185,6 +189,14 @@ defmodule SpadesGame.Game do
     |> advance_turn()
     |> check_for_trick_winner()
     |> check_for_new_round()
+  end
+
+  # move_card/5: A player moves a card on the table.
+  @spec move_card(Game.t(), number | :bot, Card.t(), number, number) ::
+          {:ok, Game.t()} | {:error, String.t()}
+
+  def move_card(%Game{} = game, user_id, %Card{} = card, newx, newy) do
+    {:ok, %Game{game | cardx: newx, cardy: newy}}
   end
 
   @doc """
