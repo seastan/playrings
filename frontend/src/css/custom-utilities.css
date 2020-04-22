@@ -8,6 +8,10 @@
   transform: rotate(1deg);
 }
 
+.hand-card-dragged {
+  opacity: 0;
+}
+
 /* Fade animation for modal  */
 
 .ReactModal__Overlay {

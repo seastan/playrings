@@ -1,4 +1,5 @@
 import React from "react";
+import Draggable from 'react-draggable';
 import cx from "classnames";
 import ScoreButton from "../score/ScoreButton";
 import GameTeam from "../room/GameTeam";
@@ -60,7 +61,7 @@ export const Table: React.FC<Props> = ({
           </div>
         </div>
       )}
-      <div className="h-56 bg-orange-200 border rounded-lg shadow-lg">
+      <Draggable onStop={() => {console.log('dragstop')}}><div className="h-56 bg-orange-200 border rounded-lg shadow-lg">
         {/* Top row/card */}
         <div className="absolute inset-x-0 top-0 h-0 p-1 flex">
           <div className="mx-auto flex">
@@ -150,7 +151,7 @@ export const Table: React.FC<Props> = ({
             <div className="h-12"></div>
           </div>
         </div>
-      </div>
+      </div></Draggable>
     </div>
   );
 };
