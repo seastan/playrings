@@ -26,7 +26,7 @@ export const RoomStagingTimer: React.FC<Props> = ({ when_seats_full }) => {
         <h1 className="font-semibold">Table full!</h1>
         <div className="text-2xl mt-2">
           Game starting in...
-          <CountdownTimer initialSeconds={10} />
+          <CountdownTimer initialSeconds={1} />
         </div>
       </div>
     </div>

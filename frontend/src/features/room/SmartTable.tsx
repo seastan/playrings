@@ -5,6 +5,7 @@ import RotateTableContext from "../../contexts/RotateTableContext";
 
 interface Props {
   gameUIView: GameUIView;
+  broadcast: (eventName: string, payload: object) => void;
 }
 
 let arrow = `/images/cards3/red-arrow-down.png`;
@@ -23,7 +24,7 @@ const cardFromTrick = (trick: Array<TrickCard>, seat: Seat) => {
   return imageUrlForCard(thisCard);
 };
 
-export const SmartTable: React.FC<Props> = ({ gameUIView }) => {
+export const SmartTable: React.FC<Props> = ({ gameUIView, broadcast }) => {
   const { game } = gameUIView.game_ui;
   const { trick } = game;
 
@@ -65,6 +66,7 @@ export const SmartTable: React.FC<Props> = ({ gameUIView }) => {
       rightPlayer={rightPlayer}
       bottomPlayer={bottomPlayer}
       emphasizeBidding={game.status === "bidding"}
+      broadcast={broadcast}
     />
   );
 };

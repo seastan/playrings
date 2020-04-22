@@ -67,7 +67,10 @@ const RoomGame: React.FC<Props> = ({ gameUIView, broadcast }) => {
           />
         </div>
         <div className="h-56 w-3/5 relative">
-          <SmartTable gameUIView={gameUIView} />
+          <SmartTable 
+            gameUIView={gameUIView} 
+            broadcast={broadcast}
+          />
         </div>
         <div className="h-full w-1/5 h-32 flex items-center justify-center">
           {/* Right player */}

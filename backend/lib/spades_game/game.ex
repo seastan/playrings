@@ -17,6 +17,8 @@ defmodule SpadesGame.Game do
     :options,
     :dealer,
     :status,
+    :cardx,
+    :cardy,
     :turn,
     :west,
     :north,
@@ -28,7 +30,7 @@ defmodule SpadesGame.Game do
     :score,
     :round_number,
     :winner,
-    :hand_size
+    :hand_size,
   ]
 
   use Accessible
@@ -37,6 +39,8 @@ defmodule SpadesGame.Game do
           game_name: String.t(),
           options: GameOptions.t(),
           status: :bidding | :playing,
+          cardx: number,
+          cardy: number,
           dealer: :west | :north | :east | :south,
           turn: nil | :west | :north | :east | :south,
           west: GamePlayer.t(),
@@ -50,8 +54,6 @@ defmodule SpadesGame.Game do
           round_number: integer,
           winner: nil | :north_south | :east_west,
           hand_size: integer,
-          cardx: number,
-          cardy: number
         }
 
   @doc """
@@ -76,6 +78,8 @@ defmodule SpadesGame.Game do
       game_name: game_name,
       options: options,
       status: :bidding,
+      cardx: 0,
+      cardy: 0,
       dealer: :north,
       turn: :east,
       west: w,
@@ -89,8 +93,6 @@ defmodule SpadesGame.Game do
       round_number: 1,
       winner: nil,
       hand_size: 13,
-      cardx: 0,
-      cardy: 0
     }
   end
 
@@ -196,7 +198,7 @@ defmodule SpadesGame.Game do
           {:ok, Game.t()} | {:error, String.t()}
 
   def move_card(%Game{} = game, user_id, %Card{} = card, newx, newy) do
-    {:ok, %Game{game | cardx: newx, cardy: newy}}
+    {:ok, %Game{game | cardx: newx, cardy: newy, round_number: newx}}
   end
 
   @doc """

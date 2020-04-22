@@ -16,6 +16,7 @@ interface Props {
   topPlayer: GamePlayer;
   rightPlayer: GamePlayer;
   bottomPlayer: GamePlayer;
+  broadcast: (eventName: string, payload: object) => void;
 }
 
 const qNull = (input: number | null) => {
@@ -24,6 +25,7 @@ const qNull = (input: number | null) => {
   }
   return input;
 };
+
 
 export const Table: React.FC<Props> = ({
   leftCard,
@@ -35,6 +37,7 @@ export const Table: React.FC<Props> = ({
   rightPlayer,
   bottomPlayer,
   emphasizeBidding,
+  broadcast,
 }) => {
   const gameUIView = useGameUIView();
   const winner = gameUIView != null ? gameUIView.game_ui.game.winner : null;
@@ -61,7 +64,10 @@ export const Table: React.FC<Props> = ({
           </div>
         </div>
       )}
-      <Draggable onStop={() => {console.log('dragstop')}}><div className="h-56 bg-orange-200 border rounded-lg shadow-lg">
+      <Draggable onStop={() => {
+        broadcast("move_card", {test: "test", cardx: 100, cardy: 200} );
+      }}>
+      <div className="h-56 bg-orange-200 border rounded-lg shadow-lg">
         {/* Top row/card */}
         <div className="absolute inset-x-0 top-0 h-0 p-1 flex">
           <div className="mx-auto flex">

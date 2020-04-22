@@ -63,6 +63,8 @@ declare module "elixir-backend" {
     score: GameScore;
     round_number: number;
     winner: Winner;
+    cardx: number;
+    cardy: number;
   }
 
   export declare class GamePlayer {
