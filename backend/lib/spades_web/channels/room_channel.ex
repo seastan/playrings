@@ -77,7 +77,6 @@ defmodule SpadesWeb.RoomChannel do
     card = Card.from_map(card)
     # Ignoring return value; could work on passing an error up
     GameUIServer.play(room_slug, user_id, card)
-
     state = GameUIServer.state(room_slug)
     socket = socket |> assign(:game_ui, state)
     notify(socket)
@@ -87,15 +86,13 @@ defmodule SpadesWeb.RoomChannel do
 
   def handle_in(
       "move_card",
-      %{"card" => card},
-      %{"newx" => newx},
-      %{"newy" => newy},
+      %{"drag_data" => drag_data},
       %{assigns: %{room_slug: room_slug, user_id: user_id}} = socket
     ) do
-    card = Card.from_map(card)
     # Ignoring return value; could work on passing an error up
-    GameUIServer.move_card(room_slug, user_id, card, newx, newy)
-
+    IO.puts("room channel: move_card a")
+    GameUIServer.move_card(room_slug, user_id, drag_data)
+    IO.puts("room channel: move_card b")
     state = GameUIServer.state(room_slug)
     socket = socket |> assign(:game_ui, state)
     notify(socket)

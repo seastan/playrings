@@ -14,11 +14,11 @@ defmodule SpadesGame.Game do
   @derive Jason.Encoder
   defstruct [
     :game_name,
+    :cards,
     :options,
     :dealer,
     :status,
-    :cardx,
-    :cardy,
+    :drag_data,
     :turn,
     :west,
     :north,
@@ -37,10 +37,10 @@ defmodule SpadesGame.Game do
 
   @type t :: %Game{
           game_name: String.t(),
+          cards: list(Card.t()),
           options: GameOptions.t(),
           status: :bidding | :playing,
-          cardx: number,
-          cardy: number,
+          drag_data: HTMLElementt,
           dealer: :west | :north | :east | :south,
           turn: nil | :west | :north | :east | :south,
           west: GamePlayer.t(),
@@ -76,10 +76,10 @@ defmodule SpadesGame.Game do
 
     %Game{
       game_name: game_name,
+      cards: [%Card{rank: 2, suit: :h}],
       options: options,
       status: :bidding,
-      cardx: 0,
-      cardy: 0,
+      drag_data: nil,
       dealer: :north,
       turn: :east,
       west: w,
@@ -194,11 +194,11 @@ defmodule SpadesGame.Game do
   end
 
   # move_card/5: A player moves a card on the table.
-  @spec move_card(Game.t(), number | :bot, Card.t(), number, number) ::
+  @spec move_card(Game.t(), number | :bot, HTMLElement) ::
           {:ok, Game.t()} | {:error, String.t()}
 
-  def move_card(%Game{} = game, user_id, %Card{} = card, newx, newy) do
-    {:ok, %Game{game | cardx: newx, cardy: newy, round_number: newx}}
+  def move_card(%Game{} = game, user_id, drag_data) do
+    {:ok, %Game{game | drag_data: drag_data}}
   end
 
   @doc """
@@ -310,6 +310,7 @@ defmodule SpadesGame.Game do
   """
   @spec followed_suit?(Game.t(), :north | :east | :west | :south, Card.t()) :: boolean
   def followed_suit?(game, seat, card) do
+    IO.puts("followed_suit?")
     %TrickCard{card: first_card, seat: _first_player} = List.last(game.trick)
     this_player = Map.get(game, seat)
 
@@ -325,6 +326,7 @@ defmodule SpadesGame.Game do
   """
   @spec valid_lead_card?(Game.t(), :north | :east | :west | :south, Card.t()) :: boolean
   def valid_lead_card?(game, seat, card) do
+    IO.puts("valid_lead_card?")
     # Invalid card: !game.spades_broken && card.suit == :s
     # Use DeMorgan's Law to invert
     game.spades_broken || card.suit != :s || only_spades_left?(game, seat)

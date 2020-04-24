@@ -4,7 +4,7 @@ import cx from "classnames";
 import ScoreButton from "../score/ScoreButton";
 import GameTeam from "../room/GameTeam";
 import useGameUIView from "../../hooks/useGameUIView";
-import { GamePlayer } from "elixir-backend";
+import { GamePlayer, Card } from "elixir-backend";
 
 interface Props {
   emphasizeBidding?: boolean;
@@ -16,6 +16,7 @@ interface Props {
   topPlayer: GamePlayer;
   rightPlayer: GamePlayer;
   bottomPlayer: GamePlayer;
+  cards: Array<Card>;
   broadcast: (eventName: string, payload: object) => void;
 }
 
@@ -25,7 +26,6 @@ const qNull = (input: number | null) => {
   }
   return input;
 };
-
 
 export const Table: React.FC<Props> = ({
   leftCard,
@@ -37,6 +37,7 @@ export const Table: React.FC<Props> = ({
   rightPlayer,
   bottomPlayer,
   emphasizeBidding,
+  cards,
   broadcast,
 }) => {
   const gameUIView = useGameUIView();
@@ -46,7 +47,47 @@ export const Table: React.FC<Props> = ({
     "font-semibold text-lg text-blue-800": emphasizeBidding,
   };
 
+  //var dragging = false;
+  // var cardx = 0;
+  // var cardy = 0;
+  const handleDragStop = (e: any, drag_data: any) => {
+    console.log("table handleDragStop");
+    console.log(drag_data);
+    console.log(e);    
+    var element = drag_data.node;
+    console.log(element);
+    console.log(element.style);
+    console.log(element.style.transform);
+    broadcast("move_card", drag_data );
+    //setTimeout(() => { console.log("timeout"); dragging = false; }, 2000);
+    element.style.transform = "translate(84px, 19px)";
+
+  };  
+  // const handleDrag = (e: any, position: any) => {
+  //   //console.log(e);
+  //   cardx = position.x;
+  //   //console.log(cardx);
+  //   cardy = position.y;
+  //   dragging = true;
+  //   //console.log(dragging);
+  //   //broadcast("move_card", {card: cards[0], cardx: position.x, cardy: position.y} )
+  // };
+
+
   return (
+    <div>
+    <Draggable 
+      //onDrag={handleDrag}
+      onStop={handleDragStop}
+      // position={{
+      //   x: dragging? 800 : (gameUIView != null ? gameUIView.game_ui.game.cardx : 0),
+      //   y: dragging? 800 : (gameUIView != null ? gameUIView.game_ui.game.cardy : 0)
+      // }}
+      >
+      <img id={"gwaihir"} draggable={false} className={cardHeight} src="https://images-cdn.fantasyflightgames.com/filer_public/83/8b/838b34bc-9188-4311-b04a-33dab2a527e0/mec82_gwaihir.png">
+      </img>
+    </Draggable>
+      
     <div className="h-full w-full relative">
       {winner && (
         <div className="p-6 w-full h-full absolute inset-0 z-40">
@@ -64,9 +105,6 @@ export const Table: React.FC<Props> = ({
           </div>
         </div>
       )}
-      <Draggable onStop={() => {
-        broadcast("move_card", {test: "test", cardx: 100, cardy: 200} );
-      }}>
       <div className="h-56 bg-orange-200 border rounded-lg shadow-lg">
         {/* Top row/card */}
         <div className="absolute inset-x-0 top-0 h-0 p-1 flex">
@@ -157,7 +195,8 @@ export const Table: React.FC<Props> = ({
             <div className="h-12"></div>
           </div>
         </div>
-      </div></Draggable>
+      </div>
+    </div>
     </div>
   );
 };
