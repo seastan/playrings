@@ -4,7 +4,7 @@ import cx from "classnames";
 import ScoreButton from "../score/ScoreButton";
 import GameTeam from "../room/GameTeam";
 import useGameUIView from "../../hooks/useGameUIView";
-import { GamePlayer, Card } from "elixir-backend";
+import { GamePlayer, Card, DragEvent } from "elixir-backend";
 
 interface Props {
   emphasizeBidding?: boolean;
@@ -58,9 +58,11 @@ export const Table: React.FC<Props> = ({
     console.log(element);
     console.log(element.style);
     console.log(element.style.transform);
-    broadcast("move_card", drag_data );
+    //var drag_event = new DragEvent();
+    // drag_event.element = element; 
+    //broadcast("drag_card", { drag_data: 10 } );
     //setTimeout(() => { console.log("timeout"); dragging = false; }, 2000);
-    element.style.transform = "translate(84px, 19px)";
+    //element.style.transform = "translate(84px, 19px)";
 
   };  
   // const handleDrag = (e: any, position: any) => {
@@ -70,7 +72,7 @@ export const Table: React.FC<Props> = ({
   //   cardy = position.y;
   //   dragging = true;
   //   //console.log(dragging);
-  //   //broadcast("move_card", {card: cards[0], cardx: position.x, cardy: position.y} )
+  //   //broadcast("drag_card", {card: cards[0], cardx: position.x, cardy: position.y} )
   // };
 
 

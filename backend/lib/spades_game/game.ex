@@ -40,7 +40,7 @@ defmodule SpadesGame.Game do
           cards: list(Card.t()),
           options: GameOptions.t(),
           status: :bidding | :playing,
-          drag_data: HTMLElementt,
+          drag_data: number, #DragEvent.t(),
           dealer: :west | :north | :east | :south,
           turn: nil | :west | :north | :east | :south,
           west: GamePlayer.t(),
@@ -193,11 +193,11 @@ defmodule SpadesGame.Game do
     |> check_for_new_round()
   end
 
-  # move_card/5: A player moves a card on the table.
-  @spec move_card(Game.t(), number | :bot, HTMLElement) ::
+  # drag_card/5: A player moves a card on the table.
+  @spec drag_card(Game.t(), number | :bot, number) :: #DragEvent.t()) ::
           {:ok, Game.t()} | {:error, String.t()}
 
-  def move_card(%Game{} = game, user_id, drag_data) do
+  def drag_card(%Game{} = game, user_id, drag_data) do
     {:ok, %Game{game | drag_data: drag_data}}
   end
 

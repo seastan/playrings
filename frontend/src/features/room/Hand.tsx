@@ -45,7 +45,7 @@ export const Hand: React.FC<Props> = ({ cards, broadcast }) => {
 
         return (
           <Draggable onStop={() => {
-            broadcast("move_card", {card} );
+            broadcast("drag_card", {card} );
             console.log('dropped');
           }}>
           <img

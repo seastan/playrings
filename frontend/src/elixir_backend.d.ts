@@ -24,6 +24,10 @@ declare module "elixir-backend" {
     public suit: "s" | "c" | "h" | "d";
   }
 
+  export declare class DragEvent {
+    public element: HTMLElement;
+  }
+
   export declare class GameUI {
     created_at: any;
     game: Game;
