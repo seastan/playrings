@@ -68,10 +68,10 @@ defmodule SpadesGame.GameUIServer do
   @doc """
   drag_card/5: A player just moved a card.
   """
-  @spec drag_card(String.t(), integer | :bot, number) :: GameUI.t() #DragEvent.t()) :: GameUI.t()
-  def drag_card(game_name, user_id, drag_data) do
+  @spec drag_card(String.t(), integer | :bot, String.t(), number, number) :: GameUI.t() #DragEvent.t()) :: GameUI.t()
+  def drag_card(game_name, user_id, drag_id, drag_x, drag_y) do
     IO.puts("game_ui_server: drag_card")
-    GenServer.call(via_tuple(game_name), {:drag_card, user_id, drag_data})
+    GenServer.call(via_tuple(game_name), {:drag_card, user_id, drag_id, drag_x, drag_y})
   end
 
   @doc """
@@ -215,9 +215,9 @@ defmodule SpadesGame.GameUIServer do
     |> save_and_reply()
   end
 
-  def handle_call({:drag_card, user_id, drag_data}, _from, gameui) do
+  def handle_call({:drag_card, user_id, drag_id, drag_x, drag_y}, _from, gameui) do
     IO.puts("game_ui_server: handle_call: drag_card a")
-    gameui = GameUI.drag_card(gameui, user_id, drag_data)
+    gameui = GameUI.drag_card(gameui, user_id, drag_id, drag_x, drag_y)
     IO.puts("game_ui_server: handle_call: drag_card b")
     gameui
     |> save_and_reply()

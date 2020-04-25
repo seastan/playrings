@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState} from "react";
 import Draggable from 'react-draggable';
 import cx from "classnames";
 import ScoreButton from "../score/ScoreButton";
@@ -40,6 +40,8 @@ export const Table: React.FC<Props> = ({
   cards,
   broadcast,
 }) => {
+  const [cardx, setCardX] = useState(0);
+  const [cardy, setCardY] = useState(0);
   const gameUIView = useGameUIView();
   const winner = gameUIView != null ? gameUIView.game_ui.game.winner : null;
   const cardHeight = "h-24";
@@ -51,16 +53,19 @@ export const Table: React.FC<Props> = ({
   // var cardx = 0;
   // var cardy = 0;
   const handleDragStop = (e: any, drag_data: any) => {
+    setCardX(drag_data.x);
+    setCardY(drag_data.y);
     console.log("table handleDragStop");
     console.log(drag_data);
     console.log(e);    
     var element = drag_data.node;
     console.log(element);
+    console.log(element.id);
     console.log(element.style);
     console.log(element.style.transform);
     //var drag_event = new DragEvent();
     // drag_event.element = element; 
-    //broadcast("drag_card", { drag_data: 10 } );
+    broadcast("drag_card", { drag_id: element.id, drag_x:drag_data.x, drag_y:drag_data.y } );
     //setTimeout(() => { console.log("timeout"); dragging = false; }, 2000);
     //element.style.transform = "translate(84px, 19px)";
 
@@ -81,10 +86,10 @@ export const Table: React.FC<Props> = ({
     <Draggable 
       //onDrag={handleDrag}
       onStop={handleDragStop}
-      // position={{
-      //   x: dragging? 800 : (gameUIView != null ? gameUIView.game_ui.game.cardx : 0),
-      //   y: dragging? 800 : (gameUIView != null ? gameUIView.game_ui.game.cardy : 0)
-      // }}
+/*       position={{
+         x: cardx, //dragging? 800 : (gameUIView != null ? gameUIView.game_ui.game.cardx : 0),
+         y: cardy //dragging? 800 : (gameUIView != null ? gameUIView.game_ui.game.cardy : 0)
+      }} */
       >
       <img id={"gwaihir"} draggable={false} className={cardHeight} src="https://images-cdn.fantasyflightgames.com/filer_public/83/8b/838b34bc-9188-4311-b04a-33dab2a527e0/mec82_gwaihir.png">
       </img>

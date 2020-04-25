@@ -18,7 +18,9 @@ defmodule SpadesGame.Game do
     :options,
     :dealer,
     :status,
-    :drag_data,
+    :drag_id,
+    :drag_x,
+    :drag_y,
     :turn,
     :west,
     :north,
@@ -40,7 +42,9 @@ defmodule SpadesGame.Game do
           cards: list(Card.t()),
           options: GameOptions.t(),
           status: :bidding | :playing,
-          drag_data: number, #DragEvent.t(),
+          drag_id: String.t(),
+          drag_x: number,
+          drag_y: number,
           dealer: :west | :north | :east | :south,
           turn: nil | :west | :north | :east | :south,
           west: GamePlayer.t(),
@@ -79,7 +83,9 @@ defmodule SpadesGame.Game do
       cards: [%Card{rank: 2, suit: :h}],
       options: options,
       status: :bidding,
-      drag_data: nil,
+      drag_id: "",
+      drag_x: 0,
+      drag_y: 0,
       dealer: :north,
       turn: :east,
       west: w,
@@ -194,11 +200,11 @@ defmodule SpadesGame.Game do
   end
 
   # drag_card/5: A player moves a card on the table.
-  @spec drag_card(Game.t(), number | :bot, number) :: #DragEvent.t()) ::
+  @spec drag_card(Game.t(), number | :bot, String.t(), number, number) :: #DragEvent.t()) ::
           {:ok, Game.t()} | {:error, String.t()}
 
-  def drag_card(%Game{} = game, user_id, drag_data) do
-    {:ok, %Game{game | drag_data: drag_data}}
+  def drag_card(%Game{} = game, user_id, drag_id, drag_x, drag_y) do
+    {:ok, %Game{game | drag_id: drag_id, drag_x: drag_x, drag_y: drag_y}}
   end
 
   @doc """

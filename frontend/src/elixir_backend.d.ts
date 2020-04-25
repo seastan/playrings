@@ -67,7 +67,9 @@ declare module "elixir-backend" {
     score: GameScore;
     round_number: number;
     winner: Winner;
-    drag_data: object;
+    drag_id: string;
+    drag_x: number;
+    drag_y: number;
     cards: Array<Card>;
   }
 

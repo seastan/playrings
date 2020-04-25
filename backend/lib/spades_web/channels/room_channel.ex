@@ -86,12 +86,14 @@ defmodule SpadesWeb.RoomChannel do
 
   def handle_in(
       "drag_card",
-      %{"drag_data" => drag_data},
+      %{"drag_id" => drag_id},
+      %{"drag_x" => drag_x},
+      %{"drag_y" => drag_y},
       %{assigns: %{room_slug: room_slug, user_id: user_id}} = socket
     ) do
     # Ignoring return value; could work on passing an error up
     IO.puts("room channel: drag_card a")
-    GameUIServer.drag_card(room_slug, user_id, drag_data)
+    GameUIServer.drag_card(room_slug, user_id, drag_id, drag_x, drag_y)
     IO.puts("room channel: drag_card b")
     state = GameUIServer.state(room_slug)
     socket = socket |> assign(:game_ui, state)

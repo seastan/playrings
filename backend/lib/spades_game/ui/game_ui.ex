@@ -102,10 +102,10 @@ defmodule SpadesGame.GameUI do
   @doc """
   play/5: A player moves a card on the table.
   """
-  @spec drag_card(GameUI.t(), number | :bot, number) :: GameUI.t() #DragEvent.t()) :: GameUI.t()
-  def drag_card(game_ui, user_id, drag_data) do
+  @spec drag_card(GameUI.t(), number | :bot, String.t(), number, number) :: GameUI.t() #DragEvent.t()) :: GameUI.t()
+  def drag_card(game_ui, user_id, drag_id, drag_x, drag_y) do
     IO.puts("game_ui: drag_card a")
-    case Game.drag_card(game_ui.game, user_id, drag_data) do
+    case Game.drag_card(game_ui.game, user_id, drag_id, drag_x, drag_y) do
       {:ok, new_game} ->
         %{game_ui | game: new_game}
         |> checks
