@@ -66,7 +66,9 @@ export const SmartTable: React.FC<Props> = ({ gameUIView, broadcast }) => {
       rightPlayer={rightPlayer}
       bottomPlayer={bottomPlayer}
       emphasizeBidding={game.status === "bidding"}
-      cards={gameUIView.game_ui.game.cards}
+      drag_id={gameUIView.game_ui.game.drag_id}
+      drag_x={gameUIView.game_ui.game.drag_x}
+      drag_y={gameUIView.game_ui.game.drag_y}
       broadcast={broadcast}
     />
   );

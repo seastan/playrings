@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useState, useEffect} from "react";
 import Draggable from 'react-draggable';
 import cx from "classnames";
 import ScoreButton from "../score/ScoreButton";
@@ -16,7 +16,9 @@ interface Props {
   topPlayer: GamePlayer;
   rightPlayer: GamePlayer;
   bottomPlayer: GamePlayer;
-  cards: Array<Card>;
+  drag_id: string;
+  drag_x: number;
+  drag_y: number;
   broadcast: (eventName: string, payload: object) => void;
 }
 
@@ -37,24 +39,44 @@ export const Table: React.FC<Props> = ({
   rightPlayer,
   bottomPlayer,
   emphasizeBidding,
-  cards,
+  drag_id,
+  drag_x,
+  drag_y,
   broadcast,
 }) => {
-  const [cardx, setCardX] = useState(0);
-  const [cardy, setCardY] = useState(0);
+  const [dragging, setDragging] = useState(false);
+  const [card_x, setCardX] = useState(0);
+  const [card_y, setCardY] = useState(0);
   const gameUIView = useGameUIView();
+  //if (!gameUIView) return(null);
   const winner = gameUIView != null ? gameUIView.game_ui.game.winner : null;
   const cardHeight = "h-24";
   const bidClasses = {
     "font-semibold text-lg text-blue-800": emphasizeBidding,
   };
 
+  useEffect(() => {
+    console.log('Updated x/y!');
+    console.log(drag_x);
+    console.log(drag_y);
+    var element = document.getElementById(drag_id);
+    console.log(element);
+    if (element) {
+    console.log(element.style.transform);
+      var new_transform = "rotate(50px)"; //"translate("+drag_x+"px"+(drag_y-100)+"px"+")"
+      element.style.transform = new_transform;
+      //element.style.left = drag_x+"px";
+      //element.style.top = drag_y+"px";
+      console.log(element);
+    }
+  }, [drag_id, drag_x, drag_y]);
+
   //var dragging = false;
   // var cardx = 0;
   // var cardy = 0;
   const handleDragStop = (e: any, drag_data: any) => {
-    setCardX(drag_data.x);
-    setCardY(drag_data.y);
+    // setCardX(drag_data.x);
+    // setCardY(drag_data.y);
     console.log("table handleDragStop");
     console.log(drag_data);
     console.log(e);    
@@ -66,30 +88,33 @@ export const Table: React.FC<Props> = ({
     //var drag_event = new DragEvent();
     // drag_event.element = element; 
     broadcast("drag_card", { drag_id: element.id, drag_x:drag_data.x, drag_y:drag_data.y } );
-    //setTimeout(() => { console.log("timeout"); dragging = false; }, 2000);
+    setDragging(false);
+    setTimeout(() => { console.log("timeout"); setDragging(false); }, 500);
     //element.style.transform = "translate(84px, 19px)";
-
   };  
-  // const handleDrag = (e: any, position: any) => {
-  //   //console.log(e);
-  //   cardx = position.x;
-  //   //console.log(cardx);
-  //   cardy = position.y;
-  //   dragging = true;
-  //   //console.log(dragging);
-  //   //broadcast("drag_card", {card: cards[0], cardx: position.x, cardy: position.y} )
-  // };
+  const handleDrag = (e: any, drag_data: any) => {
+    setCardX(drag_data.x);
+    setCardY(drag_data.y);
+    setDragging(true);
+    
+    //cardx = position.x;
+    //console.log(cardx);
+    //cardy = position.y;
+    //dragging = true;
+    //console.log(dragging);
+    //broadcast("drag_card", {card: cards[0], cardx: position.x, cardy: position.y} )
+  };
 
 
   return (
     <div>
     <Draggable 
-      //onDrag={handleDrag}
+      onDrag={handleDrag}
       onStop={handleDragStop}
-/*       position={{
-         x: cardx, //dragging? 800 : (gameUIView != null ? gameUIView.game_ui.game.cardx : 0),
-         y: cardy //dragging? 800 : (gameUIView != null ? gameUIView.game_ui.game.cardy : 0)
-      }} */
+      position={{
+         x: dragging? card_x : (gameUIView != null ? gameUIView.game_ui.game.drag_x : -100),
+         y: dragging? card_y : (gameUIView != null ? gameUIView.game_ui.game.drag_y : -100)
+      }}
       >
       <img id={"gwaihir"} draggable={false} className={cardHeight} src="https://images-cdn.fantasyflightgames.com/filer_public/83/8b/838b34bc-9188-4311-b04a-33dab2a527e0/mec82_gwaihir.png">
       </img>

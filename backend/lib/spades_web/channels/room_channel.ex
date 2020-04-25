@@ -86,9 +86,7 @@ defmodule SpadesWeb.RoomChannel do
 
   def handle_in(
       "drag_card",
-      %{"drag_id" => drag_id},
-      %{"drag_x" => drag_x},
-      %{"drag_y" => drag_y},
+      %{"drag_id" => drag_id, "drag_x" => drag_x, "drag_y" => drag_y},
       %{assigns: %{room_slug: room_slug, user_id: user_id}} = socket
     ) do
     # Ignoring return value; could work on passing an error up
