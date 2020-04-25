@@ -24,6 +24,13 @@ declare module "elixir-backend" {
     public suit: "s" | "c" | "h" | "d";
   }
 
+  export declare class Group {
+    public name: string;
+    public type: string;
+    public controller: string;
+    public cards: Array<Card>;
+  }
+
   export declare class DragEvent {
     public element: HTMLElement;
   }
@@ -70,7 +77,7 @@ declare module "elixir-backend" {
     drag_id: string;
     drag_x: number;
     drag_y: number;
-    cards: Array<Card>;
+    groups: Array<Group>;
   }
 
   export declare class GamePlayer {

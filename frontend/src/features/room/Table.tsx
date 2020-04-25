@@ -55,21 +55,21 @@ export const Table: React.FC<Props> = ({
     "font-semibold text-lg text-blue-800": emphasizeBidding,
   };
 
-  useEffect(() => {
-    console.log('Updated x/y!');
-    console.log(drag_x);
-    console.log(drag_y);
-    var element = document.getElementById(drag_id);
-    console.log(element);
-    if (element) {
-    console.log(element.style.transform);
-      var new_transform = "rotate(50px)"; //"translate("+drag_x+"px"+(drag_y-100)+"px"+")"
-      element.style.transform = new_transform;
-      //element.style.left = drag_x+"px";
-      //element.style.top = drag_y+"px";
-      console.log(element);
-    }
-  }, [drag_id, drag_x, drag_y]);
+  // useEffect(() => {
+  //   console.log('Updated x/y!');
+  //   console.log(drag_x);
+  //   console.log(drag_y);
+  //   var element = document.getElementById(drag_id);
+  //   console.log(element);
+  //   if (element) {
+  //   console.log(element.style.transform);
+  //     var new_transform = "rotate(50px)"; //"translate("+drag_x+"px"+(drag_y-100)+"px"+")"
+  //     element.style.transform = new_transform;
+  //     //element.style.left = drag_x+"px";
+  //     //element.style.top = drag_y+"px";
+  //     console.log(element);
+  //   }
+  // }, [drag_id, drag_x, drag_y]);
 
   //var dragging = false;
   // var cardx = 0;
@@ -78,17 +78,16 @@ export const Table: React.FC<Props> = ({
     // setCardX(drag_data.x);
     // setCardY(drag_data.y);
     console.log("table handleDragStop");
-    console.log(drag_data);
-    console.log(e);    
+    // console.log(drag_data);
+    // console.log(e);    
     var element = drag_data.node;
-    console.log(element);
-    console.log(element.id);
-    console.log(element.style);
-    console.log(element.style.transform);
+    // console.log(element);
+    // console.log(element.id);
+    // console.log(element.style);
+    // console.log(element.style.transform);
     //var drag_event = new DragEvent();
     // drag_event.element = element; 
     broadcast("drag_card", { drag_id: element.id, drag_x:drag_data.x, drag_y:drag_data.y } );
-    setDragging(false);
     setTimeout(() => { console.log("timeout"); setDragging(false); }, 500);
     //element.style.transform = "translate(84px, 19px)";
   };  
@@ -112,14 +111,24 @@ export const Table: React.FC<Props> = ({
       onDrag={handleDrag}
       onStop={handleDragStop}
       position={{
-         x: dragging? card_x : (gameUIView != null ? gameUIView.game_ui.game.drag_x : -100),
+         x: dragging? card_x : (gameUIView != null ? gameUIView.game_ui.game["drag_x"] : -100),
          y: dragging? card_y : (gameUIView != null ? gameUIView.game_ui.game.drag_y : -100)
       }}
       >
       <img id={"gwaihir"} draggable={false} className={cardHeight} src="https://images-cdn.fantasyflightgames.com/filer_public/83/8b/838b34bc-9188-4311-b04a-33dab2a527e0/mec82_gwaihir.png">
       </img>
     </Draggable>
-      
+    <Draggable 
+      onDrag={handleDrag}
+      onStop={handleDragStop}
+      position={{
+         x: dragging? card_x : (gameUIView != null ? gameUIView.game_ui.game.drag_x : -100),
+         y: dragging? card_y : (gameUIView != null ? gameUIView.game_ui.game.drag_y : -100)
+      }}
+      >
+      <img id={"gwaihir2"} draggable={false} className={cardHeight} src="https://images-cdn.fantasyflightgames.com/filer_public/83/8b/838b34bc-9188-4311-b04a-33dab2a527e0/mec82_gwaihir.png">
+      </img>
+    </Draggable>      
     <div className="h-full w-full relative">
       {winner && (
         <div className="p-6 w-full h-full absolute inset-0 z-40">
