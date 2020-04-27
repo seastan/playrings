@@ -39,7 +39,12 @@ defmodule SpadesGame.Game do
 
   @type t :: %Game{
           game_name: String.t(),
-          groups: list(Group.t()),
+          groups: %{
+            table: Group.t(),
+            player_1_deck: Group.t(),
+            player_1_hand: Group.t(),
+            player_1_discard: Group.t()
+          },
           options: GameOptions.t(),
           status: :bidding | :playing,
           drag_id: String.t(),
@@ -82,7 +87,12 @@ defmodule SpadesGame.Game do
 
     %Game{
       game_name: game_name,
-      groups: [],
+      groups: %{
+        table: Group.new_table(),
+        player_1_deck: Group.new(),
+        player_1_hand: Group.new(),
+        player_1_discard: Group.new()
+      },
       options: options,
       status: :bidding,
       drag_id: "",

@@ -13,6 +13,11 @@ defmodule SpadesGame.Card do
   def suits(), do: [:h, :d, :c, :s]
   def ranks(), do: Enum.to_list(2..14)
 
+  @spec new_test() :: Card.t()
+  def new_test() do]
+    %Card{rank: 8, suit: :h}
+  end
+
   @spec from_map(%{}) :: Card.t()
   def from_map(%{"rank" => rank, "suit" => "c"}),
     do: %Card{rank: rank, suit: :c}

@@ -31,6 +31,13 @@ declare module "elixir-backend" {
     public cards: Array<Card>;
   }
 
+  export declare class Groups {
+    public table: Group;
+    public player_1_hand: Group;
+    public player_1_deck: Group;
+    public player_1_discard: Group;
+  }
+
   export declare class DragEvent {
     public element: HTMLElement;
   }
@@ -77,7 +84,7 @@ declare module "elixir-backend" {
     drag_id: string;
     drag_x: number;
     drag_y: number;
-    groups: Array<Group>;
+    groups: Groups;
   }
 
   export declare class GamePlayer {
