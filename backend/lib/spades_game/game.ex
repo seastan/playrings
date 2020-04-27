@@ -4,7 +4,7 @@ defmodule SpadesGame.Game do
   In early stages of the app, it only represents a
   some toy game used to test everything around it.
   """
-  alias SpadesGame.{Card, Group, Deck, Game, GamePlayer, GameOptions, GameScore, TrickCard}
+  alias SpadesGame.{Card, Group, Groups, Deck, Game, GamePlayer, GameOptions, GameScore, TrickCard}
 
   require Logger
 
@@ -39,7 +39,7 @@ defmodule SpadesGame.Game do
 
   @type t :: %Game{
           game_name: String.t(),
-          groups: %{
+          groups: %Groups{
             table: Group.t(),
             player_1_deck: Group.t(),
             player_1_hand: Group.t(),
@@ -87,7 +87,7 @@ defmodule SpadesGame.Game do
 
     %Game{
       game_name: game_name,
-      groups: %{
+      groups: %Groups{
         table: Group.new_table(),
         player_1_deck: Group.new(),
         player_1_hand: Group.new(),
@@ -216,7 +216,12 @@ defmodule SpadesGame.Game do
           {:ok, Game.t()} | {:error, String.t()}
 
   def drag_card(%Game{} = game, user_id, drag_id, drag_x, drag_y) do
-    {:ok, %Game{game | drag_id: drag_id, drag_x: drag_x, drag_y: drag_y}}
+    {:ok, %Game{game |
+      drag_id: drag_id,
+      drag_x: drag_x,
+      drag_y: drag_y}
+    }
+
   end
 
   @doc """

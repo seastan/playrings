@@ -4,7 +4,7 @@ import cx from "classnames";
 import ScoreButton from "../score/ScoreButton";
 import GameTeam from "../room/GameTeam";
 import useGameUIView from "../../hooks/useGameUIView";
-import { GamePlayer, Card, DragEvent } from "elixir-backend";
+import { GamePlayer, Group, Card, DragEvent } from "elixir-backend";
 
 interface Props {
   emphasizeBidding?: boolean;
@@ -16,9 +16,7 @@ interface Props {
   topPlayer: GamePlayer;
   rightPlayer: GamePlayer;
   bottomPlayer: GamePlayer;
-  drag_id: string;
-  drag_x: number;
-  drag_y: number;
+  groupTable: Group;
   broadcast: (eventName: string, payload: object) => void;
 }
 
@@ -39,9 +37,7 @@ export const Table: React.FC<Props> = ({
   rightPlayer,
   bottomPlayer,
   emphasizeBidding,
-  drag_id,
-  drag_x,
-  drag_y,
+  groupTable,
   broadcast,
 }) => {
   const [dragging, setDragging] = useState(false);
@@ -111,22 +107,22 @@ export const Table: React.FC<Props> = ({
       onDrag={handleDrag}
       onStop={handleDragStop}
       position={{
-         x: dragging? card_x : (gameUIView != null ? gameUIView.game_ui.game["drag_x"] : -100),
-         y: dragging? card_y : (gameUIView != null ? gameUIView.game_ui.game.drag_y : -100)
+         x: dragging? card_x : (gameUIView != null ? gameUIView.game_ui.game.groups.table.cards[0].table_x : -100),
+         y: dragging? card_y : (gameUIView != null ? gameUIView.game_ui.game.groups.table.cards[0].table_y : -100)
       }}
       >
-      <img id={"gwaihir"} draggable={false} className={cardHeight} src="https://images-cdn.fantasyflightgames.com/filer_public/83/8b/838b34bc-9188-4311-b04a-33dab2a527e0/mec82_gwaihir.png">
+      <img id={"1"} draggable={false} className={cardHeight} src="https://images-cdn.fantasyflightgames.com/filer_public/83/8b/838b34bc-9188-4311-b04a-33dab2a527e0/mec82_gwaihir.png">
       </img>
     </Draggable>
     <Draggable 
       onDrag={handleDrag}
       onStop={handleDragStop}
       position={{
-         x: dragging? card_x : (gameUIView != null ? gameUIView.game_ui.game.drag_x : -100),
-         y: dragging? card_y : (gameUIView != null ? gameUIView.game_ui.game.drag_y : -100)
+        x: dragging? card_x : (gameUIView != null ? gameUIView.game_ui.game.groups.table.cards[1].table_x : -100),
+        y: dragging? card_y : (gameUIView != null ? gameUIView.game_ui.game.groups.table.cards[1].table_y : -100)
       }}
       >
-      <img id={"gwaihir2"} draggable={false} className={cardHeight} src="https://images-cdn.fantasyflightgames.com/filer_public/83/8b/838b34bc-9188-4311-b04a-33dab2a527e0/mec82_gwaihir.png">
+      <img id={"2"} draggable={false} className={cardHeight} src="https://images-cdn.fantasyflightgames.com/filer_public/83/8b/838b34bc-9188-4311-b04a-33dab2a527e0/mec82_gwaihir.png">
       </img>
     </Draggable>      
     <div className="h-full w-full relative">
