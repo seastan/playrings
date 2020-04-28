@@ -44,6 +44,7 @@ export const Table: React.FC<Props> = ({
   const [dragging, setDragging] = useState(draggingDefault);
   const [card_x, setCardX] = useState(0);
   const [card_y, setCardY] = useState(0);
+  const [selectedCard, setSelectedCard] = useState<number | null>(null);
   const gameUIView = useGameUIView();
   //if (!gameUIView) return(null);
   const winner = gameUIView != null ? gameUIView.game_ui.game.winner : null;
@@ -112,6 +113,7 @@ export const Table: React.FC<Props> = ({
         // let cardStr = cardToString(card);
 
         return (
+          <div>
           <Draggable 
             onDrag={handleDrag}
             onStop={handleDragStop}
@@ -123,14 +125,25 @@ export const Table: React.FC<Props> = ({
             <img 
               id={index.toString()} 
               draggable={false} 
-              className={cardHeight} 
+              onMouseOver={() => {
+                setSelectedCard(index);
+              }}            
+              onMouseLeave={() => {
+                setSelectedCard(null);
+              }}
+              className={cx({
+                "h-32 object-cover -ml-16 z-30": true,
+                "hand-card-animate": dragging[index]? false : true,
+                "hand-card-selected": selectedCard === index
+              })}
               src="https://images-cdn.fantasyflightgames.com/filer_public/83/8b/838b34bc-9188-4311-b04a-33dab2a527e0/mec82_gwaihir.png">
             </img>
           </Draggable>
+          </div>
         );
       })}
 
- 
+{/*  
     <div className="h-full w-full relative">
       {winner && (
         <div className="p-6 w-full h-full absolute inset-0 z-40">
@@ -149,7 +162,7 @@ export const Table: React.FC<Props> = ({
         </div>
       )}
       <div className="h-56 bg-orange-200 border rounded-lg shadow-lg">
-        {/* Top row/card */}
+        //  Top row/card 
         <div className="absolute inset-x-0 top-0 h-0 p-1 flex">
           <div className="mx-auto flex">
             <div className="w-20 px-2 text-right text-sm">
@@ -170,7 +183,7 @@ export const Table: React.FC<Props> = ({
           </div>
         </div>
 
-        {/* Bottom row/card */}
+        // Bottom row/card
         <div className="absolute inset-x-0 bottom-0 h-0 p-1 flex">
           <div className="mx-auto flex -mt-24 items-end">
             <div className="w-20"></div>
@@ -191,7 +204,7 @@ export const Table: React.FC<Props> = ({
           </div>
         </div>
 
-        {/* Left row/card */}
+        // Left row/card
         <div className="absolute inset-y-0 left-0 p-1 flex">
           <div className="my-auto flex flex-col">
             <div className="h-12"></div>
@@ -214,7 +227,7 @@ export const Table: React.FC<Props> = ({
           </div>
         </div>
 
-        {/* Right row/card */}
+        // Right row/card
         <div className="absolute inset-y-0 right-0 p-1 flex">
           <div className="my-auto flex flex-col">
             <div className="h-12 mt-4 -mb-4 flex items-end">
@@ -239,7 +252,7 @@ export const Table: React.FC<Props> = ({
           </div>
         </div>
       </div>
-    </div>
+    </div> */}
     </div>
   );
 };

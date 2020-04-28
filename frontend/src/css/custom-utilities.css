@@ -1,6 +1,6 @@
 /* Selected Card Animations */
 .hand-card-animate {
-  transition: margin 110ms ease-in-out, transform 110ms ease-in-out;
+  transition: margin 500ms ease-in-out, transform 500ms ease-in-out;
 }
 
 .hand-card-selected {

@@ -66,6 +66,9 @@ export const Hand: React.FC<Props> = ({ cards, broadcast }) => {
             onMouseOver={() => {
               if (!draggedCard)
                 setSelectedCard(cardStr);
+              
+              console.log(selectedCard);
+              console.log(selectedCard == cardStr);
             }}            
             onMouseLeave={() => {
               setSelectedCard(null);
