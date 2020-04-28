@@ -36,7 +36,7 @@ defmodule SpadesGame.Group do
       name: "table",
       type: "table",
       controller: "all",
-      cards: [Card.new_test(),Card.new_test()]#[{:id1, "id1"},{:id2, "id2"}] #[{:id1, Card.new_test()},{:id2, Card.new_test()}]
+      cards: [Card.new_test(),Card.new_test(),Card.new_test()]#[{:id1, "id1"},{:id2, "id2"}] #[{:id1, Card.new_test()},{:id2, Card.new_test()}]
     }
   end
 

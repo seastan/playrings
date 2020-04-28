@@ -216,11 +216,14 @@ defmodule SpadesGame.Game do
           {:ok, Game.t()} | {:error, String.t()}
 
   def drag_card(%Game{} = game, user_id, drag_id, drag_x, drag_y) do
+    index = String.to_integer(drag_id)
     {:ok, %Game{game |
-      drag_id: drag_id,
-      drag_x: drag_x,
-      drag_y: drag_y}
-    }
+      groups: %Groups{game.groups |
+        table: %Group{game.groups.table |
+          cards: List.update_at(game.groups.table.cards, index, fn(card) -> %Card{card | table_x: drag_x, table_y: drag_y} end)
+        }
+      }
+    }}
 
   end
 

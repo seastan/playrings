@@ -40,7 +40,8 @@ export const Table: React.FC<Props> = ({
   groupTable,
   broadcast,
 }) => {
-  const [dragging, setDragging] = useState(false);
+  var draggingDefault = new Array(groupTable.cards.length).fill(false);
+  const [dragging, setDragging] = useState(draggingDefault);
   const [card_x, setCardX] = useState(0);
   const [card_y, setCardY] = useState(0);
   const gameUIView = useGameUIView();
@@ -84,13 +85,16 @@ export const Table: React.FC<Props> = ({
     //var drag_event = new DragEvent();
     // drag_event.element = element; 
     broadcast("drag_card", { drag_id: element.id, drag_x:drag_data.x, drag_y:drag_data.y } );
-    setTimeout(() => { console.log("timeout"); setDragging(false); }, 500);
+    setTimeout(() => { console.log("timeout"); setDragging(draggingDefault); }, 500);
     //element.style.transform = "translate(84px, 19px)";
   };  
   const handleDrag = (e: any, drag_data: any) => {
     setCardX(drag_data.x);
     setCardY(drag_data.y);
-    setDragging(true);
+    const index = drag_data.node.id.toString();
+    var set_dragging = draggingDefault;
+    set_dragging[index] = true; 
+    setDragging(set_dragging);
     
     //cardx = position.x;
     //console.log(cardx);
@@ -100,31 +104,33 @@ export const Table: React.FC<Props> = ({
     //broadcast("drag_card", {card: cards[0], cardx: position.x, cardy: position.y} )
   };
 
-
+  const cards = groupTable.cards;
+  
   return (
     <div>
-    <Draggable 
-      onDrag={handleDrag}
-      onStop={handleDragStop}
-      position={{
-         x: dragging? card_x : (gameUIView != null ? gameUIView.game_ui.game.groups.table.cards[0].table_x : -100),
-         y: dragging? card_y : (gameUIView != null ? gameUIView.game_ui.game.groups.table.cards[0].table_y : -100)
-      }}
-      >
-      <img id={"1"} draggable={false} className={cardHeight} src="https://images-cdn.fantasyflightgames.com/filer_public/83/8b/838b34bc-9188-4311-b04a-33dab2a527e0/mec82_gwaihir.png">
-      </img>
-    </Draggable>
-    <Draggable 
-      onDrag={handleDrag}
-      onStop={handleDragStop}
-      position={{
-        x: dragging? card_x : (gameUIView != null ? gameUIView.game_ui.game.groups.table.cards[1].table_x : -100),
-        y: dragging? card_y : (gameUIView != null ? gameUIView.game_ui.game.groups.table.cards[1].table_y : -100)
-      }}
-      >
-      <img id={"2"} draggable={false} className={cardHeight} src="https://images-cdn.fantasyflightgames.com/filer_public/83/8b/838b34bc-9188-4311-b04a-33dab2a527e0/mec82_gwaihir.png">
-      </img>
-    </Draggable>      
+      {cards.map((card,index) => {
+        // let cardStr = cardToString(card);
+
+        return (
+          <Draggable 
+            onDrag={handleDrag}
+            onStop={handleDragStop}
+            position={{
+              x: dragging[index]? card_x : (gameUIView != null ? card.table_x : -100),
+              y: dragging[index]? card_y : (gameUIView != null ? card.table_y : -100)
+            }}
+            >
+            <img 
+              id={index.toString()} 
+              draggable={false} 
+              className={cardHeight} 
+              src="https://images-cdn.fantasyflightgames.com/filer_public/83/8b/838b34bc-9188-4311-b04a-33dab2a527e0/mec82_gwaihir.png">
+            </img>
+          </Draggable>
+        );
+      })}
+
+ 
     <div className="h-full w-full relative">
       {winner && (
         <div className="p-6 w-full h-full absolute inset-0 z-40">
