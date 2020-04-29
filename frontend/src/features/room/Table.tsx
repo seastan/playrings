@@ -5,6 +5,8 @@ import ScoreButton from "../score/ScoreButton";
 import GameTeam from "../room/GameTeam";
 import useGameUIView from "../../hooks/useGameUIView";
 import { GamePlayer, Group, Card, DragEvent } from "elixir-backend";
+import { useDrop } from 'react-dnd'
+import HTML5Backend from 'react-dnd-html5-backend'
 
 interface Props {
   emphasizeBidding?: boolean;
@@ -104,6 +106,16 @@ export const Table: React.FC<Props> = ({
     //console.log(dragging);
     //broadcast("drag_card", {card: cards[0], cardx: position.x, cardy: position.y} )
   };
+  const handleDrop = (e: any) => {
+    console.log('dropped')
+    e.preventDefault();
+    e.stopPropagation();
+  };  
+  const handleMouseEnter = (e: any) => {
+    console.log('mouseover')
+    e.preventDefault();
+    e.stopPropagation();
+  };
 
   const cards = groupTable.cards;
   
@@ -142,6 +154,12 @@ export const Table: React.FC<Props> = ({
           </div>
         );
       })}
+      <div 
+        onDrop={e => handleDrop(e)}
+        onMouseEnter={e => handleMouseEnter(e)}
+      >
+        <img src="https://images-na.ssl-images-amazon.com/images/I/31sIPsH0CRL._AC_.jpg"></img>
+      </div>
 
 {/*  
     <div className="h-full w-full relative">
