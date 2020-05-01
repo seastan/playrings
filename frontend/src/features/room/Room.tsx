@@ -30,28 +30,18 @@ export const Room: React.FC<Props> = ({ slug }) => {
   }, []);
   const broadcast = useChannel(`room:${slug}`, onChannelMessage);
 
-  const statusIs = (targetStatus: string) =>
-    gameUIView != null &&
-    gameUIView.game_ui.status != null &&
-    gameUIView.game_ui.status === targetStatus;
-
-  const isStaging = statusIs("staging");
-  const isPlaying = statusIs("playing");
-
-  const game_ui = gameUIView != null ? gameUIView.game_ui : null;
   return (
     <Container>
-      <div>
-        {/* <div className="text-lg">{slug}</div> */}
-        {isStaging && <RoomStaging gameState={game_ui} broadcast={broadcast} />}
-        {isPlaying && gameUIView != null && (
+      {/* <img className="gamebackground" src="https://raw.githubusercontent.com/seastan/Lord-of-the-Rings/master/o8g/background/background.jpg" /> */}
+      <div className="gamebackground">
+        {gameUIView != null && (
           <GameUIViewContext.Provider value={gameUIView}>
             <RotateTableProvider gameUIView={gameUIView}>
               <div className="flex flex-wrap">
-                <div className="w-full lg:w-3/4 xl:w-4/6 mb-4">
+                <div className="h-screen w-full lg:w-5/6 xl:w-5/6 mb-4">
                   <RoomGame gameUIView={gameUIView} broadcast={broadcast} />
                 </div>
-                <div className="w-full lg:w-1/4 xl:w-2/6 mb-4">
+                <div className="w-full lg:w-1/6 xl:w-1/6 mb-4">
                   <div className=" bg-white max-w-none p-4 mx-auto rounded-lg mt-4 ">
                     <Chat roomName={gameUIView.game_ui.game_name} />
                   </div>

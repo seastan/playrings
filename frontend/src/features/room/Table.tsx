@@ -208,10 +208,10 @@ export const Table: React.FC<Props> = ({
   const cards = groupTable.cards;
   return (
       <div
-        className="droptarget"
+        className="h-full droptarget"
         onDrop={drop} 
         onDragOver={handleDragOver}
-        style={{position: "absolute"}}
+        //style={{position: "absolute"}}
       >
         <img
           className={cx({
