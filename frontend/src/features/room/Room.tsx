@@ -42,7 +42,7 @@ export const Room: React.FC<Props> = ({ slug }) => {
   return (
     <Container>
       <div>
-        <div className="text-lg">{slug}</div>
+        {/* <div className="text-lg">{slug}</div> */}
         {isStaging && <RoomStaging gameState={game_ui} broadcast={broadcast} />}
         {isPlaying && gameUIView != null && (
           <GameUIViewContext.Provider value={gameUIView}>

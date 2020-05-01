@@ -25,11 +25,18 @@ export const PlayerSeat: React.FC<Props> = ({
       // Empty Seat + Game not over yet
       if (isLoggedIn) {
         return (
+          <div 
+            style={{zIndex:-1}}
+          >
           <Button onClick={() => broadcast("sit", { whichSeat })}>Sit</Button>
+          </div>
         );
       } else {
         return (
-          <span className="text-gray-700 bg-gray-100 text-sm border p-1 mt-1 rounded ">
+          <span 
+            style={{zIndex:1}}
+            className="text-gray-700 bg-gray-100 text-sm border p-1 mt-1 rounded " 
+          >
             <Link to="/login" className="mr-1">
               Log In
             </Link>
