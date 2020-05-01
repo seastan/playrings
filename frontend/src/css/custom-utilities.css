@@ -49,3 +49,22 @@
   user-select: none; /* Non-prefixed version, currently
                                   supported by Chrome, Opera and Firefox */
 }
+
+.droptarget {
+  float: left; 
+  width: 800px; 
+  height: 600px;
+  margin: 0px;
+  padding: 0px;
+  border: 1px solid #aaaaaa;
+}
+
+.dropitem { 
+  position:  absolute; 
+  left: 100;
+  top: 0;/* set these so Chrome doesn't return 'auto' from getComputedStyle */
+  /* width: 200px; 
+  background: rgba(255,255,255,0.66); 
+  border: 2px  solid rgba(0,0,0,0.5); 
+  border-radius: 4px; padding: 8px; */
+}

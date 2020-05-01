@@ -15,7 +15,7 @@ defmodule SpadesGame.Card do
 
   @spec new_test() :: Card.t()
   def new_test() do
-    %Card{rank: 8, suit: :h}
+    %Card{rank: 9, suit: :h, table_x: 100, table_y: 100}
   end
 
   @spec from_map(%{}) :: Card.t()

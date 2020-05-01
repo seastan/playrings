@@ -5,8 +5,10 @@ import ScoreButton from "../score/ScoreButton";
 import GameTeam from "../room/GameTeam";
 import useGameUIView from "../../hooks/useGameUIView";
 import { GamePlayer, Group, Card, DragEvent } from "elixir-backend";
-import { useDrop } from 'react-dnd'
-import HTML5Backend from 'react-dnd-html5-backend'
+import { DndProvider } from 'react-dnd'
+import Backend from 'react-dnd-html5-backend'
+import Example from './example/example'
+
 
 interface Props {
   emphasizeBidding?: boolean;
@@ -42,10 +44,12 @@ export const Table: React.FC<Props> = ({
   groupTable,
   broadcast,
 }) => {
-  var draggingDefault = new Array(groupTable.cards.length).fill(false);
-  const [dragging, setDragging] = useState(draggingDefault);
-  const [card_x, setCardX] = useState(0);
-  const [card_y, setCardY] = useState(0);
+  //var draggingDefault = new Array(groupTable.cards.length).fill(false);
+  const [dragging, setDragging] = useState(false);
+  const [activeCard, setActiveCard] = useState(null);
+  const [origin, setOrigin] = useState({x: 0, y: 0});
+  const [deltaXY, setDeltaXY] = useState({x: 0, y: 0});
+  const [hoverImage, setHoverImage] = useState("");
   const [selectedCard, setSelectedCard] = useState<number | null>(null);
   const gameUIView = useGameUIView();
   //if (!gameUIView) return(null);
@@ -88,16 +92,16 @@ export const Table: React.FC<Props> = ({
     //var drag_event = new DragEvent();
     // drag_event.element = element; 
     broadcast("drag_card", { drag_id: element.id, drag_x:drag_data.x, drag_y:drag_data.y } );
-    setTimeout(() => { console.log("timeout"); setDragging(draggingDefault); }, 500);
+    setTimeout(() => { console.log("timeout"); setDragging(false); }, 500);
     //element.style.transform = "translate(84px, 19px)";
   };  
   const handleDrag = (e: any, drag_data: any) => {
-    setCardX(drag_data.x);
-    setCardY(drag_data.y);
-    const index = drag_data.node.id.toString();
-    var set_dragging = draggingDefault;
-    set_dragging[index] = true; 
-    setDragging(set_dragging);
+    // setCardX(drag_data.x);
+    // setCardY(drag_data.y);
+    // const index = drag_data.node.id.toString();
+    // var set_dragging = draggingDefault;
+    // set_dragging[index] = true; 
+    // setDragging(set_dragging);
     
     //cardx = position.x;
     //console.log(cardx);
@@ -117,23 +121,137 @@ export const Table: React.FC<Props> = ({
     e.stopPropagation();
   };
 
-  const cards = groupTable.cards;
-  
-  return (
-    <div>
-      {cards.map((card,index) => {
-        // let cardStr = cardToString(card);
+  function dragStart (event: any) {
+    // event.dataTransfer.setData("Text", event.target.id);
+    // const demoElement: HTMLElement | null = document.getElementById('demo');
+    // if (demoElement) {
+    //   demoElement.innerHTML = "Started to drag the p element";
+    // }
+    setDragging(true);
+    var style = window.getComputedStyle(event.target, null);
+    console.log(event.pageX,event.pageY);
+    setOrigin({x:event.pageX,y:event.pageY});
+    var str = (parseInt(style.getPropertyValue("left")) - event.clientX) + ',' + (parseInt(style.getPropertyValue("top")) - event.clientY) + ',' + event.target.id;
+    console.log(str);
+    event.dataTransfer.setData("Text", str);
 
-        return (
-          <div>
-          <Draggable 
-            onDrag={handleDrag}
-            onStop={handleDragStop}
-            position={{
-              x: dragging[index]? card_x : (gameUIView != null ? card.table_x : -100),
-              y: dragging[index]? card_y : (gameUIView != null ? card.table_y : -100)
-            }}
-            >
+    var img = new Image();
+    img.src = 'data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs=';
+    event.dataTransfer.setDragImage(img, 0, 0);
+
+    // var dragIcon = document.createElement("span");
+		// event.dataTransfer.setDragImage(dragIcon, -10, -10);	
+
+  }
+  
+  function dragEnd(event: any) {
+    // const demoElement: HTMLElement | null = document.getElementById('demo');
+    // if (demoElement) {
+    //   demoElement.innerHTML = "Finished dragging the p element.";
+    // }
+  }
+  
+  function handleDragOver(event: any) {
+    event.preventDefault();
+    event.dataTransfer.dropEffect = 'over';
+
+    // Physically drag the card instead of using the D&D ghost
+		if ( dragging ) {
+			var x = event.pageX - origin.x;
+      var y = event.pageY - origin.y;
+      setDeltaXY({x,y});
+			var css = "pointer-events: none; transform: scale(1.05, 1.05) rotateX(0deg) translate3d("+x+"px, "+y+"px, 0px);";
+      var draggedCard = document.getElementById("test1");
+
+/*       if (activeCard != null) {
+			  activeCard.style.cssText = css;
+      } */
+/* 			if ( siblings.length ) {
+				each(siblings, function(i, card) {
+					card.style.cssText = css;
+				}, this);
+			} */
+		}	
+  }
+  
+  function drop(event: any) {
+    // event.preventDefault();
+    // var data = event.dataTransfer.getData("Text");
+    // console.log(event.dataTransfer);
+    // console.log(typeof event);
+    // event.target.appendChild(document.getElementById(data));
+    var offset = event.dataTransfer.getData("Text").split(',');
+    var dm = document.getElementById(offset[2]);
+    console.log(dm);
+    if (dm) {
+      console.log(dm.style.left);
+      console.log(event.clientX)
+      console.log(offset)
+      dm.style.left = (event.clientX + parseInt(offset[0], 10)) + 'px';
+      console.log(dm.style.left);
+      dm.style.top = (event.clientY + parseInt(offset[1], 10)) + 'px';
+    }
+    setDeltaXY({x:0,y:0})
+    setTimeout(() => { console.log("timeout"); setDragging(false); }, 100);
+    event.preventDefault();
+    return false;
+  }
+
+  function handleMouseOver(event: any) {
+    setHoverImage("https://images-cdn.fantasyflightgames.com/filer_public/83/8b/838b34bc-9188-4311-b04a-33dab2a527e0/mec82_gwaihir.png");
+  }
+
+  function handleMouseLeave(event: any) {
+    setHoverImage("");
+  }
+
+  const cards = groupTable.cards;
+  return (
+      <div
+        className="droptarget"
+        onDrop={drop} 
+        onDragOver={handleDragOver}
+        style={{position: "absolute"}}
+      >
+        <img
+          className={cx({
+            "dropitem h-32 object-cover -ml-16 z-30": true,
+            "hand-card-animate": !dragging
+            //"hand-card-selected": dragging
+          })}
+          style={{transform: dragging? "scale(1.0, 1.0) rotateX(0deg) translate3d("+deltaXY.x+"px, "+deltaXY.y+"px, 0px)": ""}}
+          onDragStart={dragStart} 
+          onDragEnd={dragEnd}
+          onMouseOver={handleMouseOver}
+          onMouseLeave={handleMouseLeave}
+          draggable="true" 
+          id="card1"
+          src="https://images-cdn.fantasyflightgames.com/filer_public/83/8b/838b34bc-9188-4311-b04a-33dab2a527e0/mec82_gwaihir.png">
+        </img>
+
+        <img
+          style={{height:"200px"}}
+          draggable="false" 
+          id="display"
+          src={hoverImage}>
+        </img>
+      </div>
+
+  )}
+
+  //     {cards.map((card,index) => {
+  //       // let cardStr = cardToString(card);
+
+
+
+
+  //       return (
+
+  //       )
+  //     })
+  // );
+
+            {/* <p id="demo"></p>
             <img 
               id={index.toString()} 
               draggable={false} 
@@ -150,16 +268,11 @@ export const Table: React.FC<Props> = ({
               })}
               src="https://images-cdn.fantasyflightgames.com/filer_public/83/8b/838b34bc-9188-4311-b04a-33dab2a527e0/mec82_gwaihir.png">
             </img>
-          </Draggable>
-          </div>
         );
       })}
-      <div 
-        onDrop={e => handleDrop(e)}
-        onMouseEnter={e => handleMouseEnter(e)}
-      >
+
         <img src="https://images-na.ssl-images-amazon.com/images/I/31sIPsH0CRL._AC_.jpg"></img>
-      </div>
+      </div> */}
 
 {/*  
     <div className="h-full w-full relative">
@@ -271,7 +384,7 @@ export const Table: React.FC<Props> = ({
         </div>
       </div>
     </div> */}
-    </div>
-  );
-};
+    {/* </div>
+  ); */}
+
 export default Table;
