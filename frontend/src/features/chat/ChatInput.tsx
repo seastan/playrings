@@ -19,7 +19,7 @@ export const ChatInput: React.FC<Props> = ({ broadcast }) => {
     }
   );
   return (
-    <div className="max-w-md">
+    <div>
       <form onSubmit={handleSubmit}>
         <input
           type="text"

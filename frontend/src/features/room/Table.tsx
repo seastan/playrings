@@ -8,6 +8,7 @@ import { GamePlayer, Group, Card, DragEvent } from "elixir-backend";
 import { DndProvider } from 'react-dnd'
 import Backend from 'react-dnd-html5-backend'
 import Example from './example/example'
+import Chat from "../chat/Chat";
 
 
 interface Props {
@@ -213,6 +214,15 @@ export const Table: React.FC<Props> = ({
         onDragOver={handleDragOver}
         //style={{position: "absolute"}}
       >
+        {gameUIView != null && (
+          <Draggable positionOffset={{x:"495%",y:"0%"}}>
+            <div className="w-full lg:w-1/6 xl:w-1/6 mb-4">
+              <div className=" bg-white max-w-none p-4 mx-auto rounded-lg mt-4 ">
+                <Chat roomName={gameUIView.game_ui.game_name} />
+              </div>
+            </div>
+          </Draggable>
+        )}
         <img
           className={cx({
             "dropitem h-32 object-cover -ml-16 z-30": true,
@@ -235,6 +245,8 @@ export const Table: React.FC<Props> = ({
           id="display"
           src={hoverImage}>
         </img>
+        
+
       </div>
 
   )}
