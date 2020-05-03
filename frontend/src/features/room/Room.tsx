@@ -31,14 +31,13 @@ export const Room: React.FC<Props> = ({ slug }) => {
   const broadcast = useChannel(`room:${slug}`, onChannelMessage);
 
   return (
-    <Container>
-      {/* <img className="gamebackground" src="https://raw.githubusercontent.com/seastan/Lord-of-the-Rings/master/o8g/background/background.jpg" /> */}
+    // <Container>
       <div className="gamebackground">
         {gameUIView != null && (
           <GameUIViewContext.Provider value={gameUIView}>
             <RotateTableProvider gameUIView={gameUIView}>
               <div className="flex flex-wrap">
-                <div className="h-screen w-full ">
+                <div className="w-full" style={{display:"flex",flexDirection:"column"}}>
                   <RoomGame gameUIView={gameUIView} broadcast={broadcast} />
                 </div>
                 {/* <div className="w-full lg:w-1/6 xl:w-1/6 mb-4">
@@ -51,7 +50,7 @@ export const Room: React.FC<Props> = ({ slug }) => {
           </GameUIViewContext.Provider>
         )}
       </div>
-    </Container>
+    // </Container>
   );
 };
 export default Room;

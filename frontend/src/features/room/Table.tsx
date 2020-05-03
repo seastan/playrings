@@ -9,6 +9,8 @@ import { DndProvider } from 'react-dnd'
 import Backend from 'react-dnd-html5-backend'
 import Example from './example/example'
 import Chat from "../chat/Chat";
+import { faHome, faGripLines, faArrowsAlt } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 
 interface Props {
@@ -50,7 +52,8 @@ export const Table: React.FC<Props> = ({
   const [activeCard, setActiveCard] = useState(null);
   const [origin, setOrigin] = useState({x: 0, y: 0});
   const [deltaXY, setDeltaXY] = useState({x: 0, y: 0});
-  const [hoverImage, setHoverImage] = useState("");
+  const [viewTab, setViewTab] = useState("shared");
+  const [hoverImage, setHoverImage] = useState("https://raw.githubusercontent.com/seastan/Lord-of-the-Rings/master/o8g/cards/card.jpg");
   const [selectedCard, setSelectedCard] = useState<number | null>(null);
   const gameUIView = useGameUIView();
   //if (!gameUIView) return(null);
@@ -203,33 +206,116 @@ export const Table: React.FC<Props> = ({
   }
 
   function handleMouseLeave(event: any) {
-    setHoverImage("");
+    setHoverImage("https://raw.githubusercontent.com/seastan/Lord-of-the-Rings/master/o8g/cards/card.jpg");
+  }
+
+  function openCity(cityName: string) {
+    var i, tabcontent, tablinks;
+    tabcontent = document.getElementsByClassName("tabcontent");
+    for (i = 0; i < tabcontent.length; i++) {
+      tabcontent[i].setAttribute("display","none");
+    }
+    tablinks = document.getElementsByClassName("tablinks");
+    for (i = 0; i < tablinks.length; i++) {
+      tablinks[i].className = tablinks[i].className.replace(" active", "");
+    }
+    var cityname = document.getElementById(cityName);
+    console.log(cityname);
+    if (cityname) {
+      cityname.setAttribute("display","block");
+      console.log(cityname);
+      setViewTab(cityname.id)
+      console.log(viewTab);
+    }
+    // event.currentTarget.className += " active";
   }
 
   const cards = groupTable.cards;
   return (
       <div
-        className="h-full droptarget"
+        className="droptarget"
         onDrop={drop} 
         onDragOver={handleDragOver}
         //style={{position: "absolute"}}
-      >
+      >        
+        {/* Chat */}
         {gameUIView != null && (
-          <Draggable positionOffset={{x:"495%",y:"0%"}}>
-            <div className="w-full lg:w-1/6 xl:w-1/6 mb-4">
-              <div className=" bg-white max-w-none p-4 mx-auto rounded-lg mt-4 ">
+          <Draggable handle="strong" positionOffset={{x:"495%",y:"0%"}}>
+            <div className="opacity-90 w-full lg:w-1/6 xl:w-1/6 mb-4">
+              <div className="bg-white max-w-none p-2 mx-auto mt-4">
+                <div className="text-center">
+                  <strong><FontAwesomeIcon icon={faGripLines}/></strong>
+                </div>
                 <Chat roomName={gameUIView.game_ui.game_name} />
               </div>
             </div>
           </Draggable>
         )}
+        {/* Hover image */}
+        <Draggable positionOffset={{x:"495%",y:"0%"}}>
+          <div className="opacity-90 w-full lg:w-1/6 xl:w-1/6 mb-4">
+            <div className="bg-white max-w-none p-2 mx-auto mt-4 ">
+              <img
+                draggable="false" 
+                id="display"
+                style={{width:"100%"}}
+                src={hoverImage}>
+              </img>
+            </div>
+          </div>
+        </Draggable>
+        
+        {/* Hands */}
+        <div 
+          className="bg-white"
+          style={{position:"absolute",width:"1000px",height:"180px",top:"75%",left:"1%",display:"flex",flexDirection:"column"}}
+        >
+          {/* <div 
+            className="bg-white max-w-none p-2 mx-auto mt-4 "
+            style={{width:"1000px", height:"180px"}}
+          > */}
+            <div className="tab">
+              <button className="tablinks" onClick={() => openCity('sharedTab')}>Shared</button>
+              <button className="tablinks" onClick={() => openCity('player1Tab')}>Player 1</button>
+              <button className="tablinks" onClick={() => openCity('player2Tab')}>Player 2</button>
+            </div>
+
+            <div 
+              id="sharedTab" 
+              className="tabcontent"
+              style={{display: viewTab === "sharedTab" ? "block" : "none"}}
+            >
+              <h3>London</h3>
+              <p>London is the capital city of England.</p>
+            </div>
+
+            <div 
+              id="player1Tab" 
+              className="tabcontent"
+              style={{display: viewTab === "player1Tab" ? "block" : "none"}}
+            >
+              <h3>Paris</h3>
+              <p>Paris is the capital of France.</p> 
+            </div>
+
+            <div 
+              id="player2Tab" 
+              className="tabcontent"
+              style={{display: viewTab === "player2Tab" ? "block" : "none"}}
+            >
+              <h3>Tokyo</h3>
+              <p>Tokyo is the capital of Japan.</p>
+            </div>
+        </div>
+
+
         <img
           className={cx({
             "dropitem h-32 object-cover -ml-16 z-30": true,
             "hand-card-animate": !dragging
             //"hand-card-selected": dragging
           })}
-          style={{transform: dragging? "scale(1.0, 1.0) rotateX(0deg) translate3d("+deltaXY.x+"px, "+deltaXY.y+"px, 0px)": ""}}
+          style={{height:"100px",transform: dragging? "scale(1.0, 1.0) rotateX(0deg) translate3d("+deltaXY.x+"px, "+deltaXY.y+"px, 0px)": ""}}
           onDragStart={dragStart} 
           onDragEnd={dragEnd}
           onMouseOver={handleMouseOver}
@@ -239,12 +325,7 @@ export const Table: React.FC<Props> = ({
           src="https://images-cdn.fantasyflightgames.com/filer_public/83/8b/838b34bc-9188-4311-b04a-33dab2a527e0/mec82_gwaihir.png">
         </img>
 
-        <img
-          style={{height:"200px"}}
-          draggable="false" 
-          id="display"
-          src={hoverImage}>
-        </img>
+
         
 
       </div>

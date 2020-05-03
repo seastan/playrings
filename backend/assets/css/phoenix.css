@@ -18,7 +18,7 @@ h6{font-size: 1.4rem; letter-spacing: 0; line-height: 1.2}
 
 .container{
   margin: 0 auto;
-  max-width: 80.0rem;
+  /* max-width: 80.0rem; */
   padding: 0 2.0rem;
   position: relative;
   width: 100%

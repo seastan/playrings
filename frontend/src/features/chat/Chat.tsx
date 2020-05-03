@@ -26,7 +26,7 @@ export const Chat: React.FC<Props> = ({ roomName }) => {
   return (
     <div className="w-full">
       <div className="mb-2">
-        <ChatMessages messages={messages} className="h-128" />
+        <ChatMessages messages={messages} className="h-64" />
       </div>
       {isLoggedIn && <ChatInput broadcast={broadcast} />}
     </div>
