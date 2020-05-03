@@ -266,48 +266,64 @@ export const Table: React.FC<Props> = ({
         </Draggable>
         
         {/* Hands */}
+        <Draggable handle="strong">
         <div 
           className="bg-white"
           style={{position:"absolute",width:"1000px",height:"180px",top:"75%",left:"1%",display:"flex",flexDirection:"column"}}
         >
-          {/* <div 
-            className="bg-white max-w-none p-2 mx-auto mt-4 "
-            style={{width:"1000px", height:"180px"}}
-          > */}
             <div className="tab">
-              <button className="tablinks" onClick={() => openCity('sharedTab')}>Shared</button>
-              <button className="tablinks" onClick={() => openCity('player1Tab')}>Player 1</button>
-              <button className="tablinks" onClick={() => openCity('player2Tab')}>Player 2</button>
+              <strong className="p-4"><FontAwesomeIcon icon={faGripLines}/></strong>
+              <button 
+                className={cx({
+                  "tablinks": true,
+                  "active": viewTab === "tabShared"
+                })} 
+                onClick={() => openCity('tabShared')}>Shared
+              </button>
+              <button 
+                className={cx({
+                  "tablinks": true,
+                  "active": viewTab === "tabPlayer1"
+                })} 
+                onClick={() => openCity('tabPlayer1')}>Player 1
+              </button>
+              <button 
+                className={cx({
+                  "tablinks": true,
+                  "active": viewTab === "tabPlayer2"
+                })} 
+                onClick={() => openCity('tabPlayer2')}>Player 2
+              </button>
             </div>
 
             <div 
-              id="sharedTab" 
+              id="tabShared" 
               className="tabcontent"
-              style={{display: viewTab === "sharedTab" ? "block" : "none"}}
+              style={{display: viewTab === "tabShared" ? "block" : "none"}}
             >
               <h3>London</h3>
               <p>London is the capital city of England.</p>
             </div>
 
             <div 
-              id="player1Tab" 
+              id="tabPlayer1" 
               className="tabcontent"
-              style={{display: viewTab === "player1Tab" ? "block" : "none"}}
+              style={{display: viewTab === "tabPlayer1" ? "block" : "none"}}
             >
               <h3>Paris</h3>
               <p>Paris is the capital of France.</p> 
             </div>
 
             <div 
-              id="player2Tab" 
+              id="tabPlayer2" 
               className="tabcontent"
-              style={{display: viewTab === "player2Tab" ? "block" : "none"}}
+              style={{display: viewTab === "tabPlayer2" ? "block" : "none"}}
             >
               <h3>Tokyo</h3>
               <p>Tokyo is the capital of Japan.</p>
             </div>
         </div>
-
+        </Draggable>
 
         <img
           className={cx({
@@ -315,7 +331,7 @@ export const Table: React.FC<Props> = ({
             "hand-card-animate": !dragging
             //"hand-card-selected": dragging
           })}
-          style={{height:"100px",transform: dragging? "scale(1.0, 1.0) rotateX(0deg) translate3d("+deltaXY.x+"px, "+deltaXY.y+"px, 0px)": ""}}
+          style={{height:"120px",transform: dragging? "scale(1.0, 1.0) rotateX(0deg) translate3d("+deltaXY.x+"px, "+deltaXY.y+"px, 0px)": ""}}
           onDragStart={dragStart} 
           onDragEnd={dragEnd}
           onMouseOver={handleMouseOver}

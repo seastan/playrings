@@ -91,7 +91,7 @@
 /* Style the buttons inside the tab */
 .tab button {
   background-color: inherit;
-  float: left;
+  /* float: left; */
   border: none;
   outline: none;
   cursor: pointer;
