@@ -209,7 +209,7 @@ export const Table: React.FC<Props> = ({
     setHoverImage("https://raw.githubusercontent.com/seastan/Lord-of-the-Rings/master/o8g/cards/card.jpg");
   }
 
-  function openCity(cityName: string) {
+  function openTab(tabName: string) {
     var i, tabcontent, tablinks;
     tabcontent = document.getElementsByClassName("tabcontent");
     for (i = 0; i < tabcontent.length; i++) {
@@ -219,13 +219,10 @@ export const Table: React.FC<Props> = ({
     for (i = 0; i < tablinks.length; i++) {
       tablinks[i].className = tablinks[i].className.replace(" active", "");
     }
-    var cityname = document.getElementById(cityName);
-    console.log(cityname);
-    if (cityname) {
-      cityname.setAttribute("display","block");
-      console.log(cityname);
-      setViewTab(cityname.id)
-      console.log(viewTab);
+    var tabElement = document.getElementById(tabName);
+    if (tabElement) {
+      tabElement.setAttribute("display","block");
+      setViewTab(tabElement.id)
     }
     // event.currentTarget.className += " active";
   }
@@ -233,7 +230,7 @@ export const Table: React.FC<Props> = ({
   const cards = groupTable.cards;
   return (
       <div
-        className="droptarget"
+        className="droptarget flex-1"
         onDrop={drop} 
         onDragOver={handleDragOver}
         //style={{position: "absolute"}}
@@ -278,21 +275,21 @@ export const Table: React.FC<Props> = ({
                   "tablinks": true,
                   "active": viewTab === "tabShared"
                 })} 
-                onClick={() => openCity('tabShared')}>Shared
+                onClick={() => openTab('tabShared')}>Shared
               </button>
               <button 
                 className={cx({
                   "tablinks": true,
                   "active": viewTab === "tabPlayer1"
                 })} 
-                onClick={() => openCity('tabPlayer1')}>Player 1
+                onClick={() => openTab('tabPlayer1')}>Player 1
               </button>
               <button 
                 className={cx({
                   "tablinks": true,
                   "active": viewTab === "tabPlayer2"
                 })} 
-                onClick={() => openCity('tabPlayer2')}>Player 2
+                onClick={() => openTab('tabPlayer2')}>Player 2
               </button>
             </div>
 

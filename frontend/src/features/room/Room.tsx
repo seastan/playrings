@@ -32,20 +32,16 @@ export const Room: React.FC<Props> = ({ slug }) => {
 
   return (
     // <Container>
-      <div className="gamebackground">
+      <div className="gamebackground flex-1 flex flex-col">
         {gameUIView != null && (
           <GameUIViewContext.Provider value={gameUIView}>
             <RotateTableProvider gameUIView={gameUIView}>
-              <div className="flex flex-wrap">
-                <div className="w-full" style={{display:"flex",flexDirection:"column"}}>
                   <RoomGame gameUIView={gameUIView} broadcast={broadcast} />
-                </div>
                 {/* <div className="w-full lg:w-1/6 xl:w-1/6 mb-4">
                   <div className=" bg-white max-w-none p-4 mx-auto rounded-lg mt-4 ">
                     <Chat roomName={gameUIView.game_ui.game_name} />
                   </div>
                 </div> */}
-              </div>
             </RotateTableProvider>
           </GameUIViewContext.Provider>
         )}

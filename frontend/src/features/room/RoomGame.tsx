@@ -36,12 +36,10 @@ const RoomGame: React.FC<Props> = ({ gameUIView, broadcast }) => {
   } = rtcv;
 
   return (
-    <div>
       <SmartTable 
         gameUIView={gameUIView} 
         broadcast={broadcast}
       />
-    </div>
   )
 }
       {/* <div className={cx("flex mt-6", rowMaxWidth)}>
