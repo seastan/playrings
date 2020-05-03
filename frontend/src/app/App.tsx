@@ -44,7 +44,7 @@ const App: React.FC = () => {
     localStorage.removeItem("renewToken");
   }, [tokens.authToken]);
 
-  useHtmlClass(["text-gray-900", "antialiased"]);
+  useHtmlClass(["antialiased"]);
   useBodyClass(["min-h-screen", "bg-white", "flex", "flex-col"]);
 
   const authValue = useMemo(

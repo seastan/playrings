@@ -13,7 +13,7 @@ export const ChatMessages: React.FC<Props> = ({ messages, className }) => {
   return (
     <ScrollToBottom
       className={cx(
-        "bg-white border rounded p-2 overflow-y-auto",
+        "bg-gray-700 rounded p-2 overflow-y-auto",
         className || "h-32"
       )}
     >

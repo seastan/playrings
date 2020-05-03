@@ -7,7 +7,8 @@ module.exports = {
         "black-60": "rgba(0,0,0,0.6)",
         "black-50": "rgba(0,0,0,0.5)",
         "black-40": "rgba(0,0,0,0.4)",
-        "blue-400-50": "rgba(99,179,237,0.5)"
+        "blue-400-50": "rgba(99,179,237,0.5)",
+        "yellow-950": "#271605"
       },
       spacing: {
         "72": "18rem",

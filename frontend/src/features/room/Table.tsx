@@ -51,7 +51,7 @@ export const Table: React.FC<Props> = ({
   const [dragging, setDragging] = useState(false);
   const [activeCard, setActiveCard] = useState(null);
   const [origin, setOrigin] = useState({x: 0, y: 0});
-  const [deltaXY, setDeltaXY] = useState({x: 0, y: 0});
+  const [deltaXY, setDeltaXY] = useState({dx: 0, dy: 0});
   const [viewTab, setViewTab] = useState("shared");
   const [hoverImage, setHoverImage] = useState("https://raw.githubusercontent.com/seastan/Lord-of-the-Rings/master/o8g/cards/card.jpg");
   const [selectedCard, setSelectedCard] = useState<number | null>(null);
@@ -62,6 +62,10 @@ export const Table: React.FC<Props> = ({
   const bidClasses = {
     "font-semibold text-lg text-blue-800": emphasizeBidding,
   };
+  var maxX = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+  var maxY = window.innerHeight|| document.documentElement.clientHeight|| document.body.clientHeight;
+  maxX = maxX - 120;
+  maxY = maxY - 120;
 
   // useEffect(() => {
   //   console.log('Updated x/y!');
@@ -133,19 +137,15 @@ export const Table: React.FC<Props> = ({
     // }
     setDragging(true);
     var style = window.getComputedStyle(event.target, null);
-    console.log(event.pageX,event.pageY);
     setOrigin({x:event.pageX,y:event.pageY});
     var str = (parseInt(style.getPropertyValue("left")) - event.clientX) + ',' + (parseInt(style.getPropertyValue("top")) - event.clientY) + ',' + event.target.id;
     console.log(str);
     event.dataTransfer.setData("Text", str);
 
+    // Overwrite drag image to hide ghost
     var img = new Image();
     img.src = 'data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs=';
     event.dataTransfer.setDragImage(img, 0, 0);
-
-    // var dragIcon = document.createElement("span");
-		// event.dataTransfer.setDragImage(dragIcon, -10, -10);	
-
   }
   
   function dragEnd(event: any) {
@@ -161,12 +161,19 @@ export const Table: React.FC<Props> = ({
 
     // Physically drag the card instead of using the D&D ghost
 		if ( dragging ) {
-			var x = event.pageX - origin.x;
-      var y = event.pageY - origin.y;
-      setDeltaXY({x,y});
-			var css = "pointer-events: none; transform: scale(1.05, 1.05) rotateX(0deg) translate3d("+x+"px, "+y+"px, 0px);";
-      var draggedCard = document.getElementById("test1");
-
+      var x = event.pageX;
+      var y = event.pageY;
+      if (x>maxX) x = maxX;
+      if (y>maxY) y = maxY;
+      console.log(x,y)
+      console.log(window.innerWidth,window.innerHeight)
+      const dx = x - origin.x;
+      const dy = y - origin.y;
+      setDeltaXY({dx, dy});
+      console.log(dx,dy)
+      const css = "pointer-events: none; transform: scale(1.05, 1.05) rotateX(0deg) translate3d("+dx+"px, "+dy+"px, 0px);";
+      const draggedCard = document.getElementById("test1");
+      
 /*       if (activeCard != null) {
 			  activeCard.style.cssText = css;
       } */
@@ -195,13 +202,14 @@ export const Table: React.FC<Props> = ({
       console.log(dm.style.left);
       dm.style.top = (event.clientY + parseInt(offset[1], 10)) + 'px';
     }
-    setDeltaXY({x:0,y:0})
+    setDeltaXY({dx:0,dy:0})
     setTimeout(() => { console.log("timeout"); setDragging(false); }, 100);
     event.preventDefault();
     return false;
   }
 
   function handleMouseOver(event: any) {
+    console.log(event);
     setHoverImage("https://images-cdn.fantasyflightgames.com/filer_public/83/8b/838b34bc-9188-4311-b04a-33dab2a527e0/mec82_gwaihir.png");
   }
 
@@ -239,9 +247,9 @@ export const Table: React.FC<Props> = ({
         {gameUIView != null && (
           <Draggable handle="strong" positionOffset={{x:"495%",y:"0%"}}>
             <div className="opacity-90 w-full lg:w-1/6 xl:w-1/6 mb-4">
-              <div className="bg-white max-w-none p-2 mx-auto mt-4">
+              <div className="bg-gray-900 max-w-none p-2 mx-auto mt-4">
                 <div className="text-center">
-                  <strong><FontAwesomeIcon icon={faGripLines}/></strong>
+                  <strong><FontAwesomeIcon className="text-white" icon={faGripLines}/></strong>
                 </div>
                 <Chat roomName={gameUIView.game_ui.game_name} />
               </div>
@@ -251,7 +259,7 @@ export const Table: React.FC<Props> = ({
         {/* Hover image */}
         <Draggable positionOffset={{x:"495%",y:"0%"}}>
           <div className="opacity-90 w-full lg:w-1/6 xl:w-1/6 mb-4">
-            <div className="bg-white max-w-none p-2 mx-auto mt-4 ">
+            <div className="max-w-none p-2 mx-auto mt-4 ">
               <img
                 draggable="false" 
                 id="display"
@@ -265,11 +273,11 @@ export const Table: React.FC<Props> = ({
         {/* Hands */}
         <Draggable handle="strong">
         <div 
-          className="bg-white"
+          className="bg-gray-700"
           style={{position:"absolute",width:"1000px",height:"180px",top:"75%",left:"1%",display:"flex",flexDirection:"column"}}
         >
-            <div className="tab">
-              <strong className="p-4"><FontAwesomeIcon icon={faGripLines}/></strong>
+            <div className="tab bg-gray-900">
+              <strong className="p-4"><FontAwesomeIcon className="text-white" icon={faGripLines}/></strong>
               <button 
                 className={cx({
                   "tablinks": true,
@@ -328,7 +336,7 @@ export const Table: React.FC<Props> = ({
             "hand-card-animate": !dragging
             //"hand-card-selected": dragging
           })}
-          style={{height:"120px",transform: dragging? "scale(1.0, 1.0) rotateX(0deg) translate3d("+deltaXY.x+"px, "+deltaXY.y+"px, 0px)": ""}}
+          style={{height:"120px",transform: dragging? "scale(1.0, 1.0) rotateX(0deg) translate3d("+deltaXY.dx+"px, "+deltaXY.dy+"px, 0px)": ""}}
           onDragStart={dragStart} 
           onDragEnd={dragEnd}
           onMouseOver={handleMouseOver}

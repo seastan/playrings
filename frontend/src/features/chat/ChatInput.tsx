@@ -25,7 +25,7 @@ export const ChatInput: React.FC<Props> = ({ broadcast }) => {
           type="text"
           name="chat"
           placeholder="your message.."
-          className="form-control w-full"
+          className="form-control w-full bg-gray-700 text-white border-0"
           onChange={handleInputChange}
           value={inputs.chat || ""}
         />
