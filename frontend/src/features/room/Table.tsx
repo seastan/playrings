@@ -52,7 +52,8 @@ export const Table: React.FC<Props> = ({
   const [activeCard, setActiveCard] = useState(null);
   const [origin, setOrigin] = useState({x: 0, y: 0});
   const [deltaXY, setDeltaXY] = useState({dx: 0, dy: 0});
-  const [viewTab, setViewTab] = useState("shared");
+  const [tabButtonController, setTabButtonController] = useState("tabButtonShared");
+  const [tabButtonGroup, setTabButtonGroup] = useState("tabQuest");
   const [hoverImage, setHoverImage] = useState("https://raw.githubusercontent.com/seastan/Lord-of-the-Rings/master/o8g/cards/card.jpg");
   const [selectedCard, setSelectedCard] = useState<number | null>(null);
   const gameUIView = useGameUIView();
@@ -64,8 +65,28 @@ export const Table: React.FC<Props> = ({
   };
   var maxX = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
   var maxY = window.innerHeight|| document.documentElement.clientHeight|| document.body.clientHeight;
-  maxX = maxX - 120;
-  maxY = maxY - 120;
+  maxX = maxX-90;
+  maxY = maxY-90;
+
+  // document.addEventListener("dragenter", function( event : any ) {
+  //   // highlight potential drop target when the draggable element enters it
+  //   // if ( event && event.target && event.target.className == "tabContainer" ) {
+  //   //     event.target.style.background = "purple";
+  //   // }
+  //   var t = event.target;
+  //   console.log(t);
+  //   t.classList.add("drophighlight");
+  // }, false);
+
+  const structEncounter: [string, string][] = [
+    ["tabQuest", "Quest"],
+    ["tabQuestDiscard", "Quest Discard"],
+    ["tabEncounter", "Encounter"],
+    ["tabEncounerDiscard", "Encounter Discard"],
+    ["tabSecondary", "Secondary"],
+    ["tabSecondaryDiscard", "Secondary Discard"],
+    ["tabOther", "Other"],
+  ]
 
   // useEffect(() => {
   //   console.log('Updated x/y!');
@@ -86,58 +107,135 @@ export const Table: React.FC<Props> = ({
   //var dragging = false;
   // var cardx = 0;
   // var cardy = 0;
-  const handleDragStop = (e: any, drag_data: any) => {
-    // setCardX(drag_data.x);
-    // setCardY(drag_data.y);
-    console.log("table handleDragStop");
-    // console.log(drag_data);
-    // console.log(e);    
-    var element = drag_data.node;
-    // console.log(element);
-    // console.log(element.id);
-    // console.log(element.style);
-    // console.log(element.style.transform);
-    //var drag_event = new DragEvent();
-    // drag_event.element = element; 
-    broadcast("drag_card", { drag_id: element.id, drag_x:drag_data.x, drag_y:drag_data.y } );
-    setTimeout(() => { console.log("timeout"); setDragging(false); }, 500);
-    //element.style.transform = "translate(84px, 19px)";
-  };  
-  const handleDrag = (e: any, drag_data: any) => {
-    // setCardX(drag_data.x);
-    // setCardY(drag_data.y);
-    // const index = drag_data.node.id.toString();
-    // var set_dragging = draggingDefault;
-    // set_dragging[index] = true; 
-    // setDragging(set_dragging);
+  // const handleDragStop = (e: any, drag_data: any) => {
+  //   // setCardX(drag_data.x);
+  //   // setCardY(drag_data.y);
+  //   console.log("table handleDragStop");
+  //   // console.log(drag_data);
+  //   // console.log(e);    
+  //   var element = drag_data.node;
+  //   // console.log(element);
+  //   // console.log(element.id);
+  //   // console.log(element.style);
+  //   // console.log(element.style.transform);
+  //   //var drag_event = new DragEvent();
+  //   // drag_event.element = element; 
+  //   broadcast("drag_card", { drag_id: element.id, drag_x:drag_data.x, drag_y:drag_data.y } );
+  //   setTimeout(() => { console.log("timeout"); setDragging(false); }, 500);
+  //   //element.style.transform = "translate(84px, 19px)";
+  // };  
+  // const handleDrag = (e: any, drag_data: any) => {
+  //   // setCardX(drag_data.x);
+  //   // setCardY(drag_data.y);
+  //   // const index = drag_data.node.id.toString();
+  //   // var set_dragging = draggingDefault;
+  //   // set_dragging[index] = true; 
+  //   // setDragging(set_dragging);
     
-    //cardx = position.x;
-    //console.log(cardx);
-    //cardy = position.y;
-    //dragging = true;
-    //console.log(dragging);
-    //broadcast("drag_card", {card: cards[0], cardx: position.x, cardy: position.y} )
-  };
-  const handleDrop = (e: any) => {
-    console.log('dropped')
-    e.preventDefault();
-    e.stopPropagation();
-  };  
-  const handleMouseEnter = (e: any) => {
-    console.log('mouseover')
-    e.preventDefault();
-    e.stopPropagation();
-  };
+  //   //cardx = position.x;
+  //   //console.log(cardx);
+  //   //cardy = position.y;
+  //   //dragging = true;
+  //   //console.log(dragging);
+  //   //broadcast("drag_card", {card: cards[0], cardx: position.x, cardy: position.y} )
+  // };
+  // const handleDrop = (e: any) => {
+  //   console.log('dropped')
+  //   e.preventDefault();
+  //   e.stopPropagation();
+  // };  
+  // const handleMouseEnter = (e: any) => {
+  //   console.log('mouseover')
+  //   e.preventDefault();
+  //   e.stopPropagation();
+  // };
+
+  function makeTabs() {
+    return(
+      <Draggable handle="strong">
+        <div 
+          className="bg-gray-700"
+          style={{position:"absolute",width:"1000px",height:"230px",top:"78%",left:"2%",display:"flex",flexDirection:"column"}}
+        >
+          {/* <div className="tab bg-yellow-900 flex-1"> */}
+            {makeTabContainer("tabButtonShared",structEncounter)}
+            {makeTabContainer("tabButtonPlayer1",structEncounter)}
+            {makeTabContainer("tabButtonPlayer2",structEncounter)}
+          {/* </div> */}
+          <div className="fixed bottom-0 w-full">
+          <div className="tab bg-gray-900">
+            {makeTabButtonGroup("tabButtonShared",structEncounter)}
+            {makeTabButtonGroup("tabButtonPlayer1",structEncounter)}
+            {makeTabButtonGroup("tabButtonPlayer2",structEncounter)}
+          </div>
+          <div className="tab bg-gray-900">
+            <strong className="p-4"><FontAwesomeIcon className="text-white" icon={faGripLines}/></strong>
+            {makeTabButtonController("tabButtonShared","Shared")}
+            {makeTabButtonController("tabButtonPlayer1","Player 1")}
+            {makeTabButtonController("tabButtonPlayer2","Player 2")}
+          </div>
+          </div>
+        </div>
+      </Draggable>
+  )}
+
+  function makeTabButtonController(id: string, title: string) {
+    return(
+      <>
+        <button 
+          className={cx({
+            "tablinks": true,
+            "active": tabButtonController === id
+          })} 
+          onClick={() => setTabButtonController(id)}
+          onDragEnter={() => setTabButtonController(id)}
+        >
+          {title}
+        </button>
+      </>
+  )}
+
+  function makeTabButtonGroup(nameController: string, structGroups: [string, string][]) {
+    return(
+      <>
+        {structGroups.map(function(pair) {
+          return(
+            <button 
+              className={cx({
+                "tablinks": true,
+                "active": (tabButtonController === nameController && tabButtonGroup === pair[0])
+              })}
+              style={{display: (tabButtonController === nameController) ? "inline" : "none"}}
+              onClick={() => setTabButtonGroup(pair[0])}
+              onDragEnter={() => setTabButtonGroup(pair[0])}
+            >
+              {pair[1]}
+            </button>
+        )})}
+      </>
+  )}
+
+  function makeTabContainer(nameController: string, structGroups: [string, string][]) {
+    return (
+      <>
+        {structGroups.map(function(pair) {
+          return(
+            <div 
+              id={nameController}
+              className="tabContainer flex-1"
+              style={{display: (tabButtonController === nameController && tabButtonGroup === pair[0]) ? "block" : "none"}}
+              onDragEnter={handleDragEnter}
+              onDragLeave={handleDragLeave}
+              onDragOver={() => console.log("dragover")}
+          >{pair[0]}</div>
+        )})}
+      </>
+  )}
 
   function dragStart (event: any) {
-    // event.dataTransfer.setData("Text", event.target.id);
-    // const demoElement: HTMLElement | null = document.getElementById('demo');
-    // if (demoElement) {
-    //   demoElement.innerHTML = "Started to drag the p element";
-    // }
     setDragging(true);
     var style = window.getComputedStyle(event.target, null);
-    setOrigin({x:event.pageX,y:event.pageY});
+    setOrigin({x:event.clientX,y:event.clientY});
     var str = (parseInt(style.getPropertyValue("left")) - event.clientX) + ',' + (parseInt(style.getPropertyValue("top")) - event.clientY) + ',' + event.target.id;
     console.log(str);
     event.dataTransfer.setData("Text", str);
@@ -154,26 +252,36 @@ export const Table: React.FC<Props> = ({
     //   demoElement.innerHTML = "Finished dragging the p element.";
     // }
   }
+
+  function handleDragEnter(event: any) {
+    event.preventDefault();
+    var t = event.target;
+    console.log(t);
+    t.classList.add("drophighlight");
+  }
+  function handleDragLeave(event: any) {
+    var t = event.target;
+    console.log(t);
+    t.classList.remove("drophighlight");
+  }
   
   function handleDragOver(event: any) {
     event.preventDefault();
     event.dataTransfer.dropEffect = 'over';
+    var t = event.target;
+    console.log(t);
 
     // Physically drag the card instead of using the D&D ghost
 		if ( dragging ) {
-      var x = event.pageX;
-      var y = event.pageY;
+      var x = event.clientX;
+      var y = event.clientY;
       if (x>maxX) x = maxX;
       if (y>maxY) y = maxY;
-      console.log(x,y)
-      console.log(window.innerWidth,window.innerHeight)
       const dx = x - origin.x;
       const dy = y - origin.y;
       setDeltaXY({dx, dy});
-      console.log(dx,dy)
-      const css = "pointer-events: none; transform: scale(1.05, 1.05) rotateX(0deg) translate3d("+dx+"px, "+dy+"px, 0px);";
-      const draggedCard = document.getElementById("test1");
-      
+/*       const draggedCard = document.getElementById("test1");
+  */     
 /*       if (activeCard != null) {
 			  activeCard.style.cssText = css;
       } */
@@ -195,12 +303,12 @@ export const Table: React.FC<Props> = ({
     var dm = document.getElementById(offset[2]);
     console.log(dm);
     if (dm) {
-      console.log(dm.style.left);
-      console.log(event.clientX)
-      console.log(offset)
-      dm.style.left = (event.clientX + parseInt(offset[0], 10)) + 'px';
-      console.log(dm.style.left);
-      dm.style.top = (event.clientY + parseInt(offset[1], 10)) + 'px';
+      var x = event.clientX + parseInt(offset[0], 10);
+      var y = event.clientY + parseInt(offset[1], 10);
+      if (x>maxX) x = maxX;
+      if (y>maxY) y = maxY;
+      dm.style.left = `${x}px`;
+      dm.style.top  = `${y}px`;
     }
     setDeltaXY({dx:0,dy:0})
     setTimeout(() => { console.log("timeout"); setDragging(false); }, 100);
@@ -209,30 +317,12 @@ export const Table: React.FC<Props> = ({
   }
 
   function handleMouseOver(event: any) {
-    console.log(event);
-    setHoverImage("https://images-cdn.fantasyflightgames.com/filer_public/83/8b/838b34bc-9188-4311-b04a-33dab2a527e0/mec82_gwaihir.png");
+    const imgURL = event.target.src;
+    setHoverImage(imgURL);
   }
 
   function handleMouseLeave(event: any) {
     setHoverImage("https://raw.githubusercontent.com/seastan/Lord-of-the-Rings/master/o8g/cards/card.jpg");
-  }
-
-  function openTab(tabName: string) {
-    var i, tabcontent, tablinks;
-    tabcontent = document.getElementsByClassName("tabcontent");
-    for (i = 0; i < tabcontent.length; i++) {
-      tabcontent[i].setAttribute("display","none");
-    }
-    tablinks = document.getElementsByClassName("tablinks");
-    for (i = 0; i < tablinks.length; i++) {
-      tablinks[i].className = tablinks[i].className.replace(" active", "");
-    }
-    var tabElement = document.getElementById(tabName);
-    if (tabElement) {
-      tabElement.setAttribute("display","block");
-      setViewTab(tabElement.id)
-    }
-    // event.currentTarget.className += " active";
   }
 
   const cards = groupTable.cards;
@@ -271,64 +361,7 @@ export const Table: React.FC<Props> = ({
         </Draggable>
         
         {/* Hands */}
-        <Draggable handle="strong">
-        <div 
-          className="bg-gray-700"
-          style={{position:"absolute",width:"1000px",height:"180px",top:"75%",left:"1%",display:"flex",flexDirection:"column"}}
-        >
-            <div className="tab bg-gray-900">
-              <strong className="p-4"><FontAwesomeIcon className="text-white" icon={faGripLines}/></strong>
-              <button 
-                className={cx({
-                  "tablinks": true,
-                  "active": viewTab === "tabShared"
-                })} 
-                onClick={() => openTab('tabShared')}>Shared
-              </button>
-              <button 
-                className={cx({
-                  "tablinks": true,
-                  "active": viewTab === "tabPlayer1"
-                })} 
-                onClick={() => openTab('tabPlayer1')}>Player 1
-              </button>
-              <button 
-                className={cx({
-                  "tablinks": true,
-                  "active": viewTab === "tabPlayer2"
-                })} 
-                onClick={() => openTab('tabPlayer2')}>Player 2
-              </button>
-            </div>
-
-            <div 
-              id="tabShared" 
-              className="tabcontent"
-              style={{display: viewTab === "tabShared" ? "block" : "none"}}
-            >
-              <h3>London</h3>
-              <p>London is the capital city of England.</p>
-            </div>
-
-            <div 
-              id="tabPlayer1" 
-              className="tabcontent"
-              style={{display: viewTab === "tabPlayer1" ? "block" : "none"}}
-            >
-              <h3>Paris</h3>
-              <p>Paris is the capital of France.</p> 
-            </div>
-
-            <div 
-              id="tabPlayer2" 
-              className="tabcontent"
-              style={{display: viewTab === "tabPlayer2" ? "block" : "none"}}
-            >
-              <h3>Tokyo</h3>
-              <p>Tokyo is the capital of Japan.</p>
-            </div>
-        </div>
-        </Draggable>
+        {makeTabs()}
 
         <img
           className={cx({
@@ -345,12 +378,7 @@ export const Table: React.FC<Props> = ({
           id="card1"
           src="https://images-cdn.fantasyflightgames.com/filer_public/83/8b/838b34bc-9188-4311-b04a-33dab2a527e0/mec82_gwaihir.png">
         </img>
-
-
-        
-
       </div>
-
   )}
 
   //     {cards.map((card,index) => {

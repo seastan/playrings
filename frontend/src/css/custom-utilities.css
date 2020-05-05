@@ -107,9 +107,7 @@ p {
   background-color: #4a5568;
 }
 
-/* Style the tab content */
-.tabcontent {
-  padding: 6px 12px;
-  border-top: none;
-  flex-grow: 1;
+
+.drophighlight {
+  background-color: yellow;
 }
