@@ -38,6 +38,7 @@ declare module "elixir-backend" {
     public player_1_hand: Group;
     public player_1_deck: Group;
     public player_1_discard: Group;
+    public player_1_sideboard: Group;
   }
 
   export declare class DragEvent {

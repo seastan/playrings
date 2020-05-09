@@ -91,7 +91,8 @@ defmodule SpadesGame.Game do
         table: Group.new_table(),
         player_1_deck: Group.new(),
         player_1_hand: Group.new(),
-        player_1_discard: Group.new()
+        player_1_discard: Group.new(),
+        player_1_sideboard: Group.new()
       },
       options: options,
       status: :bidding,
