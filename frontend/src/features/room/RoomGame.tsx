@@ -36,7 +36,7 @@ const RoomGame: React.FC<Props> = ({ gameUIView, broadcast }) => {
   } = rtcv;
 
   return (
-      <SmartTable 
+      <Table 
         gameUIView={gameUIView} 
         broadcast={broadcast}
       />

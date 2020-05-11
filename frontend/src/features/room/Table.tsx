@@ -384,7 +384,8 @@ export const Table: React.FC<Props> = ({
     setHoverImage("https://raw.githubusercontent.com/seastan/Lord-of-the-Rings/master/o8g/cards/card.jpg");
   }
 
-  const cards = groupTable.cards;
+  
+  const columns = gameUIView?.game_ui.game.columns;
   return (
       <div
         className="droptarget flex-1"
