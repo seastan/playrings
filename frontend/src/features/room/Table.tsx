@@ -106,10 +106,10 @@ export const Table: React.FC<Props> = ({
   const players = [1,2,3,4];
   for (let i of players) {
     console.log(i);
-    listGroups.push([`cPlayer${i}`,`gPlayer${i}Hand`,`Player ${i} Hand`]);
-    listGroups.push([`cPlayer${i}`,`gPlayer${i}Deck`,`Player ${i} Deck`]);
-    listGroups.push([`cPlayer${i}`,`gPlayer${i}Discard`,`Player ${i} Discard`]);
-    listGroups.push([`cPlayer${i}`,`gPlayer${i}Sideboard`,`Player ${i} Sideboard`]);
+    listGroups.push([`cPlayer${i}`,`gPlayer${i}Hand`,`Hand`]);
+    listGroups.push([`cPlayer${i}`,`gPlayer${i}Deck`,`Deck`]);
+    listGroups.push([`cPlayer${i}`,`gPlayer${i}Discard`,`Discard`]);
+    listGroups.push([`cPlayer${i}`,`gPlayer${i}Sideboard`,`Sideboard`]);
   }
 
   // useEffect(() => {

@@ -3,10 +3,10 @@ defmodule SpadesGame.Card do
   Represents a playing card.
   """
   @derive Jason.Encoder
-  defstruct [:rank, :suit, :table_x, :table_y]
+  defstruct [:rank, :suit]
   alias SpadesGame.Card
 
-  @type t :: %Card{rank: rank, suit: suit, table_x: number, table_y: number}
+  @type t :: %Card{rank: rank, suit: suit}
   @type suit :: :h | :d | :c | :s
   @type rank :: 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14
 
@@ -15,7 +15,7 @@ defmodule SpadesGame.Card do
 
   @spec new_test() :: Card.t()
   def new_test() do
-    %Card{rank: 9, suit: :h, table_x: 100, table_y: 100}
+    %Card{rank: 9, suit: :h}
   end
 
   @spec from_map(%{}) :: Card.t()

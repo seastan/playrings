@@ -4,7 +4,7 @@ defmodule SpadesGame.Game do
   In early stages of the app, it only represents a
   some toy game used to test everything around it.
   """
-  alias SpadesGame.{Card, Group, Groups, Deck, Game, GamePlayer, GameOptions, GameScore, TrickCard}
+  alias SpadesGame.{Card, Column, Group, Groups, Deck, Game, GamePlayer, GameOptions, GameScore, TrickCard}
 
   require Logger
 
@@ -14,6 +14,7 @@ defmodule SpadesGame.Game do
   @derive Jason.Encoder
   defstruct [
     :game_name,
+    :columns,
     :groups,
     :options,
     :dealer,
@@ -39,12 +40,8 @@ defmodule SpadesGame.Game do
 
   @type t :: %Game{
           game_name: String.t(),
-          groups: %Groups{
-            table: Group.t(),
-            player_1_deck: Group.t(),
-            player_1_hand: Group.t(),
-            player_1_discard: Group.t()
-          },
+          columns: list(Column.t()),
+          groups: Groups.t(),
           options: GameOptions.t(),
           status: :bidding | :playing,
           drag_id: String.t(),
@@ -87,13 +84,8 @@ defmodule SpadesGame.Game do
 
     %Game{
       game_name: game_name,
-      groups: %Groups{
-        table: Group.new_table(),
-        player_1_deck: Group.new(),
-        player_1_hand: Group.new(),
-        player_1_discard: Group.new(),
-        player_1_sideboard: Group.new()
-      },
+      columns: [],
+      groups: Groups.new(),
       options: options,
       status: :bidding,
       drag_id: "",
@@ -219,13 +211,8 @@ defmodule SpadesGame.Game do
   def drag_card(%Game{} = game, user_id, drag_id, drag_x, drag_y) do
     index = String.to_integer(drag_id)
     {:ok, %Game{game |
-      groups: %Groups{game.groups |
-        table: %Group{game.groups.table |
-          cards: List.update_at(game.groups.table.cards, index, fn(card) -> %Card{card | table_x: drag_x, table_y: drag_y} end)
-        }
-      }
+      columns: List.update_at(game.columns, index, fn(column) -> %Column{column | table_x: drag_x, table_y: drag_y} end)
     }}
-
   end
 
   @doc """
