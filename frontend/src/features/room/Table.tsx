@@ -4,10 +4,9 @@ import cx from "classnames";
 import ScoreButton from "../score/ScoreButton";
 import GameTeam from "../room/GameTeam";
 import useGameUIView from "../../hooks/useGameUIView";
-import { GamePlayer, Group, Card, DragEvent } from "elixir-backend";
+import { GamePlayer, Group, Card, DragEvent, GameUIView } from "elixir-backend";
 import { DndProvider } from 'react-dnd'
 import Backend from 'react-dnd-html5-backend'
-import Example from './example/example'
 import Chat from "../chat/Chat";
 import { faHome, faGripLines, faArrowsAlt } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -15,16 +14,7 @@ import { url } from "inspector";
 
 
 interface Props {
-  emphasizeBidding?: boolean;
-  topCard?: null | string;
-  bottomCard?: null | string;
-  leftCard?: null | string;
-  rightCard?: null | string;
-  leftPlayer: GamePlayer;
-  topPlayer: GamePlayer;
-  rightPlayer: GamePlayer;
-  bottomPlayer: GamePlayer;
-  groupTable: Group;
+  gameUIView: GameUIView;
   broadcast: (eventName: string, payload: object) => void;
 }
 
@@ -36,16 +26,7 @@ const qNull = (input: number | null) => {
 };
 
 export const Table: React.FC<Props> = ({
-  leftCard,
-  topCard,
-  rightCard,
-  bottomCard,
-  leftPlayer,
-  topPlayer,
-  rightPlayer,
-  bottomPlayer,
-  emphasizeBidding,
-  groupTable,
+  gameUIView,
   broadcast,
 }) => {
   //var draggingDefault = new Array(groupTable.cards.length).fill(false);
@@ -57,7 +38,7 @@ export const Table: React.FC<Props> = ({
   const [tabButtonGroup, setTabButtonGroup] = useState("gSharedQuest");
   const [hoverImage, setHoverImage] = useState("https://raw.githubusercontent.com/seastan/Lord-of-the-Rings/master/o8g/cards/card.jpg");
   const [selectedCard, setSelectedCard] = useState<number | null>(null);
-  const gameUIView = useGameUIView();
+  //const gameUIView = useGameUIView();
   //if (!gameUIView) return(null);
   const winner = gameUIView != null ? gameUIView.game_ui.game.winner : null;
   const CARDHEIGHT = 120;
@@ -66,12 +47,12 @@ export const Table: React.FC<Props> = ({
   var maxY = window.innerHeight|| document.documentElement.clientHeight|| document.body.clientHeight;
   maxX = maxX-90;
   maxY = maxY-90;
-  const cardGroups = gameUIView != null ? gameUIView.game_ui.game.groups: null;
-  const cardsTable = cardGroups?.table;
-  const cardsPlayer1Hand    = cardGroups?.player_1_hand;
-  const cardsPlayer1Deck    = cardGroups?.player_1_deck;
-  const cardsPlayer1Discard = cardGroups?.player_1_discard;
-  const cardsPlayer1Sideboard = cardGroups?.player_1_sideboard;
+  const groups = gameUIView.game_ui.game.groups;
+  const columns = gameUIView.game_ui.game.columns;
+  const cardsPlayer1Hand    = groups.gPlayer1Hand;
+  const cardsPlayer1Deck    = groups.gPlayer1Deck;
+  const cardsPlayer1Discard = groups.gPlayer1Discard;
+  const cardsPlayer1Sideboard = groups.gPlayer1Sideboard;
  
  // document.addEventListener("dragenter", function( event : any ) {
   //   // highlight potential handleDrop target when the draggable element enters it
@@ -250,10 +231,10 @@ export const Table: React.FC<Props> = ({
               onDragOver={() => console.log("dragover")}
           >{groupName}
           
-          {cardsTable?.cards.map((card,index) => {
+          {/* {groups[groupID].cards.map((card: Card,index: number) => {
           return(
             <div          
-              className="card"
+              className="cardcontainer"
               style={{
                 height:`${CARDHEIGHT}px`, 
                 width:`${CARDWIDTH}px`,
@@ -263,7 +244,7 @@ export const Table: React.FC<Props> = ({
               onMouseOver={handleMouseOver}
               onMouseLeave={handleMouseLeave}
               draggable="true" 
-              id={`column${index}`}
+              id={`cardcontainer${index}`}
             >
               <div
                 className="card"
@@ -279,8 +260,7 @@ export const Table: React.FC<Props> = ({
                 draggable="false" 
               ></div>
             </div>
-          )
-        })}
+          )})} */}
           
           
           
@@ -384,8 +364,6 @@ export const Table: React.FC<Props> = ({
     setHoverImage("https://raw.githubusercontent.com/seastan/Lord-of-the-Rings/master/o8g/cards/card.jpg");
   }
 
-  
-  const columns = gameUIView?.game_ui.game.columns;
   return (
       <div
         className="droptarget flex-1"
@@ -422,10 +400,10 @@ export const Table: React.FC<Props> = ({
         </Draggable>
 
 
-        {cardsTable?.cards.map((card,index) => {
+        {columns.map((column,index) => {
           return(
             <div          
-              className="card"
+              className="column"
               style={{
                 height:`${CARDHEIGHT}px`, 
                 width:`${CARDWIDTH}px`,

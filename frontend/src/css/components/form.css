@@ -1,5 +1,5 @@
 .form-control {
-  @apply shadow appearance-none border rounded py-1 px-2 leading-normal;
+  @apply shadow appearance-none rounded py-1 px-2 leading-normal;
 }
 .form-control:focus {
   @apply outline-none shadow-outline;

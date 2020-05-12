@@ -33,7 +33,7 @@ export const LobbyTable: React.FC<Props> = ({ rooms }) => {
 
   if (roomItems.length === 0) {
     return (
-      <div className="p-3 border rounded bg-gray-100 max-w-lg">
+      <div className="p-3 text-white rounded bg-gray-700 max-w-lg">
         No rooms created.
       </div>
     );

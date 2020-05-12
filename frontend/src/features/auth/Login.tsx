@@ -74,34 +74,34 @@ export const Login: React.FC<Props> = () => {
 
   return (
     <Container>
-      <div className="mx-auto max-w-xs mt-20 p-8 bg-gray-100 rounded-lg shadow-lg">
+      <div className="mx-auto max-w-xs mt-20 p-8 bg-gray-700 rounded-lg shadow-lg">
         {/* <Logo src={logoImg} /> */}
-        <h1 className="font-semibold text-green-900 mb-4">Log In</h1>
+        <h1 className="font-semibold text-green-200 mb-4">Log In</h1>
         <form action="POST" onSubmit={handleSubmit}>
           <fieldset disabled={isLoading} aria-busy={isLoading}>
             <div className="mb-4">
-              <label className="block text-gray-700 text-sm font-bold mb-2">
+              <label className="block text-white text-sm font-bold mb-2">
                 email
               </label>
               <input
                 type="email"
                 name="email"
                 placeholder="email"
-                className="form-control w-full"
+                className="form-control w-full bg-gray-900 text-white"
                 onChange={handleInputChange}
                 value={inputs.email || ""}
                 ref={emailRef}
               />
             </div>
             <div className="mb-6">
-              <label className="block text-gray-700 text-sm font-bold mb-2">
+              <label className="block text-white text-sm font-bold mb-2">
                 password
               </label>
               <input
                 type="password"
                 name="password"
                 placeholder="password"
-                className="form-control w-full"
+                className="form-control w-full bg-gray-900 text-white"
                 onChange={handleInputChange}
                 value={inputs.password || ""}
               />

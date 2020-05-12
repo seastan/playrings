@@ -50,11 +50,11 @@ export const Lobby: React.FC = () => {
                   </Button>
                 )}
                 {!isLoggedIn && (
-                  <span className="p-2 text-gray-600 bg-gray-100 border rounded">
-                    <Link to="/login" className="mr-1">
+                  <span className="p-2 text-white bg-gray-700 rounded">
+                    <Link to="/login" className="mr-1 text-white">
                       Log In
                     </Link>
-                    To Create a Room
+                    to create a room
                   </span>
                 )}
               </div>
@@ -76,17 +76,6 @@ export const Lobby: React.FC = () => {
               <p className="mb-2">
                 If you have any suggestions or encounter any problems, please
                 email me: <AdminContact />
-              </p>
-              <p className="text-sm text-gray-700">
-                Last Update: 2020-03-16. Version: 0.3.4.{" "}
-                <a
-                  href="https://github.com/seastan/spades/blob/master/CHANGELOG.md"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Changelog
-                </a>
-                .
               </p>
             </div>
             <CreateRoomModal

@@ -11,6 +11,7 @@ interface Props {
 export const SmartTable: React.FC<Props> = ({ gameUIView, broadcast }) => {
   return (
     <Table
+      gameUIView={gameUIView}
       broadcast={broadcast}
     />
   );
