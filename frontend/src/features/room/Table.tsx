@@ -205,13 +205,13 @@ export const Table: React.FC<Props> = ({
             <button 
               className={cx({
                 "tablinks": true,
-                "active": (tabButtonController === groups.groupID.controller && tabButtonGroup === groupID)
+                "active": (tabButtonController === groups[groupID].controller && tabButtonGroup === groupID)
               })}
-              style={{display: (tabButtonController === groups.groupID.controller) ? "inline" : "none"}}
+              style={{display: (tabButtonController === groups[groupID].controller) ? "inline" : "none"}}
               onClick={() => setTabButtonGroup(groupID)}
               onDragEnter={() => setTabButtonGroup(groupID)}
             >
-              {groups.groupID.name}
+              {groups[groupID].name}
             </button>
         )})}
       </>
@@ -221,15 +221,16 @@ export const Table: React.FC<Props> = ({
     return (
       <>
         {groupIDs.map(function(groupID: string) {
+          console.log(groupID);
           return(
             <div 
               id={groupID}
               className="tabContainer flex-1"
-              style={{display: (tabButtonController === groups.groupID.controller && tabButtonGroup === groupID) ? "block" : "none"}}
+              style={{display: (tabButtonController === groups[groupID].controller && tabButtonGroup === groupID) ? "block" : "none"}}
               onDragEnter={handleDragEnter}
               onDragLeave={handleDragLeave}
               onDragOver={() => console.log("dragover")}
-          >{groups.groupID.name}
+          >{groups[groupID].name}
           
           {/* {groups[groupID].cards.map((card: Card,index: number) => {
           return(
