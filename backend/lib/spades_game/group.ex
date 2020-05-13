@@ -11,32 +11,22 @@ defmodule SpadesGame.Group do
   use Accessible
 
   @type t :: %Group{
-    name: string,
-    type: string,
-    controller: string,
+    name: String.t(),
+    type: :hand | :deck | :discard,
+    controller: String.t(),
     cards: [Card.t()]
   }
 
   @doc """
   new/0: Create a new player with an empty hand.
   """
-  @spec new() :: Group.t()
-  def new() do
+  @spec new(String.t(), :hand | :deck | :discard, String.t()) :: Group.t()
+  def new(name, type, controller) do
     %Group{
-      name: "blankname",
-      type: "blanktype",
-      controller: "blankcontroller",
+      name: name,
+      type: type,
+      controller: controller,
       cards: []
-    }
-  end
-
-  @spec new_table() :: Group.t()
-  def new_table() do
-    %Group{
-      name: "table",
-      type: "table",
-      controller: "all",
-      cards: [Card.new_test(),Card.new_test(),Card.new_test()]#[{:id1, "id1"},{:id2, "id2"}] #[{:id1, Card.new_test()},{:id2, Card.new_test()}]
     }
   end
 

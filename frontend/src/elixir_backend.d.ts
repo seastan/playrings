@@ -34,32 +34,34 @@ declare module "elixir-backend" {
   }
 
   export declare class Groups {
-    gSharedQuest: Group;
-    gSharedQuestDiscard: Group;
-    gSharedEncounter: Group;
-    gSharedEncounterDiscard: Group;
-    gSharedQuest2: Group;
-    gSharedQuestDiscard2: Group;
-    gSharedEncounter2: Group;
-    gSharedEncounterDiscard2: Group;
-    gSharedOther: Group;
-    gPlayer1Hand: Group;
-    gPlayer1Deck: Group;
-    gPlayer1Discard: Group;
-    gPlayer1Sideboard: Group;
-    gPlayer2Hand: Group;
-    gPlayer2Deck: Group;
-    gPlayer2Discard: Group;
-    gPlayer2Sideboard: Group;
-    gPlayer3Hand: Group;
-    gPlayer3Deck: Group;
-    gPlayer3Discard: Group;
-    gPlayer3Sideboard: Group;
-    gPlayer4Hand: Group;
-    gPlayer4Deck: Group;
-    gPlayer4Discard: Group;
-    gPlayer4Sideboard: Group;
+    [key:string]: Group
   }
+  //   gSharedQuest: Group;
+  //   gSharedQuestDiscard: Group;
+  //   gSharedEncounter: Group;
+  //   gSharedEncounterDiscard: Group;
+  //   gSharedQuest2: Group;
+  //   gSharedQuestDiscard2: Group;
+  //   gSharedEncounter2: Group;
+  //   gSharedEncounterDiscard2: Group;
+  //   gSharedOther: Group;
+  //   gPlayer1Hand: Group;
+  //   gPlayer1Deck: Group;
+  //   gPlayer1Discard: Group;
+  //   gPlayer1Sideboard: Group;
+  //   gPlayer2Hand: Group;
+  //   gPlayer2Deck: Group;
+  //   gPlayer2Discard: Group;
+  //   gPlayer2Sideboard: Group;
+  //   gPlayer3Hand: Group;
+  //   gPlayer3Deck: Group;
+  //   gPlayer3Discard: Group;
+  //   gPlayer3Sideboard: Group;
+  //   gPlayer4Hand: Group;
+  //   gPlayer4Deck: Group;
+  //   gPlayer4Discard: Group;
+  //   gPlayer4Sideboard: Group;
+  // }
 
   export declare class Column {
     controller: string;

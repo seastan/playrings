@@ -4,7 +4,7 @@ import cx from "classnames";
 import ScoreButton from "../score/ScoreButton";
 import GameTeam from "../room/GameTeam";
 import useGameUIView from "../../hooks/useGameUIView";
-import { GamePlayer, Group, Card, DragEvent, GameUIView } from "elixir-backend";
+import { GamePlayer, Group, Groups, Card, DragEvent, GameUIView } from "elixir-backend";
 import { DndProvider } from 'react-dnd'
 import Backend from 'react-dnd-html5-backend'
 import Chat from "../chat/Chat";
@@ -48,11 +48,11 @@ export const Table: React.FC<Props> = ({
   maxX = maxX-90;
   maxY = maxY-90;
   const groups = gameUIView.game_ui.game.groups;
+  var groupIDs: string[] = [];
+  for (let key in groups) {
+    groupIDs.push(key);
+  }
   const columns = gameUIView.game_ui.game.columns;
-  const cardsPlayer1Hand    = groups.gPlayer1Hand;
-  const cardsPlayer1Deck    = groups.gPlayer1Deck;
-  const cardsPlayer1Discard = groups.gPlayer1Discard;
-  const cardsPlayer1Sideboard = groups.gPlayer1Sideboard;
  
  // document.addEventListener("dragenter", function( event : any ) {
   //   // highlight potential handleDrop target when the draggable element enters it
@@ -163,11 +163,11 @@ export const Table: React.FC<Props> = ({
           style={{position:"absolute",width:"1300px",height:"230px",top:"72%",left:"2%",display:"flex",flexDirection:"column"}}
         >
           {/* <div className="tab bg-yellow-900 flex-1"> */}
-            {makeTabContainer(listGroups)}
+            {makeTabContainer()}
           {/* </div> */}
           <div className="fixed bottom-0 w-full">
           <div className="tab bg-gray-900">
-            {makeTabButtonGroup(listGroups)}
+            {makeTabButtonGroup()}
           </div>
           <div className="tab bg-gray-900">
             <strong className="p-4"><FontAwesomeIcon className="text-white" icon={faGripLines}/></strong>
@@ -197,39 +197,39 @@ export const Table: React.FC<Props> = ({
       </>
   )}
 
-  function makeTabButtonGroup(list: [string,string,string][]) {
+  function makeTabButtonGroup() {
     return(
       <>
-        {list.map(function([controllerID,groupID,groupName]) {
+        {groupIDs.map(function(groupID: string) {
           return(
             <button 
               className={cx({
                 "tablinks": true,
-                "active": (tabButtonController === controllerID && tabButtonGroup === groupID)
+                "active": (tabButtonController === groups.groupID.controller && tabButtonGroup === groupID)
               })}
-              style={{display: (tabButtonController === controllerID) ? "inline" : "none"}}
+              style={{display: (tabButtonController === groups.groupID.controller) ? "inline" : "none"}}
               onClick={() => setTabButtonGroup(groupID)}
               onDragEnter={() => setTabButtonGroup(groupID)}
             >
-              {groupName}
+              {groups.groupID.name}
             </button>
         )})}
       </>
   )}
 
-  function makeTabContainer(list: [string,string,string][]) {
+  function makeTabContainer() {
     return (
       <>
-        {list.map(function([controllerID,groupID,groupName]) {
+        {groupIDs.map(function(groupID: string) {
           return(
             <div 
               id={groupID}
               className="tabContainer flex-1"
-              style={{display: (tabButtonController === controllerID && tabButtonGroup === groupID) ? "block" : "none"}}
+              style={{display: (tabButtonController === groups.groupID.controller && tabButtonGroup === groupID) ? "block" : "none"}}
               onDragEnter={handleDragEnter}
               onDragLeave={handleDragLeave}
               onDragOver={() => console.log("dragover")}
-          >{groupName}
+          >{groups.groupID.name}
           
           {/* {groups[groupID].cards.map((card: Card,index: number) => {
           return(
