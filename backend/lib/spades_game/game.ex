@@ -4,7 +4,7 @@ defmodule SpadesGame.Game do
   In early stages of the app, it only represents a
   some toy game used to test everything around it.
   """
-  alias SpadesGame.{Card, Column, Group, Groups, Deck, Game, GamePlayer, GameOptions, GameScore, TrickCard}
+  alias SpadesGame.{Card, Column, Groups, Deck, Game, GamePlayer, GameOptions, GameScore, TrickCard}
 
   require Logger
 
@@ -79,8 +79,6 @@ defmodule SpadesGame.Game do
     [w, n, e, s] =
       get_initial_hands(options)
       |> Enum.map(fn d -> GamePlayer.new(d) end)
-
-    table = Group.new()
 
     %Game{
       game_name: game_name,
