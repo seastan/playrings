@@ -31,7 +31,8 @@ defmodule SpadesGame.Groups do
     :gPlayer4Hand,
     :gPlayer4Deck,
     :gPlayer4Discard,
-    :gPlayer4Sideboard]
+    :gPlayer4Sideboard
+  ]
 
   use Accessible
 

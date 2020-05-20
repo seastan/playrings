@@ -5,8 +5,6 @@ import ScoreButton from "../score/ScoreButton";
 import GameTeam from "../room/GameTeam";
 import useGameUIView from "../../hooks/useGameUIView";
 import { GamePlayer, Group, Groups, Card, DragEvent, GameUIView } from "elixir-backend";
-import { DndProvider } from 'react-dnd'
-import Backend from 'react-dnd-html5-backend'
 import Chat from "../chat/Chat";
 import { faHome, faGripLines, faArrowsAlt } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -31,7 +29,8 @@ export const Table: React.FC<Props> = ({
 }) => {
   //var draggingDefault = new Array(groupTable.cards.length).fill(false);
   const [dragging, setDragging] = useState(false);
-  const [activeCard, setActiveCard] = useState(null);
+  const [activeContainerIndices, setActiveContainerIndices] = useState<Array<number>>([]);
+  const [activeCardIndices, setActiveCardIndices] = useState<Array<number>>([]);
   const [origin, setOrigin] = useState({x: 0, y: 0});
   const [deltaXY, setDeltaXY] = useState({dx: 0, dy: 0});
   const [tabButtonController, setTabButtonController] = useState("cShared");
@@ -43,15 +42,40 @@ export const Table: React.FC<Props> = ({
   const winner = gameUIView != null ? gameUIView.game_ui.game.winner : null;
   const CARDHEIGHT = 120;
   const CARDWIDTH = 86;
+  const TABSWIDTH = 1300;
   var maxX = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
   var maxY = window.innerHeight|| document.documentElement.clientHeight|| document.body.clientHeight;
   maxX = maxX-90;
   maxY = maxY-90;
   const groups = gameUIView.game_ui.game.groups;
-  var groupIDs: string[] = [];
-  for (let key in groups) {
-    groupIDs.push(key);
-  }
+  const groupIDs: string[] = [
+    "gSharedQuest",
+    "gSharedQuestDiscard",
+    "gSharedEncounter",
+    "gSharedEncounterDiscard",
+    "gSharedQuest2",
+    "gSharedQuestDiscard2",
+    "gSharedEncounter2",
+    "gSharedEncounterDiscard2",
+    "gSharedOther",
+    "gSharedVictory",
+    "gPlayer1Hand",
+    "gPlayer1Deck",
+    "gPlayer1Discard",
+    "gPlayer1Sideboard",
+    "gPlayer2Hand",
+    "gPlayer2Deck",
+    "gPlayer2Discard",
+    "gPlayer2Sideboard",
+    "gPlayer3Hand",
+    "gPlayer3Deck",
+    "gPlayer3Discard",
+    "gPlayer3Sideboard",
+    "gPlayer4Hand",
+    "gPlayer4Deck",
+    "gPlayer4Discard",
+    "gPlayer4Sideboard"
+  ];
   const columns = gameUIView.game_ui.game.columns;
  
  // document.addEventListener("dragenter", function( event : any ) {
@@ -72,26 +96,6 @@ export const Table: React.FC<Props> = ({
     ["cPlayer4", "Player 4"]
   ]
 
-  var listGroups: [string, string, string][] = [
-    ["cShared", "gSharedQuest", "Quest"],
-    ["cShared", "gSharedQuestDiscard", "Quest Discard"],
-    ["cShared", "gSharedEncounter", "Encounter"],
-    ["cShared", "gSharedEncounterDiscard", "Encounter Discard"],
-    ["cShared", "gSharedQuest2", "Quest 2"],
-    ["cShared", "gSharedQuestDiscard2", "Quest Discard 2"],
-    ["cShared", "gSharedEncounter2", "Encounter 2"],
-    ["cShared", "gSharedEncounterDiscard2", "Encounter Discard 2"],
-    ["cShared", "gSharedOther", "Other"]
-  ]
-
-  const players = [1,2,3,4];
-  for (let i of players) {
-    console.log(i);
-    listGroups.push([`cPlayer${i}`,`gPlayer${i}Hand`,`Hand`]);
-    listGroups.push([`cPlayer${i}`,`gPlayer${i}Deck`,`Deck`]);
-    listGroups.push([`cPlayer${i}`,`gPlayer${i}Discard`,`Discard`]);
-    listGroups.push([`cPlayer${i}`,`gPlayer${i}Sideboard`,`Sideboard`]);
-  }
 
   // useEffect(() => {
   //   console.log('Updated x/y!');
@@ -160,7 +164,7 @@ export const Table: React.FC<Props> = ({
       <Draggable handle="strong">
         <div 
           className="bg-gray-700"
-          style={{position:"absolute",width:"1300px",height:"230px",top:"72%",left:"2%",display:"flex",flexDirection:"column"}}
+          style={{position:"absolute",width:`${TABSWIDTH}px`,height:"230px",top:"72%",left:"2%",display:"flex",flexDirection:"column"}}
         >
           {/* <div className="tab bg-yellow-900 flex-1"> */}
             {makeTabContainer()}
@@ -221,47 +225,55 @@ export const Table: React.FC<Props> = ({
     return (
       <>
         {groupIDs.map(function(groupID: string) {
-          console.log(groupID);
           return(
             <div 
               id={groupID}
-              className="tabContainer flex-1"
+              className="tabContainer flex-1 m-3"
               style={{display: (tabButtonController === groups[groupID].controller && tabButtonGroup === groupID) ? "block" : "none"}}
               onDragEnter={handleDragEnter}
               onDragLeave={handleDragLeave}
               onDragOver={() => console.log("dragover")}
-          >{groups[groupID].name}
+          >
           
-          {/* {groups[groupID].cards.map((card: Card,index: number) => {
-          return(
-            <div          
-              className="cardcontainer"
-              style={{
-                height:`${CARDHEIGHT}px`, 
-                width:`${CARDWIDTH}px`,
-              }}
-              onDragStart={handleDragStart} 
-              onDragEnd={handleDragEnd}
-              onMouseOver={handleMouseOver}
-              onMouseLeave={handleMouseLeave}
-              draggable="true" 
-              id={`cardcontainer${index}`}
-            >
-              <div
-                className="card"
+          {groups[groupID].cards.map((card: Card,index: number) => {
+            console.log()
+            return(
+              <div          
+                className="container"
                 style={{
                   height:`${CARDHEIGHT}px`, 
                   width:`${CARDWIDTH}px`,
-                  left:`${Math.max(index*10),CARDWIDTH*index}px`,
-                  backgroundImage: "url(https://s3.amazonaws.com/hallofbeorn-resources/Images/Cards/Conflict-at-the-Carrock/Song-of-Wisdom.jpg)",
-                  // Drag image around instead of ghost
-                  // transform: dragging? "scale(1.0, 1.0) rotateX(0deg) translate3d("+deltaXY.dx+"px, "+deltaXY.dy+"px, 0px)": ""
+                  left:`${20+Math.min(index*CARDWIDTH,index*(TABSWIDTH-CARDWIDTH)/groups[groupID].cards.length)}px`,
+                  position:"absolute",
+                  top:"20px",
                 }}
-                id={`card${index}`}
-                draggable="false" 
-              ></div>
-            </div>
-          )})} */}
+                data-group={groupID}
+                data-index={index}
+                id={`${groupID}Container${index}`}
+              >
+                <div
+                  className="card"
+                  style={{
+                    height:`${CARDHEIGHT}px`, 
+                    width:`${CARDWIDTH}px`,
+                    left:`0px`,
+                    top:`0px`,
+                    position: "relative",
+                    background: "url(https://s3.amazonaws.com/hallofbeorn-resources/Images/Cards/Conflict-at-the-Carrock/Song-of-Wisdom.jpg) no-repeat center center fixed",
+                    backgroundSize: "100%",
+                    // Drag image around instead of ghost
+                    // transform: dragging? "scale(1.0, 1.0) rotateX(0deg) translate3d("+deltaXY.dx+"px, "+deltaXY.dy+"px, 0px)": ""
+                  }}
+                  id={`${groupID}Container${index}Card1`}
+                  onDragStart={handleDragStart} 
+                  onDragEnd={handleDragEnd}
+                  onMouseOver={handleMouseOver}
+                  onMouseLeave={handleMouseLeave}
+                  data-index={0}
+                  draggable="true"  
+                ></div>
+              </div>
+          )})}
           
           
           
@@ -271,12 +283,25 @@ export const Table: React.FC<Props> = ({
   )}
 
   function handleDragStart (event: any) {
+    console.log(event)
     setDragging(true);
     var style = window.getComputedStyle(event.target, null);
     setOrigin({x:event.clientX,y:event.clientY});
-    var str = (parseInt(style.getPropertyValue("left")) - event.clientX) + ',' + (parseInt(style.getPropertyValue("top")) - event.clientY) + ',' + event.target.id;
+    var str =   
+      event.target.id + ',' + // Card div id
+      event.target.parentNode.id + ',' + // Container div id
+      event.target.parentNode.parentNode.id + ',' + // Group div id
+      (parseInt(style.getPropertyValue("left")) - event.clientX) + ',' + 
+      (parseInt(style.getPropertyValue("top")) - event.clientY);
     console.log(str);
     event.dataTransfer.setData("Text", str);
+    const groupID = event.target.dataset.group;
+    const card_index = event.target.dataset.index;
+    const container_index = event.target.parentNode.dataset.index;
+    setActiveContainerIndices([container_index]);
+    setActiveCardIndices([card_index]);
+    console.log(activeContainerIndices);
+    console.log(activeCardIndices);
 
     // Overwrite drag image to hide ghost
     // var img = new Image();
@@ -334,23 +359,31 @@ export const Table: React.FC<Props> = ({
   }
   
   function handleDrop(event: any) {
+
     // event.preventDefault();
     // var data = event.dataTransfer.getData("Text");
     // console.log(event.dataTransfer);
     // console.log(typeof event);
     // event.target.appendChild(document.getElementById(data));
-    var offset = event.dataTransfer.getData("Text").split(',');
-    var dm = document.getElementById(offset[2]);
-    console.log(dm);
-    if (dm) {
-      var x = event.clientX + parseInt(offset[0], 10);
-      var y = event.clientY + parseInt(offset[1], 10);
+    const drag_data = event.dataTransfer.getData("Text").split(',');
+    const origin_card_id = drag_data[0];
+    const origin_container_id = drag_data[1];
+    const origin_group_id = drag_data[2];
+    const container = document.getElementById(origin_container_id);
+    //console.log(dm);
+    console.log(event);
+    var x: number = 0;
+    var y: number = 0;
+    if (container) {
+      x = event.clientX + parseInt(drag_data[3], 10);
+      y = event.clientY + parseInt(drag_data[4], 10);
       if (x>maxX) x = maxX;
       if (y>maxY) y = maxY;
-      dm.style.left = `${x}px`;
-      dm.style.top  = `${y}px`;
+      //container.style.left = `${x}px`;
+      //container.style.top  = `${y}px`;
     }
     setDeltaXY({dx:0,dy:0})
+    broadcast("drag_card", { container_indices:activeContainerIndices, card_indices:activeCardIndices, source_id:origin_group_id, dest_id:event.target.id, drag_x:x, drag_y:y } );
     setTimeout(() => { console.log("timeout"); setDragging(false); }, 100);
     event.preventDefault();
     return false;

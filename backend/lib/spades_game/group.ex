@@ -26,8 +26,13 @@ defmodule SpadesGame.Group do
       name: name,
       type: type,
       controller: controller,
-      cards: []
+      cards: [Card.new_test(),Card.new_test(),Card.new_test()]
     }
+  end
+
+  @spec empty(Group.t()) :: Group.t()
+  def empty(group) do
+    %Group{group | cards: []}
   end
 
 end

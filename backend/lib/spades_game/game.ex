@@ -4,7 +4,7 @@ defmodule SpadesGame.Game do
   In early stages of the app, it only represents a
   some toy game used to test everything around it.
   """
-  alias SpadesGame.{Card, Column, Groups, Deck, Game, GamePlayer, GameOptions, GameScore, TrickCard}
+  alias SpadesGame.{Card, Column, Group, Groups, Deck, Game, GamePlayer, GameOptions, GameScore, TrickCard}
 
   require Logger
 
@@ -202,15 +202,45 @@ defmodule SpadesGame.Game do
     |> check_for_new_round()
   end
 
-  # drag_card/5: A player moves a card on the table.
-  @spec drag_card(Game.t(), number | :bot, String.t(), number, number) :: #DragEvent.t()) ::
+  # drag_card/8: A player moves a card on the table.
+  @spec drag_card(Game.t(), number, list(number), list(number), String.t(), String.t(), number, number) :: #DragEvent.t()) ::
           {:ok, Game.t()} | {:error, String.t()}
 
-  def drag_card(%Game{} = game, user_id, drag_id, drag_x, drag_y) do
-    index = String.to_integer(drag_id)
-    {:ok, %Game{game |
-      columns: List.update_at(game.columns, index, fn(column) -> %Column{column | table_x: drag_x, table_y: drag_y} end)
-    }}
+  def drag_card(%Game{} = game, user_id, container_indices, card_indices, source_id, dest_id, drag_x, drag_y) do
+    index = 1 #String.to_integer(drag_id)
+    source_atom = String.to_existing_atom(source_id)
+    dest_atom = String.to_existing_atom(dest_id)
+    container_indices = container_indices |> Enum.map(& String.to_integer/1)
+    dest_list_old = game.groups[dest_atom].cards
+    source_list_old = game.groups[source_atom].cards
+    dest_list_new = game.groups[dest_atom].cards ++ select_multiple(source_list_old,container_indices)
+    source_list_new = remove_multiple(source_list_old, container_indices)
+    game = %Game{game |
+      groups: Map.put(game.groups,dest_atom,
+        %Group{game.groups[dest_atom] |
+          cards: dest_list_new
+      })
+    }
+    game = %Game{game |
+      groups: Map.put(game.groups,source_atom,
+        %Group{game.groups[source_atom] |
+          cards: source_list_new
+      })
+    }
+    {:ok, game}
+
+    # {:ok, %Game{game |
+    #   groups: Map.put(game.groups,dest_atom,
+    #     %Group{game.groups[dest_atom] |
+    #       cards: dest_list_new}
+    # )}}
+
+    # {:ok, %Game{game |
+    #   groups: %Groups{game.groups |
+    #     source_atom => %Group{game.groups[source_atom] |
+    #       name: "Quest3"
+    #   #List.update_at(game.columns, index, fn(column) -> %Column{column | table_x: drag_x, table_y: drag_y} end)
+    # }}}}
   end
 
   @doc """
@@ -617,6 +647,8 @@ defmodule SpadesGame.Game do
     {:error, "Unspecified error"}
   end
 
+
+
   @doc """
   Get the hand (list of cards) for a specific seat.
   """
@@ -624,4 +656,15 @@ defmodule SpadesGame.Game do
   def hand(%Game{} = game, seat) do
     Map.get(game, seat).hand
   end
+
+  def select_multiple(list, indices) do
+    Enum.map(indices, &(Enum.at(list, &1)))
+  end
+  def remove_multiple(list, indices) do
+    list
+    |> Stream.with_index()
+    |> Stream.reject(fn {_item, index} -> index in indices end)
+    |> Enum.map(&elem(&1, 0))
+  end
+
 end
