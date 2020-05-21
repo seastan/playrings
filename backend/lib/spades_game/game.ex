@@ -211,20 +211,20 @@ defmodule SpadesGame.Game do
     source_atom = String.to_existing_atom(source_id)
     dest_atom = String.to_existing_atom(dest_id)
     container_indices = container_indices |> Enum.map(& String.to_integer/1)
-    dest_list_old = game.groups[dest_atom].cards
     source_list_old = game.groups[source_atom].cards
-    dest_list_new = game.groups[dest_atom].cards ++ select_multiple(source_list_old,container_indices)
     source_list_new = remove_multiple(source_list_old, container_indices)
-    game = %Game{game |
-      groups: Map.put(game.groups,dest_atom,
-        %Group{game.groups[dest_atom] |
-          cards: dest_list_new
-      })
-    }
     game = %Game{game |
       groups: Map.put(game.groups,source_atom,
         %Group{game.groups[source_atom] |
           cards: source_list_new
+      })
+    }
+    dest_list_old = game.groups[dest_atom].cards
+    dest_list_new = game.groups[dest_atom].cards ++ select_multiple(source_list_old,container_indices)
+    game = %Game{game |
+      groups: Map.put(game.groups,dest_atom,
+        %Group{game.groups[dest_atom] |
+          cards: dest_list_new
       })
     }
     {:ok, game}
