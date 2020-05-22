@@ -222,7 +222,9 @@ export const Table: React.FC<Props> = ({
               })}
               style={{display: (tabButtonController === groups[groupID].controller) ? "inline" : "none"}}
               onClick={() => setTabButtonGroup(groupID)}
-              onDragEnter={() => setTabButtonGroup(groupID)}
+              onDragEnter={handleDragOver}
+              data-type="buttonGroup"
+              data-group={groupID}
             >
               {groups[groupID].name}
             </button>
@@ -427,6 +429,7 @@ export const Table: React.FC<Props> = ({
     event.preventDefault();
     event.dataTransfer.dropEffect = 'over';
     var t = event.target;
+    console.log("dragovertarget:"+t)
     console.log("dragover:"+underHoverGroupID);
     console.log("dragover:"+underHoverIndex);
 
@@ -437,6 +440,10 @@ export const Table: React.FC<Props> = ({
       setUnderHoverGroupID(t.dataset.group);
       setUnderHoverIndex(Number(t.dataset.index));
     } else if (t.dataset.type == "tabContainer") {
+      setUnderHoverGroupID(t.dataset.group);
+      setUnderHoverIndex(groups[underHoverGroupID]?.cards.length);
+    } else if (t.dataset.type == "buttonGroup") {
+      setTabButtonGroup(t.dataset.group);
       setUnderHoverGroupID(t.dataset.group);
       setUnderHoverIndex(groups[underHoverGroupID]?.cards.length);
     }
