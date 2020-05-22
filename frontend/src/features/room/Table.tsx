@@ -28,18 +28,20 @@ export const Table: React.FC<Props> = ({
   broadcast,
 }) => {
   //var draggingDefault = new Array(groupTable.cards.length).fill(false);
-  const [dragging, setDragging] = useState(false);
+  const [dragging, setDragging] = useState<boolean>(false);
   const [activeContainerIndices, setActiveContainerIndices] = useState<Array<number>>([]);
   const [activeCardIndices, setActiveCardIndices] = useState<Array<number>>([]);
   const [origin, setOrigin] = useState({x: 0, y: 0});
   const [deltaXY, setDeltaXY] = useState({dx: 0, dy: 0});
   const [tabButtonController, setTabButtonController] = useState("cShared");
 
-  const [underHoverGroupID, setUnderHoverGroupID] = useState("");
+  const [underHoverGroupID, setUnderHoverGroupID] = useState<string>("");
   const [underHoverIndex, setUnderHoverIndex] = useState<number>(-1);
   const [ghostCard, setGhostCard] = useState<Card | null>(null);
-  const [ghostGroupID, setGhostGroupID] = useState("");
-  const [ghostIndex, setGhostIndex] = useState(0);
+  const [ghostGroupID, setGhostGroupID] = useState<string>("");
+  const [ghostIndex, setGhostIndex] = useState<number>(0);
+  const [mouseOverGroupID, setMouseOverGroupID] = useState<string>("");
+  const [mouseOverIndex, setMouseOverIndex] = useState<number>(0);
 
   const [tabButtonGroup, setTabButtonGroup] = useState("gSharedQuest");
   const [hoverImage, setHoverImage] = useState("https://raw.githubusercontent.com/seastan/Lord-of-the-Rings/master/o8g/cards/card.jpg");
@@ -86,16 +88,6 @@ export const Table: React.FC<Props> = ({
     "gPlayer4Sideboard"
   ];
   const columns = gameUIView.game_ui.game.columns;
- 
- // document.addEventListener("dragenter", function( event : any ) {
-  //   // highlight potential handleDrop target when the draggable element enters it
-  //   // if ( event && event.target && event.target.className == "tabContainer" ) {
-  //   //     event.target.style.background = "purple";
-  //   // }
-  //   var t = event.target;
-  //   console.log(t);
-  //   t.classList.add("drophighlight");
-  // }, false);
 
   const listControllers: [string, string][] = [
     ["cShared", "Shared"],
@@ -104,69 +96,6 @@ export const Table: React.FC<Props> = ({
     ["cPlayer3", "Player 3"],
     ["cPlayer4", "Player 4"]
   ]
-
-
-  // useEffect(() => {
-  //   console.log('Updated x/y!');
-  //   console.log(drag_x);
-  //   console.log(drag_y);
-  //   var element = document.getElementById(drag_id);
-  //   console.log(element);
-  //   if (element) {
-  //   console.log(element.style.transform);
-  //     var new_transform = "rotate(50px)"; //"translate("+drag_x+"px"+(drag_y-100)+"px"+")"
-  //     element.style.transform = new_transform;
-  //     //element.style.left = drag_x+"px";
-  //     //element.style.top = drag_y+"px";
-  //     console.log(element);
-  //   }
-  // }, [drag_id, drag_x, drag_y]);
-
-  //var dragging = false;
-  // var cardx = 0;
-  // var cardy = 0;
-  // const handleDragStop = (e: any, drag_data: any) => {
-  //   // setCardX(drag_data.x);
-  //   // setCardY(drag_data.y);
-  //   console.log("table handleDragStop");
-  //   // console.log(drag_data);
-  //   // console.log(e);    
-  //   var element = drag_data.node;
-  //   // console.log(element);
-  //   // console.log(element.id);
-  //   // console.log(element.style);
-  //   // console.log(element.style.transform);
-  //   //var drag_event = new DragEvent();
-  //   // drag_event.element = element; 
-  //   broadcast("drag_card", { drag_id: element.id, drag_x:drag_data.x, drag_y:drag_data.y } );
-  //   setTimeout(() => { console.log("timeout"); setDragging(false); }, 500);
-  //   //element.style.transform = "translate(84px, 19px)";
-  // };  
-  // const handleDrag = (e: any, drag_data: any) => {
-  //   // setCardX(drag_data.x);
-  //   // setCardY(drag_data.y);
-  //   // const index = drag_data.node.id.toString();
-  //   // var set_dragging = draggingDefault;
-  //   // set_dragging[index] = true; 
-  //   // setDragging(set_dragging);
-    
-  //   //cardx = position.x;
-  //   //console.log(cardx);
-  //   //cardy = position.y;
-  //   //dragging = true;
-  //   //console.log(dragging);
-  //   //broadcast("drag_card", {card: cards[0], cardx: position.x, cardy: position.y} )
-  // };
-  // const handleDrop = (e: any) => {
-  //   console.log('dropped')
-  //   e.preventDefault();
-  //   e.stopPropagation();
-  // };  
-  // const handleMouseEnter = (e: any) => {
-  //   console.log('mouseover')
-  //   e.preventDefault();
-  //   e.stopPropagation();
-  // };
 
   function makeTabs() {
     return(
@@ -249,8 +178,6 @@ export const Table: React.FC<Props> = ({
               //onDragLeave={handleDragLeave}
           >
           
-
-
           {groups[groupID].cards.map((card: Card,index: number) => {
             var left = GROUPXOFFSET+index*spacing;
             //if (ghostGroupID == groupID && ghostIndex < index) left = left - spacing;
@@ -291,7 +218,7 @@ export const Table: React.FC<Props> = ({
                     display: (
                       groupID === underHoverGroupID && 
                       index == underHoverIndex
-                      && (underHoverIndex != ghostIndex || underHoverGroupID != ghostGroupID)
+                      && ((underHoverIndex != ghostIndex && underHoverIndex != Number(ghostIndex)+1) || underHoverGroupID != ghostGroupID)
                       ) ? "block" : "none",
                   }}
                   id={`${groupID}CardContainer${index}Outline`}
@@ -310,9 +237,9 @@ export const Table: React.FC<Props> = ({
                     left: (
                       groupID === underHoverGroupID && 
                       index >= underHoverIndex 
-                      && (underHoverIndex != ghostIndex || underHoverGroupID != ghostGroupID)
+                      && ((underHoverIndex != ghostIndex && underHoverIndex != Number(ghostIndex)+1) || underHoverGroupID != ghostGroupID)
                       ) ? `${spacing}px` : "0px",
-                    top:`0px`,
+                    top: `0px`,
                     position: "relative",
                     background: `url(${card.src}) no-repeat center center / 100%`,
                     //backgroundSize: "100%",
@@ -328,6 +255,7 @@ export const Table: React.FC<Props> = ({
                   onMouseLeave={handleMouseLeave}
                   data-type="card"
                   data-group={groupID}
+                  data-index={index}
                   draggable="true"  
                 ></div>
               </div>
@@ -428,7 +356,7 @@ export const Table: React.FC<Props> = ({
   function handleDragOver(event: any) {
     event.preventDefault();
     event.dataTransfer.dropEffect = 'over';
-    var t = event.target;
+    const t = event.target;
     console.log("dragovertarget:"+t)
     console.log("dragover:"+underHoverGroupID);
     console.log("dragover:"+underHoverIndex);
@@ -512,21 +440,37 @@ export const Table: React.FC<Props> = ({
     setGhostGroupID("");
     setGhostIndex(0);
 
+
     setTimeout(() => { 
-      console.log("timeout"); 
+      console.log("timeout");  
       setDragging(false); 
+      
     }, 100);
     event.preventDefault();
     return false;
   }
 
+
   function handleMouseOver(event: any) {
     const imgURL = event.target.style.backgroundImage.slice(4, -1).replace(/"/g, "");
     setHoverImage(imgURL);
+    
+    // const t = event.target;
+    // console.log(t);
+    // console.log(t.dataset.type);
+    // if (t.dataset.type=="card" && !dragging) {
+    //   setMouseOverGroupID(t.dataset.group)
+    //   setMouseOverIndex(t.dataset.index)
+    // }
   }
 
   function handleMouseLeave(event: any) {
     setHoverImage("https://raw.githubusercontent.com/seastan/Lord-of-the-Rings/master/o8g/cards/card.jpg");
+    // const t = event.target;
+    // if (t.dataset.type=="card") {
+    //   setMouseOverGroupID("")
+    //   setMouseOverIndex(-1)
+    // }
   }
 
   return (
@@ -604,7 +548,7 @@ export const Table: React.FC<Props> = ({
 
         {/* Hands */}
         {makeTabs()}
- 
+        {makeTabs()}
       </div>
   )}
 
