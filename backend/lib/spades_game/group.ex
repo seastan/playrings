@@ -26,7 +26,7 @@ defmodule SpadesGame.Group do
       name: name,
       type: type,
       controller: controller,
-      cards: [Card.new_test(),Card.new_test(),Card.new_test()]
+      cards: [Card.new_test1(),Card.new_test2(),Card.new_test3()]
     }
   end
 

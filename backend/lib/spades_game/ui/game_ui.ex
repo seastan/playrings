@@ -100,12 +100,18 @@ defmodule SpadesGame.GameUI do
 
 
   @doc """
-  play/7: A player moves a card on the table.
+  drag_cards/8: A player moves a card on the table.
   """
-  @spec drag_card(GameUI.t(), number, list(number), list(number), String.t(), String.t(), number, number) :: GameUI.t() #DragEvent.t()) :: GameUI.t()
-  def drag_card(game_ui, user_id, container_indices, card_indices, source_id, dest_id, drag_x, drag_y) do
-    IO.puts("game_ui: drag_card a")
-    case Game.drag_card(game_ui.game, user_id, container_indices, card_indices, source_id, dest_id, drag_x, drag_y) do
+  @spec drag_cards(GameUI.t(), number, String.t(), list(number), String.t(), number, number, number) :: GameUI.t() #DragEvent.t()) :: GameUI.t()
+  def drag_cards(game_ui, user_id, source_group_id, source_indices, dest_group_id, dest_index, drag_x, drag_y) do
+    IO.puts("game_ui: drag_cards a")
+    IO.puts(source_group_id)
+    IO.puts(source_indices)
+    IO.puts(dest_group_id)
+    IO.puts(dest_index)
+    IO.puts(drag_x)
+    IO.puts(drag_y)
+    case Game.drag_cards(game_ui.game, user_id, source_group_id, source_indices, dest_group_id, dest_index, drag_x, drag_y) do
       {:ok, new_game} ->
         %{game_ui | game: new_game}
         |> checks

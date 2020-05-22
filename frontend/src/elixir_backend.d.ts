@@ -22,6 +22,7 @@ declare module "elixir-backend" {
   export declare class Card {
     public rank: number;
     public suit: "s" | "c" | "h" | "d";
+    public src: string;
     public table_x: number;
     public table_y: number;
   }
