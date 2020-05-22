@@ -36,7 +36,7 @@ export const Table: React.FC<Props> = ({
   const [tabButtonController, setTabButtonController] = useState("cShared");
 
   const [underHoverGroupID, setUnderHoverGroupID] = useState("");
-  const [underHoverIndex, setUnderHoverIndex] = useState(0);
+  const [underHoverIndex, setUnderHoverIndex] = useState<number>(-1);
   const [ghostCard, setGhostCard] = useState<Card | null>(null);
   const [ghostGroupID, setGhostGroupID] = useState("");
   const [ghostIndex, setGhostIndex] = useState(0);
@@ -50,6 +50,8 @@ export const Table: React.FC<Props> = ({
   const CARDHEIGHT = 120;
   const CARDWIDTH = 86;
   const TABSWIDTH = 1300;
+  const GROUPXOFFSET = 20;
+  const GROUPYOFFSET = 20;
   var maxX = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
   var maxY = window.innerHeight|| document.documentElement.clientHeight|| document.body.clientHeight;
   maxX = maxX-90;
@@ -232,9 +234,13 @@ export const Table: React.FC<Props> = ({
     return (
       <>
         {groupIDs.map(function(groupID: string) {
+          const numcards = groups[groupID].cards.length
+          const spacing = Math.min(CARDWIDTH*0.99,(TABSWIDTH-CARDWIDTH)/numcards); 
           return(
             <div 
-              id={groupID}
+              id={`${groupID}TabContainer`}
+              data-group={groupID}
+              data-type="tabContainer"
               className="tabContainer flex-1 m-3"
               style={{display: (tabButtonController === groups[groupID].controller && tabButtonGroup === groupID) ? "block" : "none"}}
               //onDragEnter={handleDragEnter}
@@ -243,27 +249,26 @@ export const Table: React.FC<Props> = ({
           
 
 
-
           {groups[groupID].cards.map((card: Card,index: number) => {
-            const spacing = Math.min(CARDWIDTH*0.99,(TABSWIDTH-CARDWIDTH)/groups[groupID].cards.length); 
-            var left = 20+index*spacing;
+            var left = GROUPXOFFSET+index*spacing;
             //if (ghostGroupID == groupID && ghostIndex < index) left = left - spacing;
             //if (outlineID === `${groupID}Container${index}`) left = left+20;
             console.log()
             return(
               <div          
-                className="container"
+                className="cardContainer"
                 style={{
                   height:`${CARDHEIGHT}px`, 
                   width:`${CARDWIDTH}px`,
                   left:`${left}px`,
                   position:"absolute",
-                  top:"20px",
+                  top:`${GROUPXOFFSET}px`,
                   display: (groupID === ghostGroupID && index === ghostIndex) ? "none" : "block",
                 }}
+                data-type="cardContainer"
                 data-group={groupID}
                 data-index={index}
-                id={`${groupID}Container${index}`}
+                id={`${groupID}CardContainer${index}`}
                 onDragEnter={handleDragEnter}
                 onDragLeave={handleDragLeave}
                 //onDragOver={handleDragOver}
@@ -287,12 +292,12 @@ export const Table: React.FC<Props> = ({
                       && (underHoverIndex != ghostIndex || underHoverGroupID != ghostGroupID)
                       ) ? "block" : "none",
                   }}
-                  id={`${groupID}Container${index}Outline0`}
+                  id={`${groupID}CardContainer${index}Outline`}
                   // onDragStart={handleDragStart} 
                   // onDragEnd={handleDragEnd}
                   // onMouseOver={handleMouseOver}
                   // onMouseLeave={handleMouseLeave}
-                  data-index={0}
+                  data-type="outline"
                   draggable="false"  
                 ></div>
                 <div
@@ -314,19 +319,45 @@ export const Table: React.FC<Props> = ({
                     // Drag image around instead of ghost
                     // transform: dragging? "scale(1.0, 1.0) rotateX(0deg) translate3d("+deltaXY.dx+"px, "+deltaXY.dy+"px, 0px)": ""
                   }}
-                  id={`${groupID}Container${index}Card0`}
+                  id={`${groupID}CardContainer${index}Card`}
                   onDragStart={handleDragStart} 
                   onDragEnd={handleDragEnd}
                   onMouseOver={handleMouseOver}
                   onMouseLeave={handleMouseLeave}
+                  data-type="card"
                   data-group={groupID}
-                  data-index={0}
                   draggable="true"  
                 ></div>
               </div>
           )})}
           
-          
+          <div
+            className="outline border-dashed border-4 border-gray-600"
+            style={{
+              height:`${CARDHEIGHT}px`, 
+              width:`${CARDWIDTH}px`,
+              left:`${GROUPXOFFSET+numcards*spacing}px`,
+              top:`${GROUPXOFFSET}px`,
+              position: "absolute",
+              //background: "white",
+              backgroundSize: "100%",
+              float:"left",
+              // display: (outlineID === `${groupID}Container${index}`) ? "block" : "none",
+              display: (
+                groupID === underHoverGroupID &&
+                underHoverIndex == numcards)
+                // && (underHoverIndex != ghostIndex || underHoverGroupID != ghostGroupID)
+                // ) 
+                ? "block" : "none",
+            }}
+            id={`${groupID}EndOutline`}
+            // onDragStart={handleDragStart} 
+            // onDragEnd={handleDragEnd}
+            // onMouseOver={handleMouseOver}
+            // onMouseLeave={handleMouseLeave}
+            data-type="outline"
+            draggable="false"  
+          ></div>
           
           </div>
         )})}
@@ -385,7 +416,7 @@ export const Table: React.FC<Props> = ({
     var t = event.target;
     console.log("dragleave:"+t.id);
     setUnderHoverGroupID("");      
-    setUnderHoverIndex(0);
+    setUnderHoverIndex(-1);
     //t.classList.remove("drophighlight");      
     //setOutlineGroupID("");      
     //setOutlineIndex(0);
@@ -396,16 +427,18 @@ export const Table: React.FC<Props> = ({
     event.preventDefault();
     event.dataTransfer.dropEffect = 'over';
     var t = event.target;
-    console.log("dragover:"+t.id);
-    if (t.parentNode.className == "container") {
+    console.log("dragover:"+underHoverGroupID);
+    console.log("dragover:"+underHoverIndex);
+
+    if (t.parentNode.dataset.type == "cardContainer") {
       setUnderHoverGroupID(t.parentNode.dataset.group);
-      setUnderHoverIndex(t.parentNode.dataset.index);
-      console.log("dragover a:"+activeContainerIndices);
-      console.log("dragover b:"+t.parentNode.dataset.index);
-      console.log("dragover c:"+activeContainerIndices.includes(t.parentNode.dataset.index));
-    } else if (t.className == "container") {
+      setUnderHoverIndex(Number(t.parentNode.dataset.index));
+    } else if (t.dataset.type == "cardContainer") {
       setUnderHoverGroupID(t.dataset.group);
-      setUnderHoverIndex(t.dataset.index);
+      setUnderHoverIndex(Number(t.dataset.index));
+    } else if (t.dataset.type == "tabContainer") {
+      setUnderHoverGroupID(t.dataset.group);
+      setUnderHoverIndex(groups[underHoverGroupID]?.cards.length);
     }
 
 
@@ -457,12 +490,6 @@ export const Table: React.FC<Props> = ({
       //container.style.left = `${x}px`;
       //container.style.top  = `${y}px`;
     }
-    setDeltaXY({dx:0,dy:0})
-    setUnderHoverGroupID("");      
-    setUnderHoverIndex(0);
-    setGhostCard(null);
-    setGhostGroupID("");
-    setGhostIndex(0);
     broadcast("drag_cards", { 
       source_group_id:ghostGroupID,
       source_indices:activeContainerIndices,
@@ -471,6 +498,13 @@ export const Table: React.FC<Props> = ({
       drag_x:x, 
       drag_y:y 
     });
+    setDeltaXY({dx:0,dy:0})
+    setUnderHoverGroupID("");      
+    setUnderHoverIndex(-1);
+    setGhostCard(null);
+    setGhostGroupID("");
+    setGhostIndex(0);
+
     setTimeout(() => { 
       console.log("timeout"); 
       setDragging(false); 

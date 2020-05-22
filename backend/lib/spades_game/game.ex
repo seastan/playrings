@@ -209,9 +209,13 @@ defmodule SpadesGame.Game do
   def drag_cards(%Game{} = game, user_id, source_group_id, source_indices, dest_group_id, dest_index, drag_x, drag_y) do
     # Remove cards from source group
     source_atom = String.to_existing_atom(source_group_id)
+    IO.puts("a")
     source_indices = source_indices |> Enum.map(& String.to_integer/1)
+    IO.puts("b")
     source_list_old = game.groups[source_atom].cards
+    IO.puts("c")
     source_list_new = remove_multiple(source_list_old, source_indices)
+    IO.puts("d")
     game = %Game{game |
       groups: Map.put(game.groups,source_atom,
         %Group{game.groups[source_atom] |
@@ -220,11 +224,17 @@ defmodule SpadesGame.Game do
     }
     # Add cards to destination group
     dest_atom = String.to_existing_atom(dest_group_id)
-    dest_index = String.to_integer(dest_index)
+    IO.puts("e")
+    IO.inspect(dest_index)
+    #dest_index = String.to_integer(dest_index)
+    IO.puts("f")
     num_source_indices_below_dest_index = Enum.filter(source_indices, fn x -> x < dest_index end) |> Enum.count
     ## If source = dest, then the removal of cards in the last stem messed up the dest_index
+    IO.puts("g")
     dest_index = if (source_atom == dest_atom), do: dest_index - num_source_indices_below_dest_index, else: dest_index
+    IO.puts("h")
     dest_list_old = game.groups[dest_atom].cards
+    IO.puts("i")
     dest_list_new = Enum.slice(dest_list_old,0,dest_index) ++
                     select_multiple(source_list_old,source_indices) ++
                     Enum.drop(dest_list_old,dest_index)
