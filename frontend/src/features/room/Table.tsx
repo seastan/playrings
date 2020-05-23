@@ -151,7 +151,7 @@ export const Table: React.FC<Props> = ({
               })}
               style={{display: (tabButtonController === groups[groupID].controller) ? "inline" : "none"}}
               onClick={() => setTabButtonGroup(groupID)}
-              onDragEnter={handleDragOver}
+              onDragEnter={handleDragEnter}
               data-type="buttonGroup"
               data-group={groupID}
             >
@@ -166,7 +166,7 @@ export const Table: React.FC<Props> = ({
       <>
         {groupIDs.map(function(groupID: string) {
           const numcards = groups[groupID].cards.length
-          const spacing = Math.min(CARDWIDTH*0.99,(TABSWIDTH-CARDWIDTH)/numcards); 
+          const spacing = Math.min(CARDWIDTH*0.99,(TABSWIDTH-1.8*CARDWIDTH)/numcards); 
           return(
             <div 
               id={`${groupID}TabContainer`}
@@ -174,7 +174,7 @@ export const Table: React.FC<Props> = ({
               data-type="tabContainer"
               className="tabContainer flex-1 m-3"
               style={{display: (tabButtonController === groups[groupID].controller && tabButtonGroup === groupID) ? "block" : "none"}}
-              //onDragEnter={handleDragEnter}
+              onDragEnter={handleDragEnter}
               //onDragLeave={handleDragLeave}
           >
           
@@ -251,12 +251,12 @@ export const Table: React.FC<Props> = ({
                   id={`${groupID}CardContainer${index}Card`}
                   onDragStart={handleDragStart} 
                   onDragEnd={handleDragEnd}
-                  onMouseOver={handleMouseOver}
-                  onMouseLeave={handleMouseLeave}
+                  //onMouseOver={handleMouseOver}
+                  //onMouseLeave={handleMouseLeave}
                   data-type="card"
                   data-group={groupID}
                   data-index={index}
-                  draggable="true"  
+                  draggable={index<30}
                 ></div>
               </div>
           )})}
@@ -340,16 +340,18 @@ export const Table: React.FC<Props> = ({
     var t = event.target;
     console.log("dragenter:"+t.id);
     //t.classList.add("drophighlight");
+
   }
 
   function handleDragLeave(event: any) {
     var t = event.target;
     console.log("dragleave:"+t.id);
-    setUnderHoverGroupID("");      
-    setUnderHoverIndex(-1);
+    //setUnderHoverGroupID("");      
+    //setUnderHoverIndex(-1);
     //t.classList.remove("drophighlight");      
     //setOutlineGroupID("");      
     //setOutlineIndex(0);
+
 
   }
   
@@ -357,10 +359,6 @@ export const Table: React.FC<Props> = ({
     event.preventDefault();
     event.dataTransfer.dropEffect = 'over';
     const t = event.target;
-    console.log("dragovertarget:"+t)
-    console.log("dragover:"+underHoverGroupID);
-    console.log("dragover:"+underHoverIndex);
-
     if (t.parentNode.dataset.type == "cardContainer") {
       setUnderHoverGroupID(t.parentNode.dataset.group);
       setUnderHoverIndex(Number(t.parentNode.dataset.index));
@@ -375,6 +373,24 @@ export const Table: React.FC<Props> = ({
       setUnderHoverGroupID(t.dataset.group);
       setUnderHoverIndex(groups[underHoverGroupID]?.cards.length);
     }
+    // console.log("dragovertarget:"+t)
+    // console.log("dragover:"+underHoverGroupID);
+    // console.log("dragover:"+underHoverIndex);
+    console.log(t.dataset.type);
+    // if (t.parentNode.dataset.type == "cardContainer") {
+    //   setUnderHoverGroupID(t.parentNode.dataset.group);
+    //   setUnderHoverIndex(Number(t.parentNode.dataset.index));
+    // } else if (t.dataset.type == "cardContainer") {
+    //   setUnderHoverGroupID(t.dataset.group);
+    //   setUnderHoverIndex(Number(t.dataset.index));
+    // } else if (t.dataset.type == "tabContainer") {
+    //   setUnderHoverGroupID(t.dataset.group);
+    //   setUnderHoverIndex(groups[underHoverGroupID]?.cards.length);
+    // } else if (t.dataset.type == "buttonGroup") {
+    //   setTabButtonGroup(t.dataset.group);
+    //   setUnderHoverGroupID(t.dataset.group);
+    //   setUnderHoverIndex(groups[underHoverGroupID]?.cards.length);
+    // }
 
 
     // Physically drag the card instead of using the D&D 
@@ -397,8 +413,8 @@ export const Table: React.FC<Props> = ({
 				}, this);
 			} */
     }	
-    console.log(ghostGroupID);
-    console.log(ghostIndex);
+    // console.log(ghostGroupID);
+    // console.log(ghostIndex);
   }
   
   function handleDrop(event: any) {
@@ -445,7 +461,7 @@ export const Table: React.FC<Props> = ({
       console.log("timeout");  
       setDragging(false); 
       
-    }, 100);
+    }, 10);
     event.preventDefault();
     return false;
   }
