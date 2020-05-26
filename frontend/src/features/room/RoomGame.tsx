@@ -4,6 +4,7 @@ import PlayerSeat from "./PlayerSeat";
 import Table from "./Table";
 import Hand from "./Hand";
 import Bid from "./Bid";
+import Groups from "./Groups";
 import ScoreHeader from "../score/ScoreHeader";
 import RotateTableContext from "../../contexts/RotateTableContext";
 import { GameUIView } from "elixir-backend";
@@ -16,7 +17,7 @@ interface Props {
 const RoomGame: React.FC<Props> = ({ gameUIView, broadcast }) => {
 
   return (
-      <Table 
+      <Groups
         gameUIView={gameUIView} 
         broadcast={broadcast}
       />
