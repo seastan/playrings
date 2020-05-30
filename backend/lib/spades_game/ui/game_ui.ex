@@ -3,7 +3,7 @@ defmodule SpadesGame.GameUI do
   One level on top of Game.
   """
 
-  alias SpadesGame.{Card, Game, GameOptions, GameUI, GameUISeat}
+  alias SpadesGame.{Card, Game, GameOptions, GameUI, GameUISeat, Groups}
 
   @derive Jason.Encoder
   defstruct [:game, :game_name, :options, :created_at, :status, :seats, :when_seats_full]
@@ -112,6 +112,22 @@ defmodule SpadesGame.GameUI do
     IO.puts(drag_x)
     IO.puts(drag_y)
     case Game.drag_cards(game_ui.game, user_id, source_group_id, source_indices, dest_group_id, dest_index, drag_x, drag_y) do
+      {:ok, new_game} ->
+        %{game_ui | game: new_game}
+        |> checks
+
+      {:error, _msg} ->
+        game_ui
+    end
+  end
+
+  @doc """
+  update_groups/3: A player moves a card on the table.
+  """
+  @spec update_groups(GameUI.t(), number, Groups.t()) :: GameUI.t() #DragEvent.t()) :: GameUI.t()
+  def update_groups(game_ui, user_id, groups) do
+    IO.puts("game_ui: update_groups a")
+    case Game.update_groups(game_ui.game, user_id, groups) do
       {:ok, new_game} ->
         %{game_ui | game: new_game}
         |> checks

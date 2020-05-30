@@ -6,7 +6,7 @@ defmodule SpadesGame.GameUIServer do
   @timeout :timer.minutes(12)
 
   require Logger
-  alias SpadesGame.{Card, GameOptions, GameAISupervisor, GameUI, GameRegistry}
+  alias SpadesGame.{Card, GameOptions, GameAISupervisor, GameUI, GameRegistry, Groups}
   alias SpadesGame.{Game}
 
   @doc """
@@ -74,6 +74,15 @@ defmodule SpadesGame.GameUIServer do
     IO.inspect(source_indices)
     IO.puts("game_ui_server: that was list of cards")
     GenServer.call(via_tuple(game_name), {:drag_cards, user_id, source_group_id, source_indices, dest_group_id, dest_index, drag_x, drag_y})
+  end
+
+  @doc """
+  update_groups/3: A player just moved a card.
+  """
+  @spec update_groups(String.t(), integer, Groups.t()) :: GameUI.t() #DragEvent.t()) :: GameUI.t()
+  def update_groups(game_name, user_id, groups) do
+    IO.puts("game_ui_server: update_groups")
+    GenServer.call(via_tuple(game_name), {:update_groups, user_id, groups})
   end
 
   @doc """
@@ -221,6 +230,14 @@ defmodule SpadesGame.GameUIServer do
     IO.puts("game_ui_server: handle_call: drag_cards a")
     gameui = GameUI.drag_cards(gameui, user_id, source_group_id, source_indices, dest_group_id, dest_index, drag_x, drag_y)
     IO.puts("game_ui_server: handle_call: drag_cards b")
+    gameui
+    |> save_and_reply()
+  end
+
+  def handle_call({:update_groups, user_id, groups}, _from, gameui) do
+    IO.puts("game_ui_server: handle_call: update_groups a")
+    gameui = GameUI.update_groups(gameui, user_id, groups)
+    IO.puts("game_ui_server: handle_call: update_groups b")
     gameui
     |> save_and_reply()
   end

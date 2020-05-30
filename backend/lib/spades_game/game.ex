@@ -244,7 +244,6 @@ defmodule SpadesGame.Game do
           cards: dest_list_new
       })
     }
-    {:ok, game}
 
     # {:ok, %Game{game |
     #   groups: Map.put(game.groups,dest_atom,
@@ -259,6 +258,21 @@ defmodule SpadesGame.Game do
     #   #List.update_at(game.columns, index, fn(column) -> %Column{column | table_x: drag_x, table_y: drag_y} end)
     # }}}}
   end
+
+
+  # unpdate_groups/8: A player moves a card on the table.
+  @spec update_groups(Game.t(), number, Groups.t()) :: #DragEvent.t()) ::
+          {:ok, Game.t()} | {:error, String.t()}
+
+  def update_groups(%Game{} = game, user_id, groups) do
+    IO.puts("game: update_groups")
+    IO.inspect(groups)
+    game = %Game{game |
+      groups: groups
+    }
+    {:ok, game}
+  end
+
 
   @doc """
   checks/1:  Checks for time-based changes.
