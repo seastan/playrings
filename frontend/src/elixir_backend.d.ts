@@ -44,10 +44,6 @@ declare module "elixir-backend" {
     cards: Array<Card>;
   }
 
-  export declare class DragEvent {
-    public element: HTMLElement;
-  }
-
   export declare class GameUI {
     created_at: any;
     game: Game;

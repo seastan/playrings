@@ -4,7 +4,7 @@ import cx from "classnames";
 import ScoreButton from "../score/ScoreButton";
 import GameTeam from "../room/GameTeam";
 import useGameUIView from "../../hooks/useGameUIView";
-import { GamePlayer, Group, Groups, Card, DragEvent, GameUIView } from "elixir-backend";
+import { GamePlayer, Group, Groups, Card, GameUIView } from "elixir-backend";
 import Chat from "../chat/Chat";
 import { faHome, faGripLines, faArrowsAlt } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
