@@ -24,12 +24,23 @@ export const Chat: React.FC<Props> = ({ roomName }) => {
   const broadcast = useChannel(`chat:${roomName}`, onChannelMessage);
 
   return (
-    <div className="w-full">
-      <div className="mb-2">
-        <ChatMessages messages={messages} className="h-64" />
+
+    <div className="flex flex-col flex-1 overflow-hidden">
+      <div className="bg-gray-900 flex-grow flex flex-col overflow-y-auto mb-2">
+        <ChatMessages messages={messages}/>
       </div>
-      {isLoggedIn && <ChatInput broadcast={broadcast} />}
+      <div className="text-center" >
+        {isLoggedIn && <ChatInput broadcast={broadcast} />}
+      </div>
     </div>
+
+
+    // <div className="flex flex-1 flex-col h-full w-full">
+    //   <div className="flex flex-grow flex-col mb-2 max-h-full">
+    //     <ChatMessages messages={messages} className="flex" />
+    //   </div>
+    //   {isLoggedIn && <ChatInput broadcast={broadcast} />}
+    // </div>
   );
 };
 export default Chat;

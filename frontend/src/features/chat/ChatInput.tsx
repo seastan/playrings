@@ -19,7 +19,7 @@ export const ChatInput: React.FC<Props> = ({ broadcast }) => {
     }
   );
   return (
-    <div>
+    <div className="">
       <form onSubmit={handleSubmit}>
         <input
           type="text"
