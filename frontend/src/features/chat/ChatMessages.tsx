@@ -12,7 +12,7 @@ interface Props {
 export const ChatMessages: React.FC<Props> = ({ messages, className }) => {
   return (
     <ScrollToBottom
-      className="bg-grey-700 max-w-full p-2 overflow-y-auto h-128"
+      className="bg-grey-700 max-w-full p-2 overflow-y-auto h-192"
     >
       <ChatMessagesInner messages={messages} />
     </ScrollToBottom>

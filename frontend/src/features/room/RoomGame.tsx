@@ -68,14 +68,11 @@ const RoomGame: React.FC<Props> = ({ gameUIView, broadcast }) => {
             </div>
             <div className="bg-gray-700 flex flex-1 overflow-hidden" style={{minHeight: "20%"}}>
               {gameUIView != null && (
-                // <div className="flex flex-1 bg-gray-900 p-1">
-                //   <Chat roomName={gameUIView.game_ui.game_name} />
-                // </div>
                 <Chat roomName={gameUIView.game_ui.game_name} />
               )}
             </div>
             <div className="bg-gray-800 flex flex-1" style={{minHeight: "30%", display: showScratch ? "block" : "none"}}>
-
+              
             </div>
           </div>
           <div className="text-center" onClick={() => toggleScratch()}>

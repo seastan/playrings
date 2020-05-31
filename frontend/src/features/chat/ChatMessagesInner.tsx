@@ -8,7 +8,7 @@ interface Props {
 
 export const ChatMessagesInner: React.FC<Props> = ({ messages }) => {
   return (
-    <div className="overflow-auto">
+    <div>
       {messages.map((m, i) => (
         <ChatLine key={m.shortcode} message={m} />
       ))}
