@@ -27,7 +27,20 @@ const RoomGame: React.FC<Props> = ({ gameUIView, broadcast }) => {
 
   return (
     <div className="flex flex-1">
-      {/* Left panel */}
+      {/* Right panel */}
+      <div className="flex flex-col bg-gray-400 w-8">
+        <div className="flex flex-col flex-1 bg-gray-600 text-center p-1" style={{writingMode:"vertical-rl"}}>Refresh</div>
+        <div className="flex flex-col flex-1 bg-gray-600 text-center p-1" style={{writingMode:"vertical-rl"}}>Combat</div>
+        <div className="flex flex-col flex-1 bg-gray-600 text-center p-1" style={{writingMode:"vertical-rl"}}>Encounter</div>
+        <div className="flex flex-col flex-1 bg-gray-600 text-center p-1" style={{writingMode:"vertical-rl"}}>Travel</div>
+        <div className="flex flex-col flex-1 bg-gray-600 text-center p-1" style={{writingMode:"vertical-rl"}}>Quest</div>
+        <div className="flex flex-col flex-1 bg-gray-600 text-center p-1" style={{writingMode:"vertical-rl"}}>Planning</div>
+        <div className="flex flex-col flex-1 bg-gray-600 text-center p-1" style={{writingMode:"vertical-rl"}}>Resource</div>
+      </div>
+
+
+
+      {/* Middle panel */}
       <div className="flex flex-1 w-4/5 bg-gray-500">
         <div className="flex flex-col flex-1">
           <div>
@@ -43,7 +56,10 @@ const RoomGame: React.FC<Props> = ({ gameUIView, broadcast }) => {
             </div>
             <div className="bg-gray-700 flex flex-1" style={{maxHeight: "20%"}}></div>
             <div className="bg-gray-600 flex flex-1" style={{maxHeight: "20%"}}></div>
-            <div className="bg-gray-700 flex flex-1" style={{maxHeight: "20%"}}></div>
+            <div className="bg-gray-700 flex flex-1" style={{maxHeight: "20%"}}>
+              <div className="bg-gray-500 w-11/12"></div>
+              <div className="bg-gray-300 w-1/12"></div>
+              </div>
             <div className="bg-gray-600 flex flex-1" style={{maxHeight: "20%"}}>
               <div className="bg-gray-200 w-10/12"></div>
               <div className="bg-gray-300 w-1/12"></div>
@@ -56,7 +72,6 @@ const RoomGame: React.FC<Props> = ({ gameUIView, broadcast }) => {
         </div>
       </div>
       {/* Right panel */}
-      
       <div className="flex w-1/5 bg-gray-400" >
         <div className="flex flex-col flex-1">
           <div>
@@ -71,8 +86,10 @@ const RoomGame: React.FC<Props> = ({ gameUIView, broadcast }) => {
                 <Chat roomName={gameUIView.game_ui.game_name} />
               )}
             </div>
-            <div className="bg-gray-800 flex flex-1" style={{minHeight: "30%", display: showScratch ? "block" : "none"}}>
-              
+            <div className="bg-gray-800 flex flex-1" style={{minHeight: "30%", display: showScratch ? "block" : "none"}}>        
+              <div className="bg-gray-300 flex flex-1" style={{height: "33.3%"}}></div>
+              <div className="bg-gray-400 flex flex-1" style={{height: "33.3%"}}></div>
+              <div className="bg-gray-500 flex flex-1" style={{height: "33.4%"}}></div>
             </div>
           </div>
           <div className="text-center" onClick={() => toggleScratch()}>
@@ -81,31 +98,6 @@ const RoomGame: React.FC<Props> = ({ gameUIView, broadcast }) => {
         </div>
       </div>
     </div>
-    // <div className="flex flex-1">
-    //   <div className="w-4/5 bg-gray-500" >
-    //     <div className="bg-gray-600 flex flex-1" style={{height: "19%"}}>
-    //       <div className="bg-gray-200 w-8/12"></div>
-    //       <div className="bg-gray-300 w-1/12"></div>
-    //       <div className="bg-gray-200 w-1/12"></div>
-    //       <div className="bg-gray-300 w-2/12"></div>
-    //     </div>
-    //     <div className="bg-gray-700" style={{height: "19%"}}></div>
-    //     <div className="bg-gray-600" style={{height: "19%"}}></div>
-    //     <div className="bg-gray-700" style={{height: "19%"}}></div>
-    //     <div className="bg-gray-600" style={{height: "19%"}}></div>
-    //   </div>
-    //   <div className="w-1/5 bg-gray-400" >
-    //     <div className="bg-gray-200" style={{height: "10%"}}></div>
-    //     <div className="bg-gray-300" style={{height: "10%"}}></div>
-    //     <div className="bg-gray-200" style={{height: "10%"}}></div>
-    //     <div className="bg-gray-300" style={{height: "20%"}}></div>
-    //     <div className="bg-gray-400" style={{height: "50%"}}></div>
-    //   </div>
-    // </div>
-    //   // <Groups
-    //   //   gameUIView={gameUIView} 
-    //   //   broadcast={broadcast}
-    //   // />
   )
 }   
 
