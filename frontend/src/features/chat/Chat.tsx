@@ -26,7 +26,7 @@ export const Chat: React.FC<Props> = ({ roomName }) => {
   return (
 
     <div className="flex flex-col flex-1 overflow-hidden">
-      <div className="bg-gray-900 flex-grow flex flex-col overflow-y-auto">
+      <div className="bg-gray-800 flex-grow flex flex-col overflow-y-auto">
         <ChatMessages messages={messages}/>
       </div>
       <div className="text-center" >
