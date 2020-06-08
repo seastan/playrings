@@ -6,11 +6,12 @@ defmodule SpadesGame.Group do
   alias SpadesGame.{Group,Card}
 
   @derive Jason.Encoder
-  defstruct [:name, :type, :controller, :cards]
+  defstruct [:id, :name, :type, :controller, :cards]
 
   use Accessible
 
   @type t :: %Group{
+    id: String.t(),
     name: String.t(),
     type: :hand | :deck | :discard,
     controller: String.t(),
@@ -18,11 +19,12 @@ defmodule SpadesGame.Group do
   }
 
   @doc """
-  new/0: Create a new player with an empty hand.
+  new/4: Create a new player with an empty hand.
   """
-  @spec new(String.t(), :hand | :deck | :discard, String.t()) :: Group.t()
-  def new(name, type, controller) do
+  @spec new(String.t(), String.t(), :hand | :deck | :discard, String.t()) :: Group.t()
+  def new(id, name, type, controller) do
     %Group{
+      id: id,
       name: name,
       type: type,
       controller: controller,

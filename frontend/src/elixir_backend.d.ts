@@ -29,6 +29,7 @@ declare module "elixir-backend" {
   }
 
   export declare class Group {
+    id: string;
     name: string;
     type: string;
     controller: string;

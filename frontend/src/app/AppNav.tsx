@@ -17,7 +17,7 @@ export const AppNav: React.FC<Props> = () => {
   const headerLinkClass =
     "mt-1 sm:mt-0 sm:ml-2 block px-2 py-1 text-white font-semibold hover:bg-gray-900 rounded";
   return (
-    <header className="bg-gray-700 sm:flex sm:justify-between sm:items-center sm:px-4 sm:py-3">
+    <header className="bg-gray-700 sm:flex sm:justify-between sm:items-center sm:px-4" style={{height:"3vh"}}>
       <div className="flex items-center justify-between px-4 py-3 sm:p-0">
         <div>
           <Link
@@ -31,7 +31,7 @@ export const AppNav: React.FC<Props> = () => {
               alt="Logo "
             />
                 */}
-            OneRingTeki
+            RingsLCG
           </Link>
         </div>
         <div className="sm:hidden">

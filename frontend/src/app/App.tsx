@@ -45,7 +45,7 @@ const App: React.FC = () => {
   }, [tokens.authToken]);
 
   useHtmlClass(["antialiased"]);
-  useBodyClass(["min-h-screen", "bg-white", "flex", "flex-col"]);
+  useBodyClass(["h-screen", "bg-white", "flex", "flex-col","max-w-screen"]);
 
   const authValue = useMemo(
     () => ({
