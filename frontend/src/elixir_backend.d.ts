@@ -40,7 +40,7 @@ declare module "elixir-backend" {
     [key:string]: Group
   }
 
-  export declare class Column {
+  export declare class Stack {
     controller: string;
     cards: Array<Card>;
   }
@@ -87,7 +87,6 @@ declare module "elixir-backend" {
     drag_id: string;
     drag_x: number;
     drag_y: number;
-    columns: Array<Column>;
     groups: Groups;
   }
 

@@ -4,7 +4,7 @@ defmodule SpadesGame.Game do
   In early stages of the app, it only represents a
   some toy game used to test everything around it.
   """
-  alias SpadesGame.{Card, Column, Group, Groups, Deck, Game, GamePlayer, GameOptions, GameScore, TrickCard}
+  alias SpadesGame.{Card, Stack, Group, Groups, Deck, Game, GamePlayer, GameOptions, GameScore, TrickCard}
 
   require Logger
 
@@ -14,7 +14,6 @@ defmodule SpadesGame.Game do
   @derive Jason.Encoder
   defstruct [
     :game_name,
-    :columns,
     :groups,
     :options,
     :dealer,
@@ -40,7 +39,6 @@ defmodule SpadesGame.Game do
 
   @type t :: %Game{
           game_name: String.t(),
-          columns: list(Column.t()),
           groups: Groups.t(),
           options: GameOptions.t(),
           status: :bidding | :playing,
@@ -82,7 +80,6 @@ defmodule SpadesGame.Game do
 
     %Game{
       game_name: game_name,
-      columns: [],
       groups: Groups.new(),
       options: options,
       status: :bidding,
