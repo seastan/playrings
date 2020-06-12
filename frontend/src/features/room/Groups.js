@@ -125,46 +125,46 @@ export const Groups = ({
 
             <div className="w-full" style={{minHeight: "20%", height: "20%", maxHeight: "20%"}}>
               <div className="float-left h-full" style={{width: "10%"}}>
-                <Group group={groups['gSharedEncounterDiscard']}></Group>
+                <Group group={groups['gSharedEncounterDiscard']} broadcast={broadcast}></Group>
               </div>
               <div className="float-left h-full" style={{width: "10%"}}>
-                <Group group={groups['gSharedEncounterDeck']}></Group>
+                <Group group={groups['gSharedEncounterDeck']} broadcast={broadcast}></Group>
               </div>
               <div className="float-left h-full" style={{width: "55%"}}>
-                <Group group={groups['gSharedStaging']}></Group>
+                <Group group={groups['gSharedStaging']} broadcast={broadcast}></Group>
               </div>
               <div className="float-left h-full" style={{width: "10%"}}>
-                <Group group={groups['gSharedActive']}></Group>
+                <Group group={groups['gSharedActive']} broadcast={broadcast}></Group>
               </div>
               <div className="float-left h-full" style={{width: "15%"}}>
-                <Group group={groups['gSharedMainQuest']}></Group>
+                <Group group={groups['gSharedMainQuest']} broadcast={broadcast}></Group>
               </div>
               
             </div> 
             <div className="w-full" style={{minHeight: "20%", height: "20%", maxHeight: "20%"}}>
-              <Group group={groups['gPlayer1Engaged']}></Group>
+              <Group group={groups['gPlayer1Engaged']} broadcast={broadcast}></Group>
             </div>
               
             <div className="flex flex-1" style={{minHeight: "20%", height: "20%", maxHeight: "20%"}}>
-              <Group group={groups['gPlayer1Play1']}></Group>
+              <Group group={groups['gPlayer1Play1']} broadcast={broadcast}></Group>
             </div>
             <div className="flex flex-1" style={{minHeight: "20%", height: "20%", maxHeight: "20%"}}>
               <div className="" style={{width: "90%"}}>
-                <Group group={groups['gPlayer1Play2']}></Group>
+                <Group group={groups['gPlayer1Play2']} broadcast={broadcast}></Group>
               </div>
               <div className="" style={{width: "10%"}}>
-                <Group group={groups['gPlayer1Event']}></Group>
+                <Group group={groups['gPlayer1Event']} broadcast={broadcast}></Group>
               </div>
             </div>
             <div className=" flex flex-1" style={{minHeight: "20%", height: "20%", maxHeight: "20%", background: "rgba(0, 0, 0, 0.5)"}}>
               <div className="" style={{width: "80%"}}>
-                <Group group={groups['gPlayer1Hand']}></Group>
+                <Group group={groups['gPlayer1Hand']} broadcast={broadcast}></Group>
               </div>
               <div className="" style={{width: "10%"}}>
-                <Group group={groups['gPlayer1Deck']}></Group>
+                <Group group={groups['gPlayer1Deck']} broadcast={broadcast}></Group>
               </div>
               <div className="" style={{width: "10%"}}>
-                <Group group={groups['gPlayer1Discard']}></Group>
+                <Group group={groups['gPlayer1Discard']} broadcast={broadcast}></Group>
               </div>
             </div>
           </div>

@@ -7,11 +7,13 @@ import Chat from "../chat/Chat";
 import uuid from "uuid/v4";
 import cx from "classnames";
 import { callbackify } from "util";
+import { roundToNearestMinutesWithOptions } from "date-fns/fp";
 
-
+const CARDSCALE = 4.5;
 
 export const Group = ({
   group,
+  broadcast,
   showTitle,
 }) => {
   const groupID = group.id
@@ -81,6 +83,19 @@ export const Group = ({
                       index={index}
                     >
                       {(provided, snapshot) => {
+                        if (stack.cards.length == 0) return;
+                        // Determine width of the stack, which is dependent on the orientation of the last card in the stack.
+                        const lastCard = stack.cards[stack.cards.length - 1];                             
+                        var widthOfLastCard = CARDSCALE;
+                        if (lastCard.rotation == 90 || lastCard.rotation == 270) {
+                          widthOfLastCard = CARDSCALE/lastCard.aspectRatio;
+                        } else if (lastCard.rotation == 0 || lastCard.rotation == 180) {
+                          widthOfLastCard = CARDSCALE*lastCard.aspectRatio;
+                        }
+                        console.log(CARDSCALE);
+                        console.log(lastCard.aspectRatio);
+                        console.log(CARDSCALE/lastCard.aspectRatio);
+                        const stackWidth = widthOfLastCard + CARDSCALE/3*(stack.cards.length-1)
                         return (
                           <div
                             className=""
@@ -93,18 +108,12 @@ export const Group = ({
                               padding: 0,
                               margin: "4px 4px 0 0",
                               minHeight: "full",
-                              background: `url(${stack.cards[0].src}) no-repeat`,
-                              backgroundSize: "contain",
-                              backgroundColor: snapshot.isDragging
-                                ? "red"
-                                : "#456C86",
-                              color: "white",
                               ...provided.draggableProps.style,
                               //height: "180px", //120,
                               //paddingRight: "7%",
-                              minWidth: "4.5vw",
-                              width: `${4.5+1.5*(stack.cards.length-1)}vw`,
-                              height: "6.4vw"
+                              minWidth: `${stackWidth}vw`,
+                              width: `${stackWidth}vw`, //  `${CARDSCALE+CARDSCALE/3*(stack.cards.length-1)}vw`,
+                              height: `100%`
                             }}
                           >
                             {stack.cards.map((card, cindex) => {
@@ -114,10 +123,11 @@ export const Group = ({
                                     position: "absolute",
                                     background: `url(${card.src}) no-repeat`,
                                     backgroundSize: "contain",
-                                    height: "6.4vw",
-                                    width: "4.5vw",
-                                    marginLeft: `${1.5*cindex}vw`,
-                                    zIndex: 1e9-cindex,
+                                    height: `${CARDSCALE/0.7}vw`,
+                                    width: `${CARDSCALE}vw`,
+                                    left: `${CARDSCALE/3*cindex}vw`,
+                                    transform: `rotate(${card.rotation}deg)`,
+                                    zIndex: 1e5-cindex,
                                   }}
                                   onClick={() => console.log(card.id)}
                                 >

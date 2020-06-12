@@ -5,10 +5,10 @@ defmodule SpadesGame.Card do
   Represents a playing card.
   """
   @derive Jason.Encoder
-  defstruct [:id, :rank, :suit, :src]
+  defstruct [:id, :rank, :suit, :src, :rotation, :aspectRatio]
   alias SpadesGame.Card
 
-  @type t :: %Card{id: String.t(), rank: rank, suit: suit, src: String.t()}
+  @type t :: %Card{id: String.t(), rank: rank, suit: suit, src: String.t(), rotation: number, aspectRatio: number}
   @type suit :: :h | :d | :c | :s
   @type rank :: 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14
 
@@ -17,15 +17,15 @@ defmodule SpadesGame.Card do
 
   @spec new_test1() :: Card.t()
   def new_test1() do
-    %Card{id: Ecto.UUID.generate, rank: 9, suit: :h, src: "https://s3.amazonaws.com/hallofbeorn-resources/Images/Cards/Shadow-and-Flame/Elrond.jpg"}
+    %Card{id: Ecto.UUID.generate, rotation: 0, aspectRatio: 0.7, rank: 9, suit: :h, src: "https://s3.amazonaws.com/hallofbeorn-resources/Images/Cards/Shadow-and-Flame/Elrond.jpg"}
   end
   @spec new_test2() :: Card.t()
   def new_test2() do
-    %Card{id: Ecto.UUID.generate, rank: 9, suit: :h, src: "https://s3.amazonaws.com/hallofbeorn-resources/Images/Cards/Shadow-and-Flame/Vilya.jpg"}
+    %Card{id: Ecto.UUID.generate, rotation: 0, aspectRatio: 0.7, rank: 9, suit: :h, src: "https://s3.amazonaws.com/hallofbeorn-resources/Images/Cards/Shadow-and-Flame/Vilya.jpg"}
   end
   @spec new_test2() :: Card.t()
   def new_test3() do
-    %Card{id: Ecto.UUID.generate, rank: 9, suit: :h, src: "https://s3.amazonaws.com/hallofbeorn-resources/Images/Cards/Shadow-and-Flame/Miruvor.jpg"}
+    %Card{id: Ecto.UUID.generate, rotation: 90, aspectRatio: 0.7, rank: 9, suit: :h, src: "https://s3.amazonaws.com/hallofbeorn-resources/Images/Cards/Shadow-and-Flame/Miruvor.jpg"}
   end
 
   @spec from_map(%{}) :: Card.t()
