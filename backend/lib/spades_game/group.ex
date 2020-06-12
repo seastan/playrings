@@ -13,7 +13,7 @@ defmodule SpadesGame.Group do
   @type t :: %Group{
     id: String.t(),
     name: String.t(),
-    type: :hand | :deck | :discard,
+    type: :hand | :deck | :discard | :play,
     controller: String.t(),
     cards: [Card.t()]
   }
@@ -21,14 +21,14 @@ defmodule SpadesGame.Group do
   @doc """
   new/4: Create a new player with an empty hand.
   """
-  @spec new(String.t(), String.t(), :hand | :deck | :discard, String.t()) :: Group.t()
+  @spec new(String.t(), String.t(), :hand | :deck | :discard | :play, String.t()) :: Group.t()
   def new(id, name, type, controller) do
     %Group{
       id: id,
       name: name,
       type: type,
       controller: controller,
-      cards: [Card.new_test1(),Card.new_test2(),Card.new_test3(),Card.new_test3(),Card.new_test3(),Card.new_test3(),Card.new_test3(),Card.new_test3(),Card.new_test3(),Card.new_test3(),Card.new_test3(),Card.new_test3(),Card.new_test3(),Card.new_test3(),Card.new_test3(),Card.new_test3(),Card.new_test3(),Card.new_test3(),Card.new_test3(),Card.new_test3(),Card.new_test3(),Card.new_test3(),Card.new_test3(),Card.new_test3(),Card.new_test3(),Card.new_test3(),Card.new_test3(),Card.new_test3(),Card.new_test3(),Card.new_test3(),Card.new_test3(),Card.new_test3(),Card.new_test3(),Card.new_test3(),Card.new_test3(),Card.new_test3(),Card.new_test3(),Card.new_test3(),Card.new_test3(),Card.new_test3(),Card.new_test3(),Card.new_test3(),Card.new_test3(),Card.new_test3(),Card.new_test3(),Card.new_test3(),Card.new_test3(),Card.new_test3(),Card.new_test3(),Card.new_test3(),Card.new_test3(),Card.new_test3(),Card.new_test3(),Card.new_test3(),Card.new_test3(),Card.new_test3(),Card.new_test3(),Card.new_test3(),Card.new_test3()]
+      cards: [Card.new_test1(),Card.new_test2(),Card.new_test3(),Card.new_test3(),Card.new_test3(),Card.new_test3()],
     }
   end
 

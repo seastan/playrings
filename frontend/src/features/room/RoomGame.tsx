@@ -3,7 +3,7 @@ import cx from "classnames";
 import PlayerSeat from "./PlayerSeat";
 import Table from "./Table";
 import Hand from "./Hand";
-import Groups from "./Groups";
+import { Groups } from "./Groups";
 import ScoreHeader from "../score/ScoreHeader";
 import RotateTableContext from "../../contexts/RotateTableContext";
 import { GameUIView } from "elixir-backend";
