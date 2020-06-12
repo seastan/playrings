@@ -16,24 +16,24 @@ const onDragEnd = (result, groups, setGroups, broadcast) => {
   if (source.droppableId !== destination.droppableId) {
     const sourceGroup = groups[source.droppableId];
     const destGroup = groups[destination.droppableId];
-    const sourceCards = [...sourceGroup.cards];
-    const destCards = [...destGroup.cards];
-    const [removed] = sourceCards.splice(source.index, 1);
-    destCards.splice(destination.index, 0, removed);
+    const sourceStacks = [...sourceGroup.stacks];
+    const destStacks = [...destGroup.stacks];
+    const [removed] = sourceStacks.splice(source.index, 1);
+    destStacks.splice(destination.index, 0, removed);
     newGroups = {
       ...groups,
       [source.droppableId]: {
         ...sourceGroup,
-        cards: sourceCards
+        stacks: sourceStacks
       },
       [destination.droppableId]: {
         ...destGroup,
-        cards: destCards
+        stacks: destStacks
       }
     }
   } else {
     const group = groups[source.droppableId];
-    const copiedCards = [...group.cards];
+    const copiedCards = [...group.stacks];
     const [removed] = copiedCards.splice(source.index, 1);
     copiedCards.splice(destination.index, 0, removed);
     newGroups = {
@@ -74,7 +74,7 @@ export const Groups = ({
       onDragEnd={result => onDragEnd(result, groups, setGroups, broadcast)}
     >
 
-    <div className="flex flex-1 max-h-full">
+    <div className="flex flex-1 h-full">
       {/* Right panel */}
       <div className="flex flex-col w-8">
         <div 
@@ -121,9 +121,9 @@ export const Groups = ({
             </select>
             player(s)
           </div>
-          <div className="flex-grow flex flex-col"  style={{height: "94%"}}>
+          <div className="f"  style={{height: "94%"}}>
 
-            <div className="w-full" style={{height: "20%", maxHeight: "20%"}}>
+            <div className="w-full" style={{minHeight: "20%", height: "20%", maxHeight: "20%"}}>
               <div className="float-left h-full" style={{width: "10%"}}>
                 <Group group={groups['gSharedEncounterDiscard']}></Group>
               </div>
@@ -141,14 +141,14 @@ export const Groups = ({
               </div>
               
             </div> 
-            <div className="w-full" style={{height: "20%", maxHeight: "20%"}}>
+            <div className="w-full" style={{minHeight: "20%", height: "20%", maxHeight: "20%"}}>
               <Group group={groups['gPlayer1Engaged']}></Group>
             </div>
               
-            <div className="flex flex-1" style={{height: "20%", maxHeight: "20%"}}>
+            <div className="flex flex-1" style={{minHeight: "20%", height: "20%", maxHeight: "20%"}}>
               <Group group={groups['gPlayer1Play1']}></Group>
             </div>
-            <div className="flex flex-1" style={{height: "20%", maxHeight: "20%"}}>
+            <div className="flex flex-1" style={{minHeight: "20%", height: "20%", maxHeight: "20%"}}>
               <div className="" style={{width: "90%"}}>
                 <Group group={groups['gPlayer1Play2']}></Group>
               </div>
@@ -156,7 +156,7 @@ export const Groups = ({
                 <Group group={groups['gPlayer1Event']}></Group>
               </div>
             </div>
-            <div className=" flex flex-1" style={{height: "20%", maxHeight: "20%", background: "rgba(0, 0, 0, 0.5)"}}>
+            <div className=" flex flex-1" style={{minHeight: "20%", height: "20%", maxHeight: "20%", background: "rgba(0, 0, 0, 0.5)"}}>
               <div className="" style={{width: "80%"}}>
                 <Group group={groups['gPlayer1Hand']}></Group>
               </div>

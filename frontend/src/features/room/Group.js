@@ -16,11 +16,12 @@ export const Group = ({
 }) => {
   const groupID = group.id
   return (
-    <div className="flex flex-1 h-full w-full" 
+    <div className="h-full w-full" 
       key={groupID}
     >
       <div className="text-center p-1 select-none text-white" 
         style={{
+          float: "left",
           width:"30px", 
           writingMode:"vertical-rl", 
           display: (showTitle == "false" ? "none" : "block")
@@ -65,18 +66,18 @@ export const Group = ({
                   margin: 0,
                   overflowX: (group.type == "discard" || group.type == "deck") ? "hidden" : "auto",
                   overflowY: (group.type == "discard" || group.type == "deck") ? "auto" : "hidden",
-                  width: (group.type == "hand" || group.type == "play") ? "calc(100% - 30px)" : "100%",
+                  width: "calc(100% - 30px)", //(group.type == "hand" || group.type == "play") ? "calc(100% - 30px)" : "100%",
                   height: "95%",
                   //minHeight: "full",
                 }}
                 
               >
-                {group.cards.map((card, index) => {
+                {group.stacks.map((stack, index) => {
                   //if ((group.type=="deck" || group.type=="discard") && index>0) return null;
                   return (
                     <Draggable
-                      key={card.id}
-                      draggableId={card.id}
+                      key={stack.id}
+                      draggableId={stack.id}
                       index={index}
                     >
                       {(provided, snapshot) => {
@@ -87,11 +88,12 @@ export const Group = ({
                             {...provided.draggableProps}
                             {...provided.dragHandleProps}
                             style={{
+                              position: "relative",
                               userSelect: "none",
                               padding: 0,
                               margin: "4px 4px 0 0",
                               minHeight: "full",
-                              background: `url(${card.src}) no-repeat`,
+                              background: `url(${stack.cards[0].src}) no-repeat`,
                               backgroundSize: "contain",
                               backgroundColor: snapshot.isDragging
                                 ? "red"
@@ -101,11 +103,30 @@ export const Group = ({
                               //height: "180px", //120,
                               //paddingRight: "7%",
                               minWidth: "4.5vw",
-                              width: "4.5vw",
+                              width: `${4.5+1.5*(stack.cards.length-1)}vw`,
                               height: "6.4vw"
                             }}
                           >
-                            
+                            {stack.cards.map((card, cindex) => {
+                              return(
+                                <div 
+                                  style={{
+                                    position: "absolute",
+                                    background: `url(${card.src}) no-repeat`,
+                                    backgroundSize: "contain",
+                                    height: "6.4vw",
+                                    width: "4.5vw",
+                                    marginLeft: `${1.5*cindex}vw`,
+                                    zIndex: 1e9-cindex,
+                                  }}
+                                  onClick={() => console.log(card.id)}
+                                >
+
+                                </div>
+                              )
+                            })}
+
+
                           </div>
                         );
                       }}

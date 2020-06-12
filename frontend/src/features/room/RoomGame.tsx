@@ -1,7 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import cx from "classnames";
 import PlayerSeat from "./PlayerSeat";
-import Table from "./Table";
 import Hand from "./Hand";
 import { Groups } from "./Groups";
 import ScoreHeader from "../score/ScoreHeader";

@@ -84,30 +84,6 @@ defmodule SpadesWeb.RoomChannel do
     {:reply, {:ok, client_state(socket)}, socket}
   end
 
-  def handle_in(
-      "drag_cards",
-      %{
-        "source_group_id" => source_group_id,
-        "source_indices" => source_indices,
-        "dest_group_id" => dest_group_id,
-        "dest_index" => dest_index,
-        "drag_x" => drag_x,
-        "drag_y" => drag_y
-      },
-      %{assigns: %{room_slug: room_slug, user_id: user_id}} = socket
-    ) do
-    # Ignoring return value; could work on passing an error up
-    IO.puts("room channel: drag_cards a")
-    #IO.puts(list_of_cards[0])
-    GameUIServer.drag_cards(room_slug, user_id, source_group_id, source_indices, dest_group_id, dest_index, drag_x, drag_y)
-    IO.puts("room channel: drag_cards b")
-    state = GameUIServer.state(room_slug)
-    socket = socket |> assign(:game_ui, state)
-    notify(socket)
-
-    {:reply, {:ok, client_state(socket)}, socket}
-end
-
 def handle_in(
   "update_groups",
   %{

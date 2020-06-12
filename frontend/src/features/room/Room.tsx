@@ -32,7 +32,9 @@ export const Room: React.FC<Props> = ({ slug }) => {
 
   return (
     // <Container>
-      <div className="gamebackground max-h-full">
+      <div className="gamebackground"
+        style={{height: "97vh"}}
+      >
         {gameUIView != null && (
           <GameUIViewContext.Provider value={gameUIView}>
             <RotateTableProvider gameUIView={gameUIView}>

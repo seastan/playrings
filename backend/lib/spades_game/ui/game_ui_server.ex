@@ -66,17 +66,6 @@ defmodule SpadesGame.GameUIServer do
   end
 
   @doc """
-  drag_cards/7: A player just moved a card.
-  """
-  @spec drag_cards(String.t(), integer, Strint.t(), list(number), String.t(), number, number, number) :: GameUI.t() #DragEvent.t()) :: GameUI.t()
-  def drag_cards(game_name, user_id, source_group_id, source_indices, dest_group_id, dest_index, drag_x, drag_y) do
-    IO.puts("game_ui_server: drag_cards")
-    IO.inspect(source_indices)
-    IO.puts("game_ui_server: that was list of cards")
-    GenServer.call(via_tuple(game_name), {:drag_cards, user_id, source_group_id, source_indices, dest_group_id, dest_index, drag_x, drag_y})
-  end
-
-  @doc """
   update_groups/3: A player just moved a card.
   """
   @spec update_groups(String.t(), integer, Groups.t()) :: GameUI.t() #DragEvent.t()) :: GameUI.t()
@@ -222,14 +211,6 @@ defmodule SpadesGame.GameUIServer do
       push_state_to_clients(2, 700)
     end
 
-    gameui
-    |> save_and_reply()
-  end
-
-  def handle_call({:drag_cards, user_id, source_group_id, source_indices, dest_group_id, dest_index, drag_x, drag_y}, _from, gameui) do
-    IO.puts("game_ui_server: handle_call: drag_cards a")
-    gameui = GameUI.drag_cards(gameui, user_id, source_group_id, source_indices, dest_group_id, dest_index, drag_x, drag_y)
-    IO.puts("game_ui_server: handle_call: drag_cards b")
     gameui
     |> save_and_reply()
   end

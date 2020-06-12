@@ -8,7 +8,7 @@ defmodule SpadesGame.Card do
   defstruct [:id, :rank, :suit, :src]
   alias SpadesGame.Card
 
-  @type t :: %Card{id: number, rank: rank, suit: suit, src: String.t()}
+  @type t :: %Card{id: String.t(), rank: rank, suit: suit, src: String.t()}
   @type suit :: :h | :d | :c | :s
   @type rank :: 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14
 

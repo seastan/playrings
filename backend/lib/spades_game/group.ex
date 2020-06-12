@@ -3,10 +3,10 @@ defmodule SpadesGame.Group do
   Represents a player inside a game of spades.
   They will have a hand of cards, a bid etc.
   """
-  alias SpadesGame.{Group,Card}
+  alias SpadesGame.{Group,Stack}
 
   @derive Jason.Encoder
-  defstruct [:id, :name, :type, :controller, :cards]
+  defstruct [:id, :name, :type, :controller, :stacks]
 
   use Accessible
 
@@ -15,7 +15,7 @@ defmodule SpadesGame.Group do
     name: String.t(),
     type: :hand | :deck | :discard | :play,
     controller: String.t(),
-    cards: [Card.t()]
+    stacks: [Stack.t()]
   }
 
   @doc """
@@ -28,13 +28,13 @@ defmodule SpadesGame.Group do
       name: name,
       type: type,
       controller: controller,
-      cards: [Card.new_test1(),Card.new_test2(),Card.new_test3(),Card.new_test3(),Card.new_test3(),Card.new_test3()],
+      stacks: [Stack.new_test()],
     }
   end
 
   @spec empty(Group.t()) :: Group.t()
   def empty(group) do
-    %Group{group | cards: []}
+    %Group{group | stacks: []}
   end
 
 end
