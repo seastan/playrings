@@ -8,9 +8,8 @@ import Group from "./Group";
 import uuid from "uuid/v4";
 import cx from "classnames";
 
-
-
 const onDragEnd = (result, groups, setGroups, broadcast) => {
+  console.log(result);
   if (!result.destination) return;
   const { source, destination } = result;
   var newGroups = {};
@@ -49,50 +48,6 @@ const onDragEnd = (result, groups, setGroups, broadcast) => {
   broadcast("update_groups",{groups: newGroups});
 };
 
-const groupIDs = [
-  "gSharedStaging",
-  "gSharedActive",
-  "gSharedMainQuest",
-  "gSharedQuestDeck",
-  "gSharedQuestDiscard",
-  "gSharedEncounterDeck",
-  "gSharedEncounterDiscard",
-  "gSharedQuestDeck2",
-  "gSharedQuestDiscard2",
-  "gSharedEncounterDeck2",
-  "gSharedEncounterDiscard2",
-  "gSharedOther",
-  "gSharedVictory",
-  "gSharedExtra1",
-  "gSharedExtra2",
-  "gSharedExtra3",
-  "gPlayer1Hand",
-  "gPlayer1Deck",
-  "gPlayer1Discard",
-  "gPlayer1Sideboard",
-  "gPlayer1Play",
-  "gPlayer1Engaged",
-  "gPlayer2Hand",
-  "gPlayer2Deck",
-  "gPlayer2Discard",
-  "gPlayer2Sideboard",
-  "gPlayer2Play",
-  "gPlayer2Engaged",
-  "gPlayer3Hand",
-  "gPlayer3Deck",
-  "gPlayer3Discard",
-  "gPlayer3Sideboard",
-  "gPlayer3Play",
-  "gPlayer3Engaged",
-  "gPlayer4Hand",
-  "gPlayer4Deck",
-  "gPlayer4Discard",
-  "gPlayer4Sideboard",
-  "gPlayer4Play",
-  "gPlayer4Engaged"
-];
-
-
 export const Groups = ({
   gameUIView,
   broadcast,
@@ -121,7 +76,7 @@ export const Groups = ({
 
     <div className="flex flex-1 max-h-full">
       {/* Right panel */}
-      <div className="flex flex-col bg-gray-400 w-8">
+      <div className="flex flex-col w-8">
         <div 
           className={`flex flex-col flex-1 text-center p-1 select-none ${(phase==7) ? "bg-gray-600" : "bg-gray-400"}`}
           style={{writingMode:"vertical-rl"}} 
@@ -155,9 +110,9 @@ export const Groups = ({
 
 
       {/* Middle panel */}
-      <div className="flex  w-4/5 bg-gray-500">
+      <div className="flex w-4/5">
         <div className="flex flex-col w-full h-full">
-          <div style={{height: "3%"}}>
+          <div className="bg-gray-200" style={{height: "3%"}}>
             <select name="num_players" id="num_players">
               <option value="1">1</option>
               <option value="2">2</option>
@@ -168,52 +123,52 @@ export const Groups = ({
           </div>
           <div className="flex-grow flex flex-col"  style={{height: "94%"}}>
 
-            <div className="bg-gray-600 w-full" style={{height: "20%", maxHeight: "20%"}}>
-              <div className="bg-gray-200 float-left h-full" style={{width: "10%"}}>
+            <div className="w-full" style={{height: "20%", maxHeight: "20%"}}>
+              <div className="float-left h-full" style={{width: "10%"}}>
                 <Group group={groups['gSharedEncounterDiscard']}></Group>
               </div>
-              <div className="bg-gray-300 float-left h-full" style={{width: "10%"}}>
+              <div className="float-left h-full" style={{width: "10%"}}>
                 <Group group={groups['gSharedEncounterDeck']}></Group>
               </div>
-              <div className="bg-white float-left h-full" style={{width: "55%"}}>
+              <div className="float-left h-full" style={{width: "55%"}}>
                 <Group group={groups['gSharedStaging']}></Group>
               </div>
-              <div className="bg-gray-300 float-left h-full" style={{width: "10%"}}>
+              <div className="float-left h-full" style={{width: "10%"}}>
                 <Group group={groups['gSharedActive']}></Group>
               </div>
-              <div className="bg-gray-200 float-left h-full" style={{width: "15%"}}>
+              <div className="float-left h-full" style={{width: "15%"}}>
                 <Group group={groups['gSharedMainQuest']}></Group>
               </div>
               
             </div> 
-            <div className="bg-gray-700 w-full" style={{height: "20%", maxHeight: "20%"}}>
+            <div className="w-full" style={{height: "20%", maxHeight: "20%"}}>
               <Group group={groups['gPlayer1Engaged']}></Group>
             </div>
               
-            <div className="bg-gray-600 flex flex-1" style={{height: "20%", maxHeight: "20%"}}>
+            <div className="flex flex-1" style={{height: "20%", maxHeight: "20%"}}>
               <Group group={groups['gPlayer1Play1']}></Group>
             </div>
-            <div className="bg-gray-700 flex flex-1" style={{height: "20%", maxHeight: "20%"}}>
-              <div className="bg-gray-500" style={{width: "90%"}}>
+            <div className="flex flex-1" style={{height: "20%", maxHeight: "20%"}}>
+              <div className="" style={{width: "90%"}}>
                 <Group group={groups['gPlayer1Play2']}></Group>
               </div>
-              <div className="bg-gray-300" style={{width: "10%"}}>
+              <div className="" style={{width: "10%"}}>
                 <Group group={groups['gPlayer1Event']}></Group>
               </div>
             </div>
-            <div className="bg-gray-600 flex flex-1" style={{height: "20%", maxHeight: "20%"}}>
-              <div className="bg-gray-200" style={{width: "80%"}}>
+            <div className=" flex flex-1" style={{height: "20%", maxHeight: "20%", background: "rgba(0, 0, 0, 0.5)"}}>
+              <div className="" style={{width: "80%"}}>
                 <Group group={groups['gPlayer1Hand']}></Group>
               </div>
-              <div className="bg-gray-300" style={{width: "10%"}}>
+              <div className="" style={{width: "10%"}}>
                 <Group group={groups['gPlayer1Deck']}></Group>
               </div>
-              <div className="bg-gray-200" style={{width: "10%"}}>
+              <div className="" style={{width: "10%"}}>
                 <Group group={groups['gPlayer1Discard']}></Group>
               </div>
             </div>
           </div>
-          <div style={{height: "3%"}}>
+          <div className="bg-gray-300" style={{height: "3%"}}>
             Social links
           </div>
         </div>

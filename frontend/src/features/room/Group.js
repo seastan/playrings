@@ -15,13 +15,11 @@ export const Group = ({
   showTitle,
 }) => {
   const groupID = group.id
-  console.log("gid");
-  console.log(groupID);
   return (
     <div className="flex flex-1 h-full w-full" 
       key={groupID}
     >
-      <div className="text-center p-1 select-none" 
+      <div className="text-center p-1 select-none text-white" 
         style={{
           width:"30px", 
           writingMode:"vertical-rl", 
@@ -31,7 +29,8 @@ export const Group = ({
       </div>
       <div className="w-full h-full" 
         style={{
-          backgroundColor:"red",
+          marginTop: "4px"
+          //backgroundColor:"red",
           //overflowX: (group.type == "discard" || group.type == "deck") ? "hidden" : "scroll",
         }}
         >
@@ -54,19 +53,20 @@ export const Group = ({
                 {...provided.droppableProps}
                 ref={provided.innerRef}
                 className={cx({
-                  "h-full m-2": true,
+                  //"h-full": true,
                   "flex": (group.type == "hand" || group.type == "play"),
                 })}
                 style={{
-                  background: snapshot.isDraggingOver
-                    ? "lightblue"
-                    : "lightgrey",
+                  borderStyle: snapshot.isDraggingOver
+                    ? "dashed"
+                    : "none",
+                  borderWidth: 2,
                   padding: 0,
                   margin: 0,
-                  overflowX: (group.type == "discard" || group.type == "deck") ? "hidden" : "scroll",
-                  overflowY: (group.type == "discard" || group.type == "deck") ? "scroll" : "hidden",
-                  width: "100%", //(group.type == "hand" || group.type == "play") ? "calc(100%)" : "100%",
-                  //height: "full",
+                  overflowX: (group.type == "discard" || group.type == "deck") ? "hidden" : "auto",
+                  overflowY: (group.type == "discard" || group.type == "deck") ? "auto" : "hidden",
+                  width: (group.type == "hand" || group.type == "play") ? "calc(100% - 30px)" : "100%",
+                  height: "95%",
                   //minHeight: "full",
                 }}
                 
@@ -75,8 +75,8 @@ export const Group = ({
                   //if ((group.type=="deck" || group.type=="discard") && index>0) return null;
                   return (
                     <Draggable
-                      key={groupID+' '+card.id}
-                      draggableId={groupID+' '+card.id}
+                      key={card.id}
+                      draggableId={card.id}
                       index={index}
                     >
                       {(provided, snapshot) => {

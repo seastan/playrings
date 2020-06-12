@@ -95,3 +95,18 @@ p {
   height: "10px";
 
 }
+
+.scrollable-content {
+  overflow-x:hidden;
+  overflow-y:scroll; 
+}
+.scrollable-content::-webkit-scrollbar {
+  width:30px; 
+}
+.scrollable-content::-webkit-scrollbar * {
+  background:transparent;
+}
+.scrollable-content::-webkit-scrollbar-thumb {
+  background:rgba(255,0,0,0.1) !important;
+}
+
