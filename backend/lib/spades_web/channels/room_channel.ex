@@ -84,24 +84,34 @@ defmodule SpadesWeb.RoomChannel do
     {:reply, {:ok, client_state(socket)}, socket}
   end
 
-def handle_in(
-  "update_groups",
-  %{
-    "groups" => groups
-  },
-  %{assigns: %{room_slug: room_slug, user_id: user_id}} = socket
-) do
-# Ignoring return value; could work on passing an error up
-IO.puts("room channel: update_groups a")
-IO.inspect(groups)
-#IO.puts(list_of_cards[0])
-GameUIServer.update_groups(room_slug, user_id, groups)
-IO.puts("room channel: update_groups b")
-state = GameUIServer.state(room_slug)
-socket = socket |> assign(:game_ui, state)
-notify(socket)
+  def handle_in(
+      "update_groups",
+      %{"groups" => groups},
+      %{assigns: %{room_slug: room_slug, user_id: user_id}} = socket
+    ) do
+    GameUIServer.update_groups(room_slug, user_id, groups)
+    state = GameUIServer.state(room_slug)
+    socket = socket |> assign(:game_ui, state)
+    notify(socket)
 
-{:reply, {:ok, client_state(socket)}, socket}
+    {:reply, {:ok, client_state(socket)}, socket}
+  end
+
+  def handle_in(
+    "toggle_exhaust",
+    %{
+      "group" => group,
+      "stack" => stack,
+      "card" => card,
+    },
+    %{assigns: %{room_slug: room_slug, user_id: user_id}} = socket
+  ) do
+  GameUIServer.toggle_exhaust(room_slug, user_id, group, stack, card)
+  state = GameUIServer.state(room_slug)
+  socket = socket |> assign(:game_ui, state)
+  notify(socket)
+
+  {:reply, {:ok, client_state(socket)}, socket}
 end
 
   def handle_in(

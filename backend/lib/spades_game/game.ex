@@ -199,7 +199,7 @@ defmodule SpadesGame.Game do
     |> check_for_new_round()
   end
 
-  # unpdate_groups/8: A player moves a card on the table.
+  # update_groups/3: A player moves a card on the table.
   @spec update_groups(Game.t(), number, Groups.t()) :: #DragEvent.t()) ::
           {:ok, Game.t()} | {:error, String.t()}
 
@@ -212,6 +212,13 @@ defmodule SpadesGame.Game do
     {:ok, game}
   end
 
+  # toggle_exhaust/3: A player moves a card on the table.
+  @spec toggle_exhaust(Game.t(), number, Group.t(), Stack.t(), Card.t()) :: #DragEvent.t()) ::
+          {:ok, Game.t()} | {:error, String.t()}
+
+  def toggle_exhaust(%Game{} = game, user_id, group, stack, card) do
+    {:ok, game}
+  end
 
   @doc """
   checks/1:  Checks for time-based changes.

@@ -125,46 +125,46 @@ export const Groups = ({
 
             <div className="w-full" style={{minHeight: "20%", height: "20%", maxHeight: "20%"}}>
               <div className="float-left h-full" style={{width: "10%"}}>
-                <Group group={groups['gSharedEncounterDiscard']} broadcast={broadcast}></Group>
+                <Group inputGroup={groups['gSharedEncounterDiscard']} broadcast={broadcast}></Group>
               </div>
               <div className="float-left h-full" style={{width: "10%"}}>
-                <Group group={groups['gSharedEncounterDeck']} broadcast={broadcast}></Group>
+                <Group inputGroup={groups['gSharedEncounterDeck']} broadcast={broadcast}></Group>
               </div>
               <div className="float-left h-full" style={{width: "55%"}}>
-                <Group group={groups['gSharedStaging']} broadcast={broadcast}></Group>
+                <Group inputGroup={groups['gSharedStaging']} broadcast={broadcast}></Group>
               </div>
               <div className="float-left h-full" style={{width: "10%"}}>
-                <Group group={groups['gSharedActive']} broadcast={broadcast}></Group>
+                <Group inputGroup={groups['gSharedActive']} broadcast={broadcast}></Group>
               </div>
               <div className="float-left h-full" style={{width: "15%"}}>
-                <Group group={groups['gSharedMainQuest']} broadcast={broadcast}></Group>
+                <Group inputGroup={groups['gSharedMainQuest']} broadcast={broadcast}></Group>
               </div>
               
             </div> 
             <div className="w-full" style={{minHeight: "20%", height: "20%", maxHeight: "20%"}}>
-              <Group group={groups['gPlayer1Engaged']} broadcast={broadcast}></Group>
+              <Group inputGroup={groups['gPlayer1Engaged']} broadcast={broadcast}></Group>
             </div>
               
             <div className="flex flex-1" style={{minHeight: "20%", height: "20%", maxHeight: "20%"}}>
-              <Group group={groups['gPlayer1Play1']} broadcast={broadcast}></Group>
+              <Group inputGroup={groups['gPlayer1Play1']} broadcast={broadcast}></Group>
             </div>
             <div className="flex flex-1" style={{minHeight: "20%", height: "20%", maxHeight: "20%"}}>
               <div className="" style={{width: "90%"}}>
-                <Group group={groups['gPlayer1Play2']} broadcast={broadcast}></Group>
+                <Group inputGroup={groups['gPlayer1Play2']} broadcast={broadcast}></Group>
               </div>
               <div className="" style={{width: "10%"}}>
-                <Group group={groups['gPlayer1Event']} broadcast={broadcast}></Group>
+                <Group inputGroup={groups['gPlayer1Event']} broadcast={broadcast}></Group>
               </div>
             </div>
             <div className=" flex flex-1" style={{minHeight: "20%", height: "20%", maxHeight: "20%", background: "rgba(0, 0, 0, 0.5)"}}>
               <div className="" style={{width: "80%"}}>
-                <Group group={groups['gPlayer1Hand']} broadcast={broadcast}></Group>
+                <Group inputGroup={groups['gPlayer1Hand']} broadcast={broadcast}></Group>
               </div>
               <div className="" style={{width: "10%"}}>
-                <Group group={groups['gPlayer1Deck']} broadcast={broadcast}></Group>
+                <Group inputGroup={groups['gPlayer1Deck']} broadcast={broadcast}></Group>
               </div>
               <div className="" style={{width: "10%"}}>
-                <Group group={groups['gPlayer1Discard']} broadcast={broadcast}></Group>
+                <Group inputGroup={groups['gPlayer1Discard']} broadcast={broadcast}></Group>
               </div>
             </div>
           </div>
@@ -196,12 +196,12 @@ export const Groups = ({
             }}
           >        
             <div className="bg-gray-300" style={{height: "33.3%"}}>
-              <Group group={groups['gSharedExtra1']} showTitle="false"></Group>
+              <Group inputGroup={groups['gSharedExtra1']} showTitle="false"></Group>
             </div>
             <div className="bg-gray-400" style={{height: "33.3%"}}>
-              <Group group={groups['gSharedExtra2']} showTitle="false"></Group></div>
+              <Group inputGroup={groups['gSharedExtra2']} showTitle="false"></Group></div>
             <div className="bg-gray-500" style={{height: "33.4%"}}>
-              <Group group={groups['gSharedExtra3']} showTitle="false"></Group></div>
+              <Group inputGroup={groups['gSharedExtra3']} showTitle="false"></Group></div>
           </div>
           <div className="text-center" onClick={() => toggleScratch()} style={{height: "3%"}}>
             <FontAwesomeIcon className="text-white" icon={showScratch ? faChevronDown : faChevronUp}/>

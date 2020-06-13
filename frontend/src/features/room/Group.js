@@ -11,12 +11,40 @@ import { roundToNearestMinutesWithOptions } from "date-fns/fp";
 
 const CARDSCALE = 4.5;
 
+
+const toggleExhaust = (group, setGroup, stackIndex, cardIndex, broadcast) => {
+  var card = group.stacks[stackIndex].cards[cardIndex];
+  if (card.exhausted) {
+    console.log("Readying card");
+    card.exhausted = false;
+    card.rotation = 0;
+  }
+  else {
+    console.log("Exhausting card");
+    card.exhausted = true;
+    card.rotation = 90;
+  }
+  group.stacks[stackIndex].cards[cardIndex] = card;
+  setGroup(group);
+  //console.log(group);
+  //broadcast("update_group",group);
+}
+
+
+
 export const Group = ({
-  group,
+  inputGroup,
   broadcast,
   showTitle,
 }) => {
-  const groupID = group.id
+  const [group, setGroup] = useState(inputGroup);
+  const groupID = inputGroup.id
+  const [angles, setAngles] = useState(0);
+
+  useEffect(() => {    
+    setGroup(inputGroup);
+  }, [inputGroup]);
+
   return (
     <div className="h-full w-full" 
       key={groupID}
@@ -28,7 +56,7 @@ export const Group = ({
           writingMode:"vertical-rl", 
           display: (showTitle == "false" ? "none" : "block")
           }}>
-            {group.name}
+            {inputGroup.name}
       </div>
       <div className="w-full h-full" 
         style={{
@@ -47,8 +75,8 @@ export const Group = ({
         <Droppable 
           droppableId={groupID} 
           key={groupID}
-          direction={(group.type == "discard" || group.type == "deck") ? "vertical" : "horizontal"}
-          isCombineEnabled={(group.type == "play") ? true : false}
+          direction={(inputGroup.type == "discard" || inputGroup.type == "deck") ? "vertical" : "horizontal"}
+          isCombineEnabled={(inputGroup.type == "play") ? true : false}
         >
           {(provided, snapshot) => {
             return (
@@ -57,7 +85,7 @@ export const Group = ({
                 ref={provided.innerRef}
                 className={cx({
                   //"h-full": true,
-                  "flex": (group.type == "hand" || group.type == "play"),
+                  "flex": (inputGroup.type == "hand" || inputGroup.type == "play"),
                 })}
                 style={{
                   borderStyle: snapshot.isDraggingOver
@@ -66,21 +94,21 @@ export const Group = ({
                   borderWidth: 2,
                   padding: 0,
                   margin: 0,
-                  overflowX: (group.type == "discard" || group.type == "deck") ? "hidden" : "auto",
-                  overflowY: (group.type == "discard" || group.type == "deck") ? "auto" : "hidden",
+                  overflowX: (inputGroup.type == "discard" || inputGroup.type == "deck") ? "hidden" : "auto",
+                  overflowY: (inputGroup.type == "discard" || inputGroup.type == "deck") ? "auto" : "hidden",
                   width: "calc(100% - 30px)", //(group.type == "hand" || group.type == "play") ? "calc(100% - 30px)" : "100%",
                   height: "95%",
                   //minHeight: "full",
                 }}
                 
               >
-                {group.stacks.map((stack, index) => {
+                {inputGroup.stacks.map((stack, stackIndex) => {
                   //if ((group.type=="deck" || group.type=="discard") && index>0) return null;
                   return (
                     <Draggable
                       key={stack.id}
                       draggableId={stack.id}
-                      index={index}
+                      index={stackIndex}
                     >
                       {(provided, snapshot) => {
                         if (stack.cards.length == 0) return;
@@ -92,9 +120,6 @@ export const Group = ({
                         } else if (lastCard.rotation == 0 || lastCard.rotation == 180) {
                           widthOfLastCard = CARDSCALE*lastCard.aspectRatio;
                         }
-                        console.log(CARDSCALE);
-                        console.log(lastCard.aspectRatio);
-                        console.log(CARDSCALE/lastCard.aspectRatio);
                         const stackWidth = widthOfLastCard + CARDSCALE/3*(stack.cards.length-1)
                         return (
                           <div
@@ -116,7 +141,7 @@ export const Group = ({
                               height: `100%`
                             }}
                           >
-                            {stack.cards.map((card, cindex) => {
+                            {stack.cards.map((card, cardIndex) => {
                               return(
                                 <div 
                                   style={{
@@ -125,11 +150,22 @@ export const Group = ({
                                     backgroundSize: "contain",
                                     height: `${CARDSCALE/0.7}vw`,
                                     width: `${CARDSCALE}vw`,
-                                    left: `${CARDSCALE/3*cindex}vw`,
-                                    transform: `rotate(${card.rotation}deg)`,
-                                    zIndex: 1e5-cindex,
+                                    left: `${CARDSCALE/3*cardIndex}vw`,
+                                    transform: `rotate(${angles}deg)`,
+                                    //transform: `rotate(${card.rotation}deg)`,
+                                    zIndex: 1e5-cardIndex,
+                                    WebkitTransitionDuration: "0.2s",
+                                    MozTransitionDuration: "0.2s",
+                                    OTransitionDuration: "0.2s",
+                                    transitionDuration: "0.2s",
+                                    WebkitTransitionProperty: "-webkit-transform",
+                                    MozTransitionProperty: "-moz-transform",
+                                    OTransitionProperty: "-o-transform",
+                                    transitionProperty: "transform",
                                   }}
-                                  onClick={() => console.log(card.id)}
+                                  //  onDoubleClick={() => broadcast("toggle_exhaust",{group, stack, card})}
+                                  //onDoubleClick={() => toggleExhaust(inputGroup, setGroup, stackIndex, cardIndex, broadcast)}
+                                  onDoubleClick={() => setAngles(angles+90)}
                                 >
 
                                 </div>

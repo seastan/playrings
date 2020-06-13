@@ -3,7 +3,7 @@ defmodule SpadesGame.GameUI do
   One level on top of Game.
   """
 
-  alias SpadesGame.{Card, Game, GameOptions, GameUI, GameUISeat, Groups}
+  alias SpadesGame.{Game, GameOptions, GameUI, GameUISeat, Groups, Group, Stack, Card}
 
   @derive Jason.Encoder
   defstruct [:game, :game_name, :options, :created_at, :status, :seats, :when_seats_full]
@@ -105,6 +105,22 @@ defmodule SpadesGame.GameUI do
   def update_groups(game_ui, user_id, groups) do
     IO.puts("game_ui: update_groups a")
     case Game.update_groups(game_ui.game, user_id, groups) do
+      {:ok, new_game} ->
+        %{game_ui | game: new_game}
+        |> checks
+
+      {:error, _msg} ->
+        game_ui
+    end
+  end
+
+  @doc """
+  toggle_exhaust/3: A player moves a card on the table.
+  """
+  @spec toggle_exhaust(GameUI.t(), number, Group.t(), Stack.t(), Card.t()) :: GameUI.t() #DragEvent.t()) :: GameUI.t()
+  def toggle_exhaust(game_ui, user_id, group, stack, card) do
+    IO.puts("game_ui: toggle_exhaust a")
+    case Game.toggle_exhaust(game_ui.game, user_id, group, stack, card) do
       {:ok, new_game} ->
         %{game_ui | game: new_game}
         |> checks
