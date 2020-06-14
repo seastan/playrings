@@ -89,10 +89,14 @@ export const Group = ({
                   "flex": (inputGroup.type == "hand" || inputGroup.type == "play"),
                 })}
                 style={{
-                  borderStyle: snapshot.isDraggingOver
-                    ? "dashed"
-                    : "none",
-                  borderWidth: 2,
+                  //borderStyle: "line",
+                  //borderColor: snapshot.isDraggingOver
+                  //? "rgba(255,255,255,0.3)"
+                  //: "rgba(255,255,255,0)",
+                  //borderWidth: 2,
+                  backgroundColor: snapshot.isDraggingOver
+                  ? "rgba(255,255,255,0.1)"
+                  : "rgba(255,255,255,0)",
                   padding: 0,
                   margin: 0,
                   overflowX: (inputGroup.type == "discard" || inputGroup.type == "deck") ? "hidden" : "auto",
