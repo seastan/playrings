@@ -6,6 +6,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Chat from "../chat/Chat";
 import uuid from "uuid/v4";
 import cx from "classnames";
+import { Stack } from "./Stack"
 import { callbackify } from "util";
 import { roundToNearestMinutesWithOptions } from "date-fns/fp";
 
@@ -41,9 +42,9 @@ export const Group = ({
   const groupID = inputGroup.id
   const [angles, setAngles] = useState(0);
 
-  useEffect(() => {    
-    setGroup(inputGroup);
-  }, [inputGroup]);
+  // useEffect(() => {    
+  //   setGroup(inputGroup);
+  // }, [inputGroup]);
 
   return (
     <div className="h-full w-full" 
@@ -103,81 +104,82 @@ export const Group = ({
                 
               >
                 {inputGroup.stacks.map((stack, stackIndex) => {
+                  return(<Stack key={stack.id} inputStack={stack} stackIndex={stackIndex} broadcast={broadcast}></Stack>)
                   //if ((group.type=="deck" || group.type=="discard") && index>0) return null;
-                  return (
-                    <Draggable
-                      key={stack.id}
-                      draggableId={stack.id}
-                      index={stackIndex}
-                    >
-                      {(provided, snapshot) => {
-                        if (stack.cards.length == 0) return;
-                        // Determine width of the stack, which is dependent on the orientation of the last card in the stack.
-                        const lastCard = stack.cards[stack.cards.length - 1];                             
-                        var widthOfLastCard = CARDSCALE;
-                        if (lastCard.rotation == 90 || lastCard.rotation == 270) {
-                          widthOfLastCard = CARDSCALE/lastCard.aspectRatio;
-                        } else if (lastCard.rotation == 0 || lastCard.rotation == 180) {
-                          widthOfLastCard = CARDSCALE*lastCard.aspectRatio;
-                        }
-                        const stackWidth = widthOfLastCard + CARDSCALE/3*(stack.cards.length-1)
-                        return (
-                          <div
-                            className=""
-                            ref={provided.innerRef}
-                            {...provided.draggableProps}
-                            {...provided.dragHandleProps}
-                            style={{
-                              position: "relative",
-                              userSelect: "none",
-                              padding: 0,
-                              margin: "4px 4px 0 0",
-                              minHeight: "full",
-                              ...provided.draggableProps.style,
-                              //height: "180px", //120,
-                              //paddingRight: "7%",
-                              minWidth: `${stackWidth}vw`,
-                              width: `${stackWidth}vw`, //  `${CARDSCALE+CARDSCALE/3*(stack.cards.length-1)}vw`,
-                              height: `100%`
-                            }}
-                          >
-                            {stack.cards.map((card, cardIndex) => {
-                              return(
-                                <div 
-                                  style={{
-                                    position: "absolute",
-                                    background: `url(${card.src}) no-repeat`,
-                                    backgroundSize: "contain",
-                                    height: `${CARDSCALE/0.7}vw`,
-                                    width: `${CARDSCALE}vw`,
-                                    left: `${CARDSCALE/3*cardIndex}vw`,
-                                    transform: `rotate(${angles}deg)`,
-                                    //transform: `rotate(${card.rotation}deg)`,
-                                    zIndex: 1e5-cardIndex,
-                                    WebkitTransitionDuration: "0.2s",
-                                    MozTransitionDuration: "0.2s",
-                                    OTransitionDuration: "0.2s",
-                                    transitionDuration: "0.2s",
-                                    WebkitTransitionProperty: "-webkit-transform",
-                                    MozTransitionProperty: "-moz-transform",
-                                    OTransitionProperty: "-o-transform",
-                                    transitionProperty: "transform",
-                                  }}
-                                  //  onDoubleClick={() => broadcast("toggle_exhaust",{group, stack, card})}
-                                  //onDoubleClick={() => toggleExhaust(inputGroup, setGroup, stackIndex, cardIndex, broadcast)}
-                                  onDoubleClick={() => setAngles(angles+90)}
-                                >
+                  // return (
+                  //   <Draggable
+                  //     key={stack.id}
+                  //     draggableId={stack.id}
+                  //     index={stackIndex}
+                  //   >
+                  //     {(provided, snapshot) => {
+                  //       if (stack.cards.length == 0) return;
+                  //       // Determine width of the stack, which is dependent on the orientation of the last card in the stack.
+                  //       const lastCard = stack.cards[stack.cards.length - 1];                             
+                  //       var widthOfLastCard = CARDSCALE;
+                  //       if (lastCard.rotation == 90 || lastCard.rotation == 270) {
+                  //         widthOfLastCard = CARDSCALE/lastCard.aspectRatio;
+                  //       } else if (lastCard.rotation == 0 || lastCard.rotation == 180) {
+                  //         widthOfLastCard = CARDSCALE*lastCard.aspectRatio;
+                  //       }
+                  //       const stackWidth = widthOfLastCard + CARDSCALE/3*(stack.cards.length-1)
+                  //       return (
+                  //         <div
+                  //           className=""
+                  //           ref={provided.innerRef}
+                  //           {...provided.draggableProps}
+                  //           {...provided.dragHandleProps}
+                  //           style={{
+                  //             position: "relative",
+                  //             userSelect: "none",
+                  //             padding: 0,
+                  //             margin: "4px 4px 0 0",
+                  //             minHeight: "full",
+                  //             ...provided.draggableProps.style,
+                  //             //height: "180px", //120,
+                  //             //paddingRight: "7%",
+                  //             minWidth: `${stackWidth}vw`,
+                  //             width: `${stackWidth}vw`, //  `${CARDSCALE+CARDSCALE/3*(stack.cards.length-1)}vw`,
+                  //             height: `100%`
+                  //           }}
+                  //         >
+                  //           {stack.cards.map((card, cardIndex) => {
+                  //             return(
+                  //               <div 
+                  //                 style={{
+                  //                   position: "absolute",
+                  //                   background: `url(${card.src}) no-repeat`,
+                  //                   backgroundSize: "contain",
+                  //                   height: `${CARDSCALE/0.7}vw`,
+                  //                   width: `${CARDSCALE}vw`,
+                  //                   left: `${CARDSCALE/3*cardIndex}vw`,
+                  //                   transform: `rotate(${angles}deg)`,
+                  //                   //transform: `rotate(${card.rotation}deg)`,
+                  //                   zIndex: 1e5-cardIndex,
+                  //                   WebkitTransitionDuration: "0.2s",
+                  //                   MozTransitionDuration: "0.2s",
+                  //                   OTransitionDuration: "0.2s",
+                  //                   transitionDuration: "0.2s",
+                  //                   WebkitTransitionProperty: "-webkit-transform",
+                  //                   MozTransitionProperty: "-moz-transform",
+                  //                   OTransitionProperty: "-o-transform",
+                  //                   transitionProperty: "transform",
+                  //                 }}
+                  //                 //  onDoubleClick={() => broadcast("toggle_exhaust",{group, stack, card})}
+                  //                 //onDoubleClick={() => toggleExhaust(inputGroup, setGroup, stackIndex, cardIndex, broadcast)}
+                  //                 onDoubleClick={() => setAngles(angles+90)}
+                  //               >
 
-                                </div>
-                              )
-                            })}
+                  //               </div>
+                  //             )
+                  //           })}
 
 
-                          </div>
-                        );
-                      }}
-                    </Draggable>
-                  );
+                  //         </div>
+                  //       );
+                  //     }}
+                  //   </Draggable>
+                  // );
                 })}
                 {provided.placeholder}
               </div>
