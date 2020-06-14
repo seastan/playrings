@@ -14,7 +14,8 @@ import {CARDSCALE, Card} from "./Card";
 export const Stack = ({
     inputStack,
     stackIndex,
-    broadcast
+    broadcast,
+    setActiveCard,
   }) => {
     const [stack, setStack] = useState(inputStack);
     if (!stack) return null;
@@ -48,7 +49,7 @@ export const Stack = ({
                 }}
             >
                 {stack.cards.map((card, cardIndex) => {
-                    return(<Card key={card.id} inputCard={card} cardIndex={cardIndex} broadcast={broadcast}></Card>)
+                    return(<Card key={card.id} inputCard={card} cardIndex={cardIndex} broadcast={broadcast} setActiveCard={setActiveCard}></Card>)
                 })}
             </div>
             );

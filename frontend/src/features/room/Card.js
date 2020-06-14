@@ -17,7 +17,8 @@ const handleDoubleClick = (event, card, setCard, broadcast) => {
 export const Card = ({
     inputCard,
     cardIndex,
-    broadcast
+    broadcast,
+    setActiveCard,
   }) => {
     const [card, setCard] = useState(inputCard);
     if (!card) return null;
@@ -46,6 +47,7 @@ export const Card = ({
             //onDoubleClick={() => broadcast("toggle_exhaust",{group, stack, card})}
             //onDoubleClick={() => toggleExhaust(inputGroup, setGroup, stackIndex, cardIndex, broadcast)}
             onDoubleClick={event => handleDoubleClick(event, card, setCard, broadcast)}
+            onMouseOver={() => {setActiveCard(card); console.log(card);}}
         >
         </div>
     )

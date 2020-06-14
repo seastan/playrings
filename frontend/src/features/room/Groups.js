@@ -5,6 +5,7 @@ import { faChevronUp, faChevronDown } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Chat from "../chat/Chat";
 import Group from "./Group";
+import Card from "./Card";
 import uuid from "uuid/v4";
 import cx from "classnames";
 
@@ -55,6 +56,7 @@ export const Groups = ({
   const [groups, setGroups] = useState(gameUIView.game_ui.game.groups);
   const [showScratch, setShowScratch] = useState(false);
   const [phase, setPhase] = useState(1);
+  const [activeCard, setActiveCard] = useState(null);
 
   function toggleScratch() {
     if (showScratch) setShowScratch(false);
@@ -125,46 +127,46 @@ export const Groups = ({
 
             <div className="w-full" style={{minHeight: "20%", height: "20%", maxHeight: "20%"}}>
               <div className="float-left h-full" style={{width: "10%"}}>
-                <Group inputGroup={groups['gSharedEncounterDiscard']} broadcast={broadcast}></Group>
+                <Group inputGroup={groups['gSharedEncounterDiscard']} broadcast={broadcast} setActiveCard={setActiveCard}></Group>
               </div>
               <div className="float-left h-full" style={{width: "10%"}}>
-                <Group inputGroup={groups['gSharedEncounterDeck']} broadcast={broadcast}></Group>
+                <Group inputGroup={groups['gSharedEncounterDeck']} broadcast={broadcast} setActiveCard={setActiveCard}></Group>
               </div>
               <div className="float-left h-full" style={{width: "55%"}}>
-                <Group inputGroup={groups['gSharedStaging']} broadcast={broadcast}></Group>
+                <Group inputGroup={groups['gSharedStaging']} broadcast={broadcast} setActiveCard={setActiveCard}></Group>
               </div>
               <div className="float-left h-full" style={{width: "10%"}}>
-                <Group inputGroup={groups['gSharedActive']} broadcast={broadcast}></Group>
+                <Group inputGroup={groups['gSharedActive']} broadcast={broadcast} setActiveCard={setActiveCard}></Group>
               </div>
               <div className="float-left h-full" style={{width: "15%"}}>
-                <Group inputGroup={groups['gSharedMainQuest']} broadcast={broadcast}></Group>
+                <Group inputGroup={groups['gSharedMainQuest']} broadcast={broadcast} setActiveCard={setActiveCard}></Group>
               </div>
               
             </div> 
             <div className="w-full" style={{minHeight: "20%", height: "20%", maxHeight: "20%"}}>
-              <Group inputGroup={groups['gPlayer1Engaged']} broadcast={broadcast}></Group>
+              <Group inputGroup={groups['gPlayer1Engaged']} broadcast={broadcast} setActiveCard={setActiveCard}></Group>
             </div>
               
             <div className="flex flex-1" style={{minHeight: "20%", height: "20%", maxHeight: "20%"}}>
-              <Group inputGroup={groups['gPlayer1Play1']} broadcast={broadcast}></Group>
+              <Group inputGroup={groups['gPlayer1Play1']} broadcast={broadcast} setActiveCard={setActiveCard}></Group>
             </div>
             <div className="flex flex-1" style={{minHeight: "20%", height: "20%", maxHeight: "20%"}}>
               <div className="" style={{width: "90%"}}>
-                <Group inputGroup={groups['gPlayer1Play2']} showTitle="false" broadcast={broadcast}></Group>
+                <Group inputGroup={groups['gPlayer1Play2']} showTitle="false" broadcast={broadcast} setActiveCard={setActiveCard}></Group>
               </div>
               <div className="" style={{width: "10%"}}>
-                <Group inputGroup={groups['gPlayer1Event']} broadcast={broadcast}></Group>
+                <Group inputGroup={groups['gPlayer1Event']} broadcast={broadcast} setActiveCard={setActiveCard}></Group>
               </div>
             </div>
             <div className=" flex flex-1" style={{minHeight: "20%", height: "20%", maxHeight: "20%", background: "rgba(0, 0, 0, 0.5)"}}>
               <div className="" style={{width: "80%"}}>
-                <Group inputGroup={groups['gPlayer1Hand']} broadcast={broadcast}></Group>
+                <Group inputGroup={groups['gPlayer1Hand']} broadcast={broadcast} setActiveCard={setActiveCard}></Group>
               </div>
               <div className="" style={{width: "10%"}}>
-                <Group inputGroup={groups['gPlayer1Deck']} broadcast={broadcast}></Group>
+                <Group inputGroup={groups['gPlayer1Deck']} broadcast={broadcast} setActiveCard={setActiveCard}></Group>
               </div>
               <div className="" style={{width: "10%"}}>
-                <Group inputGroup={groups['gPlayer1Discard']} broadcast={broadcast}></Group>
+                <Group inputGroup={groups['gPlayer1Discard']} broadcast={broadcast} setActiveCard={setActiveCard}></Group>
               </div>
             </div>
           </div>
@@ -175,14 +177,22 @@ export const Groups = ({
       </div>
       
       {/* Right panel */}
-      <div className="flex w-1/5 bg-gray-400" >
+      <div className="flex w-1/5" >
         <div className="flex flex-col w-full h-full">
 
-          <div className="bg-gray-600" style={{height: "40%"}}>
+          <div className="" 
+            style={{
+              height: "45%",
+              backgroundImage: `url(${activeCard?.src})`,
+              backgroundRepeat: "no-repeat",
+              backgroundSize: "contain",
+              backgroundPosition: "center",
+            }}
+          >
           </div>
           <div 
             className="bg-gray-500 overflow-hidden" 
-            style={{height: showScratch ? "17%" : "57%"}}
+            style={{height: showScratch ? "12%" : "57%"}}
           >
             {gameUIView != null && (
               <Chat roomName={gameUIView.game_ui.game_name} />
@@ -196,12 +206,12 @@ export const Groups = ({
             }}
           >        
             <div className="bg-gray-300" style={{height: "33.3%"}}>
-              <Group inputGroup={groups['gSharedExtra1']} showTitle="false"></Group>
+              <Group inputGroup={groups['gSharedExtra1']} showTitle="false" setActiveCard={setActiveCard}></Group>
             </div>
             <div className="bg-gray-400" style={{height: "33.3%"}}>
-              <Group inputGroup={groups['gSharedExtra2']} showTitle="false"></Group></div>
+              <Group inputGroup={groups['gSharedExtra2']} showTitle="false" setActiveCard={setActiveCard}></Group></div>
             <div className="bg-gray-500" style={{height: "33.4%"}}>
-              <Group inputGroup={groups['gSharedExtra3']} showTitle="false"></Group></div>
+              <Group inputGroup={groups['gSharedExtra3']} showTitle="false" setActiveCard={setActiveCard}></Group></div>
           </div>
           <div className="text-center" onClick={() => toggleScratch()} style={{height: "3%"}}>
             <FontAwesomeIcon className="text-white" icon={showScratch ? faChevronDown : faChevronUp}/>

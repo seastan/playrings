@@ -37,6 +37,7 @@ export const Group = ({
   inputGroup,
   broadcast,
   showTitle,
+  setActiveCard,
 }) => {
   const [group, setGroup] = useState(inputGroup);
   const groupID = inputGroup.id
@@ -63,7 +64,7 @@ export const Group = ({
       <div className="w-full" 
         style={{
           marginTop: "4px",
-          height: "calc(100% - 30px)",
+          height: (showTitle == "false" ? "100%" : "calc(100% - 30px)"),
           //backgroundColor:"red",
           //overflowX: (group.type == "discard" || group.type == "deck") ? "hidden" : "scroll",
         }}
@@ -103,14 +104,14 @@ export const Group = ({
                   margin: 0,
                   overflowX: (inputGroup.type == "discard" || inputGroup.type == "deck") ? "hidden" : "auto",
                   overflowY: (inputGroup.type == "discard" || inputGroup.type == "deck") ? "auto" : "hidden",
-                  width: "calc(100% - 30px)", //(group.type == "hand" || group.type == "play") ? "calc(100% - 30px)" : "100%",
+                  width: "100%", //(group.type == "hand" || group.type == "play") ? "calc(100% - 30px)" : "100%",
                   height: "95%",
                   //minHeight: "full",
                 }}
                 
               >
                 {inputGroup.stacks.map((stack, stackIndex) => {
-                  return(<Stack key={stack.id} inputStack={stack} stackIndex={stackIndex} broadcast={broadcast}></Stack>)
+                  return(<Stack key={stack.id} inputStack={stack} stackIndex={stackIndex} broadcast={broadcast} setActiveCard={setActiveCard}></Stack>)
                   //if ((group.type=="deck" || group.type=="discard") && index>0) return null;
                   // return (
                   //   <Draggable
