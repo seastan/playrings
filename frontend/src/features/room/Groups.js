@@ -33,14 +33,14 @@ const onDragEnd = (result, groups, setGroups, broadcast) => {
     }
   } else {
     const group = groups[source.droppableId];
-    const copiedCards = [...group.stacks];
-    const [removed] = copiedCards.splice(source.index, 1);
-    copiedCards.splice(destination.index, 0, removed);
+    const copiedStacks = [...group.stacks];
+    const [removed] = copiedStacks.splice(source.index, 1);
+    copiedStacks.splice(destination.index, 0, removed);
     newGroups = {
       ...groups,
       [source.droppableId]: {
         ...group,
-        cards: copiedCards
+        stacks: copiedStacks
       }
     }
   }
