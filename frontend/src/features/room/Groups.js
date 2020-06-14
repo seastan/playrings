@@ -150,7 +150,7 @@ export const Groups = ({
             </div>
             <div className="flex flex-1" style={{minHeight: "20%", height: "20%", maxHeight: "20%"}}>
               <div className="" style={{width: "90%"}}>
-                <Group inputGroup={groups['gPlayer1Play2']} broadcast={broadcast}></Group>
+                <Group inputGroup={groups['gPlayer1Play2']} showTitle="false" broadcast={broadcast}></Group>
               </div>
               <div className="" style={{width: "10%"}}>
                 <Group inputGroup={groups['gPlayer1Event']} broadcast={broadcast}></Group>

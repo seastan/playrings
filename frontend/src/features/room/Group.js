@@ -50,18 +50,20 @@ export const Group = ({
     <div className="h-full w-full" 
       key={groupID}
     >
-      <div className="text-center p-1 select-none text-white" 
+      <div className="p-1 select-none text-white text-xs" 
         style={{
-          float: "left",
-          width:"30px", 
-          writingMode:"vertical-rl", 
+          //float: "left",
+          height: "30px",
+          width:"full", 
+          //writingMode:"vertical-rl", 
           display: (showTitle == "false" ? "none" : "block")
           }}>
             {inputGroup.name}
       </div>
-      <div className="w-full h-full" 
+      <div className="w-full" 
         style={{
-          marginTop: "4px"
+          marginTop: "4px",
+          height: "calc(100% - 30px)",
           //backgroundColor:"red",
           //overflowX: (group.type == "discard" || group.type == "deck") ? "hidden" : "scroll",
         }}
