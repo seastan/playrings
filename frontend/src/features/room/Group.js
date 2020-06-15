@@ -37,6 +37,7 @@ export const Group = ({
   inputGroup,
   broadcast,
   showTitle,
+  activeCard,
   setActiveCard,
 }) => {
   const [group, setGroup] = useState(inputGroup);
@@ -111,7 +112,7 @@ export const Group = ({
                 
               >
                 {inputGroup.stacks.map((stack, stackIndex) => {
-                  return(<Stack key={stack.id} inputStack={stack} stackIndex={stackIndex} broadcast={broadcast} setActiveCard={setActiveCard}></Stack>)
+                  return(<Stack key={stack.id} inputStack={stack} stackIndex={stackIndex} broadcast={broadcast} activeCard={activeCard} setActiveCard={setActiveCard}></Stack>)
                   //if ((group.type=="deck" || group.type=="discard") && index>0) return null;
                   // return (
                   //   <Draggable

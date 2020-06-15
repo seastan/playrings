@@ -14,7 +14,8 @@ const progressURL = "https://raw.githubusercontent.com/seastan/Lord-of-the-Rings
 const timeURL = "https://raw.githubusercontent.com/seastan/Lord-of-the-Rings/master/o8g/Sets/Markers%20and%20Tokens/Markers/31627422-f546-4a69-86df-ca0a028f3138.png";
 
 
-const handleDoubleClick = (event, card, setCard, broadcast) => {
+const handleDoubleClick = (event, card, setCard, broadcast, adjustVisible) => {
+    if (adjustVisible) return;
     if (!card.exhausted) {
         card.exhausted = true;
         card.rotation = 90;
@@ -29,9 +30,34 @@ export const Card = ({
     inputCard,
     cardIndex,
     broadcast,
+    activeCard,
     setActiveCard,
   }) => {
     const [card, setCard] = useState(inputCard);
+    const [adjustVisible, setAdjustVisible] = useState(false);
+    useEffect(() => {
+        const onKeyDown = ({key}) => {
+            if (key === "Shift") {
+                setAdjustVisible(true);
+            }
+        }
+
+        const onKeyUp = ({key}) => {
+            if (key === "Shift") {
+                setAdjustVisible(false);
+            }
+        }
+
+        document.addEventListener('keydown', onKeyDown);
+        document.addEventListener('keyup', onKeyUp);
+
+        return () => {
+            document.removeEventListener('keydown', onKeyDown);
+            document.removeEventListener('keyup', onKeyUp);
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
     if (!card) return null;
     return (
         <div 
@@ -58,10 +84,10 @@ export const Card = ({
                 // MozBoxShadow: "10px 10px 29px 5px rgba(0,0,0,0.26)",
                 // boxShadow: "10px 10px 29px 5px rgba(0,0,0,0.26)",
             }}
-            onDoubleClick={event => handleDoubleClick(event, card, setCard, broadcast)}
+            onDoubleClick={event => handleDoubleClick(event, card, setCard, broadcast, adjustVisible)}
             onMouseOver={() => {setActiveCard(card); console.log(card);}}
         >
-            <Tokens card={card}></Tokens>
+            <Tokens card={card} adjustVisible={adjustVisible && (activeCard===card)}></Tokens>
         </div>
     )
   }

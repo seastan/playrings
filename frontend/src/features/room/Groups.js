@@ -127,46 +127,46 @@ export const Groups = ({
 
             <div className="w-full" style={{minHeight: "20%", height: "20%", maxHeight: "20%"}}>
               <div className="float-left h-full" style={{width: "10%"}}>
-                <Group inputGroup={groups['gSharedEncounterDiscard']} broadcast={broadcast} setActiveCard={setActiveCard}></Group>
+                <Group inputGroup={groups['gSharedEncounterDiscard']} broadcast={broadcast} activeCard={activeCard} setActiveCard={setActiveCard}></Group>
               </div>
               <div className="float-left h-full" style={{width: "10%"}}>
-                <Group inputGroup={groups['gSharedEncounterDeck']} broadcast={broadcast} setActiveCard={setActiveCard}></Group>
+                <Group inputGroup={groups['gSharedEncounterDeck']} broadcast={broadcast} activeCard={activeCard} setActiveCard={setActiveCard}></Group>
               </div>
               <div className="float-left h-full" style={{width: "55%"}}>
-                <Group inputGroup={groups['gSharedStaging']} broadcast={broadcast} setActiveCard={setActiveCard}></Group>
+                <Group inputGroup={groups['gSharedStaging']} broadcast={broadcast} activeCard={activeCard} setActiveCard={setActiveCard}></Group>
               </div>
               <div className="float-left h-full" style={{width: "10%"}}>
-                <Group inputGroup={groups['gSharedActive']} broadcast={broadcast} setActiveCard={setActiveCard}></Group>
+                <Group inputGroup={groups['gSharedActive']} broadcast={broadcast} activeCard={activeCard} setActiveCard={setActiveCard}></Group>
               </div>
               <div className="float-left h-full" style={{width: "15%"}}>
-                <Group inputGroup={groups['gSharedMainQuest']} broadcast={broadcast} setActiveCard={setActiveCard}></Group>
+                <Group inputGroup={groups['gSharedMainQuest']} broadcast={broadcast} activeCard={activeCard} setActiveCard={setActiveCard}></Group>
               </div>
               
             </div> 
             <div className="w-full" style={{minHeight: "20%", height: "20%", maxHeight: "20%"}}>
-              <Group inputGroup={groups['gPlayer1Engaged']} broadcast={broadcast} setActiveCard={setActiveCard}></Group>
+              <Group inputGroup={groups['gPlayer1Engaged']} broadcast={broadcast} activeCard={activeCard} setActiveCard={setActiveCard}></Group>
             </div>
               
             <div className="flex flex-1" style={{minHeight: "20%", height: "20%", maxHeight: "20%"}}>
-              <Group inputGroup={groups['gPlayer1Play1']} broadcast={broadcast} setActiveCard={setActiveCard}></Group>
+              <Group inputGroup={groups['gPlayer1Play1']} broadcast={broadcast} activeCard={activeCard} setActiveCard={setActiveCard}></Group>
             </div>
             <div className="flex flex-1" style={{minHeight: "20%", height: "20%", maxHeight: "20%"}}>
               <div className="" style={{width: "90%"}}>
-                <Group inputGroup={groups['gPlayer1Play2']} showTitle="false" broadcast={broadcast} setActiveCard={setActiveCard}></Group>
+                <Group inputGroup={groups['gPlayer1Play2']} showTitle="false" broadcast={broadcast} activeCard={activeCard} setActiveCard={setActiveCard}></Group>
               </div>
               <div className="" style={{width: "10%"}}>
-                <Group inputGroup={groups['gPlayer1Event']} broadcast={broadcast} setActiveCard={setActiveCard}></Group>
+                <Group inputGroup={groups['gPlayer1Event']} broadcast={broadcast} activeCard={activeCard} setActiveCard={setActiveCard}></Group>
               </div>
             </div>
             <div className=" flex flex-1" style={{minHeight: "20%", height: "20%", maxHeight: "20%", background: "rgba(0, 0, 0, 0.5)"}}>
               <div className="" style={{width: "80%"}}>
-                <Group inputGroup={groups['gPlayer1Hand']} broadcast={broadcast} setActiveCard={setActiveCard}></Group>
+                <Group inputGroup={groups['gPlayer1Hand']} broadcast={broadcast} activeCard={activeCard} setActiveCard={setActiveCard}></Group>
               </div>
               <div className="" style={{width: "10%"}}>
-                <Group inputGroup={groups['gPlayer1Deck']} broadcast={broadcast} setActiveCard={setActiveCard}></Group>
+                <Group inputGroup={groups['gPlayer1Deck']} broadcast={broadcast} activeCard={activeCard} setActiveCard={setActiveCard}></Group>
               </div>
               <div className="" style={{width: "10%"}}>
-                <Group inputGroup={groups['gPlayer1Discard']} broadcast={broadcast} setActiveCard={setActiveCard}></Group>
+                <Group inputGroup={groups['gPlayer1Discard']} broadcast={broadcast} activeCard={activeCard} setActiveCard={setActiveCard}></Group>
               </div>
             </div>
           </div>
@@ -206,12 +206,12 @@ export const Groups = ({
             }}
           >        
             <div className="bg-gray-300" style={{height: "33.3%"}}>
-              <Group inputGroup={groups['gSharedExtra1']} showTitle="false" setActiveCard={setActiveCard}></Group>
+              <Group inputGroup={groups['gSharedExtra1']} showTitle="false" activeCard={activeCard} setActiveCard={setActiveCard}></Group>
             </div>
             <div className="bg-gray-400" style={{height: "33.3%"}}>
-              <Group inputGroup={groups['gSharedExtra2']} showTitle="false" setActiveCard={setActiveCard}></Group></div>
+              <Group inputGroup={groups['gSharedExtra2']} showTitle="false" activeCard={activeCard} setActiveCard={setActiveCard}></Group></div>
             <div className="bg-gray-500" style={{height: "33.4%"}}>
-              <Group inputGroup={groups['gSharedExtra3']} showTitle="false" setActiveCard={setActiveCard}></Group></div>
+              <Group inputGroup={groups['gSharedExtra3']} showTitle="false" activeCard={activeCard} setActiveCard={setActiveCard}></Group></div>
           </div>
           <div className="text-center" onClick={() => toggleScratch()} style={{height: "3%"}}>
             <FontAwesomeIcon className="text-white" icon={showScratch ? faChevronDown : faChevronUp}/>
