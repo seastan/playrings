@@ -26,7 +26,7 @@ export const Chat: React.FC<Props> = ({ roomName }) => {
   return (
 
     <div className="overflow-hidden h-full">
-      <div className="bg-gray-800 overflow-y-auto" style={{height: "calc(100% - 32px)"}}>
+      <div className="bg-gray-800 overflow-y-auto rounded-lg" style={{height: "calc(100% - 32px)"}}>
         <ChatMessages messages={messages}/>
       </div>
       <div className="text-center" >

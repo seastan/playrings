@@ -179,7 +179,7 @@ export const Groups = ({
       {/* Right panel */}
       <div className="flex w-1/5" >
         <div className="flex flex-col w-full h-full">
-
+          {/* Hovercard */}
           <div className="" 
             style={{
               height: "45%",
@@ -190,14 +190,16 @@ export const Groups = ({
             }}
           >
           </div>
+          {/* Chat */}
           <div 
-            className="bg-gray-500 overflow-hidden" 
-            style={{height: showScratch ? "12%" : "57%"}}
+            className="overflow-hidden" 
+            style={{height: showScratch ? "12%" : "57%", opacity: 0.7}}
           >
             {gameUIView != null && (
               <Chat roomName={gameUIView.game_ui.game_name} />
             )}
           </div>
+          {/* Extra */}
           <div 
             className="bg-gray-800" 
             style={{
@@ -210,7 +212,7 @@ export const Groups = ({
             </div>
             <div className="bg-gray-400" style={{height: "33.3%"}}>
               <Group inputGroup={groups['gSharedExtra2']} showTitle="false" activeCard={activeCard} setActiveCard={setActiveCard}></Group></div>
-            <div className="bg-gray-500" style={{height: "33.4%"}}>
+            <div className="" style={{height: "33.4%"}}>
               <Group inputGroup={groups['gSharedExtra3']} showTitle="false" activeCard={activeCard} setActiveCard={setActiveCard}></Group></div>
           </div>
           <div className="text-center" onClick={() => toggleScratch()} style={{height: "3%"}}>
