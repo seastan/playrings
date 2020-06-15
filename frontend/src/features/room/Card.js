@@ -64,7 +64,7 @@ export const Card = ({
             key={card.id}
             style={{
                 position: "absolute",
-                background: `url(${card.src}) no-repeat`,
+                background: "red", //`url(${card.src}) no-repeat`,
                 backgroundSize: "contain",
                 height: `${CARDSCALE/0.7}vw`,
                 width: `${CARDSCALE}vw`,

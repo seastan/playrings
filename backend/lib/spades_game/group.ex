@@ -28,7 +28,22 @@ defmodule SpadesGame.Group do
       name: name,
       type: type,
       controller: controller,
-      stacks: [Stack.new_test()],
+      # stacks: [Stack.new_test1(),Stack.new_test(),Stack.new_test(),Stack.new_test(),Stack.new_test(),Stack.new_test(),Stack.new_test()],
+      stacks: [Stack.new_test1()]#,Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1()],
+    }
+  end
+
+  @doc """
+  new_deck/4: Create a new player with an empty hand.
+  """
+  @spec new_deck(String.t(), String.t(), :hand | :deck | :discard | :play, String.t()) :: Group.t()
+  def new_deck(id, name, type, controller) do
+    %Group{
+      id: id,
+      name: name,
+      type: type,
+      controller: controller,
+      stacks: [Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1()]
     }
   end
 

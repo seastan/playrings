@@ -116,7 +116,7 @@ defmodule SpadesGame.Groups do
     %Groups{
       gSharedQuestDeck:         Group.new("gSharedQuestDeck","Quest","hand","cShared"),
       gSharedQuestDiscard:      Group.new("gSharedQuestDiscard","Quest Discard","discard","cShared"),
-      gSharedEncounterDeck:     Group.new("gSharedEncounterDeck","Encounter","deck","cShared"),
+      gSharedEncounterDeck:     Group.new_deck("gSharedEncounterDeck","Encounter","deck","cShared"),
       gSharedEncounterDiscard:  Group.new("gSharedEncounterDiscard","Enc Discard","discard","cShared"),
       gSharedQuestDeck2:        Group.new("gSharedQuestDeck2","Quest 2","hand","cShared"),
       gSharedQuestDiscard2:     Group.new("gSharedQuestDiscard2","Quest Discard 2","discard","cShared"),
@@ -131,7 +131,7 @@ defmodule SpadesGame.Groups do
       gSharedExtra2:            Group.new("gSharedExtra2","Extra2","play","cShared"),
       gSharedExtra3:            Group.new("gSharedExtra3","Extra3","play","cShared"),
       gPlayer1Hand:             Group.new("gPlayer1Hand","Hand","hand","cPlayer1"),
-      gPlayer1Deck:             Group.new("gPlayer1Deck","Deck","deck","cPlayer1"),
+      gPlayer1Deck:             Group.new_deck("gPlayer1Deck","Deck","deck","cPlayer1"),
       gPlayer1Discard:          Group.new("gPlayer1Discard","Discard","discard","cPlayer1"),
       gPlayer1Sideboard:        Group.new("gPlayer1Sideboard","Sideboard","discard","cPlayer1"),
       gPlayer1Play1:            Group.new("gPlayer1Play1","Play Area","play","cPlayer1"),

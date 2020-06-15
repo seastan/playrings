@@ -104,7 +104,7 @@ export const Group = ({
                   padding: 0,
                   margin: 0,
                   overflowX: (inputGroup.type == "discard" || inputGroup.type == "deck") ? "hidden" : "auto",
-                  overflowY: (inputGroup.type == "discard" || inputGroup.type == "deck") ? "auto" : "hidden",
+                  overflowY: (inputGroup.type == "discard") ? "auto" : "hidden",
                   width: "100%", //(group.type == "hand" || group.type == "play") ? "calc(100% - 30px)" : "100%",
                   height: "95%",
                   //minHeight: "full",
@@ -112,7 +112,8 @@ export const Group = ({
                 
               >
                 {inputGroup.stacks.map((stack, stackIndex) => {
-                  return(<Stack key={stack.id} inputStack={stack} stackIndex={stackIndex} broadcast={broadcast} activeCard={activeCard} setActiveCard={setActiveCard}></Stack>)
+                  if (!((inputGroup.type == "deck" || inputGroup.type == "discard") && (stackIndex>0)))
+                    return(<Stack key={stack.id} inputStack={stack} stackIndex={stackIndex} broadcast={broadcast} activeCard={activeCard} setActiveCard={setActiveCard}></Stack>)
                   //if ((group.type=="deck" || group.type=="discard") && index>0) return null;
                   // return (
                   //   <Draggable
