@@ -20,8 +20,49 @@ export const Token = ({
     left,
     top,
 }) => {
+    const [adjustVisible, setAdjustVisible] = useState(false);
+
+
+    useEffect(() => {
+        const onKeyDown = ({key}) => {
+            if (key === "Shift") {
+                setAdjustVisible(true);
+            }
+        }
+
+        const onKeyUp = ({key}) => {
+            if (key === "Shift") {
+                setAdjustVisible(false);
+            }
+        }
+
+        document.addEventListener('keydown', onKeyDown);
+        document.addEventListener('keyup', onKeyUp);
+
+        return () => {
+            document.removeEventListener('keydown', onKeyDown);
+            document.removeEventListener('keyup', onKeyUp);
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    // document.onkeydown = function(evt) {
+    //     evt = evt || window.event;
+    //     if (evt.shiftKey) {
+    //         setAdjustVisible(true);
+    //     }
+    // };
+
+    // document.onkeyup = function(evt) {
+    //     evt = evt || window.event;
+    //     if (evt.shiftKey) {
+    //         setAdjustVisible(false);
+    //     }
+    // };
+
     return(
         <div
+            
             style={{
                 position: "absolute",
                 left: `${left}`,
@@ -31,8 +72,21 @@ export const Token = ({
                 backgroundImage: `url(${tokenURLs[type]})`,
                 backgroundSize: "contain",
                 zIndex: 1e6,
+                display: adjustVisible ? "block" : "none",
             }}
-        >{amount}
+        >
+            <p 
+                className="text-center text-sm"
+                style={{
+                    position: "relative",
+                    color: "white", 
+//                    textShadow: "2px 0 0 #000, 0 -2px 0 #000, 0 2px 0 #000, -2px 0 0 #000", 
+                    textShadow: "rgb(0, 0, 0) 2px 0px 0px, rgb(0, 0, 0) 1.75517px 0.958851px 0px, rgb(0, 0, 0) 1.0806px 1.68294px 0px, rgb(0, 0, 0) 0.141474px 1.99499px 0px, rgb(0, 0, 0) -0.832294px 1.81859px 0px, rgb(0, 0, 0) -1.60229px 1.19694px 0px, rgb(0, 0, 0) -1.97999px 0.28224px 0px, rgb(0, 0, 0) -1.87291px -0.701566px 0px, rgb(0, 0, 0) -1.30729px -1.51361px 0px, rgb(0, 0, 0) -0.421592px -1.95506px 0px, rgb(0, 0, 0) 0.567324px -1.91785px 0px, rgb(0, 0, 0) 1.41734px -1.41108px 0px, rgb(0, 0, 0) 1.92034px -0.558831px 0px",
+                    top: "17%",
+                    width: "100%",
+            }}>
+                {amount}
+            </p>
         </div>
     )
   }

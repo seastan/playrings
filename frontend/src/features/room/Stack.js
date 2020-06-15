@@ -37,15 +37,16 @@ export const Stack = ({
                 {...provided.draggableProps}
                 {...provided.dragHandleProps}
                 style={{
-                position: "relative",
-                userSelect: "none",
-                padding: 0,
-                margin: "4px 4px 0 0",
-                minHeight: "full",
-                ...provided.draggableProps.style,
-                minWidth: `${stackWidth}vw`,
-                width: `${stackWidth}vw`, //  `${CARDSCALE+CARDSCALE/3*(stack.cards.length-1)}vw`,
-                height: `100%`
+                    position: "relative",
+                    userSelect: "none",
+                    padding: 0,
+                    cursor: "default",
+                    margin: "4px 4px 0 0",
+                    minHeight: "full",
+                    ...provided.draggableProps.style,
+                    minWidth: `${stackWidth}vw`,
+                    width: `${stackWidth}vw`, //  `${CARDSCALE+CARDSCALE/3*(stack.cards.length-1)}vw`,
+                    height: `100%`,
                 }}
             >
                 {stack.cards.map((card, cardIndex) => {

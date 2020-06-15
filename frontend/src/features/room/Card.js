@@ -54,9 +54,10 @@ export const Card = ({
                 MozTransitionProperty: "-moz-transform",
                 OTransitionProperty: "-o-transform",
                 transitionProperty: "transform",
+                // WebkitBoxShadow: "10px 10px 29px 5px rgba(0,0,0,0.26)",
+                // MozBoxShadow: "10px 10px 29px 5px rgba(0,0,0,0.26)",
+                // boxShadow: "10px 10px 29px 5px rgba(0,0,0,0.26)",
             }}
-            //onDoubleClick={() => broadcast("toggle_exhaust",{group, stack, card})}
-            //onDoubleClick={() => toggleExhaust(inputGroup, setGroup, stackIndex, cardIndex, broadcast)}
             onDoubleClick={event => handleDoubleClick(event, card, setCard, broadcast)}
             onMouseOver={() => {setActiveCard(card); console.log(card);}}
         >
