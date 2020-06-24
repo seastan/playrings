@@ -8,7 +8,7 @@ export const Tokens = ({
     adjustVisible,
 }) => {
     if (card.aspectRatio < 1) return(
-        <div style={{display: "none"}}>
+        <div>
             <Token type="threat" amount={0} left={"10%"} top={"0%"} adjustVisible={adjustVisible}></Token>
             <Token type="willpower" amount={13} left={"10%"} top={"25%"} adjustVisible={adjustVisible}></Token>
             <Token type="attack" amount={8} left={"10%"} top={"50%"} adjustVisible={adjustVisible}></Token>

@@ -2,14 +2,14 @@ import React, { Component, useState } from "react";
 import ReactDOM from "react-dom";
 import { generateQuoteMap } from "./data";
 import styled from "@emotion/styled";
-import Column from "./column";
-import reorder, { reorderQuoteMap } from "./reorder";
+import Group from "./Group";
+import Reorder, { reorderQuoteMap } from "./Reorder";
 import { DragDropContext } from "react-beautiful-dnd";
 
 const data = {
   small: generateQuoteMap(10),
   medium: generateQuoteMap(100),
-  large: generateQuoteMap(200)
+  large: generateQuoteMap(250)
 };
 
 const ParentContainer = styled.div`
@@ -35,7 +35,7 @@ export const Groups = ({
   };
 
   const [state,setState] = useState({
-    columns: data.medium,
+    columns: data.large,
     ordered: Object.keys(data.medium)
   });
 
@@ -84,6 +84,8 @@ export const Groups = ({
 
   const columns = state.columns;
   const ordered = state.ordered;
+  console.log('ordered');
+  console.log(ordered);
   // const {
   //   containerHeight,
   //   useClone,
@@ -101,7 +103,7 @@ export const Groups = ({
     //   {provided => (ref={provided.innerRef} {...provided.droppableProps}>
     <Container>
       {ordered.map((key, index) => (
-        <Column
+        <Group
           key={key}
           index={index}
           title={key}
