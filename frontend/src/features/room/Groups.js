@@ -1,4 +1,4 @@
-import React, { Component, useState } from "react";
+import React, { useEffect, useState } from "react";
 import ReactDOM from "react-dom";
 import { generateQuoteMap } from "./data";
 import styled from "@emotion/styled";
@@ -12,12 +12,6 @@ const data = {
   large: generateQuoteMap(250)
 };
 
-const ParentContainer = styled.div`
-  height: ${({ height }) => height};
-  overflow-x: hidden;
-  overflow-y: auto;
-`;
-
 const Container = styled.div`
   min-height: 100vh;
   /* like display:flex but will allow bleeding over the window width */
@@ -29,10 +23,24 @@ export const Groups = ({
   gameUIView,
   broadcast,
 }) => {
-  /* eslint-disable react/sort-comp */
-  const defaultProps = {
-    isCombineEnabled: true
-  };
+
+  const [groups, setGroups] = useState(gameUIView.game_ui.game.groups);
+  const [showScratch, setShowScratch] = useState(false);
+  const [phase, setPhase] = useState(1);
+  const [activeCard, setActiveCard] = useState(null);
+
+  function toggleScratch() {
+    if (showScratch) setShowScratch(false);
+    else setShowScratch(true);
+  }
+
+  function changePhase(num) {
+    if (num!=phase) setPhase(num);
+  }
+
+  useEffect(() => {    
+    setGroups(gameUIView.game_ui.game.groups);
+  }, [gameUIView.game_ui.game.groups]);
 
   const [state,setState] = useState({
     columns: data.large,
@@ -40,7 +48,6 @@ export const Groups = ({
   });
 
   const onDragEnd = (result) => {
-    console.log(result);
     if (result.combine) {
       const column = state.columns[result.source.droppableId];
       const withQuoteRemoved = [...column];
@@ -94,29 +101,19 @@ export const Groups = ({
   // } = props;
 
   const board = (
-    // <Droppable
-    //   droppableId="board"
-    //   type="COLUMN"
-    //   ignoreContainerClipping={Boolean(containerHeight)}
-    //   isCombineEnabled={isCombineEnabled}
-    // >
-    //   {provided => (ref={provided.innerRef} {...provided.droppableProps}>
+
     <Container>
       {ordered.map((key, index) => (
         <Group
+          group={groups['gSharedQuestDeck']}
           key={key}
           index={index}
           title={key}
           quotes={columns[key]}
-          //isScrollable={withScrollableColumns}
           isCombineEnabled={true}
-          //useClone={useClone}
         />
       ))}
-      {/* {provided.placeholder} */}
     </Container>
-    //   )}
-    // </Droppable>
   );
 
   return (

@@ -26,6 +26,8 @@ export default class Group extends Component {
     const title = this.props.title;
     const quotes = this.props.quotes;
     const index = this.props.index;
+    const group = this.props.group;
+    const stacks = group.stacks;
     return (
       // <Draggable draggableId={title} index={index}>
       //   {(provided, snapshot) => (ref={provided.innerRef} {...provided.draggableProps}>
@@ -34,12 +36,12 @@ export default class Group extends Component {
           <Title aria-label={`${title} quote list`}>{title}</Title>
         </Header>
         <Stacks
+          stacks={stacks}
           listId={title}
           listType="QUOTE"
           quotes={quotes}
           internalScroll={this.props.isScrollable}
           isCombineEnabled={Boolean(this.props.isCombineEnabled)}
-          useClone={Boolean(this.props.useClone)}
         />
       </Container>
       //   )}

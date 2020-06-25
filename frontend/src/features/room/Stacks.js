@@ -62,14 +62,14 @@ const InnerQuoteList = React.memo(function InnerQuoteList(props) {
 });
 
 function InnerList(props) {
-  const { quotes, dropProvided } = props;
+  const { stacks, quotes, dropProvided } = props;
   const title = props.title ? <Title>{props.title}</Title> : null;
 
   return (
     <Container>
       {title}
       <DropZone ref={dropProvided.innerRef}>
-        <InnerQuoteList quotes={quotes} />
+        <InnerQuoteList stacks={stacks} quotes={quotes} />
         {dropProvided.placeholder}
       </DropZone>
     </Container>
@@ -78,6 +78,7 @@ function InnerList(props) {
 
 export default function Stacks(props) {
   const {
+    stacks,
     ignoreContainerClipping,
     isDropDisabled,
     isCombineEnabled,
@@ -97,18 +98,6 @@ export default function Stacks(props) {
       isDropDisabled={isDropDisabled}
       isCombineEnabled={isCombineEnabled}
       direction="horizontal"
-      renderClone={
-        useClone
-          ? (provided, snapshot, descriptor) => (
-              <Stack
-                quote={quotes[descriptor.source.index]}
-                provided={provided}
-                isDragging={snapshot.isDragging}
-                isClone
-              />
-            )
-          : null
-      }
     >
       {(dropProvided, dropSnapshot) => (
         <Wrapper
@@ -119,6 +108,7 @@ export default function Stacks(props) {
           {...dropProvided.droppableProps}
         >
             <InnerList
+                stacks={stacks}
                 quotes={quotes}
                 title={title}
                 dropProvided={dropProvided}
