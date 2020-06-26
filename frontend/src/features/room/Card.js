@@ -64,7 +64,7 @@ export const Card = ({
             key={card.id}
             style={{
                 position: "absolute",
-                background: "red", //`url(${card.src}) no-repeat`,
+                background: `url(${card.src}) no-repeat`,
                 backgroundSize: "contain",
                 height: `${CARDSCALE/0.7}vw`,
                 width: `${CARDSCALE}vw`,
@@ -85,7 +85,7 @@ export const Card = ({
                 // boxShadow: "10px 10px 29px 5px rgba(0,0,0,0.26)",
             }}
             onDoubleClick={event => handleDoubleClick(event, card, setCard, broadcast, adjustVisible)}
-            onMouseOver={() => {setActiveCard(card); console.log(card);}}
+            //onMouseOver={() => {setActiveCard(card); console.log(card);}}
         >
             <Tokens card={card} adjustVisible={adjustVisible && (activeCard===card)}></Tokens>
         </div>

@@ -1,47 +1,29 @@
 import React from "react";
 import styled from "@emotion/styled";
 import { borderRadius, grid } from "./Constants";
-import { Card } from "./Card"
+import { Card, CARDSCALE } from "./Card"
 
 const getBorderColor = (isDragging) =>
   isDragging ? "black" : "transparent";
 
 const imageSize = 40;
 
+
+
 const Container = styled.div`
-  border-radius: ${borderRadius}px;
-  border: 2px solid transparent;
-  border-color: ${props => getBorderColor(props.isDragging)};
-  box-shadow: ${({ isDragging }) =>
-    isDragging ? `2px 2px 1px orange` : "none"};
-  box-sizing: border-box;
-  padding: ${grid}px;
-  width: ${4.5}vw;
-  height: ${4.5/0.7}vw;
-  min-width: ${4.5}vw;
-  min-height:  ${4.5/0.7}vw;
-  margin-right: ${grid}px;
-  user-select: none;
   position: relative;
+  userSelect: none;
+  padding: 0;
+  cursor: default;
+  margin: 4px 4px 0 0;
+  min-width: ${props => props.stackWidth}vw;
+  width: ${props => props.stackWidth}vw;
+  min-height: 100%;
+  height: 100%;
 
-  /* anchor overrides */
-  color: "yellow";
+  // min-width: ${4.5}vw;
+  min-height:  ${4.5/0.7}vw;
 
-  &:hover,
-  &:active {
-    color: "gray";
-    text-decoration: none;
-  }
-
-`;
-
-const Avatar = styled.img`
-  width: ${imageSize}px;
-  height: ${imageSize}px;
-  border-radius: 50%;
-  margin-right: ${grid}px;
-  flex-shrink: 0;
-  flex-grow: 0;
 `;
 
 function getStyle(provided, style) {
@@ -78,11 +60,14 @@ function Stack(props) {
     setActiveCard,
   } = props;
 
+  const stackWidth = CARDSCALE/0.75 + CARDSCALE/3*(stack.cards.length-1)
+
   return (
     <Container
       isDragging={isDragging}
       isGroupedOver={isGroupedOver}
       isClone={isClone}
+      stackWidth={stackWidth}
       ref={provided.innerRef}
       {...provided.draggableProps}
       {...provided.dragHandleProps}
