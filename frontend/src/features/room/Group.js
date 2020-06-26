@@ -24,8 +24,6 @@ const Header = styled.div`
 export default class Group extends Component {
   render() {
     const title = this.props.title;
-    const quotes = this.props.quotes;
-    const index = this.props.index;
     const group = this.props.group;
     const stacks = group.stacks;
     return (
@@ -39,7 +37,6 @@ export default class Group extends Component {
           stacks={stacks}
           listId={title}
           listType="QUOTE"
-          quotes={quotes}
           internalScroll={this.props.isScrollable}
           isCombineEnabled={Boolean(this.props.isCombineEnabled)}
         />

@@ -47,6 +47,46 @@ export const Groups = ({
     ordered: Object.keys(data.medium)
   });
 
+  // const onDragEnd = (result) => {
+  //   console.log(result);
+  //   if (!result.destination) return;
+  //   const { source, destination } = result;
+  //   var newGroups = {};
+  //   if (source.droppableId !== destination.droppableId) {
+  //     const sourceGroup = groups[source.droppableId];
+  //     const destGroup = groups[destination.droppableId];
+  //     const sourceStacks = [...sourceGroup.stacks];
+  //     const destStacks = [...destGroup.stacks];
+  //     const [removed] = sourceStacks.splice(source.index, 1);
+  //     destStacks.splice(destination.index, 0, removed);
+  //     newGroups = {
+  //       ...groups,
+  //       [source.droppableId]: {
+  //         ...sourceGroup,
+  //         stacks: sourceStacks
+  //       },
+  //       [destination.droppableId]: {
+  //         ...destGroup,
+  //         stacks: destStacks
+  //       }
+  //     }
+  //   } else {
+  //     const group = groups[source.droppableId];
+  //     const copiedStacks = [...group.stacks];
+  //     const [removed] = copiedStacks.splice(source.index, 1);
+  //     copiedStacks.splice(destination.index, 0, removed);
+  //     newGroups = {
+  //       ...groups,
+  //       [source.droppableId]: {
+  //         ...group,
+  //         stacks: copiedStacks
+  //       }
+  //     }
+  //   }
+  //   setGroups(newGroups);
+  //   broadcast("update_groups",{groups: newGroups});
+  // };
+
   const onDragEnd = (result) => {
     if (result.combine) {
       const column = state.columns[result.source.droppableId];
@@ -64,7 +104,7 @@ export const Groups = ({
     if (!result.destination) {
       return;
     }
-
+    console.log(result);
     const source = result.source;
     const destination = result.destination;
 
@@ -103,16 +143,19 @@ export const Groups = ({
   const board = (
 
     <Container>
-      {ordered.map((key, index) => (
-        <Group
-          group={groups['gSharedQuestDeck']}
-          key={key}
-          index={index}
-          title={key}
-          quotes={columns[key]}
-          isCombineEnabled={true}
-        />
-      ))}
+      <Group
+        group={groups['gSharedQuestDeck']}
+        key={'gSharedQuestDeck'}
+        title={groups['gSharedQuestDeck'].id}
+        isCombineEnabled={true}
+      />
+      <Group
+        group={groups['gSharedEncounterDeck']}
+        key={'gSharedEncounterDeck'}
+        title={groups['gSharedEncounterDeck'].id}
+        isCombineEnabled={true}
+      />
+      
     </Container>
   );
 

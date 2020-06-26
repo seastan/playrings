@@ -12,6 +12,10 @@ const Reorder = (list, startIndex, endIndex) => {
   export default Reorder;
   
   export const reorderQuoteMap = ({ quoteMap, source, destination }) => {
+    console.log('source');
+    console.log(source);
+    console.log('dest');
+    console.log(destination);
     const current = [...quoteMap[source.droppableId]];
     const next = [...quoteMap[destination.droppableId]];
     const target = current[source.index];

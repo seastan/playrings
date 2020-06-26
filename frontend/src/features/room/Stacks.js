@@ -46,12 +46,12 @@ const Container = styled.div``;
 const InnerQuoteList = React.memo(function InnerQuoteList(props) {
   console.log("t");
   console.log(props);
-  return props.quotes.map((quote, index) => (
-    <Draggable key={quote.id} draggableId={quote.id} index={index}>
+  return props.stacks.map((stack, index) => (
+    <Draggable key={stack.id} draggableId={stack.id} index={index}>
       {(dragProvided, dragSnapshot) => (
         <Stack
-          key={quote.id}
-          quote={quote}
+          key={stack.id}
+          stack={stack}
           isDragging={dragSnapshot.isDragging}
           isGroupedOver={Boolean(dragSnapshot.combineTargetFor)}
           provided={dragProvided}
@@ -62,14 +62,14 @@ const InnerQuoteList = React.memo(function InnerQuoteList(props) {
 });
 
 function InnerList(props) {
-  const { stacks, quotes, dropProvided } = props;
+  const { stacks, dropProvided } = props;
   const title = props.title ? <Title>{props.title}</Title> : null;
 
   return (
     <Container>
       {title}
       <DropZone ref={dropProvided.innerRef}>
-        <InnerQuoteList stacks={stacks} quotes={quotes} />
+        <InnerQuoteList stacks={stacks}/>
         {dropProvided.placeholder}
       </DropZone>
     </Container>
@@ -85,7 +85,6 @@ export default function Stacks(props) {
     listId = "LIST",
     listType,
     style,
-    quotes,
     title,
     useClone
   } = props;
@@ -109,7 +108,6 @@ export default function Stacks(props) {
         >
             <InnerList
                 stacks={stacks}
-                quotes={quotes}
                 title={title}
                 dropProvided={dropProvided}
             />
