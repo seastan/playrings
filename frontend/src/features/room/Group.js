@@ -34,16 +34,14 @@ export default class Group extends Component {
       //   {(provided, snapshot) => (ref={provided.innerRef} {...provided.draggableProps}>
       <Container>
         <Header>
-          <Title aria-label={`${title} quote list`}>{title}</Title>
+          <Title>{group.name}</Title>
         </Header>
         <Stacks
           broadcast={broadcast}
           group={group}
           stacks={stacks}
-          listId={title}
-          listType="QUOTE"
           internalScroll={this.props.isScrollable}
-          isCombineEnabled={Boolean(this.props.isCombineEnabled)}
+          isCombineEnabled={group.type === "play"}
           activeCard={activeCard}
           setActiveCard={setActiveCard}
         />

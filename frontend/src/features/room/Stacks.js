@@ -66,11 +66,9 @@ const InnerQuoteList = React.memo(function InnerQuoteList(props) {
 
 function InnerList(props) {
   const { broadcast, group, stacks, dropProvided, activeCard, setActiveCard } = props;
-  const title = props.title ? <Title>{props.title}</Title> : null;
 
   return (
     <Container>
-      {title}
       <DropZone ref={dropProvided.innerRef}>
         <InnerQuoteList 
           broadcast={broadcast} 
@@ -90,30 +88,22 @@ export default function Stacks(props) {
     broadcast,
     group,
     stacks,
-    ignoreContainerClipping,
     isDropDisabled,
     isCombineEnabled,
-    listId = "LIST",
-    listType,
-    style,
-    title,
-    useClone,
     activeCard,
     setActiveCard,
   } = props;
 
   return (
     <Droppable
-      droppableId={listId}
-      type={listType}
-      ignoreContainerClipping={ignoreContainerClipping}
+      droppableId={group.id}
+      key={group.id}
       isDropDisabled={isDropDisabled}
       isCombineEnabled={isCombineEnabled}
       direction="horizontal"
     >
       {(dropProvided, dropSnapshot) => (
         <Wrapper
-          style={style}
           isDraggingOver={dropSnapshot.isDraggingOver}
           isDropDisabled={isDropDisabled}
           isDraggingFrom={Boolean(dropSnapshot.draggingFromThisWith)}
@@ -123,7 +113,6 @@ export default function Stacks(props) {
                 broadcast={broadcast}
                 group={group}
                 stacks={stacks}
-                title={title}
                 dropProvided={dropProvided}
                 activeCard={activeCard}
                 setActiveCard={setActiveCard}
