@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "@emotion/styled";
 import { borderRadius, grid } from "./Constants";
-import { Tokens } from "./Tokens"
+import { Card } from "./Card"
 
 const getBorderColor = (isDragging) =>
   isDragging ? "black" : "transparent";
@@ -64,13 +64,18 @@ function getStyle(provided, style) {
 // will be using PureComponent
 function Stack(props) {
   const {
+    broadcast,
+    group,
+    stackIndex,
     stack,
     isDragging,
     isGroupedOver,
     provided,
     style,
     isClone,
-    index
+    index,
+    activeCard,
+    setActiveCard,
   } = props;
 
   return (
@@ -86,8 +91,20 @@ function Stack(props) {
       data-testid={stack.id}
       data-index={index}
     >
-
-      <Tokens card={{aspectRatio: 0.6}}></Tokens>
+      {stack.cards.map((card, cardIndex) => {
+          return(
+            <Card 
+              broadcast={broadcast} 
+              group={group} 
+              stackIndex={stackIndex}
+              cardIndex={cardIndex}
+              inputCard={card} 
+              key={card.id} 
+              activeCard={activeCard} 
+              setActiveCard={setActiveCard}
+            >
+            </Card>)
+      })}
     </Container>
   );
 }

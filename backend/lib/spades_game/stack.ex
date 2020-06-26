@@ -12,7 +12,8 @@ defmodule SpadesGame.Stack do
 
   @spec new_test() :: Stack.t()
   def new_test() do
-    %Stack{id: Ecto.UUID.generate, cards: [Card.new_test1(),Card.new_test2(),Card.new_test3(),Card.new_test2()]}
+#    %Stack{id: Ecto.UUID.generate, cards: [Card.new_test1(),Card.new_test2(),Card.new_test3(),Card.new_test2()]}
+    %Stack{id: Ecto.UUID.generate, cards: [Card.new_test2()]}
   end
 
   def new_test1() do

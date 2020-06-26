@@ -3,7 +3,7 @@ import ReactDOM from "react-dom";
 import { generateQuoteMap } from "./data";
 import styled from "@emotion/styled";
 import Group from "./Group";
-import Reorder, { reorderQuoteMap } from "./Reorder";
+import Reorder, { reorderGroups } from "./Reorder";
 import { DragDropContext } from "react-beautiful-dnd";
 
 const data = {
@@ -89,6 +89,7 @@ export const Groups = ({
 
   const onDragEnd = (result) => {
     if (result.combine) {
+      return;
       const column = state.columns[result.source.droppableId];
       const withQuoteRemoved = [...column];
       withQuoteRemoved.splice(result.source.index, 1);
@@ -117,16 +118,17 @@ export const Groups = ({
     }
 
     console.log('here');
-    const data = reorderQuoteMap({
-      quoteMap: state.columns,
+    const data = reorderGroups({
+      groups: groups,
       source,
       destination
     });
 
-    setState({
-      columns: data.quoteMap,
-      ordered: state.ordered
-    });
+    setGroups(data.groups);
+    // setState({
+    //   columns: data.quoteMap,
+    //   ordered: state.ordered
+    // });
   };
 
   const columns = state.columns;
@@ -144,16 +146,49 @@ export const Groups = ({
 
     <Container>
       <Group
+        broadcast={broadcast}
         group={groups['gSharedQuestDeck']}
         key={'gSharedQuestDeck'}
         title={groups['gSharedQuestDeck'].id}
         isCombineEnabled={true}
+        activeCard={activeCard}
+        setActiveCard={setActiveCard}
       />
       <Group
+        broadcast={broadcast}
         group={groups['gSharedEncounterDeck']}
         key={'gSharedEncounterDeck'}
         title={groups['gSharedEncounterDeck'].id}
         isCombineEnabled={true}
+        activeCard={activeCard}
+        setActiveCard={setActiveCard}
+      />      
+      <Group
+        broadcast={broadcast}
+        group={groups['gPlayer1Deck']}
+        key={'gPlayer1Deck'}
+        title={groups['gPlayer1Deck'].id}
+        isCombineEnabled={true}
+        activeCard={activeCard}
+        setActiveCard={setActiveCard}
+      />  
+      <Group
+        broadcast={broadcast}
+        group={groups['gPlayer2Deck']}
+        key={'gPlayer2Deck'}
+        title={groups['gPlayer2Deck'].id}
+        isCombineEnabled={true}
+        activeCard={activeCard}
+        setActiveCard={setActiveCard}
+      />  
+      <Group
+        broadcast={broadcast}
+        group={groups['gPlayer3Deck']}
+        key={'gPlayer3Deck'}
+        title={groups['gPlayer3Deck'].id}
+        isCombineEnabled={true}
+        activeCard={activeCard}
+        setActiveCard={setActiveCard}
       />
       
     </Container>

@@ -44,17 +44,20 @@ const Container = styled.div``;
 /* stylelint-enable */
 
 const InnerQuoteList = React.memo(function InnerQuoteList(props) {
-  console.log("t");
-  console.log(props);
-  return props.stacks.map((stack, index) => (
-    <Draggable key={stack.id} draggableId={stack.id} index={index}>
+  return props.stacks.map((stack, stackIndex) => (
+    <Draggable key={stack.id} draggableId={stack.id} index={stackIndex}>
       {(dragProvided, dragSnapshot) => (
         <Stack
-          key={stack.id}
+          broadcast={props.broadcast}
+          group={props.group}
+          stackIndex={stackIndex}
           stack={stack}
+          key={stack.id}
           isDragging={dragSnapshot.isDragging}
           isGroupedOver={Boolean(dragSnapshot.combineTargetFor)}
           provided={dragProvided}
+          activeCard={props.activeCard}
+          setActiveCard={props.setActiveCard}
         />
       )}
     </Draggable>
@@ -62,14 +65,20 @@ const InnerQuoteList = React.memo(function InnerQuoteList(props) {
 });
 
 function InnerList(props) {
-  const { stacks, dropProvided } = props;
+  const { broadcast, group, stacks, dropProvided, activeCard, setActiveCard } = props;
   const title = props.title ? <Title>{props.title}</Title> : null;
 
   return (
     <Container>
       {title}
       <DropZone ref={dropProvided.innerRef}>
-        <InnerQuoteList stacks={stacks}/>
+        <InnerQuoteList 
+          broadcast={broadcast} 
+          group={group} 
+          stacks={stacks}
+          activeCard={activeCard}
+          setActiveCard={setActiveCard}
+        />
         {dropProvided.placeholder}
       </DropZone>
     </Container>
@@ -78,6 +87,8 @@ function InnerList(props) {
 
 export default function Stacks(props) {
   const {
+    broadcast,
+    group,
     stacks,
     ignoreContainerClipping,
     isDropDisabled,
@@ -86,7 +97,9 @@ export default function Stacks(props) {
     listType,
     style,
     title,
-    useClone
+    useClone,
+    activeCard,
+    setActiveCard,
   } = props;
 
   return (
@@ -107,9 +120,13 @@ export default function Stacks(props) {
           {...dropProvided.droppableProps}
         >
             <InnerList
+                broadcast={broadcast}
+                group={group}
                 stacks={stacks}
                 title={title}
                 dropProvided={dropProvided}
+                activeCard={activeCard}
+                setActiveCard={setActiveCard}
             />
         </Wrapper>
       )}

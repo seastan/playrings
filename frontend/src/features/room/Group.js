@@ -23,9 +23,12 @@ const Header = styled.div`
 
 export default class Group extends Component {
   render() {
-    const title = this.props.title;
+    const broadcast = this.props.broadcast;
     const group = this.props.group;
+    const title = this.props.title;
     const stacks = group.stacks;
+    const activeCard = this.props.activeCard;
+    const setActiveCard= this.props.setActiveCard;
     return (
       // <Draggable draggableId={title} index={index}>
       //   {(provided, snapshot) => (ref={provided.innerRef} {...provided.draggableProps}>
@@ -34,11 +37,15 @@ export default class Group extends Component {
           <Title aria-label={`${title} quote list`}>{title}</Title>
         </Header>
         <Stacks
+          broadcast={broadcast}
+          group={group}
           stacks={stacks}
           listId={title}
           listType="QUOTE"
           internalScroll={this.props.isScrollable}
           isCombineEnabled={Boolean(this.props.isCombineEnabled)}
+          activeCard={activeCard}
+          setActiveCard={setActiveCard}
         />
       </Container>
       //   )}
