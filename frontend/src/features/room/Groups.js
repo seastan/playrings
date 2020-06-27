@@ -21,46 +21,6 @@ const WidthContainer = styled.div`
   height: 100%;
 `;
 
-const onDragEnd = (result, groups, setGroups, broadcast) => {
-  console.log(result);
-  if (!result.destination) return;
-  const { source, destination } = result;
-  var newGroups = {};
-  if (source.droppableId !== destination.droppableId) {
-    const sourceGroup = groups[source.droppableId];
-    const destGroup = groups[destination.droppableId];
-    const sourceStacks = [...sourceGroup.stacks];
-    const destStacks = [...destGroup.stacks];
-    const [removed] = sourceStacks.splice(source.index, 1);
-    destStacks.splice(destination.index, 0, removed);
-    newGroups = {
-      ...groups,
-      [source.droppableId]: {
-        ...sourceGroup,
-        stacks: sourceStacks
-      },
-      [destination.droppableId]: {
-        ...destGroup,
-        stacks: destStacks
-      }
-    }
-  } else {
-    const group = groups[source.droppableId];
-    const copiedStacks = [...group.stacks];
-    const [removed] = copiedStacks.splice(source.index, 1);
-    copiedStacks.splice(destination.index, 0, removed);
-    newGroups = {
-      ...groups,
-      [source.droppableId]: {
-        ...group,
-        stacks: copiedStacks
-      }
-    }
-  }
-  setGroups(newGroups);
-  broadcast("update_groups",{groups: newGroups});
-};
-
 export const Groups = ({
   gameUIView,
   broadcast,
@@ -116,7 +76,6 @@ export const Groups = ({
       return;
     }
 
-    console.log('here');
     const data = reorderGroups({
       groups: groups,
       source,
@@ -174,15 +133,6 @@ export const Groups = ({
       {/* Middle panel */}
       <div className="flex w-4/5">
         <div className="flex flex-col w-full h-full">
-          <div className="bg-gray-200" style={{height: "3%"}}>
-            <select name="num_players" id="num_players">
-              <option value="1">1</option>
-              <option value="2">2</option>
-              <option value="3">3</option>
-              <option value="4">4</option>
-            </select>
-            player(s)
-          </div>
           <div className=""  style={{height: "94%"}}>
 
             <div className="w-full" style={{minHeight: "20%", height: "20%", maxHeight: "20%"}}>
@@ -230,6 +180,15 @@ export const Groups = ({
           </div>
           <div className="bg-gray-300" style={{height: "3%"}}>
             Social links
+          </div>
+          <div className="bg-gray-200" style={{height: "3%"}}>
+            <select name="num_players" id="num_players">
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+            </select>
+            player(s)
           </div>
         </div>
       </div>

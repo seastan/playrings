@@ -12,10 +12,6 @@ const Reorder = (list, startIndex, endIndex) => {
 export default Reorder;
 
 export const reorderGroups = ({ groups, source, destination }) => {
-  console.log('source');
-  console.log(source);
-  console.log('dest');
-  console.log(destination);
   const current = groups[source.droppableId].stacks;
   const next = groups[destination.droppableId].stacks;
   const target = current[source.index];
