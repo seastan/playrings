@@ -86,7 +86,7 @@ export const Card = ({
                 // boxShadow: "10px 10px 29px 5px rgba(0,0,0,0.26)",
             }}
             onDoubleClick={event => handleDoubleClick(event, card, setCard, broadcast, adjustVisible)}
-            onClick={() => {setActiveCard(card); console.log(card);}}
+            onMouseEnter={() => {setActiveCard(card); console.log(card);}}
         >
             <Tokens card={card} adjustVisible={adjustVisible && (activeCard===card)}></Tokens>
         </div>
