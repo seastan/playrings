@@ -16,10 +16,10 @@ export const getBackgroundColor = (isDraggingOver, isDraggingFrom) => {
 };
 
 const Wrapper = styled.div`
-  background-color: ${props => props.isDraggingOver ? "rgba(1,1,1,0.4)" : "green"};
+  background-color: ${props => props.isDraggingOver ? "rgba(1,1,1,0.4)" : ""};
   padding: 0 0 0 0;
   height: 87%;
-  transition: background-color 0.2s ease, opacity 0.1s ease;
+  transition: background-color 0.4s ease, opacity 0.1s ease;
   user-select: none;
   overflow-x: auto;
 `;
@@ -29,15 +29,14 @@ const scrollContainerHeight = 250;
 const DropZone = styled.div`
   /* stop the list collapsing when empty */
   display: flex;
-  /*
-    not relying on the items for a margin-bottom
-    as it will collapse when the list is empty
-  */
-  padding-bottom: ${grid}px;
+  width: 100%;
+  min-height: 100%;
 `;
 
 /* stylelint-disable block-no-empty */
-const Container = styled.div``;
+const Container = styled.div`
+  height: 100%;
+`;
 /* stylelint-enable */
 
 const InnerQuoteList = React.memo(function InnerQuoteList(props) {

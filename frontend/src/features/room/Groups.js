@@ -267,12 +267,12 @@ export const Groups = ({
               display: showScratch ? "block" : "none"
             }}
           >        
-            <div className="bg-gray-300" style={{height: "33.3%"}}>
+            <div style={{height: "33.3%"}}>
               <Group group={groups['gSharedExtra1']} showTitle="false" activeCard={activeCard} setActiveCard={setActiveCard}></Group>
             </div>
-            <div className="bg-gray-400" style={{height: "33.3%"}}>
+            <div style={{height: "33.3%"}}>
               <Group group={groups['gSharedExtra2']} showTitle="false" activeCard={activeCard} setActiveCard={setActiveCard}></Group></div>
-            <div className="" style={{height: "33.4%"}}>
+            <div style={{height: "33.4%"}}>
               <Group group={groups['gSharedExtra3']} showTitle="false" activeCard={activeCard} setActiveCard={setActiveCard}></Group></div>
           </div>
           <div className="text-center" onClick={() => toggleScratch()} style={{height: "3%"}}>

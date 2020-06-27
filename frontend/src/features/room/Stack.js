@@ -22,7 +22,7 @@ const Container = styled.div`
   height: 100%;
 
   // min-width: ${4.5}vw;
-  min-height:  ${4.5/0.7}vw;
+  min-height:  ${4.5/0.75}vw;
 
 `;
 
