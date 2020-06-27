@@ -64,7 +64,6 @@ export const Groups = ({
     if (!result.destination) {
       return;
     }
-    console.log(result);
     const source = result.source;
     const destination = result.destination;
 

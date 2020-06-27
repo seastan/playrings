@@ -67,7 +67,7 @@ export const Card = ({
                 position: "absolute",
                 background: `url(${card.src}) no-repeat`,
                 backgroundSize: "contain",
-                height: `${CARDSCALE/0.7}vw`,
+                height: `${CARDSCALE/0.72}vw`,
                 width: `${CARDSCALE}vw`,
                 left: `${CARDSCALE/3*cardIndex}vw`,
                 //transform: `rotate(${angles}deg)`,
