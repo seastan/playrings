@@ -5,15 +5,6 @@ import { useActiveCard, useSetActiveCard } from "../../contexts/ActiveCardContex
 //import cx from "classnames";
 
 export const CARDSCALE = 4.5;
-const threatURL    = "https://raw.githubusercontent.com/seastan/Lord-of-the-Rings/master/o8g/Sets/Markers%20and%20Tokens/Markers/39df75f2-141d-425f-b651-d572b4885004.png";
-const willpowerURL = "https://raw.githubusercontent.com/seastan/Lord-of-the-Rings/master/o8g/Sets/Markers%20and%20Tokens/Markers/f24eb0c4-8405-4599-ba80-95bc009ae9fb.png";
-const attackURL    = "https://raw.githubusercontent.com/seastan/Lord-of-the-Rings/master/o8g/Sets/Markers%20and%20Tokens/Markers/53f20b83-6292-4017-abd0-511efdaf710d.png";
-const defenseURL   = "https://raw.githubusercontent.com/seastan/Lord-of-the-Rings/master/o8g/Sets/Markers%20and%20Tokens/Markers/6987d1a6-55ab-4ced-bbec-4e5b3490a40e.png";
-const resourceURL  = "https://raw.githubusercontent.com/seastan/Lord-of-the-Rings/master/o8g/Sets/Markers%20and%20Tokens/Markers/62a2ba76-9872-481b-b8fc-ec35447ca640.png";
-const damageURL    = "https://raw.githubusercontent.com/seastan/Lord-of-the-Rings/master/o8g/Sets/Markers%20and%20Tokens/Markers/38d55f36-04d7-4cf9-a496-06cb84de567d.png";
-const progressURL  = "https://raw.githubusercontent.com/seastan/Lord-of-the-Rings/master/o8g/Sets/Markers%20and%20Tokens/Markers/e9a419ff-5154-41cf-b84f-95149cc19a2a.png";
-const timeURL      = "https://raw.githubusercontent.com/seastan/Lord-of-the-Rings/master/o8g/Sets/Markers%20and%20Tokens/Markers/31627422-f546-4a69-86df-ca0a028f3138.png";
-
 
 const handleDoubleClick = (event, card, setCard, broadcast, adjustVisible) => {
     if (adjustVisible) return;

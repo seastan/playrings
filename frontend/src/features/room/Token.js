@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { CARDSCALE } from "./Card";
 import { faChevronLeft, faChevronRight } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -67,7 +67,7 @@ export const Token = ({
                     top: "17%",
                     width: "100%",
             }}>
-                {(type=="threat" || type=="willpower" || type=="attack" || type=="defense") && amount>0 ? "+"+amount : amount}
+                {(type==="threat" || type==="willpower" || type==="attack" || type==="defense") && amount>0 ? "+"+amount : amount}
             </p>
 
             <div

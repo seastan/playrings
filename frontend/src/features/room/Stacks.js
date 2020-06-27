@@ -2,8 +2,6 @@ import React from "react";
 import styled from "@emotion/styled";
 import { Droppable, Draggable } from "react-beautiful-dnd";
 import Stack from "./Stack";
-import { grid } from "./Constants";
-import Title from "./Title";
 
 export const getBackgroundColor = (isDraggingOver, isDraggingFrom) => {
   if (isDraggingOver) {
@@ -23,8 +21,6 @@ const Wrapper = styled.div`
   user-select: none;
   overflow-x: auto;
 `;
-
-const scrollContainerHeight = 250;
 
 const DropZone = styled.div`
   /* stop the list collapsing when empty */

@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import styled from "@emotion/styled";
 import Stacks from "./Stacks";
 import Title from "./Title";
-import { borderRadius, grid } from "./Constants";
 
 const Container = styled.div`
   padding: 1px 1px 1px 1px;
@@ -22,7 +21,6 @@ export default class Group extends Component {
   render() {
     const broadcast = this.props.broadcast;
     const group = this.props.group;
-    const title = this.props.title;
     const stacks = group.stacks;
     const activeCard = this.props.activeCard;
     const setActiveCard= this.props.setActiveCard;

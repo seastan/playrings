@@ -1,19 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
-import { Constants } from "../../game_constants";
+import { DragDropContext } from "react-beautiful-dnd";
 import { faChevronUp, faChevronDown } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Chat from "../chat/Chat";
 import Group from "./Group";
 import { reorderGroups } from "./Reorder";
 import { ActiveCard } from "./ActiveCard";
-import Card from "./Card";
-import uuid from "uuid/v4";
-import cx from "classnames";
 import styled from "@emotion/styled";
-import { ActiveCardProvider } from "../../contexts/ActiveCardContext";
-
-const SetActiveCardContext = React.createContext()
 
 const WidthContainer = styled.div`
   padding: 2px 2px 2px 2px;
@@ -37,7 +30,7 @@ export const Groups = ({
   }
 
   function changePhase(num) {
-    if (num!=phase) setPhase(num);
+    if (num!==phase) setPhase(num);
   }
 
   useEffect(() => {    
@@ -98,31 +91,31 @@ export const Groups = ({
       {/* Right panel */}
       <div className="flex flex-col w-8">
         <div 
-          className={`flex flex-col flex-1 text-center p-1 select-none ${(phase==7) ? "bg-gray-600" : "bg-gray-400"}`}
+          className={`flex flex-col flex-1 text-center p-1 select-none ${(phase===7) ? "bg-gray-600" : "bg-gray-400"}`}
           style={{writingMode:"vertical-rl"}} 
           onClick={() => changePhase(7)}>Refresh</div>
         <div 
-          className={`flex flex-col flex-1 text-center p-1 select-none ${(phase==6) ? "bg-gray-600" : "bg-gray-400"}`}
+          className={`flex flex-col flex-1 text-center p-1 select-none ${(phase===6) ? "bg-gray-600" : "bg-gray-400"}`}
           style={{writingMode:"vertical-rl"}} 
           onClick={() => changePhase(6)}>Combat</div>
         <div 
-          className={`flex flex-col flex-1 text-center p-1 select-none ${(phase==5) ? "bg-gray-600" : "bg-gray-400"}`}
+          className={`flex flex-col flex-1 text-center p-1 select-none ${(phase===5) ? "bg-gray-600" : "bg-gray-400"}`}
           style={{writingMode:"vertical-rl"}} 
           onClick={() => changePhase(5)}>Encounter</div>
         <div 
-          className={`flex flex-col flex-1 text-center p-1 select-none ${(phase==4) ? "bg-gray-600" : "bg-gray-400"}`}
+          className={`flex flex-col flex-1 text-center p-1 select-none ${(phase===4) ? "bg-gray-600" : "bg-gray-400"}`}
           style={{writingMode:"vertical-rl"}} 
           onClick={() => changePhase(4)}>Travel</div>
         <div 
-          className={`flex flex-col flex-1 text-center p-1 select-none ${(phase==3) ? "bg-gray-600" : "bg-gray-400"}`}
+          className={`flex flex-col flex-1 text-center p-1 select-none ${(phase===3) ? "bg-gray-600" : "bg-gray-400"}`}
           style={{writingMode:"vertical-rl"}} 
           onClick={() => changePhase(3)}>Quest</div>
         <div 
-          className={`flex flex-col flex-1 text-center p-1 select-none ${(phase==2) ? "bg-gray-600" : "bg-gray-400"}`}
+          className={`flex flex-col flex-1 text-center p-1 select-none ${(phase===2) ? "bg-gray-600" : "bg-gray-400"}`}
           style={{writingMode:"vertical-rl"}} 
           onClick={() => changePhase(2)}>Planning</div>
         <div 
-          className={`flex flex-col flex-1 text-center p-1 select-none ${(phase==1) ? "bg-gray-600" : "bg-gray-400"}`}
+          className={`flex flex-col flex-1 text-center p-1 select-none ${(phase===1) ? "bg-gray-600" : "bg-gray-400"}`}
           style={{writingMode:"vertical-rl"}} 
           onClick={() => changePhase(1)}>Resource</div>
       </div>

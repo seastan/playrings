@@ -1,14 +1,6 @@
 import React from "react";
 import styled from "@emotion/styled";
-import { borderRadius, grid } from "./Constants";
 import { Card, CARDSCALE } from "./Card"
-
-const getBorderColor = (isDragging) =>
-  isDragging ? "black" : "transparent";
-
-const imageSize = 40;
-
-
 
 const Container = styled.div`
   position: relative;

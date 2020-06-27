@@ -1,9 +1,6 @@
 import React, { useState, useCallback } from "react";
 import RotateTableProvider from "./RotateTableProvider";
 import RoomGame from "./RoomGame";
-import RoomStaging from "./RoomStaging";
-import Container from "../../components/basic/Container";
-import Chat from "../chat/Chat";
 
 import GameUIViewContext from "../../contexts/GameUIViewContext";
 import useChannel from "../../hooks/useChannel";

@@ -2,7 +2,6 @@ import React from "react";
 import ScrollToBottom from "react-scroll-to-bottom";
 import ChatMessagesInner from "./ChatMessagesInner";
 import { ChatMessage } from "elixir-backend";
-import cx from "classnames";
 
 interface Props {
   messages: Array<ChatMessage>;

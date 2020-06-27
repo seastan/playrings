@@ -1,10 +1,5 @@
-import React, { useContext, useEffect, useState } from "react";
-import cx from "classnames";
-import PlayerSeat from "./PlayerSeat";
-import Hand from "./Hand";
+import React from "react";
 import { Groups } from "./Groups";
-import ScoreHeader from "../score/ScoreHeader";
-import RotateTableContext from "../../contexts/RotateTableContext";
 import { GameUIView } from "elixir-backend";
 import {ActiveCardProvider} from '../../contexts/ActiveCardContext'
 
