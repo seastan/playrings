@@ -28,7 +28,7 @@ defmodule SpadesGame.Group do
       name: name,
       type: type,
       controller: controller,
-      stacks: [Stack.new_test1(),Stack.new_test(),Stack.new_test(),Stack.new_test(),Stack.new_test(),Stack.new_test(),Stack.new_test()],
+      stacks: [Stack.new_test()]
       #stacks: [Stack.new_test1()]#,Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1()],
     }
   end
@@ -43,7 +43,8 @@ defmodule SpadesGame.Group do
       name: name,
       type: type,
       controller: controller,
-      stacks: [Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1()]
+#      stacks: [Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1(),Stack.new_test1()]
+      stacks: [Stack.new_test1()]
     }
   end
 

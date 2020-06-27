@@ -5,20 +5,17 @@ import Title from "./Title";
 import { borderRadius, grid } from "./Constants";
 
 const Container = styled.div`
-  margin: ${grid}px;
+  padding: 1px 1px 1px 1px;
+  max-height: 100%;
+  height: 100%;
+  width: 100%;
 `;
 
 const Header = styled.div`
-  display: flex;
   align-items: center;
   justify-content: center;
-  border-top-left-radius: ${borderRadius}px;
-  border-top-right-radius: ${borderRadius}px;
-  background-color: ${({ isDragging }) => (isDragging ? "green" : "gray")};
-  transition: background-color 0.2s ease;
-  &:hover {
-    background-color: "green";
-  }
+  color: white;
+  height: 13%;
 `;
 
 export default class Group extends Component {

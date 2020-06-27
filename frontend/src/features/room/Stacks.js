@@ -10,18 +10,15 @@ export const getBackgroundColor = (isDraggingOver, isDraggingFrom) => {
     return 'hotpink';
   }
   if (isDraggingFrom) {
-    return 'teal';
+    return '';
   }
   return 'lime';
 };
 
 const Wrapper = styled.div`
-  background-color: ${props =>
-    getBackgroundColor(props.isDraggingOver, props.isDraggingFrom)};
-  opacity: ${({ isDropDisabled }) => (isDropDisabled ? 0.5 : "inherit")};
-  padding: ${grid}px;
-  border: ${grid}px;
-  padding-bottom: 0;
+  background-color: ${props => props.isDraggingOver ? "rgba(1,1,1,0.4)" : "green"};
+  padding: 0 0 0 0;
+  height: 87%;
   transition: background-color 0.2s ease, opacity 0.1s ease;
   user-select: none;
   overflow-x: auto;

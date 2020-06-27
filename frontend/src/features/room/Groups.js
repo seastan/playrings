@@ -9,6 +9,13 @@ import { reorderGroups } from "./Reorder";
 import Card from "./Card";
 import uuid from "uuid/v4";
 import cx from "classnames";
+import styled from "@emotion/styled";
+
+const WidthContainer = styled.div`
+  padding: 2px 2px 2px 2px;
+  float: left;
+  height: 100%;
+`;
 
 const onDragEnd = (result, groups, setGroups, broadcast) => {
   console.log(result);
@@ -175,57 +182,52 @@ export const Groups = ({
           <div className="f"  style={{height: "94%"}}>
 
             <div className="w-full" style={{minHeight: "20%", height: "20%", maxHeight: "20%"}}>
-              <div className="float-left h-full" style={{width: "10%"}}>
+              <WidthContainer style={{width: "10%"}}>
                 <Group group={groups['gSharedEncounterDiscard']} broadcast={broadcast} activeCard={activeCard} setActiveCard={setActiveCard}></Group>
-              </div>
-              <div className="float-left h-full" style={{width: "10%"}}>
+              </WidthContainer>
+              <WidthContainer style={{width: "10%"}}>
                 <Group group={groups['gSharedEncounterDeck']} broadcast={broadcast} activeCard={activeCard} setActiveCard={setActiveCard}></Group>
-              </div>
-              <div className="float-left h-full" style={{width: "55%"}}>
-              <Group
-        broadcast={broadcast}
-        group={groups['gSharedQuestDeck']}
-        key={'gSharedQuestDeck'}
-        title={groups['gSharedQuestDeck'].id}
-        activeCard={activeCard}
-        setActiveCard={setActiveCard}
-      />
-                
-                {/* <Group group={groups['gSharedStaging']} key={'gSharedStaging'} broadcast={broadcast} activeCard={activeCard} setActiveCard={setActiveCard}></Group> */}
-              </div>
-              <div className="float-left h-full" style={{width: "10%"}}>
+              </WidthContainer>
+              <WidthContainer style={{width: "55%"}}>                
+                <Group group={groups['gSharedStaging']} key={'gSharedStaging'} broadcast={broadcast} activeCard={activeCard} setActiveCard={setActiveCard}></Group>
+              </WidthContainer>
+              <WidthContainer style={{width: "10%"}}>
                 <Group group={groups['gSharedActive']} broadcast={broadcast} activeCard={activeCard} setActiveCard={setActiveCard}></Group>
-              </div>
-              <div className="float-left h-full" style={{width: "15%"}}>
+              </WidthContainer>
+              <WidthContainer style={{width: "15%"}}>
                 <Group group={groups['gSharedMainQuest']} broadcast={broadcast} activeCard={activeCard} setActiveCard={setActiveCard}></Group>
-              </div>
+              </WidthContainer>
               
             </div> 
             <div className="w-full" style={{minHeight: "20%", height: "20%", maxHeight: "20%"}}>
-              <Group group={groups['gPlayer1Engaged']} key={'gPlayer1Engaged'} broadcast={broadcast} activeCard={activeCard} setActiveCard={setActiveCard}></Group>
+              <WidthContainer style={{width: "100%"}}>
+                <Group group={groups['gPlayer1Engaged']} key={'gPlayer1Engaged'} broadcast={broadcast} activeCard={activeCard} setActiveCard={setActiveCard}></Group>
+              </WidthContainer>
             </div>
               
-            <div className="flex flex-1" style={{minHeight: "20%", height: "20%", maxHeight: "20%"}}>
-              <Group group={groups['gPlayer1Play1']} broadcast={broadcast} activeCard={activeCard} setActiveCard={setActiveCard}></Group>
+            <div className="w-full" style={{minHeight: "20%", height: "20%", maxHeight: "20%"}}>
+              <WidthContainer style={{width: "100%"}}>
+                <Group group={groups['gPlayer1Play1']} broadcast={broadcast} activeCard={activeCard} setActiveCard={setActiveCard}></Group>
+              </WidthContainer>
             </div>
             <div className="flex flex-1" style={{minHeight: "20%", height: "20%", maxHeight: "20%"}}>
-              <div className="" style={{width: "90%"}}>
+              <WidthContainer style={{width: "90%"}}>
                 <Group group={groups['gPlayer1Play2']} showTitle="false" broadcast={broadcast} activeCard={activeCard} setActiveCard={setActiveCard}></Group>
-              </div>
-              <div className="" style={{width: "10%"}}>
+              </WidthContainer>
+              <WidthContainer style={{width: "10%"}}>
                 <Group group={groups['gPlayer1Event']} broadcast={broadcast} activeCard={activeCard} setActiveCard={setActiveCard}></Group>
-              </div>
+              </WidthContainer>
             </div>
             <div className=" flex flex-1" style={{minHeight: "20%", height: "20%", maxHeight: "20%", background: "rgba(0, 0, 0, 0.5)"}}>
-              <div className="" style={{width: "80%"}}>
+              <WidthContainer style={{width: "80%"}}>
                 <Group group={groups['gPlayer1Hand']} broadcast={broadcast} activeCard={activeCard} setActiveCard={setActiveCard}></Group>
-              </div>
-              <div className="" style={{width: "10%"}}>
+              </WidthContainer>
+              <WidthContainer style={{width: "10%"}}>
                 <Group group={groups['gPlayer1Deck']} broadcast={broadcast} activeCard={activeCard} setActiveCard={setActiveCard}></Group>
-              </div>
-              <div className="" style={{width: "10%"}}>
+              </WidthContainer>
+              <WidthContainer style={{width: "10%"}}>
                 <Group group={groups['gPlayer1Discard']} broadcast={broadcast} activeCard={activeCard} setActiveCard={setActiveCard}></Group>
-              </div>
+              </WidthContainer>
             </div>
           </div>
           <div className="bg-gray-300" style={{height: "3%"}}>
@@ -312,7 +314,7 @@ export default Groups;
 //   large: generateQuoteMap(250)
 // };
 
-// const Container = styled.div`
+// const WidthContainer = styled.div`
 //   min-height: 100vh;
 //   /* like display:flex but will allow bleeding over the window width */
 //   min-width: 100vw;
@@ -444,7 +446,7 @@ export default Groups;
 
 //   const board = (
 
-//     <Container>
+//     <WidthContainer>
 //       <Group
 //         broadcast={broadcast}
 //         group={groups['gSharedQuestDeck']}
@@ -491,7 +493,7 @@ export default Groups;
 //         setActiveCard={setActiveCard}
 //       />
       
-//     </Container>
+//     </WidthContainer>
 //   );
 
 //   return (
