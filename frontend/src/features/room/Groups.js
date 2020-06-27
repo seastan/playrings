@@ -182,13 +182,7 @@ export const Groups = ({
           <div className="f"  style={{height: "94%"}}>
 
             <div className="w-full" style={{minHeight: "20%", height: "20%", maxHeight: "20%"}}>
-              <WidthContainer style={{width: "10%"}}>
-                <Group group={groups['gSharedEncounterDiscard']} broadcast={broadcast} activeCard={activeCard} setActiveCard={setActiveCard}></Group>
-              </WidthContainer>
-              <WidthContainer style={{width: "10%"}}>
-                <Group group={groups['gSharedEncounterDeck']} broadcast={broadcast} activeCard={activeCard} setActiveCard={setActiveCard}></Group>
-              </WidthContainer>
-              <WidthContainer style={{width: "55%"}}>                
+              <WidthContainer style={{width: "75%"}}>                
                 <Group group={groups['gSharedStaging']} key={'gSharedStaging'} broadcast={broadcast} activeCard={activeCard} setActiveCard={setActiveCard}></Group>
               </WidthContainer>
               <WidthContainer style={{width: "10%"}}>
@@ -260,8 +254,7 @@ export const Groups = ({
             )}
           </div>
           {/* Extra */}
-          <div 
-            className="bg-gray-800" 
+          <div
             style={{
               height: "40%", 
               display: showScratch ? "block" : "none"
