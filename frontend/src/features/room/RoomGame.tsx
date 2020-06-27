@@ -6,6 +6,7 @@ import { Groups } from "./Groups";
 import ScoreHeader from "../score/ScoreHeader";
 import RotateTableContext from "../../contexts/RotateTableContext";
 import { GameUIView } from "elixir-backend";
+import {ActiveCardProvider} from '../../contexts/ActiveCardContext'
 
 interface Props {
   gameUIView: GameUIView;
@@ -15,10 +16,12 @@ interface Props {
 const RoomGame: React.FC<Props> = ({ gameUIView, broadcast }) => {
 
   return (
-    <Groups 
-      gameUIView={gameUIView}
-      broadcast={broadcast}
-    />
+    <ActiveCardProvider value={null}>
+      <Groups 
+        gameUIView={gameUIView}
+        broadcast={broadcast}
+      />
+    </ActiveCardProvider>
  
   )
 }   

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Tokens } from './Tokens';
+import { useActiveCard, useSetActiveCard } from "../../contexts/ActiveCardContext";
 
 //import cx from "classnames";
 
@@ -30,11 +31,11 @@ export const Card = ({
     inputCard,
     cardIndex,
     broadcast,
-    activeCard,
-    setActiveCard,
   }) => {
     const [card, setCard] = useState(inputCard);
     const [adjustVisible, setAdjustVisible] = useState(false);
+    const activeCard = useActiveCard();
+    const setActiveCard = useSetActiveCard();
     useEffect(() => {
         const onKeyDown = ({key}) => {
             if (key === "Shift") {
@@ -85,7 +86,7 @@ export const Card = ({
                 // boxShadow: "10px 10px 29px 5px rgba(0,0,0,0.26)",
             }}
             onDoubleClick={event => handleDoubleClick(event, card, setCard, broadcast, adjustVisible)}
-            //onMouseOver={() => {setActiveCard(card); console.log(card);}}
+            onClick={() => {setActiveCard(card); console.log(card);}}
         >
             <Tokens card={card} adjustVisible={adjustVisible && (activeCard===card)}></Tokens>
         </div>
