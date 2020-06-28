@@ -75,6 +75,7 @@ export const Groups = ({
     });
 
     setGroups(data.groups);
+    broadcast("update_groups",{groups: data.groups});
     // setState({
     //   columns: data.quoteMap,
     //   ordered: state.ordered
