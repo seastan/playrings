@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "@emotion/styled";
 import { Droppable, Draggable } from "react-beautiful-dnd";
-import Stack from "./Stack";
+import StackView from "./StackView";
 
 export const getBackgroundColor = (isDraggingOver, isDraggingFrom) => {
   if (isDraggingOver) {
@@ -39,7 +39,7 @@ const InnerQuoteList = React.memo(function InnerQuoteList(props) {
   return props.stacks.map((stack, stackIndex) => (
     <Draggable key={stack.id} draggableId={stack.id} index={stackIndex}>
       {(dragProvided, dragSnapshot) => (
-        <Stack
+        <StackView
           broadcast={props.broadcast}
           group={props.group}
           stackIndex={stackIndex}
