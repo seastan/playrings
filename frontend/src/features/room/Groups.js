@@ -75,7 +75,15 @@ export const Groups = ({
     });
 
     setGroups(data.groups);
-    broadcast("update_groups",{groups: data.groups});
+    // broadcast(
+    //   "update_2_groups",
+    //   {
+    //     groupID1: source.droppableId,
+    //     group2: data.groups[source.droppableId],
+    //     groupID2: destination.droppableId,
+    //     group2: data.groups[destination.droppableId],
+    // })
+    //broadcast("update_groups",{groups: data.groups});
     // setState({
     //   columns: data.quoteMap,
     //   ordered: state.ordered
