@@ -3,7 +3,7 @@ import { DragDropContext } from "react-beautiful-dnd";
 import { faChevronUp, faChevronDown } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Chat from "../chat/Chat";
-import Group from "./Group";
+import GroupView from "./GroupView";
 import { reorderGroups } from "./Reorder";
 import { ActiveCard } from "./ActiveCard";
 import styled from "@emotion/styled";
@@ -74,6 +74,16 @@ export const Groups = ({
       destination
     });
 
+    const keys = Object.keys(data.groups);
+    for (const key of keys) {
+      //data.groups[key].updated = false;
+      if (key === source.droppableId || key === destination.droppableId) {
+        data.groups[key]["updated"] = true;
+      } else {
+        data.groups[key]["updated"] = false;
+      }
+    }
+    console.log(data.groups);
     setGroups(data.groups);
     // broadcast(
     //   "update_2_groups",
@@ -83,7 +93,7 @@ export const Groups = ({
     //     groupID2: destination.droppableId,
     //     group2: data.groups[destination.droppableId],
     // })
-    //broadcast("update_groups",{groups: data.groups});
+    broadcast("update_groups",{groups: data.groups});
     // setState({
     //   columns: data.quoteMap,
     //   ordered: state.ordered
@@ -138,44 +148,44 @@ export const Groups = ({
 
             <div className="w-full" style={{minHeight: "20%", height: "20%", maxHeight: "20%"}}>
               <WidthContainer style={{width: "75%"}}>                
-                <Group group={groups['gSharedStaging']} key={'gSharedStaging'} broadcast={broadcast}></Group>
+                <GroupView group={groups['gSharedStaging']} key={'gSharedStaging'} broadcast={broadcast}></GroupView>
               </WidthContainer>
               <WidthContainer style={{width: "10%"}}>
-                <Group group={groups['gSharedActive']} broadcast={broadcast}></Group>
+                <GroupView group={groups['gSharedActive']} broadcast={broadcast}></GroupView>
               </WidthContainer>
               <WidthContainer style={{width: "15%"}}>
-                <Group group={groups['gSharedMainQuest']} broadcast={broadcast}></Group>
+                <GroupView group={groups['gSharedMainQuest']} broadcast={broadcast}></GroupView>
               </WidthContainer>
               
             </div> 
             <div className="w-full" style={{minHeight: "20%", height: "20%", maxHeight: "20%"}}>
               <WidthContainer style={{width: "100%"}}>
-                <Group group={groups['gPlayer1Engaged']} key={'gPlayer1Engaged'} broadcast={broadcast}></Group>
+                <GroupView group={groups['gPlayer1Engaged']} key={'gPlayer1Engaged'} broadcast={broadcast}></GroupView>
               </WidthContainer>
             </div>
               
             <div className="w-full" style={{minHeight: "20%", height: "20%", maxHeight: "20%"}}>
               <WidthContainer style={{width: "100%"}}>
-                <Group group={groups['gPlayer1Play1']} broadcast={broadcast}></Group>
+                <GroupView group={groups['gPlayer1Play1']} broadcast={broadcast}></GroupView>
               </WidthContainer>
             </div>
             <div className="flex flex-1" style={{minHeight: "20%", height: "20%", maxHeight: "20%"}}>
               <WidthContainer style={{width: "90%"}}>
-                <Group group={groups['gPlayer1Play2']} showTitle="false" broadcast={broadcast}></Group>
+                <GroupView group={groups['gPlayer1Play2']} showTitle="false" broadcast={broadcast}></GroupView>
               </WidthContainer>
               <WidthContainer style={{width: "10%"}}>
-                <Group group={groups['gPlayer1Event']} broadcast={broadcast}></Group>
+                <GroupView group={groups['gPlayer1Event']} broadcast={broadcast}></GroupView>
               </WidthContainer>
             </div>
             <div className=" flex flex-1" style={{minHeight: "20%", height: "20%", maxHeight: "20%", background: "rgba(0, 0, 0, 0.5)"}}>
               <WidthContainer style={{width: "80%"}}>
-                <Group group={groups['gPlayer1Hand']} broadcast={broadcast}></Group>
+                <GroupView group={groups['gPlayer1Hand']} broadcast={broadcast}></GroupView>
               </WidthContainer>
               <WidthContainer style={{width: "10%"}}>
-                <Group group={groups['gPlayer1Deck']} broadcast={broadcast}></Group>
+                <GroupView group={groups['gPlayer1Deck']} broadcast={broadcast}></GroupView>
               </WidthContainer>
               <WidthContainer style={{width: "10%"}}>
-                <Group group={groups['gPlayer1Discard']} broadcast={broadcast}></Group>
+                <GroupView group={groups['gPlayer1Discard']} broadcast={broadcast}></GroupView>
               </WidthContainer>
             </div>
           </div>
@@ -218,12 +228,12 @@ export const Groups = ({
             }}
           >        
             <div style={{height: "33.3%"}}>
-              <Group group={groups['gSharedExtra1']} showTitle="false"></Group>
+              <GroupView group={groups['gSharedExtra1']} showTitle="false"></GroupView>
             </div>
             <div style={{height: "33.3%"}}>
-              <Group group={groups['gSharedExtra2']} showTitle="false"></Group></div>
+              <GroupView group={groups['gSharedExtra2']} showTitle="false"></GroupView></div>
             <div style={{height: "33.4%"}}>
-              <Group group={groups['gSharedExtra3']} showTitle="false"></Group></div>
+              <GroupView group={groups['gSharedExtra3']} showTitle="false"></GroupView></div>
           </div>
           <div className="text-center" onClick={() => toggleScratch()} style={{height: "3%"}}>
             <FontAwesomeIcon className="text-white" icon={showScratch ? faChevronDown : faChevronUp}/>
@@ -253,7 +263,7 @@ export default Groups;
 // import ReactDOM from "react-dom";
 // import { generateQuoteMap } from "./data";
 // import styled from "@emotion/styled";
-// import Group from "./Group";
+// import GroupView from "./Group";
 // import Reorder, { reorderGroups } from "./Reorder";
 // import { DragDropContext } from "react-beautiful-dnd";
 
@@ -304,8 +314,8 @@ export default Groups;
 //   //   const { source, destination } = result;
 //   //   var newGroups = {};
 //   //   if (source.droppableId !== destination.droppableId) {
-//   //     const sourceGroup = groups[source.droppableId];
-//   //     const destGroup = groups[destination.droppableId];
+//   //     const sourceGroupView = groups[source.droppableId];
+//   //     const destGroupView = groups[destination.droppableId];
 //   //     const sourceStacks = [...sourceGroup.stacks];
 //   //     const destStacks = [...destGroup.stacks];
 //   //     const [removed] = sourceStacks.splice(source.index, 1);

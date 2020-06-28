@@ -79,7 +79,6 @@ export default function Stacks(props) {
   const {
     broadcast,
     group,
-    stacks,
     isDropDisabled,
     isCombineEnabled,
     activeCard,
@@ -104,7 +103,7 @@ export default function Stacks(props) {
             <InnerList
                 broadcast={broadcast}
                 group={group}
-                stacks={stacks}
+                stacks={group.stacks}
                 dropProvided={dropProvided}
                 activeCard={activeCard}
                 setActiveCard={setActiveCard}

@@ -35,6 +35,7 @@ declare module "elixir-backend" {
     type: string;
     controller: string;
     cards: Array<Card>;
+    updated: boolean;
   }
 
   export declare class Groups {
