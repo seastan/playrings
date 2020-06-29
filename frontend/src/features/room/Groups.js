@@ -94,7 +94,7 @@ export const Groups = ({
     //     groupID2: destination.droppableId,
     //     groupIndex2: data.groups[destination.droppableId],
     // })
-    //broadcast("update_groups",{groups: data.groups});
+    broadcast("update_groups",{groups: data.groups});
     // setState({
     //   columns: data.quoteMap,
     //   ordered: state.ordered
