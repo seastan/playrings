@@ -6,6 +6,7 @@ type TParams = { slug: string };
 interface Props extends RouteComponentProps<TParams> {}
 
 export const RoomShow: React.FC<Props> = ({ match }) => {
+  console.log('rendering roomshow')
   const {
     params: { slug },
   } = match;

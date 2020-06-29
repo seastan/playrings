@@ -7,6 +7,7 @@ import GroupView from "./GroupView";
 import { reorderGroups } from "./Reorder";
 import { ActiveCard } from "./ActiveCard";
 import styled from "@emotion/styled";
+import GameUIViewContext from "../../contexts/GameUIViewContext";
 
 const WidthContainer = styled.div`
   padding: 2px 2px 2px 2px;
@@ -15,9 +16,9 @@ const WidthContainer = styled.div`
 `;
 
 export const Groups = ({
-  gameUIView,
   broadcast,
 }) => {
+  const gameUIView = React.useContext(GameUIViewContext);
   const [groups, setGroups] = useState(gameUIView.game_ui.game.groups);
   const [showScratch, setShowScratch] = useState(false);
   const [phase, setPhase] = useState(1);
@@ -93,7 +94,7 @@ export const Groups = ({
     //     groupID2: destination.droppableId,
     //     groupIndex2: data.groups[destination.droppableId],
     // })
-    //broadcast("update_groups",{groups: data.groups});
+    broadcast("update_groups",{groups: data.groups});
     // setState({
     //   columns: data.quoteMap,
     //   ordered: state.ordered
