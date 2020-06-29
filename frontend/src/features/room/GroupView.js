@@ -20,9 +20,14 @@ const Header = styled.div`
 export default class GroupView extends Component {
 
   shouldComponentUpdate = (nextProps, nextState) => {
-      if (nextProps.group.updated === false) {
+      //if (nextProps.group.updated === false) {
+      if (JSON.stringify(nextProps.group)===JSON.stringify(this.props.group)) {
         return false;
       } else {
+        // console.log('this.props.group');
+        // console.log(this.props.group);
+        // console.log('nextProps.group');
+        // console.log(nextProps.group);
         return true;
       }
   };
@@ -30,8 +35,6 @@ export default class GroupView extends Component {
   render() {
     const broadcast = this.props.broadcast;
     const group = this.props.group;
-    const activeCard = this.props.activeCard;
-    const setActiveCard= this.props.setActiveCard;
     console.log('rendering');
     console.log(group.id);
     return (
@@ -46,8 +49,6 @@ export default class GroupView extends Component {
           group={group}
           internalScroll={this.props.isScrollable}
           isCombineEnabled={group.type === "play"}
-          activeCard={activeCard}
-          setActiveCard={setActiveCard}
         />
       </Container>
       //   )}

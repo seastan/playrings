@@ -11,7 +11,7 @@ interface Props {
 
 export const Room: React.FC<Props> = ({ slug }) => {
   const [gameUIView, setGameUIView] = useState<GameUIView | null>(null);
-
+  console.log('rendering room');
   const onChannelMessage = useCallback((event, payload) => {
     //console.log("[room] Got channel message", event, payload);
     if (

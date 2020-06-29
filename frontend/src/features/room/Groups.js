@@ -75,15 +75,15 @@ export const Groups = ({
       destination
     });
 
-    const keys = Object.keys(data.groups);
-    for (const key of keys) {
-      //data.groups[key].updated = false;
-      if (key === source.droppableId || key === destination.droppableId) {
-        data.groups[key]["updated"] = true;
-      } else {
-        data.groups[key]["updated"] = false;
-      }
-    }
+    // const keys = Object.keys(data.groups);
+    // for (const key of keys) {
+    //   //data.groups[key].updated = false;
+    //   if (key === source.droppableId || key === destination.droppableId) {
+    //     data.groups[key]["updated"] = true;
+    //   } else {
+    //     data.groups[key]["updated"] = false;
+    //   }
+    // }
     console.log(data.groups);
     setGroups(data.groups);
     // broadcast(
@@ -94,7 +94,7 @@ export const Groups = ({
     //     groupID2: destination.droppableId,
     //     groupIndex2: data.groups[destination.droppableId],
     // })
-    broadcast("update_groups",{groups: data.groups});
+    //broadcast("update_groups",{groups: data.groups});
     // setState({
     //   columns: data.quoteMap,
     //   ordered: state.ordered
