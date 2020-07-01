@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Tokens } from './Tokens';
+import GameUIViewContext from "../../contexts/GameUIViewContext";
 import { useActiveCard, useSetActiveCard } from "../../contexts/ActiveCardContext";
 
 //import cx from "classnames";
@@ -11,12 +12,30 @@ export const CARDSCALE = 4.5;
 export const CardView = ({
     inputCard,
     cardIndex,
+    stackIndex,
+    group,
     broadcast,
   }) => {
+
+    const gameUIView = React.useContext(GameUIViewContext);
     const [card, setCard] = useState(inputCard);
     const [shiftDown, setShiftDown] = useState(false);
     const activeCard = useActiveCard();
     const setActiveCard = useSetActiveCard();
+    const groups = gameUIView.game_ui.game.groups;
+    const cardWatch = gameUIView.game_ui.game.groups[group.id].stacks[stackIndex]?.cards[cardIndex];
+
+    // console.log('printing out card path');
+    // console.log(group.id);
+    // console.log(gameUIView.game_ui.game.groups[group.id]);
+    // console.log(stackIndex);
+    // console.log(gameUIView.game_ui.game.groups[group.id].stacks[stackIndex]);
+    // console.log(cardIndex);
+    // console.log(gameUIView.game_ui.game.groups[group.id].stacks[stackIndex].cards[cardIndex]);
+  
+    // useEffect(() => {    
+    //   if (cardWatch) setCard(cardWatch);
+    // }, [cardWatch]);
 
     const handleSetActiveCard = (event) => {
         if (activeCard !== card) {
@@ -34,6 +53,9 @@ export const CardView = ({
             card.rotation = 0;
         }
         setCard({...card});
+        const newGroups = groups;
+        newGroups[group.id].stacks[stackIndex].cards[cardIndex] = card;
+        broadcast("update_groups",{groups: {...newGroups}});
         //setTimeout(setActiveCard(card),2000);
     }
 
@@ -60,7 +82,9 @@ export const CardView = ({
         }
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
+
     console.log('rendering card');
+    console.log(card.id);
     if (!card) return null;
     return (
         <div 
@@ -91,7 +115,7 @@ export const CardView = ({
                 // boxShadow: "10px 10px 29px 5px rgba(0,0,0,0.26)",
             }}
             onDoubleClick={event => handleDoubleClick(event)}
-            onMouseEnter={event => handleSetActiveCard(event)}
+            onMouseOver={event => handleSetActiveCard(event)}
         >
             <Tokens card={card} adjustVisible={shiftDown && (activeCard===card)}></Tokens>
         </div>

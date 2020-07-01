@@ -38,8 +38,6 @@ export const Groups = ({
     setGroups(gameUIView.game_ui.game.groups);
   }, [gameUIView.game_ui.game.groups]);
 
-
-
   const onDragEnd = (result) => {
     if (result.combine) {
       return;
