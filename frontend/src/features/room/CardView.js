@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Tokens } from './Tokens';
 import GameUIViewContext from "../../contexts/GameUIViewContext";
 import { useActiveCard, useSetActiveCard } from "../../contexts/ActiveCardContext";
@@ -7,6 +7,74 @@ import { useActiveCard, useSetActiveCard } from "../../contexts/ActiveCardContex
 
 export const CARDSCALE = 4.5;
 
+// PREVENT DOUBLECLICK REGISTERING 2 CLICK EVENTS
+export const delay = n => new Promise(resolve => setTimeout(resolve, n));
+
+export const cancellablePromise = promise => {
+    let isCanceled = false;
+  
+    const wrappedPromise = new Promise((resolve, reject) => {
+      promise.then(
+        value => (isCanceled ? reject({ isCanceled, value }) : resolve(value)),
+        error => reject({ isCanceled, error }),
+      );
+    });
+  
+    return {
+      promise: wrappedPromise,
+      cancel: () => (isCanceled = true),
+    };
+};
+
+const useCancellablePromises = () => {
+  const pendingPromises = useRef([]);
+
+  const appendPendingPromise = promise =>
+    pendingPromises.current = [...pendingPromises.current, promise];
+
+  const removePendingPromise = promise =>
+    pendingPromises.current = pendingPromises.current.filter(p => p !== promise);
+
+  const clearPendingPromises = () => pendingPromises.current.map(p => p.cancel());
+
+  const api = {
+    appendPendingPromise,
+    removePendingPromise,
+    clearPendingPromises,
+  };
+
+  return api;
+};
+
+const useClickPreventionOnDoubleClick = (onClick, onDoubleClick) => {
+    const api = useCancellablePromises();
+  
+    const handleClick = () => {
+      api.clearPendingPromises();
+      const waitForClick = cancellablePromise(delay(300));
+      api.appendPendingPromise(waitForClick);
+  
+      return waitForClick.promise
+        .then(() => {
+          api.removePendingPromise(waitForClick);
+          onClick();
+        })
+        .catch(errorInfo => {
+          api.removePendingPromise(waitForClick);
+          if (!errorInfo.isCanceled) {
+            throw errorInfo.error;
+          }
+        });
+    };
+  
+    const handleDoubleClick = () => {
+      api.clearPendingPromises();
+      onDoubleClick();
+    };
+  
+    return [handleClick, handleDoubleClick];
+};
+// END PREVENT DOUBLECLICK REGISTERING 2 CLICK EVENTS
 
 
 export const CardView = ({
@@ -16,7 +84,6 @@ export const CardView = ({
     group,
     broadcast,
   }) => {
-
     const gameUIView = React.useContext(GameUIViewContext);
     const [card, setCard] = useState(inputCard);
     const [shiftDown, setShiftDown] = useState(false);
@@ -24,7 +91,7 @@ export const CardView = ({
     const setActiveCard = useSetActiveCard();
     const [isActive, setIsActive] = useState(false);
     const groups = gameUIView.game_ui.game.groups;
-    const cardWatch = gameUIView.game_ui.game.groups[group.id].stacks[stackIndex]?.cards[cardIndex];
+    const cardWatch = gameUIView.game_ui.game.groups[group.id].stacks[stackIndex]?.cards[cardIndex]
 
     // console.log('printing out card path');
     // console.log(group.id);
@@ -34,9 +101,9 @@ export const CardView = ({
     // console.log(cardIndex);
     // console.log(gameUIView.game_ui.game.groups[group.id].stacks[stackIndex].cards[cardIndex]);
   
-    // useEffect(() => {    
-    //   if (cardWatch) setCard(cardWatch);
-    // }, [cardWatch]);
+    useEffect(() => {    
+      if (cardWatch) setCard(cardWatch);
+    }, [cardWatch]);
 
     const handleSetActiveCard = (event) => {
         if (!isActive) {
@@ -52,12 +119,12 @@ export const CardView = ({
         }
     }
 
-    const handleClick = (event) => {
+    const onClick = (event) => {
         console.log('click');
         return;
     }
 
-    const handleDoubleClick = (event) => {
+    const onDoubleClick = (event) => {
         if (shiftDown) return;
         if (!card.exhausted) {
             card.exhausted = true;
@@ -72,6 +139,9 @@ export const CardView = ({
         broadcast("update_groups",{groups: {...newGroups}});
         //setTimeout(setActiveCard(card),2000);
     }
+
+    const [handleClick, handleDoubleClick] = useClickPreventionOnDoubleClick(onClick, onDoubleClick);
+
 
     useEffect(() => {
 
@@ -97,7 +167,7 @@ export const CardView = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    //console.log('rendering card');
+    console.log('rendering card');
     //console.log(card.id);
     if (!card) return null;
     return (
@@ -128,8 +198,8 @@ export const CardView = ({
                 // MozBoxShadow: "10px 10px 29px 5px rgba(0,0,0,0.26)",
                 // boxShadow: "10px 10px 29px 5px rgba(0,0,0,0.26)",
             }}
-            onClick={event => handleClick(event)}
-            onDoubleClick={event => handleDoubleClick(event)}
+            onClick={handleClick}
+            onDoubleClick={handleDoubleClick}
             onMouseOver={event => handleSetActiveCard(event)}
             onMouseLeave={event => handleUnsetActiveCard(event)}
         >
