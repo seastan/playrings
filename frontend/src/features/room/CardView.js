@@ -20,8 +20,9 @@ export const CardView = ({
     const gameUIView = React.useContext(GameUIViewContext);
     const [card, setCard] = useState(inputCard);
     const [shiftDown, setShiftDown] = useState(false);
-    const activeCard = useActiveCard();
+//    const activeCard = useActiveCard();
     const setActiveCard = useSetActiveCard();
+    const [isActive, setIsActive] = useState(false);
     const groups = gameUIView.game_ui.game.groups;
     const cardWatch = gameUIView.game_ui.game.groups[group.id].stacks[stackIndex]?.cards[cardIndex];
 
@@ -38,9 +39,22 @@ export const CardView = ({
     // }, [cardWatch]);
 
     const handleSetActiveCard = (event) => {
-        if (activeCard !== card) {
+        if (!isActive) {
+            setIsActive(true);
             setActiveCard(card);
         }
+    }
+
+    const handleUnsetActiveCard = (event) => {
+        if (isActive) {
+            setIsActive(false);
+            setActiveCard(null);
+        }
+    }
+
+    const handleClick = (event) => {
+        console.log('click');
+        return;
     }
 
     const handleDoubleClick = (event) => {
@@ -83,8 +97,8 @@ export const CardView = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    console.log('rendering card');
-    console.log(card.id);
+    //console.log('rendering card');
+    //console.log(card.id);
     if (!card) return null;
     return (
         <div 
@@ -98,7 +112,7 @@ export const CardView = ({
                 left: `${CARDSCALE/3*cardIndex}vw`,
                 borderWidth: '2px',
                 borderRadius: '5px',
-                borderColor: (activeCard === card) ? 'yellow' : 'transparent',
+                borderColor: isActive ? 'yellow' : 'transparent',
                 //transform: `rotate(${angles}deg)`,
                 transform: `rotate(${card.rotation}deg)`,
                 zIndex: 1e5-cardIndex,
@@ -114,10 +128,12 @@ export const CardView = ({
                 // MozBoxShadow: "10px 10px 29px 5px rgba(0,0,0,0.26)",
                 // boxShadow: "10px 10px 29px 5px rgba(0,0,0,0.26)",
             }}
+            onClick={event => handleClick(event)}
             onDoubleClick={event => handleDoubleClick(event)}
             onMouseOver={event => handleSetActiveCard(event)}
+            onMouseLeave={event => handleUnsetActiveCard(event)}
         >
-            <Tokens card={card} adjustVisible={shiftDown && (activeCard===card)}></Tokens>
+            <Tokens card={card} adjustVisible={shiftDown && isActive}></Tokens>
         </div>
     )
   }

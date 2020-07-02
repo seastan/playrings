@@ -48,13 +48,12 @@ function StackView(props) {
     style,
     isClone,
     index,
-    activeCard,
-    setActiveCard,
   } = props;
 
   const stackWidth = CARDSCALE/0.75 + CARDSCALE/3*(stack.cards.length-1)
-
+  console.log('rendering stackview');
   return (
+
     <Container
       isDragging={isDragging}
       isGroupedOver={isGroupedOver}
@@ -77,8 +76,6 @@ function StackView(props) {
               cardIndex={cardIndex}
               inputCard={card} 
               key={card.id} 
-              activeCard={activeCard} 
-              setActiveCard={setActiveCard}
             >
             </CardView>)
       })}

@@ -23,6 +23,8 @@ export default class GroupView extends Component {
       //if (nextProps.group.updated === false) {
       if (JSON.stringify(nextProps.group)===JSON.stringify(this.props.group)) {
         return false;
+//      } else if {
+
       } else {
         // console.log('this.props.group');
         // console.log(this.props.group);

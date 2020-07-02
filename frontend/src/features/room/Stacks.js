@@ -27,6 +27,7 @@ const DropZone = styled.div`
   display: flex;
   width: 100%;
   min-height: 100%;
+  padding: 0 0 0 0.75vw;
 `;
 
 /* stylelint-disable block-no-empty */
@@ -48,8 +49,6 @@ const InnerQuoteList = React.memo(function InnerQuoteList(props) {
           isDragging={dragSnapshot.isDragging}
           isGroupedOver={Boolean(dragSnapshot.combineTargetFor)}
           provided={dragProvided}
-          activeCard={props.activeCard}
-          setActiveCard={props.setActiveCard}
         />
       )}
     </Draggable>
@@ -57,7 +56,7 @@ const InnerQuoteList = React.memo(function InnerQuoteList(props) {
 });
 
 function InnerList(props) {
-  const { broadcast, group, stacks, dropProvided, activeCard, setActiveCard } = props;
+  const { broadcast, group, stacks, dropProvided } = props;
 
   return (
     <Container>
@@ -66,8 +65,6 @@ function InnerList(props) {
           broadcast={broadcast} 
           group={group} 
           stacks={stacks}
-          activeCard={activeCard}
-          setActiveCard={setActiveCard}
         />
         {dropProvided.placeholder}
       </DropZone>
@@ -81,8 +78,6 @@ export default function Stacks(props) {
     group,
     isDropDisabled,
     isCombineEnabled,
-    activeCard,
-    setActiveCard,
   } = props;
 
   return (
@@ -105,8 +100,6 @@ export default function Stacks(props) {
                 group={group}
                 stacks={group.stacks}
                 dropProvided={dropProvided}
-                activeCard={activeCard}
-                setActiveCard={setActiveCard}
             />
         </Wrapper>
       )}

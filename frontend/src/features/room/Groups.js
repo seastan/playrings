@@ -10,7 +10,7 @@ import styled from "@emotion/styled";
 import GameUIViewContext from "../../contexts/GameUIViewContext";
 
 const WidthContainer = styled.div`
-  padding: 2px 2px 2px 2px;
+  padding: 2px 2px 2px 0.5vw;
   float: left;
   height: 100%;
 `;
