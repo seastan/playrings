@@ -84,12 +84,12 @@ const CardComponent = ({
     inputCard,
     cardIndex,
     stackIndex,
-    group,
+    inputGroup,
     broadcast,
     gameUIView,
 }) => {
-    inputCard.modified = false;
-    const [card, setCard] = useState({...inputCard});
+    const [card, setCard] = useState(inputCard);
+    const [group, setGroup] = useState(inputGroup);
     const [shiftDown, setShiftDown] = useState(false);
     const setActiveCard = useSetActiveCard();
     const [isActive, setIsActive] = useState(false);
@@ -135,10 +135,10 @@ const CardComponent = ({
             card.exhausted = false;
             card.rotation = 0;
         }
-        card.modified = true;
         setCard({...card});
         const newGroup = group;
         group.stacks[stackIndex].cards[cardIndex] = card;
+        setGroup({...group});
         //console.log(gameUIView.game_ui.game.groups);
         //console.log(group.id);
         //console.log(stackIndex);
@@ -229,9 +229,13 @@ class CardClass extends Component {
 
     shouldComponentUpdate = (nextProps, nextState) => {
         //if (nextProps.group.updated === false) {
-        if (JSON.stringify(nextProps.group)===JSON.stringify(this.props.group)) {
-            
-            return false;
+        if ( 
+            (JSON.stringify(nextProps.inputCard)!==JSON.stringify(this.props.inputCard)) ||
+            (JSON.stringify(nextProps.group)!==JSON.stringify(this.props.group)) ||
+            (nextProps.stackIndex!==this.props.stackIndex) ||
+            (nextProps.cardIndex!==this.props.cardIndex)
+        ) {
+            return true;
         } else {
             //console.log('DO UPDATE!!!!!');
             //console.log(this.props);
@@ -252,7 +256,7 @@ class CardClass extends Component {
                 inputCard={inputCard}
                 cardIndex={cardIndex}
                 stackIndex={stackIndex}
-                group={group}
+                inputGroup={group}
                 broadcast={broadcast}
                 gameUIView={gameUIView}
             ></CardComponent>
