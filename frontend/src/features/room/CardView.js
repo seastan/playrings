@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, Component } from "react";
 import { Tokens } from './Tokens';
 import GameUIViewContext from "../../contexts/GameUIViewContext";
 import { useActiveCard, useSetActiveCard } from "../../contexts/ActiveCardContext";
@@ -77,30 +77,32 @@ const useClickPreventionOnDoubleClick = (onClick, onDoubleClick) => {
 // END PREVENT DOUBLECLICK REGISTERING 2 CLICK EVENTS
 
 
-export const CardView = ({
+
+
+
+const CardComponent = ({
     inputCard,
     cardIndex,
     stackIndex,
     group,
     broadcast,
-  }) => {
-    const gameUIView = React.useContext(GameUIViewContext);
-    const [card, setCard] = useState(inputCard);
+    gameUIView,
+}) => {
+    inputCard.modified = false;
+    const [card, setCard] = useState({...inputCard});
     const [shiftDown, setShiftDown] = useState(false);
-//    const activeCard = useActiveCard();
     const setActiveCard = useSetActiveCard();
     const [isActive, setIsActive] = useState(false);
     const groups = gameUIView.game_ui.game.groups;
-    const cardWatch = gameUIView.game_ui.game.groups[group.id].stacks[stackIndex]?.cards[cardIndex]
-
-    // console.log('printing out card path');
-    // console.log(group.id);
-    // console.log(gameUIView.game_ui.game.groups[group.id]);
-    // console.log(stackIndex);
-    // console.log(gameUIView.game_ui.game.groups[group.id].stacks[stackIndex]);
-    // console.log(cardIndex);
-    // console.log(gameUIView.game_ui.game.groups[group.id].stacks[stackIndex].cards[cardIndex]);
-  
+    const cardWatch = groups[group.id].stacks[stackIndex]?.cards[cardIndex];
+    if (card.id === '56584f7c-2a0c-4350-9f81-0aaffc5bdf21') {
+        console.log("rendering Card")
+        console.log(cardIndex);
+        console.log(stackIndex);
+        console.log(group);
+        console.log(broadcast);
+        console.log(gameUIView.game_ui.game.groups[group.id].stacks.length);
+    }
     useEffect(() => {    
       if (cardWatch) setCard(cardWatch);
     }, [cardWatch]);
@@ -120,7 +122,7 @@ export const CardView = ({
     }
 
     const onClick = (event) => {
-        console.log('click');
+        console.log(gameUIView);
         return;
     }
 
@@ -133,15 +135,20 @@ export const CardView = ({
             card.exhausted = false;
             card.rotation = 0;
         }
+        card.modified = true;
         setCard({...card});
-        const newGroups = groups;
-        newGroups[group.id].stacks[stackIndex].cards[cardIndex] = card;
-        broadcast("update_groups",{groups: {...newGroups}});
+        const newGroup = group;
+        group.stacks[stackIndex].cards[cardIndex] = card;
+        //console.log(gameUIView.game_ui.game.groups);
+        //console.log(group.id);
+        //console.log(stackIndex);
+        //console.log(groups[group.id].stacks[stackIndex]);
+        //groups[group.id].stacks[stackIndex].cards[cardIndex] = card;
+        broadcast("update_card",{card: card, groupID: group.id, stackIndex: stackIndex, cardIndex:cardIndex});
         //setTimeout(setActiveCard(card),2000);
     }
 
     const [handleClick, handleDoubleClick] = useClickPreventionOnDoubleClick(onClick, onDoubleClick);
-
 
     useEffect(() => {
 
@@ -167,8 +174,9 @@ export const CardView = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    console.log('rendering card');
     //console.log(card.id);
+    //console.log('in');
+    //console.log(group);
     if (!card) return null;
     return (
         <div 
@@ -203,9 +211,359 @@ export const CardView = ({
             onMouseOver={event => handleSetActiveCard(event)}
             onMouseLeave={event => handleUnsetActiveCard(event)}
         >
-            <Tokens card={card} adjustVisible={shiftDown && isActive}></Tokens>
+            <div className='text-white'>{group.id}</div>
+            <div className='text-white'>{stackIndex}</div>
+            {/* <div>{cardIndex}</div> */}
+            <div className='text-white'>{gameUIView.game_ui.game.groups[group.id].stacks.length}</div>
+            <div className='text-white'>{group.stacks.length}</div>
+            
+            {/* <Tokens card={card} adjustVisible={shiftDown && isActive}></Tokens> */}
         </div>
     )
-  }
+}
   
-  export default CardView;
+
+
+
+class CardClass extends Component {
+
+    shouldComponentUpdate = (nextProps, nextState) => {
+        //if (nextProps.group.updated === false) {
+        if (JSON.stringify(nextProps.group)===JSON.stringify(this.props.group)) {
+            
+            return false;
+        } else {
+            //console.log('DO UPDATE!!!!!');
+            //console.log(this.props);
+            //console.log(nextProps);
+            return true;
+        }
+    };
+  
+    render() {
+        const inputCard = this.props.inputCard;
+        const cardIndex = this.props.cardIndex;
+        const stackIndex = this.props.stackIndex;
+        const group = this.props.group;
+        const broadcast = this.props.broadcast;
+        const gameUIView = this.props.gameUIView;
+        return(
+            <CardComponent
+                inputCard={inputCard}
+                cardIndex={cardIndex}
+                stackIndex={stackIndex}
+                group={group}
+                broadcast={broadcast}
+                gameUIView={gameUIView}
+            ></CardComponent>
+        )
+    }
+}
+
+
+const CardView = ({
+    inputCard,
+    cardIndex,
+    stackIndex,
+    group,
+    broadcast,
+  }) => {
+    const gameUIView = React.useContext(GameUIViewContext);
+    return (
+        <CardClass
+            inputCard={inputCard}
+            cardIndex={cardIndex}
+            stackIndex={stackIndex}
+            group={group}
+            broadcast={broadcast}
+            gameUIView={gameUIView}
+        ></CardClass>
+    )
+};
+
+export default CardView;
+
+
+
+
+
+
+// class CardClass extends Component {
+
+//     shouldComponentUpdate = (nextProps, nextState) => {
+//         //if (nextProps.group.updated === false) {
+//         if (JSON.stringify(nextProps.group)===JSON.stringify(this.props.group)) {
+//           return false;
+//         } else {
+//           return true;
+//         }
+//     };
+  
+//     render() {
+//         const inputCard = this.props.inputCard;
+//         const cardIndex = this.props.cardIndex;
+//         const stackIndex = this.props.stackIndex;
+//         const group = this.props.group;
+//         const broadcast = this.props.broadcast;
+//         console.log(inputCard.id);
+
+
+
+
+//         // console.log('printing out card path');
+//         // console.log(group.id);
+//         // console.log(gameUIView.game_ui.game.groups[group.id]);
+//         // console.log(stackIndex);
+//         // console.log(gameUIView.game_ui.game.groups[group.id].stacks[stackIndex]);
+//         // console.log(cardIndex);
+//         // console.log(gameUIView.game_ui.game.groups[group.id].stacks[stackIndex].cards[cardIndex]);
+    
+//         useEffect(() => {    
+//            if (cardWatch) setCard(cardWatch);
+//         }, [cardWatch]);
+
+
+//         const handleSetActiveCard = (event) => {
+//             if (!isActive) {
+//                 setIsActive(true);
+//                 setActiveCard(card);
+//             }
+//         }
+    
+//         const handleUnsetActiveCard = (event) => {
+//             if (isActive) {
+//                 setIsActive(false);
+//                 setActiveCard(null);
+//             }
+//         }
+    
+//         const onClick = (event) => {
+//             console.log('click');
+//             return;
+//         }
+    
+//         const onDoubleClick = (event) => {
+//             if (shiftDown) return;
+//             if (!card.exhausted) {
+//                 card.exhausted = true;
+//                 card.rotation = 90;
+//             } else {
+//                 card.exhausted = false;
+//                 card.rotation = 0;
+//             }
+//             //setCard(card);
+//             //const newGroups = groups;
+//             //groups[group.id].stacks[stackIndex].cards[cardIndex] = card;
+//             //broadcast("update_groups",{groups: groups});
+//             //setTimeout(setActiveCard(card),2000);
+//         }
+    
+//         const [handleClick, handleDoubleClick] = useClickPreventionOnDoubleClick(onClick, onDoubleClick);
+    
+    
+//         useEffect(() => {
+    
+//             const onKeyDown = ({key}) => {
+//                 if (key === "Shift") {
+//                     setShiftDown(true);
+//                 }
+//             }
+    
+//             const onKeyUp = ({key}) => {
+//                 if (key === "Shift") {
+//                     setShiftDown(false);
+//                 }
+//             }
+    
+//             document.addEventListener('keydown', onKeyDown);
+//             document.addEventListener('keyup', onKeyUp);
+    
+//             return () => {
+//                 document.removeEventListener('keydown', onKeyDown);
+//                 document.removeEventListener('keyup', onKeyUp);
+//             }
+//         // eslint-disable-next-line react-hooks/exhaustive-deps
+//         }, []);
+    
+//         if (!card) return null;
+//         return (
+//             <div 
+//                 key={card.id}
+//                 style={{
+//                     position: "absolute",
+//                     background: `url(${card.src}) no-repeat`,
+//                     backgroundSize: "contain",
+//                     height: `${CARDSCALE/0.72}vw`,
+//                     width: `${CARDSCALE}vw`,
+//                     left: `${CARDSCALE/3*cardIndex}vw`,
+//                     borderWidth: '2px',
+//                     borderRadius: '5px',
+//                     borderColor: isActive ? 'yellow' : 'transparent',
+//                     //transform: `rotate(${angles}deg)`,
+//                     transform: `rotate(${card.rotation}deg)`,
+//                     zIndex: 1e5-cardIndex,
+//                     WebkitTransitionDuration: "0.1s",
+//                     MozTransitionDuration: "0.1s",
+//                     OTransitionDuration: "0.1s",
+//                     transitionDuration: "0.1s",
+//                     WebkitTransitionProperty: "-webkit-transform",
+//                     MozTransitionProperty: "-moz-transform",
+//                     OTransitionProperty: "-o-transform",
+//                     transitionProperty: "transform",
+//                     // WebkitBoxShadow: "10px 10px 29px 5px rgba(0,0,0,0.26)",
+//                     // MozBoxShadow: "10px 10px 29px 5px rgba(0,0,0,0.26)",
+//                     // boxShadow: "10px 10px 29px 5px rgba(0,0,0,0.26)",
+//                 }}
+//                 onClick={handleClick}
+//                 onDoubleClick={handleDoubleClick}
+//                 onMouseOver={event => handleSetActiveCard(event)}
+//                 onMouseLeave={event => handleUnsetActiveCard(event)}
+//             >
+//                 <Tokens card={card} adjustVisible={shiftDown && isActive}></Tokens>
+//             </div>
+//         )
+//       }
+//     }
+
+
+// export default CardView;
+
+
+
+
+
+
+
+
+// const CardView = React.memo(function CardView({
+//     inputCard,
+//     cardIndex,
+//     stackIndex,
+//     groups,
+//     group,
+//     broadcast,
+//   }) {
+//     //const gameUIView = React.useContext(GameUIViewContext);
+//     const [card, setCard] = useState(inputCard);
+//     const [shiftDown, setShiftDown] = useState(false);
+// //    const activeCard = useActiveCard();
+//     const setActiveCard = useSetActiveCard();
+//     const [isActive, setIsActive] = useState(false);
+//     //const groups = gameUIView.game_ui.game.groups;
+//     //const cardWatch = gameUIView.game_ui.game.groups[group.id].stacks[stackIndex]?.cards[cardIndex]
+
+//     // console.log('printing out card path');
+//     // console.log(group.id);
+//     // console.log(gameUIView.game_ui.game.groups[group.id]);
+//     // console.log(stackIndex);
+//     // console.log(gameUIView.game_ui.game.groups[group.id].stacks[stackIndex]);
+//     // console.log(cardIndex);
+//     // console.log(gameUIView.game_ui.game.groups[group.id].stacks[stackIndex].cards[cardIndex]);
+  
+//     // useEffect(() => {    
+//     //   if (cardWatch) setCard(cardWatch);
+//     // }, [cardWatch]);
+
+//     const handleSetActiveCard = (event) => {
+//         if (!isActive) {
+//             setIsActive(true);
+//             setActiveCard(card);
+//         }
+//     }
+
+//     const handleUnsetActiveCard = (event) => {
+//         if (isActive) {
+//             setIsActive(false);
+//             setActiveCard(null);
+//         }
+//     }
+
+//     const onClick = (event) => {
+//         console.log('click');
+//         return;
+//     }
+
+//     const onDoubleClick = (event) => {
+//         if (shiftDown) return;
+//         if (!card.exhausted) {
+//             card.exhausted = true;
+//             card.rotation = 90;
+//         } else {
+//             card.exhausted = false;
+//             card.rotation = 0;
+//         }
+//         //setCard(card);
+//         //const newGroups = groups;
+//         //groups[group.id].stacks[stackIndex].cards[cardIndex] = card;
+//         //broadcast("update_groups",{groups: groups});
+//         //setTimeout(setActiveCard(card),2000);
+//     }
+
+//     const [handleClick, handleDoubleClick] = useClickPreventionOnDoubleClick(onClick, onDoubleClick);
+
+
+//     useEffect(() => {
+
+//         const onKeyDown = ({key}) => {
+//             if (key === "Shift") {
+//                 setShiftDown(true);
+//             }
+//         }
+
+//         const onKeyUp = ({key}) => {
+//             if (key === "Shift") {
+//                 setShiftDown(false);
+//             }
+//         }
+
+//         document.addEventListener('keydown', onKeyDown);
+//         document.addEventListener('keyup', onKeyUp);
+
+//         return () => {
+//             document.removeEventListener('keydown', onKeyDown);
+//             document.removeEventListener('keyup', onKeyUp);
+//         }
+//     // eslint-disable-next-line react-hooks/exhaustive-deps
+//     }, []);
+
+//     console.log(card.id);
+//     if (!card) return null;
+//     return (
+//         <div 
+//             key={card.id}
+//             style={{
+//                 position: "absolute",
+//                 background: `url(${card.src}) no-repeat`,
+//                 backgroundSize: "contain",
+//                 height: `${CARDSCALE/0.72}vw`,
+//                 width: `${CARDSCALE}vw`,
+//                 left: `${CARDSCALE/3*cardIndex}vw`,
+//                 borderWidth: '2px',
+//                 borderRadius: '5px',
+//                 borderColor: isActive ? 'yellow' : 'transparent',
+//                 //transform: `rotate(${angles}deg)`,
+//                 transform: `rotate(${card.rotation}deg)`,
+//                 zIndex: 1e5-cardIndex,
+//                 WebkitTransitionDuration: "0.1s",
+//                 MozTransitionDuration: "0.1s",
+//                 OTransitionDuration: "0.1s",
+//                 transitionDuration: "0.1s",
+//                 WebkitTransitionProperty: "-webkit-transform",
+//                 MozTransitionProperty: "-moz-transform",
+//                 OTransitionProperty: "-o-transform",
+//                 transitionProperty: "transform",
+//                 // WebkitBoxShadow: "10px 10px 29px 5px rgba(0,0,0,0.26)",
+//                 // MozBoxShadow: "10px 10px 29px 5px rgba(0,0,0,0.26)",
+//                 // boxShadow: "10px 10px 29px 5px rgba(0,0,0,0.26)",
+//             }}
+//             onClick={handleClick}
+//             onDoubleClick={handleDoubleClick}
+//             onMouseOver={event => handleSetActiveCard(event)}
+//             onMouseLeave={event => handleUnsetActiveCard(event)}
+//         >
+//             <Tokens card={card} adjustVisible={shiftDown && isActive}></Tokens>
+//         </div>
+//     )
+//   })
+  
+// export default CardView;

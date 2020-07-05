@@ -212,6 +212,20 @@ defmodule SpadesGame.Game do
     {:ok, game}
   end
 
+  # update_card/6: A player moves a card on the table.
+  @spec update_card(Game.t(), number, Card.t(), String.t(), number, number) :: #DragEvent.t()) ::
+  {:ok, Game.t()} | {:error, String.t()}
+
+  def update_card(%Game{} = game, user_id, card, groupID, stackIndex, cardIndex) do
+    IO.puts("game: update_card")
+    # IO.inspect(groups)
+    # game = %Game{game |
+    #   groups: %Groups{game.groups |
+
+    # }
+    {:ok, game}
+  end
+
   # toggle_exhaust/3: A player moves a card on the table.
   @spec toggle_exhaust(Game.t(), number, Group.t(), Stack.t(), Card.t()) :: #DragEvent.t()) ::
           {:ok, Game.t()} | {:error, String.t()}

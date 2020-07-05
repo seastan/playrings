@@ -27,6 +27,7 @@ declare module "elixir-backend" {
     public rotation: number;
     public aspectRatio: number;
     public exhausted: boolean;
+    public modified: boolean;
   }
 
   export declare class Group {
