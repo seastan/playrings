@@ -78,9 +78,9 @@ defmodule SpadesGame.GameUIServer do
   update_card/6: A player just moved a card.
   """
   @spec update_card(String.t(), integer, Card.t(), String.t(), number, number) :: GameUI.t() #DragEvent.t()) :: GameUI.t()
-  def update_card(game_name, user_id, card, groupID, stackIndex, cardIndex) do
+  def update_card(game_name, user_id, card, group_id, stack_index, card_index) do
     IO.puts("game_ui_server: update_card")
-    GenServer.call(via_tuple(game_name), {:update_card, user_id, card, groupID, stackIndex, cardIndex})
+    GenServer.call(via_tuple(game_name), {:update_card, user_id, card, group_id, stack_index, card_index})
   end
 
   @doc """
@@ -241,9 +241,9 @@ defmodule SpadesGame.GameUIServer do
     |> save_and_reply()
   end
 
-  def handle_call({:update_card, user_id, card, groupID, stackIndex, cardIndex}, _from, gameui) do
+  def handle_call({:update_card, user_id, card, group_id, stack_index, card_index}, _from, gameui) do
     IO.puts("game_ui_server: handle_call: update_card a")
-    gameui = GameUI.update_card(gameui, user_id, card, groupID, stackIndex, cardIndex)
+    gameui = GameUI.update_card(gameui, user_id, card, group_id, stack_index, card_index)
     IO.puts("game_ui_server: handle_call: update_card b")
     gameui
     |> save_and_reply()

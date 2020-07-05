@@ -144,7 +144,7 @@ const CardComponent = ({
         //console.log(stackIndex);
         //console.log(groups[group.id].stacks[stackIndex]);
         //groups[group.id].stacks[stackIndex].cards[cardIndex] = card;
-        broadcast("update_card",{card: card, groupID: group.id, stackIndex: stackIndex, cardIndex:cardIndex});
+        broadcast("update_card",{card: card, group_id: group.id, stack_index: stackIndex, card_index:cardIndex});
         //setTimeout(setActiveCard(card),2000);
     }
 

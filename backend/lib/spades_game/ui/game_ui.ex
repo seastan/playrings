@@ -118,9 +118,9 @@ defmodule SpadesGame.GameUI do
   update_card/6: A player moves a card on the table.
   """
   @spec update_card(GameUI.t(), number, Card.t(), String.t(), number, number) :: GameUI.t() #DragEvent.t()) :: GameUI.t()
-  def update_card(game_ui, user_id, card, groupID, stackIndex, cardIndex) do
+  def update_card(game_ui, user_id, card, group_id, stack_index, card_index) do
     IO.puts("game_ui: update_card a")
-    case Game.update_card(game_ui.game, user_id, card, groupID, stackIndex, cardIndex) do
+    case Game.update_card(game_ui.game, user_id, card, group_id, stack_index, card_index) do
       {:ok, new_game} ->
         %{game_ui | game: new_game}
         |> checks

@@ -216,13 +216,42 @@ defmodule SpadesGame.Game do
   @spec update_card(Game.t(), number, Card.t(), String.t(), number, number) :: #DragEvent.t()) ::
   {:ok, Game.t()} | {:error, String.t()}
 
-  def update_card(%Game{} = game, user_id, card, groupID, stackIndex, cardIndex) do
+  def update_card(%Game{} = game, user_id, card, group_id, stack_index, card_index) do
     IO.puts("game: update_card")
-    # IO.inspect(groups)
-    # game = %Game{game |
-    #   groups: %Groups{game.groups |
+    group_atom = String.to_existing_atom(group_id)
+    IO.inspect(group_atom)
+    IO.inspect(Map.keys(game.groups))
+    group_old = game.groups[group_id]
+    IO.inspect(group_old)
+    stacks_old = group_old["stacks"]
 
-    # }
+    IO.inspect(stacks_old)
+    stack_old = Enum.at(stacks_old, stack_index)
+
+    IO.puts("game: stack_old")
+    IO.inspect(stack_old)
+    cards_old = stack_old["cards"]
+    IO.puts("game: cards_old")
+    IO.inspect(cards_old)
+    cards_new = Enum.slice(cards_old,0,card_index) ++ [card] ++ Enum.drop(cards_old,card_index+1)
+    IO.puts("game: cards_new")
+    IO.inspect(cards_new)
+    stack_new = Map.put(stack_old,"cards",cards_new)
+    #%Stack{stack_old |
+    #  "cards": cards_new
+    #}
+    IO.puts("game: stack_new")
+    IO.inspect(stack_new)
+    stacks_new = Enum.slice(stacks_old,0,stack_index) ++ [stack_new] ++ Enum.drop(stacks_old,stack_index+1)
+    IO.puts("game: stacks_new")
+    IO.inspect(stacks_new)
+    group_new = Map.put(group_old,"stacks",stacks_new)
+    IO.puts("game: group_new")
+    IO.inspect(group_new)
+    game = %Game{game |
+      groups: Map.put(game.groups,group_atom,group_new)
+    }
+    IO.puts("game: game_new")
     {:ok, game}
   end
 

@@ -101,13 +101,13 @@ defmodule SpadesWeb.RoomChannel do
       "update_card",
       %{
         "card" => card,
-        "groupID" => groupID,
-        "stackIndex" => stackIndex,
-        "cardIndex" => cardIndex,
+        "group_id" => group_id,
+        "stack_index" => stack_index,
+        "card_index" => card_index,
       },
       %{assigns: %{room_slug: room_slug, user_id: user_id}} = socket
     ) do
-    GameUIServer.update_card(room_slug, user_id, card, groupID, stackIndex, cardIndex)
+    GameUIServer.update_card(room_slug, user_id, card, group_id, stack_index, card_index)
     state = GameUIServer.state(room_slug)
     socket = socket |> assign(:game_ui, state)
     notify(socket)
