@@ -32,20 +32,6 @@ defmodule SpadesGame.GameAI do
   end
 
   def example_hand() do
-    [
-      %Card{rank: 2, suit: :h},
-      %Card{rank: 3, suit: :d},
-      %Card{rank: 14, suit: :h},
-      %Card{rank: 14, suit: :c},
-      %Card{rank: 3, suit: :s},
-      %Card{rank: 9, suit: :c},
-      %Card{rank: 10, suit: :s},
-      %Card{rank: 11, suit: :c},
-      %Card{rank: 6, suit: :c},
-      %Card{rank: 13, suit: :c},
-      %Card{rank: 12, suit: :d},
-      %Card{rank: 8, suit: :s},
-      %Card{rank: 4, suit: :h}
-    ]
+    []
   end
 end

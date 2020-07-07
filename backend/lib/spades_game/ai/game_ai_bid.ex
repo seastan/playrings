@@ -70,10 +70,6 @@ defmodule SpadesGame.GameAI.Bid do
   def hard_bid(hand) do
     high_spade_ranks =
       hand
-      |> Enum.filter(fn %Card{rank: rank, suit: suit} -> suit == :s and rank >= 10 end)
-      |> Enum.map(fn card -> card.rank end)
-      |> Enum.sort()
-      |> Enum.reverse()
 
     high_spade_ranks
     |> Enum.reduce_while(%{count: 0, prev: nil}, fn rank, acc ->
@@ -101,9 +97,6 @@ defmodule SpadesGame.GameAI.Bid do
   @spec low_spade_points(Deck.t()) :: integer
   def low_spade_points(hand) do
     hand
-    |> Enum.filter(fn %Card{rank: rank, suit: suit} -> suit == :s and rank < 10 end)
-    |> Enum.count()
-    |> low_spade_points_from_count()
   end
 
   @spec low_spade_points_from_count(integer) :: integer
@@ -115,31 +108,24 @@ defmodule SpadesGame.GameAI.Bid do
   end
 
   def high_card_flags(hand, suit) do
-    hand_suit = hand |> Enum.filter(fn %Card{suit: card_suit} -> card_suit == suit end)
-
+    hand_suit = hand
     has_ace =
       hand_suit
-      |> Enum.any?(fn %Card{rank: rank} -> rank == 14 end)
 
     has_king =
       hand_suit
-      |> Enum.any?(fn %Card{rank: rank} -> rank == 13 end)
 
     has_queen =
       hand_suit
-      |> Enum.any?(fn %Card{rank: rank} -> rank == 12 end)
 
     has_jack =
       hand_suit
-      |> Enum.any?(fn %Card{rank: rank} -> rank == 11 end)
 
     [has_ace, has_king, has_queen, has_jack]
   end
 
   def suit_count(hand, suit) do
     hand
-    |> Enum.filter(fn %Card{suit: card_suit} -> card_suit == suit end)
-    |> Enum.count()
   end
 
   @spec offsuit_high_card_points(Deck.t(), :h | :d | :c) :: integer

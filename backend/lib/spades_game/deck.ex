@@ -12,7 +12,7 @@ defmodule SpadesGame.Deck do
   """
   def new_shuffled do
     for rank <- Card.ranks(), suit <- Card.suits() do
-      %Card{rank: rank, suit: suit}
+      %{"rank"=> rank, "suit"=> suit}
     end
     |> Enum.shuffle()
   end
@@ -40,7 +40,6 @@ defmodule SpadesGame.Deck do
   @spec sort(Deck.t()) :: Deck.t()
   def sort(deck) do
     deck
-    |> Enum.sort_by(fn %Card{rank: rank, suit: suit} -> {suit, rank} end)
   end
 
   @doc """
@@ -49,8 +48,6 @@ defmodule SpadesGame.Deck do
   @spec count_rank(Deck.t(), integer) :: integer
   def count_rank(hand, rank) do
     hand
-    |> Enum.filter(fn %Card{rank: r} -> rank == r end)
-    |> Enum.count()
   end
 
   @doc """
@@ -59,73 +56,10 @@ defmodule SpadesGame.Deck do
   @spec count_suit(Deck.t(), :d | :c | :s | :h) :: integer
   def count_suit(hand, suit) do
     hand
-    |> Enum.filter(fn %Card{suit: r} -> suit == r end)
-    |> Enum.count()
   end
 
   @spec hardcoded_cards() :: list(Deck.t())
   def hardcoded_cards do
-    [
-      [
-        %Card{rank: 7, suit: :h},
-        %Card{rank: 10, suit: :h},
-        %Card{rank: 11, suit: :h},
-        %Card{rank: 13, suit: :h},
-        %Card{rank: 2, suit: :c},
-        %Card{rank: 4, suit: :c},
-        %Card{rank: 5, suit: :c},
-        %Card{rank: 11, suit: :c},
-        %Card{rank: 9, suit: :d},
-        %Card{rank: 14, suit: :d},
-        %Card{rank: 10, suit: :s},
-        %Card{rank: 12, suit: :s},
-        %Card{rank: 13, suit: :s}
-      ],
-      [
-        %Card{rank: 2, suit: :h},
-        %Card{rank: 3, suit: :h},
-        %Card{rank: 5, suit: :h},
-        %Card{rank: 8, suit: :h},
-        %Card{rank: 14, suit: :h},
-        %Card{rank: 6, suit: :c},
-        %Card{rank: 7, suit: :c},
-        %Card{rank: 9, suit: :c},
-        %Card{rank: 12, suit: :c},
-        %Card{rank: 5, suit: :d},
-        %Card{rank: 6, suit: :d},
-        %Card{rank: 5, suit: :s},
-        %Card{rank: 7, suit: :s}
-      ],
-      [
-        %Card{rank: 6, suit: :h},
-        %Card{rank: 12, suit: :h},
-        %Card{rank: 8, suit: :c},
-        %Card{rank: 14, suit: :c},
-        %Card{rank: 3, suit: :d},
-        %Card{rank: 4, suit: :d},
-        %Card{rank: 7, suit: :d},
-        %Card{rank: 10, suit: :d},
-        %Card{rank: 12, suit: :d},
-        %Card{rank: 13, suit: :d},
-        %Card{rank: 2, suit: :s},
-        %Card{rank: 3, suit: :s},
-        %Card{rank: 9, suit: :s}
-      ],
-      [
-        %Card{rank: 4, suit: :h},
-        %Card{rank: 9, suit: :h},
-        %Card{rank: 3, suit: :c},
-        %Card{rank: 10, suit: :c},
-        %Card{rank: 13, suit: :c},
-        %Card{rank: 2, suit: :d},
-        %Card{rank: 8, suit: :d},
-        %Card{rank: 11, suit: :d},
-        %Card{rank: 4, suit: :s},
-        %Card{rank: 6, suit: :s},
-        %Card{rank: 8, suit: :s},
-        %Card{rank: 11, suit: :s},
-        %Card{rank: 14, suit: :s}
-      ]
-    ]
+    []
   end
 end

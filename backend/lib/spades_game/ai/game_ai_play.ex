@@ -80,12 +80,6 @@ defmodule SpadesGame.GameAI.Play do
 
     sorted_cards =
       valid_cards
-      |> Enum.map(fn %Card{rank: rank, suit: suit} = card ->
-        val = rank + priority_map[suit]
-        {card, val}
-      end)
-      |> Enum.sort_by(fn {_card, val} -> val end)
-      |> Enum.map(fn {card, _val} -> card end)
 
     worst_card = List.first(sorted_cards)
     best_card = List.last(sorted_cards)

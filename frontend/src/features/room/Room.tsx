@@ -25,6 +25,7 @@ export const Room: React.FC<Props> = ({ slug }) => {
     }
   }, []);
   const broadcast = useChannel(`room:${slug}`, onChannelMessage);
+  //if (gameUIView) broadcast("update_groups",gameUIView.game_ui.game.groups);
   return (
     // <Container>
       <div className="gamebackground"

@@ -39,7 +39,7 @@ defmodule SpadesGame.Game do
 
   @type t :: %Game{
           game_name: String.t(),
-          groups: Groups.t(),
+          groups: Map.t(),
           options: GameOptions.t(),
           status: :bidding | :playing,
           drag_id: String.t(),
@@ -199,18 +199,32 @@ defmodule SpadesGame.Game do
     |> check_for_new_round()
   end
 
+  # @doc """
+  # Changes String Map to Map of Atoms e.g. %{"c"=> "d", "x" => %{"yy" => "zz"}} to
+  #         %{c: "d", x: %{yy: "zz"}}, i.e changes even the nested maps.
+  # """
+  # def  convert_to_atom_map(map), do: to_atom_map(map)
+
+  # defp to_atom_map(map) when is_map(map), do: Map.new(map, fn {k,v} -> {String.to_atom(k),to_atom_map(v)} end)
+  # defp to_atom_map(v), do: v
+
+  # end
+
   # update_groups/3: A player moves a card on the table.
   @spec update_groups(Game.t(), number, Groups.t()) :: #DragEvent.t()) ::
           {:ok, Game.t()} | {:error, String.t()}
 
   def update_groups(%Game{} = game, user_id, groups) do
     IO.puts("game: update_groups")
+    #groups = convert_to_atom_map(groups)
     IO.inspect(groups)
     game = %Game{game |
       groups: groups
     }
     {:ok, game}
   end
+
+
 
   # update_card/6: A player moves a card on the table.
   @spec update_card(Game.t(), number, Card.t(), String.t(), number, number) :: #DragEvent.t()) ::
@@ -222,13 +236,13 @@ defmodule SpadesGame.Game do
     IO.inspect(group_atom)
     IO.inspect(Map.keys(game.groups))
     group_old = game.groups[group_id]
-    #IO.inspect(group_old)
+    IO.inspect(group_old)
     stacks_old = group_old["stacks"]
     IO.inspect(stacks_old)
     stack_old = Enum.at(stacks_old, stack_index)
     #IO.puts("game: stack_old")
     #IO.inspect(stack_old)
-    cards_old = stack_old["cards"]
+    cards_old = stack_old.cards
     #IO.puts("game: cards_old")
     #IO.inspect(cards_old)
     cards_new = Enum.slice(cards_old,0,card_index) ++ [card] ++ Enum.drop(cards_old,card_index+1)
@@ -250,12 +264,12 @@ defmodule SpadesGame.Game do
     IO.inspect(group_new)
     groups_new = Map.put(game.groups,group_id,group_new)
     IO.puts("game: groups_new")
-    IO.inspect(groups_new["gSharedStaging"])
+    IO.inspect(groups_new.gSharedStaging)
     game = %Game{game |
       groups: groups_new
     }
     IO.puts("game: game_new")
-    IO.inspect(game.groups["gSharedStaging"])
+    IO.inspect(game.groups.gSharedStaging)
 
     {:ok, game}
   end
