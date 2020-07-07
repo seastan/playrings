@@ -16,10 +16,10 @@ const WidthContainer = styled.div`
 `;
 
 export const Groups = ({
-  gameUIView,
+  groups,
   broadcast,
 }) => {
-  const [groups, setGroups] = useState(gameUIView.game_ui.game.groups);
+  //const [groups, setGroups] = useState(gameUIView.game_ui.game.groups);
   const [showScratch, setShowScratch] = useState(false);
   const [phase, setPhase] = useState(1);
   //const activeCard = useActiveCard();
@@ -34,9 +34,9 @@ export const Groups = ({
     if (num!==phase) setPhase(num);
   }
 
-  useEffect(() => {    
-    setGroups(gameUIView.game_ui.game.groups);
-  }, [gameUIView.game_ui.game.groups]);
+  // useEffect(() => {    
+  //   setGroups(gameUIView.game_ui.game.groups);
+  // }, [gameUIView.game_ui.game.groups]);
 
   const onDragEnd = (result) => {
     if (result.combine) {
@@ -82,8 +82,10 @@ export const Groups = ({
     //     data.groups[key]["updated"] = false;
     //   }
     // }
+    console.log('REGISTERED A DRAG');
     console.log(data.groups);
-    setGroups(data.groups);
+    //
+    //setGroups(data.groups);
     // broadcast(
     //   "update_2_groups",
     //   {
@@ -215,9 +217,9 @@ export const Groups = ({
             className="overflow-hidden" 
             style={{height: showScratch ? "12%" : "57%", opacity: 0.7}}
           >
-            {gameUIView != null && (
+            {/* {gameUIView != null && (
               <Chat roomName={gameUIView.game_ui.game_name} />
-            )}
+            )} */}
           </div>
           {/* Extra */}
           <div

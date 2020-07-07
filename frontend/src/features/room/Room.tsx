@@ -31,14 +31,14 @@ export const Room: React.FC<Props> = ({ slug }) => {
         style={{height: "97vh"}}
       >
         {gameUIView != null && (
-          <GameUIViewContext.Provider value={gameUIView}>
-            <RoomGame broadcast={broadcast} />
-          {/* <div className="w-full lg:w-1/6 xl:w-1/6 mb-4">
-            <div className=" bg-white max-w-none p-4 mx-auto rounded-lg mt-4 ">
-              <Chat roomName={gameUIView.game_ui.game_name} />
-            </div>
-          </div> */}
-          </GameUIViewContext.Provider>
+          //<GameUIViewContext.Provider value={gameUIView}>
+            <RoomGame broadcast={broadcast} gameUIView={gameUIView} />
+        //   {/* <div className="w-full lg:w-1/6 xl:w-1/6 mb-4">
+        //     <div className=" bg-white max-w-none p-4 mx-auto rounded-lg mt-4 ">
+        //       <Chat roomName={gameUIView.game_ui.game_name} />
+        //     </div>
+        //   </div> */}
+        //  //</div> </GameUIViewContext.Provider>
         )}
       </div>
     // </Container>

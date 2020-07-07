@@ -5,17 +5,18 @@ import {ActiveCardProvider} from '../../contexts/ActiveCardContext'
 import GameUIViewContext from "../../contexts/GameUIViewContext";
 
 interface Props {
+  gameUIView: any;
   broadcast: (eventName: string, payload: object) => void;
 }
 
-const RoomGame: React.FC<Props> = ({ broadcast }) => {
+const RoomGame: React.FC<Props> = ({ broadcast, gameUIView }) => {
   console.log('rendring roomgame');
-  const gameUIView = React.useContext(GameUIViewContext);
+  //const gameUIView = React.useContext(GameUIViewContext);
 
   return (
     <ActiveCardProvider value={null}>
-      <Groups 
-        gameUIView={gameUIView}
+      <Groups
+        groups={gameUIView?.game_ui.game.groups}
         broadcast={broadcast}
       />
     </ActiveCardProvider>

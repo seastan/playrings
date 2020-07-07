@@ -74,6 +74,7 @@ function StackView(props) {
             <CardView
               broadcast={broadcast} 
               groupID={group.id} 
+              group={group}
               stackIndex={stackIndex}
               cardIndex={cardIndex}
               inputCard={card} 

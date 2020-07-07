@@ -246,10 +246,17 @@ defmodule SpadesGame.Game do
     group_new = Map.put(group_old,"stacks",stacks_new)
     #IO.puts("game: group_new")
     #IO.inspect(group_new)
+    IO.puts("game: group_new")
+    IO.inspect(group_new)
+    groups_new = Map.put(game.groups,group_id,group_new)
+    IO.puts("game: groups_new")
+    IO.inspect(groups_new["gSharedStaging"])
     game = %Game{game |
-      groups: Map.put(game.groups,group_atom,group_new)
+      groups: groups_new
     }
     IO.puts("game: game_new")
+    IO.inspect(game.groups["gSharedStaging"])
+
     {:ok, game}
   end
 
@@ -282,7 +289,7 @@ defmodule SpadesGame.Game do
   def ensure_playing({:ok, game}), do: {:ok, game}
 
   # Ensure_active_player/2: Only continue if the seat is the player
-  # whose turn it is.
+  # whose turn itMap.put(game.groups,group_atom,group_new) is.
   @spec ensure_active_player(
           {:ok, Game.t()} | {:error, String.t()},
           :west | :north | :east | :south

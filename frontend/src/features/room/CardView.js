@@ -85,33 +85,27 @@ const CardComponent = ({
     cardIndex,
     stackIndex,
     groupID,
+    group,
     broadcast,
 }) => {
-    const [card, setCard] = useState(inputCard);
+    //const [card, setCard] = useState(inputCard);
     const [shiftDown, setShiftDown] = useState(false);
     const setActiveCard = useSetActiveCard();
     const [isActive, setIsActive] = useState(false);
     //const groups = gameUIView.game_ui.game.groups;
     //const cardWatch = groups[group.id].stacks[stackIndex]?.cards[cardIndex];
 
-    if (groupID==='gSharedStaging') console.log('rendering CardComponent');
-    if (groupID==='gSharedStaging') console.log(inputCard);
+    //if (groupID==='gSharedStaging') console.log('rendering CardComponent');
+    //if (groupID==='gSharedStaging') console.log(inputCard);
 
-    if (card.id === '56584f7c-2a0c-4350-9f81-0aaffc5bdf21') {
-        console.log("rendering Card")
-        console.log(cardIndex);
-        console.log(stackIndex);
-        console.log(broadcast);
-        //console.log(gameUIView.game_ui.game.groups[group.id].stacks.length);
-    }
-    useEffect(() => {    
-      if (inputCard) setCard(inputCard);
-    }, [inputCard]);
+    // useEffect(() => {    
+    //   if (inputCard) setCard(inputCard);
+    // }, [inputCard]);
 
     const handleSetActiveCard = (event) => {
         if (!isActive) {
             setIsActive(true);
-            setActiveCard(card);
+            setActiveCard(inputCard);
         }
     }
 
@@ -124,17 +118,19 @@ const CardComponent = ({
 
     const onClick = (event) => {
         //console.log(gameUIView);
+        broadcast("update_card",{card: inputCard, group_id: groupID, stack_index: stackIndex, card_index:cardIndex});
+
         return;
     }
 
     const onDoubleClick = (event) => {
         if (shiftDown) return;
-        if (!card.exhausted) {
-            card.exhausted = true;
-            card.rotation = 90;
+        if (!inputCard.exhausted) {
+            inputCard.exhausted = true;
+            inputCard.rotation = 90;
         } else {
-            card.exhausted = false;
-            card.rotation = 0;
+            inputCard.exhausted = false;
+            inputCard.rotation = 0;
         }
         //setCard({...card});
         //const newGroup = group;
@@ -145,7 +141,7 @@ const CardComponent = ({
         //console.log(stackIndex);
         //console.log(groups[group.id].stacks[stackIndex]);
         //groups[group.id].stacks[stackIndex].cards[cardIndex] = card;
-        broadcast("update_card",{card: card, group_id: groupID, stack_index: stackIndex, card_index:cardIndex});
+        broadcast("update_card",{card: inputCard, group_id: groupID, stack_index: stackIndex, card_index:cardIndex});
         //setTimeout(setActiveCard(card),2000);
     }
 
@@ -178,13 +174,13 @@ const CardComponent = ({
     //console.log(card.id);
     //console.log('in');
     //console.log(group);
-    if (!card) return null;
+    if (!inputCard) return null;
     return (
         <div 
-            key={card.id}
+            key={inputCard.id}
             style={{
                 position: "absolute",
-                background: `url(${card.src}) no-repeat`,
+                background: `url(${inputCard.src}) no-repeat`,
                 backgroundSize: "contain",
                 height: `${CARDSCALE/0.72}vw`,
                 width: `${CARDSCALE}vw`,
@@ -193,7 +189,7 @@ const CardComponent = ({
                 borderRadius: '5px',
                 borderColor: isActive ? 'yellow' : 'transparent',
                 //transform: `rotate(${angles}deg)`,
-                transform: `rotate(${card.rotation}deg)`,
+                transform: `rotate(${inputCard.rotation}deg)`,
                 zIndex: 1e5-cardIndex,
                 WebkitTransitionDuration: "0.1s",
                 MozTransitionDuration: "0.1s",
@@ -212,8 +208,8 @@ const CardComponent = ({
             onMouseOver={event => handleSetActiveCard(event)}
             onMouseLeave={event => handleUnsetActiveCard(event)}
         >
-            <div className='text-white'>{groupID}</div>
-            <div className='text-white'>{stackIndex}</div>
+            <div className='text-white'>{group.stacks[0]?.cards[0].exhausted ? 'ex' : 'notex'}</div>
+            <div className='text-white'>{group.stacks[1]?.cards[0].exhausted ? 'ex' : 'notex'}</div>
             {/* <div>{cardIndex}</div> */}
             {/* <div className='text-white'>{gameUIView.game_ui.game.groups[group.id].stacks.length}</div> */}
             
@@ -229,6 +225,9 @@ class CardClass extends Component {
 
     shouldComponentUpdate = (nextProps, nextState) => {
         //if (nextProps.group.updated === false) {
+        if (nextProps.inputCard.exhausted && !this.props.inputCard.exhaused) {
+            console.log('exhausting',this.props.stackIndex);
+        }
 
         if ( 
             (JSON.stringify(nextProps.inputCard)!==JSON.stringify(this.props.inputCard)) //||
@@ -246,22 +245,23 @@ class CardClass extends Component {
     };
   
     render() {
-        if (this.props.groupID==='gSharedStaging') console.log('rendering Cardclass');
-        if (this.props.groupID==='gSharedStaging') console.log(this.props.inputCard);
+        //if (this.props.groupID==='gSharedStaging') console.log('rendering Cardclass');
+        //if (this.props.groupID==='gSharedStaging') console.log(this.props.inputCard);
         const inputCard = this.props.inputCard;
         const cardIndex = this.props.cardIndex;
         const stackIndex = this.props.stackIndex;
         const groupID = this.props.groupID;
         const broadcast = this.props.broadcast;
-        const gameUIView = this.props.gameUIView;
+        //const gameUIView = this.props.gameUIView;
         return(
             <CardComponent
                 inputCard={inputCard}
                 cardIndex={cardIndex}
                 stackIndex={stackIndex}
                 groupID={groupID}
+                group={this.props.group}
                 broadcast={broadcast}
-                gameUIView={gameUIView}
+                //gameUIView={gameUIView}
             ></CardComponent>
         )
     }
@@ -274,17 +274,19 @@ const CardView = ({
     stackIndex,
     groupID,
     broadcast,
+    group,
   }) => {
-    if (groupID==='gSharedStaging') console.log('rendering Cardview');
-    const gameUIView = React.useContext(GameUIViewContext);
+    //if (groupID==='gSharedStaging') console.log('rendering Cardview');
+    //const gameUIView = React.useContext(GameUIViewContext);
     return (
         <CardClass
             inputCard={inputCard}
             cardIndex={cardIndex}
             stackIndex={stackIndex}
             groupID={groupID}
+            group={group}
             broadcast={broadcast}
-            gameUIView={gameUIView}
+            //gameUIView={gameUIView}
         ></CardClass>
     )
 };
