@@ -84,19 +84,18 @@ const CardComponent = ({
     inputCard,
     cardIndex,
     stackIndex,
-    inputGroup,
+    groupID,
     broadcast,
 }) => {
     const [card, setCard] = useState(inputCard);
-    const [group, setGroup] = useState(inputGroup);
     const [shiftDown, setShiftDown] = useState(false);
     const setActiveCard = useSetActiveCard();
     const [isActive, setIsActive] = useState(false);
     //const groups = gameUIView.game_ui.game.groups;
     //const cardWatch = groups[group.id].stacks[stackIndex]?.cards[cardIndex];
 
-    if (inputGroup.id==='gSharedStaging') console.log('rendering CardComponent');
-    if (inputGroup.id==='gSharedStaging') console.log(inputCard);
+    if (groupID==='gSharedStaging') console.log('rendering CardComponent');
+    if (groupID==='gSharedStaging') console.log(inputCard);
 
     if (card.id === '56584f7c-2a0c-4350-9f81-0aaffc5bdf21') {
         console.log("rendering Card")
@@ -146,7 +145,7 @@ const CardComponent = ({
         //console.log(stackIndex);
         //console.log(groups[group.id].stacks[stackIndex]);
         //groups[group.id].stacks[stackIndex].cards[cardIndex] = card;
-        broadcast("update_card",{card: card, group_id: group.id, stack_index: stackIndex, card_index:cardIndex});
+        broadcast("update_card",{card: card, group_id: groupID, stack_index: stackIndex, card_index:cardIndex});
         //setTimeout(setActiveCard(card),2000);
     }
 
@@ -213,11 +212,10 @@ const CardComponent = ({
             onMouseOver={event => handleSetActiveCard(event)}
             onMouseLeave={event => handleUnsetActiveCard(event)}
         >
-            <div className='text-white'>{group.id}</div>
+            <div className='text-white'>{groupID}</div>
             <div className='text-white'>{stackIndex}</div>
             {/* <div>{cardIndex}</div> */}
             {/* <div className='text-white'>{gameUIView.game_ui.game.groups[group.id].stacks.length}</div> */}
-            <div className='text-white'>{group.stacks.length}</div>
             
             {/* <Tokens card={card} adjustVisible={shiftDown && isActive}></Tokens> */}
         </div>
@@ -234,7 +232,7 @@ class CardClass extends Component {
 
         if ( 
             (JSON.stringify(nextProps.inputCard)!==JSON.stringify(this.props.inputCard)) ||
-            (JSON.stringify(nextProps.group)!==JSON.stringify(this.props.group)) ||
+            (nextProps.groupID!==this.props.groupID) ||
             (nextProps.stackIndex!==this.props.stackIndex) ||
             (nextProps.cardIndex!==this.props.cardIndex)
         ) {
@@ -243,17 +241,17 @@ class CardClass extends Component {
             //console.log('DO UPDATE!!!!!');
             //console.log(this.props);
             //console.log(nextProps);
-            return false; 
+            return true; 
         }
     };
   
     render() {
-        if (this.props.group.id==='gSharedStaging') console.log('rendering Cardclass');
-        if (this.props.group.id==='gSharedStaging') console.log(this.props.inputCard);
+        if (this.props.groupID==='gSharedStaging') console.log('rendering Cardclass');
+        if (this.props.groupID==='gSharedStaging') console.log(this.props.inputCard);
         const inputCard = this.props.inputCard;
         const cardIndex = this.props.cardIndex;
         const stackIndex = this.props.stackIndex;
-        const group = this.props.group;
+        const groupID = this.props.groupID;
         const broadcast = this.props.broadcast;
         const gameUIView = this.props.gameUIView;
         return(
@@ -261,7 +259,7 @@ class CardClass extends Component {
                 inputCard={inputCard}
                 cardIndex={cardIndex}
                 stackIndex={stackIndex}
-                inputGroup={group}
+                groupID={groupID}
                 broadcast={broadcast}
                 gameUIView={gameUIView}
             ></CardComponent>
@@ -274,17 +272,17 @@ const CardView = ({
     inputCard,
     cardIndex,
     stackIndex,
-    group,
+    groupID,
     broadcast,
   }) => {
-    if (group.id==='gSharedStaging') console.log('rendering Cardview');
+    if (groupID==='gSharedStaging') console.log('rendering Cardview');
     const gameUIView = React.useContext(GameUIViewContext);
     return (
         <CardClass
             inputCard={inputCard}
             cardIndex={cardIndex}
             stackIndex={stackIndex}
-            group={group}
+            groupID={groupID}
             broadcast={broadcast}
             gameUIView={gameUIView}
         ></CardClass>
