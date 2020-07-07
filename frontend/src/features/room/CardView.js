@@ -136,7 +136,7 @@ const CardComponent = ({
             card.exhausted = false;
             card.rotation = 0;
         }
-        setCard({...card});
+        //setCard({...card});
         //const newGroup = group;
         //group.stacks[stackIndex].cards[cardIndex] = card;
         //setGroup({...group});
@@ -231,10 +231,10 @@ class CardClass extends Component {
         //if (nextProps.group.updated === false) {
 
         if ( 
-            (JSON.stringify(nextProps.inputCard)!==JSON.stringify(this.props.inputCard)) ||
-            (nextProps.groupID!==this.props.groupID) ||
-            (nextProps.stackIndex!==this.props.stackIndex) ||
-            (nextProps.cardIndex!==this.props.cardIndex)
+            (JSON.stringify(nextProps.inputCard)!==JSON.stringify(this.props.inputCard)) //||
+            //(nextProps.groupID!==this.props.groupID) ||
+            //(nextProps.stackIndex!==this.props.stackIndex) ||
+            //(nextProps.cardIndex!==this.props.cardIndex)
         ) {
             return true;
         } else {
