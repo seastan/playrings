@@ -86,26 +86,28 @@ const CardComponent = ({
     stackIndex,
     inputGroup,
     broadcast,
-    gameUIView,
 }) => {
     const [card, setCard] = useState(inputCard);
     const [group, setGroup] = useState(inputGroup);
     const [shiftDown, setShiftDown] = useState(false);
     const setActiveCard = useSetActiveCard();
     const [isActive, setIsActive] = useState(false);
-    const groups = gameUIView.game_ui.game.groups;
-    const cardWatch = groups[group.id].stacks[stackIndex]?.cards[cardIndex];
+    //const groups = gameUIView.game_ui.game.groups;
+    //const cardWatch = groups[group.id].stacks[stackIndex]?.cards[cardIndex];
+
+    if (inputGroup.id==='gSharedStaging') console.log('rendering CardComponent');
+    if (inputGroup.id==='gSharedStaging') console.log(inputCard);
+
     if (card.id === '56584f7c-2a0c-4350-9f81-0aaffc5bdf21') {
         console.log("rendering Card")
         console.log(cardIndex);
         console.log(stackIndex);
-        console.log(group);
         console.log(broadcast);
-        console.log(gameUIView.game_ui.game.groups[group.id].stacks.length);
+        //console.log(gameUIView.game_ui.game.groups[group.id].stacks.length);
     }
     useEffect(() => {    
-      if (cardWatch) setCard(cardWatch);
-    }, [cardWatch]);
+      if (inputCard) setCard(inputCard);
+    }, [inputCard]);
 
     const handleSetActiveCard = (event) => {
         if (!isActive) {
@@ -122,7 +124,7 @@ const CardComponent = ({
     }
 
     const onClick = (event) => {
-        console.log(gameUIView);
+        //console.log(gameUIView);
         return;
     }
 
@@ -136,9 +138,9 @@ const CardComponent = ({
             card.rotation = 0;
         }
         setCard({...card});
-        const newGroup = group;
-        group.stacks[stackIndex].cards[cardIndex] = card;
-        setGroup({...group});
+        //const newGroup = group;
+        //group.stacks[stackIndex].cards[cardIndex] = card;
+        //setGroup({...group});
         //console.log(gameUIView.game_ui.game.groups);
         //console.log(group.id);
         //console.log(stackIndex);
@@ -214,7 +216,7 @@ const CardComponent = ({
             <div className='text-white'>{group.id}</div>
             <div className='text-white'>{stackIndex}</div>
             {/* <div>{cardIndex}</div> */}
-            <div className='text-white'>{gameUIView.game_ui.game.groups[group.id].stacks.length}</div>
+            {/* <div className='text-white'>{gameUIView.game_ui.game.groups[group.id].stacks.length}</div> */}
             <div className='text-white'>{group.stacks.length}</div>
             
             {/* <Tokens card={card} adjustVisible={shiftDown && isActive}></Tokens> */}
@@ -229,6 +231,7 @@ class CardClass extends Component {
 
     shouldComponentUpdate = (nextProps, nextState) => {
         //if (nextProps.group.updated === false) {
+
         if ( 
             (JSON.stringify(nextProps.inputCard)!==JSON.stringify(this.props.inputCard)) ||
             (JSON.stringify(nextProps.group)!==JSON.stringify(this.props.group)) ||
@@ -240,11 +243,13 @@ class CardClass extends Component {
             //console.log('DO UPDATE!!!!!');
             //console.log(this.props);
             //console.log(nextProps);
-            return true;
+            return false; 
         }
     };
   
     render() {
+        if (this.props.group.id==='gSharedStaging') console.log('rendering Cardclass');
+        if (this.props.group.id==='gSharedStaging') console.log(this.props.inputCard);
         const inputCard = this.props.inputCard;
         const cardIndex = this.props.cardIndex;
         const stackIndex = this.props.stackIndex;
@@ -272,6 +277,7 @@ const CardView = ({
     group,
     broadcast,
   }) => {
+    if (group.id==='gSharedStaging') console.log('rendering Cardview');
     const gameUIView = React.useContext(GameUIViewContext);
     return (
         <CardClass

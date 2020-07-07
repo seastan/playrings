@@ -16,9 +16,9 @@ const WidthContainer = styled.div`
 `;
 
 export const Groups = ({
+  gameUIView,
   broadcast,
 }) => {
-  const gameUIView = React.useContext(GameUIViewContext);
   const [groups, setGroups] = useState(gameUIView.game_ui.game.groups);
   const [showScratch, setShowScratch] = useState(false);
   const [phase, setPhase] = useState(1);

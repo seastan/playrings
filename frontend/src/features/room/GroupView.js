@@ -39,6 +39,7 @@ export default class GroupView extends Component {
     const group = this.props.group;
     console.log('rendering');
     console.log(group.id);
+    console.log(group.stacks);
     return (
       // <Draggable draggableId={title} index={index}>
       //   {(provided, snapshot) => (ref={provided.innerRef} {...provided.draggableProps}>

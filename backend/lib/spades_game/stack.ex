@@ -19,4 +19,8 @@ defmodule SpadesGame.Stack do
   def new_test1() do
     %Stack{id: Ecto.UUID.generate, cards: [Card.new_test1()]}
   end
+
+  def new_test2() do
+    %Stack{id: Ecto.UUID.generate, cards: [Card.new_test2()]}
+  end
 end

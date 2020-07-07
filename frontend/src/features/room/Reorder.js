@@ -19,6 +19,8 @@ export const reorderGroups = ({ groups, source, destination }) => {
   // moving to same list
   if (source.droppableId === destination.droppableId) {
     const reorderedStacks = Reorder(current, source.index, destination.index);
+    console.log('reordered stacks');
+    console.log(reorderedStacks);
     const result = {
       ...groups,
       [source.droppableId]: {
