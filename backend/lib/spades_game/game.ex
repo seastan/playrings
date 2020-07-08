@@ -176,28 +176,6 @@ defmodule SpadesGame.Game do
     end
   end
 
-  # play/3: A player puts a card on the table. (Moves from hand to trick.)
-  @spec play(Game.t(), :west | :north | :east | :south, Card.t()) ::
-          {:ok, Game.t()} | {:error, String.t()}
-
-  # Should I add these for pipelining?
-  # def play({:ok, game}, seat, card), do: play(game, seat, card)
-  # def play({:error, _message}, _seat, _card), do: raise("Can't play on an error tuple")
-
-  def play(%Game{winner: winner}, _seat, _card) when winner != nil do
-    {:error, "Cannot play in a won game"}
-  end
-
-  def play(%Game{} = game, seat, %Card{} = card) do
-    {:ok, game}
-    |> ensure_playing()
-    |> ensure_active_player(seat)
-    |> remove_card_from_hand(seat, card)
-    |> add_card_to_trick(seat, card)
-    |> advance_turn()
-    |> check_for_trick_winner()
-    |> check_for_new_round()
-  end
 
   # @doc """
   # Changes String Map to Map of Atoms e.g. %{"c"=> "d", "x" => %{"yy" => "zz"}} to
@@ -669,15 +647,6 @@ defmodule SpadesGame.Game do
       when current_turn == seat do
     cards =
       Map.get(game, seat).hand
-      |> Enum.filter(fn card ->
-        case play(game, seat, card) do
-          {:ok, _game} ->
-            true
-
-          {:error, _msg} ->
-            false
-        end
-      end)
 
     {:ok, cards}
   end

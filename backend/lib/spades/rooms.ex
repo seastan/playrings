@@ -38,8 +38,13 @@ defmodule Spades.Rooms do
   def get_room!(id), do: Repo.get!(Room, id)
 
   def get_room_by_name(name) do
+    #Process.sleep(5000)
+    #IO.puts("get room by name")
+    #IO.inspect(Repo.all(Room))
     Room
     |> Repo.get_by(name: name)
+    #IO.inspect(Room
+    #|> Repo.get_by(name: name))
   end
 
   @doc """

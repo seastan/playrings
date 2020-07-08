@@ -17,9 +17,6 @@ defmodule Spades.Application do
       # GameUISupervisor and Process Registry
       {Registry, keys: :unique, name: SpadesGame.GameUIRegistry},
       SpadesGame.GameUISupervisor,
-      # GameAISupervisor and Process Registry
-      {Registry, keys: :unique, name: SpadesGame.GameAIRegistry},
-      SpadesGame.GameAISupervisor,
       # ChatSupervisor and Process Registry
       {Registry, keys: :unique, name: SpadesChat.ChatRegistry},
       SpadesChat.ChatSupervisor,

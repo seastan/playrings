@@ -24,8 +24,9 @@ defmodule SpadesGame.GameUISupervisor do
       start: {GameUIServer, :start_link, [game_name, options]},
       restart: :transient
     }
-
+    IO.puts("gameuisup: start a")
     DynamicSupervisor.start_child(__MODULE__, child_spec)
+    IO.puts("gameuisup: start b")
   end
 
   @doc """

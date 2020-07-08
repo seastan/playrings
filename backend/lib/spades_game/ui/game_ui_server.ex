@@ -6,7 +6,7 @@ defmodule SpadesGame.GameUIServer do
   @timeout :timer.minutes(12)
 
   require Logger
-  alias SpadesGame.{Card, GameOptions, GameAISupervisor, GameUI, GameRegistry, Groups}
+  alias SpadesGame.{Card, GameOptions, GameUI, GameRegistry, Groups}
   alias SpadesGame.{Game}
 
   @doc """
@@ -130,30 +130,6 @@ defmodule SpadesGame.GameUIServer do
     GenServer.call(via_tuple(game_name), {:leave, user_id})
   end
 
-  @doc """
-  invite_bots/1: Invite bots to fill the remaining seats.
-  """
-  def invite_bots(game_name) do
-    GenServer.call(via_tuple(game_name), :invite_bots)
-  end
-
-  @doc """
-  bots_leave/1: All bots will leave the table.
-  Should be called after the GameAIServer is killed.
-  """
-  def bots_leave(game_name) do
-    GenServer.call(via_tuple(game_name), :bots_leave)
-  end
-
-  @doc """
-  bot_notify/1: Notify other players to get new state.
-  Should this be reworked, so the caller doesn't need to care about
-  using this after a bot move?
-  """
-  def bot_notify(game_name) do
-    GenServer.call(via_tuple(game_name), :bot_notify)
-  end
-
   ## Temp function to set winner flag on a game
   def winner(game_name, winner_val) do
     GenServer.call(via_tuple(game_name), {:winner, winner_val})
@@ -167,7 +143,6 @@ defmodule SpadesGame.GameUIServer do
     gameui =
       case :ets.lookup(:game_uis, game_name) do
         [] ->
-          {:ok, _pid} = GameAISupervisor.start_game(game_name)
           gameui = GameUI.new(game_name, options)
           :ets.insert(:game_uis, {game_name, gameui})
           gameui
@@ -337,7 +312,6 @@ defmodule SpadesGame.GameUIServer do
     Logger.info("Terminate (Timeout) running for #{state.game_name}")
     :ets.delete(:game_uis, state.game_name)
     GameRegistry.remove(state.game_name)
-    GameAISupervisor.stop_game(state.game_name)
     :ok
   end
 
@@ -345,7 +319,6 @@ defmodule SpadesGame.GameUIServer do
   def terminate(_reason, state) do
     Logger.info("Terminate (Non Timeout) running for #{state.game_name}")
     GameRegistry.remove(state.game_name)
-    GameAISupervisor.stop_game(state.game_name)
     :ok
   end
 end

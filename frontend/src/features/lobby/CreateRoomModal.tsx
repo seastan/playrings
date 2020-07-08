@@ -20,8 +20,10 @@ export const CreateRoomModal: React.FC<Props> = ({ isOpen, closeModal }) => {
     const data = { room: { name: "" } };
     setIsLoading(true);
     setIsError(false);
+    console.log('here');
     try {
       const res = await axios.post("/be/api/v1/games", data);
+      console.log(res);
       setIsLoading(false);
       if (res.status !== 201) {
         throw new Error("Room not created");
@@ -29,6 +31,7 @@ export const CreateRoomModal: React.FC<Props> = ({ isOpen, closeModal }) => {
       const room = res.data.success.room;
       setRoomSlugCreated(room.slug);
     } catch (err) {
+      console.log('err')
       setIsLoading(false);
       setIsError(true);
     }

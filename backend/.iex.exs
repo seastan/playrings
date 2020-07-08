@@ -13,9 +13,6 @@ alias SpadesGame.{
   GameServer,
   GameOptions,
   GamePlayer,
-  GameAI,
-  GameAIServer,
-  GameAISupervisor,
   GameUI,
   GameUIServer,
   GameUISupervisor
