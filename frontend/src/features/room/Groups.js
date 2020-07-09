@@ -16,10 +16,10 @@ const WidthContainer = styled.div`
 `;
 
 export const Groups = ({
-  groups,
+  inputGroups,
   broadcast,
 }) => {
-  //const [groups, setGroups] = useState(gameUIView.game_ui.game.groups);
+  const [groups, setGroups] = useState(inputGroups);
   const [showScratch, setShowScratch] = useState(false);
   const [phase, setPhase] = useState(1);
   //const activeCard = useActiveCard();
@@ -34,9 +34,9 @@ export const Groups = ({
     if (num!==phase) setPhase(num);
   }
 
-  // useEffect(() => {    
-  //   setGroups(gameUIView.game_ui.game.groups);
-  // }, [gameUIView.game_ui.game.groups]);
+  useEffect(() => {    
+    setGroups(inputGroups);
+  }, [inputGroups]);
 
   const onDragEnd = (result) => {
     if (result.combine) {
@@ -85,7 +85,7 @@ export const Groups = ({
     console.log('REGISTERED A DRAG');
     console.log(data.groups);
     //
-    //setGroups(data.groups);
+    setGroups(data.groups);
     // broadcast(
     //   "update_2_groups",
     //   {

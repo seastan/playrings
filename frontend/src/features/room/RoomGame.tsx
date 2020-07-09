@@ -15,8 +15,8 @@ const RoomGame: React.FC<Props> = ({ broadcast, gameUIView }) => {
   //if (gameUIView) broadcast("update_groups",{groups: gameUIView.game_ui.game.groups});
   return (
     <ActiveCardProvider value={null}>
-      <Groups
-        groups={gameUIView?.game_ui.game.groups}
+      <Groups 
+        inputGroups={gameUIView?.game_ui.game.groups}
         broadcast={broadcast}
       />
     </ActiveCardProvider>
