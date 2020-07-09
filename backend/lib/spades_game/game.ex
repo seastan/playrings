@@ -210,28 +210,26 @@ defmodule SpadesGame.Game do
 
   def update_card(%Game{} = game, user_id, card, group_id, stack_index, card_index) do
     IO.puts("game: update_card")
-    group_atom = String.to_existing_atom(group_id)
-    IO.inspect(group_atom)
     IO.inspect(Map.keys(game.groups))
     group_old = game.groups[group_id]
     IO.inspect(group_old)
     stacks_old = group_old["stacks"]
     IO.inspect(stacks_old)
     stack_old = Enum.at(stacks_old, stack_index)
-    #IO.puts("game: stack_old")
-    #IO.inspect(stack_old)
-    cards_old = stack_old.cards
-    #IO.puts("game: cards_old")
-    #IO.inspect(cards_old)
+    IO.puts("game: stack_old")
+    IO.inspect(stack_old)
+    cards_old = stack_old["cards"]
+    IO.puts("game: cards_old")
+    IO.inspect(cards_old)
     cards_new = Enum.slice(cards_old,0,card_index) ++ [card] ++ Enum.drop(cards_old,card_index+1)
-    #IO.puts("game: cards_new")
-    #IO.inspect(cards_new)
+    IO.puts("game: cards_new")
+    IO.inspect(cards_new)
     stack_new = Map.put(stack_old,"cards",cards_new)
     #%Stack{stack_old |
     #  "cards": cards_new
     #}
-    #IO.puts("game: stack_new")
-    #IO.inspect(stack_new)
+    IO.puts("game: stack_new")
+    IO.inspect(stack_new)
     stacks_new = Enum.slice(stacks_old,0,stack_index) ++ [stack_new] ++ Enum.drop(stacks_old,stack_index+1)
     IO.puts("game: stacks_new")
     IO.inspect(stacks_new)
@@ -242,12 +240,12 @@ defmodule SpadesGame.Game do
     IO.inspect(group_new)
     groups_new = Map.put(game.groups,group_id,group_new)
     IO.puts("game: groups_new")
-    IO.inspect(groups_new.gSharedStaging)
+    IO.inspect(groups_new["gSharedStaging"])
     game = %Game{game |
       groups: groups_new
     }
     IO.puts("game: game_new")
-    IO.inspect(game.groups.gSharedStaging)
+    IO.inspect(game.groups["gSharedStaging"])
 
     {:ok, game}
   end

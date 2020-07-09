@@ -103,7 +103,6 @@ defmodule SpadesGame.GameUI do
   """
   @spec update_groups(GameUI.t(), number, Groups.t()) :: GameUI.t() #DragEvent.t()) :: GameUI.t()
   def update_groups(game_ui, user_id, groups) do
-    IO.puts("game_ui: update_groups a")
     case Game.update_groups(game_ui.game, user_id, groups) do
       {:ok, new_game} ->
         %{game_ui | game: new_game}

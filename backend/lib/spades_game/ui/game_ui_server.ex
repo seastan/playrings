@@ -263,14 +263,19 @@ defmodule SpadesGame.GameUIServer do
     # Async GameRegistry.update Should improve performance,
     # but causes tests to fail.  Not sure it's a real failure
     # spawn_link(fn ->
+
+    IO.puts("game_ui_server: save_and_reply a")
+    IO.inspect(new_gameui)
     GameRegistry.update(new_gameui.game_name, new_gameui)
 
+    IO.puts("game_ui_server: save_and_reply b")
     # end)
 
     spawn_link(fn ->
       :ets.insert(:game_uis, {new_gameui.game_name, new_gameui})
     end)
 
+    IO.puts("game_ui_server: save_and_reply c")
     {:reply, new_gameui, new_gameui, timeout(new_gameui)}
   end
 
