@@ -51,9 +51,9 @@ function StackView(props) {
   } = props;
 
   const stackWidth = CARDSCALE/0.75 + CARDSCALE/3*(stack.cards.length-1)
-  console.log('rendering stackview');
-  console.log(stackIndex);
-  console.log(stack.cards);
+  //console.log('rendering stackview');
+  //console.log(stackIndex);
+  //console.log(stack.cards);
   return (
 
     <Container
