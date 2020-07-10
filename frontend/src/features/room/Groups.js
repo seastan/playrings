@@ -16,6 +16,7 @@ const WidthContainer = styled.div`
 `;
 
 export const Groups = ({
+  gameUIView,
   inputGroups,
   broadcast,
 }) => {
@@ -217,9 +218,9 @@ export const Groups = ({
             className="overflow-hidden" 
             style={{height: showScratch ? "12%" : "57%", opacity: 0.7}}
           >
-            {/* {gameUIView != null && (
+            {gameUIView != null && (
               <Chat roomName={gameUIView.game_ui.game_name} />
-            )} */}
+            )}
           </div>
           {/* Extra */}
           <div

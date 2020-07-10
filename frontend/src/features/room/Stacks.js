@@ -17,14 +17,13 @@ const Wrapper = styled.div`
   background-color: ${props => props.isDraggingOver ? "rgba(1,1,1,0.4)" : ""};
   padding: 0 0 0 0;
   height: 87%;
-  transition: background-color 0.4s ease, opacity 0.1s ease;
   user-select: none;
-  overflow-x: auto;
+  overflow-x: ${props => (props.type=="deck" || props.type=="discard") ? "none" : "auto"};
 `;
 
 const DropZone = styled.div`
   /* stop the list collapsing when empty */
-  display: flex;
+  display: ${props => (props.type=="deck" || props.type=="discard") ? "" : "flex"};
   width: 100%;
   min-height: 100%;
   padding: 0 0 0 0.75vw;
@@ -37,7 +36,16 @@ const Container = styled.div`
 /* stylelint-enable */
 
 const InnerQuoteList = React.memo(function InnerQuoteList(props) {
-  return props.stacks.map((stack, stackIndex) => (
+  const pile = (props.group.type=="deck" || props.group.type=="discard")
+
+  console.log(props.group.id,"STACKS",props.stacks);
+  console.log(props.isDraggingOver,props.isDraggingFrom)
+  var stacks;
+  if (pile && props.isDraggingOver && !props.isDraggingFrom) stacks = [];
+  else if (pile && props.stacks.length>1) stacks = [props.stacks[0]]
+  else stacks = props.stacks;
+  console.log(stacks);
+  return stacks?.map((stack, stackIndex) => (
     <Draggable key={stack.id} draggableId={stack.id} index={stackIndex}>
       {(dragProvided, dragSnapshot) => (
         <StackView
@@ -56,12 +64,14 @@ const InnerQuoteList = React.memo(function InnerQuoteList(props) {
 });
 
 function InnerList(props) {
-  const { broadcast, group, stacks, dropProvided } = props;
+  const { isDraggingOver, isDraggingFrom, broadcast, group, stacks, dropProvided } = props;
 
   return (
     <Container>
-      <DropZone ref={dropProvided.innerRef}>
+      <DropZone ref={dropProvided.innerRef} group={group}>
         <InnerQuoteList 
+          isDraggingOver={isDraggingOver}
+          isDraggingFrom={isDraggingFrom}
           broadcast={broadcast} 
           group={group} 
           stacks={stacks}
@@ -86,7 +96,7 @@ export default function Stacks(props) {
       key={group.id}
       isDropDisabled={isDropDisabled}
       isCombineEnabled={isCombineEnabled}
-      direction="horizontal"
+      direction={group.type=="deck" || group.type=="discard" ? "vertical" : "horizontal"}
     >
       {(dropProvided, dropSnapshot) => (
         <Wrapper
@@ -94,8 +104,11 @@ export default function Stacks(props) {
           isDropDisabled={isDropDisabled}
           isDraggingFrom={Boolean(dropSnapshot.draggingFromThisWith)}
           {...dropProvided.droppableProps}
+          type={group.type}
         >
             <InnerList
+                isDraggingOver={dropSnapshot.isDraggingOver}
+                isDraggingFrom={Boolean(dropSnapshot.draggingFromThisWith)}
                 broadcast={broadcast}
                 group={group}
                 stacks={group.stacks}

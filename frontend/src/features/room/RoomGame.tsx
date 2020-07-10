@@ -16,6 +16,7 @@ const RoomGame: React.FC<Props> = ({ broadcast, gameUIView }) => {
   return (
     <ActiveCardProvider value={null}>
       <Groups 
+        gameUIView={gameUIView}
         inputGroups={gameUIView?.game_ui.game.groups}
         broadcast={broadcast}
       />
