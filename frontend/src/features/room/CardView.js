@@ -89,9 +89,18 @@ const CardComponent = ({
     broadcast,
 }) => {
     //const [card, setCard] = useState(inputCard);
+
+    // I know that forceUpdate is a sign I'm doing something wrong. But without it I will
+    // occasionally have cards refuse to rerender ater calling a broadcast. For some reason
+    // the shouldComponentUpdate aleady sees the next state and thinks its the same as the
+    // current one, so it doesn't update.
+    const [, updateState] = React.useState();
+    const forceUpdate = React.useCallback(() => updateState({}), []);
+
     const [shiftDown, setShiftDown] = useState(false);
     const setActiveCard = useSetActiveCard();
     const [isActive, setIsActive] = useState(false);
+    const [isClicked, setIsClicked] = useState(false);
     //const groups = gameUIView.game_ui.game.groups;
     //const cardWatch = groups[group.id].stacks[stackIndex]?.cards[cardIndex];
 
@@ -119,6 +128,8 @@ const CardComponent = ({
 
     const onClick = (event) => {
         //console.log(gameUIView);
+        if (isClicked) setIsClicked(false);
+        else setIsClicked(true);
         broadcast("update_card",{card: inputCard, group_id: groupID, stack_index: stackIndex, card_index:cardIndex});
         
         return;
@@ -143,7 +154,7 @@ const CardComponent = ({
         //console.log(groups[group.id].stacks[stackIndex]);
         //groups[group.id].stacks[stackIndex].cards[cardIndex] = card;
         broadcast("update_card",{card: inputCard, group_id: groupID, stack_index: stackIndex, card_index:cardIndex});
-        //setTimeout(setActiveCard(card),2000);
+        forceUpdate();
     }
 
     const [handleClick, handleDoubleClick] = useClickPreventionOnDoubleClick(onClick, onDoubleClick);
@@ -188,7 +199,7 @@ const CardComponent = ({
                 left: `${CARDSCALE/3*cardIndex}vw`,
                 borderWidth: '2px',
                 borderRadius: '5px',
-                borderColor: isActive ? 'yellow' : 'transparent',
+                borderColor: isActive || isClicked ? 'yellow' : 'transparent',
                 //transform: `rotate(${angles}deg)`,
                 transform: `rotate(${inputCard.rotation}deg)`,
                 zIndex: 1e5-cardIndex,
@@ -214,7 +225,7 @@ const CardComponent = ({
             {/* <div>{cardIndex}</div> */}
             {/* <div className='text-white'>{gameUIView.game_ui.game.groups[group.id].stacks.length}</div> */}
             
-            {/* <Tokens card={card} adjustVisible={shiftDown && isActive}></Tokens> */}
+            <Tokens card={inputCard} adjustVisible={shiftDown && isActive}></Tokens>
         </div>
     )
 }
@@ -241,7 +252,7 @@ class CardClass extends Component {
             //console.log('DO UPDATE!!!!!');
             //console.log(this.props);
             //console.log(nextProps);
-            return true; 
+            return false; 
         }
     };
   

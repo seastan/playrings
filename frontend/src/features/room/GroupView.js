@@ -20,12 +20,13 @@ const Header = styled.div`
 export default class GroupView extends Component {
 
   shouldComponentUpdate = (nextProps, nextState) => {
-      //if (nextProps.group.updated === false) {
+        // if (nextProps.group.id == "gSharedStaging") {
+        //   console.log("prev",JSON.stringify(this.props.group.stacks[0].cards[0].exhausted),JSON.stringify(this.props.group.stacks[1].cards[0].exhausted))
+        //   console.log("next",JSON.stringify(nextProps.group.stacks[0].cards[0].exhausted),JSON.stringify(nextProps.group.stacks[1].cards[0].exhausted))
+        // }
+              //if (nextProps.group.updated === false) {
       if (JSON.stringify(nextProps.group)===JSON.stringify(this.props.group)) {
-        if (nextProps.group.id == "gSharedStaging") {
-          console.log("prev",JSON.stringify(this.props.group.stacks[0].cards[0].exhausted),JSON.stringify(this.props.group.stacks[1].cards[0].exhausted))
-          console.log("next",JSON.stringify(nextProps.group.stacks[0].cards[0].exhausted),JSON.stringify(nextProps.group.stacks[1].cards[0].exhausted))
-        }
+
         return false;
 //      } else if {
 
