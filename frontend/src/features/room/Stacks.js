@@ -2,6 +2,7 @@ import React from "react";
 import styled from "@emotion/styled";
 import { Droppable, Draggable } from "react-beautiful-dnd";
 import StackView from "./StackView";
+import { CARDSCALE } from "./CardView"
 
 export const getBackgroundColor = (isDraggingOver, isDraggingFrom) => {
   if (isDraggingOver) {
@@ -23,10 +24,23 @@ const Wrapper = styled.div`
 
 const DropZone = styled.div`
   /* stop the list collapsing when empty */
-  display: ${props => (props.type=="deck" || props.type=="discard") ? "" : "flex"};
+  display: ${props => (props.group.type=="deck" || props.group.type=="discard") ? "" : "flex"};
   width: 100%;
   min-height: 100%;
   padding: 0 0 0 0.75vw;
+`;
+
+const CardBack = styled.div`
+  /* stop the list collapsing when empty */
+  display: ${props => (props.group.type=="deck" || props.group.type=="discard") ? "" : "none"};
+  width: ${CARDSCALE}vw;
+  height: ${CARDSCALE/0.72}vw;
+  border-width: 2px;
+  border-color: black;
+  position: absolute;
+  margin: 0 0 0 0.75vw;
+  background: ${props => (props.group.type=="deck" && props.group.stacks.length>0) ? "url(https://raw.githubusercontent.com/seastan/Lord-of-the-Rings/master/o8g/cards/card.jpg)" : ""}; 
+  background-size: contain;
 `;
 
 /* stylelint-disable block-no-empty */
@@ -46,7 +60,11 @@ const InnerQuoteList = React.memo(function InnerQuoteList(props) {
   else stacks = props.stacks;
   console.log(stacks);
   return stacks?.map((stack, stackIndex) => (
-    <Draggable key={stack.id} draggableId={stack.id} index={stackIndex}>
+    <Draggable 
+      key={stack.id} 
+      draggableId={stack.id} 
+      index={stackIndex}
+    >
       {(dragProvided, dragSnapshot) => (
         <StackView
           broadcast={props.broadcast}
@@ -68,6 +86,7 @@ function InnerList(props) {
 
   return (
     <Container>
+      <CardBack group={group}></CardBack>
       <DropZone ref={dropProvided.innerRef} group={group}>
         <InnerQuoteList 
           isDraggingOver={isDraggingOver}

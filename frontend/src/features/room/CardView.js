@@ -198,7 +198,7 @@ const CardComponent = ({
                 width: `${CARDSCALE}vw`,
                 left: `${CARDSCALE/3*cardIndex}vw`,
                 borderWidth: '2px',
-                borderRadius: '5px',
+                borderRadius: '6px',
                 borderColor: isActive || isClicked ? 'yellow' : 'transparent',
                 //transform: `rotate(${angles}deg)`,
                 transform: `rotate(${inputCard.rotation}deg)`,
