@@ -21,12 +21,15 @@ const Wrapper = styled.div`
   height: 87%;
   user-select: none;
   overflow-x: ${props => (props.type=="deck" || props.type=="discard") ? "none" : "auto"};
+  overflow-y: ${props => (props.type=="deck" || props.type=="discard") ? "hidden" : "none"};
+  max-height: 87%;
 `;
 
 const DropZone = styled.div`
   /* stop the list collapsing when empty */
   display: ${props => (props.group.type=="deck" || props.group.type=="discard") ? "" : "flex"};
   width: 100%;
+  height: 100%;
   min-height: 100%;
   padding: 0 0 0 0.75vw;
 `;
@@ -55,11 +58,13 @@ const InnerQuoteList = React.memo(function InnerQuoteList(props) {
 
   console.log(props.group.id,"STACKS",props.stacks);
   console.log(props.isDraggingOver,props.isDraggingFrom)
+
+  // Truncate stacked piles
   var stacks;
   if (pile && props.isDraggingOver && !props.isDraggingFrom) stacks = [];
   else if (pile && props.stacks.length>1) stacks = [props.stacks[0]]
   else stacks = props.stacks;
-  console.log(stacks);
+
   return stacks?.map((stack, stackIndex) => (
     <Draggable 
       key={stack.id} 

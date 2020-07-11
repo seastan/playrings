@@ -12,8 +12,8 @@ const Container = styled.div`
   min-height: 100%;
   height: 100%;
   z-index: 1;
-  // min-width: ${4.5}vw;
-  min-height:  ${4.5/0.75}vw;
+  // min-width: ${CARDSCALE}vw;
+  min-height:  ${CARDSCALE/0.75}vw;
 
 `;
 
