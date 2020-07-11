@@ -39,7 +39,7 @@ const CardBack = styled.div`
   border-color: black;
   position: absolute;
   margin: 0 0 0 0.75vw;
-  background: ${props => (props.group.type=="deck" && props.group.stacks.length>0) ? "url(https://raw.githubusercontent.com/seastan/Lord-of-the-Rings/master/o8g/cards/card.jpg)" : ""}; 
+  background: ${props => (props.group.type=="deck" && props.group.stacks.length>1) ? "url(https://raw.githubusercontent.com/seastan/Lord-of-the-Rings/master/o8g/cards/card.jpg)" : ""}; 
   background-size: contain;
 `;
 
