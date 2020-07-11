@@ -3,6 +3,7 @@ import styled from "@emotion/styled";
 import { Droppable, Draggable } from "react-beautiful-dnd";
 import StackView from "./StackView";
 import { CARDSCALE } from "./CardView"
+import { playerBackURL } from "./Constants"
 
 export const getBackgroundColor = (isDraggingOver, isDraggingFrom) => {
   if (isDraggingOver) {
@@ -35,11 +36,11 @@ const CardBack = styled.div`
   display: ${props => (props.group.type=="deck" || props.group.type=="discard") ? "" : "none"};
   width: ${CARDSCALE}vw;
   height: ${CARDSCALE/0.72}vw;
-  border-width: 2px;
+  border-width: 0px;
   border-color: black;
   position: absolute;
   margin: 0 0 0 0.75vw;
-  background: ${props => (props.group.type=="deck" && props.group.stacks.length>1) ? "url(https://raw.githubusercontent.com/seastan/Lord-of-the-Rings/master/o8g/cards/card.jpg)" : ""}; 
+  background: ${props => (props.group.type=="deck" && (props.group.stacks.length>1 || (props.group.stacks.length===1 && props.isDraggingOver && !props.isDraggingFrom))) ? `url(${playerBackURL})` : ""}; 
   background-size: contain;
 `;
 
@@ -86,7 +87,7 @@ function InnerList(props) {
 
   return (
     <Container>
-      <CardBack group={group}></CardBack>
+      <CardBack group={group} isDraggingOver={isDraggingOver} isDraggingFrom={isDraggingFrom}></CardBack>
       <DropZone ref={dropProvided.innerRef} group={group}>
         <InnerQuoteList 
           isDraggingOver={isDraggingOver}

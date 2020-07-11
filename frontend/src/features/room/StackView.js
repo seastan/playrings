@@ -7,12 +7,11 @@ const Container = styled.div`
   userSelect: none;
   padding: 0;
   cursor: default;
-  margin: 4px 4px 0 0;
   min-width: ${props => props.stackWidth}vw;
   width: ${props => props.stackWidth}vw;
   min-height: 100%;
   height: 100%;
-
+  z-index: 1;
   // min-width: ${4.5}vw;
   min-height:  ${4.5/0.75}vw;
 
@@ -50,7 +49,11 @@ function StackView(props) {
     index,
   } = props;
 
-  const stackWidth = CARDSCALE/0.75 + CARDSCALE/3*(stack.cards.length-1)
+  console.log(group.id,group.stacks.length);
+  var handSpacing = 100*0.8*0.8*0.8/(group.stacks.length);
+  if (handSpacing > CARDSCALE) handSpacing = CARDSCALE;
+  const stackWidth = group.type == "hand" ? handSpacing : CARDSCALE/0.75 + CARDSCALE/3*(stack.cards.length-1);
+
   //console.log('rendering stackview');
   //console.log(stackIndex);
   //console.log(stack.cards);

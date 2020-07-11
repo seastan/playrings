@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, Component } from "react";
 import { Tokens } from './Tokens';
 import GameUIViewContext from "../../contexts/GameUIViewContext";
 import { useActiveCard, useSetActiveCard } from "../../contexts/ActiveCardContext";
+import { playerBackURL } from "./Constants"
 
 //import cx from "classnames";
 
@@ -192,7 +193,7 @@ const CardComponent = ({
             key={inputCard.id}
             style={{
                 position: "absolute",
-                background: `url(${inputCard.src}) no-repeat`,
+                background: group.type=="deck" ? `url(${playerBackURL}) no-repeat` : `url(${inputCard.src}) no-repeat`,
                 backgroundSize: "contain",
                 height: `${CARDSCALE/0.72}vw`,
                 width: `${CARDSCALE}vw`,
