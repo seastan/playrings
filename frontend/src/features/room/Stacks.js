@@ -2,8 +2,7 @@ import React from "react";
 import styled from "@emotion/styled";
 import { Droppable, Draggable } from "react-beautiful-dnd";
 import StackView from "./StackView";
-import { CARDSCALE } from "./CardView"
-import { playerBackURL } from "./Constants"
+import CardBack from "./CardBack"
 
 export const getBackgroundColor = (isDraggingOver, isDraggingFrom) => {
   if (isDraggingOver) {
@@ -34,18 +33,19 @@ const DropZone = styled.div`
   padding: 0 0 0 0.75vw;
 `;
 
-const CardBack = styled.div`
-  /* stop the list collapsing when empty */
-  display: ${props => (props.group.type=="deck" || props.group.type=="discard") ? "" : "none"};
-  width: ${CARDSCALE}vw;
-  height: ${CARDSCALE/0.72}vw;
-  border-width: 0px;
-  border-color: black;
-  position: absolute;
-  margin: 0 0 0 0.75vw;
-  background: ${props => (props.group.type=="deck" && (props.group.stacks.length>1 || (props.group.stacks.length===1 && props.isDraggingOver && !props.isDraggingFrom))) ? `url(${playerBackURL})` : ""}; 
-  background-size: contain;
-`;
+// const CardBack = styled.div`
+//   /* stop the list collapsing when empty */
+//   display: ${props => (props.type=="deck" || props.type=="discard") ? "" : "none"};
+//   width: ${CARDSCALE}vw;
+//   height: ${CARDSCALE/0.72}vw;
+//   border-width: 0px;
+//   border-color: black;
+//   position: absolute;
+//   margin: 0 0 0 0.75vw;
+//   background: ${props => ((props.type=="deck" || props.type=="discard") && (props.group.stacks.length>1 || (props.group.stacks.length===1 && props.isDraggingOver && !props.isDraggingFrom))) ? 
+//                               (props.type=="deck" ? `url(${playerBackURL})`: `url(${props.group.stacks[0].cards[0].src})`) : ""}; 
+//   background-size: contain;
+// `;
 
 /* stylelint-disable block-no-empty */
 const Container = styled.div`

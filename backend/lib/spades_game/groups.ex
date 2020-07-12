@@ -34,7 +34,7 @@ defmodule SpadesGame.Groups do
       "gPlayer1Play1"=>            Group.new("gPlayer1Play1","Play Area","play","cPlayer1"),
       "gPlayer1Play2"=>            Group.new("gPlayer1Play2","","play","cPlayer1"),
       "gPlayer1Engaged"=>          Group.new("gPlayer1Engaged","Engaged","play","cPlayer1"),
-      "gPlayer1Event"=>            Group.new("gPlayer1Event","Active Event","play","cPlayer1"),
+      "gPlayer1Event"=>            Group.new("gPlayer1Event","Active Event","discard","cPlayer1"),
       "gPlayer2Hand"=>             Group.new("gPlayer2Hand","Hand","hand","cPlayer2"),
       "gPlayer2Deck"=>             Group.new("gPlayer2Deck","Deck","deck","cPlayer2"),
       "gPlayer2Discard"=>          Group.new("gPlayer2Discard","Discard","discard","cPlayer2"),
@@ -42,7 +42,7 @@ defmodule SpadesGame.Groups do
       "gPlayer2Play1"=>            Group.new("gPlayer2Play1","Play Area","play","cPlayer2"),
       "gPlayer2Play2"=>            Group.new("gPlayer2Play2","","play","cPlayer2"),
       "gPlayer2Engaged"=>          Group.new("gPlayer2Engaged","Engaged","play","cPlayer2"),
-      "gPlayer2Event"=>            Group.new("gPlayer2Event","Active Event","play","cPlayer2"),
+      "gPlayer2Event"=>            Group.new("gPlayer2Event","Active Event","discard","cPlayer2"),
       "gPlayer3Hand"=>             Group.new("gPlayer3Hand","Hand","hand","cPlayer3"),
       "gPlayer3Deck"=>             Group.new("gPlayer3Deck","Deck","deck","cPlayer3"),
       "gPlayer3Discard"=>          Group.new("gPlayer3Discard","Discard","discard","cPlayer3"),
@@ -50,7 +50,7 @@ defmodule SpadesGame.Groups do
       "gPlayer3Play1"=>            Group.new("gPlayer3Play1","Play Area","play","cPlayer3"),
       "gPlayer3Play2"=>            Group.new("gPlayer3Play2","","play","cPlayer3"),
       "gPlayer3Engaged"=>          Group.new("gPlayer3Engaged","Engaged","play","cPlayer3"),
-      "gPlayer3Event"=>            Group.new("gPlayer3Event","Active Event","play","cPlayer3"),
+      "gPlayer3Event"=>            Group.new("gPlayer3Event","Active Event","discard","cPlayer3"),
       "gPlayer4Hand"=>             Group.new("gPlayer4Hand","Hand","hand","cPlayer4"),
       "gPlayer4Deck"=>             Group.new("gPlayer4Deck","Deck","deck","cPlayer4"),
       "gPlayer4Discard"=>          Group.new("gPlayer4Discard","Discard","discard","cPlayer4"),
@@ -58,7 +58,7 @@ defmodule SpadesGame.Groups do
       "gPlayer4Play1"=>            Group.new("gPlayer4Play1","Play Area","play","cPlayer4"),
       "gPlayer4Play2"=>            Group.new("gPlayer4Play2","","play","cPlayer4"),
       "gPlayer4Engaged"=>          Group.new("gPlayer4Engaged","Engaged","play","cPlayer4"),
-      "gPlayer4Event"=>            Group.new("gPlayer4Event","Active Event","play","cPlayer4"),
+      "gPlayer4Event"=>            Group.new("gPlayer4Event","Active Event","discard","cPlayer4"),
     }
   end
 

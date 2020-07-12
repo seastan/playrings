@@ -2,11 +2,14 @@ import React, { useState, useEffect, useRef, Component } from "react";
 import { Tokens } from './Tokens';
 import GameUIViewContext from "../../contexts/GameUIViewContext";
 import { useActiveCard, useSetActiveCard } from "../../contexts/ActiveCardContext";
-import { playerBackURL } from "./Constants"
+import { playerBackSRC, encounterBackSRC } from "./Constants"
+import { getCardBackSRC } from "./CardBack"
+import { CARDSCALE } from "./Constants"
+
 
 //import cx from "classnames";
 
-export const CARDSCALE = 4.5;
+
 
 // PREVENT DOUBLECLICK REGISTERING 2 CLICK EVENTS
 export const delay = n => new Promise(resolve => setTimeout(resolve, n));
@@ -187,13 +190,13 @@ const CardComponent = ({
     //console.log(card.id);
     //console.log('in');
     //console.log(group);
-    if (!inputCard) return null;
+    if (!inputCard) return <div></div>;
     return (
         <div 
             key={inputCard.id}
             style={{
                 position: "absolute",
-                background: group.type=="deck" ? `url(${playerBackURL}) no-repeat` : `url(${inputCard.src}) no-repeat`,
+                background: group.type === "deck" ? `url(${getCardBackSRC(inputCard)}) no-repeat` : `url(${inputCard.src}) no-repeat`,
                 backgroundSize: "contain",
                 height: `${CARDSCALE/0.72}vw`,
                 width: `${CARDSCALE}vw`,

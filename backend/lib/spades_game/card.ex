@@ -15,15 +15,42 @@ defmodule SpadesGame.Card do
 
   @spec new_test1() :: Map.t()
   def new_test1() do
-    %{"id"=> Ecto.UUID.generate, "rotation"=> 0, "aspectRatio"=> 0.7, "exhausted"=> false, "rank"=> 9, "suit"=> :h, "src"=> "https://s3.amazonaws.com/hallofbeorn-resources/Images/Cards/Shadow-and-Flame/Elrond.jpg"}
+    %{"id"=> Ecto.UUID.generate,
+      "rotation"=> 0,
+      "aspectRatio"=> 0.7,
+      "exhausted"=> false,
+      "rank"=> 9,
+      "suit"=> :h,
+      "src"=> "https://s3.amazonaws.com/hallofbeorn-resources/Images/Cards/Shadow-and-Flame/Elrond.jpg",
+      "srcBack"=> "",
+      "deckType"=> "Player"
+    }
   end
   @spec new_test2() :: Map.t()
   def new_test2() do
-    %{"id"=> Ecto.UUID.generate, "rotation"=> 0, "aspectRatio"=> 0.7, "exhausted"=> false, "rank"=> 9, "suit"=> :h, "src"=> "https://s3.amazonaws.com/hallofbeorn-resources/Images/Cards/Shadow-and-Flame/Vilya.jpg"}
+    %{"id"=> Ecto.UUID.generate,
+      "rotation"=> 0,
+      "aspectRatio"=> 0.7,
+      "exhausted"=> false,
+      "rank"=> 9,
+      "suit"=> :h,
+      "src"=> "https://s3.amazonaws.com/hallofbeorn-resources/Images/Cards/Shadow-and-Flame/Vilya.jpg",
+      "srcBack"=> "",
+      "deckType"=> "Player"
+    }
   end
   @spec new_test2() :: Map.t()
   def new_test3() do
-    %{"id"=> Ecto.UUID.generate, "rotation"=> 90, "aspectRatio"=> 0.7, "exhausted"=> false, "rank"=> 9, "suit"=> :h, "src"=> "https://s3.amazonaws.com/hallofbeorn-resources/Images/Cards/Shadow-and-Flame/Miruvor.jpg"}
+    %{"id"=> Ecto.UUID.generate,
+      "rotation"=> 90,
+      "aspectRatio"=> 0.7,
+      "exhausted"=> false,
+      "rank"=> 9,
+      "suit"=> :h,
+      "src"=> "https://s3.amazonaws.com/hallofbeorn-resources/Images/Cards/Shadow-and-Flame/Miruvor.jpg",
+      "srcBack"=> "",
+      "deckType"=> "Player"
+    }
   end
 
   @spec from_map(%{}) :: Map.t()

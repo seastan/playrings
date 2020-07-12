@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { CARDSCALE } from "./CardView";
+import { CARDSCALE } from "./Constants";
 import { faChevronLeft, faChevronRight } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
