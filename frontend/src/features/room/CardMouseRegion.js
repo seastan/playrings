@@ -9,11 +9,11 @@ export const CardMouseRegion = React.memo(({
     setIsActive,
     zIndex,
 }) => {
-    console.log("rendering cardmouseregion")
     //const activeCard = useActiveCard();
     const setActiveCard = useSetActiveCard();
 
     const handleMouseOver = (event, mousePosition) => {
+        //return;
         const screenPosition = event.clientX > (window.innerWidth/2) ? "right" : "left";
         setActiveCard({
             card: card,

@@ -20,7 +20,7 @@ export const Token = React.memo(({
 }) => {
     const tokenStore = state => state?.gameUi?.game?.cardById?.[cardId]?.tokens?.[tokenType];
     const tokenValue = useSelector(tokenStore);
-    console.log('rendering token on ',cardId, tokenType);
+    //console.log('rendering token on ',cardId, tokenType);
     //console.log(gameUI.game.groups[groupId].stacks)
     const [buttonLeftVisible, setButtonLeftVisible] = useState(false);
     const [buttonRightVisible, setButtonRightVisible] = useState(false);

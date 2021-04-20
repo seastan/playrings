@@ -71,7 +71,6 @@ export const TableLayout = React.memo(({
   const finalRowHeight = 100/numRows; 
   const cardSize = CARDSCALE/numRows;
   console.log("rendering layout");
-  console.log(rowHeight, finalRowHeight);
   return (
     layoutInfo.map((row, rowIndex) => (
       (browseGroupId && rowIndex === numRows - 2) ? 

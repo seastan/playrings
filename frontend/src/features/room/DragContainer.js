@@ -102,6 +102,8 @@ export const DragContainer = React.memo(({
     }
 
     // Moved to a different spot
+    const temp = {droppableId: "sharedExtra1"};
+    const tempGroupById = reorderGroupStackIds(groupById, orig, temp);
     const newGroupById = reorderGroupStackIds(groupById, orig, dest);
     const origGroupTitle = GROUPSINFO[origGroupId].name;
     const destGroupTitle = GROUPSINFO[destGroupId].name;
@@ -114,8 +116,14 @@ export const DragContainer = React.memo(({
     else {
       chatBroadcast("game_update",{message: "moved "+getDisplayName(topOfOrigStackCard)+" from "+origGroupTitle+" to "+destGroupTitle+"."});
     }
-    dispatch(setGroupById(newGroupById));
-    gameBroadcast("game_action", {action:"move_stack", options:{stack_id: origStackId, dest_group_id: destGroupId, dest_stack_index: dest.index, combine: false, preserve_state: keypress["Shift"]}})
+    //dispatch(setGroupById(tempGroupById));
+    //dispatch(setGroupById(newGroupById));
+
+    //const delayBroadcast = setTimeout(function() {
+      dispatch(setGroupById(newGroupById));
+    //}, 1);
+
+    //gameBroadcast("game_action", {action:"move_stack", options:{stack_id: origStackId, dest_group_id: destGroupId, dest_stack_index: dest.index, combine: false, preserve_state: keypress["Shift"]}})
   }
 
   return(

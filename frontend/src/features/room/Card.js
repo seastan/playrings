@@ -92,27 +92,45 @@ const useClickPreventionOnDoubleClick = (onClick, onDoubleClick) => {
 
 export const Card = React.memo(({
     cardId,
-    groupId,
     gameBroadcast,
     chatBroadcast,
+    groupType,
     playerN,
     cardIndex,
     cardSize,
 }) => {
+    console.log(cardId)
+    console.log(groupType)
+    console.log(playerN)
+    console.log(cardIndex)
+    console.log(cardSize)
     const cardStore = state => state?.gameUi?.game?.cardById[cardId];
     const card = useSelector(cardStore);
     if (!card) return null;
     const currentFace = getCurrentFace(card);
     const visibleSide = getVisibleSide(card, playerN);
     const visibleFace = getVisibleFace(card, playerN);
-    const isInMyHand = groupId === (playerN+"Hand");
     const zIndex = 1000 - cardIndex;
+    console.log('rendering card ',visibleFace.name);
+
+    // return (
+    //     <div 
+    //         key={card.id}
+    //         style={{
+    //             position: "absolute",
+    //             backgroundColor: `red`, //group.type === "deck" ? `url(${card.sides["B"].src}) no-repeat` : `url(${card.sides["A"].src}) no-repeat`,
+    //             height: `${cardSize*visibleFace.height}vw`,
+    //             width: `${cardSize*visibleFace.width}vw`,
+    //             left: `${0.2 + (1.39-visibleFace.width)*cardSize/2 + cardSize/3*cardIndex}vw`,
+    //         }}
+    //     />
+    // )
     // useEffect(() => {    
     //     if (JSON.stringify(inputCard) !== JSON.stringify(card)) setCard(inputCard);
     // }, [inputCard]);
 
-    // const [, updateState] = React.useState();
-    // const forceUpdate = React.useCallback(() => updateState({}), []);
+    //const [, updateState] = React.useState();
+    //const forceUpdate = React.useCallback(() => updateState({}), []);
     const setActiveCard = useSetActiveCard();
 
     const [isActive, setIsActive] = useState(false);
@@ -132,6 +150,7 @@ export const Card = React.memo(({
         console.log(card);
         console.log(playerN);
         console.log(card.peeking[playerN]);
+        //forceUpdate();
         return;
     }
 
@@ -144,7 +163,7 @@ export const Card = React.memo(({
         const relationList = [];
         for (var id of card.arrowIds) {
             const relation = {
-                targetId: id,
+                targetId: 'arrow-'+id,
                 targetAnchor: 'top',
                 sourceAnchor: 'bottom',
             }
@@ -184,10 +203,7 @@ export const Card = React.memo(({
         }
     }
     
-    console.log('rendering card ',currentFace.name);
-    console.log('rendering card ',visibleFace.name);
-    console.log(card.id);
-    console.log(cardSize);
+    //console.log('rendering card ',visibleFace.name);
 
     return (
         <div>
@@ -224,7 +240,7 @@ export const Card = React.memo(({
                     //onDoubleClick={handleDoubleClick}
                     onMouseLeave={event => handleMouseLeave(event)}
                 >
-                    {(card["peeking"][playerN] && !isInMyHand && (card["currentSide"] === "B")) ? <FontAwesomeIcon className="absolute bottom-0 text-2xl" icon={faEye}/>:null}
+                    {(card["peeking"][playerN] && !(groupType == "hand") && (card["currentSide"] === "B")) ? <FontAwesomeIcon className="absolute bottom-0 text-2xl" icon={faEye}/>:null}
                     
                     <Target
                         cardId={cardId}
@@ -258,7 +274,7 @@ export const Card = React.memo(({
                     />
 
                     <ArcherElement
-                        id={card.id}
+                        id={"arrow-"+card.id}
                         relations={arrowRelationList()}
                     >
                         <div style={{

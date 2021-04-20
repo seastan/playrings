@@ -5,7 +5,6 @@ import { getVisibleFace, getVisibleFaceSRC } from "./Helpers";
 export const GiantCard = ({playerN}) => {
   const activeCardAndLoc = useActiveCard();
   const activeCard = activeCardAndLoc?.card
-  console.log("giantcard ", activeCard, playerN);
   const visibleFace = getVisibleFace(activeCard, playerN)
   if (activeCard) {
     return (

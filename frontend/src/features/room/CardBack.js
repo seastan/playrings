@@ -28,8 +28,6 @@ const CardBack = React.memo(({
   const layoutInfo = LAYOUTINFO["layout" + numPlayers + layout];
   const numRows = layoutInfo.length;
   const cardSize = CARDSCALE/numRows;
-  console.log("rendering cardback ", numRows, cardSize);
-  console.log(stackIds)
 
   var visibleFaceSRC;
   var visibleFace;

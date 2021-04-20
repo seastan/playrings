@@ -44,7 +44,6 @@ const StacksList = React.memo(({
   gameBroadcast,
   chatBroadcast,
   playerN,
-  groupId,
   groupType,
   cardSize,
   stackIds,
@@ -67,7 +66,6 @@ const StacksList = React.memo(({
           gameBroadcast={gameBroadcast}
           chatBroadcast={chatBroadcast}
           playerN={playerN}
-          groupId={groupId}
           groupType={groupType}
           stackIndex={stackIndex}
           cardSize={cardSize}
@@ -90,7 +88,7 @@ export const Stacks = React.memo(({
   isCombineEnabled,
   selectedStackIndices,
 }) => {
-  console.log("rendering stacks ",playerN,groupId,groupType,stackIds,selectedStackIndices)
+  console.log("rendering stacks ",groupId)
   return(
     <Droppable
       droppableId={groupId}
