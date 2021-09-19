@@ -21,6 +21,9 @@ export const SpawnCustomModal = React.memo(({
   const [backType, setBackType] = useState(backOptions[0]);
 
   const onSubmit = (inputs) => {
+    const deckGroupId = inputs.owner;
+    const discardGroupId = deckGroupId.replace("Deck","Discard");
+
     const loadList = [{
       "cardRow": {
         "cardencounterset": "",
@@ -47,7 +50,7 @@ export const SpawnCustomModal = React.memo(({
             "customimgurl": inputs.sideAcustomimgurl,
           },
           "B": {
-            "printname": (backType.value === "encounter" ? "encounter" : inputs.sideBname),
+            "printname": (backType.value === "encounter" || backType.value === "player" ? backType.value : inputs.sideBname),
             "sphere": inputs.sideBsphere,
             "text": inputs.sideBtext,
             "willpower": inputs.sideBwillpower,
@@ -59,7 +62,7 @@ export const SpawnCustomModal = React.memo(({
             "type": inputs.sideBtype,
             "victorypoints": inputs.sideBvictorypoints,
             "cost": inputs.sideBcost,
-            "name": (backType.value === "encounter" ? "encounter" : inputs.sideBname),
+            "name": (backType.value === "encounter" || backType.value === "player" ? backType.value : inputs.sideBname),
             "questpoints": inputs.sideBquestpoints,
             "attack": inputs.sideBattack,
             "unique": inputs.sideBunique,
@@ -72,94 +75,17 @@ export const SpawnCustomModal = React.memo(({
         "cardsetid": "",
         "cardpackname": "",
         "cardid": "",
-        "cardnumber": "1"
+        "cardnumber": "1",
+        "deckgroupid": deckGroupId,
+        "discardgroupid": discardGroupId,
       },
       "quantity": 1,
-      "groupId": inputs.owner === "shared" ? "sharedStaging" : inputs.owner+"Play1",
+      "groupId": "sharedStaging",
     }]
 
     gameBroadcast("game_action", {action: "load_cards", options: {load_list: loadList}});
     chatBroadcast("game_update", {message: "spawned "+ loadList[0].cardRow.sides.A.printname + "."});
-    console.log(loadList);
   }
-
-    // "width"=> width,
-    // "height"=> height,
-    // "attack" => convert_to_integer(card_row_side["attack"]),
-    // "cost" => convert_to_integer(card_row_side["cost"]),
-    // "defense" => convert_to_integer(card_row_side["defense"]),
-    // "engagementCost" => convert_to_integer(card_row_side["engagementcost"]),
-    // "hitPoints" => convert_to_integer(card_row_side["hitpoints"]),
-    // "keywords" => card_row_side["keywords"],
-    // "name" => card_row_side["name"],
-    // "printName" => card_row_side["printname"],
-    // "questPoints" => convert_to_integer(card_row_side["questpoints"]),
-    // "shadow" => card_row_side["shadow"],
-    // "sphere" => card_row_side["sphere"],
-    // "text" => card_row_side["text"],
-    // "threat" => convert_to_integer(card_row_side["threat"]),
-    // "traits" => card_row_side["traits"],
-    // "type" => card_row_side["type"],
-    // "unique" => card_row_side["unique"],
-    // "victoryPoints" => convert_to_integer(card_row_side["victorypoints"]),
-    // "willpower" => convert_to_integer(card_row_side["willpower"]),
-    // "triggers" => trigger_steps_from_text(card_row_side["keywords"], card_row_side["text"]),
-    // "customImgUrl" => nil,
-
-    // const loadList = {
-    //   "cardRow": {
-    //     "cardencounterset": "",
-    //     "sides": {
-    //       "A": {
-    //         "printname": "Aragorn",
-    //         "sphere": "Tactics",
-    //         "text": "Response: After Aragorn participates in an attack that destroys an enemy, choose an enemy not engaged with you and engage that enemy.",
-    //         "willpower": "2",
-    //         "hitpoints": "5",
-    //         "shadow": "",
-    //         "engagementcost": "",
-    //         "traits": "Dunedain. Ranger. Warrior.",
-    //         "keywords": "Each enemy engaged with you gets -1 [defense].",
-    //         "type": "Hero",
-    //         "victorypoints": "",
-    //         "cost": "12",
-    //         "name": "Aragorn",
-    //         "questpoints": "",
-    //         "attack": "3",
-    //         "unique": "1",
-    //         "defense": "2",
-    //         "threat": ""
-    //       },
-    //       "B": {
-    //         "printname": "player",
-    //         "sphere": "",
-    //         "text": "",
-    //         "willpower": "",
-    //         "hitpoints": "",
-    //         "shadow": "",
-    //         "cost": "",
-    //         "traits": "",
-    //         "keywords": "",
-    //         "type": "",
-    //         "victorypoints": "",
-    //         "engagementcost": "",
-    //         "name": "player",
-    //         "questpoints": "",
-    //         "attack": "",
-    //         "unique": "",
-    //         "defense": "",
-    //         "threat": ""
-    //       }
-    //     },
-    //     "cardquantity": "1",
-    //     "cardsetid": "",
-    //     "cardpackname": "",
-    //     "cardid": "",
-    //     "cardnumber": "1"
-    //   },
-    //   "quantity": 1,
-    //   "groupId": "sharedStaging"
-    // }
 
     const lineInput = (id, title) => {
       return (
@@ -255,11 +181,15 @@ export const SpawnCustomModal = React.memo(({
         <form className="w-full" onSubmit={handleSubmit(onSubmit)}> 
           <label for="owner"><h2 className="text-white">Owner: </h2></label>
           <select className="form-control mb-1" style={{width:"35%"}} ref={register({ required: false })} id={"owner"} name={"owner"}>
-            <option value="shared" selected>Encounter</option>
-            <option value="player1">Player 1</option>
-            <option value="player2">Player 2</option>
-            <option value="player3">Player 3</option>
-            <option value="player4">Player 4</option>
+            <option value="sharedEncounterDeck" selected>Encounter Deck</option>
+            <option value="sharedEncounterDeck2">Encounter Deck 2</option>
+            <option value="sharedEncounterDeck3">Encounter Deck 3</option>
+            <option value="sharedQuestDeck">Quest Deck</option>
+            <option value="sharedQuestDeck2">Quest Deck 2</option>
+            <option value="player1Deck">Player 1</option>
+            <option value="player2Deck">Player 2</option>
+            <option value="player3Deck">Player 3</option>
+            <option value="player4Deck">Player 4</option>
           </select>
           <div className="w-full h-full">
             <table className="w-full h-full">

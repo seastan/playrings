@@ -28,8 +28,6 @@ export const DropdownMenuFirstPlayer = React.memo(({
     <div 
       className="dropdown" 
       style={{ height: menuHeight, zIndex: 1e7, top: top, left: left }}
-      onMouseEnter={() => setIsHovering(true)}
-      onMouseLeave={() => setIsHovering(false)}
       >
       <div className="menu-title">{dropdownMenu.title}</div>
 

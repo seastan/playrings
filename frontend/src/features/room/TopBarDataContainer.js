@@ -9,8 +9,7 @@ export const TopBarDataContainer = React.memo(({
   playerN,
   gameBroadcast,
   chatBroadcast,
-  observingPlayerN,
-  setObservingPlayerN,
+  setTyping,
 }) => {
   
     const stagingStore = state => state?.gameUi?.game?.groupById?.sharedStaging.stackIds;
@@ -49,7 +48,6 @@ export const TopBarDataContainer = React.memo(({
     })
     //const totalWillpower = playerWillpower["player1"] + playerWillpower["player2"] + playerWillpower["player3"] + playerWillpower["player4"];
     var totalWillpower = 0;
-    console.log("playerData",playerData);
     for (var i =1; i<=numPlayers; i++) {
       const playerI = "player"+i;
       totalWillpower += playerData[playerI].willpower;
@@ -64,14 +62,14 @@ export const TopBarDataContainer = React.memo(({
           progress={totalProgress}
           gameBroadcast={gameBroadcast}
           chatBroadcast={chatBroadcast}
+          setTyping={setTyping}
         />
         <TopBarUser
           playerN={playerN}
           playerI={"player1"}
           gameBroadcast={gameBroadcast}
           chatBroadcast={chatBroadcast}
-          observingPlayerN={observingPlayerN}
-          setObservingPlayerN={setObservingPlayerN}
+          setTyping={setTyping}
         />
         {numPlayers > 1 &&
         <TopBarUser
@@ -79,8 +77,7 @@ export const TopBarDataContainer = React.memo(({
           playerI={"player2"}
           gameBroadcast={gameBroadcast}
           chatBroadcast={chatBroadcast}
-          observingPlayerN={observingPlayerN}
-          setObservingPlayerN={setObservingPlayerN}
+          setTyping={setTyping}
         />}
         {numPlayers > 2 &&
         <TopBarUser
@@ -88,8 +85,7 @@ export const TopBarDataContainer = React.memo(({
           playerI={"player3"}
           gameBroadcast={gameBroadcast}
           chatBroadcast={chatBroadcast}
-          observingPlayerN={observingPlayerN}
-          setObservingPlayerN={setObservingPlayerN}
+          setTyping={setTyping}
         />}
         {numPlayers > 3 &&
         <TopBarUser
@@ -97,8 +93,7 @@ export const TopBarDataContainer = React.memo(({
           playerI={"player4"}
           gameBroadcast={gameBroadcast}
           chatBroadcast={chatBroadcast}
-          observingPlayerN={observingPlayerN}
-          setObservingPlayerN={setObservingPlayerN}
+          setTyping={setTyping}
         />}
       </div>
     )

@@ -16,10 +16,10 @@ const Container = styled.div`
   transition: all 0.2s;
   padding-left: 0px;
   height: 100%;
+  width: calc(100% - 15px);
   user-select: none;
   overflow-x: ${props => ["deck", "discard", "vertical"].includes(props.groupType) ? "none" : "auto"};
   overflow-y: ${props => props.groupType === "vertical" ? "auto" : "hidden"};
-  scrollbar-color: rgba(1,1,1,0.8) rgba(1,1,1,0);
   max-height: 100%;
   position: relative;
 `;
@@ -110,7 +110,9 @@ export const Stacks = React.memo(({
               groupType={groupType} 
               stackIds={stackIds} 
               isDraggingOver={dropSnapshot.isDraggingOver} 
-              isDraggingFrom={Boolean(dropSnapshot.draggingFromThisWith)}>
+              isDraggingFrom={Boolean(dropSnapshot.draggingFromThisWith)}
+              playerN={playerN}
+              cardSize={cardSize}>
             </CardBack>
             <DropZone ref={dropProvided.innerRef} groupType={groupType}>
               <StacksList

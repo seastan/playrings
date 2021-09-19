@@ -28,14 +28,14 @@ export const PlayersInRoom = React.memo(({
     <Draggable>
       <div className={windowClass} style={windowStyle}>
         <div className="w-full bg-gray-500" style={{height: "25px"}}>
-          <FontAwesomeIcon className="ml-2" icon={faTimes} onClick={() => setShowWindow(false)}/>
+          <FontAwesomeIcon className="ml-2" icon={faTimes} onMouseUp={() => setShowWindow(false)} onTouchStart={() => setShowWindow(false)}/>
         </div>
         <div className="w-full p-3">
           <table className="table-fixed rounded-lg w-full">
             <thead>
               <tr className="bg-gray-800">
-                <th className={col1Class}>Player</th>
-                <th className={col2Class}>Seat</th>
+                <th className={col1Class}>User</th>
+                {/* <th className={col2Class}>Seat</th> */}
               </tr>
             </thead>
             <tbody>
@@ -43,7 +43,7 @@ export const PlayersInRoom = React.memo(({
                 if (playersInRoom[playerId] > 0) return(
                   <tr key={index} className={"bg-gray-500"}>
                     <td className="p-1 text-center">{playerId ? <UserName userID={playerId}/> : "Anonymous"}</td>
-                    <td className="p-1 text-center">Spectator</td>
+                    {/* <td className="p-1 text-center">Spectator</td> */}
                   </tr>
                 )
               })}

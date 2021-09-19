@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useSelector } from 'react-redux';
 import { tokenPrintName } from "./Helpers";
-import { faChevronLeft, faChevronRight } from "@fortawesome/free-solid-svg-icons";
+import { faChevronDown, faChevronUp } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 var delayBroadcast;
@@ -16,6 +16,7 @@ export const Token = React.memo(({
     gameBroadcast,
     chatBroadcast,
     zIndex,
+    aspectRatio,
 }) => {
     const tokenStore = state => state?.gameUi?.game?.cardById?.[cardId]?.tokens?.[tokenType];
     const tokenValue = useSelector(tokenStore);
@@ -72,33 +73,26 @@ export const Token = React.memo(({
         <div
             style={{
                 position: "absolute",
-                left: `${left}`,
-                top: `${top}`,
-                height: `25%`,
-                width: `35%`,
-                alignItems: "center",
-                zIndex: showButtons ? zIndex + 1 : zIndex,
-                display: showButtons || amount!==0 ? "block" : "none",
-            }}
-        >
-            <p 
-                className="text-center text-sm"
+                left: left,
+                top: top,
+                height: `${22*(1-0.6*(0.7-aspectRatio))}%`,
+                zIndex: showButtons ? zIndex + 1 : "",
+                display: showButtons || amount!==0 ? "block" : "none"}}>
+            <div
+                className="flex absolute text-white text-center w-full h-full items-center justify-center"
                 style={{
-                    position: "absolute",
-                    color: "white", 
                     textShadow: "rgb(0, 0, 0) 2px 0px 0px, rgb(0, 0, 0) 1.75517px 0.958851px 0px, rgb(0, 0, 0) 1.0806px 1.68294px 0px, rgb(0, 0, 0) 0.141474px 1.99499px 0px, rgb(0, 0, 0) -0.832294px 1.81859px 0px, rgb(0, 0, 0) -1.60229px 1.19694px 0px, rgb(0, 0, 0) -1.97999px 0.28224px 0px, rgb(0, 0, 0) -1.87291px -0.701566px 0px, rgb(0, 0, 0) -1.30729px -1.51361px 0px, rgb(0, 0, 0) -0.421592px -1.95506px 0px, rgb(0, 0, 0) 0.567324px -1.91785px 0px, rgb(0, 0, 0) 1.41734px -1.41108px 0px, rgb(0, 0, 0) 1.92034px -0.558831px 0px",
-                    top: "17%",
-                    width: "100%",
                 }}>
-                {(tokenType==="threat" || tokenType==="willpower" || tokenType==="attack" || tokenType==="defense") && amount>0 ? "+"+amount : amount}
-            </p>
+                {(tokenType==="threat" || tokenType==="willpower" || tokenType==="attack" || tokenType==="defense" || tokenType==="hitPoints") && amount>0 ? "+"+amount : amount}
+            </div>
 
             <div
-                className="text-center text-sm"
+                className="text-center"
                 style={{
                     position: "absolute",
-                    height: "100%",
-                    width: "50%",
+                    height: "50%",
+                    width: "100%",
+                    top: "50%",
                     backgroundColor: "black",
                     opacity: buttonLeftVisible ? "65%" : "0%",
                     display: showButtons ? "block" : "none",
@@ -107,26 +101,23 @@ export const Token = React.memo(({
                 onMouseOver={() => setButtonLeftVisible(true)}
                 onMouseLeave={() => setButtonLeftVisible(false)}
                 onClick={(event) => clickArrow(event,-1)}
-                onDoubleClick={(event) => handleDoubleClick(event)}
-            >
+                onDoubleClick={(event) => handleDoubleClick(event)}>
                 <FontAwesomeIcon 
                     className="text-white" 
                     style={{
                         position:"absolute", 
-                        top:"25%", 
-                        left:"20%",
+                        top:"15%", 
+                        left:"30%",
                     }}  
-                    icon={faChevronLeft}
-                />
+                    icon={faChevronDown}/>
             </div>
 
             <div
-                className="text-center text-sm"
+                className="text-center"
                 style={{
                     position: "absolute",
-                    height: "100%",
-                    width: "50%",
-                    left: "50%",
+                    height: "50%",
+                    width: "100%",
                     backgroundColor: "black",
                     opacity: buttonRightVisible ? "65%" : "0%",
                     display: showButtons ? "block" : "none",
@@ -135,22 +126,20 @@ export const Token = React.memo(({
                 onMouseOver={() => setButtonRightVisible(true)}
                 onMouseLeave={() => setButtonRightVisible(false)}
                 onClick={(event) => clickArrow(event,1)}
-                onDoubleClick={(event) => handleDoubleClick(event)}
-            >
+                onDoubleClick={(event) => handleDoubleClick(event)}>
                 <FontAwesomeIcon 
                     className="text-white" 
                     style={{
                         position:"absolute", 
-                        top:"25%", 
+                        top:"15%", 
                         left:"30%",
                     }} 
-                    icon={faChevronRight}
+                    icon={faChevronUp}
                 />
             </div>
             <img 
-                className="block ml-auto mr-auto max-h-8"
-                src={process.env.PUBLIC_URL + '/images/tokens/'+tokenType+'.png'}
-            />
+                className="block h-full"
+                src={process.env.PUBLIC_URL + '/images/tokens/'+tokenType+'.png'}/>
         </div>
     )
 })

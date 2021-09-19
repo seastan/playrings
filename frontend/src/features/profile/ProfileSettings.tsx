@@ -26,6 +26,7 @@ export const ProfileSettings: React.FC<Props> = () => {
     const data = {
       user: {
         id: user?.id,
+        language: inputs.language,
         background_url: inputs.background_url,
         player_back_url: inputs.player_back_url,
         encounter_back_url: inputs.encounter_back_url,
@@ -47,6 +48,7 @@ export const ProfileSettings: React.FC<Props> = () => {
     if (user) {
       setInputs((inputs) => ({
         ...inputs,
+        language: user.language || "",
         background_url: user.background_url || "",
         player_back_url: user.player_back_url || "",
         encounter_back_url: user.encounter_back_url || "",
@@ -65,12 +67,23 @@ export const ProfileSettings: React.FC<Props> = () => {
         <fieldset>
           <div className="mb-4">
             <label className="block text-sm font-bold mb-2">
+              Language (Images only)
+            </label>
+            <select 
+              name="language"
+              className="form-control w-full"
+              onChange={handleInputChange}
+              value={inputs.language || "English"}>
+              <option value="English">English</option>
+              <option value="French">French</option>
+            </select>
+            <label className="block text-sm font-bold mb-2 mt-4">
               Background image url
             </label>
             <input
               disabled={user.supporter_level < required_support_level}
               name="background_url"
-              className="form-control w-full"
+              className="form-control w-full mb-2"
               onChange={handleInputChange}
               value={inputs.background_url || ""}
             />
@@ -100,15 +113,14 @@ export const ProfileSettings: React.FC<Props> = () => {
             />
           </div>
           <div className="flex items-center justify-between">
-            {user.supporter_level < required_support_level ?
-              <Button isPrimary className="mx-2 mt-2">
-                <img className="inline-block mr-2" style={{height: "20px", width: "20px"}} src="https://upload.wikimedia.org/wikipedia/commons/9/94/Patreon_logo.svg"/>
-                <a className="text-white no-underline" href="https://www.patreon.com/dragncards">Unlock</a>
-              </Button> 
-              :
               <Button isSubmit isPrimary className="mx-2">
                 Update
               </Button>
+            {user.supporter_level < required_support_level &&
+              <Button isPrimary className="mx-2">
+                <img className="inline-block mr-2" style={{height: "20px", width: "20px"}} src="https://upload.wikimedia.org/wikipedia/commons/9/94/Patreon_logo.svg"/>
+                <a className="text-white no-underline" href="https://www.patreon.com/dragncards">Unlock all</a>
+              </Button> 
             }
           </div>
         </fieldset>

@@ -7,6 +7,7 @@ declare module "elixir-backend" {
     public created_by: null | number;
     public privacy_type: string;
     public last_update: null | number;
+    public quest: string;
   }
 
 
@@ -105,6 +106,7 @@ declare module "elixir-backend" {
     public player_back_url: null | string;
     public encounter_back_url: null | string;
     public playtester: null | integer;
+    public language: null | string;
   }
 
   // User: Public information about other users.

@@ -5,15 +5,17 @@ import { Stacks } from "./Stacks";
 import { Browse } from "./Browse";
 import { GROUPSINFO, CARDSCALE, LAYOUTINFO } from "./Constants";
 import Chat from "../chat/Chat";
-import { handleBrowseTopN } from "./HandleBrowseTopN"; 
 import "../../css/custom-misc.css"; 
+import useWindowDimensions from "../../hooks/useWindowDimensions";
+import { useObservingPlayerN } from "../../contexts/ObservingPlayerNContext";
+import { QuickAccess } from "./QuickAccess";
+import { SideGroup } from "./SideGroup";
 
 var delayBroadcast;
 
 export const TableRegion = React.memo(({
   region,
   cardSize,
-  observingPlayerN,
   gameBroadcast,
   chatBroadcast,
   playerN,
@@ -22,6 +24,7 @@ export const TableRegion = React.memo(({
   setBrowseGroupTopN,
   registerDivToArrowsContext,
 }) => {
+  const observingPlayerN = useObservingPlayerN();
   const groupId = ["Hand", "Deck", "Discard"].includes(region.id) ? observingPlayerN + region.id : region.id;
   const beingBrowsed = groupId === browseGroupId;
   return (
@@ -55,7 +58,6 @@ export const TableRegion = React.memo(({
 })
 
 export const TableLayout = React.memo(({
-  observingPlayerN,
   gameBroadcast,
   chatBroadcast,
   playerN,
@@ -64,7 +66,8 @@ export const TableLayout = React.memo(({
   setBrowseGroupId,
   browseGroupTopN,
   setBrowseGroupTopN,
-  registerDivToArrowsContext
+  registerDivToArrowsContext,
+  cardSizeFactor,
 }) => {
   console.log("Rendering TableLayout");
   const numPlayersStore = state => state.gameUi.game.numPlayers;
@@ -73,15 +76,14 @@ export const TableLayout = React.memo(({
   const groupById = useSelector(groupByIdStore);
   const layoutStore = state => state.gameUi?.game?.layout;
   const layout = useSelector(layoutStore);
+  const observingPlayerN = useObservingPlayerN();
   const [chatHover, setChatHover] = useState(false);
   const [sideGroupId, setSideGroupId] = useState("sharedSetAside");
+  const { height, width } = useWindowDimensions();
+  const aspectRatio = width/height;
+
   if (!layout) return;
 
-  const handleQuickViewClick = (groupId) => {
-    if (sideGroupId === groupId) setSideGroupId("");
-    else setSideGroupId(groupId);
-    //handleBrowseTopN("All", groupById[groupId], playerN, gameBroadcast, chatBroadcast, setBrowseGroupId, setBrowseGroupTopN);
-  }
   const handleStartChatHover = () => {
     if (delayBroadcast) clearTimeout(delayBroadcast);
     delayBroadcast = setTimeout(function() {
@@ -93,12 +95,14 @@ export const TableLayout = React.memo(({
     setChatHover(false);
   }
 
-  const quickViewClassName = "w-full cursor-default quickviewbutton"
-  const quickViewStyle = {height: "24.5%"}
   const layoutInfo = LAYOUTINFO["layout" + numPlayers + layout];
   const numRows = layoutInfo.length;
   const rowHeight = `${100/numRows}%`; 
-  const cardSize = CARDSCALE/numRows;
+  var cardSize = CARDSCALE/numRows;
+  if (aspectRatio < 1.9) cardSize = cardSize*(1-0.75*(1.9-aspectRatio));
+
+  cardSize = cardSize*cardSizeFactor/100;
+
   var middleRowsWidth = 100;
   if (sideGroupId !== "") {
     if (numRows >= 6) middleRowsWidth = 93;
@@ -115,7 +119,6 @@ export const TableLayout = React.memo(({
           <TableRegion
             region={region}
             cardSize={cardSize}
-            observingPlayerN={observingPlayerN}
             gameBroadcast={gameBroadcast} 
             chatBroadcast={chatBroadcast}
             playerN={playerN}
@@ -159,7 +162,6 @@ export const TableLayout = React.memo(({
                   <TableRegion
                     region={region}
                     cardSize={cardSize}
-                    observingPlayerN={observingPlayerN}
                     gameBroadcast={gameBroadcast} 
                     chatBroadcast={chatBroadcast}
                     playerN={playerN}
@@ -174,36 +176,22 @@ export const TableLayout = React.memo(({
           }
         })}
       </div>
-      {/* Side Group */}
-      {Object.keys(GROUPSINFO).includes(sideGroupId) && browseGroupId !== sideGroupId &&
-        <div className="relative float-left" style={{height: `${100-2*(100/numRows)}%`, width:`${100-middleRowsWidth}%`}}>
-          <div className="absolute text-center w-full select-none text-gray-500">
-              <div className="mt-1 text-sm">
-                {GROUPSINFO[sideGroupId].tablename}
-            </div>
-          </div>
-          <div className="w-full h-full pt-4">
-            <Stacks
-              gameBroadcast={gameBroadcast}
-              chatBroadcast={chatBroadcast}
-              playerN={playerN}
-              groupId={sideGroupId}
-              groupType={"vertical"}
-              cardSize={cardSize}
-              registerDivToArrowsContext={registerDivToArrowsContext}
-            />
-          </div>
-        </div>
-      }
+      <SideGroup
+        gameBroadcast={gameBroadcast}
+        chatBroadcast={chatBroadcast}
+        playerN={playerN}
+        browseGroupId={browseGroupId}
+        registerDivToArrowsContext={registerDivToArrowsContext}
+        cardSizeFactor={cardSizeFactor}
+        sideGroupId={sideGroupId}/>
       {/* Bottom row */}
       <div 
-        className="relative w-full" 
+        className="relative float-left w-full" 
         style={{height: rowHeight}}>
         {layoutInfo[numRows-1].regions.map((region, _regionIndex) => (
           <TableRegion
             region={region}
             cardSize={cardSize}
-            observingPlayerN={observingPlayerN}
             gameBroadcast={gameBroadcast} 
             chatBroadcast={chatBroadcast}
             playerN={playerN}
@@ -218,29 +206,15 @@ export const TableLayout = React.memo(({
       <div className="absolute right-0 bottom-0 h-full" style={{width:"25%", height: rowHeight}}>
         <div 
           className="absolute bottom-0 left-0" 
-          style={{height: chatHover ? `${numRows*100}%` : `100%`, width:'100%', paddingRight:"30px", opacity: 0.7, zIndex: 1e6}}
+          style={{height: chatHover ? `${numRows*100}%` : `100%`, width:'100%', paddingRight:"30px", opacity: 0.7, zIndex: chatHover ? 1e6 : 1e3}}
           onMouseEnter={() => handleStartChatHover()}
           onMouseLeave={() => handleStopChatHover()}>
           <Chat hover={chatHover} chatBroadcast={chatBroadcast} setTyping={setTyping}/>
         </div>
-        <div className="absolute h-full text-xs text-center text-gray-400 right-0" style={{width:"30px", background:"rgba(0, 0, 0, 0.3)", zIndex: 1e6+1}}>
-          <div className={`quickviewbutton ${sideGroupId === "sharedSetAside" ? "bg-gray-700" : ""}`} onClick={() => handleQuickViewClick("sharedSetAside")}>
-            <div style={{height: "50%"}}>SA</div>
-            <div style={{height: "50%"}}>{groupById["sharedSetAside"].stackIds.length}</div>
-          </div>
-          <div className={`quickviewbutton ${sideGroupId === observingPlayerN+"Sideboard" ? "bg-gray-700" : ""}`} onClick={() => handleQuickViewClick(observingPlayerN+"Sideboard")}>
-            <div style={{height: "50%"}}>SB</div>
-            <div style={{height: "50%"}}>{groupById[observingPlayerN+"Sideboard"]?.stackIds.length}</div>
-          </div>
-          <div className={`quickviewbutton ${sideGroupId === "sharedQuestDeck" ? "bg-gray-700" : ""}`} onClick={() => handleQuickViewClick("sharedQuestDeck")}>
-            <div style={{height: "50%"}}>QD</div>
-            <div style={{height: "50%"}}>{groupById["sharedQuestDeck"].stackIds.length}</div>
-          </div>
-          <div className={`quickviewbutton ${sideGroupId === "sharedVictory" ? "bg-gray-700" : ""}`} onClick={() => handleQuickViewClick("sharedVictory")}>
-            <div style={{height: "50%"}}>VD</div>
-            <div style={{height: "50%"}}>{groupById["sharedVictory"].stackIds.length}</div>
-          </div>
-        </div>
+        <QuickAccess
+          sideGroupId={sideGroupId}
+          setSideGroupId={setSideGroupId}
+        />
       </div>
     </>
   )

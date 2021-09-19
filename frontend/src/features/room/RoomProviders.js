@@ -5,8 +5,12 @@ import {KeypressProvider} from '../../contexts/KeypressContext';
 import {ActiveCardProvider} from '../../contexts/ActiveCardContext';
 import {DropdownMenuProvider} from '../../contexts/DropdownMenuContext';
 import {MousePositionProvider} from '../../contexts/MousePositionContext';
+import {TouchModeProvider} from '../../contexts/TouchModeContext';
+import {TouchActionProvider} from '../../contexts/TouchActionContext';
 import { GetPlayerN } from "./Helpers";
 import useProfile from "../../hooks/useProfile";
+import { CardSizeFactorProvider } from "../../contexts/CardSizeFactorContext";
+import { ObservingPlayerNProvider } from "../../contexts/ObservingPlayerNContext";
 
 export const RoomProviders = ({ gameBroadcast, chatBroadcast }) => {
   console.log("Rendering RoomProviders");
@@ -25,14 +29,22 @@ export const RoomProviders = ({ gameBroadcast, chatBroadcast }) => {
           backgroundPositionY: "50%",
         }}
       >
-          <KeypressProvider value={{Shift: false}}>
-            <MousePositionProvider value={null}>
-              <DropdownMenuProvider value={null}>
-                <ActiveCardProvider value={null}>
-                  <RoomGame playerN={playerN} gameBroadcast={gameBroadcast} chatBroadcast={chatBroadcast}/>
-                </ActiveCardProvider>
-              </DropdownMenuProvider>
-            </MousePositionProvider>
+          <KeypressProvider value={{}}>
+            <TouchModeProvider value={false}>
+              <TouchActionProvider value={null}>
+                <MousePositionProvider value={null}>
+                  <DropdownMenuProvider value={null}>
+                    <ActiveCardProvider value={null}>
+                      <CardSizeFactorProvider value={null}>
+                        <ObservingPlayerNProvider value={null}>
+                          <RoomGame playerN={playerN} gameBroadcast={gameBroadcast} chatBroadcast={chatBroadcast}/>
+                        </ObservingPlayerNProvider>
+                      </CardSizeFactorProvider>
+                    </ActiveCardProvider>
+                  </DropdownMenuProvider>
+                </MousePositionProvider>
+              </TouchActionProvider>
+            </TouchModeProvider>
           </KeypressProvider>
       </div>
   );

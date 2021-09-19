@@ -1,9 +1,10 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useState } from "react";
 import { useSelector, useDispatch } from 'react-redux';
 import RoomProviders from "./RoomProviders";
 import {useSetMessages} from '../../contexts/MessagesContext';
 import useChannel from "../../hooks/useChannel";
 import { setGameUi, setGame } from "./gameUiSlice";
+import useProfile from "../../hooks/useProfile";
 
 export const Room = ({ slug }) => {
   const dispatch = useDispatch();
@@ -12,11 +13,14 @@ export const Room = ({ slug }) => {
   const errorStore = state => state.gameUi.error;
   const error = useSelector(errorStore);
   const setMessages = useSetMessages();
+  const myUser = useProfile();
+  const myUserId = myUser?.id;
+  const [isClosed, setIsClosed] = useState(false);
 
   //const [gameUI, setGameUI] = useState<GameUI | null>(null);
   const onChannelMessage = useCallback((event, payload) => {
     if (!payload) return;
-    console.log("Got new game state: ", payload.response);
+    console.log("Got new payload: ", event, payload);
     if (
       event === "phx_reply" &&
       payload.response != null &&
@@ -29,6 +33,14 @@ export const Room = ({ slug }) => {
       }
       dispatch(setGame(game_ui.game));
       dispatch(setGameUi(game_ui));
+    } else if (
+      event === "phx_reply" &&
+      payload.response != null &&
+      payload.response.game_ui === null &&
+      !isClosed
+    ) {
+      setIsClosed(true);
+      alert("Your room has closed or timed out. If you were in the middle of playing, it may have crashed. If so, please go to the Menu and download the game state file. Then, create a new room and upload that file to continue where you left off.")
     }
 
   }, []);
@@ -42,10 +54,10 @@ export const Room = ({ slug }) => {
       setMessages(payload.response.messages);
     }
   }, []);
-  const gameBroadcast = useChannel(`room:${slug}`, onChannelMessage);
-  const chatBroadcast = useChannel(`chat:${slug}`, onChatMessage);
+  const gameBroadcast = useChannel(`room:${slug}`, onChannelMessage, myUserId);
+  const chatBroadcast = useChannel(`chat:${slug}`, onChatMessage, myUserId);
 
-  console.log('Rendering Room');
+  console.log('Rendering Room',myUserId);
 
   if (gameName !== slug) return (<div></div>);
   else {

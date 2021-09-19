@@ -39,22 +39,22 @@ for an example implementation.
 
 const useChannel = (
   channelTopic: string,
-  onMessage: (event: any, payload: any) => void
+  onMessage: (event: any, payload: any) => void,
+  myUserId: number | null | undefined,
 ) => {
   const socket = useContext(SocketContext);
   const [broadcast, setBroadcast] = useState<
     (eventName: string, payload: object) => void
   >(mustJoinChannelWarning);
 
-  console.log('useChannel broadcast', broadcast);
   useEffect(() => {
     let doCleanup: () => void = () => null;
     console.log('socket',socket);
     if (socket != null) {
-      doCleanup = joinChannel(socket, channelTopic, onMessage, setBroadcast);
+      doCleanup = joinChannel(socket, channelTopic, onMessage, setBroadcast, myUserId);
     }
     return doCleanup;
-  }, [channelTopic, onMessage, socket]);
+  }, [channelTopic, onMessage, socket, myUserId]);
 
   return broadcast;
 };
@@ -65,12 +65,15 @@ const joinChannel = (
   onMessage: (event: any, payload: any) => void,
   setBroadcast: React.Dispatch<
     React.SetStateAction<(eventName: string, payload: object) => void>
-  >
+  >,
+  myUserId: number | null | undefined,
 ) => {
   const channel = socket.channel(channelTopic, { client: "browser" });
   console.log('joinCh',channel);
 
   channel.onMessage = (event, payload) => {
+    //console.log("game state payload", payload)
+    const userId = payload?.response?.user_id;
     // I don't think the chan_reply_ events are needed - always duplicates of phx_reply?
     if (event != null && !event.startsWith("chan_reply_")) {
       onMessage(event, payload);
@@ -78,7 +81,9 @@ const joinChannel = (
 
     // Specific Hack for DragnCards
     // See room_channel.ex for more info
-    if (event != null && event === "ask_for_update") {
+    //console.log("game state userid ",event, userId, myUserId)
+    if (event != null && event === "ask_for_update" && userId !== myUserId) {
+      console.log("requesting game state")
       channel.push("request_state", {});
     }
 

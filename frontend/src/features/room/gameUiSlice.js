@@ -70,7 +70,6 @@ const deepUpdate = (obj1, obj2) => {
 
 const updateValue = (obj, update) => {
   const updateLength = update.length;
-  console.log("updating", update)
   if (updateLength === 2) {
     obj[update[0]] = update[1];
   } else if (updateLength > 2) {
@@ -132,12 +131,10 @@ const gameUiSlice = createSlice({
       }
     },
     setValues: (state, { payload }) => {
-      console.log("setting values")
       console.log(payload)
       updateValues(state, payload.updates);
     },
     incrementRound: (state, { payload }) => {
-      console.log("increment round")
       state.game.roundNumber = state.game.roundNumber+1;
     },
   },

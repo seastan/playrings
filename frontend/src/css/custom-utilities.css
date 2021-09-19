@@ -73,10 +73,6 @@ p {
   border-radius: 4px; padding: 8px; */
 }
 
-.quickviewbutton {
-  background-color: red;
-}
-
 .scrolltobottom {
   height: "10px";
 
@@ -217,7 +213,7 @@ padding: 0;
 .top-level-menu
 {
     list-style: none;
-    
+    user-select: none;
     width: 20%;
     height: 100%;
     padding: 0;
@@ -259,3 +255,15 @@ padding: 0;
   to {transform:rotate(360deg);}
 }
 
+
+@keyframes glowing {
+  0% {
+    background-color: rgba(55, 65, 81);
+  }
+  50% {
+    background-color: rgba(185, 28, 28);
+  }
+  100% {
+    background-color: rgba(55, 65, 81);
+  }
+}

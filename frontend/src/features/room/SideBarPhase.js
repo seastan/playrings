@@ -18,15 +18,16 @@ export const SideBarPhase = React.memo(({
       style={{height: phaseInfo.height, maxHeight: phaseInfo.height, borderBottom: (phaseInfo.phase === "End") ? "" : "1px solid"}}>
       <div
         className={`absolute h-full pointer-events-none ${isPhase ? "bg-red-800" : ""}`}
-        style={{width:"24px"}}>
+        style={{width:"3vh"}}>
         <div className="absolute" style={{top: "50%", left: "50%", transform: "translate(-50%, -50%) rotate(90deg)"}}>
           {phaseInfo.label}
         </div>
       </div>
-      <div className="w-full h-full text-sm flex flex-col float-left">
+      <div className="w-full h-full flex flex-col float-left">
         {phaseInfo.steps.map((step, _stepIndex) => {
           return (
             <SideBarRoundStep
+              key={step.id}
               playerN={playerN}
               phase={phaseInfo.name}
               stepInfo={step}

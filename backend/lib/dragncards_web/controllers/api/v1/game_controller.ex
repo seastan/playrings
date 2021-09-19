@@ -15,9 +15,7 @@ defmodule DragnCardsWeb.API.V1.GameController do
     options = %{
       "privacyType" => _params["room"]["privacy_type"],
       "replayId" => _params["game_options"]["replay_id"],
-      "ringsDbIds" => _params["game_options"]["ringsdb_ids"],
-      "ringsDbType" => _params["game_options"]["ringsdb_type"],
-      "ringsDbDomain" => _params["game_options"]["ringsdb_domain"],
+      "ringsDbInfo" => _params["game_options"]["ringsdb_info"],
       "loadShuffle" => _params["game_options"]["load_shuffle"],
     }
     GameUISupervisor.start_game(game_name, user, options)

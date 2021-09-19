@@ -11,6 +11,7 @@ export const TopBarShared = React.memo(({
   progress,
   gameBroadcast,
   chatBroadcast,
+  setTyping,
 }) => {
   const dispatch = useDispatch();
   const roundStore = state => state?.gameUi?.game?.roundNumber
@@ -37,7 +38,7 @@ export const TopBarShared = React.memo(({
   }
 
   return(
-    <div className="float-left h-full bg-gray-600" style={{width: "16%"}}>
+    <div className="float-left h-full bg-gray-600" style={{fontSize: "1.7vh", width: "16%", borderLeft: "1px solid lightgrey"}}>
       <div className="float-left h-full w-1/3">
         <div className="h-1/2 w-full flex justify-center">
           Round
@@ -50,6 +51,8 @@ export const TopBarShared = React.memo(({
             onChange={handleRoundChange}
             type="number" min="0" step="1"
             disabled={playerN ? false : true}
+            onFocus={event => setTyping(true)}
+            onBlur={event => setTyping(false)}
             ref={inputRefRound}>
           </input>
         </div>
@@ -59,7 +62,7 @@ export const TopBarShared = React.memo(({
           Staging
         </div>
         <div className="h-1/2 w-full flex justify-center">
-          <div className="text-xl">{threat}</div>
+          <div>{threat}</div>
           <img className="h-full ml-1" src={process.env.PUBLIC_URL + '/images/tokens/threat.png'}></img>
         </div>
       </div>
@@ -68,7 +71,7 @@ export const TopBarShared = React.memo(({
           Progress
         </div>
         <div className="h-1/2 w-full flex justify-center">
-          <div className="text-xl">{progress}</div>
+          <div>{progress}</div>
           <img className="h-full ml-1" src={process.env.PUBLIC_URL + '/images/tokens/progress.png'}></img>
         </div>
       </div>

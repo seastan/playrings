@@ -6,10 +6,12 @@ import { useSelector, useDispatch } from 'react-redux';
 import { setStackIds, setCardIds, setGroupById, setValues } from "./gameUiSlice";
 import { reorderGroupStackIds } from "./Reorder";
 import { Table } from "./Table";
-import { GROUPSINFO } from "./Constants"
-import { getDisplayName, getDisplayNameFlipped, getCurrentFace } from "./Helpers"
+import { GROUPSINFO } from "./Constants";
+import { getDisplayName, getDisplayNameFlipped, getCurrentFace } from "./Helpers";
 import { useKeypress } from "../../contexts/KeypressContext";
 import { processGameChange } from "../automation/ProcessGameChange";
+import { useTouchMode } from "../../contexts/TouchModeContext";
+import { useSetTouchAction } from "../../contexts/TouchActionContext";
 
 // custom hook for getting previous value 
 function usePrevious(value) {
@@ -33,12 +35,15 @@ export const DragContainer = React.memo(({
   const keypress = useKeypress();
   //const archerContainerRef = React.createRef();
   const arrowColors = ["rgba(255,0,0,0.6)", "rgba(0,200,0,0.6)", "rgba(0,128,255,0.6)", "rgba(128,0,255,0.6)"];
+  const touchMode = useTouchMode();
+  const setTouchAction = useSetTouchAction();
 
   const prevGame = usePrevious(game)
-
-  useEffect(() => {
-    processGameChange(prevGame, game, playerN, gameBroadcast, chatBroadcast);
-  }, [game]);
+  const arrows1 = game.playerData.player1.arrows;
+  const arrows2 = game.playerData.player1.arrows;
+  const arrows3 = game.playerData.player1.arrows;
+  const arrows4 = game.playerData.player1.arrows;
+  const usingArrows = arrows1 || arrows2 || arrows3 || arrows4;
 
   const onDragEnd = (result) => {
     const groupById = game.groupById;
@@ -51,12 +56,13 @@ export const DragContainer = React.memo(({
     const origStackCardIds = origStack.cardIds;
     const topOfOrigStackCardId = origStackCardIds[0];
     const topOfOrigStackCard = game.cardById[topOfOrigStackCardId];
+    var destGroup = null;
 
     // Combine
     if (result.combine) {
       const dest = result.combine;
       const destGroupId = dest.droppableId;
-      const destGroup = game["groupById"][destGroupId];
+      destGroup = game["groupById"][destGroupId];
       const destGroupStackIds = groupById[destGroupId].stackIds;
 
       dest.index = -1;
@@ -96,40 +102,47 @@ export const DragContainer = React.memo(({
       dispatch(setStackIds(newOrigGroup));
       dispatch(setCardIds(newDestStack));
       gameBroadcast("game_action", {action:"move_stack", options:{stack_id: origStackId, dest_group_id: destGroupId, dest_stack_index: dest.index, combine: true, preserve_state: keypress["Shift"]}})
-      return;
     }
 
     // Dropped nowhere
-    if (!result.destination) {
+    else if (!result.destination) {
       return;
-    }
-    const dest = result.destination;
-    const destGroupId = dest.droppableId;
-    const destGroup = game["groupById"][destGroupId];
-
-    // Did not move anywhere - can bail early
-    if (
-      orig.droppableId === dest.droppableId &&
-      orig.index === dest.index
-    ) {
-      return;
-    }
-
-    // Moved to a different spot
-    const newGroupById = reorderGroupStackIds(groupById, orig, dest);
-    const origGroupTitle = GROUPSINFO[origGroupId].name;
-    const destGroupTitle = GROUPSINFO[destGroupId].name;
-    if (!keypress["Shift"] && (origGroup.type === "hand" || origGroup.type === "deck" ) && (destGroup.type !== "hand" && destGroup.type !== "deck" )) {
-      chatBroadcast("game_update",{message: "moved "+getDisplayNameFlipped(topOfOrigStackCard)+" from "+origGroupTitle+" to "+destGroupTitle+"."});
-      // Flip card faceup
-      const updates = [["game","cardById",topOfOrigStackCardId,"currentSide", "A"]];
-      dispatch(setValues({updates: updates}));
-    }
+    } 
+    
+    // Dragged somewhere
     else {
-      chatBroadcast("game_update",{message: "moved "+getDisplayName(topOfOrigStackCard)+" from "+origGroupTitle+" to "+destGroupTitle+"."});
+      const dest = result.destination;
+      const destGroupId = dest.droppableId;
+      destGroup = game["groupById"][destGroupId];
+
+      // Did not move anywhere - can bail early
+      if (
+        orig.droppableId === dest.droppableId &&
+        orig.index === dest.index
+      ) {
+        return;
+      }
+
+      // Moved to a different spot
+      const newGroupById = reorderGroupStackIds(groupById, orig, dest);
+      const origGroupTitle = GROUPSINFO[origGroupId].name;
+      const destGroupTitle = GROUPSINFO[destGroupId].name;
+      if (!keypress["Shift"] && (origGroup.type === "hand" || origGroup.type === "deck" ) && (destGroup.type !== "hand" && destGroup.type !== "deck" )) {
+        chatBroadcast("game_update",{message: "moved "+getDisplayNameFlipped(topOfOrigStackCard)+" from "+origGroupTitle+" to "+destGroupTitle+"."});
+        // Flip card faceup
+        const updates = [["game","cardById",topOfOrigStackCardId,"currentSide", "A"]];
+        dispatch(setValues({updates: updates}));
+      }
+      else {
+        chatBroadcast("game_update",{message: "moved "+getDisplayName(topOfOrigStackCard)+" from "+origGroupTitle+" to "+destGroupTitle+"."});
+      }
+      dispatch(setGroupById(newGroupById));
+      gameBroadcast("game_action", {action:"move_stack", options:{stack_id: origStackId, dest_group_id: destGroupId, dest_stack_index: dest.index, combine: false, preserve_state: (keypress["Shift"] || destGroupId === origGroupId)}})
     }
-    dispatch(setGroupById(newGroupById));
-    gameBroadcast("game_action", {action:"move_stack", options:{stack_id: origStackId, dest_group_id: destGroupId, dest_stack_index: dest.index, combine: false, preserve_state: (keypress["Shift"] || destGroupId === origGroupId)}})
+    if (touchMode && origGroup.type === "hand" && destGroup.type === "play") {
+      const cost = topOfOrigStackCard.sides.A.cost;
+      if (cost) setTouchAction({action: "increment_token", options:{tokenType: "resource", "increment": -1, tokensLeft: cost}, type: "card"});
+    }
   }
 
   return(
@@ -159,7 +172,7 @@ export const DragContainer = React.memo(({
             gameBroadcast={gameBroadcast}
             chatBroadcast={chatBroadcast}
             setTyping={setTyping}
-            registerDivToArrowsContext={game.playerData.player1.arrows.length ? registerDivToArrowsContext: null}
+            registerDivToArrowsContext={usingArrows ? registerDivToArrowsContext: null}
           />
         </>
         )}

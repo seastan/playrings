@@ -14,7 +14,6 @@ export const DropdownMenuGroup = React.memo(({
   handleDropdownClick,
   calcHeight,
   activeMenu,
-  setIsHovering,
 }) => {
   const menuGroup = dropdownMenu.group;
   
@@ -51,25 +50,23 @@ export const DropdownMenuGroup = React.memo(({
   }
 
   const left = mouseX < (window.innerWidth/2)  ? mouseX : mouseX -300;
-  const top = mouseY < (window.innerHeight/2) ? mouseY : mouseY -250;
+  const top = mouseY < (window.innerHeight/2) ? mouseY : mouseY -300;
 
   return (
     <div 
       className="dropdown" 
       style={{ height: menuHeight, zIndex: 1e7, top: top, left: left }}
-      onMouseEnter={() => setIsHovering(true)}
-      onMouseLeave={() => setIsHovering(false)}
       >
         <div className="menu-title">{dropdownMenu.title}</div>
 
-        <CSSTransition onEnter={calcHeight} timeout={500} classNames="menu-primary" unmountOnExit
-          in={activeMenu === "main"}>
+        {activeMenu === "main" &&
         <div className="menu">
           <DropdownItem action="shuffle" clickCallback={handleDropdownClick}>Shuffle</DropdownItem>
           {menuGroup.id === playerN+"Hand" ? <DropdownItem action="makeVisible" clickCallback={handleDropdownClick}>Make visible/hidden</DropdownItem> : null}
           <DropdownItem action="lookAt" topN="None" clickCallback={handleDropdownClick}>Browse</DropdownItem>
           <DropdownItem action="lookAt" topN="5" clickCallback={handleDropdownClick}>Look at top 5</DropdownItem>
           <DropdownItem action="lookAt" topN="10" clickCallback={handleDropdownClick}>Look at top 10</DropdownItem>
+          <DropdownItem action="lookAt" topN="X" clickCallback={handleDropdownClick}>Look at top X</DropdownItem>
           <DropdownItem action="chooseRandom" clickCallback={handleDropdownClick}>Choose Random</DropdownItem>
           <DropdownItem
             rightIcon={<FontAwesomeIcon icon={faChevronRight}/>}
@@ -83,11 +80,9 @@ export const DropdownMenuGroup = React.memo(({
             clickCallback={handleDropdownClick}>
             More
           </DropdownItem>
-        </div>
-      </CSSTransition>
+        </div>}
 
-      <CSSTransition onEnter={calcHeight} timeout={500} classNames="menu-primary" unmountOnExit
-          in={activeMenu === "moveTo"}>
+        {activeMenu === "moveTo" &&
         <div className="menu">
           <GoBack goToMenu="main" clickCallback={handleDropdownClick}/>
           <DropdownItem
@@ -114,38 +109,20 @@ export const DropdownMenuGroup = React.memo(({
             clickCallback={handleDropdownClick}>
             Encounter Deck 3
           </DropdownItem>
-        </div>
-      </CSSTransition>
-
-      <CSSTransition onEnter={calcHeight} timeout={500} classNames="menu-primary" unmountOnExit
-          in={activeMenu === "moveToMy"}>
-        <DropdownMoveTo destGroupId={playerN+"Deck"}/>
-      </CSSTransition>
-
-      <CSSTransition onEnter={calcHeight} timeout={500} classNames="menu-primary" unmountOnExit
-          in={activeMenu === "moveToEncounter1"}>
-        <DropdownMoveTo destGroupId="sharedEncounterDeck"/>
-      </CSSTransition>
-
-      <CSSTransition onEnter={calcHeight} timeout={500} classNames="menu-primary" unmountOnExit
-          in={activeMenu === "moveToEncounter2"}>
-        <DropdownMoveTo destGroupId="sharedEncounterDeck2"/>
-      </CSSTransition>
-
-      <CSSTransition onEnter={calcHeight} timeout={500} classNames="menu-primary" unmountOnExit
-          in={activeMenu === "moveToEncounter3"}>
-        <DropdownMoveTo destGroupId="sharedEncounterDeck3"/>
-      </CSSTransition>
-
-      <CSSTransition onEnter={calcHeight} timeout={500} classNames="menu-primary" unmountOnExit
-          in={activeMenu === "more"}>
+        </div>}
+        {activeMenu === "moveToMy" &&
+        <DropdownMoveTo destGroupId={playerN+"Deck"}/>}
+        {activeMenu === "moveToEncounter1" &&
+        <DropdownMoveTo destGroupId="sharedEncounterDeck"/>}
+        {activeMenu === "moveToEncounter2" &&
+        <DropdownMoveTo destGroupId="sharedEncounterDeck2"/>}
+        {activeMenu === "moveToEncounter3" &&
+        <DropdownMoveTo destGroupId="sharedEncounterDeck3"/>}
+        {activeMenu === "more" &&
         <div className="menu">
           <GoBack goToMenu="main" clickCallback={handleDropdownClick}/>
-          <DropdownItem action="lookAt" topN="X" clickCallback={handleDropdownClick}>Look at top X</DropdownItem>
           <DropdownItem action="dealX" side="B" clickCallback={handleDropdownClick}>Deal top X facedown</DropdownItem>
-        </div>
-      </CSSTransition>
-      
+        </div>}
     </div>
   );
 })

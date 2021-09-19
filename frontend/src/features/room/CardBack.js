@@ -3,7 +3,7 @@
 import React from "react";
 import { useSelector } from 'react-redux';
 import { CARDSCALE, LAYOUTINFO} from "./Constants"
-import { getCurrentFace, getVisibleFaceSRC } from "./Helpers";
+import { getCurrentFace, getVisibleFaceSrc } from "./Helpers";
 import useProfile from "../../hooks/useProfile";
 
 const CardBack = React.memo(({
@@ -12,6 +12,7 @@ const CardBack = React.memo(({
     isDraggingOver,
     isDraggingFrom,
     playerN,
+    cardSize,
 }) => {
   const user = useProfile();
   const storeStack0 = state => state?.gameUi?.game?.stackById[stackIds[0]];
@@ -22,28 +23,21 @@ const CardBack = React.memo(({
   const card0 = useSelector(storeCard0);
   const storeCard1 = state => state?.gameUi?.game?.cardById[stack1?.cardIds[0]];
   const card1 = useSelector(storeCard1);  
-  const numPlayersStore = state => state.gameUi.game.numPlayers;
-  const numPlayers = useSelector(numPlayersStore);
-  const layoutStore = state => state.gameUi?.game?.layout;
-  const layout = useSelector(layoutStore);
-  const layoutInfo = LAYOUTINFO["layout" + numPlayers + layout];
-  const numRows = layoutInfo.length;
-  const cardSize = CARDSCALE/numRows;
 
-  var visibleFaceSRC;
+  var visibleFaceSrc;
   var visibleFace;
   const groupSize = stackIds.length;
   if (groupType === "deck" && groupSize>0 && isDraggingOver && !isDraggingFrom) {
-    visibleFaceSRC = getVisibleFaceSRC(card0, playerN, user)
+    visibleFaceSrc = getVisibleFaceSrc(card0, playerN, user)
     visibleFace = getCurrentFace(card0)
   } else if (groupType === "deck" && groupSize>1 && isDraggingFrom) {
-    visibleFaceSRC = getVisibleFaceSRC(card1, playerN, user)
+    visibleFaceSrc = getVisibleFaceSrc(card1, playerN, user)
     visibleFace = getCurrentFace(card1)
   } else if (groupType === "discard" && groupSize>0 && isDraggingOver && !isDraggingFrom) {
-    visibleFaceSRC = getVisibleFaceSRC(card0, playerN, user)
+    visibleFaceSrc = getVisibleFaceSrc(card0, playerN, user)
     visibleFace = getCurrentFace(card0)
   } else if (groupType === "discard" && groupSize>1 && isDraggingFrom) {
-    visibleFaceSRC = getVisibleFaceSRC(card1, playerN, user)
+    visibleFaceSrc = getVisibleFaceSrc(card1, playerN, user)
     visibleFace = getCurrentFace(card1)
   }
   if (visibleFace) {
@@ -51,18 +45,20 @@ const CardBack = React.memo(({
         <div 
             style={{
                 backgroundColor: "red",
-                background: `url(${visibleFaceSRC}) no-repeat scroll 0% 0% / contain`,
+                background: `url(${visibleFaceSrc}) no-repeat scroll 0% 0% / contain`,
                 //borderWidth: '1px',
-                borderRadius: '6px',
+                borderRadius: '0.6vh',
                 borderColor: 'transparent',
                 position: "absolute",
-                width: `${cardSize*visibleFace.width}vw`,
-                height: `${cardSize*visibleFace.height}vw`,
-                left: `${0.2 + (1.39-visibleFace.width)*cardSize/2}vw`,
+                width: `${cardSize*visibleFace.width}vh`,
+                height: `${cardSize*visibleFace.height}vh`,
+                left: `${0.2 + (1.39-visibleFace.width)*cardSize/2}vh`,
                 top: "50%", //`${0.2 + (1.39-currentFace.height)*cardSize/2}vw`,
                 transform: "translate(0%,-50%)",
             }}
-        >
+        >                
+        <img className="absolute w-full h-full" style={{borderRadius: '0.6vh'}} src={visibleFaceSrc.src} onerror={`this.onerror=null; this.src=${visibleFaceSrc.default}`} />
+
         </div>)
   } else {
     return (<div></div>);

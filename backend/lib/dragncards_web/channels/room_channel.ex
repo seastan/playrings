@@ -33,7 +33,7 @@ defmodule DragnCardsWeb.RoomChannel do
       state = GameUIServer.state(room_slug)
       socket = socket |> assign(:game_ui, state)
 
-      notify(socket)
+      notify(socket, user_id)
     end
     {:noreply, socket}
   end
@@ -69,7 +69,7 @@ defmodule DragnCardsWeb.RoomChannel do
     state = GameUIServer.state(room_slug)
 
     socket = socket |> assign(:game_ui, state)
-    notify(socket)
+    notify(socket, user_id)
 
     {:reply, {:ok, client_state(socket)}, socket}
   end
@@ -83,7 +83,7 @@ defmodule DragnCardsWeb.RoomChannel do
     state = GameUIServer.state(room_slug)
 
     socket = socket |> assign(:game_ui, state)
-    notify(socket)
+    notify(socket, user_id)
 
     {:reply, {:ok, client_state(socket)}, socket}
   end
@@ -104,7 +104,7 @@ defmodule DragnCardsWeb.RoomChannel do
   this, unlike "notify".
   """
   def notify_from_outside(room_slug) do
-    payload = %{}
+    payload = %{user_id: 0}
     DragnCardsWeb.Endpoint.broadcast!("room:" <> room_slug, "ask_for_update", payload)
   end
 
@@ -128,18 +128,18 @@ defmodule DragnCardsWeb.RoomChannel do
   defp on_terminate(%{assigns: %{room_slug: room_slug, user_id: user_id}} = socket) do
     state = GameUIServer.leave(room_slug, user_id)
     socket = socket |> assign(:game_ui, state)
-    notify(socket)
+    notify(socket, user_id)
   end
 
-  defp notify(socket) do
+  defp notify(socket, user_id) do
     # # Fake a phx_reply event to everyone
-    # payload = %{
-    #   response: client_state(socket),
-    #   status: "ok"
-    # }
+    payload = %{
+      response: %{user_id: user_id},
+      status: "ok"
+    }
 
     # broadcast!(socket, "phx_reply", payload)
-    broadcast!(socket, "ask_for_update", %{})
+    broadcast!(socket, "ask_for_update", payload)
   end
 
   # Remove deltas from a gameui, as it's not needed for rendering

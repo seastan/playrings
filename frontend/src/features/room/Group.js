@@ -27,11 +27,13 @@ export const Group = React.memo(({
   const group = useSelector(storeGroup);
   const setDropdownMenu = useSetDropdownMenu();
 
-  const handleEyeClick = () => {
+  const handleEyeClick = (event) => {
+    event.stopPropagation();
     handleBrowseTopN("All", group, playerN, gameBroadcast, chatBroadcast, setBrowseGroupId, setBrowseGroupTopN);
   }
 
-  const handleBarsClick = () => {
+  const handleBarsClick = (event) => {
+    event.stopPropagation();
     if (!playerN) return;
     const dropdownMenu = {
         type: "group",
@@ -45,26 +47,26 @@ export const Group = React.memo(({
 
   if (!group) return null;
   const numStacks = group.stackIds.length;
+  const tablename = GROUPSINFO[group.id].tablename;
   return(
     <div className="h-full w-full">
       {hideTitle ? null :
         <div
-          className="relative text-center h-full float-left select-none text-gray-500"
-          style={{width:"15px"}} 
-        >
+          className="relative h-full float-left select-none text-gray-500"
+          style={{width:"15px"}}>
           {group.type === "play" ?        
-            <div className="absolute pointer-events-none mt-1 text-sm" 
+            <div className="absolute pointer-events-none mt-1" 
             style={{top: "50%", left: "50%", transform: "translate(-50%, -50%) rotate(90deg)", whiteSpace: "nowrap"}}>
-              {GROUPSINFO[group.id].tablename}
+              {tablename}
             </div>
           :
-            <div className="w-full h-full">
-              <FontAwesomeIcon onClick={handleEyeClick}  className="hover:text-white mt-2" icon={faEye}/>
-              <FontAwesomeIcon onClick={handleBarsClick}  className="hover:text-white" icon={faBars}/>
+            <div className="relative w-full h-full">
               <span 
-                className="absolute pointer-events-none mt-1 text-sm" 
-                style={{top: "50%", left: "50%", transform: `translate(-50%, ${group.id === "sharedEncounterDeck" ? "80%" : "0%"}) rotate(90deg)`, whiteSpace: "nowrap"}}>
-                  {GROUPSINFO[group.id].tablename + (group.type === "deck" ? " ("+numStacks+")" : "")}
+                className="absolute mt-1" 
+                style={{fontSize: "1.7vh", top: tablename == "Encounter" ? "55%" : "50%", left: "50%", transform: `translate(-50%, -40%) rotate(90deg)`, whiteSpace: "nowrap"}}>
+                <FontAwesomeIcon onClick={(event) => handleEyeClick(event)}  className="hover:text-white mr-2" style={{transform: `rotate(-90deg)`}} icon={faEye}/>
+                <FontAwesomeIcon onClick={(event) => handleBarsClick(event)}  className="hover:text-white mr-2" style={{transform: `rotate(-90deg)`}} icon={faBars}/>
+                  {tablename + (group.type === "deck" ? " ("+numStacks+")" : "")}
               </span>
             </div>
           }

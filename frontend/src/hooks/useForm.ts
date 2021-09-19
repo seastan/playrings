@@ -12,7 +12,7 @@ const useForm = (submitCallback: () => void) => {
   };
 
   const handleInputChange = (
-    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
     event.persist();
     event.stopPropagation(); 

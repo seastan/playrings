@@ -6,4 +6,3 @@ cards
 backend/config/releases.exs
 *~
 backend/config/prod.secret.exs
-frontend/src/cardDB/ALeP

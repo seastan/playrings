@@ -1,19 +1,22 @@
 import React from "react";
 import { useActiveCard } from "../../contexts/ActiveCardContext";
-import { getVisibleFace, getVisibleFaceSRC } from "./Helpers";
+import { useTouchAction } from "../../contexts/TouchActionContext";
+import { getVisibleFace, getVisibleFaceSrc } from "./Helpers";
 import useProfile from "../../hooks/useProfile";
 
-export const GiantCard = ({playerN}) => {
+export const GiantCard = React.memo(({playerN}) => {
   console.log("Rendering GiantCard");
   const user = useProfile();
+  const touchAction = useTouchAction();
   const activeCardAndLoc = useActiveCard();
-  const activeCard = activeCardAndLoc?.card
-  const visibleFace = getVisibleFace(activeCard, playerN)
-  if (activeCard) {
+  const activeCard = activeCardAndLoc?.card;
+  const visibleFace = getVisibleFace(activeCard, playerN);
+  const visibleFaceSrc = getVisibleFaceSrc(activeCard, playerN, user);
+  if (activeCard && !touchAction) {
     return (
       <img 
         className="absolute"
-        src={getVisibleFaceSRC(activeCard, playerN, user)}
+        src={visibleFaceSrc.src} onerror={`this.onerror=null; this.src=${visibleFaceSrc.default}`}
         style={{
           right: activeCardAndLoc?.screenPosition === "left" ? "3%" : "",
           left: activeCardAndLoc?.screenPosition === "right" ? "3%" : "",
@@ -23,13 +26,13 @@ export const GiantCard = ({playerN}) => {
           WebkitBoxShadow: '0 0 50px 20px black',
           boxShadow: '0 0 50px 20px black',
           zIndex: 1e6,
-          width: visibleFace.height >= visibleFace.width ? "25%" : "35%",
+          height: visibleFace.height >= visibleFace.width ? "70vh" : "50vh",
         }}
       />
     )
   } else {
     return(null)
   }
-}
+})
 
 export default GiantCard;

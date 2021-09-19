@@ -18,8 +18,15 @@ export const GoBack = (props) => {
 }
 
 export const DropdownItem = (props) => {
+  const handleDropDownItemClick = (event) => {
+    event.stopPropagation();
+    props.clickCallback(props);
+  }
+
   return (
-    <a href="#" className="menu-item" onMouseDown={() => props.clickCallback(props)}>    
+    <a href="#" className="menu-item" 
+      //onTouchStart={(event) => handleDropDownItemClick(event)} onMouseUp={(event) => handleDropDownItemClick(event)}
+      onClick={(event) => handleDropDownItemClick(event)}>    
       {props.leftIcon && <span className="icon-button">{props.leftIcon}</span>}
       {props.children}
       <span className="icon-right">{props.rightIcon}</span>

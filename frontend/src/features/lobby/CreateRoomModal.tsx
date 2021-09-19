@@ -19,9 +19,7 @@ interface Props {
   isLoggedIn: boolean;
   closeModal: () => void;
   replayId: string;
-  ringsDbIds: Array<string>;
-  ringsDbType: string;
-  ringsDbDomain: string;
+  ringsDbInfo: Array<any>;
   loadShuffle: boolean;
 }
 
@@ -32,9 +30,7 @@ export const CreateRoomModal: React.FC<Props> = ({
   isLoggedIn, 
   closeModal, 
   replayId, 
-  ringsDbIds, 
-  ringsDbType, 
-  ringsDbDomain, 
+  ringsDbInfo, 
   loadShuffle,
 }) => {
   const [isError, setIsError] = useState(false);
@@ -51,7 +47,7 @@ export const CreateRoomModal: React.FC<Props> = ({
   
   const [privacyType, setPrivacyType] = useState(options[0]);
 
-  console.log("Rendering CreateRoomModal", ringsDbIds, ringsDbType, ringsDbDomain)
+  console.log("Rendering CreateRoomModal", ringsDbInfo)
 
   const createRoom = async () => {
     const data = { 
@@ -62,9 +58,7 @@ export const CreateRoomModal: React.FC<Props> = ({
       },
       game_options: {
         replay_id: replayId,
-        ringsdb_ids: ringsDbIds,
-        ringsdb_type: ringsDbType,
-        ringsdb_domain: ringsDbDomain,
+        ringsdb_info: ringsDbInfo,
         load_shuffle: loadShuffle,
       }
     };
@@ -106,8 +100,7 @@ export const CreateRoomModal: React.FC<Props> = ({
         content: {
           width: '300px',
         }
-      }}
-    >
+      }}>
 
       <h1 className="mb-2">Create Room</h1>
       {isLoggedIn ?

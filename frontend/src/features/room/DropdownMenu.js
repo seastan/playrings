@@ -4,6 +4,7 @@ import { useMousePosition } from "../../contexts/MousePositionContext";
 import { useDropdownMenu, useSetDropdownMenu } from "../../contexts/DropdownMenuContext";
 
 import "../../css/custom-dropdown.css";
+import { useTouchAction } from "../../contexts/TouchActionContext";
 
 export const DropdownMenu = React.memo(({
   playerN,
@@ -13,40 +14,20 @@ export const DropdownMenu = React.memo(({
   const mousePosition = useMousePosition();
   const dropdownMenu = useDropdownMenu();
   const setDropdownMenu = useSetDropdownMenu();
+  const touchAction = useTouchAction();
   
-  const [isHovering, setIsHovering] = useState(false);
   const [mouseX, setMouseX] = useState(0);
-  const [mouseY, setMouseY] = useState(0);
-  const [isOpen, setIsOpen] = useState(false);  
-  console.log("Rendering DropdownMenu ", isHovering, playerN);
+  const [mouseY, setMouseY] = useState(0); 
+  console.log("Rendering DropdownMenu ");
 
   useEffect(() => {
-
-    const handleClick = (event) => {
-      if (!isOpen) return;
-      // Menu is open
-      if (!isHovering || playerN === null) {
-        setIsOpen(false);
-        setDropdownMenu(null);
-        return;
-      }
-    }
-
-    document.addEventListener('mousedown', handleClick);
-
-    return () => {
-      document.removeEventListener('mousedown', handleClick);
-    }
-  }, [dropdownMenu, isHovering])
+    setMouseX(mousePosition?.x);
+    setMouseY(mousePosition?.y);
+  }, [dropdownMenu])
 
   if (!mousePosition) return null;
   if (!dropdownMenu) return null;
-
-  if (!isOpen) {
-    setMouseX(mousePosition.x);
-    setMouseY(mousePosition.y);
-    setIsOpen(true);
-  }
+  if (touchAction) return null;
 
   return (
     <DropdownMenuCommon
@@ -57,7 +38,6 @@ export const DropdownMenu = React.memo(({
       mouseY={mouseY}
       dropdownMenu={dropdownMenu}
       setDropdownMenu={setDropdownMenu}
-      setIsHovering={setIsHovering}
     />
   )
 

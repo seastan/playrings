@@ -35,28 +35,6 @@ export const Profile: React.FC<Props> = () => {
     "/be/api/replays/"+user?.id,
     null
   );
-  const { inputs, handleSubmit, handleInputChange, setInputs } = useForm(async () => {
-    console.log(inputs);
-    const data = {
-      user: {
-        id: user?.id,
-        background_url: inputs.background_url,
-        player_back_url: inputs.player_back_url,
-        encounter_back_url: inputs.encounter_back_url,
-      },
-    };
-    const res = await axios.post("/be/api/v1/profile/update", data);
-  });
-  useEffect(() => {
-    if (user) {
-      setInputs((inputs) => ({
-        ...inputs,
-        background_url: user.background_url || "",
-        player_back_url: user.player_back_url || "",
-        encounter_back_url: user.encounter_back_url || "",
-      }));
-    }
-  }, [user]);
   if (user == null) {
     return null;
   }

@@ -1,5 +1,5 @@
 //export const CARDSCALE = 3.;
-export const CARDSCALE = 26;
+export const CARDSCALE = 52;
 
 export const CYCLEORDER = ["01", "02", "03", "04", "05", "06", "07", "08", "09", "0A", "0B", "0C", "00", "99", "A1", "PT"];
 
@@ -47,10 +47,10 @@ export const GROUPSINFO = {
     "player1Discard": {name: "Player 1 Discard", tablename: "Discard"},
     "player1Sideboard": {name: "Player 1 Sideboard", tablename: "Player 1 Sideboard"},
     "player1Deck2": {name: "Player 1 Deck 2", tablename: "Player 1 Deck 2"},
-    "player1Play1": {name: "Player 1 Play Area", tablename: "Play Area"},
-    "player1Play2": {name: "Player 1 Play Area", tablename: "Play Area"},
-    "player1Play3": {name: "Player 1 Play Area", tablename: "Play Area"},
-    "player1Play4": {name: "Player 1 Play Area", tablename: "Play Area"},
+    "player1Play1": {name: "Player 1 Play Area 1", tablename: "Play Area"},
+    "player1Play2": {name: "Player 1 Play Area 2", tablename: "Play Area"},
+    "player1Play3": {name: "Player 1 Play Area 3", tablename: "Play Area"},
+    "player1Play4": {name: "Player 1 Play Area 4", tablename: "Play Area"},
     "player1Engaged": {name: "Player 1 Engaged Area", tablename: "Engaged"},
     "player1Event": {name: "Player 1 Current Event", tablename: "Event"},
     "player2Hand": {name: "Player 2 Hand", tablename: "Hand"},
@@ -58,10 +58,10 @@ export const GROUPSINFO = {
     "player2Discard": {name: "Player 2 Discard", tablename: "Discard"},
     "player2Sideboard": {name: "Player 2 Sideboard", tablename: "Player 2 Sideboard"},
     "player2Deck2": {name: "Player 2 Deck 2", tablename: "Player 2 Deck 2"},
-    "player2Play1": {name: "Player 2 Play Area", tablename: "Play Area"},
-    "player2Play2": {name: "Player 2 Play Area", tablename: "Play Area"},
-    "player2Play3": {name: "Player 2 Play Area", tablename: "Play Area"},
-    "player2Play4": {name: "Player 2 Play Area", tablename: "Play Area"},
+    "player2Play1": {name: "Player 2 Play Area 1", tablename: "Play Area"},
+    "player2Play2": {name: "Player 2 Play Area 2", tablename: "Play Area"},
+    "player2Play3": {name: "Player 2 Play Area 3", tablename: "Play Area"},
+    "player2Play4": {name: "Player 2 Play Area 4", tablename: "Play Area"},
     "player2Engaged": {name: "Player 2 Engaged Area", tablename: "Engaged"},
     "player2Event": {name: "Player 2 Current Event", tablename: "Event"},
     "player3Hand": {name: "Player 3 Hand", tablename: "Hand"},
@@ -69,10 +69,10 @@ export const GROUPSINFO = {
     "player3Discard": {name: "Player 3 Discard", tablename: "Discard"},
     "player3Sideboard": {name: "Player 3 Sideboard", tablename: "Player 3 Sideboard"},
     "player3Deck2": {name: "Player 3 Deck 2", tablename: "Player 3 Deck 2"},
-    "player3Play1": {name: "Player 3 Play Area", tablename: "Play Area"},
-    "player3Play2": {name: "Player 3 Play Area", tablename: "Play Area"},
-    "player3Play3": {name: "Player 3 Play Area", tablename: "Play Area"},
-    "player3Play4": {name: "Player 3 Play Area", tablename: "Play Area"},
+    "player3Play1": {name: "Player 3 Play Area 1", tablename: "Play Area"},
+    "player3Play2": {name: "Player 3 Play Area 2", tablename: "Play Area"},
+    "player3Play3": {name: "Player 3 Play Area 3", tablename: "Play Area"},
+    "player3Play4": {name: "Player 3 Play Area 4", tablename: "Play Area"},
     "player3Engaged": {name: "Player 3 Engaged Area", tablename: "Engaged"},
     "player3Event": {name: "Player 3 Current Event", tablename: "Event"},
     "player4Hand": {name: "Player 4 Hand", tablename: "Hand"},
@@ -80,10 +80,10 @@ export const GROUPSINFO = {
     "player4Discard": {name: "Player 4 Discard", tablename: "Discard"},
     "player4Sideboard": {name: "Player 4 Sideboard", tablename: "Player 4 Sideboard"},
     "player4Deck2": {name: "Player 4 Deck 2", tablename: "Player 4 Deck 2"},
-    "player4Play1": {name: "Player 4 Play Area", tablename: "Play Area"},
-    "player4Play2": {name: "Player 4 Play Area", tablename: "Play Area"},
-    "player4Play3": {name: "Player 4 Play Area", tablename: "Play Area"},
-    "player4Play4": {name: "Player 4 Play Area", tablename: "Play Area"},
+    "player4Play1": {name: "Player 4 Play Area 1", tablename: "Play Area"},
+    "player4Play2": {name: "Player 4 Play Area 2", tablename: "Play Area"},
+    "player4Play3": {name: "Player 4 Play Area 3", tablename: "Play Area"},
+    "player4Play4": {name: "Player 4 Play Area 4", tablename: "Play Area"},
     "player4Engaged": {name: "Player 4 Engaged Area", tablename: "Engaged"},
     "player4Event": {name: "Player 4 Current Event", tablename: "Event"}
 }
@@ -192,6 +192,54 @@ export const PHASEINFO = [
   }
 ]
 
+export const nextRoundStep = (roundStep) => {
+  var stepFound = false;
+  for (var phase of PHASEINFO) {
+    const steps = phase.steps;
+    for (var step of steps) {
+      if (stepFound) return {roundStep: step.id, phase: phase.name};
+      if (step.id == roundStep) stepFound = true;
+    }
+  }
+  return null;
+}
+
+export const prevRoundStep = (roundStep) => {
+  var prev = null;
+  for (var phase of PHASEINFO) {
+    const steps = phase.steps;
+    for (var step of steps) {
+      if (step.id == roundStep) return prev;
+      prev = {roundStep: step.id, phase: phase.name};
+    }
+  }
+  return null;
+}
+
+export const nextPhase = (currPhase) => {
+  var phaseFound = false;
+  for (var phase of PHASEINFO) {
+    const steps = phase.steps;
+    for (var step of steps) {
+      if (phaseFound && phase.name !== currPhase) return {roundStep: step.id, phase: phase.name};
+      if (phase.name == currPhase) phaseFound = true;
+    }
+  }
+  return null;
+}
+
+export const prevPhase = (currPhase) => {
+  var prev = null;
+  for (var phase of PHASEINFO) {
+    const steps = phase.steps;
+    for (var step of steps) {
+      if (phase.name === currPhase) return prev;
+      if (prev?.phase !== phase.name ) prev = {roundStep: step.id, phase: phase.name};
+    }
+  }
+  return null;
+}
+
 export const playerNum = (playerN) => {
   switch(playerN) {
     case 'player1':
@@ -240,6 +288,40 @@ export const sectionToLoadGroupId = (section, playerN) => {
   return 'sharedOther';
 }
 
+export const sectionToDeckGroupId = (section, playerN) => {
+  switch(section) {
+    case 'Hero':
+      return playerN+'Deck';
+    case 'Ally':
+      return playerN+'Deck';
+    case 'Attachment':
+      return playerN+'Deck';
+    case 'Event':
+      return playerN+'Deck';
+    case 'Side Quest':
+      return playerN+'Deck';
+    case 'Sideboard':
+      return playerN+'Deck';
+    case 'Quest':
+      return 'sharedQuestDeck';
+    case 'Encounter':
+      return 'sharedEncounterDeck';
+    case 'Special':
+      return 'sharedEncounterDeck2';
+    case 'Second Special':
+      return 'sharedEncounterDeck3';
+    case 'Setup':
+      return 'sharedEncounterDeck';
+    case 'Staging Setup':
+      return 'sharedEncounterDeck';
+    case 'Active Setup':
+      return 'sharedEncounterDeck';
+    case 'Second Quest Deck':
+      return 'sharedQuestDeck2';
+  }
+  return 'sharedOther';
+}
+
 export const sectionToDiscardGroupId = (section, playerN) => {
   switch(section) {
     case 'Hero':
@@ -279,10 +361,10 @@ export const LAYOUTINFO = {
     {
       regions: [
         {id: "sharedMainQuest", width: "12%"},
-        {id: "sharedActive", width: "9%"},
-        {id: "sharedStaging", width: "61%", style: "shaded", boxShadow: "true"},
-        {id: "sharedEncounterDeck", width: "9%"},
-        {id: "sharedEncounterDiscard", width: "9%"},
+        {id: "sharedActive", width: "11%"},
+        {id: "sharedStaging", width: "58%", style: "shaded", boxShadow: "true"},
+        {id: "sharedEncounterDeck", width: "9.5%"},
+        {id: "sharedEncounterDiscard", width: "9.5%"},
       ]
     },
     {
@@ -297,15 +379,15 @@ export const LAYOUTINFO = {
     },
     {
       regions: [
-        {id: "player1Play2", width: "90%"},
-        {id: "player1Event", width: "10%"},
+        {id: "player1Play2", width: "89%"},
+        {id: "player1Event", width: "11%"},
       ]
     },
     {
       regions: [
-        {id: "Hand", width: "57%", style: "shaded"},
-        {id: "Deck", width: "9%", style: "shaded"},
-        {id: "Discard", width: "9%", style: "shaded"},
+        {id: "Hand", width: "56%", style: "shaded"},
+        {id: "Deck", width: "9.5%", style: "shaded"},
+        {id: "Discard", width: "9.5%", style: "shaded"},
       ]
     },
   ],
@@ -313,10 +395,10 @@ export const LAYOUTINFO = {
     {
       regions: [
         {id: "sharedMainQuest", width: "12%"},
-        {id: "sharedActive", width: "9%"},
-        {id: "sharedStaging", width: "61%", style: "shaded", boxShadow: "true"},
-        {id: "sharedEncounterDeck", width: "9%"},
-        {id: "sharedEncounterDiscard", width: "9%"},
+        {id: "sharedActive", width: "11%"},
+        {id: "sharedStaging", width: "58%", style: "shaded", boxShadow: "true"},
+        {id: "sharedEncounterDeck", width: "9.5%"},
+        {id: "sharedEncounterDiscard", width: "9.5%"},
       ]
     },
     {
@@ -340,9 +422,9 @@ export const LAYOUTINFO = {
     },
     {
       regions: [
-        {id: "Hand", width: "57%", style: "shaded"},
-        {id: "Deck", width: "9%", style: "shaded"},
-        {id: "Discard", width: "9%", style: "shaded"},
+        {id: "Hand", width: "56%", style: "shaded"},
+        {id: "Deck", width: "9.5%", style: "shaded"},
+        {id: "Discard", width: "9.5%", style: "shaded"},
       ]
     },
   ],

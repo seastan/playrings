@@ -8,9 +8,11 @@ import { DropdownMenuFirstPlayer } from "./DropdownMenuFirstPlayer";
 import { getDisplayName, tokenTitleName, getVisibleSide } from "./Helpers";
 import { faArrowUp, faArrowDown, faRandom, faReply, faChevronRight, faCheck } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { calcHeightCommon, DropdownItem, GoBack } from "./DropdownMenuHelpers";
 import "../../css/custom-dropdown.css";
+import { useSetKeypress } from "../../contexts/KeypressContext";
+import { useActiveCard, useSetActiveCard } from "../../contexts/ActiveCardContext";
 
 export const DropdownMenuCommon = React.memo(({
   playerN,
@@ -20,11 +22,10 @@ export const DropdownMenuCommon = React.memo(({
   mouseY,
   dropdownMenu,
   setDropdownMenu,
-  setIsHovering,
 }) => {
   
-  const gameStore = state => state?.gameUi?.game;
-  const game = useSelector(gameStore);
+  const gameUiStore = state => state?.gameUi;
+  const gameUi = useSelector(gameUiStore);
 
   const [activeMenu, setActiveMenu] = useState('main');
   const [menuHeight, setMenuHeight] = useState(null);
@@ -35,18 +36,26 @@ export const DropdownMenuCommon = React.memo(({
   const visibleSide = getVisibleSide(menuCard);
   const displayName = getDisplayName(menuCard);
 
+  const keypress = useSetKeypress();
+  const setKeypress = useSetKeypress();
+
+  const activeCardAndLoc = useActiveCard();
+  const setActiveCardAndLoc = useSetActiveCard();
+
+  const dispatch = useDispatch();
+
   const calcHeight = (el) => {
     calcHeightCommon(el, setMenuHeight);
   }
 
-  const handleDropdownClick = (props) => {
-    if (props.goToMenu) {
-      setActiveMenu(props.goToMenu);
+  const handleDropdownClick = (dropdownOptions) => {
+    if (dropdownOptions.goToMenu) {
+      setActiveMenu(dropdownOptions.goToMenu);
       return;
     }
-    handleDropdownClickCommon(dropdownMenu, props, playerN, game, gameBroadcast, chatBroadcast);
+    const dropdownProps = {dropdownOptions, dropdownMenu, gameUi, playerN, gameBroadcast, chatBroadcast, activeCardAndLoc, setActiveCardAndLoc, dispatch, keypress, setKeypress};
+    handleDropdownClickCommon(dropdownProps);
     setActiveMenu("main");
-    setIsHovering(false);
     setDropdownMenu(null);
     setMenuHeight(null);
   }
@@ -62,7 +71,6 @@ export const DropdownMenuCommon = React.memo(({
         handleDropdownClick={handleDropdownClick}
         calcHeight={calcHeight}
         activeMenu={activeMenu}
-        setIsHovering={setIsHovering}
       />
     )
   } else if (dropdownMenu.type === "group") {
@@ -76,7 +84,6 @@ export const DropdownMenuCommon = React.memo(({
         handleDropdownClick={handleDropdownClick}
         calcHeight={calcHeight}
         activeMenu={activeMenu}
-        setIsHovering={setIsHovering}
       />
     )
   } else if (dropdownMenu.type === "firstPlayer") {
@@ -90,7 +97,6 @@ export const DropdownMenuCommon = React.memo(({
         handleDropdownClick={handleDropdownClick}
         calcHeight={calcHeight}
         activeMenu={activeMenu}
-        setIsHovering={setIsHovering}
       />
     )
   } else return null;

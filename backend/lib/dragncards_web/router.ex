@@ -61,6 +61,9 @@ defmodule DragnCardsWeb.Router do
     # Testing Junk
     get("/authtest", JunkController, :authtest)
     post("/games", GameController, :create)
+
+    # Alerts
+    get("/alerts", AlertController, :show)
   end
 
   scope "/api/v1", DragnCardsWeb.API.V1, as: :api_v1 do

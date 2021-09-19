@@ -38,13 +38,9 @@ export const Browse = React.memo(({
   const [selectedCardName, setSelectedCardName] = useState('');
   const stackIds = group["stackIds"];
   const numStacks = stackIds.length;
-  var fontSize = "text-md"
-  if (game.numPlayers === 2) fontSize = "text-sm"
-  if (game.numPlayers > 2) fontSize = "text-xs"
- 
 
-  const handleBarsClick = () => {
-    console.log('longpress is triggered');
+  const handleBarsClick = (event) => {
+    event.stopPropagation();
     const dropdownMenu = {
         type: "group",
         group: group,
@@ -54,7 +50,6 @@ export const Browse = React.memo(({
     }
     setDropdownMenu(dropdownMenu);
   }
-
 
   // This allows the deck to be hidden instantly upon close (by hiding the top card)
   // rather than waiting to the update from the server
@@ -67,17 +62,13 @@ export const Browse = React.memo(({
     dispatch(setValues({updates: updates})) 
   }
 
-  const handleOptionClick = (event) => {
-    setSelectedCardType(event.target.value);
+  const handleCloseClick = (option) => {
+    if (option === "shuffle") closeAndShuffle();
+    else if (option === "order") closeAndOrder();
+    else if (option === "peeking") closeAndPeeking();
   }
 
-  const handleCloseClick = (_event) => {
-    gameBroadcast("game_action", {action: "peek_at", options: {stack_ids: stackIds, value: false}})
-    if (groupType === "deck") stopPeekingTopCard();
-    setBrowseGroupId("");
-  }
-
-  const handleCloseAndShuffleClick = (_event) => {
+  const closeAndShuffle = () => {
     gameBroadcast("game_action", {action: "peek_at", options: {stack_ids: stackIds, value: false}})
     gameBroadcast("game_action", {action: "shuffle_group", options: {group_id: groupId}})
     chatBroadcast("game_update",{message: "stopped looking at and shuffled "+GROUPSINFO[groupId].name+"."})
@@ -85,8 +76,16 @@ export const Browse = React.memo(({
     setBrowseGroupId("");
   }
 
-  const handleJustCloseClick = (_event) => {
+  const closeAndOrder = () => {
+    gameBroadcast("game_action", {action: "peek_at", options: {stack_ids: stackIds, value: false}})
+    chatBroadcast("game_update",{message: "stopped looking at "+GROUPSINFO[groupId].name+"."})
+    if (groupType === "deck") stopPeekingTopCard();
     setBrowseGroupId("");
+  }
+
+  const closeAndPeeking = () => {
+    setBrowseGroupId("");
+    chatBroadcast("game_update",{message: "closed but kept peeking at "+GROUPSINFO[groupId].name+"."})
   }
 
   const handleSelectClick = (event) => {
@@ -104,19 +103,29 @@ export const Browse = React.memo(({
 
   const handleInputTyping = (event) => {
     setSelectedCardName(event.target.value);
-    //setSelectedCardType(event.target.value);
   }
 
   // If browseGroupTopN not set, or equal to "All" or "None", show all stacks
   var browseGroupTopNint = isNormalInteger(browseGroupTopN) ? parseInt(browseGroupTopN) : numStacks;
   var filteredStackIndices = [...Array(browseGroupTopNint).keys()];
   // Filter by selected card type
-  if (selectedCardType !== "All") 
+  if (selectedCardType === "Other") 
+      filteredStackIndices = filteredStackIndices.filter((s,i) => (
+        stackIds[s] && 
+        parentCards[s]["sides"]["A"]["type"] !== "Enemy" &&
+        parentCards[s]["sides"]["A"]["type"] !== "Location" &&
+        parentCards[s]["sides"]["A"]["type"] !== "Treachery" &&
+        parentCards[s]["sides"]["A"]["type"] !== "Ally" &&
+        parentCards[s]["sides"]["A"]["type"] !== "Attachment" &&
+        parentCards[s]["sides"]["A"]["type"] !== "Event" &&
+        (parentCards[s]["peeking"][playerN] || parentCards[s]["currentSide"] === "A") 
+  ));
+  else if (selectedCardType !== "All") 
     filteredStackIndices = filteredStackIndices.filter((s,i) => (
       stackIds[s] && 
       parentCards[s]["sides"]["A"]["type"] === selectedCardType &&
       (parentCards[s]["peeking"][playerN] || parentCards[s]["currentSide"] === "A") 
-    ));
+  ));  
   console.log(filteredStackIndices)
   // Filter by card name
   if (selectedCardName !== "")
@@ -134,18 +143,18 @@ export const Browse = React.memo(({
     <div className="relative h-full w-full">
       <div
         className="relative text-center h-full text-gray-500 float-left select-none"
-        style={{width:"30px"}}>
+        style={{width:"5vh"}}>
         <div>
-          {group.type !== "play" && <FontAwesomeIcon onClick={handleBarsClick}  className="hover:text-white" icon={faBars}/>}
+          {group.type !== "play" && <FontAwesomeIcon onClick={(event) => handleBarsClick(event)}  className="hover:text-white" icon={faBars}/>}
           <span 
-            className="absolute mt-1 text-sm" 
+            className="absolute mt-1" 
             style={{top: "50%", left: "50%", transform: `translate(-50%, 0%) rotate(90deg)`, whiteSpace: "nowrap"}}>
               {GROUPSINFO[group.id].tablename}
           </span>
         </div>
       </div> 
 
-      <div className="relative h-full float-left " style={{width: "calc(100% - 550px)"}}>
+      <div className="relative h-full float-left " style={{width: "calc(100% - 60vh)"}}>
         <Stacks
           gameBroadcast={gameBroadcast}
           chatBroadcast={chatBroadcast}
@@ -157,71 +166,82 @@ export const Browse = React.memo(({
         />
       </div>
 
-      <div className={`relative h-full float-left p-2 ${fontSize}`} style={{width:"360px"}}>
-        <table className="w-full">
-          <body className="w-full">
-            <tr className="w-full">
-              <td className="" style={{width:"180px"}} onChange={handleSelectClick}>
-                <select name="numFaceup" id="numFaceup">
-                  <option value="" disabled selected>Look at...</option>
-                  <option value="None">None</option>
-                  <option value="All">All</option>
-                  <option value="5">Top 5</option>
-                  <option value="10">Top 10</option>
-                </select>
-              </td>
-              <td className="" style={{width:"180px"}}>
-                <div className="w-full">
-                  <input 
-                    style={{width:"100px"}} 
-                    type="text" 
-                    id="name" 
-                    name="name" 
-                    placeholder=" Search..." 
-                    onChange={handleInputTyping}
-                    onFocus={event => setTyping(true)}
-                    onBlur={event => setTyping(false)}/>
+      <div className="relative h-full float-left p-2 select-none" style={{width:"35vh"}}>
+            
+        <div className="h-1/5 w-full">
+          <div className="h-full float-left w-1/2 p-0.5">
+            <select 
+              name="numFaceup" 
+              id="numFaceup"
+              className="form-control w-full bg-gray-900 text-white border-0 h-full px-1"
+              onChange={handleSelectClick}>
+              <option value="" disabled selected>Turn faceup...</option>
+              <option value="None">None</option>
+              <option value="All">All</option>
+              <option value="5">Top 5</option>
+              <option value="10">Top 10</option>
+            </select>
+          </div>
+          <div className="h-full float-left w-1/2 p-0.5">
+            <input
+                type="text"
+                name="name"
+                id="name"
+                placeholder="Search.."
+                className="form-control w-full bg-gray-900 text-white border-0 h-full"
+                onFocus={event => setTyping(true)}
+                onBlur={event => setTyping(false)}
+                onChange={handleInputTyping}
+              />
+          </div>
+        </div>
+      
+        {[["All", "Ally"],
+          ["Enemy", "Attachment"],
+          ["Location", "Event"],
+          ["Treachery", "Other"],
+        ].map((row, rowIndex) => {
+          return(
+            <div className="h-1/5 w-full text-white text-center">
+              {row.map((item, itemIndex) => {
+                return(
+                  <div className="h-full float-left w-1/2 p-0.5">
+                    <div className={"h-full w-full flex items-center justify-center hover:bg-gray-600 rounded" + (selectedCardType === item ? " bg-red-800" : " bg-gray-800")}
+                      onClick={() => setSelectedCardType(item)}>    
+                      {row[itemIndex]}
+                    </div>
+                  </div>
+                )
+              })}
+          </div>
+          )})
+        }
+      </div>
+
+      <div className="relative h-full float-left p-3 select-none" style={{width:"20vh"}}>
+        <div className="h-1/4 w-full text-white text-center">
+          <div className="h-full float-left w-full p-0.5">
+            <div className="h-full w-full">   
+              Close &
+            </div>
+          </div>
+        </div>
+        {[["Shuffle", "shuffle"],
+          ["Keep order", "order"],
+          ["Keep peeking", "peeking"]
+          ].map((row, rowIndex) => {
+            return(
+              <div className="h-1/4 w-full text-white text-center">
+                <div className="h-full float-left w-full p-0.5">
+                  <div className="flex h-full w-full bg-gray-800 hover:bg-gray-600 rounded items-center justify-center"
+                    onClick={(event) => handleCloseClick(row[1])}>    
+                    {row[0]}
+                  </div>
                 </div>
-              </td>
-            </tr>
-            <tr onChange={handleOptionClick}>
-              <td><label className="text-white"><input type="radio" name="cardtype" value="All" defaultChecked/> All types</label></td>
-              <td><label className="text-white"><input type="radio" name="cardtype" value="Ally"/> Ally</label></td>
-            </tr>
-            <tr onChange={handleOptionClick}>
-              <td><label className="text-white"><input type="radio" name="cardtype" value="Enemy" /> Enemy</label></td>
-              <td><label className="text-white"><input type="radio" name="cardtype" value="Attachment" /> Attachment</label></td>
-            </tr>
-            <tr onChange={handleOptionClick}>
-              <td><label className="text-white"><input type="radio" name="cardtype" value="Location" /> Location</label></td>
-              <td><label className="text-white"><input type="radio" name="cardtype" value="Event" /> Event</label></td>
-            </tr>
-            <tr onChange={handleOptionClick}>
-              <td><label className="text-white"><input type="radio" name="cardtype" value="Treachery" /> Treachery</label></td>
-              <td><label className="text-white"><input type="radio" name="cardtype" value="Side Quest" /> Side Quest</label></td>
-            </tr>
-          </body>
-        </table> 
+              </div>
+            )})
+          }
       </div>
-
-      <div className="relative h-full float-left p-3" style={{width:"160px"}}>
-        <div 
-          className="text-white hover:text-red-500 select-none mr-2 border-1"
-          onClick={handleCloseAndShuffleClick}>
-          Close & shuffle
-        </div>
-        <div 
-          className="text-white hover:text-red-500 select-none mr-2 border-1"
-          onClick={handleCloseClick}>
-          Close
-        </div>
-        <div 
-          className="text-white hover:text-red-500 select-none mr-2 border-1"
-          onClick={handleJustCloseClick}>
-          Close (but keep peeking)
-        </div>
-      </div>
-
     </div>
   )
 })

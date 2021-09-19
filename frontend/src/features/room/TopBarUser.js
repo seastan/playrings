@@ -8,6 +8,7 @@ import { Link } from "react-router-dom";
 import { setValues } from "./gameUiSlice";
 import { useSetDropdownMenu } from "../../contexts/DropdownMenuContext";
 import { getCurrentFace } from "./Helpers";
+import { useObservingPlayerN, useSetObservingPlayerN } from "../../contexts/ObservingPlayerNContext";
 
 var delayBroadcast;
 
@@ -16,8 +17,7 @@ export const TopBarUser = React.memo(({
   playerI,
   gameBroadcast,
   chatBroadcast,
-  observingPlayerN,
-  setObservingPlayerN,
+  setTyping,
 }) => {
   console.log("Rendering TopBarUser ", playerI);
   const dispatch = useDispatch();
@@ -37,6 +37,8 @@ export const TopBarUser = React.memo(({
   const [inputRefThreat, setInputFocusThreat] = useFocus();
   const [inputRefWillpower, setInputFocusWillpower] = useFocus();
   const setDropdownMenu = useSetDropdownMenu();
+  const observingPlayerN = useObservingPlayerN();
+  const setObservingPlayerN = useSetObservingPlayerN();
 
   useEffect(() => {    
     if (gameUiThreat !== threatValue) setThreatValue(gameUiThreat);
@@ -50,7 +52,8 @@ export const TopBarUser = React.memo(({
 
   const sittingUserID = playerIds[playerI];
 
-  const handleFirstPlayerClick = () => {
+  const handleFirstPlayerClick = (event) => {
+    event.stopPropagation();
     if (!playerN) return;
     const dropdownMenu = {
         type: "firstPlayer",
@@ -137,7 +140,7 @@ export const TopBarUser = React.memo(({
   }
   
   return(
-    <div className="float-left h-full" style={{width: "16%"}}>
+    <div className="float-left h-full pr-1" style={{width: "16%", borderLeft: "1px solid lightgrey"}}>
       <div className="float-left h-full w-2/3">
         <div className="h-1/2 w-full flex justify-center">
           {/* Show First player token */}
@@ -145,7 +148,7 @@ export const TopBarUser = React.memo(({
             <img 
               className="h-full mr-1 mb-1" 
               src={process.env.PUBLIC_URL + '/images/tokens/firstplayer.png'}
-              onClick={() => handleFirstPlayerClick()}/>
+              onClick={(event) => handleFirstPlayerClick(event)}/>
             : null}
           <UserName userID={sittingUserID} defaultName="Empty seat"></UserName>
         </div>
@@ -178,6 +181,8 @@ export const TopBarUser = React.memo(({
             onChange={handleThreatChange}
             type="number" min="0" step="1"
             disabled={playerN ? false : true}
+            onFocus={event => setTyping(true)}
+            onBlur={event => setTyping(false)}
             ref={inputRefThreat}
           ></input>
         </div>
@@ -192,6 +197,8 @@ export const TopBarUser = React.memo(({
             onChange={handleWillpowerChange}
             type="number" min="0" step="1"
             disabled={playerN ? false : true}
+            onFocus={event => setTyping(true)}
+            onBlur={event => setTyping(false)}
             ref={inputRefWillpower}
           ></input>
         </div>

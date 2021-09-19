@@ -3,6 +3,7 @@ import { flatListOfCards } from "../room/Helpers";
 
 // cl refers to a flattened list of all card objects
 
+
 const isObject = (item) => {
     return (typeof item === "object" && !Array.isArray(item) && item !== null);
   }

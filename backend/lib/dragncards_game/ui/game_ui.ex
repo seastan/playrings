@@ -315,8 +315,12 @@ defmodule DragnCardsGame.GameUI do
   def target_card_ids(gameui, card_ids, player_n) do
     Enum.reduce(card_ids, gameui, fn(card_id, acc) ->
       old_targeting = get_targeting(acc, card_id)
-      new_targeting = put_in(old_targeting[player_n], true)
-      acc = update_targeting(acc, card_id, new_targeting)
+        acc = if old_targeting do
+          new_targeting = put_in(old_targeting[player_n], true)
+          update_targeting(acc, card_id, new_targeting)
+        else
+          acc
+        end
     end)
   end
 
@@ -390,31 +394,76 @@ defmodule DragnCardsGame.GameUI do
     move_card(gameui, card_id, group_id, stack_index + 1, 0, false, true)
   end
 
+  def discard_group_id_for_deck_group_id(deck_group_id) do
+    case deck_group_id do
+      "player1Deck" ->
+        "player1Discard"
+      "player1Deck2" ->
+        "player1Discard"
+      "player2Deck" ->
+        "player2Discard"
+      "player2Deck2" ->
+        "player2Discard"
+      "player3Deck" ->
+        "player3Discard"
+      "player3Deck2" ->
+        "player3Discard"
+      "player4Deck" ->
+        "player4Discard"
+      "player4Deck2" ->
+        "player4Discard"
+      "sharedEncounterDeck" ->
+        "sharedEncounterDiscard"
+      "sharedEncounterDeck2" ->
+        "sharedEncounterDiscard2"
+      "sharedEncounterDeck3" ->
+        "sharedEncounterDiscard3"
+      "sharedQuestDeck" ->
+        "sharedQuestDiscard"
+      "sharedQuestDeck2" ->
+        "sharedQuestDiscard2"
+      _ ->
+        "sharedEncounterDiscard"
+    end
+  end
+
   # Update a card state
   # Modify the card orientation/tokens based on where it is now
   def update_card_state(gameui, card_id, preserve_state, orig_group_id) do
-    card = get_card(gameui, card_id)
     if preserve_state do
       # We still remove arrows
       #card = put_in(card["arrowIds"], [])
-      update_card(gameui, card)
-      #gameui
+      #update_card(gameui, card)
+      gameui
     else
+      card = get_card(gameui, card_id)
       card_name = card["sides"]["A"]["name"]
-      card_id = card["id"]
-      dest_group = get_group_by_card_id(gameui, card["id"])
+      card_face = get_current_card_face(gameui, card_id)
+      dest_group = get_group_by_card_id(gameui, card_id)
       dest_group_id = dest_group["id"]
       orig_group_type = get_group_type(gameui, orig_group_id)
       dest_group_type = get_group_type(gameui, dest_group_id)
+      committed_willpower = if card["committed"] do
+        card_face["willpower"] + card["tokens"]["willpower"]
+      else
+        0
+      end
+      old_controller = card["controller"]
+      new_controller = dest_group["controller"]
       # Remove arrows
       #card = put_in(card["arrowIds"], [])
       # Set new controller
-      card = put_in(card["controller"], dest_group["controller"])
+      card = put_in(card["controller"], new_controller)
       # Entering play
       card = if dest_group_type == "play" and orig_group_type != "play" do
         card
         |> Map.put("roundEnteredPlay", gameui["game"]["round"])
         |> Map.put("phaseEnteredPlay", gameui["game"]["phase"])
+      else card end
+      # Leaving player control
+      card = if old_controller !== "shared" and new_controller == "shared" do
+        card
+        |> Map.put("committed", false)
       else card end
       # Leaving play
       card = if dest_group_type != "play" do
@@ -423,14 +472,20 @@ defmodule DragnCardsGame.GameUI do
         |> Map.put("tokensPerRound", Tokens.new())
         |> Map.put("exhausted", false)
         |> Map.put("rotation", 0)
+        |> Map.put("committed", false)
         |> Map.put("roundEnteredPlay", nil)
         |> Map.put("phaseEnteredPlay", nil)
         |> clear_targets()
       else card end
       # Entering deck: flip card facedown, no peeking
       card = if dest_group_type == "deck" do
+        new_deck_id = dest_group_id
+        new_discard_id = discard_group_id_for_deck_group_id(new_deck_id)
         card
         |> Map.put("currentSide", "B")
+        |> Map.put("owner", new_controller)
+        |> Map.put("deckGroupId", new_deck_id)
+        |> Map.put("discardGroupId", new_discard_id)
         |> set_all_peeking(false)
       else card end
       # Entering discard: flip card faceup, no peeking
@@ -459,10 +514,31 @@ defmodule DragnCardsGame.GameUI do
       end
       gameui = update_card(gameui, card)
       # Update game based on card moving
+      # Handle triggers
       gameui = if dest_group_type == "play" do
-        add_triggers(gameui, card["id"])
+        add_triggers_card_face(gameui, card_id, card_face)
       else
-        remove_triggers(gameui, card["id"])
+        remove_triggers_card_face(gameui, card_id, card_face)
+      end
+      # Handle committed willpower leaving play
+      gameui = if committed_willpower > 0 and dest_group_type !== "play" and old_controller !== "shared" do
+        old_controller_willpower = gameui["game"]["playerData"][old_controller]["willpower"]
+        put_in(gameui["game"]["playerData"][old_controller]["willpower"], old_controller_willpower - committed_willpower)
+      else
+        gameui
+      end
+      # Handle committed willpower changing control
+      gameui = if committed_willpower > 0 and old_controller !== new_controller and old_controller !== "shared" do
+        old_controller_willpower = gameui["game"]["playerData"][old_controller]["willpower"]
+        gameui = put_in(gameui["game"]["playerData"][old_controller]["willpower"], old_controller_willpower - committed_willpower)
+        if new_controller !== "shared" do
+          new_controller_willpower = gameui["game"]["playerData"][new_controller]["willpower"]
+          put_in(gameui["game"]["playerData"][new_controller]["willpower"], new_controller_willpower + committed_willpower)
+        else
+          gameui
+        end
+      else
+        gameui
       end
     end
   end
@@ -523,6 +599,10 @@ defmodule DragnCardsGame.GameUI do
 
   def add_triggers(gameui, card_id) do
     card_face = get_current_card_face(gameui, card_id)
+    add_triggers_card_face(gameui, card_id, card_face)
+  end
+
+  def add_triggers_card_face(gameui, card_id, card_face) do
     card_triggers = card_face["triggers"]
     Enum.reduce(card_triggers, gameui, fn(round_step, acc) ->
       acc = add_trigger(acc, card_id, round_step)
@@ -540,6 +620,10 @@ defmodule DragnCardsGame.GameUI do
 
   def remove_triggers(gameui, card_id) do
     card_face = get_current_card_face(gameui, card_id)
+    remove_triggers_card_face(gameui, card_id, card_face)
+  end
+
+  def remove_triggers_card_face(gameui, card_id, card_face) do
     card_triggers = card_face["triggers"]
     Enum.reduce(card_triggers, gameui, fn(round_step, acc) ->
       acc = remove_trigger(acc, card_id, round_step)
@@ -643,6 +727,12 @@ defmodule DragnCardsGame.GameUI do
   def peek_at(gameui, stack_ids, player_n, value) do
     Enum.reduce(stack_ids, gameui, fn(stack_id, acc) ->
       acc = peek_stack(acc, stack_id, player_n, value)
+    end)
+  end
+
+  def set_stack_ids_peeking_all(gameui, stack_ids, value) do
+    Enum.reduce(["player1" ,"player2", "player3", "player4"], gameui, fn(player_n, acc) ->
+      peek_at(acc, stack_ids, player_n, value)
     end)
   end
 
@@ -797,14 +887,33 @@ defmodule DragnCardsGame.GameUI do
     update_stack_ids(gameui, group_id, new_stack_ids)
   end
 
+  def deal_x(gameui, group_id, dest_group_id, top_x) do
+    stack_ids = get_stack_ids(gameui, group_id)
+    top_x = if Enum.count(stack_ids) < top_x do Enum.count(stack_ids) else top_x end
+    top_x_stack_ids = Enum.slice(stack_ids, 0, top_x)
+    gameui = set_stack_ids_peeking_all(gameui, stack_ids, false)
+    gameui = if top_x > 0 do
+      move_stack(gameui, Enum.at(top_x_stack_ids,0), dest_group_id, -1, false, true)
+    else
+      gameui
+    end
+    gameui = if top_x > 1 do
+      Enum.reduce(1..(top_x-1), gameui, fn(index, acc) ->
+        move_stack(acc, Enum.at(top_x_stack_ids,index), dest_group_id, -1, true, true)
+      end)
+    else
+      gameui
+    end
+  end
+
   ################################################################
   # Game actions                                                 #
   ################################################################
   def game_action(gameui, user_id, action, options) do
-    Logger.debug("game_action #{action}")
-    Logger.debug(options)
     player_n = get_player_n(gameui, user_id)
     player_n = if options["for_player_n"] do options["for_player_n"] else player_n end
+    Logger.debug("game_action #{user_id} #{player_n} #{action}")
+    Logger.debug(options)
     game_old = gameui["game"]
     gameui = if player_n do
       case action do
@@ -860,6 +969,8 @@ defmodule DragnCardsGame.GameUI do
           save_replay(gameui, user_id)
         "card_action" ->
           card_action(gameui, options["card_id"], options["action"], options["options"])
+        "deal_x" ->
+          deal_x(gameui, options["group_id"], options["dest_group_id"], options["top_x"])
         _ ->
           gameui
       end
@@ -871,9 +982,9 @@ defmodule DragnCardsGame.GameUI do
             gameui
       end
     end
-    # Compare state before and after, and add a delta (unless we are undoing a move)
+    # Compare state before and after, and add a delta (unless we are undoing a move or loading a game with undo info)
     game_new = gameui["game"]
-    gameui = if action != "step_through" do
+    gameui = if options["preserve_undo"] != true do
       game_new = Game.add_delta(game_new, game_old)
       gameui = put_in(gameui["game"], game_new)
       put_in(gameui["game"]["replayLength"], Enum.count(gameui["game"]["deltas"]))
@@ -990,7 +1101,7 @@ defmodule DragnCardsGame.GameUI do
   end
 
   def reset_game(gameui) do
-    new_game = Game.new()
+    new_game = Game.new(gameui["game"]["options"])
     put_in(gameui["game"], new_game)
   end
 
@@ -1084,12 +1195,16 @@ defmodule DragnCardsGame.GameUI do
 
   def get_player_n(gameui, user_id) do
     ids = gameui["playerIds"]
-    cond do
-      ids["player1"] == user_id -> "player1"
-      ids["player2"] == user_id -> "player2"
-      ids["player3"] == user_id -> "player3"
-      ids["player4"] == user_id -> "player4"
-      true -> nil
+    if user_id == nil do
+      nil
+    else
+      cond do
+        ids["player1"] == user_id -> "player1"
+        ids["player2"] == user_id -> "player2"
+        ids["player3"] == user_id -> "player3"
+        ids["player4"] == user_id -> "player4"
+        true -> nil
+      end
     end
   end
 
@@ -1288,7 +1403,11 @@ defmodule DragnCardsGame.GameUI do
   # Increment a player's willpower
   def increment_willpower(gameui, player_n, increment) do
     current_willpower = gameui["game"]["playerData"][player_n]["willpower"];
-    put_in(gameui["game"]["playerData"][player_n]["willpower"], current_willpower + increment)
+    if increment do
+      put_in(gameui["game"]["playerData"][player_n]["willpower"], current_willpower + increment)
+    else
+      gameui
+    end
   end
 
 end
