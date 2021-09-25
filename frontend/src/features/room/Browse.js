@@ -63,29 +63,29 @@ export const Browse = React.memo(({
   }
 
   const handleCloseClick = (option) => {
-    if (option === "shuffle") closeAndShuffle();
-    else if (option === "order") closeAndOrder();
-    else if (option === "peeking") closeAndPeeking();
+    chatBroadcast("game_update",{message: "closed "+GROUPSINFO[groupId].name+"."})
+    if (playerN) {
+      if (option === "shuffle") closeAndShuffle();
+      else if (option === "order") closeAndOrder();
+      else if (option === "peeking") closeAndPeeking();
+    }
+    setBrowseGroupId("");
   }
 
   const closeAndShuffle = () => {
     gameBroadcast("game_action", {action: "peek_at", options: {stack_ids: stackIds, value: false}})
     gameBroadcast("game_action", {action: "shuffle_group", options: {group_id: groupId}})
-    chatBroadcast("game_update",{message: "stopped looking at and shuffled "+GROUPSINFO[groupId].name+"."})
+    chatBroadcast("game_update",{message: "shuffled "+GROUPSINFO[groupId].name+"."})
     if (groupType === "deck") stopPeekingTopCard();
-    setBrowseGroupId("");
   }
 
   const closeAndOrder = () => {
     gameBroadcast("game_action", {action: "peek_at", options: {stack_ids: stackIds, value: false}})
-    chatBroadcast("game_update",{message: "stopped looking at "+GROUPSINFO[groupId].name+"."})
     if (groupType === "deck") stopPeekingTopCard();
-    setBrowseGroupId("");
   }
 
   const closeAndPeeking = () => {
-    setBrowseGroupId("");
-    chatBroadcast("game_update",{message: "closed but kept peeking at "+GROUPSINFO[groupId].name+"."})
+    chatBroadcast("game_update",{message: "is still peeking at "+GROUPSINFO[groupId].name+"."})
   }
 
   const handleSelectClick = (event) => {
@@ -230,6 +230,8 @@ export const Browse = React.memo(({
           ["Keep order", "order"],
           ["Keep peeking", "peeking"]
           ].map((row, rowIndex) => {
+            if (!playerN && row[1] === "shuffle") return;
+            if (!playerN && row[1] === "peeking") return; 
             return(
               <div className="h-1/4 w-full text-white text-center">
                 <div className="h-full float-left w-full p-0.5">

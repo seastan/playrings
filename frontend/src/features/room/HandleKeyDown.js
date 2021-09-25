@@ -185,8 +185,10 @@ export const HandleKeyDown = ({
         dispatch(setValues({updates: updates}))
         if (delayBroadcast) clearTimeout(delayBroadcast);
         delayBroadcast = setTimeout(function() {
+            const incrementObject = {};
             Object.keys(newKeyBackLog).map((cardId, index) => {
                 const cardKeyBackLog = newKeyBackLog[cardId];
+                incrementObject[cardId] = cardKeyBackLog;
                 const thisDisplayName = getDisplayName(game.cardById[cardId])
                 Object.keys(cardKeyBackLog).map((tok, index) => {
                     if (tok === "displayName") return;
@@ -205,11 +207,13 @@ export const HandleKeyDown = ({
                         }                
                     }
                 })
-                gameBroadcast("game_action", {action:"increment_tokens", options: {card_id: cardId, token_increments: cardKeyBackLog}});
+                //gameBroadcast("game_action", {action:"increment_tokens", options: {card_id: cardId, token_increments: cardKeyBackLog}});
                 // Adjust willpower if committed
                 if (activeCard.committed && cardKeyBackLog["willpower"] !== null) gameBroadcast("game_action", {action:"increment_willpower", options: {increment: cardKeyBackLog["willpower"]}});
             })
             setKeyBackLog({})
+            gameBroadcast("game_action", {action:"increment_tokens_object", options: {increment_object: incrementObject}});
+
         }, 500);
     }
 
