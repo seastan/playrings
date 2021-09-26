@@ -90,6 +90,12 @@ export const Lobby: React.FC = () => {
 
   return (
       <div className="w-full bg-gray-900" style={{fontFamily:"Roboto"}}>
+        <div className="w-full flex items-center justify-center pt-2">
+          <img className="mb-1" style={{display:"inline", height: "150px"}} src={process.env.PUBLIC_URL + '/logosvg.svg'}/>
+        </div>
+        <div className="w-full flex items-center justify-center text-white" style={{fontSize:"30px"}}>
+          DragnCards
+        </div>
         {0 ? 
         <div className="mt-4 mx-auto w-full" style={{maxWidth: "600px"}}>
           <div className="mb-6">
