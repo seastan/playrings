@@ -122,13 +122,13 @@ export const gameAction = (action, props) => {
             const roundNumber = game["roundNumber"];
             const newRoundNumber = parseInt(roundNumber) + 1;
             // Calculate round number
-            chatBroadcast("game_update", {message: "-----------------------------------------"})
-            chatBroadcast("game_update", {message: "-----------------------------------------"})
-            chatBroadcast("game_update", {message: "-----------------------------------------"})
-            chatBroadcast("game_update", {message: "----------------------------------------- Round "+newRoundNumber})
-            chatBroadcast("game_update", {message: "-----------------------------------------"})
-            chatBroadcast("game_update", {message: "-----------------------------------------"})
-            chatBroadcast("game_update", {message: "-----------------------------------------"})
+            chatBroadcast("game_update", {message: "-----------------------"})
+            chatBroadcast("game_update", {message: "-----------------------"})
+            chatBroadcast("game_update", {message: "-----------------------"})
+            chatBroadcast("game_update", {message: "----------------------- Round "+newRoundNumber})
+            chatBroadcast("game_update", {message: "-----------------------"})
+            chatBroadcast("game_update", {message: "-----------------------"})
+            chatBroadcast("game_update", {message: "-----------------------"})
             chatBroadcast("game_update", {message: "started a new round as host."})
             gameBroadcast("game_action", {action: "update_values", options: {updates: [["game", "phase", "Resource"], ["game", "roundStep", "1.R"]]}})
             chatBroadcast("game_update", {message: "set the round step to "+roundStepToText("1.R")+"."})
