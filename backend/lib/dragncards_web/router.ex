@@ -34,6 +34,8 @@ defmodule DragnCardsWeb.Router do
 
   scope "/api", DragnCardsWeb do
     pipe_through(:api)
+
+    post("/replays/delete/:uuid", ReplayController, :delete)
     resources("/replays/:user_id", ReplayController, except: [:new, :edit])
   end
 

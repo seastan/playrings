@@ -31,10 +31,17 @@ export const Profile: React.FC<Props> = () => {
   const history = useHistory();
   const [showModal, setShowModal] = useState(false);
   const [shareReplayId, setShareReplayId] = useState("");
-  const { isLoading, isError, data, setData } = useDataApi<any>(
+  const [deletedIndices, setDeletedIndices] = useState<Array<number>>([]); 
+  console.log('Rendering Profile');
+  console.log(user);
+  const { data, isLoading, isError, doFetchUrl, doFetchHash, setData } = useDataApi<any>(
     "/be/api/replays/"+user?.id,
     null
   );
+  console.log(data);
+  useEffect(() => {
+    doFetchUrl("/be/api/replays/"+user?.id);
+  }, [user]);
   if (user == null) {
     return null;
   }
@@ -50,31 +57,44 @@ export const Profile: React.FC<Props> = () => {
     setShareReplayId(uuid);
     setShowModal(true);
   }
+  const deleteReplay = async(uuid: any, index: number, numPlayers: number) => {
+    if (numPlayers > 1) {
+      alert("Multiplayer games can not be deleted currently.")
+      return;
+    } else if (window.confirm("Are you sure you want to delete this replay?")) {
+      const res = await axios.post("/be/api/replays/delete/"+uuid);
+      setDeletedIndices([...deletedIndices, index]);
+    }
+  }      
+
   const options: MUIDataTableOptions = {
     filterType: "checkbox",
     selectableRows: "none",
     //onRowClick: rowData => openReplay(rowData)
   };
-  console.log('Rendering Profile', data);
   var filteredData;
   if (data) {
     var replayData = data.data;
+    var nonDeletedData: Array<any> = [];
     for (var i=0; i<replayData.length; i++) {
     //for (var replay of replayData) {
       var replay = replayData[i];
+      const numPlayers = replay.num_players;
       const uuid = replay.uuid;
+      const index = i;
       replay = {...replay, 
         options: <div>
           <Button onClick={() => openReplay(uuid)} isPrimary className="mx-2 mt-2">Load</Button>
           <Button onClick={() => shareReplay(uuid)} isPrimary className="mx-2 mt-2">Share</Button>
+          <Button onClick={() => deleteReplay(uuid, index, numPlayers)} className="mx-2 mt-2">Delete</Button>
         </div>
       }
-      replayData[i] = replay;
+      if (!deletedIndices.includes(i)) nonDeletedData.push(replay);
     }
     if (user.supporter_level < 3) 
-      filteredData = replayData.slice(0,3);
+      filteredData = nonDeletedData.slice(0,3);
     else
-      filteredData = replayData;
+      filteredData = nonDeletedData;
   }
   return (
     <>
@@ -118,7 +138,7 @@ export const Profile: React.FC<Props> = () => {
         </div>
       </Container>
       
-      {filteredData && 
+      {filteredData ?
         <div className="p-4 bg-gray-900">
         <MUIDataTable
           title={"Saved games"}
@@ -127,6 +147,12 @@ export const Profile: React.FC<Props> = () => {
           options={options}
         />
         </div>
+        :
+        <Container>
+          <div className="bg-gray-100 p-4 rounded max-w-xl shadow">
+            <h1 className="font-semibold mb-4 text-black">Loading saved games...</h1>
+          </div>
+        </Container>
       }
 
       <ShareGameModal

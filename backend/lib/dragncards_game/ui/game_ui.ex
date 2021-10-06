@@ -222,7 +222,6 @@ defmodule DragnCardsGame.GameUI do
   ############################################################
   def card_action(gameui, card_id, action, options) do
     Logger.debug("card_action #{action}")
-    Logger.debug(options)
     card = get_card(gameui, card_id)
     gameui = case action do
       "update_card_values" ->
