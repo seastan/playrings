@@ -90,11 +90,17 @@ export const Lobby: React.FC = () => {
 
   return (
       <div className="w-full bg-gray-900" style={{fontFamily:"Roboto"}}>
+        <div className="w-full flex items-center justify-center pt-2">
+          <img className="mb-1" style={{display:"inline", height: "150px"}} src={process.env.PUBLIC_URL + '/logosvg.svg'}/>
+        </div>
+        <div className="w-full flex items-center justify-center text-white" style={{fontSize:"30px"}}>
+          DragnCards
+        </div>
         {0 ? 
-        <div className="mt-4 mx-auto" style={{width: "600px"}}>
+        <div className="mt-4 mx-auto w-full" style={{maxWidth: "600px"}}>
           <div className="mb-6">
             {/* <h3 className="mb-2 font-semibold text-center">New Game</h3> */}
-            <div className="flex justify-center" style={{width: "600px"}}>
+            <div className="flex justify-center w-full" style={{maxWidth: "600px"}}>
               <span className="p-2 text-white bg-gray-700 rounded">
                 Down for maintenance.
               </span>
@@ -102,10 +108,10 @@ export const Lobby: React.FC = () => {
           </div>
         </div>
         :
-        <div className="mt-4 mx-auto" style={{width: "600px"}}>
+        <div className="mt-4 mx-auto w-full p-2" style={{maxWidth: "600px"}}>
           <div className="mb-6">
             {/* <h3 className="mb-2 font-semibold text-center">New Game</h3> */}
-            <div className="flex justify-center" style={{width: "600px"}}>
+            <div className="flex justify-center w-full" style={{maxWidth: "600px"}}>
               <span className="p-2 text-white bg-gray-700 rounded">
                 New to DragnCards?  
                 <a href="https://tinyurl.com/DragnCardsYoutube" className="ml-1 text-white">
@@ -116,7 +122,7 @@ export const Lobby: React.FC = () => {
           </div>
           <div className="mb-6">
             {/* <h3 className="mb-2 font-semibold text-center">New Game</h3> */}
-            <div className="flex justify-center" style={{width: "600px"}}>
+            <div className="flex justify-center w-full" style={{maxWidth: "600px"}}>
               <span className="p-2 text-white bg-gray-700 rounded">
                 Bug reports? Feature requests? Post them on   
                 <a href="https://discord.gg/7BQv5ethUm" className="ml-1 mr-1 text-white">
@@ -135,7 +141,7 @@ export const Lobby: React.FC = () => {
           {(!isLoading && !isError) &&
             <div className="mb-6">
               {/* <h3 className="mb-2 font-semibold text-center">New Game</h3> */}
-              <div className="flex justify-center" style={{width: "600px"}}>
+              <div className="flex justify-center w-full" style={{maxWidth: "600px"}}>
                 <div style={{width: "200px"}}>
                 {isLoggedIn && (
                   <Button isPrimary onClick={() => handleCreateRoomClick()}>
