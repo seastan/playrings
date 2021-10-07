@@ -696,7 +696,7 @@ export const getScore = (gameUi, gameBroadcast, chatBroadcast) => {
 
 export const loadRingsDb = (playerI, ringsDbDomain, ringsDbType, ringsDbId, gameBroadcast, chatBroadcast) => {
   chatBroadcast("game_update",{message: "is loading a deck from RingsDb..."});
-  const urlBase = ringsDbDomain === "test" ? "https://www.test.ringsdb.com/api/" : "https://www.ringsdb.com/api/"
+  const urlBase = ringsDbDomain === "test" ? "https://test.ringsdb.com/api/" : "https://www.ringsdb.com/api/"
   const url = ringsDbType === "decklist" ? urlBase+"public/decklist/"+ringsDbId+".json" : urlBase+"oauth2/deck/load/"+ringsDbId;
   console.log("Fetching ", url);
   fetch(url)
