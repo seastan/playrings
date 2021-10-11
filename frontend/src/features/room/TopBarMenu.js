@@ -230,7 +230,6 @@ export const TopBarMenu = React.memo(({
           dispatch(setGame(gameObj));
           chatBroadcast("game_update", {message: "uploaded a game."});
           if (gameObj?.deltas?.length) {
-            alert(gameObj?.deltas?.length)
             gameBroadcast("game_action", {action: "update_values", options: {updates: [["game", gameObj]], preserve_undo: true}})            
           } else {
             gameBroadcast("game_action", {action: "update_values", options: {updates: [["game", gameObj]]}})
