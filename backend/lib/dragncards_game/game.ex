@@ -40,6 +40,7 @@ defmodule DragnCardsGame.Game do
       "version" => 0.1,
       "numPlayers" => 1,
       #"questModeAndId" => nil,
+      "encounterName" => "Unspecified",
       "layout" => "standard",
       "firstPlayer" => "player1",
       "roundNumber" => 0,

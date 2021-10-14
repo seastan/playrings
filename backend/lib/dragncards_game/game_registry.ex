@@ -55,6 +55,8 @@ defmodule DragnCardsGame.GameRegistry do
       created_by: gameui["created_by"],
       privacy_type: gameui["privacyType"],
       last_update: gameui["lastUpdate"],
+      encounter_name: gameui["game"]["encounterName"] || "Unspecified",
+      num_players: gameui["game"]["numPlayers"],
     }
   end
 

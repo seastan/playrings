@@ -1173,8 +1173,14 @@ defmodule DragnCardsGame.GameUI do
   def set_last_update(gameui) do
     timestamp = System.system_time(:second)
     room = Repo.get_by(Room, [slug: gameui["gameName"]])
+    IO.puts("..............")
     if room do
-      updates = %{last_update: timestamp}
+      IO.inspect(get_encounter_name(gameui))
+      updates = %{
+        last_update: timestamp,
+        encounter_name: gameui["game"]["encounterName"],
+        num_players: gameui["game"]["numPlayers"]
+      }
       room
       |> Room.changeset(updates)
       |> Repo.insert_or_update
@@ -1375,7 +1381,7 @@ defmodule DragnCardsGame.GameUI do
     quest_deck_stack_ids = get_stack_ids(gameui, "sharedQuestDeck")
     gameui = if Enum.count(quest_deck_stack_ids)>0 && Enum.count(main_quest_stack_ids)==0 do
       # Dump nightmare/campaign cards into staging
-      Enum.reduce_while(quest_deck_stack_ids, gameui, fn(stack_id, acc) ->
+      gameui = Enum.reduce_while(quest_deck_stack_ids, gameui, fn(stack_id, acc) ->
         card = get_top_card_of_stack(acc, stack_id)
         card_type = card["sides"]["A"]["type"]
         case card_type do
@@ -1389,6 +1395,7 @@ defmodule DragnCardsGame.GameUI do
             acc
         end
       end)
+      put_in(gameui["game"]["encounterName"], get_encounter_name(gameui))
     else
       gameui
     end

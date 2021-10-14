@@ -8,6 +8,8 @@ declare module "elixir-backend" {
     public privacy_type: string;
     public last_update: null | number;
     public quest: string;
+    public encounter_name: null | string;
+    public num_players: null | number;
   }
 
 

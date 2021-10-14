@@ -10,11 +10,11 @@ interface Props {
 }
 
 const columns = [
-  {name: "name", label: "Name", options: { filter: false, display: false }},
-  {name: "quest", label: "Name", options: { filter: false, sort: true }},
+  {name: "quest", label: "Quest", options: { filter: false, sort: true }},
   {name: "host", label: "Host", options: { filter: false, sort: true }},
   //{name: "looking_for_players", label: "Looking for players", options: { filter: true, sort: true }},
   {name: "mode", label: "Mode", options: { filter: true, sort: true }},
+  {name: "num_players", label: "Seats", options: { filter: true, sort: true }},
   {name: "status", label: "Status", options: { filter: true, sort: true }},
  ];
 
@@ -40,6 +40,7 @@ export const LobbyTable: React.FC<Props> = ({ rooms }) => {
     for (var i=0; i<rooms.length; i++) {
     //for (var replay of replayData) {
       var room = rooms[i];
+      console.log("Room", room)
       const elapsedSeconds = (room.last_update ? currentUnixTime - room.last_update : Number.MAX_SAFE_INTEGER);
       const status = (elapsedSeconds < 60 ? "Active" : "Idle");
       if (status === "Active") activeRooms++;
@@ -49,10 +50,11 @@ export const LobbyTable: React.FC<Props> = ({ rooms }) => {
 
         filteredRooms.push({
           name: room.name,
-          quest: <Link to={"/room/" + room.slug}>{room.name || "Unspecified"}</Link>,
+          quest: <Link to={"/room/" + room.slug}>{room.encounter_name || "Unspecified"}</Link>,
           host: <UserName userID={room.created_by} defaultName="Unspecified"></UserName>,
           //looking_for_players: "No",
-          mode: room.privacy_type,
+          num_players: room.num_players || 1,
+          mode: room.privacy_type.charAt(0).toUpperCase() + room.privacy_type.slice(1),
           status: status,
         })
       }

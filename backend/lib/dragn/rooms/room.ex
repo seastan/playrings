@@ -16,6 +16,8 @@ defmodule DragnCards.Rooms.Room do
     field :created_by, :integer
     field :privacy_type, :string
     field :last_update, :integer
+    field :encounter_name, :string
+    field :num_players, :integer
 
     timestamps()
   end
@@ -23,8 +25,8 @@ defmodule DragnCards.Rooms.Room do
   @doc false
   def changeset(room, attrs) do
     room
-    |> cast(attrs, [:name, :created_by, :privacy_type, :last_update])
-    |> validate_required([:name, :created_by, :privacy_type, :last_update])
+    |> cast(attrs, [:name, :created_by, :privacy_type, :last_update, :encounter_name, :num_players])
+    |> validate_required([:name, :created_by, :privacy_type, :last_update, :encounter_name, :num_players])
     |> put_slug()
   end
 

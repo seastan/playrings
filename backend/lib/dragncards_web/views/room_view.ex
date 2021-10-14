@@ -18,6 +18,8 @@ defmodule DragnCardsWeb.RoomView do
       created_by: room.created_by,
       privacy_type: room.privacy_type,
       last_update: room.last_update,
+      encounter_name: room.encounter_name,
+      num_players: room.num_players,
     }
   end
 end
