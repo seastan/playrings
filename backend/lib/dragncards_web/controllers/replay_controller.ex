@@ -19,17 +19,37 @@ defmodule DragnCardsWeb.ReplayController do
 
 
   # Update: Update profile settings.
-  @spec delete(Conn.t(), String.t()) :: Conn.t()
-  def delete(conn, %{"uuid" => uuid}) do
-    query = from(r in Replay, where: r.uuid == ^uuid)
-    case Repo.delete_all(query) do
-      {1, nil}       -> # Updated with success
-        conn
-        |> json(%{success: %{message: "Deleted replay."}})
-      _ -> # Something went wrong
-        conn
-        |> json(%{success: %{message: "Failed to delete replay."}})
+  @spec delete(Conn.t(), Map.t()) :: Conn.t()
+  def delete(conn, params) do
+    user_id = params["user"]["id"]
+    replay = params["replay"]
+    new_deleted_by = if replay["deleted_by"] do
+      replay["deleted_by"] ++ [user_id]
+    else
+      [user_id]
     end
+    updates = %{
+      deleted_by: new_deleted_by
+    }
+    r = Repo.get!(Replay, replay["id"])
+    c = Ecto.Changeset.change(r, updates)
+    case Repo.update(c) do
+      {:ok, struct}       -> # Updated with success
+        conn
+        |> json(%{success: %{message: "Deleted replay"}})
+      {:error, changeset} -> # Something went wrong
+        conn
+        |> json(%{success: %{message: "Failed to delete replay"}})
+    end
+    # query = from(r in Replay, where: r.uuid == ^uuid)
+    # case Repo.delete_all(query) do
+    #   {1, nil}       -> # Updated with success
+    #     conn
+    #     |> json(%{success: %{message: "Deleted replay."}})
+    #   _ -> # Something went wrong
+    #     conn
+    #     |> json(%{success: %{message: "Failed to delete replay."}})
+    # end
     # user_id = user["id"]
     # updates = %{
     #   background_url: user["background_url"],

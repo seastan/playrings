@@ -57,12 +57,13 @@ export const Profile: React.FC<Props> = () => {
     setShareReplayId(uuid);
     setShowModal(true);
   }
-  const deleteReplay = async(uuid: any, index: number, numPlayers: number) => {
-    if (numPlayers > 1) {
-      alert("Multiplayer games can not be deleted currently.")
-      return;
-    } else if (window.confirm("Are you sure you want to delete this replay?")) {
-      const res = await axios.post("/be/api/replays/delete/"+uuid);
+  const deleteReplay = async(replay: any, index: number, numPlayers: number) => {
+    if (window.confirm("Are you sure you want to delete this replay?")) {
+      const data = {
+        user: user,
+        replay: replay,
+      }
+      const res = await axios.post("/be/api/replays/delete",data);
       setDeletedIndices([...deletedIndices, index]);
     }
   }      
@@ -78,18 +79,20 @@ export const Profile: React.FC<Props> = () => {
     var nonDeletedData: Array<any> = [];
     for (var i=0; i<replayData.length; i++) {
     //for (var replay of replayData) {
-      var replay = replayData[i];
+      const replay = replayData[i];
+      if (replay.deleted_by && replay.deleted_by.includes(user.id)) continue;
       const numPlayers = replay.num_players;
       const uuid = replay.uuid;
+      const replayId = replay.id;
       const index = i;
-      replay = {...replay, 
+      const replayRow = {...replay, 
         options: <div>
           <Button onClick={() => openReplay(uuid)} isPrimary className="mx-2 mt-2">Load</Button>
           <Button onClick={() => shareReplay(uuid)} isPrimary className="mx-2 mt-2">Share</Button>
-          <Button onClick={() => deleteReplay(uuid, index, numPlayers)} className="mx-2 mt-2">Delete</Button>
+          <Button onClick={() => deleteReplay(replay, index, numPlayers)} className="mx-2 mt-2">Delete</Button>
         </div>
       }
-      if (!deletedIndices.includes(i)) nonDeletedData.push(replay);
+      if (!deletedIndices.includes(i)) nonDeletedData.push(replayRow);
     }
     if (user.supporter_level < 3) 
       filteredData = nonDeletedData.slice(0,3);

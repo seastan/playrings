@@ -12,6 +12,7 @@ defmodule DragnCards.Replay do
     field :player2_heroes, {:array, :string}
     field :player3_heroes, {:array, :string}
     field :player4_heroes, {:array, :string}
+    field :deleted_by, {:array, :integer}
     field :game_json, :map
 
     timestamps()
