@@ -47,7 +47,6 @@ export const LobbyTable: React.FC<Props> = ({ rooms }) => {
       if (status === "Active" && room.privacy_type !== "public") activePrivate++;
       // Currently there is no "admin" user field so I am usering supporter_level === 100 as a hack
       if (room.privacy_type === "public" || (room.privacy_type === "playtest" && myUser?.playtester) || myUser?.id === room.created_by || myUser?.supporter_level === 100) {
-
         filteredRooms.push({
           name: room.name,
           quest: <Link to={"/room/" + room.slug}>{room.encounter_name || "Unspecified"}</Link>,

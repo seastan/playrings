@@ -8,7 +8,7 @@ defmodule DragnCards.Rooms.Room do
 
   # Automatically convert to JSON when broadcasting %Room{}
   # Objects over channel messages
-  @derive {Jason.Encoder, only: [:id, :name, :slug, :created_by, :privacy_type, :last_update]}
+  @derive {Jason.Encoder, only: [:id, :name, :slug, :created_by, :privacy_type, :last_update, :encounter_name, :num_players]}
 
   schema "rooms" do
     field :name, :string
