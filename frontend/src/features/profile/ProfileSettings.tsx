@@ -76,6 +76,7 @@ export const ProfileSettings: React.FC<Props> = () => {
               value={inputs.language || "English"}>
               <option value="English">English</option>
               <option value="French">French</option>
+              <option value="Spanish">Spanish</option>
             </select>
             <label className="block text-sm font-bold mb-2 mt-4">
               Background image url
