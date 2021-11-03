@@ -16,7 +16,8 @@ export const GiantCard = React.memo(({playerN}) => {
     return (
       <img 
         className="absolute"
-        src={visibleFaceSrc.src} onerror={`this.onerror=null; this.src=${visibleFaceSrc.default}`}
+        src={visibleFaceSrc.src} 
+        onError={(e)=>{e.target.onerror = null; e.target.src=visibleFaceSrc.default}}
         style={{
           right: activeCardAndLoc?.screenPosition === "left" ? "3%" : "",
           left: activeCardAndLoc?.screenPosition === "right" ? "3%" : "",

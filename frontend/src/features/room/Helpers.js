@@ -90,14 +90,14 @@ export const getVisibleFace = (card, playerN) => {
 }
 
 export const getVisibleFaceSrc = (card, playerN, user) => {
-  if (!card) return "";
+  if (!card) return {src: "image not found", default: "image not found"};
   const visibleSide = getVisibleSide(card, playerN);
   const visibleFace = getVisibleFace(card, playerN);
   const language = user?.language || "English";
   if (visibleSide === "A") {
     return {
       src: visibleFace.customImgUrl || process.env.PUBLIC_URL + '/images/cards/' + language + '/' + card['cardDbId'] + '.jpg',
-      default: visibleFace.customImgUrl ? "image not found" : process.env.PUBLIC_URL + '/images/cards/English' + card['cardDbId'] + '.jpg',
+      default: visibleFace.customImgUrl ? "image not found" : process.env.PUBLIC_URL + '/images/cards/English/' + card['cardDbId'] + '.jpg',
     }
   } else { // Side B logic
     const sideBName = card.sides.B.name;

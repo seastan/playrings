@@ -67,7 +67,7 @@ export const Card = React.memo(({
                     transitionProperty: "transform",
                 }}
                 onMouseLeave={event => handleMouseLeave(event)}>
-                <img className="absolute w-full h-full" style={{borderRadius: '0.6vh'}} src={visibleFaceSrc.src} onerror={`this.onerror=null; this.src=${visibleFaceSrc.default}`} />
+                <img className="absolute w-full h-full" style={{borderRadius: '0.6vh'}} src={visibleFaceSrc.src} onError={(e)=>{e.target.onerror = null; e.target.src=visibleFaceSrc.default}} />
 
                 {isActive && touchMode && defaultAction &&
                     <div 
