@@ -42,7 +42,7 @@ defmodule DragnCardsGame.Card do
       "roundEnteredPlay" => nil,
       "phaseEnteerdPlay" => nil,
       "locked" => false,
-
+      "inPlay" => false,
       "cardBackOverride" => card_row["cardbackoverride"],
       "cardEncounterSet" => card_row["cardencounterset"],
       "cardDbId" => card_row["cardid"],

@@ -545,6 +545,7 @@ defmodule DragnCardsGame.GameUI do
       gameui
     else
       card = get_card(gameui, card_id)
+      card_old = card
       card_name = card["sides"]["A"]["name"]
       card_face = get_current_card_face(gameui, card_id)
       dest_group = get_group_by_card_id(gameui, card_id)
@@ -567,6 +568,7 @@ defmodule DragnCardsGame.GameUI do
         card
         |> Map.put("roundEnteredPlay", gameui["game"]["round"])
         |> Map.put("phaseEnteredPlay", gameui["game"]["phase"])
+        |> Map.put("inPlay", true)
       else card end
       # Leaving player control
       card = if old_controller !== "shared" and new_controller == "shared" do
@@ -583,6 +585,7 @@ defmodule DragnCardsGame.GameUI do
         |> Map.put("committed", false)
         |> Map.put("roundEnteredPlay", nil)
         |> Map.put("phaseEnteredPlay", nil)
+        |> Map.put("inPlay", false)
         |> clear_targets()
       else card end
       # Entering deck: flip card facedown, no peeking
@@ -1337,7 +1340,7 @@ defmodule DragnCardsGame.GameUI do
     |> insert_stack_in_group(group_id, new_stack["id"], group_size)
     |> update_stack(new_stack)
     |> update_card(new_card)
-    |> update_card_state(new_card["id"], false, "sharedStaging")
+    |> update_card_state(new_card["id"], false, "sharedEncounterDeck")
   end
 
   def load_card(gameui, card_row, group_id, quantity) do
