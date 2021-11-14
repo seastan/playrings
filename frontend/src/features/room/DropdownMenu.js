@@ -18,15 +18,18 @@ export const DropdownMenu = React.memo(({
   
   const [mouseX, setMouseX] = useState(0);
   const [mouseY, setMouseY] = useState(0); 
+  const [isNull, setIsNull] = useState(true);
   console.log("Rendering DropdownMenu ");
 
   useEffect(() => {
     setMouseX(mousePosition?.x);
     setMouseY(mousePosition?.y);
+    setIsNull(dropdownMenu === null);
   }, [dropdownMenu])
 
   if (!mousePosition) return null;
   if (!dropdownMenu) return null;
+  if (isNull) return null;
   if (touchAction) return null;
 
   return (
