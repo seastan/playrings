@@ -50,8 +50,12 @@ export const GroupContextMenu = React.memo(({
           <hr></hr>
           <MenuItem onClick={handleMenuClick} data={{action: 'shuffle_group'}}>Shuffle</MenuItem>
           <MenuItem onClick={handleMenuClick} data={{action: 'look_at', topN: "None"}}>Browse</MenuItem>
+          {group.id === "sharedEncounterDiscard" ?
+          (<div>
+            <MenuItem onClick={handleMenuClick} data={{action: 'shuffle_into_encounter', topN: "All"}}>Shuffle into deck</MenuItem>
+          </div>) : null}
           <MenuItem onClick={handleMenuClick} data={{action: 'choose_random',}}>Choose Random</MenuItem>
-          {group.type === "deck" || group.type === "discard" ?
+          {(group.type === "deck" || group.type === "discard") ?
           (<div>
             <MenuItem onClick={handleMenuClick} data={{action: 'look_at', topN: "All"}}>Look at all</MenuItem>
             <MenuItem onClick={handleMenuClick} data={{action: 'look_at', topN: "5"}}>Look at top 5</MenuItem>

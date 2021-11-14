@@ -62,6 +62,9 @@ export const DropdownMenuGroup = React.memo(({
         {activeMenu === "main" &&
         <div className="menu">
           <DropdownItem action="shuffle" clickCallback={handleDropdownClick}>Shuffle</DropdownItem>
+          {menuGroup.id === "sharedEncounterDiscard" ? <DropdownItem action="moveStacks" destGroupId={"sharedEncounterDeck"} position="shuffle" clickCallback={handleDropdownClick}>Shuffle into deck</DropdownItem> : null}
+          {menuGroup.id === "sharedEncounterDeck" ? <DropdownItem action="discardUntil" cardType={"Enemy"} clickCallback={handleDropdownClick}>Discard until enemy</DropdownItem> : null}
+          {menuGroup.id === "sharedEncounterDeck" ? <DropdownItem action="discardUntil" cardType={"Location"} clickCallback={handleDropdownClick}>Discard until location</DropdownItem> : null}
           {menuGroup.id === playerN+"Hand" ? <DropdownItem action="makeVisible" clickCallback={handleDropdownClick}>Make visible/hidden</DropdownItem> : null}
           <DropdownItem action="lookAt" topN="None" clickCallback={handleDropdownClick}>Browse</DropdownItem>
           <DropdownItem action="lookAt" topN="5" clickCallback={handleDropdownClick}>Look at top 5</DropdownItem>

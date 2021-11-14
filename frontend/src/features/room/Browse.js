@@ -169,11 +169,11 @@ export const Browse = React.memo(({
       <div className="relative h-full float-left p-2 select-none" style={{width:"35vh"}}>
             
         <div className="h-1/5 w-full">
-          <div className="h-full float-left w-1/2 p-0.5">
+          <div className="h-full float-left w-1/2 px-0.5">
             <select 
               name="numFaceup" 
               id="numFaceup"
-              className="form-control w-full bg-gray-900 text-white border-0 h-full px-1"
+              className="form-control w-full bg-gray-900 text-white border-0 h-full px-1 py-0"
               onChange={handleSelectClick}>
               <option value="" disabled selected>Turn faceup...</option>
               <option value="None">None</option>
@@ -182,17 +182,17 @@ export const Browse = React.memo(({
               <option value="10">Top 10</option>
             </select>
           </div>
-          <div className="h-full float-left w-1/2 p-0.5">
+          <div className="h-full float-left w-1/2 px-0.5">
             <input
-                type="text"
-                name="name"
-                id="name"
-                placeholder="Search.."
-                className="form-control w-full bg-gray-900 text-white border-0 h-full"
-                onFocus={event => setTyping(true)}
-                onBlur={event => setTyping(false)}
-                onChange={handleInputTyping}
-              />
+              type="text"
+              name="name"
+              id="name"
+              placeholder="Search.."
+              className="form-control w-full bg-gray-900 text-white border-0 h-full px-1"
+              onFocus={event => setTyping(true)}
+              onBlur={event => setTyping(false)}
+              onChange={handleInputTyping}
+            />
           </div>
         </div>
       

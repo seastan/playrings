@@ -158,8 +158,6 @@ export const handleDropdownClickGroup = (dropdownProps) => {
     });
     if (isVisible) chatBroadcast("game_update",{message: "made their hand hidden."})
     else chatBroadcast("game_update",{message: "made their hand visible."})
-    
-
   } else if (dropdownOptions.action === "chooseRandom") {
     const stackIds = group.stackIds;
     const rand = Math.floor(Math.random() * stackIds.length);
@@ -189,6 +187,24 @@ export const handleDropdownClickGroup = (dropdownProps) => {
   } else if (dropdownOptions.action === "dealX") {
     var topX = parseInt(prompt("Enter a number",0)) || 0;
     gameBroadcast("game_action", {action: "deal_x", options: {group_id: group.id, dest_group_id: playerN+"Play1", top_x: topX}});
+  } else if (dropdownOptions.action === "discardUntil") {
+    const stackIds = game.groupById["sharedEncounterDeck"].stackIds;
+    for (var i=0; i<stackIds.length; i++) {
+      const stackId = stackIds[i];
+      const cardId = game.stackById[stackId].cardIds[0];
+      const card = game.cardById[cardId];
+      const cardType = card.sides.A.type;
+      const cardName = card.sides.A.name;
+      chatBroadcast("game_update",{message: "discarded "+cardName+" from "+GROUPSINFO["sharedEncounterDeck"].name+"."})
+      if (cardType === dropdownOptions.cardType) {
+        gameBroadcast("game_action", {action: "move_stacks", options: {orig_group_id: group.id, dest_group_id: "sharedEncounterDiscard", top_n: i+1,  position: "top"}})
+        gameBroadcast("game_action", {action: "move_stacks", options: {orig_group_id: "sharedEncounterDiscard", dest_group_id: "sharedStaging", top_n: 1,  position: "bottom"}})
+        chatBroadcast("game_update",{message: "moved "+cardName+" from "+GROUPSINFO["sharedEncounterDiscard"].name+" to "+GROUPSINFO["sharedStaging"].name+"."})
+        break;
+      }
+      // If none were found by the end, move all cards
+      if (i === stackIds.length - 1) gameBroadcast("game_action", {action: "move_stacks", options: {orig_group_id: group.id, dest_group_id: "sharedEncounterDiscard", top_n: stackIds.length,  position: "top"}})
+    }
   }
 }
 
