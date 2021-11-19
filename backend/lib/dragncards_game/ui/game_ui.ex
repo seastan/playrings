@@ -1406,7 +1406,7 @@ defmodule DragnCardsGame.GameUI do
     # Calculate threat cost
     threat = Enum.reduce(load_list, 0, fn(r, acc) ->
       sideA = r["cardRow"]["sides"]["A"]
-      if sideA["type"] == "Hero" && r["groupId"] == player_n<>"Play1" do
+      if sideA["type"] == "Hero" && r["groupId"] == player_n<>"Play1" && gameui["game"]["roundNumber"] == 0 do
         acc + CardFace.convert_to_integer(sideA["cost"])*r["quantity"]
       else
         acc
