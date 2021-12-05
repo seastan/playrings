@@ -278,10 +278,11 @@ export const passesCriteria = (card, criteria) => {
   return true;
 }
 
-const listOfMatchingCards = (gameUi, criteria) => {
+export const listOfMatchingCards = (gameUi, criteria) => {
   const allCards = flatListOfCards(gameUi.game);
   const matchingCards = [];
   for (var card of allCards) {
+    console.log("Search ",card)
     if (passesCriteria(card, criteria)) {
       matchingCards.push(card);
     }
@@ -296,12 +297,11 @@ export const functionOnMatchingCards = (gameUi, gameBroadcast, chatBroadcast, cr
     const groupId = card["group_id"];
     const stackIndex = card["stack_index"];
     const cardIndex = card["card_index"];
-    console.log("performing function on matching cards")
     switch(func) {
       case "increment_token":
         const tokenType = args[0];
         const increment = args[1];
-        gameBroadcast("game_action", {action: func, options: {group_id: groupId, stack_index: stackIndex, card_index: cardIndex, token_type: tokenType, increment: increment}})
+        gameBroadcast("game_action", {action: func, options: {card_id: card.id, token_type: tokenType, increment: increment}})
         if (increment > 0) {
             if (increment === 1) chatBroadcast("game_update",{message: "added "+increment+" "+tokenType+" token to "+cardName+"."});
             else chatBroadcast("game_update",{message: "added "+increment+" "+tokenType+" tokens to "+cardName+"."});
@@ -342,6 +342,27 @@ export const getGroupIdStackIndexCardIndex = (game, cardId) => {
     stackIndex: group.stackIds.indexOf(stack.id), 
     cardIndex: stack.cardIds.indexOf(cardId)
   })
+}
+
+export const getCardByGroupIdStackIndexCardIndex = (game, groupId, stackIndex, cardIndex) => {
+  const stackIds = game.groupById[groupId].stackIds;
+  if (stackIndex >= stackIds.length) return null;
+  const stackId = stackIds[stackIndex];
+  const cardIds = game.stackById[stackId].cardIds;
+  if (cardIndex >= cardIds.length) return null;
+  const cardId = cardIds[cardIndex];
+  return game.cardById[cardId];
+}
+
+export const doListsOverlap = (list1, list2) => {
+  for (var item1 of list1) {
+    if (list2.includes(item1)) return true;
+  }
+  return false;
+}
+
+export const getSideAName = (card) => {
+  return card["sides"]["A"]["name"];
 }
 
 const isCardDbIdInLoadList = (loadList, cardDbId) => {

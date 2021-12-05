@@ -95,6 +95,7 @@ defmodule DragnCardsGame.CardFace do
       "type" => card_row_side["type"] || "Hero",
       "unique" => card_row_side["unique"] || false,
       "victoryPoints" => convert_to_integer(card_row_side["victorypoints"]),
+      "cornerText" => card_row_side["victorypoints"],
       "willpower" => convert_to_integer(card_row_side["willpower"]) || 0,
       "triggers" => trigger_steps_from_text(card_row_side["keywords"], card_row_side["text"]) || [],
       "customImgUrl" => card_row_side["customimgurl"],

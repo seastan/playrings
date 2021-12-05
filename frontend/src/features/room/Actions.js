@@ -13,6 +13,12 @@ import {
   getScore,
   playerNToPlayerSpaceN,
   getNextEmptyPlayerN,
+  functionOnMatchingCards,
+  getSideAName,
+  getCardByGroupIdStackIndexCardIndex,
+  doListsOverlap,
+  getRandomIntInclusive,
+  listOfMatchingCards,
 } from "./Helpers";
 import { setValues } from "./gameUiSlice";
 import { GROUPSINFO, PHASEINFO, roundStepToText, nextRoundStep, prevRoundStep, nextPhase, prevPhase } from "./Constants";
@@ -462,6 +468,62 @@ export const gameAction = (action, props) => {
         const newOptions = {...game.options, multiplayerHotkeys: newValue};
         chatBroadcast("game_update", {message: "turned multiplayer hotkeys "+(newValue ? "on" : "off")+"."});
         gameBroadcast("game_action", {action: "update_values", options: {updates: [["game", "options", newOptions]]}});
+    }
+    else if (action === "glittering_setup") {
+        const searchStackIds = game.groupById["sharedEncounterDeck2"].stackIds;
+        if (searchStackIds.length < 12) return;
+        if (game.groupById["sharedExtra1"].stackIds.length < 4) return;
+        if (game.groupById["sharedExtra2"].stackIds.length < 4) return;
+        if (game.groupById["sharedExtra3"].stackIds.length < 4) return;
+        const rightColNames = [
+            getSideAName(getCardByGroupIdStackIndexCardIndex(game, "sharedExtra1", 3, 0)),
+            getSideAName(getCardByGroupIdStackIndexCardIndex(game, "sharedExtra2", 3, 0)),
+            getSideAName(getCardByGroupIdStackIndexCardIndex(game, "sharedExtra3", 3, 0)),
+        ];
+        const searchCards = []
+        for (var id of searchStackIds) {
+            const cardId = game.stackById[id].cardIds[0];
+            const card = game.cardById[cardId]
+            searchCards.push(card)
+        }
+
+        function getNRandomFromPositionNames(n) {
+            var positionNames = [];
+            for (var searchCard of searchCards) {
+                positionNames.push(searchCard["sides"]["A"]["cornerText"]);
+            }
+            var selectedPositionNames = [];
+            for (var i=0; i<n; i++) {
+                var randomIndex = Math.floor(Math.random()*positionNames.length);
+                selectedPositionNames.push(positionNames.splice(randomIndex, 1)[0]);
+            }
+            return selectedPositionNames;
+        }
+        const numResources = 2*game.numPlayers+1;
+        const resourcePositionNames = getNRandomFromPositionNames(numResources);
+        for (var i=0; i<numResources; i++) {
+            var mapCardName;
+            if (i === numResources - 1 && !doListsOverlap(rightColNames, resourcePositionNames)) {
+                const index = getRandomIntInclusive(0,2);
+                mapCardName = rightColNames[index];
+            } else {
+                mapCardName = resourcePositionNames[i];
+            }
+            functionOnMatchingCards(gameUi, gameBroadcast, chatBroadcast, [["sides","A","name", mapCardName]], "increment_token", ["resource", 1] )
+        }
+
+        for (var i=numResources+1; i<12; i++) {
+            var mapCardName = searchCards[i]["sides"]["A"]["cornerText"];
+            functionOnMatchingCards(gameUi, gameBroadcast, chatBroadcast, [["sides","A","name", mapCardName]], "increment_token", ["damage", 1] )
+
+        }
+
+        gameBroadcast("game_action", {action: "deal_x", options: {group_id: "sharedEncounterDeck2", dest_group_id: "sharedStaging", top_x: numResources+1}});
+        gameBroadcast("game_action", {action: "move_stacks", options: {orig_group_id: "sharedEncounterDeck2", dest_group_id: "sharedEncounterDeck", top_n: 11-numResources,  position: "shuffle"}})
+        const hornCard = listOfMatchingCards(gameUi, [["sides","A","name", "Helm's Horn"]])[0];
+        if (hornCard) gameBroadcast("game_action", {action: "move_card", options: {card_id: hornCard.id, dest_group_id: "sharedStaging", dest_stack_index: -1, dest_card_index: 0, combine: true, preserve_state: true}})
+
+
     }
 }
 
