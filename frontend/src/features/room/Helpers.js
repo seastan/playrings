@@ -540,7 +540,7 @@ export const processLoadList = (loadList, playerN) => {
 export const processPostLoad = (gameUi, loadList, playerN, gameBroadcast, chatBroadcast) => {
   const tacticsEowyn = isCardDbIdInLoadList(loadList, "6dc19efc-af54-4eff-b9ee-ee45e9fd4072")
   if (tacticsEowyn) {
-    gameBroadcast("game_action", {action: "increment_threat", options: {increment: -3}})
+    gameBroadcast("game_action", {action: "increment_threat", options: {increment: -3, for_player_n: playerN}})
     chatBroadcast("game_update", {message: "reduced threat by 3."});
   }
   const loreFatty = isCardDbIdInLoadList(loadList, "151ba48a-1efd-451e-bba0-b49fa0566596")
