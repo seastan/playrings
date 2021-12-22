@@ -10,6 +10,9 @@ import { useSetTouchMode } from "../../contexts/TouchModeContext";
 import { useSetTouchAction } from "../../contexts/TouchActionContext";
 import { useCardSizeFactor, useSetCardSizeFactor } from "../../contexts/CardSizeFactorContext";
 import { loadDeckFromModeAndId } from "./SpawnQuestModal";
+import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import "../../css/custom-dropdown.css";
 
 
 export const TopBarMenu = React.memo(({
@@ -360,7 +363,10 @@ export const TopBarMenu = React.memo(({
       <ul className="second-level-menu">
         {isHost &&
           <li key={"numPlayers"}>
-            <a href="#">Player count</a>
+            <a className="" href="#">
+              Player count
+              <span className="float-right mr-1"><FontAwesomeIcon icon={faChevronRight}/></span>
+            </a>
             <ul className="third-level-menu">
                 <li key={"numPlayers1"}><a onClick={() => handleMenuClick({action:"num_players", value: 1})} href="#">1</a></li>
                 <li key={"numPlayers2"}><a onClick={() => handleMenuClick({action:"num_players", value: 2})} href="#">2</a></li>
@@ -371,7 +377,10 @@ export const TopBarMenu = React.memo(({
         }
         {isHost &&
           <li key={"layout"}>
-            <a href="#">Layout</a>
+            <a href="#">
+              Layout
+              <span className="float-right mr-1"><FontAwesomeIcon icon={faChevronRight}/></span>
+            </a>
             <ul className="third-level-menu">
                 <li key={"standard"}><a onClick={() => handleMenuClick({action:"layout", value: "standard"})} href="#">Standard</a></li>
                 <li key={"extra"}><a onClick={() => handleMenuClick({action:"layout", value: "extra"})} href="#">Extra staging areas / map</a></li>
@@ -379,14 +388,20 @@ export const TopBarMenu = React.memo(({
           </li>                
         }
         <li key={"touch_mode"}>
-          <a href="#">Touch/mouse mode</a>
+          <a href="#">
+            Touch/mouse mode
+            <span className="float-right mr-1"><FontAwesomeIcon icon={faChevronRight}/></span>
+          </a>
           <ul className="third-level-menu">
               <li key={"touch_enabled"}><a onClick={() => setTouchMode(true)} href="#">Enable (experimental)</a></li>
               <li key={"touch_disabled"}><a onClick={() => {setTouchMode(false) && setTouchAction(null)}} href="#">Disable</a></li>
           </ul>
         </li> 
         <li key={"load"}>
-          <a href="#">Load</a>
+          <a href="#">
+            Load
+            <span className="float-right mr-1"><FontAwesomeIcon icon={faChevronRight}/></span>
+          </a>
           <ul className="third-level-menu">
             <li key={"load_quest"}><a href="#" onClick={() => handleMenuClick({action:"spawn_quest"})} href="#">Load quest</a></li>
             <li key={"load_deck"}>
@@ -407,28 +422,40 @@ export const TopBarMenu = React.memo(({
           </ul>
         </li> 
         <li key={"unload"}>
-          <a href="#">Unload</a>
+          <a href="#">
+            Unload
+            <span className="float-right mr-1"><FontAwesomeIcon icon={faChevronRight}/></span>
+          </a>
           <ul className="third-level-menu">        
             <li key={"unload_my_deck"}><a  onClick={() => handleMenuClick({action:"unload_my_deck"})} href="#">Unload my deck</a></li>
             <li key={"unload_encounter_deck"}><a  onClick={() => handleMenuClick({action:"unload_encounter_deck"})} href="#">Unload encounter</a></li>
           </ul>
         </li>
         <li key={"spawn"}>
-          <a href="#">Spawn card</a>
+          <a href="#">
+            Spawn card
+            <span className="float-right mr-1"><FontAwesomeIcon icon={faChevronRight}/></span>
+          </a>
           <ul className="third-level-menu">
             <li key={"spawn_existing"}><a onClick={() => handleMenuClick({action:"spawn_existing"})} href="#">From the card pool</a></li>
             <li key={"spawn_custom"}><a onClick={() => handleMenuClick({action:"spawn_custom"})} href="#">Create your own card</a></li>
           </ul>
         </li> 
         <li key={"random"}>
-          <a href="#">Random</a>
+          <a href="#">
+            Random
+            <span className="float-right mr-1"><FontAwesomeIcon icon={faChevronRight}/></span>
+          </a>
           <ul className="third-level-menu">
             <li key={"random_coin"}><a onClick={() => handleMenuClick({action:"random_coin"})} href="#">Coin</a></li>
             <li key={"random_number"}><a onClick={() => handleMenuClick({action:"random_number"})} href="#">Number</a></li>
           </ul>
         </li> 
         <li key={"options"}>
-          <a href="#">Options</a>
+          <a href="#">
+            Options
+            <span className="float-right mr-1"><FontAwesomeIcon icon={faChevronRight}/></span>
+          </a>
           <ul className="third-level-menu">
             <li key={"adjust_card_size"}><a onClick={() => handleMenuClick({action:"adjust_card_size"})} href="#">Adjust card size</a></li>
             <li key={"cards_per_round"}><a onClick={() => handleMenuClick({action:"cards_per_round"})} href="#">Cards per round</a></li>
@@ -438,7 +465,10 @@ export const TopBarMenu = React.memo(({
           </ul>
         </li> 
         <li key={"download"}>
-          <a href="#">Download</a>
+          <a href="#">
+            Download
+            <span className="float-right mr-1"><FontAwesomeIcon icon={faChevronRight}/></span>
+          </a>
           <ul className="third-level-menu">        
             <li key={"download"}><a  onClick={() => handleMenuClick({action:"download"})} href="#">Game state (.json)</a></li>
             <li key={"export_cards"}><a  onClick={() => handleMenuClick({action:"export_cards"})} href="#">Export cards (.txt)</a></li>
@@ -446,32 +476,39 @@ export const TopBarMenu = React.memo(({
         </li>
         {isHost &&
           <li key={"reset"}>
-              <a href="#">Reload decks</a>
-              <ul className="third-level-menu">
-                <li key={"reload_victory"}><a onClick={() => handleMenuClick({action:"reload_game", state: "victory"})} href="#">Mark as victory</a></li>
-                <li key={"reload_defeat"}><a onClick={() => handleMenuClick({action:"reload_game", state: "defeat"})} href="#">Mark as defeat</a></li>
-                <li key={"reload_incomplete"}><a onClick={() => handleMenuClick({action:"reload_game", state: "incomplete"})} href="#">Mark as incomplete</a></li>
-              </ul>
+            <a href="#">
+              Reload decks
+              <span className="float-right mr-1"><FontAwesomeIcon icon={faChevronRight}/></span>
+            </a>
+            <ul className="third-level-menu">
+              <li key={"reload_victory"}><a onClick={() => handleMenuClick({action:"reload_game", state: "victory"})} href="#">Mark as victory</a></li>
+              <li key={"reload_defeat"}><a onClick={() => handleMenuClick({action:"reload_game", state: "defeat"})} href="#">Mark as defeat</a></li>
+              <li key={"reload_incomplete"}><a onClick={() => handleMenuClick({action:"reload_game", state: "incomplete"})} href="#">Mark as incomplete</a></li>
+            </ul>
           </li> 
         }    
         {isHost &&
           <li key={"reset"}>
-              <a href="#">Clear Table</a>
-              <ul className="third-level-menu">
-                <li key={"reset_victory"}><a onClick={() => handleMenuClick({action:"clear_table", state: "victory"})} href="#">Mark as victory</a></li>
-                <li key={"reset_defeat"}><a onClick={() => handleMenuClick({action:"clear_table", state: "defeat"})} href="#">Mark as defeat</a></li>
-                <li key={"reset_incomplete"}><a onClick={() => handleMenuClick({action:"clear_table", state: "incomplete"})} href="#">Mark as incomplete</a></li>
-              </ul>
+            <a href="#">Clear Table
+            <span className="float-right mr-1"><FontAwesomeIcon icon={faChevronRight}/></span>
+            </a>
+            <ul className="third-level-menu">
+              <li key={"reset_victory"}><a onClick={() => handleMenuClick({action:"clear_table", state: "victory"})} href="#">Mark as victory</a></li>
+              <li key={"reset_defeat"}><a onClick={() => handleMenuClick({action:"clear_table", state: "defeat"})} href="#">Mark as defeat</a></li>
+              <li key={"reset_incomplete"}><a onClick={() => handleMenuClick({action:"clear_table", state: "incomplete"})} href="#">Mark as incomplete</a></li>
+            </ul>
           </li> 
         }      
         {isHost &&
           <li key={"shut_down"}>
-              <a href="#">Close room</a>
-              <ul className="third-level-menu">
-                <li key={"close_victory"}><a onClick={() => handleMenuClick({action:"close_room", state: "victory"})} href="#">Mark as victory</a></li>
-                <li key={"close_defeat"}><a onClick={() => handleMenuClick({action:"close_room", state: "defeat"})} href="#">Mark as defeat</a></li>
-                <li key={"close_incomplete"}><a onClick={() => handleMenuClick({action:"close_room", state: "incomplete"})} href="#">Mark as incomplete</a></li>
-              </ul>
+            <a href="#">Close room
+              <span className="float-right mr-1"><FontAwesomeIcon icon={faChevronRight}/></span>
+            </a>
+            <ul className="third-level-menu">
+              <li key={"close_victory"}><a onClick={() => handleMenuClick({action:"close_room", state: "victory"})} href="#">Mark as victory</a></li>
+              <li key={"close_defeat"}><a onClick={() => handleMenuClick({action:"close_room", state: "defeat"})} href="#">Mark as defeat</a></li>
+              <li key={"close_incomplete"}><a onClick={() => handleMenuClick({action:"close_room", state: "incomplete"})} href="#">Mark as incomplete</a></li>
+            </ul>
           </li> 
         }
       </ul>

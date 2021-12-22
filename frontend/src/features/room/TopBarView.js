@@ -4,6 +4,8 @@ import { GROUPSINFO } from "./Constants";
 import { getQuestCompanionCycleFromQuestId } from "./Helpers";
 import { getQuestNameFromModeAndId, getQuestNameFromPath } from "./SpawnQuestModal";
 import { TopBarViewItem } from "./TopBarViewItem";
+import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 
 const keyClass = "m-auto border bg-gray-500 text-center bottom inline-block text-xs ml-2 mb-1";
@@ -46,24 +48,30 @@ export const TopBarView = React.memo(({
             <a href={questCompanionURL} target="_blank">Quest Companion</a>
           </li>
           <li key={"Shared"}>
-            <a href="#">Shared</a>
-              <ul className="third-level-menu">
-                {Object.keys(GROUPSINFO).map((groupId, _index) => {
-                  if (groupId.startsWith("shared")) return (
-                    <TopBarViewItem key={groupId} groupId={groupId} handleBrowseSelect={handleBrowseSelect} playerN={playerN}/>
-                  )
-                })}
+            <a href="#">
+              Shared
+              <span className="float-right mr-1"><FontAwesomeIcon icon={faChevronRight}/></span>
+            </a>
+            <ul className="third-level-menu">
+              {Object.keys(GROUPSINFO).map((groupId, _index) => {
+                if (groupId.startsWith("shared")) return (
+                  <TopBarViewItem key={groupId} groupId={groupId} handleBrowseSelect={handleBrowseSelect} playerN={playerN}/>
+                )
+              })}
             </ul>
           </li>
           {range(numPlayers, 1).map((N, _playerIndex) => (
           <li key={"player"+N}>
-            <a href="#">Player {N}</a>
-              <ul className="third-level-menu">
-                {Object.keys(GROUPSINFO).map((groupId, _index) => {
-                  if (groupId.startsWith("player"+N)) return (
-                    <TopBarViewItem key={groupId} groupId={groupId} handleBrowseSelect={handleBrowseSelect} playerN={playerN}/>
-                  )
-                })}
+            <a href="#">
+              Player {N}
+              <span className="float-right mr-1"><FontAwesomeIcon icon={faChevronRight}/></span>
+            </a>
+            <ul className="third-level-menu">
+              {Object.keys(GROUPSINFO).map((groupId, _index) => {
+                if (groupId.startsWith("player"+N)) return (
+                  <TopBarViewItem key={groupId} groupId={groupId} handleBrowseSelect={handleBrowseSelect} playerN={playerN}/>
+                )
+              })}
             </ul>
           </li>
           ))}
