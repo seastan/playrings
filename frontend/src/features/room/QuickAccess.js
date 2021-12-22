@@ -22,26 +22,20 @@ export const QuickAccess = React.memo(({sideGroupId, setSideGroupId}) => {
     else setSideGroupId(favoriteGroupId);
   }
 
+  const groupIds = ["sharedSetAside", observingPlayerN+"Sideboard", "sharedVictory", "sharedEncounterDeck2"];
+  const labels = ["SA", "SB", "VD", "E2"];
+
   return (        
     <div className="absolute h-full cursor-default text-center text-gray-400 right-0 overflow-y-hidden" style={{width:"30px", background:"rgba(0, 0, 0, 0.3)", zIndex: 1e6+1}}>
-      <div className={`h-1/5 w-full bg-gray-800 hover:bg-gray-600 ${sideGroupId === "sharedSetAside" ? "bg-gray-700" : ""}`} onClick={() => handleQuickViewClick("sharedSetAside")}>
-        <div className="h-1/2 w-full flex items-center justify-center">SA</div>
-        <div className="h-1/2 w-full flex items-center justify-center">{groupById["sharedSetAside"].stackIds.length}</div>
-      </div>
-      <div className={`h-1/5 w-full bg-gray-800 hover:bg-gray-600 ${sideGroupId === observingPlayerN+"Sideboard" ? "bg-gray-700" : ""}`} onClick={() => handleQuickViewClick(observingPlayerN+"Sideboard")}>
-        <div className="h-1/2 w-full flex items-center justify-center">SB</div>
-        <div className="h-1/2 w-full flex items-center justify-center">{groupById[observingPlayerN+"Sideboard"]?.stackIds.length}</div>
-      </div>
-      <div className={`h-1/5 w-full bg-gray-800 hover:bg-gray-600 ${sideGroupId === "sharedVictory" ? "bg-gray-700" : ""}`} onClick={() => handleQuickViewClick("sharedVictory")}>
-        <div className="h-1/2 w-full flex items-center justify-center">VD</div>
-        <div className="h-1/2 w-full flex items-center justify-center">{groupById["sharedVictory"].stackIds.length}</div>
-      </div>
-      <div className={`h-1/5 w-full bg-gray-800 hover:bg-gray-600 ${sideGroupId === "sharedEncounterDeck2" ? "bg-gray-700" : ""}`} onClick={() => handleQuickViewClick("sharedEncounterDeck2")}>
-        <div className="h-1/2 w-full flex items-center justify-center">E2</div>
-        <div className="h-1/2 w-full flex items-center justify-center">{groupById["sharedEncounterDeck2"].stackIds.length}</div>
-      </div>
+      {groupIds.map((groupId, groupIndex) => (
+        <div className={`h-1/5 w-full bg-gray-800 ${sideGroupId === groupId ? "bg-red-800" : "hover:bg-gray-600"}`} onClick={() => handleQuickViewClick(groupId)}>
+          <div className="h-1/2 w-full flex items-center justify-center">{labels[groupIndex]}</div>
+          <div className="h-1/2 w-full flex items-center justify-center">{groupById[groupId]?.stackIds.length}</div>
+        </div>
+      ))}
+
       <div 
-        className="h-1/5 w-full bg-gray-800 hover:bg-gray-600 flex items-center justify-center" 
+        className={`h-1/5 w-full bg-gray-800 flex items-center justify-center ${sideGroupId === favoriteGroupId ? "bg-red-800" : "hover:bg-gray-600"}`}
         onClick={() => handleFavoriteClick()}>
         <FontAwesomeIcon 
           icon={faStar}/>

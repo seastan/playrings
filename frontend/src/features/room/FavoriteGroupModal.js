@@ -22,7 +22,6 @@ export const FavoriteGroupModal = ({
 
   const groupIds = [
     "sharedQuestDeck",
-    "sharedEncounterDeck2",
     "sharedEncounterDeck3",
     "player1Hand",
     "player1Discard",
