@@ -16,7 +16,7 @@ const Container = styled.div`
   transition: all 0.2s;
   padding-left: 0px;
   height: 100%;
-  width: calc(100% - 15px);
+  width: calc(100% - 17px);
   user-select: none;
   overflow-x: ${props => ["deck", "discard", "vertical"].includes(props.groupType) ? "none" : "auto"};
   overflow-y: ${props => props.groupType === "vertical" ? "auto" : "hidden"};

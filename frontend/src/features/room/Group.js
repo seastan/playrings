@@ -61,7 +61,7 @@ export const Group = React.memo(({
       {hideTitle ? null :
         <div
           className="relative h-full float-left select-none text-gray-500"
-          style={{width:"15px"}}>
+          style={{width:"17px"}}>
           {group.type === "play" ?        
             <span 
               className="absolute mt-1" 
