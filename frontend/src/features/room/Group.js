@@ -9,6 +9,7 @@ import { GroupContextMenu } from "./GroupContextMenu";
 import { useSetDropdownMenu } from "../../contexts/DropdownMenuContext";
 import { handleBrowseTopN } from "./HandleBrowseTopN"; 
 import useLongPress from "../../hooks/useLongPress";
+import store from "../../store";
 
 export const Group = React.memo(({
   groupId,
@@ -30,6 +31,13 @@ export const Group = React.memo(({
   const handleEyeClick = (event) => {
     event.stopPropagation();
     handleBrowseTopN("All", group, playerN, gameBroadcast, chatBroadcast, setBrowseGroupId, setBrowseGroupTopN);
+  }
+
+  const handleMainQuestClick = (event) => {
+    event.stopPropagation();
+    const state = store.getState();
+    const questDeckGroup = state.gameUi.game.groupById["sharedQuestDeck"];
+    handleBrowseTopN("All", questDeckGroup, playerN, gameBroadcast, chatBroadcast, setBrowseGroupId, setBrowseGroupTopN);
   }
 
   const handleBarsClick = (event) => {
@@ -55,10 +63,12 @@ export const Group = React.memo(({
           className="relative h-full float-left select-none text-gray-500"
           style={{width:"15px"}}>
           {group.type === "play" ?        
-            <div className="absolute pointer-events-none mt-1" 
-            style={{top: "50%", left: "50%", transform: "translate(-50%, -50%) rotate(90deg)", whiteSpace: "nowrap"}}>
-              {tablename}
-            </div>
+            <span 
+              className="absolute mt-1" 
+              style={{fontSize: "1.7vh", top: tablename == "Encounter" ? "55%" : "50%", left: "50%", transform: `translate(-50%, -40%) rotate(90deg)`, whiteSpace: "nowrap"}}>
+              {playerN && groupId === "sharedMainQuest" && <FontAwesomeIcon onClick={(event) => handleMainQuestClick(event)}  className="hover:text-white mr-2" style={{transform: `rotate(-90deg)`}} icon={faEye}/>}
+                {tablename}
+            </span>
           :
             <div className="relative w-full h-full">
               <span 
