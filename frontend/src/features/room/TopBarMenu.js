@@ -115,7 +115,7 @@ export const TopBarMenu = React.memo(({
       newRingsDbInfo[playerIndex] = {id: ringsDbId, type: ringsDbType, domain: ringsDbDomain};
       const newOptions = {...options, ringsDbInfo: newRingsDbInfo, loaded: true}
       gameBroadcast("game_action", {action: "update_values", options: {updates: [["game", "options", newOptions]]}});
-      loadRingsDb(playerN, ringsDbDomain, ringsDbType, ringsDbId, gameBroadcast, chatBroadcast);
+      loadRingsDb(null, playerN, ringsDbDomain, ringsDbType, ringsDbId, gameBroadcast, chatBroadcast);
     } else if (data.action === "unload_my_deck") {
       // Delete all cards you own
       chatBroadcast("game_update",{message: "unloaded their deck."});
@@ -256,7 +256,7 @@ export const TopBarMenu = React.memo(({
           loadList = processLoadList(loadList, playerN);
           gameBroadcast("game_action", {action: "load_cards", options: {load_list: loadList}});
           chatBroadcast("game_update",{message: "loaded a deck."});
-          processPostLoad(loadList, playerN, gameBroadcast, chatBroadcast);
+          processPostLoad(null, loadList, playerN, gameBroadcast, chatBroadcast);
         //}
     //  } catch(e) {
       //    alert("Custom cards must be a valid text file. Check out the tutorial on YouTube.");

@@ -138,8 +138,7 @@ export const TableLayout = React.memo(({
             return(
             <div 
               className="relative bg-gray-700 rounded-lg w-full" 
-              style={{height: `${100/(numRows-2)}%`}}
-            >
+              style={{height: `${100/(numRows-2)}%`}}>
               <Browse
                 groupId={browseGroupId}
                 cardSize={cardSize}
@@ -149,8 +148,7 @@ export const TableLayout = React.memo(({
                 browseGroupTopN={browseGroupTopN}
                 setBrowseGroupId={setBrowseGroupId}
                 setBrowseGroupTopN={setBrowseGroupTopN}
-                setTyping={setTyping}
-              />
+                setTyping={setTyping}/>
               </div>
             )
           } else if (rowIndex > 0 && rowIndex < numRows - 1) {
@@ -183,7 +181,9 @@ export const TableLayout = React.memo(({
         browseGroupId={browseGroupId}
         registerDivToArrowsContext={registerDivToArrowsContext}
         cardSizeFactor={cardSizeFactor}
-        sideGroupId={sideGroupId}/>
+        sideGroupId={sideGroupId}
+        setBrowseGroupId={setBrowseGroupId}
+        setBrowseGroupTopN={setBrowseGroupTopN}/>
       {/* Bottom row */}
       <div 
         className="relative float-left w-full" 

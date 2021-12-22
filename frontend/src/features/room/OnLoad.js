@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { useSelector } from 'react-redux';
 import { GROUPSINFO } from "./Constants";
 import { loadRingsDb } from "./Helpers";
+import store from "../../store";
 import useProfile from "../../hooks/useProfile";
 
 export const OnLoad = React.memo(({
@@ -9,6 +10,8 @@ export const OnLoad = React.memo(({
     gameBroadcast,
     chatBroadcast,
 }) => {
+  const gameUiStore = state => state.gameUi;
+  const gameUi = useSelector(gameUiStore);  
   const optionsStore = state => state.gameUi?.game?.options;
   const options = useSelector(optionsStore);  
   const ringsDbInfo = options?.ringsDbInfo;
@@ -39,7 +42,7 @@ export const OnLoad = React.memo(({
         const deckType = ringsDbInfo[i-1].type;
         const deckId = ringsDbInfo[i-1].id;
         const deckDomain = ringsDbInfo[i-1].domain;
-        loadRingsDb(playerI, deckDomain, deckType, deckId, gameBroadcast, chatBroadcast);
+        loadRingsDb(gameUi, playerI, deckDomain, deckType, deckId, gameBroadcast, chatBroadcast);
       }
       if (numDecks>1 && numDecks<=4) {
         gameBroadcast("game_action", {action: "update_values", options: {updates: [["game", "numPlayers", numDecks]]}});

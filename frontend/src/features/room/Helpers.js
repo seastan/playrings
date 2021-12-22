@@ -1,5 +1,5 @@
-// ImageWithFallback.tsx
-import React, { useState } from 'react'
+import React from 'react';
+import { useSelector } from 'react-redux';
 import { cardDB } from "../../cardDB/cardDB";
 import { sectionToLoadGroupId, sectionToDiscardGroupId, sectionToDeckGroupId } from "./Constants";
 import axios from "axios";
@@ -367,7 +367,7 @@ export const getSideAName = (card) => {
 
 const isCardDbIdInLoadList = (loadList, cardDbId) => {
   for (var item of loadList) {
-    console.log(item.cardRow.sides.A.name,item.cardRow.cardid,cardDbId)
+    if (item.groupId.includes("Sideboard")) continue;
     if (item.cardRow.cardid === cardDbId) {
       return true;
     }
@@ -537,7 +537,7 @@ export const processLoadList = (loadList, playerN) => {
 
 }
 
-export const processPostLoad = (loadList, playerN, gameBroadcast, chatBroadcast) => {
+export const processPostLoad = (gameUi, loadList, playerN, gameBroadcast, chatBroadcast) => {
   const tacticsEowyn = isCardDbIdInLoadList(loadList, "6dc19efc-af54-4eff-b9ee-ee45e9fd4072")
   if (tacticsEowyn) {
     gameBroadcast("game_action", {action: "increment_threat", options: {increment: -3}})
@@ -547,6 +547,14 @@ export const processPostLoad = (loadList, playerN, gameBroadcast, chatBroadcast)
   if (loreFatty) {
     gameBroadcast("game_action", {action: "increment_threat", options: {increment: -2}})
     chatBroadcast("game_update", {message: "reduced threat by 2."});
+  }
+  const loreMirlonde = isCardDbIdInLoadList(loadList, "536c80ba-ad8b-447e-b378-1684508eb0f9")
+  if (loreMirlonde) {
+    console.log("Mirlonde",gameUi)
+    const loreHeroes = listOfMatchingCards(gameUi, [["sides","A","name","Mirlonde"]])
+    const reduction = loreHeroes.length;
+    gameBroadcast("game_action", {action: "increment_threat", options: {increment: -reduction}})
+    chatBroadcast("game_update", {message: "reduced threat by "+reduction+" (Mirlonde)."});
   }
   const glitteringCaves = isCardDbIdInLoadList(loadList, "03a074ce-d581-4672-b6ea-ed97b7afd415");
   if (glitteringCaves) {
@@ -624,7 +632,7 @@ export const loadDeckFromXmlText = (xmlText, playerN, gameBroadcast, chatBroadca
     console.log("loadList", loadList);
     gameBroadcast("game_action", {action: "load_cards", options: {load_list: loadList}});
     chatBroadcast("game_update",{message: "loaded a deck."});
-    processPostLoad(loadList, playerN, gameBroadcast, chatBroadcast);
+    processPostLoad(null, loadList, playerN, gameBroadcast, chatBroadcast);
   })
 }
 
@@ -715,7 +723,7 @@ export const getScore = (gameUi, gameBroadcast, chatBroadcast) => {
 }
 
 
-export const loadRingsDb = (playerI, ringsDbDomain, ringsDbType, ringsDbId, gameBroadcast, chatBroadcast) => {
+export const loadRingsDb = (gameUi, playerI, ringsDbDomain, ringsDbType, ringsDbId, gameBroadcast, chatBroadcast) => {
   chatBroadcast("game_update",{message: "is loading a deck from RingsDb..."});
   const urlBase = ringsDbDomain === "test" ? "https://test.ringsdb.com/api/" : "https://www.ringsdb.com/api/"
   const url = ringsDbType === "decklist" ? urlBase+"public/decklist/"+ringsDbId+".json" : urlBase+"oauth2/deck/load/"+ringsDbId;
@@ -784,7 +792,7 @@ export const loadRingsDb = (playerI, ringsDbDomain, ringsDbType, ringsDbId, game
       loadList = processLoadList(loadList, playerI);
       gameBroadcast("game_action", {action: "load_cards", options: {load_list: loadList, for_player_n: playerI}});
       chatBroadcast("game_update",{message: "loaded a deck."});
-      processPostLoad(loadList, playerI, gameBroadcast, chatBroadcast);
+      processPostLoad(gameUi, loadList, playerI, gameBroadcast, chatBroadcast);
     });
   })
   .catch((error) => {
