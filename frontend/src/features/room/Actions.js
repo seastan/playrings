@@ -487,42 +487,49 @@ export const gameAction = (action, props) => {
             searchCards.push(card)
         }
 
-        function getNRandomFromPositionNames(n) {
-            var positionNames = [];
-            for (var searchCard of searchCards) {
-                positionNames.push(searchCard["sides"]["A"]["cornerText"]);
-            }
-            var selectedPositionNames = [];
+        function getNRandomFromPositionCoordinates(n) {
+            var positionCoordinates = [[0,0],[0,1],[0,2],[0,3],[1,0],[1,1],[1,2],[1,3],[2,0],[2,1],[2,2],[2,3]];
+            var selectedPositionCoordinates = [];
             for (var i=0; i<n; i++) {
-                var randomIndex = Math.floor(Math.random()*positionNames.length);
-                selectedPositionNames.push(positionNames.splice(randomIndex, 1)[0]);
+                var randomIndex = Math.floor(Math.random()*positionCoordinates.length);
+                selectedPositionCoordinates.push(positionCoordinates.splice(randomIndex, 1)[0]);
             }
-            return selectedPositionNames;
-        }
-        const numResources = 2*game.numPlayers+1;
-        const resourcePositionNames = getNRandomFromPositionNames(numResources);
-        for (var i=0; i<numResources; i++) {
-            var mapCardName;
-            if (i === numResources - 1 && !doListsOverlap(rightColNames, resourcePositionNames)) {
-                const index = getRandomIntInclusive(0,2);
-                mapCardName = rightColNames[index];
-            } else {
-                mapCardName = resourcePositionNames[i];
-            }
-            functionOnMatchingCards(gameUi, gameBroadcast, chatBroadcast, [["sides","A","name", mapCardName]], "increment_token", ["resource", 1] )
+            return selectedPositionCoordinates;
         }
 
+        // Deal clues
+        const numResources = 2*game.numPlayers+1;
+        const resourcePositionCoordinates = getNRandomFromPositionCoordinates(numResources);
+        var rightColSatisfied = false;
+        for (var i=0; i<numResources; i++) {
+            var coordinates = resourcePositionCoordinates[i];
+            if (i === numResources - 1 && !rightColSatisfied) {
+                const index = getRandomIntInclusive(0,2);
+                coordinates = [index,3];
+            } else {
+                if (coordinates[1] === 3) rightColSatisfied = true;
+                coordinates = resourcePositionCoordinates[i];
+            }
+            gameBroadcast("game_action", {action: "move_card", options: {card_id: searchCards[i].id, dest_group_id: "sharedExtra"+(coordinates[0]+1), dest_stack_index: coordinates[1], dest_card_index: 1, combine: true, preserve_state: true}})
+        }
+
+        // Attack 1 card to Helm's Horn
+        gameBroadcast("game_action", {action: "deal_x", options: {group_id: "sharedEncounterDeck2", dest_group_id: "sharedStaging", top_x: 1}});
+        const hornCard = listOfMatchingCards(gameUi, [["sides","A","name", "Helm's Horn"]])[0];
+        const hornGSC = getGroupIdStackIndexCardIndex(game, hornCard.id);
+        if (hornCard) gameBroadcast("game_action", {action: "move_card", options: {card_id: searchCards[numResources].id, dest_group_id: hornGSC["groupId"], dest_stack_index: hornGSC["stackIndex"], dest_card_index: 1, combine: true, preserve_state: true}})        
+
+        // Deal damage to positions
         for (var i=numResources+1; i<12; i++) {
             var mapCardName = searchCards[i]["sides"]["A"]["cornerText"];
             functionOnMatchingCards(gameUi, gameBroadcast, chatBroadcast, [["sides","A","name", mapCardName]], "increment_token", ["damage", 1] )
-
         }
 
-        gameBroadcast("game_action", {action: "deal_x", options: {group_id: "sharedEncounterDeck2", dest_group_id: "sharedStaging", top_x: numResources+1}});
+        // Shuffle in positions
         gameBroadcast("game_action", {action: "move_stacks", options: {orig_group_id: "sharedEncounterDeck2", dest_group_id: "sharedEncounterDeck", top_n: 11-numResources,  position: "shuffle"}})
-        const hornCard = listOfMatchingCards(gameUi, [["sides","A","name", "Helm's Horn"]])[0];
-        if (hornCard) gameBroadcast("game_action", {action: "move_card", options: {card_id: hornCard.id, dest_group_id: "sharedStaging", dest_stack_index: -1, dest_card_index: 0, combine: true, preserve_state: true}})
 
+
+        // Place player tokens
         functionOnMatchingCards(gameUi, gameBroadcast, chatBroadcast, [["groupId","sharedExtra1"],["stackIndex",0]], "increment_token", ["attack", 1] )
         if (game.numPlayers > 1) functionOnMatchingCards(gameUi, gameBroadcast, chatBroadcast, [["groupId","sharedExtra1"],["stackIndex",0]], "increment_token", ["defense", 1] )
         if (game.numPlayers > 2) functionOnMatchingCards(gameUi, gameBroadcast, chatBroadcast, [["groupId","sharedExtra1"],["stackIndex",0]], "increment_token", ["hitPoints", 1] )

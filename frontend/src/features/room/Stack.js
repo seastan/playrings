@@ -33,7 +33,8 @@ export const Stack = React.memo(({
   const stackStore = state => state?.gameUi?.game?.stackById[stackId];
   const stack = useSelector(stackStore);
   const touchMode = useTouchMode();
-  const touchModeSpacingFactor = touchMode ? 1.5 : 1;
+  var spacingFactor = touchMode ? 1.5 : 1;
+  if (groupId.includes("Extra")) spacingFactor = 0;
   const { height, width } = useWindowDimensions();
   const aspectRatio = width/height;
   if (!stack) return null;
@@ -42,8 +43,8 @@ export const Stack = React.memo(({
   const numStacksNonZero = numStacks > 0 ? numStacks : 1;
   var handSpacing = 45*aspectRatio/(numStacksNonZero);
   if (handSpacing > cardSize) handSpacing = cardSize;
-  const stackWidth = groupType === "hand" ? handSpacing : cardSize/0.72 + cardSize*touchModeSpacingFactor/3*(cardIds.length-1);
-  //const stackWidth = cardSize/0.72 + cardSize/3*(stack.cards.length-1);
+  var stackWidth = groupType === "hand" ? handSpacing : cardSize/0.72 + cardSize*spacingFactor/3*(cardIds.length-1);
+
   return (
     <Draggable 
       key={stackId} 
