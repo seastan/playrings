@@ -727,7 +727,9 @@ export const cardAction = (action, cardId, options, props) => {
             }
         // If the card is a child card in a stack, just discard that card
         } else {
-            const discardGroupId = card["discardGroupId"];
+            var discardGroupId = card["discardGroupId"];
+            const encounterSet = card["cardEncounterSet"]
+            if (["Search for the Horn"].includes(encounterSet)) discardGroupId = "sharedEncounterDiscard";
             chatBroadcast("game_update", {message: "discarded "+displayName+" to "+GROUPSINFO[discardGroupId].name+"."});
             gameBroadcast("game_action", {action: "move_card", options: {card_id: cardId, dest_group_id: discardGroupId, dest_stack_index: 0, dest_card_index: 0, combine: false, preserve_state: false}})
         }
