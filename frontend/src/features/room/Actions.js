@@ -498,7 +498,7 @@ export const gameAction = (action, props) => {
         }
 
         // Deal clues
-        const numResources = 2*game.numPlayers+1;
+        const numResources = 2*game.numPlayers;
         const resourcePositionCoordinates = getNRandomFromPositionCoordinates(numResources);
         var rightColSatisfied = false;
         for (var i=0; i<numResources; i++) {
