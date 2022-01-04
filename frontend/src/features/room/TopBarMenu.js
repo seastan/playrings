@@ -12,7 +12,6 @@ import { useCardSizeFactor, useSetCardSizeFactor } from "../../contexts/CardSize
 import { loadDeckFromModeAndId } from "./SpawnQuestModal";
 import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import "../../css/custom-dropdown.css";
 
 
 export const TopBarMenu = React.memo(({
@@ -393,7 +392,7 @@ export const TopBarMenu = React.memo(({
             <span className="float-right mr-1"><FontAwesomeIcon icon={faChevronRight}/></span>
           </a>
           <ul className="third-level-menu">
-              <li key={"touch_enabled"}><a onClick={() => setTouchMode(true)} href="#">Enable (experimental)</a></li>
+              <li key={"touch_enabled"}><a onClick={() => setTouchMode(true)} href="#">Enable</a></li>
               <li key={"touch_disabled"}><a onClick={() => {setTouchMode(false) && setTouchAction(null)}} href="#">Disable</a></li>
           </ul>
         </li> 
