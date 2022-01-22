@@ -1398,10 +1398,11 @@ defmodule DragnCardsGame.GameUI do
             acc
         end
       end)
-      put_in(gameui["game"]["encounterName"], get_encounter_name(gameui))
     else
       gameui
     end
+    # Update encounter name
+    gameui = put_in(gameui["game"]["encounterName"], get_encounter_name(gameui))
 
     # Calculate threat cost
     threat = Enum.reduce(load_list, 0, fn(r, acc) ->

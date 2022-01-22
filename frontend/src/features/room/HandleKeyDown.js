@@ -241,7 +241,7 @@ export const HandleKeyDown = ({
             document.removeEventListener('keydown', onKeyDown);
         }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [gameUi, typing, keypress, cardSizeFactor, activeCardAndLoc, keyBackLog]);
+    }, [typing, keypress, cardSizeFactor, activeCardAndLoc, keyBackLog]);
 
     const handleKeyDown = (
         event, 
