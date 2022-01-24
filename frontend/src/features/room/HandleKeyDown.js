@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useReducer } from "react";
 import { useSelector, useDispatch } from 'react-redux';
 import { useActiveCard, useSetActiveCard } from "../../contexts/ActiveCardContext";
 import { setValues } from "./gameUiSlice";
@@ -219,6 +219,8 @@ export const HandleKeyDown = ({
     }
 
     useEffect(() => {
+
+        console.log("Rendering HandleKeyDown useEffect")
         const onKeyDown = (event) => {
             if (typing) return;
             else if (keyDefaultList.includes(event.key)) return;
@@ -240,8 +242,7 @@ export const HandleKeyDown = ({
         return () => {
             document.removeEventListener('keydown', onKeyDown);
         }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [typing, keypress, cardSizeFactor, activeCardAndLoc, keyBackLog]);
+    }, [gameUi, typing, keypress, cardSizeFactor, activeCardAndLoc, keyBackLog]);
 
     const handleKeyDown = (
         event, 
@@ -255,6 +256,7 @@ export const HandleKeyDown = ({
             alert("Please sit down to do that.")
             return;
         }
+        console.log("handleKeyDown triggered")
         const k = event.key;
         console.log(k);
         // Keep track of held key
@@ -278,6 +280,34 @@ export const HandleKeyDown = ({
         else if (Object.keys(keyUiMap).includes(k)) keyUiAction(keyUiMap[k], uiProps);
 
     }
+
+
+
+    // const [userGameUi, handleUserKeyPress] = useReducer((state, event) => {
+    //     if (typing) return;
+    //     else if (keyDefaultList.includes(event.key)) return;
+    //     else {
+    //         event.preventDefault();
+    //         handleKeyDown(
+    //             event,
+    //             playerN,
+    //             keypress,
+    //             setKeypress,
+    //             gameBroadcast,
+    //             chatBroadcast,
+    //         )
+    //     }
+    // }, null);
+    
+    // useEffect(() => {
+    //     console.log("handleKeyDown added")
+    //     window.addEventListener("keydown", handleUserKeyPress);
+
+    //     return () => {
+    //         console.log("handleKeyDown removed")
+    //         window.removeEventListener("keydown", handleUserKeyPress);
+    //     };
+    // }, []);
 
     return (null);
 
