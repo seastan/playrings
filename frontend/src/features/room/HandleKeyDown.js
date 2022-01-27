@@ -281,9 +281,7 @@ export const HandleKeyDown = ({
 
     }
 
-
-
-    // const [userGameUi, handleUserKeyPress] = useReducer((state, event) => {
+    // const memoizedReducer = React.useCallback((state, event) => {
     //     if (typing) return;
     //     else if (keyDefaultList.includes(event.key)) return;
     //     else {
@@ -297,7 +295,26 @@ export const HandleKeyDown = ({
     //             chatBroadcast,
     //         )
     //     }
-    // }, null);
+    // }, [gameUi, activeCardAndLoc]) // <--- if you have vars/deps inside the reducer that changes, they need to go here
+
+    // const [userGameUi, handleUserKeyPress] = React.useReducer(memoizedReducer, gameUi);
+
+
+    // // const [userGameUi, handleUserKeyPress] = useReducer((state, event) => {
+    // //     if (typing) return;
+    // //     else if (keyDefaultList.includes(event.key)) return;
+    // //     else {
+    // //         event.preventDefault();
+    // //         handleKeyDown(
+    // //             event,
+    // //             playerN,
+    // //             keypress,
+    // //             setKeypress,
+    // //             gameBroadcast,
+    // //             chatBroadcast,
+    // //         )
+    // //     }
+    // // }, gameUi);
     
     // useEffect(() => {
     //     console.log("handleKeyDown added")

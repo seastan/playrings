@@ -404,7 +404,6 @@ export const gameAction = (action, props) => {
         const newThreat = game.playerData[playerN].threat + 1;
         chatBroadcast("game_update", {message: "raises "+playerNToPlayerSpaceN(playerN)+"'s threat by 1 ("+newThreat+")."});
         const updates = [["game", "playerData", playerN, "threat", newThreat]];
-        //dispatch(setValues({updates: updates}))
         gameBroadcast("game_action", {action: "update_values", options: {updates: updates}});
     }
     else if (action === "increase_threat_all") {

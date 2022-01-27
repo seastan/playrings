@@ -748,7 +748,7 @@ export const loadRingsDb = (gameUi, playerI, ringsDbDomain, ringsDbType, ringsDb
             alert("You will need to search your deck for your MotK hero.")
           } else if (cardRow) {
             const type = slotJsonData.type_name;
-            const loadGroupId = (type === "Hero" || type === "Contract") ? playerI+"Play1" : playerI+"Deck";
+            const loadGroupId = (type === "Hero" || type === "Contract" || type === "Other") ? playerI+"Play1" : playerI+"Deck";
             cardRow['deckgroupid'] = playerI+"Deck";
             cardRow['discardgroupid'] = playerI+"Discard";
             if (cardRow['sides']['A']['keywords'].includes("Encounter")) cardRow['discardgroupid'] = "sharedEncounterDiscard";
