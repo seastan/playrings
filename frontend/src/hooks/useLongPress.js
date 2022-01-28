@@ -11,6 +11,8 @@ const useLongPress = (
 
     const start = useCallback(
         event => {
+            event.preventDefault();
+            //if (event.touches && event.touches[0].touchType === "stylus") return;
             if (shouldPreventDefault && event.target) {
                     event.target.addEventListener("touchend", preventDefault, {
                     passive: false
