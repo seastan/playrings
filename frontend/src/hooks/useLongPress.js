@@ -11,7 +11,6 @@ const useLongPress = (
 
     const start = useCallback(
         event => {
-            event.preventDefault();
             //if (event.touches && event.touches[0].touchType === "stylus") return;
             if (shouldPreventDefault && event.target) {
                     event.target.addEventListener("touchend", preventDefault, {
@@ -29,7 +28,7 @@ const useLongPress = (
 
     const clear = useCallback(
         (event, shouldTriggerClick = true) => {
-            if (event.type === "click" || event.type === "touchend") event.stopPropagation();
+            event.stopPropagation();
             timeout.current && clearTimeout(timeout.current);
             shouldTriggerClick && !longPressTriggered && onClick(event);
             setLongPressTriggered(false);
