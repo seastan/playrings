@@ -59,7 +59,7 @@ export const CardMouseRegion = React.memo(({
         if (!touchMode) handleSetDropDownMenu();
         // Make the card active (since there was no mouseover)
         // The listener in HandleTouchButton will see the active card change and perform the touch action
-        if (event.touches && event.touches[0].touchType === "stylus") return;
+        // if (event.touches && event.touches[0].touchType === "stylus") return; // Apple pencil fix attempt (didn't work)
         makeActive(event,position);
     }
     
