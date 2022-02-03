@@ -722,11 +722,14 @@ export const cardAction = (action, cardId, options, props) => {
             const stack = getStackByCardId(game.stackById, cardId);
             if (!stack) return;
             const cardIds = stack.cardIds;
-            for (var id of cardIds) {
+            for (var i=0; i<cardIds.length; i++) {
+                const id = cardIds[i];
                 const cardi = game.cardById[id];
                 const discardGroupId = cardi["discardGroupId"];
                 const cardiFace = getCurrentFace(cardi);
-                if (cardiFace.keywords.includes("Guarded") || cardiFace.text.startsWith("Guarded")) continue;
+                if ((cardiFace.keywords.includes("Guarded") || cardiFace.text.startsWith("Guarded"))
+                    && i > 0
+                    && cardi.rotation === 0) continue;
                 chatBroadcast("game_update", {message: "discarded "+getDisplayName(cardi)+" to "+GROUPSINFO[discardGroupId].name+"."});
                 gameBroadcast("game_action", {action: "move_card", options: {card_id: id, dest_group_id: discardGroupId, dest_stack_index: 0, dest_card_index: 0, combine: false, preserve_state: false}})
             }
