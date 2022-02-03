@@ -32,6 +32,7 @@ const keyCardActionMap = {
     "v": "victory",
     "x": "discard",
     "c": "detach",
+    "C": "detach_and_discard",
     "b": "move_to_back",
 }
 
@@ -210,7 +211,7 @@ export const HandleKeyDown = ({
                 })
                 //gameBroadcast("game_action", {action:"increment_tokens", options: {card_id: cardId, token_increments: cardKeyBackLog}});
                 // Adjust willpower if committed
-                if (activeCard.committed && cardKeyBackLog["willpower"] !== null) gameBroadcast("game_action", {action:"increment_willpower", options: {increment: cardKeyBackLog["willpower"]}});
+                if (activeCard.committed && cardKeyBackLog["willpower"] !== null) gameBroadcast("game_action", {action:"increment_willpower", options: {increment: cardKeyBackLog["willpower"], for_player_n: activeCard.controller}});
             })
             setKeyBackLog({})
             gameBroadcast("game_action", {action:"increment_tokens_object", options: {increment_object: incrementObject}});

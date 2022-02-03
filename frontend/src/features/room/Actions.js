@@ -561,6 +561,8 @@ export const cardAction = (action, cardId, options, props) => {
     const group = game.groupById[groupId];
     const groupType = group.type;
     const stackId = group.stackIds[stackIndex];
+    const stack = game.stackById[stackId];
+    const cardIds = stack.cardIds;
 
     // Set tokens to 0
     if (action === "zero_tokens") {
@@ -723,6 +725,8 @@ export const cardAction = (action, cardId, options, props) => {
             for (var id of cardIds) {
                 const cardi = game.cardById[id];
                 const discardGroupId = cardi["discardGroupId"];
+                const cardiFace = getCurrentFace(cardi);
+                if (cardiFace.keywords.includes("Guarded") || cardiFace.text.startsWith("Guarded")) continue;
                 chatBroadcast("game_update", {message: "discarded "+getDisplayName(cardi)+" to "+GROUPSINFO[discardGroupId].name+"."});
                 gameBroadcast("game_action", {action: "move_card", options: {card_id: id, dest_group_id: discardGroupId, dest_stack_index: 0, dest_card_index: 0, combine: false, preserve_state: false}})
             }
@@ -771,10 +775,24 @@ export const cardAction = (action, cardId, options, props) => {
             setKeypress({"w": cardId});
         }
     }
+    // Detach a card
     else if (action === "detach") {
         if (cardIndex > 0) {
             gameBroadcast("game_action", {action: "detach", options: {card_id: card.id}})
             chatBroadcast("game_update", {message: "detached "+displayName+"."})
+        }
+    }
+    // Discard the other cards in a the stack
+    else if (action === "detach_and_discard") { 
+        const stack = getStackByCardId(game.stackById, cardId);
+        if (!stack) return;
+        const cardIds = stack.cardIds;
+        for (var id of cardIds) {
+            if (id === cardId) continue;
+            const cardi = game.cardById[id];
+            const discardGroupId = cardi["discardGroupId"];
+            chatBroadcast("game_update", {message: "discarded "+getDisplayName(cardi)+" to "+GROUPSINFO[discardGroupId].name+"."});
+            gameBroadcast("game_action", {action: "move_card", options: {card_id: id, dest_group_id: discardGroupId, dest_stack_index: 0, dest_card_index: 0, combine: false, preserve_state: false}})
         }
     }
     // Increment token
