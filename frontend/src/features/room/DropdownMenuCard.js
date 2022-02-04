@@ -91,6 +91,7 @@ export const DropdownMenuCard = React.memo(({
           {(menuCard?.controller === playerN && dropdownMenu?.groupType === "play" && !menuCard?.locked) ? <DropdownItem action="lock" clickCallback={handleDropdownClick}>Prevent refresh</DropdownItem> : null}
           {(menuCard?.controller === playerN && dropdownMenu?.groupType === "play" && menuCard?.locked) ? <DropdownItem action="unlock" clickCallback={handleDropdownClick}>Enable refresh</DropdownItem> : null}
           <DropdownItem action="delete" clickCallback={handleDropdownClick}>Delete</DropdownItem>
+          {menuCardIndex>0 ? <DropdownItem action="swap_side" clickCallback={handleDropdownClick}>Swap Side</DropdownItem> : null}
           <DropdownItem
             rightIcon={<FontAwesomeIcon icon={faChevronRight}/>}
             goToMenu="moveTo"

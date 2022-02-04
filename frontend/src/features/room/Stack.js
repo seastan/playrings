@@ -6,6 +6,7 @@ import { Draggable } from "react-beautiful-dnd";
 import { useTouchMode } from "../../contexts/TouchModeContext";
 import { CARDSCALE } from "./Constants";
 import useWindowDimensions from "../../hooks/useWindowDimensions";
+import store from "../../store";
 
 const Container = styled.div`
   position: relative;
@@ -39,6 +40,25 @@ export const Stack = React.memo(({
   const aspectRatio = width/height;
   if (!stack) return null;
   const cardIds = stack.cardIds;
+  var leftOffsets = 0;
+  var rightOffsets = 0;
+  const offsets = [0];
+  for (var i = 1; i<cardIds.length; i++) {
+    const cardiId = cardIds[i];
+    const cardi = store.getState().gameUi.game.cardById[cardiId];
+    console.log("attdir",cardi.attachmentDirection)
+    if (cardi.attachmentDirection && cardi.attachmentDirection === -1) {
+      leftOffsets++;
+      offsets.push(-leftOffsets);
+    } else {
+      rightOffsets++;
+      offsets.push(rightOffsets);
+    }
+  }
+  for (var i = 0; i< offsets.length; i++) {
+    offsets[i] += leftOffsets;
+  }
+  console.log("attdir",offsets)
   // Calculate size of stack for proper spacing. Changes base on group type and number of stack in group.
   const numStacksNonZero = numStacks > 0 ? numStacks : 1;
   var handSpacing = 45*aspectRatio/(numStacksNonZero);
@@ -72,6 +92,7 @@ export const Stack = React.memo(({
                 playerN={playerN}
                 groupId={groupId}
                 groupType={groupType}
+                offset={offsets[cardIndex]}
                 cardId={cardId} 
                 cardIndex={cardIndex}
                 cardSize={cardSize}

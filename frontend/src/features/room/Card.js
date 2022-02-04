@@ -14,6 +14,7 @@ export const Card = React.memo(({
     cardId,
     groupId,
     groupType,
+    offset,
     gameBroadcast,
     chatBroadcast,
     playerN,
@@ -41,6 +42,8 @@ export const Card = React.memo(({
         setActiveCard(null);
     }
 
+    const horizontalOffset = 0.2 + (1.39-visibleFace.width)*cardSize/2 + cardSize*touchModeSpacingFactor/3*offset;
+
     return (
         <div id={card.id}>
             <div 
@@ -51,7 +54,7 @@ export const Card = React.memo(({
                     //background: `url(${getVisibleFaceSRC(card, playerN, user)}) no-repeat scroll 0% 0% / contain`, //group.type === "deck" ? `url(${card.sides["B"].src}) no-repeat` : `url(${card.sides["A"].src}) no-repeat`,
                     height: `${cardSize*visibleFace.height}vh`,
                     width: `${cardSize*visibleFace.width}vh`,
-                    left: `${0.2 + (1.39-visibleFace.width)*cardSize/2 + cardSize*touchModeSpacingFactor/3*cardIndex}vh`,
+                    left: `${horizontalOffset}vh`,
                     top: "50%",
                     borderRadius: '0.6vh',
                     transform: `translate(0%, ${groupType === "vertical" ? "0%" : "-50%"}) rotate(${card.rotation}deg)`,

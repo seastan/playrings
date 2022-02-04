@@ -31,6 +31,8 @@ export const handleDropdownClickCard = (dropdownProps) => {
     cardAction("flip", menuCard?.id, null, actionProps);
   } else if (dropdownOptions.action === "detach") {
     cardAction("detach", menuCard?.id, null, actionProps);
+  } else if (dropdownOptions.action === "swap_side") {
+    cardAction("swap_side", menuCard?.id, null, actionProps);
   } else if (dropdownOptions.action === "peek") {
     gameBroadcast("game_action", {action: "peek_card", options: {card_id: menuCard.id, value: true}})
     chatBroadcast("game_update", {message: "peeked at "+displayName+"."})

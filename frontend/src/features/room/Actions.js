@@ -785,6 +785,14 @@ export const cardAction = (action, cardId, options, props) => {
             chatBroadcast("game_update", {message: "detached "+displayName+"."})
         }
     }
+    // Swap attachment side
+    else if (action === "swap_side") {
+        if (cardIndex > 0) {
+            const newDirection = card.attachmentDirection ? -card.attachmentDirection : -1;
+            const updates = [["game", "cardById", cardId, "attachmentDirection", newDirection]];
+            gameBroadcast("game_action", {action: "update_values", options:{updates: updates}});
+        }
+    }
     // Discard the other cards in a the stack
     else if (action === "detach_and_discard") { 
         const stack = getStackByCardId(game.stackById, cardId);
