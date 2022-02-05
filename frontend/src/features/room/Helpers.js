@@ -480,7 +480,7 @@ export const processLoadList = (loadList, playerN) => {
     var e = 0;
     for (var i=0; i<n; i++) {
       const item = newLoadList[i];
-      if (item.cardRow.cardencounterset === "Caves Map") {
+      if (item.cardRow.cardencounterset === "Exploring the Caves") {
         if (e < shuffledExtraNum.length) {
           newLoadList[i] = {...item, groupId: "sharedExtra"+shuffledExtraNum[e]};
           e = e + 1;
