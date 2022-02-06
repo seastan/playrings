@@ -178,7 +178,7 @@ export const SpawnQuestModal = React.memo(({
           }
         }}
       >
-        <h1 className="mb-2">Load a quest</h1>
+        <h1 className="mb-2">Load a Quest</h1>
         <input 
           autoFocus
           style={{width:"50%"}} 

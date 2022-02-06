@@ -179,6 +179,8 @@ export const TopBarMenu = React.memo(({
       setShowModal("custom");
     } else if (data.action === "spawn_quest") {
       setShowModal("quest");
+    } else if (data.action === "spawn_campaign") {
+      setShowModal("campaign");
     } else if (data.action === "download") {
       downloadGameAsJson();
     } else if (data.action === "export_cards") {
@@ -403,6 +405,7 @@ export const TopBarMenu = React.memo(({
           </a>
           <ul className="third-level-menu">
             <li key={"load_quest"}><a href="#" onClick={() => handleMenuClick({action:"spawn_quest"})} href="#">Load quest</a></li>
+            <li key={"load_quest"}><a href="#" onClick={() => handleMenuClick({action:"spawn_campaign"})} href="#">Load campaign cards</a></li>
             <li key={"load_deck"}>
               <a href="#" onClick={() => handleMenuClick({action:"load_deck"})} href="#">Load deck (OCTGN file)</a>
               <input type='file' id='file' ref={inputFileDeck} style={{display: 'none'}} onChange={loadDeck} accept=".o8d"/>

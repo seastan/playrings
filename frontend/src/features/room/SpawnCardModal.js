@@ -4,6 +4,8 @@ import { cardDB } from "../../cardDB/cardDB";
 import useProfile from "../../hooks/useProfile";
 import { getCardRowCategory } from "./Helpers";
 
+const RESULTS_LIMIT = 150;
+
 export const SpawnCardModal = React.memo(({
     playerN,
     setTyping,
@@ -40,7 +42,10 @@ export const SpawnCardModal = React.memo(({
           const cardName = sideA["name"];
           const cardPack = cardRow["cardpackname"]
           if (
-            cardName.toLowerCase().includes(filteredName.toLowerCase()) &&
+            (cardName.toLowerCase().includes(filteredName.toLowerCase()) || 
+             cardPack.toLowerCase().includes(filteredName.toLowerCase()) ||
+             sideA.type.toLowerCase().includes(filteredName.toLowerCase())
+             ) &&
             !cardPack.toLowerCase().includes("custom") &&
             !(cardRow["playtest"] && !myUser.playtester)
           ) filteredIDs.push(cardID);
@@ -55,7 +60,7 @@ export const SpawnCardModal = React.memo(({
         onRequestClose={() => setShowModal(null)}
         contentLabel="Spawn a card"
         overlayClassName="fixed inset-0 bg-black-50 z-10000"
-        className="insert-auto overflow-auto p-5 bg-gray-700 border max-w-lg mx-auto my-12 rounded-lg outline-none"
+        className="insert-auto overflow-auto p-5 bg-gray-700 border max-w-lg mx-auto my-12 rounded-lg outline-none max-h-3/4"
       >
         <h1 className="mb-2">Spawn a card</h1>
         <input 
@@ -70,9 +75,9 @@ export const SpawnCardModal = React.memo(({
           onFocus={event => setTyping(true)}
           onBlur={event => setTyping(false)}/>
         {(spawnFilteredIDs.length) ? 
-          (spawnFilteredIDs.length>15) ?
+          (spawnFilteredIDs.length>RESULTS_LIMIT) ?
             <div className="text-white">Too many results</div> :
-            <table className="table-fixed rounded-lg w-full">
+            <table className="table-fixed rounded-lg w-full overflow-h-scroll">
               <thead>
                 <tr className="text-white bg-gray-800">
                   <th className="w-1/2">Name</th>
