@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux';
 import { useSetActiveCard } from "../../contexts/ActiveCardContext";
 import { getDisplayName } from "./Helpers";
 
+
 export const ReminderButton = React.memo(({
   triggerCardIds,
   playerN,
@@ -89,7 +90,7 @@ export const SideBarRoundStep = React.memo(({
       key={stepInfo.id}
       className={`flex flex-1 items-center`} 
       style={{
-        width: hovering ? "375px" : "100%",
+        width: hovering ? "575px" : "100%",
         fontSize: "1.7vh",
       }}
       onClick={() => handleButtonClick(stepInfo.id, stepInfo.text)}
@@ -97,7 +98,7 @@ export const SideBarRoundStep = React.memo(({
       onMouseLeave={() => setHovering(null)}
     >
       <div className="flex justify-center" style={{width:"3vh"}}/>
-      <div className={`flex h-full items-center justify-center ${isRoundStep ? "bg-red-800" : "bg-gray-500"}`} style={{width:"3vh"}}>
+      <div className={`flex h-full items-center justify-center ${isRoundStep ? "bg-red-800" : "bg-gray-500"} ${stepInfo.actions ? "underline" : ""}`} style={{width:"3vh"}}>
         {stepInfo.id}
       </div>
       {numTriggers > 0 &&
@@ -109,7 +110,7 @@ export const SideBarRoundStep = React.memo(({
         />
       }
       <div className={`flex flex-1 h-full items-center justify-center ${isRoundStep ? "bg-red-800" : "bg-gray-500"} ${hovering ? "block" : "hidden"}`} >
-        {stepInfo.text}
+        <div dangerouslySetInnerHTML={{ __html: stepInfo.text }} />
       </div>
     </div>
   )

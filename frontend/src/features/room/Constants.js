@@ -113,8 +113,8 @@ export const PHASEINFO = [
     "height" : "11%",
     "steps" : [
       {"id": "1.1", "text": "1.1: Beginning of the Resource phase"},
-      {"id": "1.R", "text": "1.2 & 1.3: Gain resources and draw cards"},
-      {"id": "1.4", "text": "1.4: End of the Resource phase"},
+      {"id": "1.R", "text": "1.2 & 1.3: Gain resources and draw cards - <u>then player actions</u>", "actions": true},
+      {"id": "1.4", "text": "1.4: End of the Resource phase"},  
     ]
   },
   {
@@ -123,7 +123,7 @@ export const PHASEINFO = [
     "height" : "11%",
     "steps" : [
       {"id": "2.1", "text": "2.1: Beginning of the Planning phase"},
-      {"id": "2.P", "text": "2.2 & 2.3: Play cards in turn order"},
+      {"id": "2.P", "text": "2.2 & 2.3: Play cards in turn order - <u>player actions throughout</u>", "actions": true},
       {"id": "2.4", "text": "2.4: End of the Planning phase"},
     ]
   },
@@ -132,10 +132,10 @@ export const PHASEINFO = [
     "label" : "Quest",
     "height" : "17%",
     "steps" : [
-      {"id": "3.1", "text": "3.1: Beginning of the Quest phase"},
-      {"id": "3.2", "text": "3.2: Commit characters to the quest"},
-      {"id": "3.3", "text": "3.3: Staging"},
-      {"id": "3.4", "text": "3.4: Quest resolution"},
+      {"id": "3.1", "text": "3.1: Beginning of the Quest phase - <u>then player actions</u>", "actions": true},
+      {"id": "3.2", "text": "3.2: Commit characters to the quest - <u>then player actions</u>", "actions": true},
+      {"id": "3.3", "text": "3.3: Staging - <u>then player actions</u>", "actions": true},
+      {"id": "3.4", "text": "3.4: Quest resolution - <u>then player actions</u>", "actions": true},
       {"id": "3.5", "text": "3.5: End of the Quest phase"},
     ]
   },
@@ -145,7 +145,7 @@ export const PHASEINFO = [
     "height" : "11%",
     "steps" : [
       {"id": "4.1", "text": "4.1: Beginning of the Travel phase"},
-      {"id": "4.2", "text": "4.2: Travel opportunity"},
+      {"id": "4.2", "text": "4.2: Travel opportunity - <u>then player actions</u>", "actions": true},
       {"id": "4.3", "text": "4.3: End of the Travel phase"},
     ]
   },
@@ -155,8 +155,8 @@ export const PHASEINFO = [
     "height" : "14%",
     "steps" : [
       {"id": "5.1", "text": "5.1: Beginning of the Encounter phase"},
-      {"id": "5.2", "text": "5.2: Optional engagement"},
-      {"id": "5.3", "text": "5.3: Engagement checks"},
+      {"id": "5.2", "text": "5.2: Optional engagement - <u>then player actions</u>", "actions": true},
+      {"id": "5.3", "text": "5.3: Engagement checks - <u>then player actions</u>", "actions": true},
       {"id": "5.4", "text": "5.4: End of the Encounter phase"},
     ]
   },
@@ -167,8 +167,8 @@ export const PHASEINFO = [
     "steps" : [
       {"id": "6.1", "text": "6.1: Beginning of the Combat phase"},
       {"id": "6.2", "text": "6.2: Deal shadow cards"},
-      {"id": "6.E", "text": "6.3-6.6: Enemy attacks"},
-      {"id": "6.P", "text": "6.7-6.10: Player attacks"},
+      {"id": "6.E", "text": "6.3-6.6: Enemy attacks - <u>player actions after each combat substep</u>", "actions": true},
+      {"id": "6.P", "text": "6.7-6.10: Player attacks - <u>player actions after each combat substep</u>", "actions": true},
       {"id": "6.11", "text": "6.11: End of the Combat phase"},
     ]
   },
@@ -178,7 +178,7 @@ export const PHASEINFO = [
     "height" : "11%",
     "steps" : [
       {"id": "7.1", "text": "7.1: Beginning of the Refresh phase"},
-      {"id": "7.R", "text": "7.2-7.4: Ready cards, raise threat, pass P1 token"},
+      {"id": "7.R", "text": "7.2-7.4: Ready cards, raise threat, pass P1 token - <u>then player actions</u>", "actions": true},
       {"id": "7.5", "text": "7.5: End of the Refresh phase"},
     ]
   },
