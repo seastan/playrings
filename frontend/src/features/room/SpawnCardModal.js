@@ -42,9 +42,9 @@ export const SpawnCardModal = React.memo(({
           const cardName = sideA["name"];
           const cardPack = cardRow["cardpackname"]
           if (
-            (cardName.toLowerCase().includes(filteredName.toLowerCase()) || 
-             cardPack.toLowerCase().includes(filteredName.toLowerCase()) ||
-             sideA.type.toLowerCase().includes(filteredName.toLowerCase())
+            (cardName.toLowerCase().includes(filteredName.toLowerCase()) 
+            //|| cardPack.toLowerCase().includes(filteredName.toLowerCase()) 
+            //|| sideA.type.toLowerCase().includes(filteredName.toLowerCase())
              ) &&
             !cardPack.toLowerCase().includes("custom") &&
             !(cardRow["playtest"] && !myUser.playtester)
