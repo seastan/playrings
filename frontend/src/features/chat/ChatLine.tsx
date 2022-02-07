@@ -7,12 +7,14 @@ interface Props {
 }
 
 export const ChatLine: React.FC<Props> = ({ message }) => {
+  const cleanText = message.text.replace(/<\/?.+?>/ig, '');
+
   if (message.game_update) {
     return (
       <div className="ml-2">
         <span className="text-white"> 
           <span className="text-gray-400 font-bold"><UserName userID={message.sent_by}/> </span> 
-          {message.text}
+          {cleanText}
         </span>
       </div>
     )
@@ -22,7 +24,7 @@ export const ChatLine: React.FC<Props> = ({ message }) => {
         <span className="text-blue-400">
           <UserName userID={message.sent_by} />
         </span>
-        <span className="text-white"> {message.text}</span>
+        <span className="text-white"> {cleanText}</span>
       </div>
     )
   }
