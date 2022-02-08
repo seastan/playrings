@@ -164,7 +164,7 @@ export const TopBarUser = React.memo(({
             className={"h-full w-1/2 float-left flex justify-center "+
               ((observingPlayerN===playerI) ? "bg-gray-500" : "hover:bg-gray-500")}
             onClick={() => handleObserveClick()}
-          >Obsv</div>
+          >Look</div>
         </div>
 
       </div>
