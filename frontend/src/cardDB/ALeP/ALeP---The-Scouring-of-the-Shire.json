@@ -238,7 +238,7 @@
                 "hitpoints": "",
                 "questpoints": "-",
                 "victorypoints": "",
-                "text": "Forced: After a side quest is defeated, search the encounter deck for a Shirriff enemy and add it to the staging area. Shuffle the encounter deck.\nForced: At the end of the round, place 1 resource token here and raise each player\u2019s threat by the total number of resource tokens here. Then, the players may choose to advance to the next quest stage.",
+                "text": "Forced: After a side quest is defeated, search the encounter deck and discard pile for a Shirriff enemy and add it to the staging area. Shuffle the encounter deck.\nForced: At the end of the round, place 1 resource token here and raise each player\u2019s threat by the total number of resource tokens here. Then, the players may choose to advance to the next quest stage.",
                 "shadow": ""
             }
         },
