@@ -13,6 +13,8 @@ export const GiantCard = React.memo(({playerN}) => {
   const visibleFace = getVisibleFace(activeCard, playerN);
   const visibleFaceSrc = getVisibleFaceSrc(activeCard, playerN, user);
   if (activeCard && !touchAction) {
+    var height = visibleFace.height >= visibleFace.width ? "70vh" : "50vh";
+    if (user.language === "English_HD") height = visibleFace.height >= visibleFace.width ? "90vh" : "70vh";
     return (
       <img 
         className="absolute"
@@ -27,7 +29,7 @@ export const GiantCard = React.memo(({playerN}) => {
           WebkitBoxShadow: '0 0 50px 20px black',
           boxShadow: '0 0 50px 20px black',
           zIndex: 1e6,
-          height: visibleFace.height >= visibleFace.width ? "70vh" : "50vh",
+          height: height,
         }}
       />
     )
