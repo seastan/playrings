@@ -39,7 +39,7 @@ export const Chat: React.FC<Props> = ({ hover, chatBroadcast, setTyping }) => {
       </div>
       <div 
         className="flex items-center justify-center float-left text-white bg-gray-700 hover:bg-gray-600 select-none"  
-        style={{height: "3vh", width: chatOnly ? "20%" : "100%", animation: newChatMessage ? "glowing 2s infinite ease" : ""}}
+        style={{height: "3vh", width: chatOnly ? "20%" : "100%", animation: newChatMessage ? "glowing 1s infinite ease" : ""}}
         onClick={() => handleChatOnlyClick()}>
         {chatOnly ? "Log" : "Chat"}
       </div>
