@@ -32,6 +32,7 @@ export const Profile: React.FC<Props> = () => {
   const [showModal, setShowModal] = useState(false);
   const [shareReplayId, setShareReplayId] = useState("");
   const [deletedIndices, setDeletedIndices] = useState<Array<number>>([]); 
+  var [wins, losses, incomplete] = [0, 0, 0];
   console.log('Rendering Profile');
   console.log(user);
   const { data, isLoading, isError, doFetchUrl, doFetchHash, setData } = useDataApi<any>(
@@ -138,6 +139,10 @@ export const Profile: React.FC<Props> = () => {
               <a className="text-white no-underline" href="https://www.patreon.com/dragncards">Unlock all saved games</a>
             </Button>
           }
+          {/* <h1 className="font-semibold mb-4 text-black">Stats</h1>
+          Wins: 
+          Losses: 
+          Incomplete:  */}
         </div>
       </Container>
       

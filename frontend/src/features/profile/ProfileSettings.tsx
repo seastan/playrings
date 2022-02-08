@@ -14,6 +14,7 @@ export const ProfileSettings: React.FC<Props> = () => {
   const required_support_level = 5;
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
+  const [showResolutionMessage, setShowResolutionMessage] = useState(false);
   const { inputs, handleSubmit, handleInputChange, setInputs } = useForm(async () => {
     var valid = true;
     [inputs.background_url, inputs.player_back_url, inputs.encounter_back_url].forEach((str) => {
@@ -59,6 +60,10 @@ export const ProfileSettings: React.FC<Props> = () => {
     return null;
   }
   console.log('Rendering ProfileSettings');
+  if (inputs.language === "English_HD" && user.supporter_level < 5) {
+    setInputs({...inputs, language: user.language || ""})
+    setShowResolutionMessage(true);
+  }
   return (
     <Container>
       <div className="bg-gray-100 p-4 rounded max-w-xl shadow">
@@ -67,7 +72,7 @@ export const ProfileSettings: React.FC<Props> = () => {
         <fieldset>
           <div className="mb-4">
             <label className="block text-sm font-bold mb-2">
-              Language (Images only)
+              Card Images
             </label>
             <select 
               name="language"
@@ -75,9 +80,11 @@ export const ProfileSettings: React.FC<Props> = () => {
               onChange={handleInputChange}
               value={inputs.language || "English"}>
               <option value="English">English</option>
+              <option value="English_HD">English (High Resolution)</option>
               <option value="French">French</option>
               <option value="Spanish">Spanish</option>
             </select>
+            {showResolutionMessage && <div className="alert alert-danger mt-4">High resolution images are only available to certain Patreon supporters.</div>}
             <label className="block text-sm font-bold mb-2 mt-4">
               Background image url
             </label>
