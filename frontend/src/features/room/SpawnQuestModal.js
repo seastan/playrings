@@ -109,6 +109,8 @@ export const SpawnQuestModal = React.memo(({
     setShowModal,
     gameBroadcast,
     chatBroadcast,
+    tooltipIds,
+    setTooltipIds,
 }) => {  
     const privacyTypeStore = state => state?.gameUi?.privacyType;
     const privacyType = useSelector(privacyTypeStore);
@@ -126,7 +128,7 @@ export const SpawnQuestModal = React.memo(({
 
       const res = await fetch(questsOCTGN[index]);
       const xmlText = await res.text();
-      loadDeckFromXmlText(xmlText, playerN, gameBroadcast, chatBroadcast);
+      loadDeckFromXmlText(xmlText, playerN, gameBroadcast, chatBroadcast, privacyType, setTooltipIds);
       setShowModal(null);
     }
       // reader.readAsText(questsOCTGN[index]);
@@ -150,9 +152,11 @@ export const SpawnQuestModal = React.memo(({
         const questPath = questsOCTGN[props.questIndex];
         const res = await fetch(questPath);
         const xmlText = await res.text();
-        loadDeckFromXmlText(xmlText, playerN, gameBroadcast, chatBroadcast);
+        loadDeckFromXmlText(xmlText, playerN, gameBroadcast, chatBroadcast, privacyType, setTooltipIds);
         setShowModal(null);
         const modeAndId = getModeLetterQuestIdFromPath(questPath);
+        //const questId = getQuestIdFromPath(questPath);
+        
         const newOptions = {...options, questModeAndId: modeAndId};
         gameBroadcast("game_action", {action: "update_values", options: {updates: [["game","options", newOptions]]}});
         //gameBroadcast("game_action", {action: "update_values", options: {updates: [["game","questModeAndId", modeAndId]]}});

@@ -20,6 +20,7 @@ export const TopBarMenu = React.memo(({
     chatBroadcast,
     playerN,
     setLoaded,
+    setTooltipIds,
 }) => {
   const myUser = useProfile();
   const myUserID = myUser?.id;
@@ -82,7 +83,7 @@ export const TopBarMenu = React.memo(({
       handleMenuClick(resetData);
       setLoaded(false);
       gameBroadcast("game_action", {action: "update_values", options: {updates: [["game", "options", newOptions]]}})
-      if (options.questModeAndId) loadDeckFromModeAndId(options.questModeAndId, playerN, gameBroadcast, chatBroadcast);
+      if (options.questModeAndId) loadDeckFromModeAndId(options.questModeAndId, playerN, gameBroadcast, chatBroadcast, options["privacyType"]);
     } else if (data.action === "load_deck") {
       loadFileDeck();
     } else if (data.action === "load_ringsdb") {
@@ -117,7 +118,7 @@ export const TopBarMenu = React.memo(({
       newRingsDbInfo[playerIndex] = {id: ringsDbId, type: ringsDbType, domain: ringsDbDomain};
       const newOptions = {...options, ringsDbInfo: newRingsDbInfo, loaded: true}
       gameBroadcast("game_action", {action: "update_values", options: {updates: [["game", "options", newOptions]]}});
-      loadRingsDb(null, playerN, ringsDbDomain, ringsDbType, ringsDbId, gameBroadcast, chatBroadcast);
+      loadRingsDb(null, playerN, ringsDbDomain, ringsDbType, ringsDbId, gameBroadcast, chatBroadcast, setTooltipIds);
     } else if (data.action === "unload_my_deck") {
       // Delete all cards you own
       chatBroadcast("game_update",{message: "unloaded their deck."});
@@ -218,7 +219,7 @@ export const TopBarMenu = React.memo(({
     const reader = new FileReader();
     reader.onload = async (event) => { 
       const xmlText = (event.target.result)
-      loadDeckFromXmlText(xmlText, playerN, gameBroadcast, chatBroadcast, options["privacyType"]);
+      loadDeckFromXmlText(xmlText, playerN, gameBroadcast, chatBroadcast, options["privacyType"], setTooltipIds);
     }
     reader.readAsText(event.target.files[0]);
     inputFileDeck.current.value = "";
