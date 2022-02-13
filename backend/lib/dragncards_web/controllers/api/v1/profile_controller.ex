@@ -45,6 +45,7 @@ defmodule DragnCardsWeb.API.V1.ProfileController do
       player_back_url: user["player_back_url"],
       encounter_back_url: user["encounter_back_url"],
       language: user["language"],
+      hidden_tooltips: user["hidden_tooltips"]
     }
     u = Repo.get!(User, user_id)
     u = Ecto.Changeset.change(u, updates)

@@ -5,6 +5,7 @@ import Button from "../../components/basic/Button";
 import useProfile from "../../hooks/useProfile";
 import { withStyles } from "@material-ui/core/styles";
 import { TOOLTIPINFO } from "./Constants";
+import axios from "axios";
 
 
 const CustomColorCheckbox = withStyles({
@@ -26,13 +27,38 @@ export const TooltipModal = React.memo(({
     gameBroadcast,
 }) => {
     const myUser = useProfile();
-    const handleClick = () => {
+    //alert(myUser.hidden_tooltips)
+    const handleHideClick = async () => {
+      const hiddenTooltips = myUser.hidden_tooltips ? [...myUser.hidden_tooltips, tooltipId] : [tooltipId];
+      const data = {
+        user: {
+          ...myUser,
+          hidden_tooltips: hiddenTooltips
+        }
+      };
+      const res = await axios.post("/be/api/v1/profile/update", data);
+      removeTooltip();
+    }
+
+
+    const handleCloseClick = () => {
+      removeTooltip();
+    }
+
+    const removeTooltip = () => {
       var index = tooltipIds.indexOf(tooltipId);
       if (index !== -1) {
         tooltipIds.splice(index, 1);
       }
       setTooltipIds([...tooltipIds])
     }
+
+    if (myUser.hidden_tooltips && myUser.hidden_tooltips.includes(tooltipId)) {
+      alert('removing '+ tooltipId)
+      removeTooltip();
+      return null;
+    }
+
     return(
       <ReactModal
         closeTimeoutMS={200}
@@ -43,10 +69,10 @@ export const TooltipModal = React.memo(({
       >
         <div className="text-white mb-2">{TOOLTIPINFO[tooltipId]}</div>    
         <span>
-          <Button onClick={handleClick} className="inline mt-2">
+          <Button onClick={handleHideClick} className="inline mt-2">
             Never show again
           </Button>
-          <Button onClick={handleClick} className="inline mt-2" isPrimary>
+          <Button onClick={handleCloseClick} className="inline mt-2" isPrimary>
             Close
           </Button>
         </span>

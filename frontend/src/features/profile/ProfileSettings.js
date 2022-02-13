@@ -6,9 +6,8 @@ import useProfile from "../../hooks/useProfile";
 import useForm from "../../hooks/useForm";
 import axios from "axios";
 
-interface Props {}
 
-export const ProfileSettings: React.FC<Props> = () => {
+export const ProfileSettings = () => {
   const user = useProfile();
   const history = useHistory();
   const required_support_level = 5;

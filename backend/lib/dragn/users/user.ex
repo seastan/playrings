@@ -20,7 +20,7 @@ defmodule DragnCards.Users.User do
     field(:encounter_back_url, :string)
     field(:playtester, :integer)
     field(:language, :string)
-
+    field(:hidden_tooltips, {:array, :string})
     timestamps()
   end
 
@@ -53,6 +53,7 @@ defmodule DragnCards.Users.User do
       encounter_back_url: user.encounter_back_url,
       playtester: user.playtester,
       language: user.language,
+      hidden_tooltips: user.hidden_tooltips,
     }
   end
 
