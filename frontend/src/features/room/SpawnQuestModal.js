@@ -124,14 +124,16 @@ export const SpawnQuestModal = React.memo(({
 
     console.log("Rendering SpawnQuestModal", searchString);
     const handleSpawnClick = async(index) => {
-      console.log(questsOCTGN[index])
 
-      const res = await fetch(questsOCTGN[index]);
+      const questPath = questsOCTGN[index];
+      const modeAndId = getModeLetterQuestIdFromPath(questPath);
+      const newOptions = {...options, questModeAndId: modeAndId};
+      const res = await fetch(questPath);
       const xmlText = await res.text();
       loadDeckFromXmlText(xmlText, playerN, gameBroadcast, chatBroadcast, privacyType, setTooltipIds);
       setShowModal(null);
+      gameBroadcast("game_action", {action: "update_values", options: {updates: [["game","options", newOptions]]}});
     }
-      // reader.readAsText(questsOCTGN[index]);
 
     const handleSpawnTyping = (event) => {
       //setSpawnCardName(event.target.value);

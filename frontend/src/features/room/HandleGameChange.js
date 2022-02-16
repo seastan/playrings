@@ -30,27 +30,27 @@ export const HandleGameChange = React.memo(({
     //     //processGameChange(prevGame, game, actionProps);
     // }, [game]);
 
-    useEffect(() => {
-        if (questModeAndId === prevQuestModeAndId) return;
-        else setPrevQuestModeAndId(questModeAndId);
-        const questName = getQuestNameFromModeAndId(questModeAndId);
-        if (questName === "The Fortress of Nurn") {
-            const result = window.confirm("Perform automated setup for this quest? (Make sure all player decks are loaded first, and all mulligans have been taken.)")
-            if (!result) return;
-            for (var i=1; i<=game.numPlayers; i++) {
-                const playerI = "player"+i;
-                const newActionProps = {...actionProps, playerN: playerI}
-                const options = {value: 8, destGroupId: playerI+"Engaged"}
-                for (var j=0; j<5; j++) {
-                    groupAction("dealX", playerI+"Deck", options, newActionProps);
-                }
-            }
-            const eDeck2StackIds = game.groupById["sharedEncounterDeck2"].stackIds;
-            for (var i=0; i<4; i++) {
-                gameBroadcast("game_action", {action: "move_stack", options: {stack_id: eDeck2StackIds[i], dest_group_id: "sharedStaging", dest_stack_index: i+1, combine: true, preserve_state: false}})
-            }
-        }
-    }, [questModeAndId]);
+    // useEffect(() => {
+    //     if (questModeAndId === prevQuestModeAndId) return;
+    //     else setPrevQuestModeAndId(questModeAndId);
+    //     const questName = getQuestNameFromModeAndId(questModeAndId);
+    //     if (questName === "The Fortress of Nurn") {
+    //         const result = window.confirm("Perform automated setup for this quest? (Make sure all player decks are loaded first, and all mulligans have been taken.)")
+    //         if (!result) return;
+    //         for (var i=1; i<=game.numPlayers; i++) {
+    //             const playerI = "player"+i;
+    //             const newActionProps = {...actionProps, playerN: playerI}
+    //             const options = {value: 8, destGroupId: playerI+"Engaged"}
+    //             for (var j=0; j<5; j++) {
+    //                 groupAction("dealX", playerI+"Deck", options, newActionProps);
+    //             }
+    //         }
+    //         const eDeck2StackIds = game.groupById["sharedEncounterDeck2"].stackIds;
+    //         for (var i=0; i<4; i++) {
+    //             gameBroadcast("game_action", {action: "move_stack", options: {stack_id: eDeck2StackIds[i], dest_group_id: "sharedStaging", dest_stack_index: i+1, combine: true, preserve_state: false}})
+    //         }
+    //     }
+    // }, [questModeAndId]);
 
     return (null);
 

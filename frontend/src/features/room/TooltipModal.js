@@ -1,11 +1,12 @@
 import { Checkbox } from "@material-ui/core";
-import React, {useState} from "react";
+import React, {useMemo, useState} from "react";
 import ReactModal from "react-modal";
 import Button from "../../components/basic/Button";
 import useProfile from "../../hooks/useProfile";
 import { withStyles } from "@material-ui/core/styles";
 import { TOOLTIPINFO } from "./Constants";
 import axios from "axios";
+import useAuth from "../../hooks/useAuth";
 
 
 const CustomColorCheckbox = withStyles({
@@ -27,16 +28,22 @@ export const TooltipModal = React.memo(({
     gameBroadcast,
 }) => {
     const myUser = useProfile();
-    //alert(myUser.hidden_tooltips)
+    const { authToken, renewToken, setAuthAndRenewToken } = useAuth();
+    const authOptions = useMemo(
+      () => ({
+        headers: {
+          Authorization: authToken,
+        },
+      }),
+      [authToken]
+    );
     const handleHideClick = async () => {
       const hiddenTooltips = myUser.hidden_tooltips ? [...myUser.hidden_tooltips, tooltipId] : [tooltipId];
-      const data = {
-        user: {
-          ...myUser,
-          hidden_tooltips: hiddenTooltips
-        }
-      };
-      const res = await axios.post("/be/api/v1/profile/update", data);
+      const newUser = {...myUser, hidden_tooltips: hiddenTooltips}
+      const updateData = {user: newUser};
+      await axios.post("/be/api/v1/profile/update", updateData, authOptions);
+      const newProfileData = {user_profile: newUser}
+      myUser.setData(newProfileData);
       removeTooltip();
     }
 
@@ -54,7 +61,6 @@ export const TooltipModal = React.memo(({
     }
 
     if (myUser.hidden_tooltips && myUser.hidden_tooltips.includes(tooltipId)) {
-      alert('removing '+ tooltipId)
       removeTooltip();
       return null;
     }
@@ -65,7 +71,7 @@ export const TooltipModal = React.memo(({
         isOpen={true}
         contentLabel="Spawn a card"
         overlayClassName="fixed inset-0 bg-black-50 z-10000"
-        className="insert-auto overflow-auto p-5 bg-gray-700 border max-w-xs mx-auto my-12 rounded-lg outline-none max-h-3/4"
+        className="insert-auto overflow-auto p-5 bg-gray-800 max-w-xs ml-48 my-24 rounded-lg outline-none max-h-3/4"
       >
         <div className="text-white mb-2">{TOOLTIPINFO[tooltipId]}</div>    
         <span>

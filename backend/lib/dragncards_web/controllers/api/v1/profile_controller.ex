@@ -38,26 +38,53 @@ defmodule DragnCardsWeb.API.V1.ProfileController do
 
   # Update: Update profile settings.
   @spec update(Conn.t(), map()) :: Conn.t()
-  def update(conn, %{"user" => user}) do
-    user_id = user["id"]
-    updates = %{
-      background_url: user["background_url"],
-      player_back_url: user["player_back_url"],
-      encounter_back_url: user["encounter_back_url"],
-      language: user["language"],
-      hidden_tooltips: user["hidden_tooltips"]
-    }
+  #def update(conn, %{"user" => user}) do
+  def update(conn, %{"user" => user_params}) do
+    user_id = user_params["id"]
     u = Repo.get!(User, user_id)
+    updates = %{
+      background_url: user_params["background_url"],
+      player_back_url: user_params["player_back_url"],
+      encounter_back_url: user_params["encounter_back_url"],
+      language: user_params["language"],
+      hidden_tooltips: user_params["hidden_tooltips"] || u.hidden_tooltips
+    }
     u = Ecto.Changeset.change(u, updates)
     case Repo.update(u) do
-      {:ok, struct}       -> # Updated with success
+      {:ok, _struct}       -> # Updated with success
+        Pow.Plug.update_user(conn, %{}) # Refresh the session
         conn
         |> json(%{success: %{message: "Updated settings"}})
       {:error, changeset} -> # Something went wrong
-        IO.inspect(changeset, label: "Failed to update settings")
         conn
         |> json(%{success: %{message: "Failed to update settings"}})
     end
+
+
+
+    # IO.puts("r")
+    # IO.inspect("r")
+    # conn
+    # |> json(%{success: %{message: "Updated user"}})
+    # user_id = user["id"]
+    # u = Repo.get!(User, user_id)
+    # updates = %{
+    #   background_url: user["background_url"],
+    #   player_back_url: user["player_back_url"],
+    #   encounter_back_url: user["encounter_back_url"],
+    #   language: user["language"],
+    #   hidden_tooltips: user["hidden_tooltips"] || u.hidden_tooltips
+    # }
+    # u = Ecto.Changeset.change(u, updates)
+    # case Repo.update(u) do
+    #   {:ok, _struct}       -> # Updated with success
+    #     conn
+    #     |> json(%{success: %{message: "Updated settings"}})
+    #   {:error, changeset} -> # Something went wrong
+    #     IO.inspect(changeset, label: "Failed to update settings")
+    #     conn
+    #     |> json(%{success: %{message: "Failed to update settings"}})
+    # end
 
   end
 end

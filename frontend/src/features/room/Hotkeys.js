@@ -144,7 +144,7 @@ export const Hotkeys = React.memo(({
         <tr className={"bg-gray-600"}>
           <td className="p-1 text-center"><div className={keyClass} style={keyStyleL}>Shift</div>
           <div className={keyClass} style={keyStyle}>C</div></td>
-          <td className="text-center">Discard all othe cards in this card's stack</td>
+          <td className="text-center">Discard all other cards in this card's stack</td>
         </tr>
         <tr className={"bg-gray-500"}>
           <td className="p-1 text-center"><div className={keyClass} style={keyStyle}>B</div></td>

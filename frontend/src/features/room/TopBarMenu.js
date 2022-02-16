@@ -4,12 +4,12 @@ import { useHistory } from "react-router-dom";
 import useProfile from "../../hooks/useProfile";
 import store from "../../store";
 import { setGame } from "./gameUiSlice";
-import { flatListOfCards, loadRingsDb, playerNToPlayerIndex, processLoadList, processPostLoad } from "./Helpers";
+import { flatListOfCards, functionOnMatchingCards, getCardByGroupIdStackIndexCardIndex, getGroupIdStackIndexCardIndex, getSideAName, listOfMatchingCards, loadRingsDb, playerNToPlayerIndex, processLoadList, processPostLoad } from "./Helpers";
 import { loadDeckFromXmlText, getRandomIntInclusive } from "./Helpers";
 import { useSetTouchMode } from "../../contexts/TouchModeContext";
 import { useSetTouchAction } from "../../contexts/TouchActionContext";
 import { useCardSizeFactor, useSetCardSizeFactor } from "../../contexts/CardSizeFactorContext";
-import { loadDeckFromModeAndId } from "./SpawnQuestModal";
+import { getQuestNameFromModeAndId, loadDeckFromModeAndId } from "./SpawnQuestModal";
 import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
@@ -199,6 +199,104 @@ export const TopBarMenu = React.memo(({
     } else if (data.action === "quest_mode") {
       gameBroadcast("game_action", {action: "update_values", options: {updates: [["game", "questMode", data.mode]]}});
       chatBroadcast("game_update", {message: "set the quest mode to " + data.mode + "."});
+    } else if (data.action === "glittering_caves") {
+      const state = store.getState();
+      const gameUi = state.gameUi;
+      const game = gameUi.game;
+      const questModeAndId = game?.options?.questModeAndId;
+      if (!questModeAndId || !questModeAndId.includes("A1.7")) {
+        alert("The Glittering Caves not detected.")
+        return;
+      }
+      const result = window.confirm("This function is meant to be used after the Caves Map has been set up so that all caves are connected. Continue?")
+      if (!result) return;
+      const searchStackIds = game.groupById["sharedEncounterDeck2"].stackIds;
+      if (searchStackIds.length < 12) return;
+      if (game.groupById["sharedExtra1"].stackIds.length < 4) return;
+      if (game.groupById["sharedExtra2"].stackIds.length < 4) return;
+      if (game.groupById["sharedExtra3"].stackIds.length < 4) return;
+      const rightColNames = [
+          getSideAName(getCardByGroupIdStackIndexCardIndex(game, "sharedExtra1", 3, 0)),
+          getSideAName(getCardByGroupIdStackIndexCardIndex(game, "sharedExtra2", 3, 0)),
+          getSideAName(getCardByGroupIdStackIndexCardIndex(game, "sharedExtra3", 3, 0)),
+      ];
+      const searchCards = []
+      for (var id of searchStackIds) {
+          const cardId = game.stackById[id].cardIds[0];
+          const card = game.cardById[cardId]
+          searchCards.push(card)
+      }
+
+      function getNRandomFromPositionCoordinates(n) {
+          var positionCoordinates = [[0,0],[0,1],[0,2],[0,3],[1,0],[1,1],[1,2],[1,3],[2,0],[2,1],[2,2],[2,3]];
+          var selectedPositionCoordinates = [];
+          for (var i=0; i<n; i++) {
+              var randomIndex = Math.floor(Math.random()*positionCoordinates.length);
+              selectedPositionCoordinates.push(positionCoordinates.splice(randomIndex, 1)[0]);
+          }
+          return selectedPositionCoordinates;
+      }
+
+      // Deal clues
+      const numResources = 2*game.numPlayers;
+      const resourcePositionCoordinates = getNRandomFromPositionCoordinates(numResources);
+      var rightColSatisfied = false;
+      for (var i=0; i<numResources; i++) {
+          var coordinates = resourcePositionCoordinates[i];
+          if (i === numResources - 1 && !rightColSatisfied) {
+              const index = getRandomIntInclusive(0,2);
+              coordinates = [index,3];
+          } else {
+              if (coordinates[1] === 3) rightColSatisfied = true;
+              coordinates = resourcePositionCoordinates[i];
+          }
+          gameBroadcast("game_action", {action: "move_card", options: {card_id: searchCards[i].id, dest_group_id: "sharedExtra"+(coordinates[0]+1), dest_stack_index: coordinates[1], dest_card_index: 1, combine: true, preserve_state: true}})
+      }
+
+      // Attack 1 card to Helm's Horn
+      gameBroadcast("game_action", {action: "deal_x", options: {group_id: "sharedEncounterDeck2", dest_group_id: "sharedStaging", top_x: 1}});
+      const hornCard = listOfMatchingCards(gameUi, [["sides","A","name", "Helm's Horn"]])[0];
+      const hornGSC = getGroupIdStackIndexCardIndex(game, hornCard.id);
+      if (hornCard) gameBroadcast("game_action", {action: "move_card", options: {card_id: searchCards[numResources].id, dest_group_id: hornGSC["groupId"], dest_stack_index: hornGSC["stackIndex"], dest_card_index: 1, combine: true, preserve_state: true}})        
+
+      // Deal damage to positions
+      for (var i=numResources+1; i<12; i++) {
+          var mapCardName = searchCards[i]["sides"]["A"]["cornerText"];
+          functionOnMatchingCards(gameUi, gameBroadcast, chatBroadcast, [["sides","A","name", mapCardName]], "increment_token", ["damage", 1] )
+      }
+
+      // Shuffle in positions
+      gameBroadcast("game_action", {action: "move_stacks", options: {orig_group_id: "sharedEncounterDeck2", dest_group_id: "sharedEncounterDeck", top_n: 11-numResources,  position: "shuffle"}})
+
+
+      // Place player tokens
+      functionOnMatchingCards(gameUi, gameBroadcast, chatBroadcast, [["groupId","sharedExtra1"],["stackIndex",0]], "increment_token", ["attack", 1] )
+      if (game.numPlayers > 1) functionOnMatchingCards(gameUi, gameBroadcast, chatBroadcast, [["groupId","sharedExtra1"],["stackIndex",0]], "increment_token", ["defense", 1] )
+      if (game.numPlayers > 2) functionOnMatchingCards(gameUi, gameBroadcast, chatBroadcast, [["groupId","sharedExtra1"],["stackIndex",0]], "increment_token", ["hitPoints", 1] )
+      if (game.numPlayers > 3) functionOnMatchingCards(gameUi, gameBroadcast, chatBroadcast, [["groupId","sharedExtra1"],["stackIndex",0]], "increment_token", ["time", 1] )
+      functionOnMatchingCards(gameUi, gameBroadcast, chatBroadcast, [["groupId","sharedExtra3"],["stackIndex",3]], "increment_token", ["threat", 1] )
+
+    } else if (data.action === "fortress_of_nurn") {
+      const state = store.getState();
+      const gameUi = state.gameUi;
+      const game = gameUi.game;
+      const questModeAndId = game?.options?.questModeAndId;
+      if (!questModeAndId || !questModeAndId.includes("09.9")) {
+        alert("The Fortress of Nurn not detected.")
+        return;
+      }
+      const result = window.confirm("Perform automated setup for this quest? (Make sure all player decks are loaded first, and all mulligans have been taken.)")
+      if (!result) return;
+      for (var i=1; i<=game.numPlayers; i++) {
+        const playerI = "player"+i;
+        for (var j=0; j<5; j++) {
+          gameBroadcast("game_action", {action: "deal_x", options: {group_id: playerI+"Deck", dest_group_id: playerI+"Engaged", top_x: 8}});
+        }
+      }
+      const eDeck2StackIds = game.groupById["sharedEncounterDeck2"].stackIds;
+      for (var i=0; i<4; i++) {
+        gameBroadcast("game_action", {action: "move_stack", options: {stack_id: eDeck2StackIds[i], dest_group_id: "sharedStaging", dest_stack_index: i+1, combine: true, preserve_state: false}})
+      }
     }
   }
 
@@ -465,6 +563,16 @@ export const TopBarMenu = React.memo(({
             <li key={"quest_mode_battle"}><a onClick={() => handleMenuClick({action:"quest_mode", mode: "Battle"})} href="#">Battle quest</a></li>
             <li key={"quest_mode_siege"}><a onClick={() => handleMenuClick({action:"quest_mode", mode: "Siege"})} href="#">Siege quest</a></li>
             <li key={"quest_mode_normal"}><a onClick={() => handleMenuClick({action:"quest_mode", mode: "Normal"})} href="#">Normal quest</a></li>
+          </ul>
+        </li> 
+        <li key={"advanced_functions"}>
+          <a href="#">
+            Advanced Functions
+            <span className="float-right mr-1"><FontAwesomeIcon icon={faChevronRight}/></span>
+          </a>
+          <ul className="third-level-menu">
+            <li key={"fortress_of_nurn"}><a onClick={() => handleMenuClick({action:"fortress_of_nurn"})} href="#">The Fortress of Nurn Setup</a></li>
+            <li key={"glittering_caves"}><a onClick={() => handleMenuClick({action:"glittering_caves"})} href="#">Glittering Caves Clues</a></li>
           </ul>
         </li> 
         <li key={"download"}>

@@ -26,10 +26,13 @@ defmodule DragnCards.Users.User do
 
   def changeset(user_or_changeset, attrs) do
     user_or_changeset
-    |> pow_changeset(attrs)
-    |> pow_extension_changeset(attrs)
-    |> Ecto.Changeset.cast(attrs, [:alias])
-    |> Ecto.Changeset.validate_required([:alias])
+    |> pow_user_id_field_changeset(attrs)
+    |> pow_password_changeset(attrs)
+#    user_or_changeset
+#    |> pow_changeset(attrs)
+#    |> pow_extension_changeset(attrs)
+#    |> Ecto.Changeset.cast(attrs, [:alias])
+#    |> Ecto.Changeset.validate_required([:alias])
     |> Ecto.Changeset.unique_constraint(:alias)
   end
 

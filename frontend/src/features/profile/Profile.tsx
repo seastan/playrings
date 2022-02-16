@@ -10,6 +10,7 @@ import ShareGameModal from "./ShareGameModal";
 import { parseISO, format, formatDistanceToNow } from "date-fns";
 import useForm from "../../hooks/useForm";
 import axios from "axios";
+import AuthTest from "../../components/AuthTest";
 
 const columns = [
   {name: "uuid", label: "UUID", options: { filter: false, display: false }},

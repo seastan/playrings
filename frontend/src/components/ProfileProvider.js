@@ -4,13 +4,8 @@ import useAuthDataApi from "../hooks/useAuthDataApi";
 import useAuth from "../hooks/useAuth";
 import useInterval from "../hooks/useInterval";
 import { format } from "date-fns";
-import { Profile } from "elixir-backend";
 
-interface Props {
-  children: React.ReactNode;
-}
-
-export const ProfileProvider: React.FC<Props> = ({ children }) => {
+export const ProfileProvider = ({ children }) => {
   const { setAuthAndRenewToken } = useAuth();
   const onError = useCallback(() => {
     // If we can't load the profile data, we have stale tokens
@@ -18,7 +13,7 @@ export const ProfileProvider: React.FC<Props> = ({ children }) => {
     // Forget them and log the user out
     setAuthAndRenewToken(null, null);
   }, [setAuthAndRenewToken]);
-  const { data, doFetchHash } = useAuthDataApi(
+  const { data, doFetchHash, setData } = useAuthDataApi(
     "/be/api/v1/profile",
     null,
     onError
@@ -35,10 +30,12 @@ export const ProfileProvider: React.FC<Props> = ({ children }) => {
     ts = ts.slice(0, -1);
     doFetchHash(ts);
   }, [doFetchHash]);
-  useInterval(fetchProfileEvery10Mins, 60 * 1000);
-
-  const user: null | Profile =
+  useInterval(fetchProfileEvery10Mins, 6 * 1000);
+  const user =
     data != null && data.user_profile != null ? data.user_profile : null;
+  if (user) user.setData = setData;
+  console.log("data prov ",data)
+
   return (
     <ProfileContext.Provider value={user}>{children}</ProfileContext.Provider>
   );

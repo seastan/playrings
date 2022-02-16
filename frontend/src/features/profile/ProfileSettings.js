@@ -1,14 +1,24 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useHistory } from "react-router-dom";
 import Container from "../../components/basic/Container";
 import Button from "../../components/basic/Button";
 import useProfile from "../../hooks/useProfile";
 import useForm from "../../hooks/useForm";
 import axios from "axios";
+import useAuth from "../../hooks/useAuth";
 
 
 export const ProfileSettings = () => {
   const user = useProfile();
+  const { authToken, renewToken, setAuthAndRenewToken } = useAuth();
+  const authOptions = useMemo(
+    () => ({
+      headers: {
+        Authorization: authToken,
+      },
+    }),
+    [authToken]
+  );
   const history = useHistory();
   const required_support_level = 5;
   const [errorMessage, setErrorMessage] = useState("");
@@ -23,8 +33,9 @@ export const ProfileSettings = () => {
       setErrorMessage("All images must be .jpg or .png");
       return;
     }
-    const data = {
+    const updateData = {
       user: {
+        ...user,
         id: user?.id,
         language: inputs.language,
         background_url: inputs.background_url,
@@ -32,15 +43,26 @@ export const ProfileSettings = () => {
         encounter_back_url: inputs.encounter_back_url,
       },
     };
-    const res = await axios.post("/be/api/v1/profile/update", data);
+    //const res = await axios.post("/be/api/v1/profile/update", data);
+    const res = await axios.post("/be/api/v1/profile/update", updateData, authOptions);
+    const newProfileData = {
+      user_profile: {
+        ...user,
+        id: user?.id,
+        language: inputs.language,
+        background_url: inputs.background_url,
+        player_back_url: inputs.player_back_url,
+        encounter_back_url: inputs.encounter_back_url,
+      }}
+    user.setData(newProfileData);
     if (
       res.status === 200
     ) {
-      setSuccessMessage("Settings updated. Changes will take effect next time you log in.");
+      setSuccessMessage("Settings updated.");
       setErrorMessage("");
     } else {
       setSuccessMessage("");
-      setErrorMessage("Error.");
+      setErrorMessage("Error."); 
     }
     
   });
@@ -59,7 +81,7 @@ export const ProfileSettings = () => {
     return null;
   }
   console.log('Rendering ProfileSettings');
-  if (inputs.language === "English_HD" && user.supporter_level < 5) {
+  if (inputs.language === "English_HD" && user.supporter_level < 5 && user.language !== "English_HD") {
     setInputs({...inputs, language: user.language || ""})
     setShowResolutionMessage(true);
   }
