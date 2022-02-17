@@ -4,7 +4,7 @@ import { useHistory } from "react-router-dom";
 import useProfile from "../../hooks/useProfile";
 import store from "../../store";
 import { setGame } from "./gameUiSlice";
-import { flatListOfCards, functionOnMatchingCards, getCardByGroupIdStackIndexCardIndex, getGroupIdStackIndexCardIndex, getSideAName, listOfMatchingCards, loadRingsDb, playerNToPlayerIndex, processLoadList, processPostLoad } from "./Helpers";
+import { flatListOfCards, functionOnMatchingCards, getCardByGroupIdStackIndexCardIndex, getGroupIdStackIndexCardIndex, getSideAName, listOfMatchingCards, loadRingsDb, playerNToPlayerIndex, processLoadList, processPostLoad, shuffle } from "./Helpers";
 import { loadDeckFromXmlText, getRandomIntInclusive } from "./Helpers";
 import { useSetTouchMode } from "../../contexts/TouchModeContext";
 import { useSetTouchAction } from "../../contexts/TouchActionContext";
@@ -285,7 +285,50 @@ export const TopBarMenu = React.memo(({
         }
       });
       alert("Complete! Players can find their capture decks under View > Player X > Player X Deck 2.")
-
+    } else if (data.action === "to_catch_an_orc") {
+      const state = store.getState();
+      const gameUi = state.gameUi;
+      const game = gameUi.game;
+      const questModeAndId = game?.options?.questModeAndId;
+      if (!questModeAndId || !questModeAndId.includes("04.2")) {
+        alert("To Catch an Orc not detected.")
+        return;
+      }      
+      const result = window.confirm("The function will set up each player's out-of-play deck which can be found under View > Player X > Player X Deck 2. Continue?")
+      if (!result) return;
+      const shuffledPlayersIds = shuffle(Array.from({length: game.numPlayers}, (_, i) => i + 1))
+      alert(shuffledPlayersIds)
+      const guards = listOfMatchingCards(gameUi, [["sides","A","name","Mugash's Guard"]]);
+      if (guards.length < game.numPlayers-1) {
+        alert("Setup failed, not enough Mugash's Guards found.");
+        return;
+      }
+      for (var i=0; i<game.numPlayers; i++) {
+        const playerI = "player"+shuffledPlayersIds[i];
+        const deck = game.groupById[playerI+"Deck"];
+        if (deck.stackIds.length < 20) {
+          alert("Setup failed, "+playerI+" does not have enough cards in their deck.");
+          return;
+        }
+        // Move 20 cards to out-of-play deck
+        gameBroadcast("game_action", {action: "move_stacks", options: {orig_group_id: playerI+"Deck", dest_group_id: playerI+"Deck2", top_n: 20, position: "top"}})
+        if (i === 0) {
+          // Move Mugash
+          gameBroadcast("game_action", {
+            action: "action_on_matching_cards", 
+            options: {
+              criteria:[["sides", "A", "name", "Mugash"]], 
+              action: "move_card", 
+              options: {dest_group_id: playerI+"Deck2", dest_stack_index: 0, dest_card_index: 0, combine: false, preserve_state: false}
+            }
+          })
+        } else {
+          const guard = guards[i-1];
+          gameBroadcast("game_action", {action: "move_card", options: {card_id: guard.id, dest_group_id: playerI+"Deck2", dest_stack_index: 0, dest_card_index: 0, combine: false, preserve_state: false}})
+        }
+        // Shuffle
+        gameBroadcast("game_action", {action: "shuffle_group", options: {group_id: playerI+"Deck2"}})
+      }
     } else if (data.action === "glittering_caves") {
       const state = store.getState();
       const gameUi = state.gameUi;
