@@ -36,8 +36,7 @@ export const Room = ({ slug }) => {
     } else if (
       event === "phx_reply" &&
       payload.response != null &&
-      payload.response.game_ui === null &&
-      !isClosed
+      payload.response.game_ui === null
     ) {
       setIsClosed(true);
       alert("Your room has closed or timed out. If you were in the middle of playing, it may have crashed. If so, please go to the Menu and download the game state file. Then, create a new room and upload that file to continue where you left off.")

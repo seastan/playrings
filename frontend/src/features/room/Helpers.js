@@ -581,13 +581,13 @@ export const processPostLoad = (gameUi, loadList, playerN, gameBroadcast, chatBr
   }
 }
 
-export const loadDeckFromXmlText = (xmlText, playerN, gameBroadcast, chatBroadcast, privacyType, setTooltipIds) => {
+export const loadDeckFromXmlText = (xmlText, playerN, gameBroadcast, chatBroadcast, privacyType) => {
   // TODO: combine duplicate code with TopBarMenu
   // Initialize tooltips
   var tooltipMotK = false;
   var tooltipEncounter2 = false;
   var tooltipQuest2 = false;
-  
+  var tooltipIds = []
   var parseString = require('xml2js').parseString;
   parseString(xmlText, function (err, deckJSON) {
     if (!deckJSON) return;
@@ -642,14 +642,11 @@ export const loadDeckFromXmlText = (xmlText, playerN, gameBroadcast, chatBroadca
     processPostLoad(null, loadList, playerN, gameBroadcast, chatBroadcast);
 
     // Add to tooltips
-    if (setTooltipIds) {
-      var tooltipIds = []
-      if (tooltipMotK) tooltipIds = [...tooltipIds, "tooltipMotK"];
-      if (tooltipEncounter2) tooltipIds = [...tooltipIds, "tooltipEncounter2"];
-      if (tooltipQuest2) tooltipIds = [...tooltipIds, "tooltipQuest2"];
-      setTooltipIds(tooltipIds);
-    }
+    if (tooltipMotK) tooltipIds.push("tooltipMotK");
+    if (tooltipEncounter2) tooltipIds.push("tooltipEncounter2");
+    if (tooltipQuest2) tooltipIds.push("tooltipQuest2");
   })
+  return tooltipIds;
 }
 
 export const checkAlerts = async () => {
@@ -814,7 +811,7 @@ export const loadRingsDb = (gameUi, playerI, ringsDbDomain, ringsDbType, ringsDb
       // Add to tooltips
       if (setTooltipIds) {
         var tooltipIds = []
-        if (tooltipMotK) tooltipIds = [...tooltipIds, "tooltipMotK"];
+        if (tooltipMotK) tooltipIds.push("tooltipMotK");
         setTooltipIds(tooltipIds);
       }
     });

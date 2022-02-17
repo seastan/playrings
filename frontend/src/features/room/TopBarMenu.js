@@ -268,7 +268,6 @@ export const TopBarMenu = React.memo(({
       // Shuffle in positions
       gameBroadcast("game_action", {action: "move_stacks", options: {orig_group_id: "sharedEncounterDeck2", dest_group_id: "sharedEncounterDeck", top_n: 11-numResources,  position: "shuffle"}})
 
-
       // Place player tokens
       functionOnMatchingCards(gameUi, gameBroadcast, chatBroadcast, [["groupId","sharedExtra1"],["stackIndex",0]], "increment_token", ["attack", 1] )
       if (game.numPlayers > 1) functionOnMatchingCards(gameUi, gameBroadcast, chatBroadcast, [["groupId","sharedExtra1"],["stackIndex",0]], "increment_token", ["defense", 1] )
@@ -317,7 +316,7 @@ export const TopBarMenu = React.memo(({
     const reader = new FileReader();
     reader.onload = async (event) => { 
       const xmlText = (event.target.result)
-      loadDeckFromXmlText(xmlText, playerN, gameBroadcast, chatBroadcast, options["privacyType"], setTooltipIds);
+      loadDeckFromXmlText(xmlText, playerN, gameBroadcast, chatBroadcast, options["privacyType"]);
     }
     reader.readAsText(event.target.files[0]);
     inputFileDeck.current.value = "";
@@ -567,10 +566,12 @@ export const TopBarMenu = React.memo(({
         </li> 
         <li key={"advanced_functions"}>
           <a href="#">
-            Advanced Functions
+            Special Functions
             <span className="float-right mr-1"><FontAwesomeIcon icon={faChevronRight}/></span>
           </a>
           <ul className="third-level-menu">
+            <li key={"to_catch_an_orc"}><a onClick={() => handleMenuClick({action:"to_catch_an_orc"})} href="#">To Catch an Orc Setup</a></li>
+            <li key={"escape_from_mount_gram"}><a onClick={() => handleMenuClick({action:"escape_from_mount_gram"})} href="#">Escape from Mount Gram Capture Deck</a></li>
             <li key={"fortress_of_nurn"}><a onClick={() => handleMenuClick({action:"fortress_of_nurn"})} href="#">The Fortress of Nurn Setup</a></li>
             <li key={"glittering_caves"}><a onClick={() => handleMenuClick({action:"glittering_caves"})} href="#">Glittering Caves Clues</a></li>
           </ul>

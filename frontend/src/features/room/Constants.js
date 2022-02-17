@@ -102,6 +102,7 @@ export const TOOLTIPINFO = {
   "tooltipMotK": "You will need to search your deck to locate your MotK hero.",
   "tooltipEncounter2": "This quest has cards in a second encounter deck located in the View > Shared menu.",
   "tooltipQuest2": "This quest has cards in a second quest deck located in the View > Shared menu.",
+  "tooltipAdvancedSetup": "To aid with the setup of this quest, see Menu > Special Functions.",
 }
 
 export const PHASEINFO = [

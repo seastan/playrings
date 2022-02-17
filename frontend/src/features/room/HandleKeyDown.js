@@ -61,7 +61,6 @@ const keyGameActionMap = {
     "W": "next_seat",
     "D": "draw_next_seat",
     "L": "multiplayer_hotkeys",
-    "G": "glittering_setup",
 }
 
 const ctrlKeyGameActionMap = {
