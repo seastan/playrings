@@ -550,8 +550,7 @@ export const processPostLoad = (gameUi, loadList, playerN, gameBroadcast, chatBr
   }
   const loreMirlonde = isCardDbIdInLoadList(loadList, "536c80ba-ad8b-447e-b378-1684508eb0f9")
   if (loreMirlonde) {
-    console.log("Mirlonde",gameUi)
-    const loreHeroes = listOfMatchingCards(gameUi, [["sides","A","name","Mirlonde"]])
+    const loreHeroes = listOfMatchingCards(gameUi, [["sides","A","sphere","Lore"]])
     const reduction = loreHeroes.length;
     gameBroadcast("game_action", {action: "increment_threat", options: {increment: -reduction}})
     chatBroadcast("game_update", {message: "reduced threat by "+reduction+" (Mirlonde)."});

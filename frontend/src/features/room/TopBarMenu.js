@@ -12,6 +12,7 @@ import { useCardSizeFactor, useSetCardSizeFactor } from "../../contexts/CardSize
 import { getQuestNameFromModeAndId, loadDeckFromModeAndId } from "./SpawnQuestModal";
 import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { getRandomInt } from "../../util/util";
 
 
 export const TopBarMenu = React.memo(({
@@ -199,6 +200,92 @@ export const TopBarMenu = React.memo(({
     } else if (data.action === "quest_mode") {
       gameBroadcast("game_action", {action: "update_values", options: {updates: [["game", "questMode", data.mode]]}});
       chatBroadcast("game_update", {message: "set the quest mode to " + data.mode + "."});
+    } else if (data.action === "escape_from_mount_gram") {
+      const state = store.getState();
+      const gameUi = state.gameUi;
+      const game = gameUi.game;
+      const questModeAndId = game?.options?.questModeAndId;
+      if (!questModeAndId || !questModeAndId.includes("05.5")) {
+        alert("Escape from Mount Gram not detected.")
+        return;
+      }      
+      const result = window.confirm("The function will set up each player's capture deck, add 2 resources to each hero, draw new starting hands of 3 cards, and set new threat levels. Before running this function, each player should flip each hero they control that is not their starting hero facedown. Continue?")
+      if (!result) return;
+      for (var i=1; i<=game.numPlayers; i++) {
+        const playerI = "player"+i;
+        const hand = game.groupById[playerN+"Hand"];
+        const handSize = hand.stackIds.length;
+        // Shuffle hand into deck
+        gameBroadcast("game_action", {action: "move_stacks", options: {orig_group_id: playerI+"Hand", dest_group_id: playerI+"Deck", top_n: handSize, position: "shuffle"}})
+        // Move allies to capture deck
+        gameBroadcast("game_action", {
+          action: "action_on_matching_cards", 
+          options: {
+            criteria:[["controller", playerN], ["sides", "A", "type", "Ally"]], 
+            action: "move_card", 
+            options: {dest_group_id: playerI+"Deck2", dest_stack_index: 0, dest_card_index: 0, combine: false, preserve_state: false}
+          }
+        })
+        // Move Items to capture deck
+        gameBroadcast("game_action", {
+          action: "action_on_matching_cards", 
+          options: {
+            criteria:[["controller", playerN], ["sides", "A", "traits", "Item."]], 
+            action: "move_card", 
+            options: {dest_group_id: playerI+"Deck2", dest_stack_index: 0, dest_card_index: 0, combine: false, preserve_state: false}
+          }
+        })
+        // Move Mounts to capture deck
+        gameBroadcast("game_action", {
+          action: "action_on_matching_cards", 
+          options: {
+            criteria:[["controller", playerN], ["sides", "A", "traits", "Mount."]], 
+            action: "move_card", 
+            options: {dest_group_id: playerI+"Deck2", dest_stack_index: 0, dest_card_index: 0, combine: false, preserve_state: false}
+          }
+        })
+        // Move Artifacts to capture deck
+        gameBroadcast("game_action", {
+          action: "action_on_matching_cards", 
+          options: {
+            criteria:[["controller", playerN], ["sides", "A", "traits", "Artifact."]], 
+            action: "move_card", 
+            options: {dest_group_id: playerI+"Deck2", dest_stack_index: 0, dest_card_index: 0, combine: false, preserve_state: false}
+          }
+        })
+        // Locate facedown heroes
+        const faceDownHeroes = listOfMatchingCards(gameUi, [["controller",playerI],["sides","A","type","Hero"],["currentSide","B"]])
+        // Choose set aside hero
+        const setAsideHeroIndex = getRandomIntInclusive(0, faceDownHeroes.length-1);        
+        const setAsideHero = faceDownHeroes[setAsideHeroIndex];
+        // Shuffle other heroes into capture deck
+        for (var j=0; j<faceDownHeroes.length; j++) {
+          if (j===setAsideHeroIndex) continue;
+          gameBroadcast("game_action", {action: "move_card", options: {card_id: faceDownHeroes[j].id, dest_group_id: playerI+"Deck2", dest_stack_index: 0, dest_card_index: 0, combine: false, preserve_state: false}})        
+        }
+        gameBroadcast("game_action", {action: "shuffle_group", options: {group_id: playerI+"Deck2"}})   
+        // Move set aside hero to top of capture deck     
+        gameBroadcast("game_action", {action: "move_card", options: {card_id: setAsideHero.id, dest_group_id: playerI+"Deck2", dest_stack_index: 0, dest_card_index: 0, combine: false, preserve_state: false}})
+        const remainingHeroes = listOfMatchingCards(gameUi, [["controller",playerI],["sides","A","type","Hero"],["currentSide","A"]]);
+        if (remainingHeroes.length === 1) {
+          // Set starting threat
+          const remainingHero = remainingHeroes[0];
+          gameBroadcast("game_action", {action: "update_values", options: {updates: [["game", "playerData", playerI, "threat", remainingHero["sides"]["A"]["cost"]]]}});
+        }
+        // Draw 3 cards
+        gameBroadcast("game_action", {action: "move_stacks", options: {orig_group_id: playerI+"Deck", dest_group_id: playerN+"Hand", top_n: 3, position: "top"}})
+      }
+      // Add a resource to each hero
+      gameBroadcast("game_action", {
+        action: "action_on_matching_cards", 
+        options: {
+            criteria:[["sides","sideUp","type","Hero"],["controller",playerN], ["groupType","play"]], 
+            action: "increment_token", 
+            options: {token_type: "resource", increment: 2}
+        }
+      });
+      alert("Complete! Players can find their capture decks under View > Player X > Player X Deck 2.")
+
     } else if (data.action === "glittering_caves") {
       const state = store.getState();
       const gameUi = state.gameUi;
@@ -253,11 +340,9 @@ export const TopBarMenu = React.memo(({
           gameBroadcast("game_action", {action: "move_card", options: {card_id: searchCards[i].id, dest_group_id: "sharedExtra"+(coordinates[0]+1), dest_stack_index: coordinates[1], dest_card_index: 1, combine: true, preserve_state: true}})
       }
 
-      // Attack 1 card to Helm's Horn
-      gameBroadcast("game_action", {action: "deal_x", options: {group_id: "sharedEncounterDeck2", dest_group_id: "sharedStaging", top_x: 1}});
-      const hornCard = listOfMatchingCards(gameUi, [["sides","A","name", "Helm's Horn"]])[0];
-      const hornGSC = getGroupIdStackIndexCardIndex(game, hornCard.id);
-      if (hornCard) gameBroadcast("game_action", {action: "move_card", options: {card_id: searchCards[numResources].id, dest_group_id: hornGSC["groupId"], dest_stack_index: hornGSC["stackIndex"], dest_card_index: 1, combine: true, preserve_state: true}})        
+      // Attach 1 card to Helm's Horn
+      // gameBroadcast("game_action", {action: "deal_x", options: {group_id: "sharedEncounterDeck2", dest_group_id: "sharedStaging", top_x: 1}});
+      gameBroadcast("game_action", {action: "move_card", options: {card_id: searchCards[numResources].id, dest_group_id: "sharedSetAside", dest_stack_index: 0, dest_card_index: 0, combine: false, preserve_state: true}})        
 
       // Deal damage to positions
       for (var i=numResources+1; i<12; i++) {
@@ -571,7 +656,7 @@ export const TopBarMenu = React.memo(({
           </a>
           <ul className="third-level-menu">
             <li key={"to_catch_an_orc"}><a onClick={() => handleMenuClick({action:"to_catch_an_orc"})} href="#">To Catch an Orc Setup</a></li>
-            <li key={"escape_from_mount_gram"}><a onClick={() => handleMenuClick({action:"escape_from_mount_gram"})} href="#">Escape from Mount Gram Capture Deck</a></li>
+            <li key={"escape_from_mount_gram"}><a onClick={() => handleMenuClick({action:"escape_from_mount_gram"})} href="#">Escape from Mount Gram Setup</a></li>
             <li key={"fortress_of_nurn"}><a onClick={() => handleMenuClick({action:"fortress_of_nurn"})} href="#">The Fortress of Nurn Setup</a></li>
             <li key={"glittering_caves"}><a onClick={() => handleMenuClick({action:"glittering_caves"})} href="#">Glittering Caves Clues</a></li>
           </ul>

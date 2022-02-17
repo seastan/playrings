@@ -240,6 +240,8 @@ defmodule DragnCardsGame.GameUI do
         add_trigger(gameui, card_id, options["round_step"])
       "remove_trigger" ->
         remove_trigger(gameui, card_id, options["round_step"])
+      "move_card" ->
+        move_card(gameui, card_id, options["dest_group_id"], options["dest_stack_index"], options["dest_card_index"], options["combine"], options["preserve_state"])
       _ ->
         gameui
     end
@@ -787,13 +789,17 @@ defmodule DragnCardsGame.GameUI do
     end
   end
 
-  def passes_criterion(card, obj, criterion) do
+  def passes_criterion(card, obj, criterion, exact_match \\ true) do
     case Enum.count(criterion) do
       0 ->
         false
       1 ->
         value = Enum.at(criterion, 0)
-        obj == value
+        if exact_match do
+          obj == value
+        else
+          String.contains?(obj, value)
+        end
       _ ->
         property = Enum.at(criterion,0)
         property = case property do
@@ -804,7 +810,11 @@ defmodule DragnCardsGame.GameUI do
           _ ->
             property
         end
-        passes_criterion(card, obj[property], List.delete_at(criterion, 0))
+        if property == "traits" do
+          passes_criterion(card, obj[property], List.delete_at(criterion, 0), false)
+        else
+          passes_criterion(card, obj[property], List.delete_at(criterion, 0))
+        end
     end
   end
 
@@ -1176,9 +1186,7 @@ defmodule DragnCardsGame.GameUI do
   def set_last_update(gameui) do
     timestamp = System.system_time(:second)
     room = Repo.get_by(Room, [slug: gameui["gameName"]])
-    IO.puts("..............")
     if room do
-      IO.inspect(get_encounter_name(gameui))
       updates = %{
         last_update: timestamp,
         encounter_name: gameui["game"]["encounterName"],
@@ -1219,7 +1227,9 @@ defmodule DragnCardsGame.GameUI do
 
   def increment_threat(gameui, player_n, increment) do
     current_threat = gameui["game"]["playerData"][player_n]["threat"]
-    put_in(gameui["game"]["playerData"][player_n]["threat"], current_threat + increment)
+    new_threat = current_threat + increment
+    new_threat = if new_threat < 0 do 0 else new_threat end
+    put_in(gameui["game"]["playerData"][player_n]["threat"], new_threat)
   end
 
   def reset_game(gameui) do

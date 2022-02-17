@@ -114,7 +114,7 @@ export const gameAction = (action, props) => {
         // Raise your threat
         const newThreat = game.playerData[playerN].threat+1;
         chatBroadcast("game_update", {message: "raises threat by 1 ("+newThreat+")."});
-        gameBroadcast("game_action", {action: "update_values", options: {updates: [["game", "playerData", playerN, "threat", newThreat], ["game", "playerData", playerN, "refreshed", true]]}});
+        gameBroadcast("game_action", {action: "increment_threat", options: {increment: 1}});
     } 
 
     else if (action === "new_round") {
@@ -401,10 +401,8 @@ export const gameAction = (action, props) => {
     }
     else if (action === "increase_threat") {
         // Raise your threat
-        const newThreat = game.playerData[playerN].threat + 1;
-        chatBroadcast("game_update", {message: "raises "+playerNToPlayerSpaceN(playerN)+"'s threat by 1 ("+newThreat+")."});
-        const updates = [["game", "playerData", playerN, "threat", newThreat]];
-        gameBroadcast("game_action", {action: "update_values", options: {updates: updates}});
+        chatBroadcast("game_update", {message: "raises "+playerNToPlayerSpaceN(playerN)+"'s threat by 1."});
+        gameBroadcast("game_action", {action: "increment_threat", options: {increment: 1, for_player_n: playerN}});
     }
     else if (action === "increase_threat_all") {
         if (!areMultiplayerHotkeysEnabled(game,chatBroadcast)) return;
@@ -418,10 +416,8 @@ export const gameAction = (action, props) => {
     }
     else if (action === "decrease_threat") {
         // Raise your threat
-        var newThreat = game.playerData[playerN].threat - 1;
-        newThreat = newThreat < 0 ? 0 : newThreat; 
-        chatBroadcast("game_update", {message: "reduces "+playerNToPlayerSpaceN(playerN)+"'s threat by 1 ("+newThreat+")."});
-        gameBroadcast("game_action", {action: "update_values", options: {updates: [["game", "playerData", playerN, "threat", newThreat]]}});
+        chatBroadcast("game_update", {message: "reduces "+playerNToPlayerSpaceN(playerN)+"'s threat by 1."});
+        gameBroadcast("game_action", {action: "increment_threat", options: {increment: -1, for_player_n: playerN}});
     }
     else if (action === "decrease_threat_all") {
         for (var i=1; i<=game.numPlayers; i++) {
