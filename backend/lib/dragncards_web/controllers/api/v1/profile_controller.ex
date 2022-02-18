@@ -59,32 +59,5 @@ defmodule DragnCardsWeb.API.V1.ProfileController do
         conn
         |> json(%{success: %{message: "Failed to update settings"}})
     end
-
-
-
-    # IO.puts("r")
-    # IO.inspect("r")
-    # conn
-    # |> json(%{success: %{message: "Updated user"}})
-    # user_id = user["id"]
-    # u = Repo.get!(User, user_id)
-    # updates = %{
-    #   background_url: user["background_url"],
-    #   player_back_url: user["player_back_url"],
-    #   encounter_back_url: user["encounter_back_url"],
-    #   language: user["language"],
-    #   hidden_tooltips: user["hidden_tooltips"] || u.hidden_tooltips
-    # }
-    # u = Ecto.Changeset.change(u, updates)
-    # case Repo.update(u) do
-    #   {:ok, _struct}       -> # Updated with success
-    #     conn
-    #     |> json(%{success: %{message: "Updated settings"}})
-    #   {:error, changeset} -> # Something went wrong
-    #     IO.inspect(changeset, label: "Failed to update settings")
-    #     conn
-    #     |> json(%{success: %{message: "Failed to update settings"}})
-    # end
-
   end
 end

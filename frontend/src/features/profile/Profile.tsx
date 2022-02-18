@@ -16,6 +16,7 @@ const columns = [
   {name: "uuid", label: "UUID", options: { filter: false, display: false }},
   {name: "encounter", label: "Encounter", options: { filter: false, sort: true }},
   {name: "rounds", label: "Rounds", options: { filter: false, sort: false }},
+  {name: "outcome", label: "Outcome", options: { filter: true, sort: false }},
   {name: "num_players", label: "Players", options: { filter: true, sort: false }},
   {name: "player1_heroes", label: "Player 1", options: { filter: false, sort: false }},
   {name: "player2_heroes", label: "Player 2", options: { filter: false, sort: false }},
@@ -33,14 +34,12 @@ export const Profile: React.FC<Props> = () => {
   const [showModal, setShowModal] = useState(false);
   const [shareReplayId, setShareReplayId] = useState("");
   const [deletedIndices, setDeletedIndices] = useState<Array<number>>([]); 
-  var [wins, losses, incomplete] = [0, 0, 0];
+  var [wins, losses, incompletes] = [0, 0, 0];
   console.log('Rendering Profile');
-  console.log(user);
   const { data, isLoading, isError, doFetchUrl, doFetchHash, setData } = useDataApi<any>(
     "/be/api/replays/"+user?.id,
     null
   );
-  console.log(data);
   useEffect(() => {
     doFetchUrl("/be/api/replays/"+user?.id);
   }, [user]);
@@ -94,6 +93,9 @@ export const Profile: React.FC<Props> = () => {
           <Button onClick={() => deleteReplay(replay, index, numPlayers)} className="mx-2 mt-2">Delete</Button>
         </div>
       }
+      if (replay.outcome === "victory") wins++;
+      else if (replay.outcome === "defeat") losses++;
+      else incompletes++;
       if (!deletedIndices.includes(i)) nonDeletedData.push(replayRow);
     }
     if (user.supporter_level < 3) 
@@ -101,6 +103,7 @@ export const Profile: React.FC<Props> = () => {
     else
       filteredData = nonDeletedData;
   }
+  const winRate = wins + losses === 0 ? 0 : Math.round(wins/(wins+losses)*100)
   return (
     <>
       <Container>
@@ -132,7 +135,7 @@ export const Profile: React.FC<Props> = () => {
       <ProfileSettings/>
       <Container>
         <div className="bg-gray-100 p-4 rounded max-w-xl shadow">
-          <h1 className="font-semibold mb-4 text-black">Saved game settings</h1>
+          <h1 className="font-semibold mb-2 text-black">Saved game settings</h1>
           Currently displaying {user.supporter_level < 3 ? "your 3 most recent games." : "all your saved games."} 
           {user.supporter_level < 3 &&             
             <Button isSubmit isPrimary className="mx-2 mt-2">
@@ -140,10 +143,13 @@ export const Profile: React.FC<Props> = () => {
               <a className="text-white no-underline" href="https://www.patreon.com/dragncards">Unlock all saved games</a>
             </Button>
           }
-          {/* <h1 className="font-semibold mb-4 text-black">Stats</h1>
-          Wins: 
-          Losses: 
-          Incomplete:  */}
+          <h1 className="font-semibold mb-2 mt-4 text-black">Stats</h1>
+          <table>
+            <tr>Wins: {wins}</tr>
+            <tr>Losses: {losses}</tr>
+            <tr>Incomplete: {incompletes}</tr>
+            <tr>Win rate: {winRate}%</tr>
+          </table>
         </div>
       </Container>
       

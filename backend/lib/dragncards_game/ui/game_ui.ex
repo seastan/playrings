@@ -1172,6 +1172,7 @@ defmodule DragnCardsGame.GameUI do
       player3_heroes: hero_3_names,
       player4_heroes: hero_4_names,
       game_json: gameui["game"],
+      outcome: gameui["game"]["victoryState"],
     }
     result =
       case Repo.get_by(Replay, [user: user_id, uuid: game_uuid]) do
