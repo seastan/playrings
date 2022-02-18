@@ -20,16 +20,19 @@ defmodule DragnCards.Users.User do
     field(:encounter_back_url, :string)
     field(:playtester, :integer)
     field(:language, :string)
-
+    field(:hidden_tooltips, {:array, :string})
     timestamps()
   end
 
   def changeset(user_or_changeset, attrs) do
     user_or_changeset
-    |> pow_changeset(attrs)
-    |> pow_extension_changeset(attrs)
-    |> Ecto.Changeset.cast(attrs, [:alias])
-    |> Ecto.Changeset.validate_required([:alias])
+    |> pow_user_id_field_changeset(attrs)
+    |> pow_password_changeset(attrs)
+#    user_or_changeset
+#    |> pow_changeset(attrs)
+#    |> pow_extension_changeset(attrs)
+#    |> Ecto.Changeset.cast(attrs, [:alias])
+#    |> Ecto.Changeset.validate_required([:alias])
     |> Ecto.Changeset.unique_constraint(:alias)
   end
 
@@ -53,6 +56,7 @@ defmodule DragnCards.Users.User do
       encounter_back_url: user.encounter_back_url,
       playtester: user.playtester,
       language: user.language,
+      hidden_tooltips: user.hidden_tooltips,
     }
   end
 

@@ -109,6 +109,7 @@ export const SpawnQuestModal = React.memo(({
     setShowModal,
     gameBroadcast,
     chatBroadcast,
+    setTooltipIds,
 }) => {  
     const privacyTypeStore = state => state?.gameUi?.privacyType;
     const privacyType = useSelector(privacyTypeStore);
@@ -120,16 +121,22 @@ export const SpawnQuestModal = React.memo(({
     const [menuHeight, setMenuHeight] = useState(null);
     const [searchString, setSearchString] = useState("");
 
-    console.log("Rendering SpawnQuestModal", searchString);
-    const handleSpawnClick = async(index) => {
-      console.log(questsOCTGN[index])
-
-      const res = await fetch(questsOCTGN[index]);
+    const loadQuest = async(index) => {
+      const questPath = questsOCTGN[index];
+      const modeAndId = getModeLetterQuestIdFromPath(questPath);
+      const newOptions = {...options, questModeAndId: modeAndId};
+      const res = await fetch(questPath);
       const xmlText = await res.text();
-      loadDeckFromXmlText(xmlText, playerN, gameBroadcast, chatBroadcast);
+      var tooltipIds = loadDeckFromXmlText(xmlText, playerN, gameBroadcast, chatBroadcast, privacyType);
+      if (modeAndId.includes("04.2") || modeAndId.includes("A1.7") || modeAndId.includes("05.5") || modeAndId.includes("09.9")) setTooltipIds([...tooltipIds, "tooltipAdvancedSetup"]);
       setShowModal(null);
+      gameBroadcast("game_action", {action: "update_values", options: {updates: [["game","options", newOptions]]}});
     }
-      // reader.readAsText(questsOCTGN[index]);
+
+    console.log("Rendering SpawnQuestModal", searchString);
+    const handleSpawnClick = (index) => {
+      loadQuest(index)
+    }
 
     const handleSpawnTyping = (event) => {
       //setSpawnCardName(event.target.value);
@@ -143,20 +150,9 @@ export const SpawnQuestModal = React.memo(({
       }
     }
 
-    const handleDropdownClick = async(props) => {
-      console.log(props);
+    const handleDropdownClick = (props) => {
       if (props.goToMenu) setActiveMenu(props.goToMenu);
-      else if (props.questIndex !== null) {
-        const questPath = questsOCTGN[props.questIndex];
-        const res = await fetch(questPath);
-        const xmlText = await res.text();
-        loadDeckFromXmlText(xmlText, playerN, gameBroadcast, chatBroadcast);
-        setShowModal(null);
-        const modeAndId = getModeLetterQuestIdFromPath(questPath);
-        const newOptions = {...options, questModeAndId: modeAndId};
-        gameBroadcast("game_action", {action: "update_values", options: {updates: [["game","options", newOptions]]}});
-        //gameBroadcast("game_action", {action: "update_values", options: {updates: [["game","questModeAndId", modeAndId]]}});
-      }
+      else if (props.questIndex !== null) loadQuest(props.questIndex)
     }
 
     const calcHeight = (el) => {

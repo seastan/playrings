@@ -23,6 +23,7 @@ import { useSetTouchAction } from "../../contexts/TouchActionContext";
 import { useSetActiveCard } from "../../contexts/ActiveCardContext";
 import { useSetDropdownMenu } from "../../contexts/DropdownMenuContext";
 import { useCardSizeFactor } from "../../contexts/CardSizeFactorContext";
+import { TooltipModal } from "./TooltipModal";
 
 export const Table = React.memo(({
   playerN,
@@ -42,6 +43,7 @@ export const Table = React.memo(({
   // Indices of stacks in group being browsed
   const [browseGroupTopN, setBrowseGroupTopN] = useState(0);
   const [observingPlayerN, setObservingPlayerN] = useState(playerN);
+  const [tooltipIds, setTooltipIds] = useState([]);
 
   const setMousePosition = useSetMousePosition();
   const setActiveCardAndLoc = useSetActiveCard();
@@ -111,7 +113,9 @@ export const Table = React.memo(({
               observingPlayerN={observingPlayerN}
               setObservingPlayerN={setObservingPlayerN}
               setTyping={setTyping}
-              setLoaded={setLoaded}/>
+              setLoaded={setLoaded}
+              setTooltipIds={setTooltipIds}
+            />
           </div>
           {/* Table */}
           <div className="relative w-full" style={{height: touchMode ? "82%" : "94%"}}>
@@ -152,6 +156,7 @@ export const Table = React.memo(({
           setShowModal={setShowModal}
           gameBroadcast={gameBroadcast}
           chatBroadcast={chatBroadcast}
+          setTooltipIds={setTooltipIds}
         />
       }
       {showModal === "campaign" && 
@@ -163,14 +168,16 @@ export const Table = React.memo(({
           chatBroadcast={chatBroadcast}
         />
       }
-      {showModal === "custom" && 
-        <SpawnCustomModal 
-          setTyping={setTyping}
+      {tooltipIds.map((tooltipId, index) => {
+        return(
+        <TooltipModal
+          tooltipId={tooltipId}
+          tooltipIds={tooltipIds}
+          setTooltipIds={setTooltipIds}
           setShowModal={setShowModal}
           gameBroadcast={gameBroadcast}
-          chatBroadcast={chatBroadcast}
-        />
-      }
+        />)
+      })}
     </div>
   );
 })

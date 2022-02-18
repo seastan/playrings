@@ -84,6 +84,7 @@ const useAuthDataApi = (
       // Also, clear data (Unsure about this, but needed for the logout
       // button to clear the ProfileProvider context)
       if (authOptions.headers.Authorization == null) {
+        console.log("debug1 initial", initialData)
         setData(initialData);
         return;
       }
@@ -95,8 +96,10 @@ const useAuthDataApi = (
       const an_axios = axios.create();
       an_axios.interceptors.response.use(id, intercept_error);
       try {
+        console.log("debug1 result", url, authOptions)
         const result = await an_axios(url, authOptions);
         if (result != null) {
+          console.log("debug1 fetchtry", result.data?.user_profile?.language)
           setData(result.data);
         }
       } catch (error) {

@@ -114,7 +114,7 @@ export const gameAction = (action, props) => {
         // Raise your threat
         const newThreat = game.playerData[playerN].threat+1;
         chatBroadcast("game_update", {message: "raises threat by 1 ("+newThreat+")."});
-        gameBroadcast("game_action", {action: "update_values", options: {updates: [["game", "playerData", playerN, "threat", newThreat], ["game", "playerData", playerN, "refreshed", true]]}});
+        gameBroadcast("game_action", {action: "increment_threat", options: {increment: 1}});
     } 
 
     else if (action === "new_round") {
@@ -401,10 +401,8 @@ export const gameAction = (action, props) => {
     }
     else if (action === "increase_threat") {
         // Raise your threat
-        const newThreat = game.playerData[playerN].threat + 1;
-        chatBroadcast("game_update", {message: "raises "+playerNToPlayerSpaceN(playerN)+"'s threat by 1 ("+newThreat+")."});
-        const updates = [["game", "playerData", playerN, "threat", newThreat]];
-        gameBroadcast("game_action", {action: "update_values", options: {updates: updates}});
+        chatBroadcast("game_update", {message: "raises "+playerNToPlayerSpaceN(playerN)+"'s threat by 1."});
+        gameBroadcast("game_action", {action: "increment_threat", options: {increment: 1, for_player_n: playerN}});
     }
     else if (action === "increase_threat_all") {
         if (!areMultiplayerHotkeysEnabled(game,chatBroadcast)) return;
@@ -418,10 +416,8 @@ export const gameAction = (action, props) => {
     }
     else if (action === "decrease_threat") {
         // Raise your threat
-        var newThreat = game.playerData[playerN].threat - 1;
-        newThreat = newThreat < 0 ? 0 : newThreat; 
-        chatBroadcast("game_update", {message: "reduces "+playerNToPlayerSpaceN(playerN)+"'s threat by 1 ("+newThreat+")."});
-        gameBroadcast("game_action", {action: "update_values", options: {updates: [["game", "playerData", playerN, "threat", newThreat]]}});
+        chatBroadcast("game_update", {message: "reduces "+playerNToPlayerSpaceN(playerN)+"'s threat by 1."});
+        gameBroadcast("game_action", {action: "increment_threat", options: {increment: -1, for_player_n: playerN}});
     }
     else if (action === "decrease_threat_all") {
         for (var i=1; i<=game.numPlayers; i++) {
@@ -469,74 +465,6 @@ export const gameAction = (action, props) => {
         const newOptions = {...game.options, multiplayerHotkeys: newValue};
         chatBroadcast("game_update", {message: "turned multiplayer hotkeys "+(newValue ? "on" : "off")+"."});
         gameBroadcast("game_action", {action: "update_values", options: {updates: [["game", "options", newOptions]]}});
-    }
-    else if (action === "glittering_setup") {
-        const searchStackIds = game.groupById["sharedEncounterDeck2"].stackIds;
-        if (searchStackIds.length < 12) return;
-        if (game.groupById["sharedExtra1"].stackIds.length < 4) return;
-        if (game.groupById["sharedExtra2"].stackIds.length < 4) return;
-        if (game.groupById["sharedExtra3"].stackIds.length < 4) return;
-        const rightColNames = [
-            getSideAName(getCardByGroupIdStackIndexCardIndex(game, "sharedExtra1", 3, 0)),
-            getSideAName(getCardByGroupIdStackIndexCardIndex(game, "sharedExtra2", 3, 0)),
-            getSideAName(getCardByGroupIdStackIndexCardIndex(game, "sharedExtra3", 3, 0)),
-        ];
-        const searchCards = []
-        for (var id of searchStackIds) {
-            const cardId = game.stackById[id].cardIds[0];
-            const card = game.cardById[cardId]
-            searchCards.push(card)
-        }
-
-        function getNRandomFromPositionCoordinates(n) {
-            var positionCoordinates = [[0,0],[0,1],[0,2],[0,3],[1,0],[1,1],[1,2],[1,3],[2,0],[2,1],[2,2],[2,3]];
-            var selectedPositionCoordinates = [];
-            for (var i=0; i<n; i++) {
-                var randomIndex = Math.floor(Math.random()*positionCoordinates.length);
-                selectedPositionCoordinates.push(positionCoordinates.splice(randomIndex, 1)[0]);
-            }
-            return selectedPositionCoordinates;
-        }
-
-        // Deal clues
-        const numResources = 2*game.numPlayers;
-        const resourcePositionCoordinates = getNRandomFromPositionCoordinates(numResources);
-        var rightColSatisfied = false;
-        for (var i=0; i<numResources; i++) {
-            var coordinates = resourcePositionCoordinates[i];
-            if (i === numResources - 1 && !rightColSatisfied) {
-                const index = getRandomIntInclusive(0,2);
-                coordinates = [index,3];
-            } else {
-                if (coordinates[1] === 3) rightColSatisfied = true;
-                coordinates = resourcePositionCoordinates[i];
-            }
-            gameBroadcast("game_action", {action: "move_card", options: {card_id: searchCards[i].id, dest_group_id: "sharedExtra"+(coordinates[0]+1), dest_stack_index: coordinates[1], dest_card_index: 1, combine: true, preserve_state: true}})
-        }
-
-        // Attack 1 card to Helm's Horn
-        gameBroadcast("game_action", {action: "deal_x", options: {group_id: "sharedEncounterDeck2", dest_group_id: "sharedStaging", top_x: 1}});
-        const hornCard = listOfMatchingCards(gameUi, [["sides","A","name", "Helm's Horn"]])[0];
-        const hornGSC = getGroupIdStackIndexCardIndex(game, hornCard.id);
-        if (hornCard) gameBroadcast("game_action", {action: "move_card", options: {card_id: searchCards[numResources].id, dest_group_id: hornGSC["groupId"], dest_stack_index: hornGSC["stackIndex"], dest_card_index: 1, combine: true, preserve_state: true}})        
-
-        // Deal damage to positions
-        for (var i=numResources+1; i<12; i++) {
-            var mapCardName = searchCards[i]["sides"]["A"]["cornerText"];
-            functionOnMatchingCards(gameUi, gameBroadcast, chatBroadcast, [["sides","A","name", mapCardName]], "increment_token", ["damage", 1] )
-        }
-
-        // Shuffle in positions
-        gameBroadcast("game_action", {action: "move_stacks", options: {orig_group_id: "sharedEncounterDeck2", dest_group_id: "sharedEncounterDeck", top_n: 11-numResources,  position: "shuffle"}})
-
-
-        // Place player tokens
-        functionOnMatchingCards(gameUi, gameBroadcast, chatBroadcast, [["groupId","sharedExtra1"],["stackIndex",0]], "increment_token", ["attack", 1] )
-        if (game.numPlayers > 1) functionOnMatchingCards(gameUi, gameBroadcast, chatBroadcast, [["groupId","sharedExtra1"],["stackIndex",0]], "increment_token", ["defense", 1] )
-        if (game.numPlayers > 2) functionOnMatchingCards(gameUi, gameBroadcast, chatBroadcast, [["groupId","sharedExtra1"],["stackIndex",0]], "increment_token", ["hitPoints", 1] )
-        if (game.numPlayers > 3) functionOnMatchingCards(gameUi, gameBroadcast, chatBroadcast, [["groupId","sharedExtra1"],["stackIndex",0]], "increment_token", ["time", 1] )
-        functionOnMatchingCards(gameUi, gameBroadcast, chatBroadcast, [["groupId","sharedExtra3"],["stackIndex",3]], "increment_token", ["threat", 1] )
-
     }
 }
 

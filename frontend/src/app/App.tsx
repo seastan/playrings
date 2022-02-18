@@ -84,8 +84,7 @@ const App: React.FC = () => {
       <AuthContext.Provider value={authValue}>
         <SocketProvider
           wsUrl={process.env.REACT_APP_WS_URL || "/be/socket"}
-          options={socketParams}
-        >
+          options={socketParams}>
           <ProfileProvider>
             <Router>
               <AppRouter />

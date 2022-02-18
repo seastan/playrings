@@ -26,6 +26,7 @@ defmodule DragnCardsWeb.ReplayView do
       player3_heroes: format_heroes(replay.player3_heroes),
       player4_heroes: format_heroes(replay.player4_heroes),
       deleted_by: replay.deleted_by,
+      outcome: replay.outcome,
       #game_json: replay.game_json,
       updated_at: String.slice(NaiveDateTime.to_string(replay.updated_at), 0..15),
     }

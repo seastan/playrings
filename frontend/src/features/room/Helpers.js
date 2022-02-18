@@ -550,8 +550,7 @@ export const processPostLoad = (gameUi, loadList, playerN, gameBroadcast, chatBr
   }
   const loreMirlonde = isCardDbIdInLoadList(loadList, "536c80ba-ad8b-447e-b378-1684508eb0f9")
   if (loreMirlonde) {
-    console.log("Mirlonde",gameUi)
-    const loreHeroes = listOfMatchingCards(gameUi, [["sides","A","name","Mirlonde"]])
+    const loreHeroes = listOfMatchingCards(gameUi, [["sides","A","sphere","Lore"]])
     const reduction = loreHeroes.length;
     gameBroadcast("game_action", {action: "increment_threat", options: {increment: -reduction}})
     chatBroadcast("game_update", {message: "reduced threat by "+reduction+" (Mirlonde)."});
@@ -583,6 +582,11 @@ export const processPostLoad = (gameUi, loadList, playerN, gameBroadcast, chatBr
 
 export const loadDeckFromXmlText = (xmlText, playerN, gameBroadcast, chatBroadcast, privacyType) => {
   // TODO: combine duplicate code with TopBarMenu
+  // Initialize tooltips
+  var tooltipMotK = false;
+  var tooltipEncounter2 = false;
+  var tooltipQuest2 = false;
+  var tooltipIds = []
   var parseString = require('xml2js').parseString;
   parseString(xmlText, function (err, deckJSON) {
     if (!deckJSON) return;
@@ -618,9 +622,11 @@ export const loadDeckFromXmlText = (xmlText, playerN, gameBroadcast, chatBroadca
         if (!cardRow) {
           alert("Encountered unknown card ID for "+card["_"])
         } else if (card["_"].includes("MotK")) {
-          alert("You will need to search your deck for your MotK hero.")
+          tooltipMotK = true;
         } else {
           cardRow['deckgroupid'] = sectionToDeckGroupId(sectionName,playerN);
+          if (cardRow['deckgroupid'] === "sharedEncounterDeck2") tooltipEncounter2 = true;
+          if (cardRow['deckgroupid'] === "sharedQuestDeck2") tooltipQuest2 = true;
           cardRow['discardgroupid'] = sectionToDiscardGroupId(sectionName,playerN);
           if (cardRow['sides']['A']['keywords'].includes("Encounter")) cardRow['discardgroupid'] = "sharedEncounterDiscard";
           loadList.push({'cardRow': cardRow, 'quantity': quantity, 'groupId': sectionToLoadGroupId(sectionName,playerN)})
@@ -633,7 +639,13 @@ export const loadDeckFromXmlText = (xmlText, playerN, gameBroadcast, chatBroadca
     gameBroadcast("game_action", {action: "load_cards", options: {load_list: loadList}});
     chatBroadcast("game_update",{message: "loaded a deck."});
     processPostLoad(null, loadList, playerN, gameBroadcast, chatBroadcast);
+
+    // Add to tooltips
+    if (tooltipMotK) tooltipIds.push("tooltipMotK");
+    if (tooltipEncounter2) tooltipIds.push("tooltipEncounter2");
+    if (tooltipQuest2) tooltipIds.push("tooltipQuest2");
   })
+  return tooltipIds;
 }
 
 export const checkAlerts = async () => {
@@ -723,8 +735,10 @@ export const getScore = (gameUi, gameBroadcast, chatBroadcast) => {
 }
 
 
-export const loadRingsDb = (gameUi, playerI, ringsDbDomain, ringsDbType, ringsDbId, gameBroadcast, chatBroadcast) => {
+export const loadRingsDb = (gameUi, playerI, ringsDbDomain, ringsDbType, ringsDbId, gameBroadcast, chatBroadcast, setTooltipIds) => {
   chatBroadcast("game_update",{message: "is loading a deck from RingsDb..."});
+  // Set up tooltips
+  var tooltipMotK = false;
   const urlBase = ringsDbDomain === "test" ? "https://test.ringsdb.com/api/" : "https://www.ringsdb.com/api/"
   const url = ringsDbType === "decklist" ? urlBase+"public/decklist/"+ringsDbId+".json" : urlBase+"oauth2/deck/load/"+ringsDbId;
   console.log("Fetching ", url);
@@ -745,7 +759,7 @@ export const loadRingsDb = (gameUi, playerI, ringsDbDomain, ringsDbType, ringsDb
           // jsonData is parsed json object received from url
           var cardRow = cardDB[slotJsonData.octgnid];
           if (slotJsonData.name.includes("MotK")) {
-            alert("You will need to search your deck for your MotK hero.")
+            tooltipMotK = true;
           } else if (cardRow) {
             const type = slotJsonData.type_name;
             const loadGroupId = (type === "Hero" || type === "Contract" || type === "Other") ? playerI+"Play1" : playerI+"Deck";
@@ -793,6 +807,12 @@ export const loadRingsDb = (gameUi, playerI, ringsDbDomain, ringsDbType, ringsDb
       gameBroadcast("game_action", {action: "load_cards", options: {load_list: loadList, for_player_n: playerI}});
       chatBroadcast("game_update",{message: "loaded a deck."});
       processPostLoad(gameUi, loadList, playerI, gameBroadcast, chatBroadcast);
+      // Add to tooltips
+      if (setTooltipIds) {
+        var tooltipIds = []
+        if (tooltipMotK) tooltipIds.push("tooltipMotK");
+        setTooltipIds(tooltipIds);
+      }
     });
   })
   .catch((error) => {
