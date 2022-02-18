@@ -71,7 +71,7 @@ export const TooltipModal = React.memo(({
         isOpen={true}
         contentLabel="Spawn a card"
         overlayClassName="fixed inset-0 bg-black-50 z-10000"
-        className="insert-auto overflow-auto p-5 bg-gray-800 max-w-xs ml-48 my-24 rounded-lg outline-none max-h-3/4"
+        className="insert-auto overflow-auto p-5 bg-gray-800 max-w-xs mx-auto my-24 rounded-lg outline-none max-h-3/4"
       >
         <div className="text-white mb-2">{TOOLTIPINFO[tooltipId]}</div>    
         <span>

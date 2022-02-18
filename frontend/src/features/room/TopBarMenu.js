@@ -701,7 +701,7 @@ export const TopBarMenu = React.memo(({
             <li key={"to_catch_an_orc"}><a onClick={() => handleMenuClick({action:"to_catch_an_orc"})} href="#">To Catch an Orc Setup</a></li>
             <li key={"escape_from_mount_gram"}><a onClick={() => handleMenuClick({action:"escape_from_mount_gram"})} href="#">Escape from Mount Gram Setup</a></li>
             <li key={"fortress_of_nurn"}><a onClick={() => handleMenuClick({action:"fortress_of_nurn"})} href="#">The Fortress of Nurn Setup</a></li>
-            <li key={"glittering_caves"}><a onClick={() => handleMenuClick({action:"glittering_caves"})} href="#">Glittering Caves Clues</a></li>
+            {/* <li key={"glittering_caves"}><a onClick={() => handleMenuClick({action:"glittering_caves"})} href="#">Glittering Caves Clues</a></li> */}
           </ul>
         </li> 
         <li key={"download"}>

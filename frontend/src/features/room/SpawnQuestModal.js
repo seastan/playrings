@@ -128,7 +128,7 @@ export const SpawnQuestModal = React.memo(({
       const res = await fetch(questPath);
       const xmlText = await res.text();
       var tooltipIds = loadDeckFromXmlText(xmlText, playerN, gameBroadcast, chatBroadcast, privacyType);
-      if (modeAndId.includes("A1.7") || modeAndId.includes("05.5") || modeAndId.includes("09.9")) setTooltipIds([...tooltipIds, "tooltipAdvancedSetup"]);
+      if (modeAndId.includes("04.2") || modeAndId.includes("A1.7") || modeAndId.includes("05.5") || modeAndId.includes("09.9")) setTooltipIds([...tooltipIds, "tooltipAdvancedSetup"]);
       setShowModal(null);
       gameBroadcast("game_action", {action: "update_values", options: {updates: [["game","options", newOptions]]}});
     }
