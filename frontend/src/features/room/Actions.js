@@ -114,7 +114,7 @@ export const gameAction = (action, props) => {
         // Raise your threat
         const newThreat = game.playerData[playerN].threat+1;
         chatBroadcast("game_update", {message: "raises threat by 1 ("+newThreat+")."});
-        gameBroadcast("game_action", {action: "increment_threat", options: {increment: 1}});
+        gameBroadcast("game_action", {action: "increment_threat", options: {increment: 1, for_player_n: playerN}});
     } 
 
     else if (action === "new_round") {
