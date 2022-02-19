@@ -1043,6 +1043,12 @@ defmodule DragnCardsGame.GameUI do
       case action do
         "draw_card" ->
           draw_card(gameui, options["player_n"])
+        "new_round" ->
+          new_round(gameui, player_n, user_id)
+        "refresh" ->
+          refresh(gameui, player_n)
+        "refresh_and_new_round" ->
+          refresh_and_new_round(gameui, player_n, user_id)
         "peek_at" ->
           peek_at(gameui, options["stack_ids"], player_n, options["value"])
         "peek_card" ->
@@ -1211,6 +1217,101 @@ defmodule DragnCardsGame.GameUI do
         game_old
     end
     put_in(gameui["game"], game_new)
+  end
+
+  def refresh(gameui, player_n) do
+    is_host = player_n == leftmost_non_eliminated_player_n(gameui)
+    # Set phase
+    gameui = if is_host do
+      update_values(gameui,[
+        ["game", "phase", "Refresh"],
+        ["game", "roundStep", "7.R"]
+      ])
+    else
+      gameui
+    end
+    # Pass token
+    gameui = if is_host do
+      pass_first_player_token(gameui)
+    else
+      gameui
+    end
+    # Refresh all cards you control
+    gameui = action_on_matching_cards(gameui, [
+        ["locked", false],
+        ["controller",player_n],
+      ],
+      "update_card_values",
+      %{"updates" => [["exhausted", false], ["rotation", 0]]}
+    )
+    gameui = increment_threat(gameui, player_n, 1)
+    # Set refreshed status
+    gameui = update_values(gameui, [["game", "playerData", player_n, "refreshed", true]]);
+  end
+
+  def new_round(gameui, player_n, user_id) do
+    # Change phase and round
+    is_host = player_n == leftmost_non_eliminated_player_n(gameui)
+    gameui = if is_host do
+      update_values(gameui,[
+        ["game", "phase", "Resource"],
+        ["game", "roundStep", "1.R"],
+        ["game", "roundNumber", gameui["game"]["roundNumber"]+1]
+      ])
+    else
+      gameui
+    end
+    # Draw card(s)
+    gameui = Enum.reduce(0..gameui["game"]["playerData"][player_n]["cardsDrawn"], gameui, fn(n, acc) ->
+      acc = draw_card(gameui, player_n)
+    end)
+    # Add a resource to each hero
+    gameui = action_on_matching_cards(gameui, [
+        ["sides","sideUp","type","Hero"],
+        ["controller",player_n],
+        ["groupType","play"]
+      ],
+      "increment_token",
+      %{"token_type" => "resource", "increment" => 1}
+    )
+    # Reset willpower count and refresh status
+    gameui = update_values(gameui,[
+      ["game", "playerData", player_n, "willpower", 0],
+      ["game", "playerData", player_n, "refreshed", false]
+    ])
+    # Add custom set tokens per round
+    gameui = action_on_matching_cards(gameui, [
+        ["controller",player_n],
+        ["groupType","play"]
+      ],
+      "apply_tokens_per_round",
+      %{}
+    );
+    if is_host do gameui = action_on_matching_cards(gameui, [
+          ["controller","shared"],
+          ["groupType","play"]
+        ],
+        "apply_tokens_per_round",
+        %{}
+      );
+    else
+      gameui
+    end
+    # Uncommit all characters to the quest
+    gameui = action_on_matching_cards(gameui, [
+        ["controller",player_n]
+      ],
+      "update_card_values",
+      %{"updates" => [["committed", false]]}
+    );
+    # Save replay
+    gameui = save_replay(gameui, user_id);
+  end
+
+  def refresh_and_new_round(gameui, player_n, user_id) do
+    gameui
+    |> refresh(player_n)
+    |> new_round(player_n, user_id)
   end
 
   def draw_card(gameui, player_n) do
@@ -1483,7 +1584,7 @@ defmodule DragnCardsGame.GameUI do
   end
 
   def next_player(gameui, player_n) do
-    seated_player_ns = seated_non_eliminated(gameui)
+    seated_player_ns = get_non_eliminated_players(gameui)
     seated_player_ns2 = seated_player_ns ++ seated_player_ns
     next = Enum.reduce(Enum.with_index(seated_player_ns2), nil, fn({player_i, index}, acc) ->
       if !acc && player_i == player_n do
@@ -1497,15 +1598,18 @@ defmodule DragnCardsGame.GameUI do
     else
       next
     end
+    IO.puts("nect_p")
+    IO.inspect(next)
+    next
   end
 
   def pass_first_player_token(gameui) do
-    current_first_player = gameui["game"]["first_player"]
+    current_first_player = gameui["game"]["firstPlayer"]
     next_first_player = next_player(gameui, current_first_player)
     if !next_first_player do
       gameui
     else
-      put_in(gameui["game"]["first_player"], next_first_player)
+      put_in(gameui["game"]["firstPlayer"], next_first_player)
     end
   end
 
@@ -1513,7 +1617,7 @@ defmodule DragnCardsGame.GameUI do
   def seated_non_eliminated(gameui) do
     player_ids = gameui["playerIds"]
     player_data = gameui["game"]["playerData"]
-    Enum.reduce(["player1","player2","player3","player4"], [], fn(player_n, acc) ->
+    Enum.reduce(1..gameui["game"]["numPlayers"], [], fn(player_n, acc) ->
       acc = if player_ids[player_n] && !player_data[player_n]["eliminated"] do
         acc ++ [player_n]
       else

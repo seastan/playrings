@@ -87,42 +87,45 @@ export const gameAction = (action, props) => {
             //chatBroadcast("game_update", {message: "tried to refresh, but they already refreshed this round."})
             if (!result) return;
         }
+        gameBroadcast("game_action", {action: "refresh", options: {for_player_n: playerN}})
+
         // The player in the leftmost non-eliminated seat is the only one that does the framework game actions.
         // This prevents, for example, the token moving multiple times if players refresh at different times.
         if (isHost) {
             // Set phase
-            gameBroadcast("game_action", {action: "update_values", options: {updates: [["game","roundStep", "7.R"], ["game", "phase", "Refresh"]]}});
+            ///gameBroadcast("game_action", {action: "update_values", options: {updates: [["game","roundStep", "7.R"], ["game", "phase", "Refresh"]]}});
             chatBroadcast("game_update", {message: "set the round step to "+roundStepToText("7.R")+"."})
             const firstPlayerN = game.firstPlayer;
             const nextPlayerN = getNextPlayerN(gameUi, firstPlayerN);
             // If nextPlayerN is null then it's a solo game, so don't pass the token
             if (nextPlayerN) {
-                gameBroadcast("game_action", {action: "update_values", options: {updates: [["game","firstPlayer", nextPlayerN]]}});    
+                ///gameBroadcast("game_action", {action: "update_values", options: {updates: [["game","firstPlayer", nextPlayerN]]}});    
                 chatBroadcast("game_update",{message: "moved first player token to "+nextPlayerN+"."});
             }
         }
         // Refresh all cards you control
         chatBroadcast("game_update",{message: "refreshes."});
-        gameBroadcast("game_action", {
+/*         gameBroadcast("game_action", {
             action: "action_on_matching_cards", 
             options: {
                 criteria:[["controller", playerN], ["locked", false]], 
                 action: "update_card_values", 
                 options: {updates: [["exhausted", false], ["rotation", 0]]}
             }
-        });
+        }); */
         // Raise your threat
         const newThreat = game.playerData[playerN].threat+1;
         chatBroadcast("game_update", {message: "raises threat by 1 ("+newThreat+")."});
-        gameBroadcast("game_action", {action: "increment_threat", options: {increment: 1, for_player_n: playerN}});
+        ///gameBroadcast("game_action", {action: "increment_threat", options: {increment: 1, for_player_n: playerN}});
         // Set refreshed status
-        gameBroadcast("game_action", {action: "update_values", options: {updates: [["game", "playerData", playerN, "refreshed", true]]}});
+        ///gameBroadcast("game_action", {action: "update_values", options: {updates: [["game", "playerData", playerN, "refreshed", true]]}});
 
     } 
 
     else if (action === "new_round") {
         // Check if refresh is needed
-        if (!game.playerData[playerN].refreshed) gameAction("refresh", props);
+        if (!game.playerData[playerN].refreshed) gameBroadcast("game_action", {action: "refresh_and_new_round", options: {for_player_n: playerN}})
+        else gameBroadcast("game_action", {action: "new_round", options: {for_player_n: playerN}})
 
         // The player in the leftmost non-eliminated seat is the only one that does the framework game actions.
         // This prevents, for example, the round number increasing multiple times.
@@ -133,36 +136,34 @@ export const gameAction = (action, props) => {
             // Calculate round number
             chatBroadcast("game_update", {message: "-----------------------"})
             chatBroadcast("game_update", {message: "-----------------------"})
-            chatBroadcast("game_update", {message: "-----------------------"})
             chatBroadcast("game_update", {message: "----------------------- Round "+newRoundNumber})
             chatBroadcast("game_update", {message: "-----------------------"})
             chatBroadcast("game_update", {message: "-----------------------"})
-            chatBroadcast("game_update", {message: "-----------------------"})
             chatBroadcast("game_update", {message: "started a new round as host."})
-            gameBroadcast("game_action", {action: "update_values", options: {updates: [["game", "phase", "Resource"], ["game", "roundStep", "1.R"]]}})
+            ///gameBroadcast("game_action", {action: "update_values", options: {updates: [["game", "phase", "Resource"], ["game", "roundStep", "1.R"]]}})
             chatBroadcast("game_update", {message: "set the round step to "+roundStepToText("1.R")+"."})
             // Update round number
-            gameBroadcast("game_action", {action: "update_values", options:{updates:[["game", "roundNumber", newRoundNumber]]}})
+            ///gameBroadcast("game_action", {action: "update_values", options:{updates:[["game", "roundNumber", newRoundNumber]]}})
             chatBroadcast("game_update",{message: "increased the round number to "+newRoundNumber+"."})
         }
         // Draw a card
         for (var i = 0; i < game.playerData[playerN].cardsDrawn; i++) {
-            gameBroadcast("game_action", {action: "draw_card", options: {player_n: playerN}})
+            ///gameBroadcast("game_action", {action: "draw_card", options: {player_n: playerN}})
             chatBroadcast("game_update",{message: "drew a card."});
         }
         // Add a resource to each hero
-        gameBroadcast("game_action", {
+/*         gameBroadcast("game_action", {
             action: "action_on_matching_cards", 
             options: {
                 criteria:[["sides","sideUp","type","Hero"],["controller",playerN], ["groupType","play"]], 
                 action: "increment_token", 
                 options: {token_type: "resource", increment: 1}
             }
-        });
+        }); */
         // Reset willpower count and refresh status
-        gameBroadcast("game_action", {action: "update_values", options:{updates:[["game", "playerData", playerN, "willpower", 0], ["game", "playerData", playerN, "refreshed", false]]}})
+        ///gameBroadcast("game_action", {action: "update_values", options:{updates:[["game", "playerData", playerN, "willpower", 0], ["game", "playerData", playerN, "refreshed", false]]}})
         // Add custom set tokens per round
-        gameBroadcast("game_action", {
+/*         gameBroadcast("game_action", {
             action: "action_on_matching_cards", 
             options: {
                 criteria:[["controller",playerN], ["groupType","play"]], 
@@ -179,18 +180,18 @@ export const gameAction = (action, props) => {
                     options: {}
                 }
             });
-        }
+        } */
         // Uncommit all characters to the quest
-        gameBroadcast("game_action", {
+/*         gameBroadcast("game_action", {
             action: "action_on_matching_cards", 
             options: {
                 criteria:[["controller", playerN]], 
                 action: "update_card_values", 
                 options: {updates: [["committed", false]]}
             }
-        });
+        }); */
         // Save replay
-        gameBroadcast("game_action", {action: "save_replay", options: {}});
+        //gameBroadcast("game_action", {action: "save_replay", options: {}});
         chatBroadcast("game_update",{message: "saved the replay to their profile."});
         // Check for alerts
         checkAlerts();
