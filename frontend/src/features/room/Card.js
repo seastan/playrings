@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useSelector } from 'react-redux';
 import { Tokens } from './Tokens';
 import useProfile from "../../hooks/useProfile";
@@ -9,6 +9,22 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { getCurrentFace, getVisibleFace, getVisibleFaceSrc, getDefault } from "./Helpers";
 import { Target } from "./Target";
 import { useTouchMode } from "../../contexts/TouchModeContext";
+
+function useTraceUpdate(props) {
+    const prev = useRef(props);
+    useEffect(() => {
+        const changedProps = Object.entries(props).reduce((ps, [k, v]) => {
+        if (prev.current[k] !== v) {
+            ps[k] = [prev.current[k], v];
+        }
+        return ps;
+        }, {});
+        if (Object.keys(changedProps).length > 0) {
+        console.log('Changed props:', changedProps);
+        }
+        prev.current = props;
+    });
+}
 
 export const Card = React.memo(({
     cardId,
@@ -22,6 +38,18 @@ export const Card = React.memo(({
     cardSize,
     registerDivToArrowsContext
 }) => {    
+    useTraceUpdate({
+        cardId,
+        groupId,
+        groupType,
+        offset,
+        gameBroadcast,
+        chatBroadcast,
+        playerN,
+        cardIndex,
+        cardSize,
+        registerDivToArrowsContext
+    });
     const user = useProfile();
     const cardStore = state => state?.gameUi?.game?.cardById[cardId];
     const card = useSelector(cardStore);

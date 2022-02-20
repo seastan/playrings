@@ -131,12 +131,11 @@ export const gameAction = (action, props) => {
         // This prevents, for example, the round number increasing multiple times.
         if (isHost) {            
             // Update round number
-            const roundNumber = game["roundNumber"];
-            const newRoundNumber = parseInt(roundNumber) + 1;
+            //const newRoundNumber = parseInt(roundNumber) + 1;
             // Calculate round number
             chatBroadcast("game_update", {message: "-----------------------"})
             chatBroadcast("game_update", {message: "-----------------------"})
-            chatBroadcast("game_update", {message: "----------------------- Round "+newRoundNumber})
+            chatBroadcast("game_update", {message: "----------------------- New Round"})
             chatBroadcast("game_update", {message: "-----------------------"})
             chatBroadcast("game_update", {message: "-----------------------"})
             chatBroadcast("game_update", {message: "started a new round as host."})
@@ -144,13 +143,12 @@ export const gameAction = (action, props) => {
             chatBroadcast("game_update", {message: "set the round step to "+roundStepToText("1.R")+"."})
             // Update round number
             ///gameBroadcast("game_action", {action: "update_values", options:{updates:[["game", "roundNumber", newRoundNumber]]}})
-            chatBroadcast("game_update",{message: "increased the round number to "+newRoundNumber+"."})
+            chatBroadcast("game_update",{message: "increased the round number by 1."})
         }
         // Draw a card
-        for (var i = 0; i < game.playerData[playerN].cardsDrawn; i++) {
             ///gameBroadcast("game_action", {action: "draw_card", options: {player_n: playerN}})
-            chatBroadcast("game_update",{message: "drew a card."});
-        }
+        chatBroadcast("game_update",{message: "drew card(s)."});
+        //}
         // Add a resource to each hero
 /*         gameBroadcast("game_action", {
             action: "action_on_matching_cards", 
@@ -405,7 +403,8 @@ export const gameAction = (action, props) => {
     }
     else if (action === "increase_threat") {
         // Raise your threat
-        chatBroadcast("game_update", {message: "raises "+playerNToPlayerSpaceN(playerN)+"'s threat by 1."});
+        const newThreat = game.playerData[playerN].threat+1;
+        chatBroadcast("game_update", {message: "raises "+playerNToPlayerSpaceN(playerN)+"'s threat by 1 ("+newThreat+")."});
         gameBroadcast("game_action", {action: "increment_threat", options: {increment: 1, for_player_n: playerN}});
     }
     else if (action === "increase_threat_all") {
@@ -420,7 +419,8 @@ export const gameAction = (action, props) => {
     }
     else if (action === "decrease_threat") {
         // Raise your threat
-        chatBroadcast("game_update", {message: "reduces "+playerNToPlayerSpaceN(playerN)+"'s threat by 1."});
+        const newThreat = game.playerData[playerN].threat-1;
+        chatBroadcast("game_update", {message: "reduces "+playerNToPlayerSpaceN(playerN)+"'s threat by 1 ("+newThreat+")."});
         gameBroadcast("game_action", {action: "increment_threat", options: {increment: -1, for_player_n: playerN}});
     }
     else if (action === "decrease_threat_all") {
