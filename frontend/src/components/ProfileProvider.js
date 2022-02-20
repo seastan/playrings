@@ -30,7 +30,7 @@ export const ProfileProvider = ({ children }) => {
     ts = ts.slice(0, -1);
     doFetchHash(ts);
   }, [doFetchHash]);
-  useInterval(fetchProfileEvery10Mins, 6 * 1000);
+  useInterval(fetchProfileEvery10Mins, 600 * 1000);
   const user =
     data != null && data.user_profile != null ? data.user_profile : null;
   if (user) user.setData = setData;
