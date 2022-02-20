@@ -12,6 +12,7 @@ import { get } from "https";
 import { useKeypress, useSetKeypress } from "../../contexts/KeypressContext";
 import { useCardSizeFactor, useSetCardSizeFactor } from "../../contexts/CardSizeFactorContext";
 import { useSetObservingPlayerN } from "../../contexts/ObservingPlayerNContext";
+import store from "../../store";
 
 // const keyTokenMap: { [id: string] : Array<string | number>; } = {
 const keyUiMap = {
@@ -113,9 +114,6 @@ export const HandleKeyDown = ({
     gameBroadcast, 
     chatBroadcast
 }) => {
-    const gameUiStore = state => state?.gameUi;
-    const gameUi = useSelector(gameUiStore);
-    const game = gameUi.game;
     const dispatch = useDispatch();
     const keypress = useKeypress();
     const setKeypress = useSetKeypress();
@@ -142,6 +140,7 @@ export const HandleKeyDown = ({
     const keyTokenAction = (rawTokenType, props) => {
         const {gameUi, playerN, gameBroadcast, chatBroadcast, activeCardAndLoc, setActiveCardAndLoc, dispatch, keypress, setKeypress} = props;       
         if (!gameUi || !playerN || !activeCardAndLoc || !activeCardAndLoc.card) return; 
+        const game = gameUi.game;
         const activeCardId = activeCardAndLoc.card.id; 
         const activeCard = game.cardById[activeCardId];
         if (!activeCard) return;
@@ -226,7 +225,10 @@ export const HandleKeyDown = ({
             else if (keyDefaultList.includes(event.key)) return;
             else {
                 event.preventDefault();
+                const state = store.getState();
+                const gameUi = state.gameUi; 
                 handleKeyDown(
+                    gameUi,
                     event, 
                     playerN,
                     keypress, 
@@ -242,9 +244,10 @@ export const HandleKeyDown = ({
         return () => {
             document.removeEventListener('keydown', onKeyDown);
         }
-    }, [gameUi, typing, keypress, cardSizeFactor, activeCardAndLoc, keyBackLog]);
+    }, [typing, keypress, cardSizeFactor, activeCardAndLoc, keyBackLog]);
 
     const handleKeyDown = (
+        gameUi,
         event, 
         playerN,
         keypress, 
@@ -259,6 +262,9 @@ export const HandleKeyDown = ({
         console.log("handleKeyDown triggered")
         const k = event.key;
         console.log(k);
+
+        
+
         // Keep track of held key
         //if (k === "Shift") setKeypress({...keypress, "Shift": true});
         const unix_sec = Math.floor(Date.now() / 1000);

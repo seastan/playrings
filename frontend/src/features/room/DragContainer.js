@@ -43,7 +43,7 @@ export const DragContainer = React.memo(({
   const arrows2 = game.playerData.player1.arrows;
   const arrows3 = game.playerData.player1.arrows;
   const arrows4 = game.playerData.player1.arrows;
-  const usingArrows = arrows1 || arrows2 || arrows3 || arrows4;
+  const usingArrows = (arrows1 && arrows1.length) || (arrows2 && arrows2.length) || (arrows3 && arrows3.length) || (arrows4 && arrows4.length);
 
   const onDragEnd = (result) => {
     const groupById = game.groupById;

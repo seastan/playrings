@@ -1263,7 +1263,7 @@ defmodule DragnCardsGame.GameUI do
     end
     # Draw card(s)
     gameui = Enum.reduce(0..gameui["game"]["playerData"][player_n]["cardsDrawn"], gameui, fn(n, acc) ->
-      acc = draw_card(gameui, player_n)
+      acc = draw_card(acc, player_n)
     end)
     # Add a resource to each hero
     gameui = action_on_matching_cards(gameui, [
