@@ -3,7 +3,7 @@ Multiplayer online card game written in Elixir, Phoenix, React, and Typescript.
 
 
 
-## Local Instnace
+## Local Instance
 
 The local instance of Dragncards serves a purpose for those looking to develop, contribute, or play Dragncards in an offline environment.
 
