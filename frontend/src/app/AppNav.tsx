@@ -22,7 +22,7 @@ export const AppNav: React.FC<Props> = () => {
         <div className="h-full">
           <Link
             to="/"
-            className="absolute text-white no-underline h-full top-0"
+            className="text-white no-underline h-full top-0"
             style={{fontSize: "2vh"}}
           >
             {/*
