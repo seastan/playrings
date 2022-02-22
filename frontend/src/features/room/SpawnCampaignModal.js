@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 import ReactModal from "react-modal";
 import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { loadDeckFromXmlText, processLoadList, processPostLoad } from "./Helpers";
+import { buildLoadList, loadDeckFromXmlText, processLoadList, processPostLoad } from "./Helpers";
 import { CYCLEORDER, CYCLEINFO } from "./Constants";
 import { calcHeightCommon, DropdownItem, GoBack } from "./DropdownMenuHelpers";
 import useProfile from "../../hooks/useProfile";
@@ -32,7 +32,8 @@ export const SpawnCampaignModal = React.memo(({
     const handleDropdownClick = async(props) => {
       const res = await fetch(props.packPath);
       const text = await res.text();
-      var loadList = JSON.parse(text);
+      var reducedLoadList = JSON.parse(text);
+      var loadList = buildLoadList(reducedLoadList);
       loadList = processLoadList(loadList, playerN);
       gameBroadcast("game_action", {action: "load_cards", options: {load_list: loadList}});
       chatBroadcast("game_update",{message: "loaded campaign cards."});
