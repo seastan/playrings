@@ -247,7 +247,7 @@ export const gameAction = (action, props) => {
         }
         // Draw card
         chatBroadcast("game_update",{message: "drew a card."});
-        gameBroadcast("game_action",{action: "draw_card", options: {player_n: playerN}});
+        gameBroadcast("game_action",{action: "draw_card", options: {for_player_n: playerN}});
     } 
 
     // Save replay
@@ -724,7 +724,10 @@ export const cardAction = (action, cardId, options, props) => {
         if (cardIndex > 0) {
             const newDirection = card.attachmentDirection ? -card.attachmentDirection : -1;
             const updates = [["game", "cardById", cardId, "attachmentDirection", newDirection]];
-            gameBroadcast("game_action", {action: "update_values", options:{updates: updates}});
+            gameBroadcast("game_action", {action: "update_values", options:{updates: updates}});            
+            gameBroadcast("game_action", {action: "move_card", options: {card_id: cardId, dest_group_id: groupId, dest_stack_index: stackIndex+1, dest_card_index: 0, combine: false, preserve_state: true}})
+            gameBroadcast("game_action", {action: "move_card", options: {card_id: cardId, dest_group_id: groupId, dest_stack_index: stackIndex, dest_card_index: cardIndex, combine: true, preserve_state: true}})
+
         }
     }
     // Discard the other cards in a the stack

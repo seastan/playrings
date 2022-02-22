@@ -1042,7 +1042,7 @@ defmodule DragnCardsGame.GameUI do
     gameui = if player_n do
       case action do
         "draw_card" ->
-          draw_card(gameui, options["player_n"])
+          draw_card(gameui, player_n)
         "new_round" ->
           new_round(gameui, player_n, user_id)
         "refresh" ->
@@ -1262,9 +1262,13 @@ defmodule DragnCardsGame.GameUI do
       gameui
     end
     # Draw card(s)
-    gameui = Enum.reduce(0..gameui["game"]["playerData"][player_n]["cardsDrawn"], gameui, fn(n, acc) ->
-      acc = draw_card(acc, player_n)
-    end)
+    cards_per_round = gameui["game"]["playerData"][player_n]["cardsDrawn"]
+    gameui = if cards_per_round > 0 do Enum.reduce(1..cards_per_round, gameui, fn(n, acc) ->
+        acc = draw_card(acc, player_n)
+      end)
+    else
+      gameui
+    end
     # Add a resource to each hero
     gameui = action_on_matching_cards(gameui, [
         ["sides","sideUp","type","Hero"],

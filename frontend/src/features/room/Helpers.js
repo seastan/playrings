@@ -94,6 +94,7 @@ export const getVisibleFaceSrc = (card, playerN, user) => {
   const visibleSide = getVisibleSide(card, playerN);
   const visibleFace = getVisibleFace(card, playerN);
   const language = user?.language || "English";
+  if (visibleFace.name.includes("Journey")) console.log("brokencard ",card.sides.B.name, card);
   if (visibleSide === "A") {
     return {
       src: visibleFace.customImgUrl || process.env.PUBLIC_URL + '/images/cards/' + language + '/' + card['cardDbId'] + '.jpg',
@@ -417,6 +418,18 @@ export const flattenLoadList = (loadList) => {
       }
     }
   }
+}
+
+export const buildLoadList = (reducedLoadList) => {
+  const loadList = [];
+  for (var item of reducedLoadList) {
+    if (item.cardRow.cardid) {
+      loadList.push({...item, cardRow: cardDB[item.cardRow.cardid]})
+    } else {
+      loadList.push(item)
+    }
+  }
+  return loadList;
 }
 
 export const processLoadList = (loadList, playerN) => {
