@@ -370,14 +370,15 @@ export const TopBarMenu = React.memo(({
       // Deal clues
       const numResources = 2*game.numPlayers;
       const resourcePositionCoordinates = getNRandomFromPositionCoordinates(numResources);
-      var rightColSatisfied = false;
+      var rightSideSatisfied = false;
       for (var i=0; i<numResources; i++) {
           var coordinates = resourcePositionCoordinates[i];
-          if (i === numResources - 1 && !rightColSatisfied) {
-              const index = getRandomIntInclusive(0,2);
-              coordinates = [index,3];
+          if (i === numResources - 1 && !rightSideSatisfied) {
+              const indexCol = getRandomIntInclusive(2,3);
+              const indexRow = getRandomIntInclusive(0,2);
+              coordinates = [indexRow,indexCol];
           } else {
-              if (coordinates[1] === 3) rightColSatisfied = true;
+              if (coordinates[1] === 2 || coordinates[1] === 3) rightSideSatisfied = true;
               coordinates = resourcePositionCoordinates[i];
           }
           gameBroadcast("game_action", {action: "move_card", options: {card_id: searchCards[i].id, dest_group_id: "sharedExtra"+(coordinates[0]+1), dest_stack_index: coordinates[1], dest_card_index: 1, combine: true, preserve_state: true}})
@@ -701,7 +702,7 @@ export const TopBarMenu = React.memo(({
             <li key={"to_catch_an_orc"}><a onClick={() => handleMenuClick({action:"to_catch_an_orc"})} href="#">To Catch an Orc Setup</a></li>
             <li key={"escape_from_mount_gram"}><a onClick={() => handleMenuClick({action:"escape_from_mount_gram"})} href="#">Escape from Mount Gram Setup</a></li>
             <li key={"fortress_of_nurn"}><a onClick={() => handleMenuClick({action:"fortress_of_nurn"})} href="#">The Fortress of Nurn Setup</a></li>
-            {/* <li key={"glittering_caves"}><a onClick={() => handleMenuClick({action:"glittering_caves"})} href="#">Glittering Caves Clues</a></li> */}
+            <li key={"glittering_caves"}><a onClick={() => handleMenuClick({action:"glittering_caves"})} href="#">Glittering Caves Clues</a></li>
           </ul>
         </li> 
         <li key={"download"}>
