@@ -97,7 +97,7 @@ export const Lobby: React.FC = () => {
 
   return (
       <div 
-        className="w-full overflow-scroll" 
+        className="w-full overflow-y-scroll overflow-x-hidden" 
         style={{fontFamily:"Roboto", height: "97vh", 
         background: `url(${process.env.PUBLIC_URL + '/images/other/background.jpg'}) no-repeat center center fixed`,
         backgroundSize: 'cover',
@@ -131,7 +131,7 @@ export const Lobby: React.FC = () => {
               </div>
               <div className="w-full h-1/3 p-2">
                 <a className={lobbyButtonClass} href="https://github.com/seastan/DragnCards">
-                  Github
+                  GitHub
                 </a>
               </div>
             </div>
