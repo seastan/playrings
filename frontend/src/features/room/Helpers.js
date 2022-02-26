@@ -747,6 +747,24 @@ export const getScore = (gameUi, gameBroadcast, chatBroadcast) => {
   return fallenHeroCost + totalDamage + sumThreat + numRounds*10 - victoryPoints;
 }
 
+export const getCommittedStat = (questMode) => {
+  var tokenType = "willpower";
+  if (questMode === "Battle") tokenType = "attack";
+  if (questMode === "Siege") tokenType = "defense";
+  return tokenType;
+}
+
+export const getPlayerCommitted = (gameUi, questMode, playerN) => {
+  const committedCards = listOfMatchingCards(gameUi, [["committed",true], ["controller",playerN]]);
+  const committedStat = getCommittedStat(questMode);
+  var totalCommitted = 0;
+  for (var card of committedCards) {
+    const currentFace = getCurrentFace(card);
+    totalCommitted += currentFace[committedStat] + card.tokens[committedStat];
+  }
+  return totalCommitted;
+}
+
 
 export const loadRingsDb = (gameUi, playerI, ringsDbDomain, ringsDbType, ringsDbId, gameBroadcast, chatBroadcast, setTooltipIds) => {
   chatBroadcast("game_update",{message: "is loading a deck from RingsDb..."});

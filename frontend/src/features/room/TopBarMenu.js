@@ -4,7 +4,7 @@ import { useHistory } from "react-router-dom";
 import useProfile from "../../hooks/useProfile";
 import store from "../../store";
 import { setGame } from "./gameUiSlice";
-import { flatListOfCards, functionOnMatchingCards, getCardByGroupIdStackIndexCardIndex, getGroupIdStackIndexCardIndex, getSideAName, listOfMatchingCards, loadRingsDb, playerNToPlayerIndex, processLoadList, processPostLoad, shuffle } from "./Helpers";
+import { flatListOfCards, functionOnMatchingCards, getCardByGroupIdStackIndexCardIndex, getGroupIdStackIndexCardIndex, getSideAName, getPlayerCommitted, listOfMatchingCards, loadRingsDb, playerNToPlayerIndex, processLoadList, processPostLoad, shuffle } from "./Helpers";
 import { loadDeckFromXmlText, getRandomIntInclusive } from "./Helpers";
 import { useSetTouchMode } from "../../contexts/TouchModeContext";
 import { useSetTouchAction } from "../../contexts/TouchActionContext";
@@ -200,6 +200,14 @@ export const TopBarMenu = React.memo(({
     } else if (data.action === "quest_mode") {
       gameBroadcast("game_action", {action: "update_values", options: {updates: [["game", "questMode", data.mode]]}});
       chatBroadcast("game_update", {message: "set the quest mode to " + data.mode + "."});
+      const state = store.getState();
+      const gameUi = state.gameUi;
+      for (var i=1; i<=gameUi.game.numPlayers; i++) {
+        const playerI = "player"+i;      
+        const totalCommitted = getPlayerCommitted(gameUi, data.mode, playerI);
+        gameBroadcast("game_action", {action: "update_values", options: {updates: [["game", "playerData", playerI, "willpower", totalCommitted]]}});
+      }
+
     } else if (data.action === "escape_from_mount_gram") {
       const state = store.getState();
       const gameUi = state.gameUi;
