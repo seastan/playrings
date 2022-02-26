@@ -105,7 +105,7 @@ export const Profile: React.FC<Props> = () => {
   }
   const winRate = wins + losses === 0 ? 0 : Math.round(wins/(wins+losses)*100)
   return (
-    <>
+    <div className="w-full h-full overflow-y-scroll">
       <Container>
         <div className="bg-gray-100 p-4 rounded max-w-xl shadow">
           <h1 className="font-semibold mb-4 text-black">{user.alias}</h1>
@@ -175,7 +175,7 @@ export const Profile: React.FC<Props> = () => {
         closeModal={() => setShowModal(false)}
         shareReplayId={shareReplayId}
       />
-    </>
+    </div>
   );
 };
 export default Profile;
