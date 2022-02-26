@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import { Room } from "elixir-backend";
 import MUIDataTable, { MUIDataTableOptions } from "mui-datatables";
 
+
 interface Props {
   rooms: Array<Room>;
 }
@@ -81,9 +82,8 @@ export const LobbyTable: React.FC<Props> = ({ rooms }) => {
   }
   return (
     <>
-      <div className="w-full text-white text-center">Active rooms: {activeRooms}</div>
       <MUIDataTable
-        title={"Rooms"}
+        title={"Rooms ("+activeRooms+" active)"}
         data={filteredRooms}
         columns={columns}
         options={options}

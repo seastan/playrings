@@ -89,7 +89,18 @@ export const Lobby: React.FC = () => {
   }
 
   return (
-      <div className="w-full bg-gray-900" style={{fontFamily:"Roboto"}}>
+      <div 
+        className="w-full overflow-scroll" 
+        style={{fontFamily:"Roboto", height: "97vh", 
+        background: `url(${process.env.PUBLIC_URL + '/images/other/background.jpg'}) no-repeat center center fixed`,
+        backgroundSize: 'cover',
+        WebkitBackgroundSize: 'cover',
+        MozBackgroundSize: 'cover',
+        OBackgroundSize: 'cover',
+        backgroundColor: `rgba(50,50,50,0.95)`,
+        backgroundBlendMode: 'overlay'
+      }}
+        >
         <div className="w-full flex items-center justify-center pt-2">
           <img className="mb-1" style={{display:"inline", height: "150px"}} src={process.env.PUBLIC_URL + '/logosvg.svg'}/>
         </div>
@@ -135,18 +146,17 @@ export const Lobby: React.FC = () => {
               </span>
             </div>
           </div>
-          <h1 className="mb-4 text-center">Lobby</h1>
           {isLoading && <div className="text-white text-center">Connecting to server...</div>}
           {isError && <div className="text-white text-center">Error communicating with server...</div>}
           {(!isLoading && !isError) &&
-            <div className="mb-6">
+            <div className="">
               {/* <h3 className="mb-2 font-semibold text-center">New Game</h3> */}
               <div className="flex justify-center w-full" style={{maxWidth: "600px"}}>
-                <div style={{width: "200px"}}>
+                <div className="w-full text-center h-24" style={{}}>
                 {isLoggedIn && (
-                  <Button isPrimary onClick={() => handleCreateRoomClick()}>
+                  <div className="h-full bg-blue-200" onClick={() => handleCreateRoomClick()}>
                     Create Room
-                  </Button>
+                  </div>
                 )}
                 {!isLoggedIn && (
                   <span className="p-2 text-white bg-gray-700 rounded">
@@ -162,7 +172,6 @@ export const Lobby: React.FC = () => {
           }
           {(!isLoading && !isError) &&
             <div className="mb-6 w-full">
-              <h3 className="mb-2 font-semibold text-center">Current Games</h3>
               <div className="mb-4 w-full">
                 <LobbyTable rooms={rooms} />
               </div>
