@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useSelector } from 'react-redux';
 import { Tokens } from './Tokens';
+import { CommittedToken } from './CommittedToken';
 import useProfile from "../../hooks/useProfile";
 import { CardMouseRegion } from "./CardMouseRegion";
 import { useSetActiveCard } from "../../contexts/ActiveCardContext";
@@ -145,6 +146,10 @@ export const Card = React.memo(({
                     zIndex={zIndex}
                     aspectRatio={visibleFace.width/visibleFace.height}
                 />
+                {card.committed && <CommittedToken
+                    cardId={card.id}
+                    zIndex={zIndex}
+                />}
                 <ArrowRegion
                     cardId={card.id}
                     registerDivToArrowsContext={registerDivToArrowsContext}
