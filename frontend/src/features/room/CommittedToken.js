@@ -24,7 +24,7 @@ export const CommittedToken = React.memo(({
                 left: "0%",
                 bottom: "50%",
                 transform: `translate(-70%,+50%) rotate(-${card.rotation}deg)`,
-                height: "2.6vh",}}>
+                height: "2.5vh",}}>
             <div
                 className="flex absolute text-white text-center w-full h-full items-center justify-center"
                 style={{
