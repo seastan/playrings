@@ -1,6 +1,7 @@
 import React, { useState, useCallback, useEffect } from "react";
 import { ChatMessage } from "elixir-backend";
 import { Link } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 import CreateRoomModal from "./CreateRoomModal";
 import LobbyTable from "./LobbyTable";
 import Button from "../../components/basic/Button";
@@ -33,7 +34,7 @@ export const Lobby: React.FC = () => {
   const isLoggedIn = useIsLoggedIn();
   const myUser = useProfile();
   const myUserId = myUser?.id;
-
+  const history = useHistory();
   const [showModal, setShowModal] = useState(false);
   const [replayId, setReplayId] = useState("");
   const [ringsDbInfo, setRingsDbInfo] = useState<Array<any>>([null,null,null,null]);
@@ -84,9 +85,15 @@ export const Lobby: React.FC = () => {
   const rooms = data != null && data.data != null ? data.data : [];
 
   const handleCreateRoomClick = () => {
-    if (myUser?.email_confirmed_at) setShowModal(true);
-    else alert("You must confirm your email before you can start a game.")
+    if (isLoggedIn) {
+      if (myUser?.email_confirmed_at) setShowModal(true);
+      else alert("You must confirm your email before you can start a game.")
+    } else {
+      history.push("/login")
+    }
   }
+
+  const lobbyButtonClass = "border cursor-pointer hover:bg-gray-100 hover:text-black h-full w-full flex items-center justify-center text-white no-underline select-none"
 
   return (
       <div 
@@ -101,71 +108,47 @@ export const Lobby: React.FC = () => {
         backgroundBlendMode: 'overlay'
       }}
         >
-        <div className="w-full flex items-center justify-center pt-2">
-          <img className="mb-1" style={{display:"inline", height: "150px"}} src={process.env.PUBLIC_URL + '/logosvg.svg'}/>
-        </div>
-        <div className="w-full flex items-center justify-center text-white" style={{fontSize:"30px"}}>
-          DragnCards
-        </div>
-        {0 ? 
-        <div className="mt-4 mx-auto w-full" style={{maxWidth: "600px"}}>
-          <div className="mb-6">
-            {/* <h3 className="mb-2 font-semibold text-center">New Game</h3> */}
-            <div className="flex justify-center w-full" style={{maxWidth: "600px"}}>
-              <span className="p-2 text-white bg-gray-700 rounded">
-                Down for maintenance.
-              </span>
-            </div>
-          </div>
-        </div>
-        :
         <div className="mt-4 mx-auto w-full p-2" style={{maxWidth: "600px"}}>
-          <div className="mb-6">
-            {/* <h3 className="mb-2 font-semibold text-center">New Game</h3> */}
-            <div className="flex justify-center w-full" style={{maxWidth: "600px"}}>
-              <span className="p-2 text-white bg-gray-700 rounded">
-                New to DragnCards?  
-                <a href="https://tinyurl.com/DragnCardsYoutube" className="ml-1 text-white">
-                  Watch the tutorial
-                </a>
-              </span>
+          <div style={{height: "200px"}}>
+            <div className="w-1/2 h-full float-left">
+              <div className="w-full h-full flex items-center justify-center">
+                <img 
+                  className="" 
+                  style={{height: "200px"}} 
+                  src={process.env.PUBLIC_URL + '/logosvg.svg'}/>
+              </div>
             </div>
-          </div>
-          <div className="mb-6">
-            {/* <h3 className="mb-2 font-semibold text-center">New Game</h3> */}
-            <div className="flex justify-center w-full" style={{maxWidth: "600px"}}>
-              <span className="p-2 text-white bg-gray-700 rounded">
-                Bug reports? Feature requests? Post them on   
-                <a href="https://discord.gg/7BQv5ethUm" className="ml-1 mr-1 text-white">
+            <div className="w-1/2 h-full float-right">
+              <div className="w-full h-1/3 p-2">
+                <a className={lobbyButtonClass} href="https://tinyurl.com/DragnCardsYoutube">
+                  Tutorial
+                </a>
+              </div>
+              <div className="w-full h-1/3 p-2">
+                <a className={lobbyButtonClass} href="https://discord.gg/7BQv5ethUm">
                   Discord
-                </a> 
-                or
-                <a href="https://github.com/seastan/DragnCards" className="ml-1 text-white">
-                  GitHub
                 </a>
-              </span>
+              </div>
+              <div className="w-full h-1/3 p-2">
+                <a className={lobbyButtonClass} href="https://github.com/seastan/DragnCards">
+                  Github
+                </a>
+              </div>
             </div>
           </div>
+        </div>
+
+        <div className="mx-auto w-full p-2" style={{maxWidth: "600px"}}>
           {isLoading && <div className="text-white text-center">Connecting to server...</div>}
           {isError && <div className="text-white text-center">Error communicating with server...</div>}
           {(!isLoading && !isError) &&
             <div className="">
               {/* <h3 className="mb-2 font-semibold text-center">New Game</h3> */}
               <div className="flex justify-center w-full" style={{maxWidth: "600px"}}>
-                <div className="w-full text-center h-24" style={{}}>
-                {isLoggedIn && (
-                  <div className="h-full bg-blue-200" onClick={() => handleCreateRoomClick()}>
-                    Create Room
+                <div className="w-full h-24 py-2 text-3xl">
+                  <div className={lobbyButtonClass} onClick={() => handleCreateRoomClick()}>
+                    {isLoggedIn ? "Create Room" : "Log in to create a room"}
                   </div>
-                )}
-                {!isLoggedIn && (
-                  <span className="p-2 text-white bg-gray-700 rounded">
-                    <Link to="/login" className="mr-1 text-white">
-                      Log In
-                    </Link>
-                    to create a room
-                  </span>
-                )}
                 </div>
               </div>
             </div>
@@ -194,7 +177,7 @@ export const Lobby: React.FC = () => {
             ringsDbInfo={ringsDbInfo}
             loadShuffle={loadShuffle}
           />
-        </div>}
+        </div>
         {/* <div className="w-full mb-4 lg:w-1/4 xl:w-2/6">
           <div className="flex items-end h-full">
             <Chat chatBroadcast={chatBroadcast} messages={messages} setTyping={setTyping} />
