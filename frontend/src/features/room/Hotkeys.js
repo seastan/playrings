@@ -150,6 +150,11 @@ export const Hotkeys = React.memo(({
           <td className="p-1 text-center"><div className={keyClass} style={keyStyle}>B</div></td>
           <td className="text-center">Send attachment to back of stack</td>
         </tr>
+        <tr className={"bg-gray-600"}>
+          <td className="p-1 text-center"><div className={keyClass} style={keyStyleL}>Shift</div>
+          <div className={keyClass} style={keyStyle}>A</div></td>
+          <td className="text-center">Trigger ability (only available for select cards).</td>
+        </tr>
       </table>
     )
   }

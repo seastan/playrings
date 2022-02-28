@@ -395,9 +395,6 @@ export const gameAction = (action, props) => {
                 updates:[["game", "playerData", playerN, "arrows", []]], 
             }
         });
-    }    
-    else if (action === "caps_lock_A") {
-        chatBroadcast("game_update",{message: "pressed Shift-A instead of A. Is caps lock on?"});
     }
     else if (action === "caps_lock_n") {
         chatBroadcast("game_update",{message: "pressed N instead of Shift-N. Is caps lock on?"});
@@ -770,7 +767,10 @@ export const cardAction = (action, cardId, options, props) => {
     }
     else if (action === "card_ability") {
         const cardAbilities = abilities[card.cardDbId];
-        if (!cardAbilities) return; // Card is not in ability database
+        if (!cardAbilities) {
+            chatBroadcast("game_update",{message: "pressed Shift+A instead of A. Is caps lock on?"});
+            return; 
+        }// Card is not in ability database
         const visibleSide = getVisibleSide(card, playerN);
         const faceAbilities = cardAbilities[visibleSide];
         if (!faceAbilities) return; // Card face does not have abilities
@@ -800,6 +800,7 @@ export const cardAction = (action, cardId, options, props) => {
                 gameBroadcast("game_action",{action: result.action, options: formatOptions(result.options, card.controller)});
             }
         }
+        chatBroadcast("game_update", {message: "triggerd an ability on "+displayName+"."});
     }
 }
 

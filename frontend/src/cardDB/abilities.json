@@ -21,8 +21,52 @@
             }
         ]
     },
+    "51223bd0-ffd1-11df-a976-0801200c9060": {
+        "label": "Henamarth Riversong",
+        "A" : [
+            {
+                "trigger": [["groupType","play"],["exhausted",false]],
+                "results": [
+                    {
+                        "type": "card_action",
+                        "criteria": "self", 
+                        "action": "exhaust", 
+                        "options": {}
+                    },
+                    {
+                        "type": "card_action",
+                        "criteria": [["groupId","sharedEncounterDeck"],["stackIndex",0],["cardIndex",0]], 
+                        "action": "update_card_values", 
+                        "options": {"updates": [["currentSide","A"]]}
+                    }
+                ]
+            }
+        ]
+    },
     "51223bd0-ffd1-11df-a976-0801200c9057": {
         "label": "Unexpected Courage",
+        "A" : [
+            {
+                "trigger": [["groupType","play"],["exhausted",false]],
+                "results": [
+                    {
+                        "type": "card_action",
+                        "criteria": "self", 
+                        "action": "exhaust", 
+                        "options": {}
+                    },
+                    {
+                        "type": "card_action",
+                        "criteria": "parent", 
+                        "action": "ready", 
+                        "options": {}
+                    }
+                ]
+            }
+        ]
+    },
+    "51223bd0-ffd1-11df-a976-0801205c9006": {
+        "label": "Fast Hitch",
         "A" : [
             {
                 "trigger": [["groupType","play"],["exhausted",false]],
@@ -120,6 +164,33 @@
                         "criteria": [["groupId", "sharedStaging"],["sides","sideUp","type","Location"]], 
                         "action": "increment_token", 
                         "options": {"token_type": "progress", "increment": 1}
+                    }
+                ]
+            }
+        ]
+    },
+    "abebff49-8219-4ae0-bd26-266db57bdfc3": {
+        "label": "Northern Tracker",
+        "A" : [
+            {
+                "trigger": [["groupType","discard"]],
+                "results": [
+                    {
+                        "type": "card_action",
+                        "criteria": "self", 
+                        "action": "move_card", 
+                        "options": {
+                            "dest_group_id": "controllerHand", 
+                            "dest_stack_index": -1, 
+                            "dest_card_index": 0, 
+                            "combine": false, 
+                            "preserve_state": false
+                        }
+                    },
+                    {
+                        "type": "game_action",
+                        "action": "draw_card", 
+                        "options": {"for_player_n": "controller"}
                     }
                 ]
             }
