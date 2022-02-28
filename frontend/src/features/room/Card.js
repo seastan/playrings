@@ -10,6 +10,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { getCurrentFace, getVisibleFace, getVisibleFaceSrc, getDefault } from "./Helpers";
 import { Target } from "./Target";
 import { useTouchMode } from "../../contexts/TouchModeContext";
+import { AbilityToken } from "./AbilityToken";
 
 function useTraceUpdate(props) {
     const prev = useRef(props);
@@ -148,6 +149,14 @@ export const Card = React.memo(({
                 />
                 {card.committed && <CommittedToken
                     cardId={card.id}
+                    zIndex={zIndex}
+                />}
+                {isActive && <AbilityToken
+                    card={card}
+                    groupId={groupId}
+                    groupType={groupType}
+                    cardIndex={cardIndex}
+                    playerN={playerN}
                     zIndex={zIndex}
                 />}
                 <ArrowRegion

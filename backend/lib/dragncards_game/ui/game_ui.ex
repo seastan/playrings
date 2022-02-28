@@ -242,7 +242,11 @@ defmodule DragnCardsGame.GameUI do
         remove_trigger(gameui, card_id, options["round_step"])
       "move_card" ->
         move_card(gameui, card_id, options["dest_group_id"], options["dest_stack_index"], options["dest_card_index"], options["combine"], options["preserve_state"])
-      _ ->
+      "exhaust" ->
+        exhaust(gameui, card_id)
+      "ready" ->
+        ready(gameui, card_id)
+        _ ->
         gameui
     end
   end
@@ -271,6 +275,26 @@ defmodule DragnCardsGame.GameUI do
     Enum.reduce(tokens_per_round, gameui, fn({token_type, increment}, acc) ->
       acc = increment_token(acc, card_id, token_type, increment)
     end)
+  end
+
+  # Exhaust
+  def exhaust(gameui, card_id) do
+    card = get_card(gameui, card_id)
+    if card["exhausted"] do
+      gameui
+    else
+      toggle_exhaust(gameui, card_id)
+    end
+  end
+
+  # Ready
+  def ready(gameui, card_id) do
+    card = get_card(gameui, card_id)
+    if !card["exhausted"] do
+      gameui
+    else
+      toggle_exhaust(gameui, card_id)
+    end
   end
 
   # Move a card
@@ -1559,7 +1583,8 @@ defmodule DragnCardsGame.GameUI do
       my_gsc = gsc(gameui, card_id)
       {group_id, stack_index, card_index} = my_gsc
       group_type = get_group_type(gameui, group_id)
-      card = Map.merge(card, %{"groupId" => group_id, "stackIndex" => stack_index, "cardIndex" => card_index, "groupType" => group_type})
+      stack = get_stack_by_card_id(gameui, card_id)
+      card = Map.merge(card, %{"groupId" => group_id, "stackIndex" => stack_index, "stackId" => stack["id"], "cardIndex" => card_index, "groupType" => group_type})
       acc ++ [card]
     end)
   end

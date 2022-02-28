@@ -35,6 +35,7 @@ const keyCardActionMap = {
     "c": "detach",
     "C": "detach_and_discard",
     "b": "move_to_back",
+    "A": "card_ability",
 }
 
 const keyGameActionMap = {
@@ -48,7 +49,6 @@ const keyGameActionMap = {
     "P": "save",
     "S": "shadows",
     "X": "discard_shadows",
-    "A": "caps_lock_A",
     "n": "caps_lock_n",
     "ArrowLeft": "undo",
     "ArrowRight": "redo",
@@ -61,7 +61,7 @@ const keyGameActionMap = {
     "j": "decrease_threat",
     "W": "next_seat",
     "D": "draw_next_seat",
-    "L": "multiplayer_hotkeys",
+    "L": "multiplayer_hotkeys"
 }
 
 const ctrlKeyGameActionMap = {
@@ -261,6 +261,7 @@ export const HandleKeyDown = ({
         }
         console.log("handleKeyDown triggered")
         const k = event.key;
+        if (k === "CapsLock") alert("Warning: Caps Lock interferes with game hotkeys.")
         console.log(k);
 
         

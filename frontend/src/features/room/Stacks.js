@@ -14,7 +14,7 @@ const Container = styled.div`
   -moz-transition: all 0.2s;
   -o-transition: all 0.2s;
   transition: all 0.2s;
-  padding-left: 0px;
+  padding-left: 5px;
   height: 100%;
   width: calc(100% - 17px);
   user-select: none;

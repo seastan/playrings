@@ -250,6 +250,7 @@ export const flatListOfCards = (game) => {
         const indexedCard = {
           ...card,
           ["groupId"]: groupId,
+          ["stackId"]: stackId,
           ["stackIndex"]: s,
           ["cardIndex"]: c,
           ["groupType"]: group.type,
@@ -260,6 +261,30 @@ export const flatListOfCards = (game) => {
   })
   return allCards;
 }
+
+// Takes in something like [["groupId","controllerDeck"],["stackIndex",0]] with "player1" and outputs [["groupId","player1Deck"],["stackIndex",0]]
+export const formatCriteria = (criteria, controller) => {
+  const formattedCriteria = [];
+  for (var criterion of criteria) {
+    const formattedCriterion = [];
+    for (var item of criterion) {
+      if (typeof item === 'string') formattedCriterion.push(item.replace("controller",controller))
+      else formattedCriterion.push(item);
+    }
+    formattedCriteria.push(formattedCriterion);
+  }
+  return formattedCriteria;
+} 
+// Takes in something like [["groupId","controllerDeck"],["stackIndex",0]] with "player1" and outputs [["groupId","player1Deck"],["stackIndex",0]]
+export const formatOptions = (options, controller) => {
+  const formattedOptions = {};
+  for (var option of Object.keys(options)) {
+    const value = options[option];
+    if (typeof value === 'string') formattedOptions[option] = value.replace("controller",controller)
+    else formattedOptions[option] = value;
+  }
+  return formattedOptions;
+} 
 
 export const passesCriterion = (card, obj, criterion) => {
   if (card === null || obj === null || criterion === null) return false;
