@@ -35,6 +35,7 @@ const keyCardActionMap = {
     "c": "detach",
     "C": "detach_and_discard",
     "b": "move_to_back",
+    "y": "card_ability",
 }
 
 const keyGameActionMap = {

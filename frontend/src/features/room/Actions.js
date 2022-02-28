@@ -19,8 +19,13 @@ import {
   doListsOverlap,
   getRandomIntInclusive,
   listOfMatchingCards,
+  formatCriteria,
+  formatOptions,
+  getVisibleFace,
+  getVisibleSide,
 } from "./Helpers";
 import { setValues } from "./gameUiSlice";
+import abilities from "../../cardDB/abilities";
 import { GROUPSINFO, PHASEINFO, roundStepToText, nextRoundStep, prevRoundStep, nextPhase, prevPhase } from "./Constants";
 
 const areMultiplayerHotkeysEnabled = (game, chatBroadcast) => {
@@ -762,6 +767,39 @@ export const cardAction = (action, cardId, options, props) => {
         const numCardIds = cardIds.length;
         if (numCardIds <= 1) return;
         gameBroadcast("game_action", {action: "move_card", options: {card_id: cardId, dest_group_id: groupId, dest_stack_index: stackIndex, dest_card_index: numCardIds-1, combine: true, preserve_state: false}})
+    }
+    else if (action === "card_ability") {
+        const cardAbilities = abilities[card.cardDbId];
+        if (!cardAbilities) return; // Card is not in ability database
+        const visibleSide = getVisibleSide(card, playerN);
+        const faceAbilities = cardAbilities[visibleSide];
+        if (!faceAbilities) return; // Card face does not have abilities
+        if (faceAbilities.length !== 1) return; // Card face does not have 1 ability
+        const faceAbility = faceAbilities[0];
+        var trigger = faceAbility.trigger;
+        trigger = [...trigger,["id",card.id]]
+        const matchingTrigger = listOfMatchingCards(gameUi, trigger)
+        console.log('matchingTrigger', matchingTrigger)
+        if (!matchingTrigger || matchingTrigger.length !== 1) return; // Card does not meet trigger condition
+        const results = faceAbility.results;
+        for (var result of results) {
+            if (result.type === "card_action") {
+                var criteria = result.criteria;
+                if (criteria === "self") criteria = [["id", card.id]];
+                if (criteria === "parent") criteria = [["stackId", stackId], ["cardIndex", 0]]
+                criteria = formatCriteria(criteria, card.controller);
+                gameBroadcast("game_action", {
+                    action: "action_on_matching_cards", 
+                    options: {
+                        criteria: criteria, 
+                        action: result.action, 
+                        options: formatOptions(result.options, card.controller)
+                    }
+                });
+            } else if (result.type = "game_action") {
+                gameBroadcast("game_action",{action: result.action, options: formatOptions(result.options, card.controller)});
+            }
+        }
     }
 }
 
