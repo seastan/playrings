@@ -159,6 +159,14 @@ export const Table = React.memo(({
           setTooltipIds={setTooltipIds}
         />
       }
+      {showModal === "custom" && 
+        <SpawnCustomModal 
+          setTyping={setTyping}
+          setShowModal={setShowModal}
+          gameBroadcast={gameBroadcast}
+          chatBroadcast={chatBroadcast}
+        />
+      }
       {showModal === "campaign" && 
         <SpawnCampaignModal 
           playerN={playerN}

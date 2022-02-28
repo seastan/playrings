@@ -58,6 +58,8 @@ module.exports = {
       },
       boxShadow: {
         yellow: '0 0 7px yellow',
+        red: '0 0 14px red',
+        green: '0 0 14px green',
       }
     }
   }

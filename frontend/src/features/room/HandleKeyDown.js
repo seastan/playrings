@@ -15,6 +15,7 @@ import { useSetObservingPlayerN } from "../../contexts/ObservingPlayerNContext";
 import store from "../../store";
 
 // const keyTokenMap: { [id: string] : Array<string | number>; } = {
+
 const keyUiMap = {
     "+": "increase_card_size",
     "-": "decrease_card_size",
@@ -244,7 +245,7 @@ export const HandleKeyDown = ({
         return () => {
             document.removeEventListener('keydown', onKeyDown);
         }
-    }, [typing, keypress, cardSizeFactor, activeCardAndLoc, keyBackLog]);
+    }, [playerN, typing, keypress, cardSizeFactor, activeCardAndLoc, keyBackLog]);
 
     const handleKeyDown = (
         gameUi,
@@ -255,12 +256,12 @@ export const HandleKeyDown = ({
         gameBroadcast, 
         chatBroadcast,
     ) => {
-        if (!playerN) {
+        console.log("handleKeyDown triggered")
+        const k = event.key;
+        if (!playerN && !Object.keys(keyUiMap).includes(k)) {
             alert("Please sit down to do that.")
             return;
         }
-        console.log("handleKeyDown triggered")
-        const k = event.key;
         if (k === "CapsLock") alert("Warning: Caps Lock interferes with game hotkeys.")
         console.log(k);
 
