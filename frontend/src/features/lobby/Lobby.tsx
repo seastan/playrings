@@ -142,13 +142,10 @@ export const Lobby: React.FC = () => {
           {isLoading && <div className="text-white text-center">Connecting to server...</div>}
           {isError && <div className="text-white text-center">Error communicating with server...</div>}
           {(!isLoading && !isError) &&
-            <div className="">
-              {/* <h3 className="mb-2 font-semibold text-center">New Game</h3> */}
-              <div className="flex justify-center w-full" style={{maxWidth: "600px"}}>
-                <div className="w-full h-24 py-2 text-3xl">
-                  <div className={lobbyButtonClass} onClick={() => handleCreateRoomClick()}>
-                    {isLoggedIn ? "Create Room" : "Log in to create a room"}
-                  </div>
+            <div className="flex justify-center w-full" style={{maxWidth: "600px"}}>
+              <div className="w-full h-24 py-2 text-3xl">
+                <div className={lobbyButtonClass} onClick={() => handleCreateRoomClick()}>
+                  {isLoggedIn ? "Create Room" : "Log in to create a room"}
                 </div>
               </div>
             </div>
