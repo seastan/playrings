@@ -120,17 +120,17 @@ export const Lobby: React.FC = () => {
             </div>
             <div className="w-1/2 h-full float-right">
               <div className="w-full h-1/3 p-2">
-                <a className={lobbyButtonClass} href="https://tinyurl.com/DragnCardsYoutube">
+                <a className={lobbyButtonClass} target="_blank" href="https://www.youtube.com/watch?v=mshb1EDsnB8&list=PLuyP-hlzlHjd-XADfU-kqJaGpSE9RWHRa&index=1">
                   Tutorial
                 </a>
               </div>
               <div className="w-full h-1/3 p-2">
-                <a className={lobbyButtonClass} href="https://discord.gg/7BQv5ethUm">
+                <a className={lobbyButtonClass} target="_blank" href="https://discord.gg/7BQv5ethUm">
                   Discord
                 </a>
               </div>
               <div className="w-full h-1/3 p-2">
-                <a className={lobbyButtonClass} href="https://github.com/seastan/DragnCards">
+                <a className={lobbyButtonClass} target="_blank" href="https://github.com/seastan/DragnCards">
                   GitHub
                 </a>
               </div>
