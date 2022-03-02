@@ -13,6 +13,7 @@ import { useKeypress, useSetKeypress } from "../../contexts/KeypressContext";
 import { useCardSizeFactor, useSetCardSizeFactor } from "../../contexts/CardSizeFactorContext";
 import { useSetObservingPlayerN } from "../../contexts/ObservingPlayerNContext";
 import store from "../../store";
+import { setPlayerN } from "./roomUiSlice";
 
 // const keyTokenMap: { [id: string] : Array<string | number>; } = {
 
@@ -264,8 +265,6 @@ export const HandleKeyDown = ({
         }
         if (k === "CapsLock") alert("Warning: Caps Lock interferes with game hotkeys.")
         console.log(k);
-
-        
 
         // Keep track of held key
         //if (k === "Shift") setKeypress({...keypress, "Shift": true});

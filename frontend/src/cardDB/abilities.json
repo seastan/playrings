@@ -170,7 +170,7 @@
         ]
     },
     "abebff49-8219-4ae0-bd26-266db57bdfc3": {
-        "label": "Northern Tracker",
+        "label": "Elven-light",
         "A" : [
             {
                 "trigger": [["groupType","discard"]],
@@ -191,6 +191,28 @@
                         "type": "game_action",
                         "action": "draw_card", 
                         "options": {"for_player_n": "controller"}
+                    }
+                ]
+            }
+        ]
+    },
+    "51223bd0-ffd1-11df-a976-0801200c9072": {
+        "label": "Self Preservation",
+        "A" : [
+            {
+                "trigger": [["groupType","play"],["exhausted",false]],
+                "results": [
+                    {
+                        "type": "card_action",
+                        "criteria": "self", 
+                        "action": "exhaust", 
+                        "options": {}
+                    },
+                    {
+                        "type": "card_action",
+                        "criteria": "parent", 
+                        "action": "increment_token", 
+                        "options": {"token_type": "damage", "increment": -2}
                     }
                 ]
             }

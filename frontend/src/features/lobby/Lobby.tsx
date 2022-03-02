@@ -120,17 +120,17 @@ export const Lobby: React.FC = () => {
             </div>
             <div className="w-1/2 h-full float-right">
               <div className="w-full h-1/3 p-2">
-                <a className={lobbyButtonClass} href="https://tinyurl.com/DragnCardsYoutube">
+                <a className={lobbyButtonClass} target="_blank" href="https://www.youtube.com/watch?v=mshb1EDsnB8&list=PLuyP-hlzlHjd-XADfU-kqJaGpSE9RWHRa&index=1">
                   Tutorial
                 </a>
               </div>
               <div className="w-full h-1/3 p-2">
-                <a className={lobbyButtonClass} href="https://discord.gg/7BQv5ethUm">
+                <a className={lobbyButtonClass} target="_blank" href="https://discord.gg/7BQv5ethUm">
                   Discord
                 </a>
               </div>
               <div className="w-full h-1/3 p-2">
-                <a className={lobbyButtonClass} href="https://github.com/seastan/DragnCards">
+                <a className={lobbyButtonClass} target="_blank" href="https://github.com/seastan/DragnCards">
                   GitHub
                 </a>
               </div>
@@ -142,13 +142,10 @@ export const Lobby: React.FC = () => {
           {isLoading && <div className="text-white text-center">Connecting to server...</div>}
           {isError && <div className="text-white text-center">Error communicating with server...</div>}
           {(!isLoading && !isError) &&
-            <div className="">
-              {/* <h3 className="mb-2 font-semibold text-center">New Game</h3> */}
-              <div className="flex justify-center w-full" style={{maxWidth: "600px"}}>
-                <div className="w-full h-24 py-2 text-3xl">
-                  <div className={lobbyButtonClass} onClick={() => handleCreateRoomClick()}>
-                    {isLoggedIn ? "Create Room" : "Log in to create a room"}
-                  </div>
+            <div className="flex justify-center w-full" style={{maxWidth: "600px"}}>
+              <div className="w-full h-24 py-2 text-3xl">
+                <div className={lobbyButtonClass} onClick={() => handleCreateRoomClick()}>
+                  {isLoggedIn ? "Create Room" : "Log in to create a room"}
                 </div>
               </div>
             </div>
