@@ -108,12 +108,12 @@ export const Card = React.memo(({
                 onMouseLeave={event => handleMouseLeave(event)}>
                 <img className="absolute w-full h-full" style={{borderRadius: '0.6vh'}} src={visibleFaceSrc.src} onError={(e)=>{e.target.onerror = null; e.target.src=visibleFaceSrc.default}} />
 
-                {destroyed &&
+                {/* {destroyed &&
                     <div className="absolute w-full h-full bg-red-700" style={{opacity: 0.3}}/>
                 }                
                 {explored &&
                     <div className="absolute w-full h-full bg-green-700" style={{opacity: 0.3}}/>
-                }
+                } */}
                 {isActive && touchMode && defaultAction &&
                     <div 
                         className={"absolute w-full pointer-events-none bg-green-700 font-bold rounded text-white text-xs text-center" + (card.rotation === -30 ? " bottom-0" : "")}

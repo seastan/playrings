@@ -93,7 +93,7 @@ export const Lobby: React.FC = () => {
     }
   }
 
-  const lobbyButtonClass = "border cursor-pointer hover:bg-gray-100 hover:text-black h-full w-full flex items-center justify-center text-white no-underline select-none"
+  const lobbyButtonClass = "border cursor-pointer hover:bg-white hover:text-black h-full w-full flex items-center justify-center text-white no-underline select-none"
 
   return (
       <div 
@@ -120,8 +120,8 @@ export const Lobby: React.FC = () => {
             </div>
             <div className="w-1/2 h-full float-right">
               <div className="w-full h-1/3 p-2">
-                <a className={lobbyButtonClass} target="_blank" href="https://www.youtube.com/watch?v=mshb1EDsnB8&list=PLuyP-hlzlHjd-XADfU-kqJaGpSE9RWHRa&index=1">
-                  Tutorial
+                <a className={lobbyButtonClass} target="_blank" href="https://patreon.com/DragnCards">
+                  Patreon
                 </a>
               </div>
               <div className="w-full h-1/3 p-2">
@@ -141,6 +141,13 @@ export const Lobby: React.FC = () => {
         <div className="mx-auto w-full p-2" style={{maxWidth: "600px"}}>
           {isLoading && <div className="text-white text-center">Connecting to server...</div>}
           {isError && <div className="text-white text-center">Error communicating with server...</div>}
+          <div className="flex justify-center w-full" style={{maxWidth: "600px"}}>
+            <div className="w-full h-24 py-2 text-3xl">
+              <a className={lobbyButtonClass} target="_blank" href="https://www.youtube.com/watch?v=mshb1EDsnB8&list=PLuyP-hlzlHjd-XADfU-kqJaGpSE9RWHRa&index=1">
+                Tutorial
+              </a>
+            </div>
+          </div>
           {(!isLoading && !isError) &&
             <div className="flex justify-center w-full" style={{maxWidth: "600px"}}>
               <div className="w-full h-24 py-2 text-3xl">
