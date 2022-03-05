@@ -1,24 +1,24 @@
 import React from "react";
-import { CSSTransition } from 'react-transition-group';
 import { tokenTitleName, getVisibleSide, getVisibleFace } from "./Helpers";
 import { faArrowUp, faArrowDown, faRandom, faChevronRight, faCheck } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { DropdownItem, GoBack } from "./DropdownMenuHelpers";
 import "../../css/custom-dropdown.css";
 import { PHASEINFO } from "./Constants";
+import { useSelector } from "react-redux";
 
 export const DropdownMenuCard = React.memo(({
-  playerN,
   mouseX,
   mouseY,
   menuHeight,
-  dropdownMenu,
   handleDropdownClick,
   calcHeight,
   activeMenu,
-}) => {
-  const menuCard = dropdownMenu.card;
-  const menuCardIndex = dropdownMenu.cardIndex;
+}) => {    
+  const playerN = useSelector(state => state?.roomUi?.playerN);
+  const dropdownMenuObj = useSelector(state => state?.roomUi?.dropdownMenuObj);
+  const menuCard = dropdownMenuObj.card;
+  const menuCardIndex = dropdownMenuObj.cardIndex;
   const visibleSide = getVisibleSide(menuCard);
   const visibleFace = getVisibleFace(menuCard);
   
@@ -77,19 +77,19 @@ export const DropdownMenuCard = React.memo(({
     <div 
       className="dropdown" 
       style={{ height: menuHeight, zIndex: 1e7, top: top, left: left }}>
-        <div className="menu-title">{dropdownMenu.title}</div>
+        <div className="menu-title">{dropdownMenuObj.title}</div>
 
         {activeMenu === "main" &&
         <div className="menu">
           {menuCardIndex>0 ? <DropdownItem action="detach" clickCallback={handleDropdownClick}>Detach</DropdownItem> : null}
           <DropdownItem action="flip" clickCallback={handleDropdownClick}>Flip</DropdownItem>
-          {(menuCard?.exhausted && dropdownMenu?.groupType === "play") ? <DropdownItem action="toggle_exhaust" clickCallback={handleDropdownClick}>Ready</DropdownItem> : null}
-          {(!menuCard?.exhausted && dropdownMenu?.groupType === "play") ? <DropdownItem action="toggle_exhaust" clickCallback={handleDropdownClick}>Exhaust</DropdownItem> : null}
+          {(menuCard?.exhausted && dropdownMenuObj?.groupType === "play") ? <DropdownItem action="toggle_exhaust" clickCallback={handleDropdownClick}>Ready</DropdownItem> : null}
+          {(!menuCard?.exhausted && dropdownMenuObj?.groupType === "play") ? <DropdownItem action="toggle_exhaust" clickCallback={handleDropdownClick}>Exhaust</DropdownItem> : null}
           {(visibleSide === "B" && !menuCard?.peeking[playerN]) ? <DropdownItem action="peek" clickCallback={handleDropdownClick}>Peek</DropdownItem> : null}
           {menuCard?.peeking[playerN] ? <DropdownItem action="unpeek" clickCallback={handleDropdownClick}>Stop peeking</DropdownItem> : null}
-          {dropdownMenu?.groupId === playerN+"Hand" ? <DropdownItem action="swapWithTop" clickCallback={handleDropdownClick}>Swap with top</DropdownItem> : null}
-          {(menuCard?.controller === playerN && dropdownMenu?.groupType === "play" && !menuCard?.locked) ? <DropdownItem action="lock" clickCallback={handleDropdownClick}>Prevent refresh</DropdownItem> : null}
-          {(menuCard?.controller === playerN && dropdownMenu?.groupType === "play" && menuCard?.locked) ? <DropdownItem action="unlock" clickCallback={handleDropdownClick}>Enable refresh</DropdownItem> : null}
+          {dropdownMenuObj?.groupId === playerN+"Hand" ? <DropdownItem action="swapWithTop" clickCallback={handleDropdownClick}>Swap with top</DropdownItem> : null}
+          {(menuCard?.controller === playerN && dropdownMenuObj?.groupType === "play" && !menuCard?.locked) ? <DropdownItem action="lock" clickCallback={handleDropdownClick}>Prevent refresh</DropdownItem> : null}
+          {(menuCard?.controller === playerN && dropdownMenuObj?.groupType === "play" && menuCard?.locked) ? <DropdownItem action="unlock" clickCallback={handleDropdownClick}>Enable refresh</DropdownItem> : null}
           <DropdownItem action="delete" clickCallback={handleDropdownClick}>Delete</DropdownItem>
           {menuCardIndex>0 ? <DropdownItem action="swap_side" clickCallback={handleDropdownClick}>Swap Side</DropdownItem> : null}
           <DropdownItem
@@ -98,21 +98,21 @@ export const DropdownMenuCard = React.memo(({
             clickCallback={handleDropdownClick}>
             Move to
           </DropdownItem>
-          {dropdownMenu.groupType === "play" && 
+          {dropdownMenuObj.groupType === "play" && 
             <DropdownItem
               rightIcon={<FontAwesomeIcon icon={faChevronRight}/>}
               goToMenu="perRound"
               clickCallback={handleDropdownClick}>
               Per round
             </DropdownItem>}
-          {dropdownMenu.groupType === "play" && 
+          {dropdownMenuObj.groupType === "play" && 
             <DropdownItem
               rightIcon={<FontAwesomeIcon icon={faChevronRight}/>}
               goToMenu="toggleTrigger"
               clickCallback={handleDropdownClick}>
               Toggle triggers
             </DropdownItem>}
-          {dropdownMenu.groupType === "play" && menuCard.cardDbId === "ce1cf93c-68d9-4613-af3a-a08671152358" &&
+          {dropdownMenuObj.groupType === "play" && menuCard.cardDbId === "ce1cf93c-68d9-4613-af3a-a08671152358" &&
             <DropdownItem
               rightIcon={<FontAwesomeIcon icon={faChevronRight}/>}
               goToMenu="setRotation"

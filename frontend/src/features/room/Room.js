@@ -17,7 +17,6 @@ export const Room = ({ slug }) => {
   const myUserId = myUser?.id;
   const [isClosed, setIsClosed] = useState(false);
 
-  //const [gameUI, setGameUI] = useState<GameUI | null>(null);
   const onChannelMessage = useCallback((event, payload) => {
     if (!payload) return;
     console.log("Got new payload: ", event, payload);
@@ -31,15 +30,17 @@ export const Room = ({ slug }) => {
       if (game_ui.error && !error) {
         alert("An error occured.");
       }
-      dispatch(setGame(game_ui.game));
+      // dispatch(setGame(game_ui.game));
       dispatch(setGameUi(game_ui));
     } else if (
       event === "phx_reply" &&
       payload.response != null &&
       payload.response.game_ui === null
     ) {
-      setIsClosed(true);
-      alert("Your room has closed or timed out. If you were in the middle of playing, it may have crashed. If so, please go to the Menu and download the game state file. Then, create a new room and upload that file to continue where you left off.")
+      if (!isClosed) {
+        setIsClosed(true);
+        alert("Your room has closed or timed out. If you were in the middle of playing, it may have crashed. If so, please go to the Menu and download the game state file. Then, create a new room and upload that file to continue where you left off.")
+      }
     }
 
   }, []);
@@ -61,7 +62,9 @@ export const Room = ({ slug }) => {
   if (gameName !== slug) return (<div></div>);
   else {
     return (
-      <RoomProviders gameBroadcast={gameBroadcast} chatBroadcast={chatBroadcast}/>
+      <RoomProviders 
+        gameBroadcast={gameBroadcast} 
+        chatBroadcast={chatBroadcast}/>
     );
   }
 };

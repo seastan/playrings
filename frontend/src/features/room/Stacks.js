@@ -38,7 +38,6 @@ const StacksList = React.memo(({
   isDraggingFrom,
   gameBroadcast,
   chatBroadcast,
-  playerN,
   groupId,
   groupType,
   cardSize,
@@ -60,7 +59,6 @@ const StacksList = React.memo(({
           key={stackId}
           gameBroadcast={gameBroadcast}
           chatBroadcast={chatBroadcast}
-          playerN={playerN}
           groupId={groupId}
           groupType={groupType}
           stackIndex={stackIndex}
@@ -77,7 +75,6 @@ const StacksList = React.memo(({
 export const Stacks = React.memo(({
   gameBroadcast,
   chatBroadcast,
-  playerN,
   groupId,
   groupType,
   cardSize,
@@ -85,8 +82,7 @@ export const Stacks = React.memo(({
   registerDivToArrowsContext
 }) => {
   console.log("Rendering Stacks for ",groupId);
-  const groupStore = state => state?.gameUi?.game?.groupById?.[groupId];
-  const group = useSelector(groupStore);
+  const group = useSelector(state => state?.gameUi?.game?.groupById?.[groupId]);
   const stackIds = group.stackIds;
   const isCombineEnabled = (groupType === "play");
   return(
@@ -111,7 +107,6 @@ export const Stacks = React.memo(({
               stackIds={stackIds} 
               isDraggingOver={dropSnapshot.isDraggingOver} 
               isDraggingFrom={Boolean(dropSnapshot.draggingFromThisWith)}
-              playerN={playerN}
               cardSize={cardSize}>
             </CardBack>
             <DropZone ref={dropProvided.innerRef} groupType={groupType}>
@@ -120,7 +115,6 @@ export const Stacks = React.memo(({
                 isDraggingFrom={Boolean(dropSnapshot.draggingFromThisWith)}
                 gameBroadcast={gameBroadcast} 
                 chatBroadcast={chatBroadcast} 
-                playerN={playerN}
                 groupId={groupId}
                 groupType={(groupType ? groupType : group.type)} 
                 cardSize={cardSize}

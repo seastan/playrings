@@ -1,56 +1,47 @@
 import React from "react";
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Stacks } from "./Stacks";
 import { GROUPSINFO } from "./Constants";
 import { faBars, faEye } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { ContextMenuTrigger } from "react-contextmenu";
-import { GroupContextMenu } from "./GroupContextMenu";
-import { useSetDropdownMenu } from "../../contexts/DropdownMenuContext";
 import { handleBrowseTopN } from "./HandleBrowseTopN"; 
-import useLongPress from "../../hooks/useLongPress";
 import store from "../../store";
+import { setDropdownMenuObj } from "./roomUiSlice";
 
 export const Group = React.memo(({
   groupId,
-  cardSize,
   gameBroadcast,
   chatBroadcast,
-  playerN,
   hideTitle,
-  browseGroupId,
-  setBrowseGroupId,
-  setBrowseGroupTopN,
   registerDivToArrowsContext
 }) => {
   console.log("Rendering Group ",groupId);
-  const storeGroup = state => state?.gameUi?.game?.groupById?.[groupId];
-  const group = useSelector(storeGroup);
-  const setDropdownMenu = useSetDropdownMenu();
+  const dispatch = useDispatch();
+  const group = useSelector(state => state?.gameUi?.game?.groupById?.[groupId]);
+  const playerN = useSelector(state => state?.roomUi?.playerN);
 
   const handleEyeClick = (event) => {
     event.stopPropagation();
-    handleBrowseTopN("All", group, playerN, gameBroadcast, chatBroadcast, setBrowseGroupId, setBrowseGroupTopN);
+    handleBrowseTopN("All", group, gameBroadcast, chatBroadcast, dispatch);
   }
 
   const handleMainQuestClick = (event) => {
     event.stopPropagation();
     const state = store.getState();
     const questDeckGroup = state.gameUi.game.groupById["sharedQuestDeck"];
-    handleBrowseTopN("All", questDeckGroup, playerN, gameBroadcast, chatBroadcast, setBrowseGroupId, setBrowseGroupTopN);
+    handleBrowseTopN("All", questDeckGroup, gameBroadcast, chatBroadcast, dispatch);
   }
 
   const handleBarsClick = (event) => {
     event.stopPropagation();
     if (!playerN) return;
-    const dropdownMenu = {
+    const dropdownMenuObj = {
         type: "group",
         group: group,
         title: GROUPSINFO[groupId].name,
-        setBrowseGroupId: setBrowseGroupId,
-        setBrowseGroupTopN: setBrowseGroupTopN,
     }
-    if (playerN) setDropdownMenu(dropdownMenu);
+    console.log("dispatch setDropdownMenuObj", dropdownMenuObj)
+    if (playerN) dispatch(setDropdownMenuObj(dropdownMenuObj));
   }
 
   if (!group) return null;
@@ -85,10 +76,8 @@ export const Group = React.memo(({
       <Stacks
         gameBroadcast={gameBroadcast}
         chatBroadcast={chatBroadcast}
-        playerN={playerN}
         groupId={group.id}
         groupType={group.type}
-        cardSize={cardSize}
         selectedStackIndices={[...Array(numStacks).keys()]}
         registerDivToArrowsContext={registerDivToArrowsContext}
       />

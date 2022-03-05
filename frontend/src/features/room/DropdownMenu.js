@@ -5,30 +5,31 @@ import { useDropdownMenu, useSetDropdownMenu } from "../../contexts/DropdownMenu
 
 import "../../css/custom-dropdown.css";
 import { useTouchAction } from "../../contexts/TouchActionContext";
+import { useSelector } from "react-redux";
 
 export const DropdownMenu = React.memo(({
-  playerN,
   gameBroadcast,
   chatBroadcast,
 }) => {
-  const mousePosition = useMousePosition();
-  const dropdownMenu = useDropdownMenu();
-  const setDropdownMenu = useSetDropdownMenu();
-  const touchAction = useTouchAction();
+  const playerN = useSelector(state => state?.roomUi?.playerN);
+  const dropdownMenuObj = useSelector(state => state?.roomUi?.dropdownMenuObj);
+  const touchAction = useSelector(state => state?.roomUi?.touchAction);
+  const mousePosition = useSelector(state => state?.roomUi?.mousePosition);
   
   const [mouseX, setMouseX] = useState(0);
   const [mouseY, setMouseY] = useState(0); 
   const [isNull, setIsNull] = useState(true);
-  console.log("Rendering DropdownMenu ");
 
   useEffect(() => {
     setMouseX(mousePosition?.x);
     setMouseY(mousePosition?.y);
-    setIsNull(dropdownMenu === null);
-  }, [dropdownMenu])
+    setIsNull(dropdownMenuObj === null);
+  }, [dropdownMenuObj])
 
+
+  console.log("Rendering DropdownMenu ",mousePosition,dropdownMenuObj,isNull,touchAction);
   if (!mousePosition) return null;
-  if (!dropdownMenu) return null;
+  if (!dropdownMenuObj) return null;
   if (isNull) return null;
   if (touchAction) return null;
 
@@ -39,8 +40,6 @@ export const DropdownMenu = React.memo(({
       chatBroadcast={chatBroadcast}
       mouseX={mouseX}
       mouseY={mouseY}
-      dropdownMenu={dropdownMenu}
-      setDropdownMenu={setDropdownMenu}
     />
   )
 

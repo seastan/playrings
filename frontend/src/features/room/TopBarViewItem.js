@@ -1,21 +1,22 @@
 import React from "react";
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { GROUPSINFO } from "./Constants";
+import { setBrowseGroupId, setBrowseGroupTopN } from "./roomUiSlice";
 
 export const TopBarViewItem = React.memo(({
   groupId,
-  handleBrowseSelect,
-  playerN,
 }) => {
-  const groupStore = state => state.gameUi.game.groupById[groupId];
-  const group = useSelector(groupStore);
+  const dispatch = useDispatch();
+  const group = useSelector(state => state?.gameUi?.game?.groupById[groupId]);
+  const playerN = useSelector(state => state?.roomUi?.playerN);
 
   const handleMenuClick = (data) => {
     if (!playerN) {
       alert("Please sit at the table first.");
       return;
     } else if (data.action === "look_at") {
-      handleBrowseSelect(data.groupId);
+      dispatch(setBrowseGroupId(data.groupId));
+      dispatch(setBrowseGroupTopN("All"))
     } 
   }
 

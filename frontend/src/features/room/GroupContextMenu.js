@@ -2,15 +2,14 @@ import React from "react";
 import { GROUPSINFO } from "./Constants";
 import { ContextMenu, MenuItem, SubMenu } from "react-contextmenu";
 import { handleBrowseTopN } from "./HandleBrowseTopN";
+import { useDispatch } from "react-redux";
 
 export const GroupContextMenu = React.memo(({
     group,
     gameBroadcast,
     chatBroadcast,
-    playerN,
-    setBrowseGroupId,
-    setBrowseGroupTopN,
 }) => {
+    const dispatch = useDispatch();
 
     const handleMenuClick = (e, data) => {
         if (data.action === "shuffle_group") {
@@ -36,11 +35,9 @@ export const GroupContextMenu = React.memo(({
           handleBrowseTopN(
             topNstr, 
             group,
-            playerN,
             gameBroadcast, 
             chatBroadcast,
-            setBrowseGroupId,
-            setBrowseGroupTopN
+            dispatch,
           ) 
         }
     }

@@ -2,30 +2,26 @@ import React, { useEffect } from "react";
 import { useSelector } from 'react-redux';
 import { GROUPSINFO } from "./Constants";
 import { loadRingsDb } from "./Helpers";
-import store from "../../store";
 import useProfile from "../../hooks/useProfile";
+import store from "../../store";
 
 export const OnLoad = React.memo(({
-    setLoaded,
     gameBroadcast,
     chatBroadcast,
 }) => {
-  const gameUiStore = state => state.gameUi;
-  const gameUi = useSelector(gameUiStore);  
-  const optionsStore = state => state.gameUi?.game?.options;
-  const options = useSelector(optionsStore);  
+  const options = useSelector(state => state.gameUi?.game?.options);  
   const ringsDbInfo = options?.ringsDbInfo;
-  const groupByIdStore = state => state.gameUi?.game.groupById;
-  const groupById = useSelector(groupByIdStore);
-  const myUser = useProfile();
-  const myUserID = myUser?.id;
-  const createdByStore = state => state.gameUi?.created_by;
-  const createdBy = useSelector(createdByStore);
-  const isHost = myUserID === createdBy;
+  const groupById = useSelector(state => state.gameUi?.game.groupById);
+  const myUserId = useProfile()?.id;
+  const createdBy = useSelector(state => state.gameUi?.created_by);
+  const isHost = myUserId === createdBy;
   const deckToLoad = ringsDbInfo?.[0] || ringsDbInfo?.[1] || ringsDbInfo?.[2] || ringsDbInfo?.[3]
+  const loaded = useSelector(state => state?.roomUi?.loaded);
+  if (loaded) return;
 
   console.log("Rendering OnLoad", options);
   useEffect(() => {
+    const gameUi = store.getState()?.gameUi;
     if (!options || !isHost) return;
     if (deckToLoad && options["loaded"] !== true) {
       setLoaded(true);

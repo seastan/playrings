@@ -1,39 +1,28 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch } from 'react-redux';
 import { useSelector } from 'react-redux';
-import { useSetTouchAction, useTouchAction } from "../../contexts/TouchActionContext";
 import { gameAction, cardAction } from "./Actions";
-import { useActiveCard, useSetActiveCard } from "../../contexts/ActiveCardContext";
-import { useKeypress, useSetKeypress } from "../../contexts/KeypressContext";
 import { getDefault, getDisplayName, processTokenType, tokenPrintName } from "./Helpers";
-import { useDropdownMenu, useSetDropdownMenu } from "../../contexts/DropdownMenuContext";
-import { useTouchMode } from "../../contexts/TouchModeContext";
-import { useSetObservingPlayerN } from "../../contexts/ObservingPlayerNContext";
-
+import { setActiveCardObj, setDropdownMenuObj, setTouchAction } from "./roomUiSlice";
+import store from "../../store";
 
 export const HandleTouchActions = React.memo(({
-    playerN,
     gameBroadcast, 
     chatBroadcast
 }) => {
-    const gameUiStore = state => state?.gameUi;
-    const gameUi = useSelector(gameUiStore);
-    const touchMode = useTouchMode();
-    const touchAction = useTouchAction();
-    const setTouchAction = useSetTouchAction();
-    const activeCardAndLoc = useActiveCard();
-    var activeCardGameUi = null;
-    if (activeCardAndLoc?.card) activeCardGameUi = gameUi.game.cardById[activeCardAndLoc.card.id];
-    const setActiveCardAndLoc = useSetActiveCard();
-    const dropdownMenu = useDropdownMenu();
-    const setDropdownMenu = useSetDropdownMenu();
-    const [currentDropdownMenuCardId, setCurrentDropdownMenuCardId] = useState(null);
-    const keypress = useKeypress();
-    const setKeypress = useSetKeypress();
-    const [prevActive, setPrevActive] = useState(null);
     const dispatch = useDispatch();
-    const setObservingPlayerN = useSetObservingPlayerN();
-    const actionProps = {gameUi, playerN, gameBroadcast, chatBroadcast, activeCardAndLoc, setActiveCardAndLoc, dispatch, keypress, setKeypress, setObservingPlayerN};
+    const gameUi = useSelector(state => state?.gameUi);
+    const playerN = useSelector(state => state?.roomUi?.playerN);
+    const touchMode = useSelector(state => state?.roomUi?.touchMode);
+    const touchAction = useSelector(state => state?.roomUi?.touchAction);
+    const activeCardObj = useSelector(state => state?.roomUi?.activeCardObj);
+    const dropdownMenuObj = useSelector(state => state?.roomUi?.dropdownMenuObj);
+    var activeCardGameUi = null;
+    if (activeCardObj?.card) activeCardGameUi = gameUi.game.cardById[activeCardObj.card.id];
+    const [currentDropdownMenuCardId, setCurrentDropdownMenuCardId] = useState(null);
+    const [prevActive, setPrevActive] = useState(null);
+    const state = store.getState();
+    const actionProps = {state, dispatch, gameBroadcast, chatBroadcast};
     console.log("Rendering HandleTouchActions")
 
     useEffect(() => {
@@ -41,10 +30,10 @@ export const HandleTouchActions = React.memo(({
         if (touchAction?.type === "game") {
             const action = touchAction?.action;
             gameAction(action, actionProps)
-            setTouchAction(null);
-        } else if (touchAction?.type === "card" && activeCardAndLoc?.card) {
+            dispatch(setTouchAction(null));
+        } else if (touchAction?.type === "card" && activeCardObj?.card) {
             const action = touchAction.action;
-            const activeCard = activeCardAndLoc.card;
+            const activeCard = activeCardObj.card;
             if (action === "increment_token") {
                 const options = touchAction.options;
                 const tokenType = processTokenType(options.tokenType, activeCard);
@@ -55,54 +44,54 @@ export const HandleTouchActions = React.memo(({
                 if (increment < 0 && hasToken) chatBroadcast("game_update",{message: "removed "+Math.abs(increment)+" "+tokenPrintName(tokenType)+" token from "+getDisplayName(activeCard)+"."});
                 const tokensLeft = touchAction.options?.tokensLeft;
                 if (tokensLeft >= 0) {
-                    if (tokensLeft === 0) setTouchAction(null);
-                    else if (tokensLeft === 1 && hasToken)  setTouchAction(null);
+                    if (tokensLeft === 0) dispatch(setTouchAction(null));
+                    else if (tokensLeft === 1 && hasToken)  dispatch(setTouchAction(null));
                     else if (hasToken) {
-                        setTouchAction({...touchAction, options: {...options, tokensLeft: tokensLeft - 1}})
+                        dispatch(setTouchAction({...touchAction, options: {...options, tokensLeft: tokensLeft - 1}}))
                     }
                 }
             } else {
                 cardAction(action, activeCard?.id, touchAction.options, actionProps);
             }
-            setActiveCardAndLoc(null);
+            dispatch(setActiveCardObj(null));
         }
-    }, [activeCardAndLoc, touchAction, gameUi, playerN]);
+    }, [activeCardObj, touchAction, gameUi, playerN]);
 
     useEffect(() => {
-        if (dropdownMenu?.visible === false && dropdownMenu?.card?.id === currentDropdownMenuCardId) {
-            setDropdownMenu({...dropdownMenu, visible: true})
+        if (dropdownMenuObj?.visible === false && dropdownMenuObj?.card?.id === currentDropdownMenuCardId) {
+            dispatch(setDropdownMenuObj({...dropdownMenuObj, visible: true}));
         } else {
-            setCurrentDropdownMenuCardId(dropdownMenu?.card?.id);
+            setCurrentDropdownMenuCardId(dropdownMenuObj?.card?.id);
         }
-    }, [dropdownMenu]);
+    }, [dropdownMenuObj]);
 
     useEffect(() => {
-        setActiveCardAndLoc(null);
-        setDropdownMenu(null);
+        dispatch(setActiveCardObj(null));
+        dispatch(setDropdownMenuObj(null));
     }, [touchAction])
 
     // Tapping on an already active card makes it perform the default action
     useEffect(() => {
         // If there is no active card, also make sure previous active card is blanked
-        if (!activeCardAndLoc && prevActive?.setIsActive) prevActive.setIsActive(false);
+        if (!activeCardObj && prevActive?.setIsActive) prevActive.setIsActive(false);
         // Make sure touch mode is on before doing default actions 
         if (!touchMode) return;
-        const sameAsPrev = activeCardAndLoc?.card?.id && activeCardAndLoc?.card?.id === prevActive?.card?.id;
+        const sameAsPrev = activeCardObj?.card?.id && activeCardObj?.card?.id === prevActive?.card?.id;
         // If card was already active, perform default function
-        if (sameAsPrev && activeCardAndLoc?.clicked) {
-            const activeCard = activeCardAndLoc.card;
-            const defaultAction = getDefault(activeCard, activeCardAndLoc.groupId, activeCardAndLoc.groupType, activeCardAndLoc.cardIndex);
+        if (sameAsPrev && activeCardObj?.clicked) {
+            const activeCard = activeCardObj.card;
+            const defaultAction = getDefault(activeCard, activeCardObj.groupId, activeCardObj.groupType, activeCardObj.cardIndex);
             if (activeCard && defaultAction) cardAction(defaultAction.action, activeCard.id, defaultAction.options, actionProps);
         } else {
-            setPrevActive(activeCardAndLoc)
+            setPrevActive(activeCardObj)
         }
 
         // Add card highlight if no touch action is selected
         if (!touchAction) {
-            if (activeCardAndLoc?.setIsActive) activeCardAndLoc.setIsActive(true);
+            if (activeCardObj?.setIsActive) activeCardObj.setIsActive(true);
             if (!sameAsPrev && prevActive?.setIsActive) prevActive.setIsActive(false);
         }
-    }, [activeCardAndLoc, touchMode])
+    }, [activeCardObj, touchMode])
 
     // useEffect(() => {
     //     setActiveCardAndLoc({...activeCardAndLoc, card: activeCardGameUi})

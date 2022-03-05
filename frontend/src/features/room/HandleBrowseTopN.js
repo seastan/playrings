@@ -1,21 +1,17 @@
 import { GROUPSINFO } from "./Constants";
-import { useSelector, useDispatch } from 'react-redux';
+import { setBrowseGroupId, setBrowseGroupTopN } from "./roomUiSlice";
 
 export const handleBrowseTopN = (
     topNstr, 
     group,
-    playerN,
     gameBroadcast, 
     chatBroadcast,
-    setBrowseGroupId,
-    setBrowseGroupTopN,
+    dispatch,
 ) => {
     const stackIds = group["stackIds"];
     const numStacks = stackIds.length;
     const groupName = GROUPSINFO[group.id].name;
     var peekStackIds = [];
-    var peekStackIndices = [];
-    var peekCardIndices = [];
     var topNint = 0;
     
     // Set peeking based on topNstr
@@ -32,8 +28,8 @@ export const handleBrowseTopN = (
       peekStackIds = stackIds.slice(0, topNint);
       chatBroadcast("game_update",{message: "looks at top "+topNstr+" of "+groupName+"."})
     }
-    setBrowseGroupId(group.id);
-    setBrowseGroupTopN(topNstr);
+    dispatch(setBrowseGroupId(group.id));
+    dispatch(setBrowseGroupTopN(topNstr));
     gameBroadcast("game_action", {action: "peek_at", options: {stack_ids: stackIds, value: false}})
     gameBroadcast("game_action", {action: "peek_at", options: {stack_ids: peekStackIds, value: true}})
 }

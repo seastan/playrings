@@ -1,11 +1,10 @@
 
 import React from "react";
-import { useSetActiveCard } from "../../contexts/ActiveCardContext";
-import { useTouchMode } from "../../contexts/TouchModeContext";
 import { getDisplayName } from "./Helpers";
-import { useSetDropdownMenu } from "../../contexts/DropdownMenuContext";
 import useLongPress from "../../hooks/useLongPress";
 import { useTouchAction } from "../../contexts/TouchActionContext";
+import { useDispatch, useSelector } from "react-redux";
+import { setActiveCardObj, setDropdownMenuObj } from "./roomUiSlice";
 
 
 export const CardMouseRegion = React.memo(({
@@ -18,17 +17,16 @@ export const CardMouseRegion = React.memo(({
     cardIndex,
     groupId,
     groupType,
-    playerN,
 }) => {
-    const setActiveCardAndLoc = useSetActiveCard();
-    const touchMode = useTouchMode();
-    const touchAction = useTouchAction();
-    const displayName = getDisplayName(card);
-    const setDropdownMenu = useSetDropdownMenu();
+    const dispatch = useDispatch();
+    const displayName = getDisplayName(card);    
+    const playerN = useSelector(state => state?.roomUi?.playerN)
+    const touchMode = useSelector(state => state?.roomUi?.touchMode)
+    const touchAction = useSelector(state => state?.roomUi?.touchAction)
 
     const makeActive = (event) => {
         const screenPosition = event.clientX > (window.innerWidth/2) ? "right" : "left";
-        setActiveCardAndLoc({
+        dispatch(setActiveCardObj({
             card: card,
             mousePosition: position, 
             screenPosition: screenPosition,
@@ -37,11 +35,11 @@ export const CardMouseRegion = React.memo(({
             groupId: groupId,
             groupType: groupType,
             cardIndex: cardIndex,
-        });
+        }));
     }
 
     const handleSetDropDownMenu = () => {
-        const dropdownMenu = {
+        const dropdownMenuObj = {
             type: "card",
             card: card,
             title: displayName,
@@ -50,7 +48,7 @@ export const CardMouseRegion = React.memo(({
             groupType: groupType,
             visible: true,
         }
-        if (playerN) setDropdownMenu(dropdownMenu);
+        if (playerN) dispatch(setDropdownMenuObj(dropdownMenuObj));
     }
 
     const handleClick = (event) => {

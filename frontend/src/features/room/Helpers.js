@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux';
 import { cardDB } from "../../cardDB/cardDB";
 import { sectionToLoadGroupId, sectionToDiscardGroupId, sectionToDeckGroupId } from "./Constants";
 import axios from "axios";
+import { setTooltipIds } from './roomUiSlice';
 
 export const getCurrentFace = (card) => {
   if (!card?.currentSide) return null;
@@ -791,7 +792,7 @@ export const getPlayerCommitted = (gameUi, questMode, playerN) => {
 }
 
 
-export const loadRingsDb = (gameUi, playerI, ringsDbDomain, ringsDbType, ringsDbId, gameBroadcast, chatBroadcast, setTooltipIds) => {
+export const loadRingsDb = (gameUi, playerI, ringsDbDomain, ringsDbType, ringsDbId, gameBroadcast, chatBroadcast, dispatch) => {
   chatBroadcast("game_update",{message: "is loading a deck from RingsDb..."});
   // Set up tooltips
   var tooltipMotK = false;
@@ -867,7 +868,7 @@ export const loadRingsDb = (gameUi, playerI, ringsDbDomain, ringsDbType, ringsDb
       if (setTooltipIds) {
         var tooltipIds = []
         if (tooltipMotK) tooltipIds.push("tooltipMotK");
-        setTooltipIds(tooltipIds);
+        dispatch(setTooltipIds(tooltipIds));
       }
     });
   })

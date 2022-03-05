@@ -21,19 +21,18 @@ const Container = styled.div`
 export const Stack = React.memo(({
   gameBroadcast,
   chatBroadcast,
-  playerN,
   groupId,
   groupType,
   stackIndex,
-  cardSize,
   stackId,
   numStacks,
   registerDivToArrowsContext
 }) => {
   console.log('Rendering Stack ',stackIndex);
-  const stackStore = state => state?.gameUi?.game?.stackById[stackId];
-  const stack = useSelector(stackStore);
-  const touchMode = useTouchMode();
+  const stack = useSelector(state => state?.gameUi?.game?.stackById[stackId]);
+  const touchMode = useSelector(state => state?.roomUi?.touchMode);
+  const cardSize = useSelector(state => state?.roomUi?.cardSize);
+  const playerN = useSelector(state => state?.roomUi?.playerN);
   var spacingFactor = touchMode ? 1.5 : 1;
   if (groupId.includes("Extra")) spacingFactor = 0;
   const { height, width } = useWindowDimensions();
@@ -46,7 +45,6 @@ export const Stack = React.memo(({
   for (var i = 1; i<cardIds.length; i++) {
     const cardiId = cardIds[i];
     const cardi = store.getState().gameUi.game.cardById[cardiId];
-    console.log("attdir",cardi.attachmentDirection)
     if (cardi.attachmentDirection && cardi.attachmentDirection === -1) {
       leftOffsets++;
       offsets.push(-leftOffsets);
@@ -58,13 +56,12 @@ export const Stack = React.memo(({
   for (var i = 0; i< offsets.length; i++) {
     offsets[i] += leftOffsets;
   }
-  console.log("attdir",offsets)
   // Calculate size of stack for proper spacing. Changes base on group type and number of stack in group.
   const numStacksNonZero = numStacks > 0 ? numStacks : 1;
   var handSpacing = 45*aspectRatio/(numStacksNonZero);
   if (handSpacing > cardSize) handSpacing = cardSize;
   var stackWidth = groupType === "hand" ? handSpacing : cardSize/0.72 + cardSize*spacingFactor/3*(cardIds.length-1);
-
+  console.log("StackCardSize ", cardSize)
   return (
     <Draggable 
       key={stackId} 
@@ -89,13 +86,11 @@ export const Stack = React.memo(({
                 key={cardId}
                 gameBroadcast={gameBroadcast} 
                 chatBroadcast={chatBroadcast} 
-                playerN={playerN}
                 groupId={groupId}
                 groupType={groupType}
                 offset={offsets[cardIndex]}
                 cardId={cardId} 
                 cardIndex={cardIndex}
-                cardSize={cardSize}
                 registerDivToArrowsContext={registerDivToArrowsContext}
               />
             )

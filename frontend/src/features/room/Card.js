@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Tokens } from './Tokens';
 import { CommittedToken } from './CommittedToken';
 import useProfile from "../../hooks/useProfile";
@@ -7,10 +7,11 @@ import { CardMouseRegion } from "./CardMouseRegion";
 import { useSetActiveCard } from "../../contexts/ActiveCardContext";
 import { faEye } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { getCurrentFace, getVisibleFace, getVisibleFaceSrc, getDefault } from "./Helpers";
+import { getCurrentFace, getVisibleFace, getVisibleFaceSrc, getDefault, usesThreatToken } from "./Helpers";
 import { Target } from "./Target";
 import { useTouchMode } from "../../contexts/TouchModeContext";
 import { AbilityToken } from "./AbilityToken";
+import { setActiveCardObj } from "./roomUiSlice";
 
 function useTraceUpdate(props) {
     const prev = useRef(props);
@@ -35,33 +36,31 @@ export const Card = React.memo(({
     offset,
     gameBroadcast,
     chatBroadcast,
-    playerN,
     cardIndex,
-    cardSize,
     registerDivToArrowsContext
 }) => {    
-    useTraceUpdate({
-        cardId,
-        groupId,
-        groupType,
-        offset,
-        gameBroadcast,
-        chatBroadcast,
-        playerN,
-        cardIndex,
-        cardSize,
-        registerDivToArrowsContext
-    });
+    // useTraceUpdate({
+    //     cardId,
+    //     groupId,
+    //     groupType,
+    //     offset,
+    //     gameBroadcast,
+    //     chatBroadcast,
+    //     cardIndex,
+    //     registerDivToArrowsContext
+    // });
+    const dispatch = useDispatch();
     const user = useProfile();
-    const cardStore = state => state?.gameUi?.game?.cardById[cardId];
-    const card = useSelector(cardStore);
-    if (!card) return null;
+    const card = useSelector(state => state?.gameUi?.game?.cardById[cardId]);
+    const playerN = useSelector(state => state?.roomUi?.playerN);
+    const cardSize = useSelector(state => state?.roomUi?.cardSize);
+    console.log("CardSize ", cardSize);
+    if (!card) return;
     const currentFace = getCurrentFace(card);
     const visibleFace = getVisibleFace(card, playerN);
     const visibleFaceSrc = getVisibleFaceSrc(card, playerN, user);
     const zIndex = 1000 - cardIndex;
     console.log('Rendering Card ',visibleFace.name);
-    const setActiveCard = useSetActiveCard();
     const [isActive, setIsActive] = useState(false);
     const touchMode = useTouchMode();
     const touchModeSpacingFactor = touchMode ? 1.5 : 1;
@@ -69,7 +68,7 @@ export const Card = React.memo(({
 
     const handleMouseLeave = (_event) => {
         setIsActive(false);
-        setActiveCard(null);
+        dispatch(setActiveCardObj(null));
     }
 
     const horizontalOffset = 0.2 + (1.39-visibleFace.width)*cardSize/2 + cardSize*touchModeSpacingFactor/3*offset;
@@ -124,7 +123,6 @@ export const Card = React.memo(({
                 {(card["peeking"][playerN] && groupType !== "hand" && (card["currentSide"] === "B")) ? <FontAwesomeIcon className="absolute top-0 right-0 text-2xl" icon={faEye}/>:null}
                 <Target
                     cardId={cardId}
-                    cardSize={cardSize}
                 />
                 <CardMouseRegion 
                     position={"top"}
@@ -153,6 +151,7 @@ export const Card = React.memo(({
                 <Tokens
                     cardName={currentFace.name}
                     cardId={card.id}
+                    usesThreatToken={usesThreatToken(card)}
                     isActive={isActive}
                     gameBroadcast={gameBroadcast}
                     chatBroadcast={chatBroadcast}

@@ -118,6 +118,7 @@ defmodule DragnCardsGame.GameUIServer do
   end
 
   def handle_call({:game_action, user_id, action, options}, _from, gameui) do
+    Logger.debug("handle game_action #{user_id} #{action}")
     try do
       gameui = GameUI.game_action(gameui, user_id, action, options)
       put_in(gameui["error"], false)
@@ -130,6 +131,7 @@ defmodule DragnCardsGame.GameUIServer do
   end
 
   def handle_call({:add_player_to_room, user_id}, _from, gameui) do
+    Logger.debug("Added player to room: #{user_id}")
     if gameui["playersInRoom"] do
       players_in_room_old = gameui["playersInRoom"]
       number_windows_open = players_in_room_old["#{user_id}"]

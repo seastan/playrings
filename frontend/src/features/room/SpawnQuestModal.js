@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import ReactModal from "react-modal";
 import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -7,6 +7,8 @@ import { loadDeckFromXmlText } from "./Helpers";
 import { CYCLEORDER, CYCLEINFO } from "./Constants";
 import { calcHeightCommon, DropdownItem, GoBack } from "./DropdownMenuHelpers";
 import useProfile from "../../hooks/useProfile";
+import { setShowModal, setTooltipIds, setTyping } from "./roomUiSlice";
+import store from "../../store";
 
 function requireAll( requireContext ) {
   return requireContext.keys().map( requireContext );
@@ -104,17 +106,12 @@ const isVisible = (questPath, playtester, privacyType) => {
 }
 
 export const SpawnQuestModal = React.memo(({
-    playerN,
-    setTyping,
-    setShowModal,
     gameBroadcast,
     chatBroadcast,
-    setTooltipIds,
 }) => {  
-    const privacyTypeStore = state => state?.gameUi?.privacyType;
-    const privacyType = useSelector(privacyTypeStore);
-    const optionsStore = state => state.gameUi?.game?.options;
-    const options = useSelector(optionsStore);
+    const dispatch = useDispatch();
+    const privacyType = useSelector(state => state?.gameUi?.privacyType);
+    const options = useSelector(state => state.gameUi?.game?.options);
     const myUser = useProfile();
     const [filteredIndices, setFilteredIndices] = useState([]);
     const [activeMenu, setActiveMenu] = useState("main");
@@ -127,11 +124,12 @@ export const SpawnQuestModal = React.memo(({
       const newOptions = {...options, questModeAndId: modeAndId};
       const res = await fetch(questPath);
       const xmlText = await res.text();
+      const playerN = store.getState()?.roomUi?.playerN;
       var tooltipIds = loadDeckFromXmlText(xmlText, playerN, gameBroadcast, chatBroadcast, privacyType);
       if (modeAndId.includes("04.2") || modeAndId.includes("A1.7") || modeAndId.includes("05.5") || modeAndId.includes("09.9"))
         tooltipIds = [...tooltipIds, "tooltipAdvancedSetup"];
-      setTooltipIds(tooltipIds);
-      setShowModal(null);
+      dispatch(setTooltipIds(tooltipIds));
+      dispatch(setShowModal(null));
       gameBroadcast("game_action", {action: "update_values", options: {updates: [["game","options", newOptions]]}});
     }
 
@@ -186,8 +184,8 @@ export const SpawnQuestModal = React.memo(({
           className="mb-2 rounded-md" 
           placeholder=" Quest name..." 
           onChange={handleSpawnTyping}
-          onFocus={event => setTyping(true)}
-          onBlur={event => setTyping(false)}/>
+          onFocus={event => dispatch(setTyping(true))}
+          onBlur={event => dispatch(setTyping(false))}/>
 
         {/* Table */}
         {searchString &&

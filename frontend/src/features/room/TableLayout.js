@@ -1,15 +1,14 @@
 import React, { useState } from "react";
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Group } from "./Group";
-import { Stacks } from "./Stacks";
 import { Browse } from "./Browse";
-import { GROUPSINFO, CARDSCALE, LAYOUTINFO } from "./Constants";
+import { CARDSCALE, LAYOUTINFO } from "./Constants";
 import Chat from "../chat/Chat";
 import "../../css/custom-misc.css"; 
 import useWindowDimensions from "../../hooks/useWindowDimensions";
-import { useObservingPlayerN } from "../../contexts/ObservingPlayerNContext";
 import { QuickAccess } from "./QuickAccess";
 import { SideGroup } from "./SideGroup";
+import { setCardSize } from "./roomUiSlice";
 
 var delayBroadcast;
 
@@ -18,13 +17,10 @@ export const TableRegion = React.memo(({
   cardSize,
   gameBroadcast,
   chatBroadcast,
-  playerN,
-  browseGroupId,
-  setBrowseGroupId,
-  setBrowseGroupTopN,
   registerDivToArrowsContext,
 }) => {
-  const observingPlayerN = useObservingPlayerN();
+  const observingPlayerN = useSelector(state => state?.roomUi?.observingPlayerN);
+  const browseGroupId = useSelector(state => state?.roomUi?.browseGroup?.id);
   const groupId = ["Hand", "Deck", "Discard"].includes(region.id) ? observingPlayerN + region.id : region.id;
   const beingBrowsed = groupId === browseGroupId;
   return (
@@ -45,11 +41,7 @@ export const TableRegion = React.memo(({
           cardSize={cardSize}
           gameBroadcast={gameBroadcast} 
           chatBroadcast={chatBroadcast}
-          playerN={playerN}
           hideTitle={region.hideTitle}
-          browseGroupId={browseGroupId}
-          setBrowseGroupId={setBrowseGroupId}
-          setBrowseGroupTopN={setBrowseGroupTopN}
           registerDivToArrowsContext={registerDivToArrowsContext}
         />
       }
@@ -60,27 +52,19 @@ export const TableRegion = React.memo(({
 export const TableLayout = React.memo(({
   gameBroadcast,
   chatBroadcast,
-  playerN,
-  setTyping,
-  browseGroupId,
-  setBrowseGroupId,
-  browseGroupTopN,
-  setBrowseGroupTopN,
   registerDivToArrowsContext,
-  cardSizeFactor,
 }) => {
   console.log("Rendering TableLayout");
-  const numPlayersStore = state => state.gameUi.game.numPlayers;
-  const numPlayers = useSelector(numPlayersStore);
-  const groupByIdStore = state => state.gameUi.game.groupById;
-  const groupById = useSelector(groupByIdStore);
-  const layoutStore = state => state.gameUi?.game?.layout;
-  const layout = useSelector(layoutStore);
-  const observingPlayerN = useObservingPlayerN();
+  const dispatch = useDispatch();
+  const numPlayers = useSelector(state => state?.gameUi?.game?.numPlayers);
+  const layout = useSelector(state => state?.gameUi?.game?.layout);
+  const cardSizeFactor = useSelector(state => state?.roomUi?.cardSizeFactor);
+  const sideGroupId = useSelector(state => state?.roomUi?.sideGroupId);
+  const browseGroupId = useSelector(state => state?.roomUi?.browseGroup?.id);
   const [chatHover, setChatHover] = useState(false);
-  const [sideGroupId, setSideGroupId] = useState("sharedSetAside");
   const { height, width } = useWindowDimensions();
   const aspectRatio = width/height;
+  console.log("browseGroupId",browseGroupId)
 
   if (!layout) return;
 
@@ -100,8 +84,8 @@ export const TableLayout = React.memo(({
   const rowHeight = `${100/numRows}%`; 
   var cardSize = CARDSCALE/numRows;
   if (aspectRatio < 1.9) cardSize = cardSize*(1-0.75*(1.9-aspectRatio));
-
-  cardSize = cardSize*cardSizeFactor/100;
+  cardSize = cardSize*cardSizeFactor;
+  dispatch(setCardSize(cardSize));
 
   var middleRowsWidth = 100;
   if (sideGroupId !== "") {
@@ -118,13 +102,8 @@ export const TableLayout = React.memo(({
         {layoutInfo[0].regions.map((region, _regionIndex) => (
           <TableRegion
             region={region}
-            cardSize={cardSize}
             gameBroadcast={gameBroadcast} 
             chatBroadcast={chatBroadcast}
-            playerN={playerN}
-            browseGroupId={browseGroupId}
-            setBrowseGroupId={setBrowseGroupId}
-            setBrowseGroupTopN={setBrowseGroupTopN}
             registerDivToArrowsContext={registerDivToArrowsContext}
           />
         ))}
@@ -141,14 +120,8 @@ export const TableLayout = React.memo(({
               style={{height: `${100/(numRows-2)}%`}}>
               <Browse
                 groupId={browseGroupId}
-                cardSize={cardSize}
                 gameBroadcast={gameBroadcast}
-                chatBroadcast={chatBroadcast}
-                playerN={playerN}
-                browseGroupTopN={browseGroupTopN}
-                setBrowseGroupId={setBrowseGroupId}
-                setBrowseGroupTopN={setBrowseGroupTopN}
-                setTyping={setTyping}/>
+                chatBroadcast={chatBroadcast}/>
               </div>
             )
           } else if (rowIndex > 0 && rowIndex < numRows - 1) {
@@ -159,13 +132,8 @@ export const TableLayout = React.memo(({
                 {row.regions.map((region, _regionIndex) => (
                   <TableRegion
                     region={region}
-                    cardSize={cardSize}
                     gameBroadcast={gameBroadcast} 
                     chatBroadcast={chatBroadcast}
-                    playerN={playerN}
-                    browseGroupId={browseGroupId}
-                    setBrowseGroupId={setBrowseGroupId}
-                    setBrowseGroupTopN={setBrowseGroupTopN}
                     registerDivToArrowsContext={registerDivToArrowsContext}
                   />
                 ))}
@@ -177,13 +145,7 @@ export const TableLayout = React.memo(({
       <SideGroup
         gameBroadcast={gameBroadcast}
         chatBroadcast={chatBroadcast}
-        playerN={playerN}
-        browseGroupId={browseGroupId}
-        registerDivToArrowsContext={registerDivToArrowsContext}
-        cardSizeFactor={cardSizeFactor}
-        sideGroupId={sideGroupId}
-        setBrowseGroupId={setBrowseGroupId}
-        setBrowseGroupTopN={setBrowseGroupTopN}/>
+        registerDivToArrowsContext={registerDivToArrowsContext}/>
       {/* Bottom row */}
       <div 
         className="relative float-left w-full" 
@@ -191,13 +153,8 @@ export const TableLayout = React.memo(({
         {layoutInfo[numRows-1].regions.map((region, _regionIndex) => (
           <TableRegion
             region={region}
-            cardSize={cardSize}
             gameBroadcast={gameBroadcast} 
             chatBroadcast={chatBroadcast}
-            playerN={playerN}
-            browseGroupId={browseGroupId}
-            setBrowseGroupId={setBrowseGroupId}
-            setBrowseGroupTopN={setBrowseGroupTopN}
             registerDivToArrowsContext={registerDivToArrowsContext}
           />
         ))}
@@ -209,12 +166,9 @@ export const TableLayout = React.memo(({
           style={{height: chatHover ? `${numRows*100}%` : `100%`, width:'100%', paddingRight:"30px", opacity: 0.7, zIndex: chatHover ? 1e6 : 1e3}}
           onMouseEnter={() => handleStartChatHover()}
           onMouseLeave={() => handleStopChatHover()}>
-          <Chat hover={chatHover} chatBroadcast={chatBroadcast} setTyping={setTyping}/>
+          <Chat hover={chatHover} chatBroadcast={chatBroadcast}/>
         </div>
-        <QuickAccess
-          sideGroupId={sideGroupId}
-          setSideGroupId={setSideGroupId}
-        />
+        <QuickAccess/>
       </div>
     </>
   )

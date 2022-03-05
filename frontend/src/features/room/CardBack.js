@@ -2,27 +2,23 @@
 
 import React from "react";
 import { useSelector } from 'react-redux';
-import { CARDSCALE, LAYOUTINFO} from "./Constants"
 import { getCurrentFace, getVisibleFaceSrc } from "./Helpers";
 import useProfile from "../../hooks/useProfile";
 
 const CardBack = React.memo(({
-    groupType,
-    stackIds,
-    isDraggingOver,
-    isDraggingFrom,
-    playerN,
-    cardSize,
+  groupType,
+  stackIds,
+  isDraggingOver,
+  isDraggingFrom,
 }) => {
   const user = useProfile();
-  const storeStack0 = state => state?.gameUi?.game?.stackById[stackIds[0]];
-  const stack0 = useSelector(storeStack0);
-  const storeStack1 = state => state?.gameUi?.game?.stackById[stackIds[1]];
-  const stack1 = useSelector(storeStack1);
-  const storeCard0 = state => state?.gameUi?.game?.cardById[stack0?.cardIds[0]];
-  const card0 = useSelector(storeCard0);
-  const storeCard1 = state => state?.gameUi?.game?.cardById[stack1?.cardIds[0]];
-  const card1 = useSelector(storeCard1);  
+  const playerN = useSelector(state => state?.roomUi?.playerN)
+  const stack0 = useSelector(state => state?.gameUi?.game?.stackById[stackIds[0]]);
+  const stack1 = useSelector(state => state?.gameUi?.game?.stackById[stackIds[1]]);
+  const card0 = useSelector(state => state?.gameUi?.game?.cardById[stack0?.cardIds[0]]);
+  const card1 = useSelector(state => state?.gameUi?.game?.cardById[stack1?.cardIds[0]]);
+  const cardSize = useSelector(state => state?.roomUi?.cardSize);
+  
 
   var visibleFaceSrc;
   var visibleFace;

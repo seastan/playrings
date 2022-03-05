@@ -1,5 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
-import { useSelector } from 'react-redux';
+import React, { useState, useEffect } from "react";
 import { TableLayout } from "./TableLayout";
 import { GiantCard } from "./GiantCard";
 import { TopBar } from "./TopBar";
@@ -13,63 +12,36 @@ import { PlayersInRoom } from "./PlayersInRoom";
 import { DropdownMenu } from "./DropdownMenu";
 import { OnLoad } from "./OnLoad";
 import { TouchBarBottom } from "./TouchBarBottom";
-import { useKeypress } from "../../contexts/KeypressContext";
-import { useTouchMode } from "../../contexts/TouchModeContext";
 
 import "../../css/custom-dropdown.css";
-
-import { useSetMousePosition } from "../../contexts/MousePositionContext";
-import { useSetTouchAction } from "../../contexts/TouchActionContext";
-import { useSetActiveCard } from "../../contexts/ActiveCardContext";
-import { useSetDropdownMenu } from "../../contexts/DropdownMenuContext";
-import { useCardSizeFactor } from "../../contexts/CardSizeFactorContext";
 import { TooltipModal } from "./TooltipModal";
+import { setActiveCardObj, setDropdownMenuObj, setMousePosition, setTouchAction } from "./roomUiSlice";
+import { useDispatch, useSelector } from "react-redux";
 
 export const Table = React.memo(({
-  playerN,
   gameBroadcast,
   chatBroadcast,
-  setTyping,
   registerDivToArrowsContext
 }) => {
   console.log('Rendering Table');
-  const [showModal, setShowModal] = useState(null);
-  const [loaded, setLoaded] = useState(false);
-  const [showHotkeys, setShowHotkeys] = useState(false);
-  const [showPlayersInRoom, setShowPlayersInRoom] = useState(false);
-  const [sittingPlayerN, setSittingPlayerN] = useState("");
-  // Show/hide group that allows you to browse certain cards in a group
-  const [browseGroupId, setBrowseGroupId] = useState("");
-  // Indices of stacks in group being browsed
-  const [browseGroupTopN, setBrowseGroupTopN] = useState(0);
-  const [observingPlayerN, setObservingPlayerN] = useState(playerN);
-  const [tooltipIds, setTooltipIds] = useState([]);
-
-  const setMousePosition = useSetMousePosition();
-  const setActiveCardAndLoc = useSetActiveCard();
-  const setTouchAction = useSetTouchAction();
-  const setDropdownMenu = useSetDropdownMenu();
-  const keypress = useKeypress();    
-  const cardSizeFactor = useCardSizeFactor();
-  const touchMode = useTouchMode();
-
-  const handleBrowseSelect = (groupId) => {
-    setBrowseGroupId(groupId);
-    setBrowseGroupTopN("All");
-  }
+  const dispatch = useDispatch();
+  const tooltipIds = useSelector(state => state?.roomUi?.tooltipIds);
+  const touchMode = useSelector(state => state?.roomUi?.touchMode);
+  const showModal = useSelector(state => state?.roomUi?.showModal);
+  const loaded = useSelector(state => state?.roomUi?.loaded);
 
   const handleTableClick = (event) => {
-    setActiveCardAndLoc(null);
-    setDropdownMenu(null);
-    setTouchAction(null);
+    dispatch(setActiveCardObj(null));
+    dispatch(setDropdownMenuObj(null));
+    dispatch(setTouchAction(null));
   }
 
   useEffect(() => {
     const handleMouseDown = (event) => {
-      setMousePosition({
+      dispatch(setMousePosition({
         x: event.clientX,
         y: event.clientY,
-      })
+      }))
     }
     document.addEventListener('mousedown', handleMouseDown);
     return () => {
@@ -82,16 +54,14 @@ export const Table = React.memo(({
       //onTouchStart={(event) => handleTableClick(event)} onMouseUp={(event) => handleTableClick(event)}
       onClick={(event) => handleTableClick(event)}>
       <DropdownMenu
-        playerN={playerN}
         gameBroadcast={gameBroadcast}
         chatBroadcast={chatBroadcast}
       />
-      {!loaded && <OnLoad setLoaded={setLoaded} gameBroadcast={gameBroadcast} chatBroadcast={chatBroadcast}/>}
-      {(showHotkeys || keypress["Tab"]) ? <Hotkeys tabMode={keypress["Tab"]} setShowWindow={setShowHotkeys}/> : null}
-      {showPlayersInRoom && <PlayersInRoom setShowWindow={setShowPlayersInRoom}/>}
+      {loaded? null : <OnLoad gameBroadcast={gameBroadcast} chatBroadcast={chatBroadcast}/>}
+      <Hotkeys/>
+      <PlayersInRoom/>
       {/* Side panel */}
       <SideBar
-        playerN={playerN}
         gameBroadcast={gameBroadcast}
         chatBroadcast={chatBroadcast}
       />
@@ -101,20 +71,8 @@ export const Table = React.memo(({
           {/* Game menu bar */}
           <div className="bg-gray-600 text-white w-full" style={{height: "6%"}}>
             <TopBar
-              setShowModal={setShowModal}
-              setShowHotkeys={setShowHotkeys}
-              setShowPlayersInRoom={setShowPlayersInRoom}
-              handleBrowseSelect={handleBrowseSelect}
               gameBroadcast={gameBroadcast}
               chatBroadcast={chatBroadcast}
-              playerN={playerN}
-              sittingPlayerN={sittingPlayerN}
-              setSittingPlayerN={setSittingPlayerN}
-              observingPlayerN={observingPlayerN}
-              setObservingPlayerN={setObservingPlayerN}
-              setTyping={setTyping}
-              setLoaded={setLoaded}
-              setTooltipIds={setTooltipIds}
             />
           </div>
           {/* Table */}
@@ -122,14 +80,7 @@ export const Table = React.memo(({
             <TableLayout
               gameBroadcast={gameBroadcast} 
               chatBroadcast={chatBroadcast}
-              playerN={playerN}
-              setTyping={setTyping}
-              browseGroupId={browseGroupId}
-              setBrowseGroupId={setBrowseGroupId}
-              browseGroupTopN={browseGroupTopN}
-              setBrowseGroupTopN={setBrowseGroupTopN}
               registerDivToArrowsContext={registerDivToArrowsContext}
-              cardSizeFactor={cardSizeFactor}
             />
           </div>
           {/* Touch Bar */}
@@ -139,39 +90,27 @@ export const Table = React.memo(({
         </div>
       </div>
       {/* Card hover view */}
-      <GiantCard playerN={playerN}/>
+      <GiantCard/>
       {showModal === "card" && 
         <SpawnCardModal 
-          playerN={playerN}
-          setTyping={setTyping}
-          setShowModal={setShowModal}
           gameBroadcast={gameBroadcast}
           chatBroadcast={chatBroadcast}
         />
       }
       {showModal === "quest" && 
         <SpawnQuestModal 
-          playerN={playerN}
-          setTyping={setTyping}
-          setShowModal={setShowModal}
           gameBroadcast={gameBroadcast}
           chatBroadcast={chatBroadcast}
-          setTooltipIds={setTooltipIds}
         />
       }
       {showModal === "custom" && 
         <SpawnCustomModal 
-          setTyping={setTyping}
-          setShowModal={setShowModal}
           gameBroadcast={gameBroadcast}
           chatBroadcast={chatBroadcast}
         />
       }
       {showModal === "campaign" && 
         <SpawnCampaignModal 
-          playerN={playerN}
-          setTyping={setTyping}
-          setShowModal={setShowModal}
           gameBroadcast={gameBroadcast}
           chatBroadcast={chatBroadcast}
         />
@@ -180,9 +119,6 @@ export const Table = React.memo(({
         return(
         <TooltipModal
           tooltipId={tooltipId}
-          tooltipIds={tooltipIds}
-          setTooltipIds={setTooltipIds}
-          setShowModal={setShowModal}
           gameBroadcast={gameBroadcast}
         />)
       })}

@@ -1,48 +1,26 @@
 import React, { useState } from "react";
-import { CSSTransition } from 'react-transition-group';
-import { GROUPSINFO } from "./Constants";
 import { handleDropdownClickCommon } from "./DropdownMenuClick";
 import { DropdownMenuCard } from "./DropdownMenuCard";
 import { DropdownMenuGroup } from "./DropdownMenuGroup";
 import { DropdownMenuFirstPlayer } from "./DropdownMenuFirstPlayer";
-import { getDisplayName, tokenTitleName, getVisibleSide } from "./Helpers";
-import { faArrowUp, faArrowDown, faRandom, faReply, faChevronRight, faCheck } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useDispatch, useSelector } from 'react-redux';
 import { calcHeightCommon, DropdownItem, GoBack } from "./DropdownMenuHelpers";
 import "../../css/custom-dropdown.css";
-import { useSetKeypress } from "../../contexts/KeypressContext";
-import { useActiveCard, useSetActiveCard } from "../../contexts/ActiveCardContext";
+import { setDropdownMenuObj } from "./roomUiSlice";
+import store from "../../store";
 
 export const DropdownMenuCommon = React.memo(({
-  playerN,
   gameBroadcast,
   chatBroadcast,
   mouseX,
   mouseY,
-  dropdownMenu,
-  setDropdownMenu,
 }) => {
   
-  const gameUiStore = state => state?.gameUi;
-  const gameUi = useSelector(gameUiStore);
-
+  const dispatch = useDispatch();
+  const dropdownMenuObj = useSelector(state => state?.roomUi?.dropdownMenuObj)
+  console.log("dropdownMenuObj",dropdownMenuObj)
   const [activeMenu, setActiveMenu] = useState('main');
   const [menuHeight, setMenuHeight] = useState(null);
-
-  const menuCard = dropdownMenu.card;
-  const menuCardIndex = dropdownMenu.cardIndex;
-
-  const visibleSide = getVisibleSide(menuCard);
-  const displayName = getDisplayName(menuCard);
-
-  const keypress = useSetKeypress();
-  const setKeypress = useSetKeypress();
-
-  const activeCardAndLoc = useActiveCard();
-  const setActiveCardAndLoc = useSetActiveCard();
-
-  const dispatch = useDispatch();
 
   const calcHeight = (el) => {
     calcHeightCommon(el, setMenuHeight);
@@ -53,47 +31,42 @@ export const DropdownMenuCommon = React.memo(({
       setActiveMenu(dropdownOptions.goToMenu);
       return;
     }
-    const dropdownProps = {dropdownOptions, dropdownMenu, gameUi, playerN, gameBroadcast, chatBroadcast, activeCardAndLoc, setActiveCardAndLoc, dispatch, keypress, setKeypress};
-    handleDropdownClickCommon(dropdownProps);
+    const state = store.getState();
+    const actionProps = {state, dispatch, gameBroadcast, chatBroadcast};
+    handleDropdownClickCommon(dropdownOptions, actionProps);
     setActiveMenu("main");
-    setDropdownMenu(null);
+    dispatch(setDropdownMenuObj(null));
     setMenuHeight(null);
   }
 
-  if (dropdownMenu.type === "card") {
+  if (dropdownMenuObj.type === "card") {
     return (
       <DropdownMenuCard
-        playerN={playerN}
         mouseX={mouseX}
         mouseY={mouseY}
         menuHeight={menuHeight}
-        dropdownMenu={dropdownMenu}
         handleDropdownClick={handleDropdownClick}
         calcHeight={calcHeight}
         activeMenu={activeMenu}
       />
     )
-  } else if (dropdownMenu.type === "group") {
+  } else if (dropdownMenuObj.type === "group") {
     return (
       <DropdownMenuGroup
-        playerN={playerN}
         mouseX={mouseX}
         mouseY={mouseY}
         menuHeight={menuHeight}
-        dropdownMenu={dropdownMenu}
         handleDropdownClick={handleDropdownClick}
         calcHeight={calcHeight}
         activeMenu={activeMenu}
       />
     )
-  } else if (dropdownMenu.type === "firstPlayer") {
+  } else if (dropdownMenuObj.type === "firstPlayer") {
     return (
       <DropdownMenuFirstPlayer
-        playerN={playerN}
         mouseX={mouseX}
         mouseY={mouseY}
         menuHeight={menuHeight}
-        dropdownMenu={dropdownMenu}
         handleDropdownClick={handleDropdownClick}
         calcHeight={calcHeight}
         activeMenu={activeMenu}

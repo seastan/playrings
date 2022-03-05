@@ -1,6 +1,5 @@
-import React, { useState, useEffect, useReducer } from "react";
+import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from 'react-redux';
-import { useActiveCard, useSetActiveCard } from "../../contexts/ActiveCardContext";
 import { setValues } from "./gameUiSlice";
 import { 
     getDisplayName,
@@ -8,12 +7,8 @@ import {
     tokenPrintName,
 } from "./Helpers";
 import { gameAction, cardAction } from "./Actions";
-import { get } from "https";
-import { useKeypress, useSetKeypress } from "../../contexts/KeypressContext";
-import { useCardSizeFactor, useSetCardSizeFactor } from "../../contexts/CardSizeFactorContext";
-import { useSetObservingPlayerN } from "../../contexts/ObservingPlayerNContext";
 import store from "../../store";
-import { setPlayerN } from "./roomUiSlice";
+import { setCardSizeFactor, setKeypressAlt, setKeypressControl, setKeypressSpace, setKeypressTab } from "./roomUiSlice";
 
 // const keyTokenMap: { [id: string] : Array<string | number>; } = {
 
@@ -111,26 +106,22 @@ const keyLogBase = {
 var delayBroadcast;
 
 export const HandleKeyDown = ({
-    playerN,
-    typing,
     gameBroadcast, 
     chatBroadcast
 }) => {
     const dispatch = useDispatch();
-    const keypress = useKeypress();
-    const setKeypress = useSetKeypress();
-    const setObservingPlayerN = useSetObservingPlayerN();
-
-    const cardSizeFactor = useCardSizeFactor();
-    const setCardSizeFactor = useSetCardSizeFactor();
-
-    const activeCardAndLoc = useActiveCard();
-    const setActiveCardAndLoc = useSetActiveCard();
+    const typing = useSelector(state => state?.roomUi?.typing);
+    const keypressControl = useSelector(state => state?.roomUi?.keypress?.Control);
+    const keypressAlt = useSelector(state => state?.roomUi?.keypress?.Alt);
+    // const keypress = useSelector(state => state?.roomUi?.keypress);
+    // const setKeypress = setKeypress();
 
     const [keyBackLog, setKeyBackLog] = useState({});
     console.log("Rendering HandleKeyDown")
 
-    const keyUiAction = (action) => {
+    const keyUiAction = (action, actionProps) => {
+        const {state, dispatch, gameBroadcast, chatBroadcast} = actionProps; 
+        const cardSizeFactor = state.roomUi.cardSizeFactor;
         if (action === "increase_card_size") {
             setCardSizeFactor(cardSizeFactor*1.1);
         }
@@ -139,18 +130,18 @@ export const HandleKeyDown = ({
         }
     }
 
-    const keyTokenAction = (rawTokenType, props) => {
-        const {gameUi, playerN, gameBroadcast, chatBroadcast, activeCardAndLoc, setActiveCardAndLoc, dispatch, keypress, setKeypress} = props;       
-        if (!gameUi || !playerN || !activeCardAndLoc || !activeCardAndLoc.card) return; 
-        const game = gameUi.game;
-        const activeCardId = activeCardAndLoc.card.id; 
-        const activeCard = game.cardById[activeCardId];
-        if (!activeCard) return;
-    
+    const keyTokenAction = (rawTokenType, actionProps) => {
+        const {state, dispatch, gameBroadcast, chatBroadcast} = actionProps;   
+        const game = state?.gameUi?.game;
+        const activeCardObj = state?.roomUi?.activeCardObj;
+        const playerN = state?.roomUi?.playerN;
+        if (!game || !playerN || !activeCardObj || !activeCardObj.card) return; 
+        const activeCardId = state.roomUi.activeCardObj.card.id; 
+        const activeCard = game.cardById[activeCardId];    
         const tokenType = processTokenType(rawTokenType, activeCard);
         // Check if mouse is hoving over top half or bottom half of card
         // Top half will increase tokens, bottom half will decrease
-        const mousePosition = activeCardAndLoc.mousePosition;
+        const mousePosition = activeCardObj.mousePosition;
         var delta = (mousePosition === "top" ? 1 : -1)
         const currentVal = game.cardById[activeCardId].tokens[tokenType];
         var newVal = currentVal + delta;
@@ -228,13 +219,9 @@ export const HandleKeyDown = ({
             else {
                 event.preventDefault();
                 const state = store.getState();
-                const gameUi = state.gameUi; 
                 handleKeyDown(
-                    gameUi,
-                    event, 
-                    playerN,
-                    keypress, 
-                    setKeypress,
+                    state,
+                    event,
                     gameBroadcast, 
                     chatBroadcast,
                 )
@@ -246,20 +233,17 @@ export const HandleKeyDown = ({
         return () => {
             document.removeEventListener('keydown', onKeyDown);
         }
-    }, [playerN, typing, keypress, cardSizeFactor, activeCardAndLoc, keyBackLog]);
+    }, [keyBackLog, typing, gameBroadcast, chatBroadcast]);
 
     const handleKeyDown = (
-        gameUi,
-        event, 
-        playerN,
-        keypress, 
-        setKeypress,
+        state,
+        event,
         gameBroadcast, 
         chatBroadcast,
     ) => {
         console.log("handleKeyDown triggered")
         const k = event.key;
-        if (!playerN && !Object.keys(keyUiMap).includes(k)) {
+        if (!state?.roomUi?.playerN && !Object.keys(keyUiMap).includes(k)) {
             alert("Please sit down to do that.")
             return;
         }
@@ -269,22 +253,21 @@ export const HandleKeyDown = ({
         // Keep track of held key
         //if (k === "Shift") setKeypress({...keypress, "Shift": true});
         const unix_sec = Math.floor(Date.now() / 1000);
-        if (k === "Control") setKeypress({...keypress, "Control": unix_sec});
-        if (k === "Alt") setKeypress({...keypress, "Alt": unix_sec});
-        if (k === "Tab") setKeypress({...keypress, "Tab": unix_sec});
-        if (k === " ") setKeypress({...keypress, "Space": unix_sec});
+        if (k === "Control") setKeypressControl(unix_sec);
+        if (k === "Alt") setKeypressAlt(unix_sec);
+        if (k === "Tab") setKeypressTab(unix_sec);
+        if (k === " ") setKeypressSpace(unix_sec);
         //else setKeypress({"Control": false});
-        const actionProps = {gameUi, playerN, gameBroadcast, chatBroadcast, activeCardAndLoc, setActiveCardAndLoc, dispatch, keypress, setKeypress, setObservingPlayerN};
-        const uiProps = {cardSizeFactor, setCardSizeFactor};
+        const actionProps = {state, dispatch, gameBroadcast, chatBroadcast};
 
         // Hotkeys
-        if ((unix_sec - keypress["Control"]) < 30 && Object.keys(ctrlKeyGameActionMap).includes(k)) gameAction(ctrlKeyGameActionMap[k], actionProps);
-        else if ((unix_sec - keypress["Alt"]) < 30 && Object.keys(altKeyGameActionMap).includes(k)) gameAction(altKeyGameActionMap[k], actionProps);
+        if ((unix_sec - keypressControl) < 30 && Object.keys(ctrlKeyGameActionMap).includes(k)) gameAction(ctrlKeyGameActionMap[k], actionProps);
+        else if ((unix_sec - keypressAlt) < 30 && Object.keys(altKeyGameActionMap).includes(k)) gameAction(altKeyGameActionMap[k], actionProps);
         // else if (keypress["Shift"] && Object.keys(shiftKeyGameActionMap).includes(k)) gameAction(shiftKeyGameActionMap[k], actionProps);
         else if (Object.keys(keyGameActionMap).includes(k)) gameAction(keyGameActionMap[k], actionProps);
-        else if (Object.keys(keyCardActionMap).includes(k)) cardAction(keyCardActionMap[k], activeCardAndLoc?.card.id, {}, actionProps);
+        else if (Object.keys(keyCardActionMap).includes(k)) cardAction(keyCardActionMap[k], state?.roomUi?.activeCardObj?.card.id, {}, actionProps);
         else if (Object.keys(keyTokenMap).includes(k)) keyTokenAction(keyTokenMap[k], actionProps);
-        else if (Object.keys(keyUiMap).includes(k)) keyUiAction(keyUiMap[k], uiProps);
+        else if (Object.keys(keyUiMap).includes(k)) keyUiAction(keyUiMap[k], actionProps);
 
     }
 
@@ -302,7 +285,7 @@ export const HandleKeyDown = ({
     //             chatBroadcast,
     //         )
     //     }
-    // }, [gameUi, activeCardAndLoc]) // <--- if you have vars/deps inside the reducer that changes, they need to go here
+    // }, [gameUi, activeCardObj]) // <--- if you have vars/deps inside the reducer that changes, they need to go here
 
     // const [userGameUi, handleUserKeyPress] = React.useReducer(memoizedReducer, gameUi);
 

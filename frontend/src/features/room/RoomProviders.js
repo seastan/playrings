@@ -1,24 +1,19 @@
 import React from "react";
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import RoomGame from "./RoomGame";
-import {KeypressProvider} from '../../contexts/KeypressContext';
-import {ActiveCardProvider} from '../../contexts/ActiveCardContext';
-import {DropdownMenuProvider} from '../../contexts/DropdownMenuContext';
-import {MousePositionProvider} from '../../contexts/MousePositionContext';
-import {TouchModeProvider} from '../../contexts/TouchModeContext';
-import {TouchActionProvider} from '../../contexts/TouchActionContext';
 import { GetPlayerN } from "./Helpers";
 import useProfile from "../../hooks/useProfile";
-import { CardSizeFactorProvider } from "../../contexts/CardSizeFactorContext";
-import { ObservingPlayerNProvider } from "../../contexts/ObservingPlayerNContext";
+import { setPlayerN } from "./roomUiSlice";
 
 export const RoomProviders = ({ gameBroadcast, chatBroadcast }) => {
   console.log("Rendering RoomProviders");
-  const storePlayerIds = state => state?.gameUi?.playerIds;
-  const playerIds = useSelector(storePlayerIds);
+  const dispatch = useDispatch();
+  const playerIds = {player1: 1} //useSelector(state => state?.gameUi?.playerIds);
   const myUser = useProfile();
-  const myUserID = myUser?.id;
-  const playerN = GetPlayerN(playerIds, myUserID);
+  const playerN = GetPlayerN(playerIds, myUser?.id);
+  dispatch(setPlayerN(playerN));
+  console.log("provider playerIds", playerIds)
+
   return (
       <div className="background"
         style={{
@@ -29,23 +24,7 @@ export const RoomProviders = ({ gameBroadcast, chatBroadcast }) => {
           backgroundPositionY: "50%",
         }}
       >
-          <KeypressProvider value={{}}>
-            <TouchModeProvider value={false}>
-              <TouchActionProvider value={null}>
-                <MousePositionProvider value={null}>
-                  <DropdownMenuProvider value={null}>
-                    <ActiveCardProvider value={null}>
-                      <CardSizeFactorProvider value={null}>
-                        <ObservingPlayerNProvider value={null}>
-                          <RoomGame playerN={playerN} gameBroadcast={gameBroadcast} chatBroadcast={chatBroadcast}/>
-                        </ObservingPlayerNProvider>
-                      </CardSizeFactorProvider>
-                    </ActiveCardProvider>
-                  </DropdownMenuProvider>
-                </MousePositionProvider>
-              </TouchActionProvider>
-            </TouchModeProvider>
-          </KeypressProvider>
+        <RoomGame gameBroadcast={gameBroadcast} chatBroadcast={chatBroadcast}/>
       </div>
   );
 };

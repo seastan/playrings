@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from 'react-redux';
 import UserName from "../user/UserName";
 import useProfile from "../../hooks/useProfile";
@@ -6,27 +6,22 @@ import useFocus from "../../hooks/useFocus";
 import useIsLoggedIn from "../../hooks/useIsLoggedIn";
 import { Link } from "react-router-dom";
 import { setValues } from "./gameUiSlice";
-import { useSetDropdownMenu } from "../../contexts/DropdownMenuContext";
-import { getCurrentFace } from "./Helpers";
-import { useObservingPlayerN, useSetObservingPlayerN } from "../../contexts/ObservingPlayerNContext";
+import { setDropdownMenuObj, setObservingPlayerN, setTyping } from "./roomUiSlice";
 
 var delayBroadcast;
 
 export const TopBarUser = React.memo(({
-  playerN,
   playerI,
   gameBroadcast,
   chatBroadcast,
-  setTyping,
 }) => {
   console.log("Rendering TopBarUser ", playerI);
   const dispatch = useDispatch();
-  const playerIdsStore = state => state?.gameUi?.playerIds;
-  const playerIds = useSelector(playerIdsStore);
-  const playerDataPlayerNStore = state => state?.gameUi?.game?.playerData?.[playerI];
-  const playerDataPlayerN = useSelector(playerDataPlayerNStore);  
-  const firstPlayerStore = state => state?.gameUi?.game?.firstPlayer;
-  const firstPlayer = useSelector(firstPlayerStore);  
+  const playerN = useSelector(state => state?.roomUi?.playerN);
+  const observingPlayerN = useSelector(state => state?.roomUi?.observingPlayerN);
+  const playerIds = useSelector(state => state?.gameUi?.playerIds);
+  const playerDataPlayerN = useSelector(state => state?.gameUi?.game?.playerData?.[playerI]);  
+  const firstPlayer = useSelector(state => state?.gameUi?.game?.firstPlayer);  
   const isLoggedIn = useIsLoggedIn();
   const myUser = useProfile();
   const myUserID = myUser?.id;  
@@ -36,9 +31,6 @@ export const TopBarUser = React.memo(({
   const [willpowerValue, setWillpowerValue] = useState(gameUiWillpower);
   const [inputRefThreat, setInputFocusThreat] = useFocus();
   const [inputRefWillpower, setInputFocusWillpower] = useFocus();
-  const setDropdownMenu = useSetDropdownMenu();
-  const observingPlayerN = useObservingPlayerN();
-  const setObservingPlayerN = useSetObservingPlayerN();
 
   useEffect(() => {    
     if (gameUiThreat !== threatValue) setThreatValue(gameUiThreat);
@@ -55,15 +47,15 @@ export const TopBarUser = React.memo(({
   const handleFirstPlayerClick = (event) => {
     event.stopPropagation();
     if (!playerN) return;
-    const dropdownMenu = {
+    const dropdownMenuObj = {
         type: "firstPlayer",
         title: "Set first player",
     }
-    setDropdownMenu(dropdownMenu);
+    dispatch(setDropdownMenuObj(dropdownMenuObj));
   }
   
   // If not observing anyone, observe yourself
-  if (!observingPlayerN && (myUserID === sittingUserID)) setObservingPlayerN(playerI);
+  if (!observingPlayerN && (myUserID === sittingUserID)) dispatch(setObservingPlayerN(playerI));
 
   const handleThreatChange = (event) => {
     const newValue = event.target.value;
@@ -74,6 +66,7 @@ export const TopBarUser = React.memo(({
     delayBroadcast = setTimeout(function() {
       const updates = [["game", "playerData", playerI, "threat", parseInt(newValue)]];
       dispatch(setValues({updates: updates}));
+      console.log("threat gameBroadcast", gameBroadcast)
       gameBroadcast("game_action", {action: "update_values", options:{updates: updates}});
       if (increment > 0) chatBroadcast("game_update",{message: "raises threat by "+increment+" ("+newValue+")."});
       if (increment < 0) chatBroadcast("game_update",{message: "reduces threat by "+(-increment)+" ("+newValue+")."});
@@ -111,13 +104,13 @@ export const TopBarUser = React.memo(({
     if (action === "sit") {
       gameBroadcast("game_action", {action: "set_seat", options: {"player_n": playerI, "user_id": myUserID}});
       chatBroadcast("game_update",{message: "sat in "+playerI+"'s seat."});
-      setObservingPlayerN(playerI);
+      dispatch(setObservingPlayerN(playerI));
     } 
   }
 
   const handleObserveClick = () => {
     if (observingPlayerN === playerI) {
-      setObservingPlayerN(null);
+      dispatch(setObservingPlayerN(null));
       chatBroadcast("game_update",{message: "stopped observing "+playerI+"."});
     } else {
       setObservingPlayerN(playerI);
@@ -181,8 +174,8 @@ export const TopBarUser = React.memo(({
             onChange={handleThreatChange}
             type="number" min="0" step="1"
             disabled={playerN ? false : true}
-            onFocus={event => setTyping(true)}
-            onBlur={event => setTyping(false)}
+            onFocus={event => dispatch(setTyping(true))}
+            onBlur={event => dispatch(setTyping(false))}
             ref={inputRefThreat}
           ></input>
         </div>
@@ -197,8 +190,8 @@ export const TopBarUser = React.memo(({
             onChange={handleWillpowerChange}
             type="number" min="0" step="1"
             disabled={playerN ? false : true}
-            onFocus={event => setTyping(true)}
-            onBlur={event => setTyping(false)}
+            onFocus={event => dispatch(setTyping(true))}
+            onBlur={event => dispatch(setTyping(false))}
             ref={inputRefWillpower}
           ></input>
         </div>

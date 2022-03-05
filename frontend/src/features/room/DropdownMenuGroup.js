@@ -4,18 +4,19 @@ import { faArrowUp, faArrowDown, faRandom, faChevronRight } from "@fortawesome/f
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { DropdownItem, GoBack } from "./DropdownMenuHelpers";
 import "../../css/custom-dropdown.css";
+import { useSelector } from "react-redux";
 
 export const DropdownMenuGroup = React.memo(({
-  playerN,
   mouseX,
   mouseY,
   menuHeight,
-  dropdownMenu,
   handleDropdownClick,
   calcHeight,
   activeMenu,
 }) => {
-  const menuGroup = dropdownMenu.group;
+  const dropdownMenuObj = useSelector(state => state?.roomUi?.dropdownMenuObj)
+  const playerN = useSelector(state => state?.roomUi?.playerN)
+  const menuGroup = dropdownMenuObj.group;
   
   const DropdownMoveTo = (props) => {
     return (
@@ -57,7 +58,7 @@ export const DropdownMenuGroup = React.memo(({
       className="dropdown" 
       style={{ height: menuHeight, zIndex: 1e7, top: top, left: left }}
       >
-        <div className="menu-title">{dropdownMenu.title}</div>
+        <div className="menu-title">{dropdownMenuObj.title}</div>
 
         {activeMenu === "main" &&
         <div className="menu">

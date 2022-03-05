@@ -2,7 +2,6 @@ import React from "react";
 import { useSelector } from 'react-redux';
 import { Token } from "./Token";
 import { getCommittedStat, getCurrentFace, getVisibleSide, passesCriteria, usesThreatToken } from "./Helpers";
-import { useKeypress } from "../../contexts/KeypressContext";
 import abilities from "../../cardDB/abilities";
 
 export const AbilityToken = React.memo(({ 
@@ -10,9 +9,9 @@ export const AbilityToken = React.memo(({
     groupId,
     groupType,
     cardIndex,
-    playerN,
     zIndex,
  }) => {
+    const playerN = useSelector(state => state?.roomUi?.playerN)
     const cardAbilities = abilities[card.cardDbId];
     if (!cardAbilities) return; // Card is not in ability database
     const visibleSide = getVisibleSide(card, playerN);

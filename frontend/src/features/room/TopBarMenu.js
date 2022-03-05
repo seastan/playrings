@@ -4,43 +4,29 @@ import { useHistory } from "react-router-dom";
 import useProfile from "../../hooks/useProfile";
 import store from "../../store";
 import { setGame } from "./gameUiSlice";
-import { flatListOfCards, functionOnMatchingCards, getCardByGroupIdStackIndexCardIndex, getGroupIdStackIndexCardIndex, getSideAName, getPlayerCommitted, listOfMatchingCards, loadRingsDb, playerNToPlayerIndex, processLoadList, processPostLoad, shuffle } from "./Helpers";
+import { flatListOfCards, functionOnMatchingCards, getCardByGroupIdStackIndexCardIndex, getSideAName, getPlayerCommitted, listOfMatchingCards, loadRingsDb, playerNToPlayerIndex, processLoadList, processPostLoad, shuffle } from "./Helpers";
 import { loadDeckFromXmlText, getRandomIntInclusive } from "./Helpers";
-import { useSetTouchMode } from "../../contexts/TouchModeContext";
-import { useSetTouchAction } from "../../contexts/TouchActionContext";
-import { useCardSizeFactor, useSetCardSizeFactor } from "../../contexts/CardSizeFactorContext";
-import { getQuestNameFromModeAndId, loadDeckFromModeAndId } from "./SpawnQuestModal";
+import { loadDeckFromModeAndId } from "./SpawnQuestModal";
 import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { getRandomInt } from "../../util/util";
-
+import { setCardSizeFactor, setLoaded, setShowModal, setTouchAction, setTouchMode } from "./roomUiSlice";
 
 export const TopBarMenu = React.memo(({
-    setShowModal,
     gameBroadcast,
     chatBroadcast,
-    playerN,
-    setLoaded,
-    setTooltipIds,
 }) => {
   const myUser = useProfile();
   const myUserID = myUser?.id;
   const history = useHistory();
-  const setTouchMode = useSetTouchMode();
-  const setTouchAction = useSetTouchAction();
-  const cardSizeFactor = useCardSizeFactor();
-  const setCardSizeFactor = useSetCardSizeFactor();
 
-  const createdByStore = state => state.gameUi?.created_by;
-  const createdBy = useSelector(createdByStore);
-  const optionsStore = state => state.gameUi?.game?.options;
-  const options = useSelector(optionsStore);
+  const createdBy = useSelector(state => state.gameUi?.created_by);
+  const options = useSelector(state => state.gameUi?.game?.options);
   const ringsDbInfo = options?.ringsDbInfo;
-  const roundStore = state => state.gameUi?.game.roundNumber;
-  const round = useSelector(roundStore);
-  const isHost = myUserID === createdBy;
-  const cardsPerRoundStore = state => state.gameUi?.game.playerData[playerN]?.cardsDrawn;
-  const cardsPerRound = useSelector(cardsPerRoundStore);
+  const round = useSelector(state => state.gameUi?.game.roundNumber);
+  const isHost = myUserID === createdBy;  
+  const playerN = useSelector(state => state?.roomUi?.playerN);
+  const cardsPerRound = useSelector(state => state.gameUi?.game.playerData[playerN]?.cardsDrawn);
+  const cardSizeFactor = useSelector(state => state?.roomUi?.cardSizeFactor)
   
   const dispatch = useDispatch();
   const inputFileDeck = useRef(null);
@@ -82,7 +68,7 @@ export const TopBarMenu = React.memo(({
       const newOptions = {...options, loaded: false};
       const resetData = {action: "clear_table", state: data.state};
       handleMenuClick(resetData);
-      setLoaded(false);
+      dispatch(setLoaded(false));
       gameBroadcast("game_action", {action: "update_values", options: {updates: [["game", "options", newOptions]]}})
       if (options.questModeAndId) loadDeckFromModeAndId(options.questModeAndId, playerN, gameBroadcast, chatBroadcast, options["privacyType"]);
     } else if (data.action === "load_deck") {
@@ -119,7 +105,7 @@ export const TopBarMenu = React.memo(({
       newRingsDbInfo[playerIndex] = {id: ringsDbId, type: ringsDbType, domain: ringsDbDomain};
       const newOptions = {...options, ringsDbInfo: newRingsDbInfo, loaded: true}
       gameBroadcast("game_action", {action: "update_values", options: {updates: [["game", "options", newOptions]]}});
-      loadRingsDb(null, playerN, ringsDbDomain, ringsDbType, ringsDbId, gameBroadcast, chatBroadcast, setTooltipIds);
+      loadRingsDb(null, playerN, ringsDbDomain, ringsDbType, ringsDbId, gameBroadcast, chatBroadcast, dispatch);
     } else if (data.action === "unload_my_deck") {
       // Delete all cards you own
       chatBroadcast("game_update",{message: "unloaded their deck."});
@@ -173,16 +159,16 @@ export const TopBarMenu = React.memo(({
     } else if (data.action === "adjust_card_size") {
       const num = parseInt(prompt("Adjust the apparent card size for yourself only (10-1000):",Math.round(cardSizeFactor)));
       if (num>=10 && num<=1000) {
-        setCardSizeFactor(num);
+        dispatch(setCardSizeFactor(num));
       }
     } else if (data.action === "spawn_existing") {
-      setShowModal("card");
+      dispatch(setShowModal("card"));
     } else if (data.action === "spawn_custom") {
-      setShowModal("custom");
+      dispatch(setShowModal("custom"));
     } else if (data.action === "spawn_quest") {
-      setShowModal("quest");
+      dispatch(setShowModal("quest"));
     } else if (data.action === "spawn_campaign") {
-      setShowModal("campaign");
+      dispatch(setShowModal("campaign"));
     } else if (data.action === "download") {
       downloadGameAsJson();
     } else if (data.action === "export_cards") {
@@ -466,7 +452,7 @@ export const TopBarMenu = React.memo(({
       try {
         const gameObj = JSON.parse(event.target.result);
         if (gameObj) {
-          dispatch(setGame(gameObj));
+          //dispatch(setGame(gameObj));
           chatBroadcast("game_update", {message: "uploaded a game."});
           if (gameObj?.deltas?.length) {
             gameBroadcast("game_action", {action: "update_values", options: {updates: [["game", gameObj]], preserve_undo: true}})            
@@ -629,8 +615,8 @@ export const TopBarMenu = React.memo(({
             <span className="float-right mr-1"><FontAwesomeIcon icon={faChevronRight}/></span>
           </a>
           <ul className="third-level-menu">
-              <li key={"touch_enabled"}><a onClick={() => setTouchMode(true)} href="#">Enable</a></li>
-              <li key={"touch_disabled"}><a onClick={() => {setTouchMode(false) && setTouchAction(null)}} href="#">Disable</a></li>
+              <li key={"touch_enabled"}><a onClick={() => dispatch(setTouchMode(true))} href="#">Enable</a></li>
+              <li key={"touch_disabled"}><a onClick={() => {dispatch(setTouchMode(false)) && dispatch(setTouchAction(null))}} href="#">Disable</a></li>
           </ul>
         </li> 
         <li key={"load"}>
@@ -639,14 +625,14 @@ export const TopBarMenu = React.memo(({
             <span className="float-right mr-1"><FontAwesomeIcon icon={faChevronRight}/></span>
           </a>
           <ul className="third-level-menu">
-            <li key={"load_quest"}><a href="#" onClick={() => handleMenuClick({action:"spawn_quest"})} href="#">Load quest</a></li>
-            <li key={"load_quest"}><a href="#" onClick={() => handleMenuClick({action:"spawn_campaign"})} href="#">Load campaign cards</a></li>
+            <li key={"load_quest"}><a href="#" onClick={() => handleMenuClick({action:"spawn_quest"})}>Load quest</a></li>
+            <li key={"load_campaign"}><a href="#" onClick={() => handleMenuClick({action:"spawn_campaign"})}>Load campaign cards</a></li>
             <li key={"load_deck"}>
-              <a href="#" onClick={() => handleMenuClick({action:"load_deck"})} href="#">Load deck (OCTGN file)</a>
+              <a href="#" onClick={() => handleMenuClick({action:"load_deck"})}>Load deck (OCTGN file)</a>
               <input type='file' id='file' ref={inputFileDeck} style={{display: 'none'}} onChange={loadDeck} accept=".o8d"/>
             </li>
             <li key={"load_ringsdb"}>
-              <a href="#" onClick={() => handleMenuClick({action:"load_ringsdb"})} href="#">Load deck (RingsDB URL)</a>
+              <a href="#" onClick={() => handleMenuClick({action:"load_ringsdb"})}>Load deck (RingsDB URL)</a>
             </li>
             <li key={"load_game"}>
               <a  onClick={() => handleMenuClick({action:"load_game"})} href="#">Load game (.json)</a>
@@ -724,7 +710,7 @@ export const TopBarMenu = React.memo(({
           </ul>
         </li>
         {isHost &&
-          <li key={"reset"}>
+          <li key={"reload"}>
             <a href="#">
               Reload decks
               <span className="float-right mr-1"><FontAwesomeIcon icon={faChevronRight}/></span>

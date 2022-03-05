@@ -1,9 +1,10 @@
 import React from "react";
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { faTimes } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Draggable from 'react-draggable';
 import UserName from "../user/UserName";
+import { setShowPlayersInRoom } from "./roomUiSlice";
 
 const windowClass = "insert-auto overflow-auto bg-gray-700 border max-w-lg rounded-lg outline-none text-white";
 const windowStyle = {
@@ -17,18 +18,21 @@ const windowStyle = {
 const col1Class = "w-1/3";
 const col2Class = "w-2/3";
 
-export const PlayersInRoom = React.memo(({
-    setShowWindow,
-}) => {
-
-  const playersInRoomStore = state => state?.gameUi?.playersInRoom;
-  const playersInRoom = useSelector(playersInRoomStore);
-  console.log("Rengering PlayersInRoom", playersInRoom);
+export const PlayersInRoom = React.memo(({}) => {
+  const showWindow = useSelector(state => state?.roomUi?.showPlayersInRoom);
+  const playersInRoom = useSelector(state => state?.gameUi?.playersInRoom);
+  const dispatch = useDispatch();
+  console.log("Rendering PlayersInRoom", playersInRoom);
+  if (!showWindow) return;
   return(
     <Draggable>
       <div className={windowClass} style={windowStyle}>
         <div className="w-full bg-gray-500" style={{height: "25px"}}>
-          <FontAwesomeIcon className="ml-2" icon={faTimes} onMouseUp={() => setShowWindow(false)} onTouchStart={() => setShowWindow(false)}/>
+          <FontAwesomeIcon 
+            className="ml-2" 
+            icon={faTimes} 
+            onMouseUp={() => dispatch(setShowPlayersInRoom(false))} 
+            onTouchStart={() => dispatch(setShowPlayersInRoom(false))}/>
         </div>
         <div className="w-full p-3">
           <table className="table-fixed rounded-lg w-full">

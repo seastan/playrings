@@ -12,20 +12,24 @@ import {
 
 // dropdownMenu is an object that gets populated with infor about a card when a card is pressed, or about a group when a group is pressed.
 
-export const handleDropdownClickCommon = (dropdownProps) => {
-  const type = dropdownProps.dropdownMenu.type;
-  if (type === "card") handleDropdownClickCard(dropdownProps);
-  else if (type === "group") handleDropdownClickGroup(dropdownProps);
-  else if (type === "firstPlayer") handleDropdownClickFirstPlayer(dropdownProps);
+export const handleDropdownClickCommon = (dropdownOptions, actionProps) => {
+  const type = actionProps?.state?.roomUi?.dropdownMenuObj?.type;
+  if (type === "card") handleDropdownClickCard(dropdownOptions, actionProps);
+  else if (type === "group") handleDropdownClickGroup(dropdownOptions, actionProps);
+  else if (type === "firstPlayer") handleDropdownClickFirstPlayer(dropdownOptions, actionProps);
 }
 
-export const handleDropdownClickCard = (dropdownProps) => {
-  const {dropdownOptions, dropdownMenu, gameUi, playerN, gameBroadcast, chatBroadcast, activeCardAndLoc, setActiveCardAndLoc, dispatch, keypress, setKeypress} = dropdownProps;
-  const actionProps = {gameUi, playerN, gameBroadcast, chatBroadcast, activeCardAndLoc, setActiveCardAndLoc, dispatch, keypress, setKeypress};
+export const handleDropdownClickCard = (dropdownOptions, actionProps) => {
+  const {state, dispatch, gameBroadcast, chatBroadcast} = actionProps;
+  const gameUi = state.gameUi;
   const game = gameUi.game;
-  const menuCard = dropdownMenu.card;
+  const dropdownMenuObj = state.roomUi.dropdownMenuObj;
+  const playerN = state.roomUi.playerN;
+  const menuCard = dropdownMenuObj.card;
   const displayName = getDisplayName(menuCard);
+  console.log("dropdownClick")
   if (dropdownOptions.action === "toggle_exhaust") {
+    console.log("dropdownExhaust", menuCard)
     cardAction("toggle_exhaust", menuCard?.id, null, actionProps);
   } else if (dropdownOptions.action === "flip") {
     cardAction("flip", menuCard?.id, null, actionProps);
@@ -143,10 +147,13 @@ export const handleDropdownClickCard = (dropdownProps) => {
   }
 }
 
-export const handleDropdownClickGroup = (dropdownProps) => {
-  const {dropdownOptions, dropdownMenu, gameUi, playerN, gameBroadcast, chatBroadcast, activeCardAndLoc, setActiveCardAndLoc, dispatch, keypress, setKeypress} = dropdownProps;
+export const handleDropdownClickGroup = (dropdownOptions, actionProps) => {
+  const {state, dispatch, gameBroadcast, chatBroadcast} = actionProps;
+  const gameUi = state.gameUi;
   const game = gameUi.game;
-  const group = dropdownMenu.group;
+  const dropdownMenuObj = state.roomUi.dropdownMenuObj;
+  const playerN = state.roomUi.playerN;
+  const group = dropdownMenuObj.group;
   if (dropdownOptions.action === "shuffle") {
     gameBroadcast("game_action", {action: "shuffle_group", options: {group_id: group.id}})
     chatBroadcast("game_update",{message: "shuffled "+GROUPSINFO[group.id].name+"."})
@@ -180,11 +187,9 @@ export const handleDropdownClickGroup = (dropdownProps) => {
     handleBrowseTopN(
       topNstr, 
       group,
-      playerN,
       gameBroadcast, 
       chatBroadcast,
-      dropdownMenu.setBrowseGroupId,
-      dropdownMenu.setBrowseGroupTopN,
+      dispatch,
     ) 
   } else if (dropdownOptions.action === "dealX") {
     var topX = parseInt(prompt("Enter a number",0)) || 0;
@@ -210,8 +215,8 @@ export const handleDropdownClickGroup = (dropdownProps) => {
   }
 }
 
-export const handleDropdownClickFirstPlayer = (dropdownProps) => {
-  const {dropdownOptions, dropdownMenu, gameUi, playerN, gameBroadcast, chatBroadcast, activeCardAndLoc, setActiveCardAndLoc, dispatch, keypress, setKeypress} = dropdownProps;
+export const handleDropdownClickFirstPlayer = (dropdownOptions, actionProps) => {
+  const {state, dispatch, gameBroadcast, chatBroadcast} = actionProps;
   gameBroadcast("game_action", {action: "update_values", options: {updates: [["game", "firstPlayer", dropdownOptions.action]]}})
   chatBroadcast("game_update",{message: "set first player to "+dropdownOptions.title+"."})
 } 

@@ -1,41 +1,28 @@
-import React, { useState } from "react";
-import { useSelector } from 'react-redux';
+import React from "react";
+import { useDispatch, useSelector } from 'react-redux';
 import { Stacks } from "./Stacks";
-import { GROUPSINFO, CARDSCALE, LAYOUTINFO } from "./Constants";
-import useWindowDimensions from "../../hooks/useWindowDimensions";
-import { useSetDropdownMenu } from "../../contexts/DropdownMenuContext";
+import { GROUPSINFO, LAYOUTINFO } from "./Constants";
 import { faBars, faEye } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { handleBrowseTopN } from "./HandleBrowseTopN"; 
+import { setDropdownMenuObj } from "./roomUiSlice";
 
 export const SideGroup = React.memo(({
   gameBroadcast,
   chatBroadcast,
-  playerN,
-  browseGroupId,
   registerDivToArrowsContext,
-  cardSizeFactor,
-  sideGroupId,
-  setBrowseGroupId,
-  setBrowseGroupTopN,
 }) => {
   console.log("Rendering TableLayout");
-  const numPlayersStore = state => state.gameUi.game.numPlayers;
-  const numPlayers = useSelector(numPlayersStore);
-  const storeGroup = state => state?.gameUi?.game?.groupById?.[sideGroupId];
-  const group = useSelector(storeGroup);
-  const layoutStore = state => state.gameUi?.game?.layout;
-  const layout = useSelector(layoutStore);
-  const { height, width } = useWindowDimensions();
-  const aspectRatio = width/height;
-  const setDropdownMenu = useSetDropdownMenu();
+  const dispatch = useDispatch();
+  const numPlayers = useSelector(state => state?.gameUi?.game?.numPlayers);
+  const sideGroupId = useSelector(state => state?.roomUi?.sideGroupId);
+  const browseGroupId = useSelector(state => state?.roomUi?.browseGroup?.id);
+  const group = useSelector(state => state?.gameUi?.game?.groupById?.[sideGroupId]);
+  const layout = useSelector(state => state.gameUi?.game?.layout);    
+  const playerN = useSelector(state => state?.roomUi?.playerN)
 
   const layoutInfo = LAYOUTINFO["layout" + numPlayers + layout];
   const numRows = layoutInfo.length;
-  var cardSize = CARDSCALE/numRows;
-  if (aspectRatio < 1.9) cardSize = cardSize*(1-0.75*(1.9-aspectRatio));
-
-  cardSize = cardSize*cardSizeFactor/100;
 
   var middleRowsWidth = 100;
   if (sideGroupId !== "") {
@@ -45,20 +32,18 @@ export const SideGroup = React.memo(({
 
   const handleEyeClick = (event) => {
     event.stopPropagation();
-    handleBrowseTopN("All", group, playerN, gameBroadcast, chatBroadcast, setBrowseGroupId, setBrowseGroupTopN);
+    handleBrowseTopN("All", group, gameBroadcast, chatBroadcast, dispatch);
   }
 
   const handleBarsClick = (event) => {
     event.stopPropagation();
     if (!playerN) return;
-    const dropdownMenu = {
+    const dropdownMenuObj = {
         type: "group",
         group: group,
         title: GROUPSINFO[sideGroupId].name,
-        setBrowseGroupId: setBrowseGroupId,
-        setBrowseGroupTopN: setBrowseGroupTopN,
     }
-    if (playerN) setDropdownMenu(dropdownMenu);
+    if (playerN) dispatch(setDropdownMenuObj(dropdownMenuObj));
   }
 
   return (
@@ -75,10 +60,8 @@ export const SideGroup = React.memo(({
             <Stacks
               gameBroadcast={gameBroadcast}
               chatBroadcast={chatBroadcast}
-              playerN={playerN}
               groupId={sideGroupId}
               groupType={"vertical"}
-              cardSize={cardSize}
               registerDivToArrowsContext={registerDivToArrowsContext}
             />
           </div>

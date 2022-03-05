@@ -27,6 +27,7 @@ import {
 import { setValues } from "./gameUiSlice";
 import abilities from "../../cardDB/abilities";
 import { GROUPSINFO, PHASEINFO, roundStepToText, nextRoundStep, prevRoundStep, nextPhase, prevPhase } from "./Constants";
+import { setActiveCardObj, setKeypressW, setObservingPlayerN } from "./roomUiSlice";
 
 const areMultiplayerHotkeysEnabled = (game, chatBroadcast) => {
     if (!game.options.multiplayerHotkeys) {
@@ -73,16 +74,19 @@ const reveal = (game, deckGroupId, discardGroupId, gameBroadcast, chatBroadcast,
     }
 }
 
-export const gameAction = (action, props) => {
-    const {gameUi, playerN, gameBroadcast, chatBroadcast, activeCardAndLoc, setActiveCardAndLoc, dispatch, keypress, setKeypress, setObservingPlayerN} = props;
+export const gameAction = (action, actionProps, forPlayerN = null) => {
+    //const {gameUi, playerN, gameBroadcast, chatBroadcast, activeCardObj, setActiveCardObj, dispatch, keypress, setKeypress, setObservingPlayerN} = props;
+    const {state, dispatch, gameBroadcast, chatBroadcast} = actionProps;
+    const gameUi = state?.gameUi;
+    const playerN = forPlayerN || state?.roomUi?.playerN;
     if (!playerN) {
         alert("Please sit down to do that.")
         return;
     }
-    if (!gameUi || !playerN) return;
+    if (!state?.gameUi || !state?.roomUi) return;
     const game = gameUi.game;
     const isHost = playerN === leftmostNonEliminatedPlayerN(gameUi);
-
+    const activeCardObj = state?.roomUi?.activeCardObj;
     if (action === "refresh") {
         const game = gameUi.game;
         const isHost = playerN === leftmostNonEliminatedPlayerN(gameUi);
@@ -206,8 +210,7 @@ export const gameAction = (action, props) => {
             const playerI = "player"+i;
             if (!game.playerData[playerI].eliminated) {
                 chatBroadcast("game_update",{message: "triggers the new round action for "+playerNToPlayerSpaceN(playerI)});
-                const actionProps = {gameUi, playerN: playerI, gameBroadcast, chatBroadcast, activeCardAndLoc, setActiveCardAndLoc, dispatch, keypress, setKeypress, setObservingPlayerN};
-                gameAction("new_round", actionProps);
+                gameAction("new_round", actionProps, playerI);
             }
         }
     }
@@ -218,8 +221,7 @@ export const gameAction = (action, props) => {
             const playerI = "player"+i;
             if (!game.playerData[playerI].eliminated) {
                 chatBroadcast("game_update",{message: "triggers the refresh action for "+playerNToPlayerSpaceN(playerI)});
-                const actionProps = {gameUi, playerN: playerI, gameBroadcast, chatBroadcast, activeCardAndLoc, setActiveCardAndLoc, dispatch, keypress, setKeypress, setObservingPlayerN};
-                gameAction("refresh", actionProps);
+                gameAction("refresh", actionProps, playerI);
             }
         }
     }
@@ -295,7 +297,7 @@ export const gameAction = (action, props) => {
             gameBroadcast("game_action", {action: "step_through", options: {size: "single", direction: "undo", preserve_undo: true}});
             chatBroadcast("game_update", {message: "pressed undo."});
             // Clear GiantCard
-            setActiveCardAndLoc(null);
+            dispatch(setActiveCardObj(null));
         }
     } 
 
@@ -307,7 +309,7 @@ export const gameAction = (action, props) => {
             gameBroadcast("game_action", {action: "step_through", options: {size: "round", direction: "undo", preserve_undo: true}});
             chatBroadcast("game_update", {message: "rewinds a round."});
             // Clear GiantCard
-            setActiveCardAndLoc(null);
+            dispatch(setActiveCardObj(null));
         }
     } 
     
@@ -319,7 +321,7 @@ export const gameAction = (action, props) => {
             gameBroadcast("game_action", {action: "step_through", options: {size: "single", direction: "redo", preserve_undo: true}});
             chatBroadcast("game_update", {message: "pressed redo."});
             // Clear GiantCard
-            setActiveCardAndLoc(null);
+            dispatch(setActiveCardObj(null));
         }
     }
     
@@ -331,7 +333,7 @@ export const gameAction = (action, props) => {
             gameBroadcast("game_action", {action: "step_through", options: {size: "round", direction: "redo", preserve_undo: true}});
             chatBroadcast("game_update", {message: "fast-forwards a round."});
             // Clear GiantCard
-            setActiveCardAndLoc(null);
+            dispatch(setActiveCardObj(null));
         }
     }
     
@@ -414,8 +416,7 @@ export const gameAction = (action, props) => {
         for (var i=1; i<=game.numPlayers; i++) {
             const playerI = "player"+i;
             if (!game.playerData[playerI].eliminated) {
-                const actionProps = {gameUi, playerN: playerI, gameBroadcast, chatBroadcast, activeCardAndLoc, setActiveCardAndLoc, dispatch, keypress, setKeypress};
-                gameAction("increase_threat", actionProps);
+                gameAction("increase_threat", actionProps, playerI);
             }
         }
     }
@@ -429,8 +430,7 @@ export const gameAction = (action, props) => {
         for (var i=1; i<=game.numPlayers; i++) {
             const playerI = "player"+i;
             if (!game.playerData[playerI].eliminated) {
-                const actionProps = {gameUi, playerN: playerI, gameBroadcast, chatBroadcast, activeCardAndLoc, setActiveCardAndLoc, dispatch, keypress, setKeypress};
-                gameAction("decrease_threat", actionProps);
+                gameAction("decrease_threat", actionProps, playerI);
             }
         }
     }
@@ -456,8 +456,7 @@ export const gameAction = (action, props) => {
         const nextPlayerN = getNextEmptyPlayerN(gameUi, playerN);
         if (nextPlayerN) {
             chatBroadcast("game_update", {message: "triggers the draw action for "+playerNToPlayerSpaceN(nextPlayerN)+"."});
-            const actionProps = {gameUi, playerN: nextPlayerN, gameBroadcast, chatBroadcast, activeCardAndLoc, setActiveCardAndLoc, dispatch, keypress, setKeypress, setObservingPlayerN};
-            gameAction("draw", actionProps);
+            gameAction("draw", actionProps, nextPlayerN);
         } else {
             chatBroadcast("game_update",{message: "tried to draw a card for the next open seat, but there was none."});
         }
@@ -476,7 +475,10 @@ export const gameAction = (action, props) => {
 
 
 export const cardAction = (action, cardId, options, props) => {
-    const {gameUi, playerN, gameBroadcast, chatBroadcast, activeCardAndLoc, setActiveCardAndLoc, dispatch, keypress, setKeypress, setObservingPlayerN} = props;
+    //const {gameUi, playerN, gameBroadcast, chatBroadcast, activeCardObj, setActiveCardObj, dispatch, keypress, setKeypress, setObservingPlayerN} = props;
+    const {state, dispatch, gameBroadcast, chatBroadcast} = props;
+    const gameUi = state?.gameUi;
+    const playerN = state?.roomUi?.playerN;
     if (!playerN) {
         alert("Please sit down to do that.")
         return;
@@ -497,6 +499,7 @@ export const cardAction = (action, cardId, options, props) => {
     const stackId = group.stackIds[stackIndex];
     const stack = game.stackById[stackId];
     const cardIds = stack.cardIds;
+    const activeCardObj = state.roomUi?.activeCardObj;
 
     // Set tokens to 0
     if (action === "zero_tokens") {
@@ -517,7 +520,7 @@ export const cardAction = (action, cardId, options, props) => {
         if (cardFace.type === "Location") {
             chatBroadcast("game_update", {message: "made "+displayName+" the active location."});
             gameBroadcast("game_action", {action: "move_stack", options: {stack_id: stackId, dest_group_id: "sharedActive", dest_stack_index: 0, combine: false, preserve_state: false}})
-            setActiveCardAndLoc(null);
+            dispatch(setActiveCardObj(null));
         } else {
             var values = [true, 90];
             if (card.exhausted) {
@@ -528,6 +531,7 @@ export const cardAction = (action, cardId, options, props) => {
             }
             const updates = [["game", "cardById", cardId, "exhausted", values[0]], ["game", "cardById", cardId, "rotation", values[1]]];
             dispatch(setValues({updates: updates}));
+            console.log("exhaust gameBroadcast", gameBroadcast)
             gameBroadcast("game_action", {action: "update_values", options:{updates: updates}});
         }
     }
@@ -537,7 +541,7 @@ export const cardAction = (action, cardId, options, props) => {
         if (card["currentSide"] === "A") newSide = "B";
         const updates = [["game","cardById",cardId,"currentSide", newSide]]
         dispatch(setValues({updates: updates}))
-        setActiveCardAndLoc({...activeCardAndLoc, card: {...card, currentSide: newSide}, clicked: false})
+        dispatch(setActiveCardObj({...activeCardObj, card: {...card, currentSide: newSide}, clicked: false}))
         gameBroadcast("game_action", {action: "flip_card", options:{card_id: cardId}});
         if (displayName==="player card" || displayName==="encounter card") {
             chatBroadcast("game_update", {message: "flipped "+getDisplayName(card)+" faceup."});
@@ -642,7 +646,7 @@ export const cardAction = (action, cardId, options, props) => {
         chatBroadcast("game_update", {message: "added "+displayName+" to the victory display."});
         gameBroadcast("game_action", {action: "move_card", options: {card_id: cardId, dest_group_id: "sharedVictory", dest_stack_index: 0, dest_card_index: 0, combine: false, preserve_state: false}})
         // Clear GiantCard
-        setActiveCardAndLoc(null);
+        dispatch(setActiveCardObj(null));
     }
     // Send to appropriate discard pile
     else if (action === "discard") {
@@ -686,7 +690,7 @@ export const cardAction = (action, cardId, options, props) => {
             }
         }
         // Clear GiantCard
-        setActiveCardAndLoc(null);
+        dispatch(setActiveCardObj(null));
     }
     // Shufle card into owner's deck
     else if (action === "shuffle_into_deck") {
@@ -696,12 +700,12 @@ export const cardAction = (action, cardId, options, props) => {
         gameBroadcast("game_action", {action: "shuffle_group", options: {group_id: destGroupId}})
         chatBroadcast("game_update", {message: "shuffled "+displayName+" from "+GROUPSINFO[groupId].name+" into "+GROUPSINFO[destGroupId].name+"."})
         // Clear GiantCard
-        setActiveCardAndLoc(null);
+        dispatch(setActiveCardObj(null));
     }
     // Draw an arrow
     else if (action === "draw_arrow") {
         // Determine if this is the start or end of the arrow
-        const drawingArrowFrom = keypress["w"];
+        const drawingArrowFrom = state?.roomUi?.keypress.w;
         if (drawingArrowFrom) {
             const drawingArrowTo = cardId;
             const oldArrows = game.playerData[playerN].arrows;
@@ -709,9 +713,9 @@ export const cardAction = (action, cardId, options, props) => {
             const updates = [["game", "playerData", playerN, "arrows", newArrows]];
             dispatch(setValues({updates: updates}));
             gameBroadcast("game_action", {action: "update_values", options:{updates: updates}});
-            setKeypress({"w": false});
+            dispatch(setKeypressW(false));
         } else {
-            setKeypress({"w": cardId});
+            dispatch(setKeypressW(cardId));
         }
     }
     // Detach a card
@@ -804,13 +808,13 @@ export const cardAction = (action, cardId, options, props) => {
     }
 }
 
-export const groupAction = (action, groupId, options, props) => {
-    const {gameUi, playerN, gameBroadcast, chatBroadcast, activeCardAndLoc, setActiveCardAndLoc, dispatch, keypress, setKeypress, setObservingPlayerN} = props;
-    if (!playerN) {
+export const groupAction = (action, groupId, options, actionProps) => {
+    const {state, dispatch, gameBroadcast, chatBroadcast} = actionProps;
+    if (!state?.roomUi?.playerN) {
         alert("Please sit down to do that.")
         return;
     }
-    if (!gameUi || !playerN || !groupId) return;
+    if (!state?.gameUi || !groupId) return;
     if (action === "dealX") {
         var topX = options?.value || 0;
         const destGroupId = options?.destGroupId;

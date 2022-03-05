@@ -10,6 +10,7 @@ import { setValues } from "./gameUiSlice";
 import { faBars } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useSetDropdownMenu } from "../../contexts/DropdownMenuContext";
+import { setBrowseGroupId, setDropdownMenuObj, setTyping } from "./roomUiSlice";
 
 const isNormalInteger = (str) => {
   var n = Math.floor(Number(str));
@@ -17,22 +18,16 @@ const isNormalInteger = (str) => {
 }
 
 export const Browse = React.memo(({
-  groupId,
-  cardSize,
   gameBroadcast,
   chatBroadcast,
-  playerN,
-  browseGroupTopN,
-  setBrowseGroupId,
-  setBrowseGroupTopN,
-  setTyping,
 }) => {
-  const gameStore = state => state?.gameUi?.game;
-  const game = useSelector(gameStore);
   const dispatch = useDispatch();
-  const setDropdownMenu = useSetDropdownMenu();
-  const group = game["groupById"][groupId];
+  const playerN = useSelector(state => state?.roomUi?.playerN);
+  const groupId = useSelector(state => state?.roomUi?.browseGroup?.id);
+  const browseGroupTopN = useSelector(state => state?.roomUi?.browseGroup?.topN);
+  const group = useSelector(state => state?.gameUi?.game?.groupById?.[groupId]);
   const groupType = group["type"];
+  const game = useSelector(state => state?.gameUi?.game);
   const parentCards = getParentCardsInGroup(game, groupId);
   const [selectedCardType, setSelectedCardType] = useState('All');
   const [selectedCardName, setSelectedCardName] = useState('');
@@ -41,14 +36,12 @@ export const Browse = React.memo(({
 
   const handleBarsClick = (event) => {
     event.stopPropagation();
-    const dropdownMenu = {
+    const dropdownMenuObj = {
         type: "group",
         group: group,
-        title: GROUPSINFO[groupId].name,
-        setBrowseGroupId: setBrowseGroupId,
-        setBrowseGroupTopN: setBrowseGroupTopN,
+        title: GROUPSINFO[groupId].name
     }
-    setDropdownMenu(dropdownMenu);
+    dispatch(setDropdownMenuObj(dropdownMenuObj));
   }
 
   // This allows the deck to be hidden instantly upon close (by hiding the top card)
@@ -69,7 +62,7 @@ export const Browse = React.memo(({
       else if (option === "order") closeAndOrder();
       else if (option === "peeking") closeAndPeeking();
     }
-    setBrowseGroupId("");
+    dispatch(setBrowseGroupId(null));
   }
 
   const closeAndShuffle = () => {
@@ -93,11 +86,9 @@ export const Browse = React.memo(({
     handleBrowseTopN(
       topNstr, 
       group,
-      playerN,
       gameBroadcast, 
       chatBroadcast,
-      setBrowseGroupId,
-      setBrowseGroupTopN
+      dispatch,
     )
   }
 
@@ -161,7 +152,6 @@ export const Browse = React.memo(({
           playerN={playerN}
           groupId={groupId}
           groupType={"hand"}
-          cardSize={cardSize}
           selectedStackIndices={filteredStackIndices}
         />
       </div>
@@ -189,8 +179,8 @@ export const Browse = React.memo(({
               id="name"
               placeholder="Search.."
               className="form-control w-full bg-gray-900 text-white border-0 h-full px-1"
-              onFocus={event => setTyping(true)}
-              onBlur={event => setTyping(false)}
+              onFocus={event => dispatch(setTyping(true))}
+              onBlur={event => dispatch(setTyping(false))}
               onChange={handleInputTyping}
             />
           </div>

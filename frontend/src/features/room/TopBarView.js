@@ -1,26 +1,21 @@
 import React from "react";
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { GROUPSINFO } from "./Constants";
 import { getQuestCompanionCycleFromQuestId } from "./Helpers";
-import { getQuestNameFromModeAndId, getQuestNameFromPath } from "./SpawnQuestModal";
+import { getQuestNameFromModeAndId } from "./SpawnQuestModal";
 import { TopBarViewItem } from "./TopBarViewItem";
 import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { setShowHotkeys, setShowPlayersInRoom } from "./roomUiSlice";
 
 
 const keyClass = "m-auto border bg-gray-500 text-center bottom inline-block text-xs ml-2 mb-1";
 const keyStyleL = {width: "35px", height: "20px", borderRadius: "5px"}
 
-export const TopBarView = React.memo(({
-  setShowHotkeys,
-  setShowPlayersInRoom,
-  handleBrowseSelect,
-  playerN,
-}) => {
-  const numPlayersStore = state => state.gameUi.game.numPlayers;
-  const numPlayers = useSelector(numPlayersStore);
-  const questModeAndIdStore = state => state.gameUi.game.questModeAndId;
-  const questModeAndId = useSelector(questModeAndIdStore);
+export const TopBarView = React.memo(({}) => {
+  const numPlayers = useSelector(state => state.gameUi.game.numPlayers);
+  const questModeAndId = useSelector(state => state.gameUi.game.questModeAndId);
+  const dispatch = useDispatch();
 
   const range = (size, startAt = 0) => {
     return [...Array(size).keys()].map(i => i + startAt);
@@ -39,10 +34,10 @@ export const TopBarView = React.memo(({
       <div className="h-full flex items-center justify-center select-none" href="#">View</div>
         <ul className="second-level-menu">
           <li key={"Hotkeys"}>
-            <a href="#" onClick={() => setShowHotkeys(true)}>Hotkeys <div className={keyClass} style={keyStyleL}>Tab</div></a>
+            <a href="#" onClick={() => dispatch(setShowHotkeys(true))}>Hotkeys <div className={keyClass} style={keyStyleL}>Tab</div></a>
           </li>
           <li key={"PlayersInRoom"}>
-            <a href="#" onClick={() => setShowPlayersInRoom(true)}>Spectators</a>
+            <a href="#" onClick={() => dispatch(setShowPlayersInRoom(true))}>Spectators</a>
           </li>
           <li key={"QuestCompanion"}>
             <a href={questCompanionURL} target="_blank">Quest Companion</a>
@@ -55,7 +50,7 @@ export const TopBarView = React.memo(({
             <ul className="third-level-menu">
               {Object.keys(GROUPSINFO).map((groupId, _index) => {
                 if (groupId.startsWith("shared")) return (
-                  <TopBarViewItem key={groupId} groupId={groupId} handleBrowseSelect={handleBrowseSelect} playerN={playerN}/>
+                  <TopBarViewItem key={groupId} groupId={groupId}/>
                 )
               })}
             </ul>
@@ -69,7 +64,7 @@ export const TopBarView = React.memo(({
             <ul className="third-level-menu">
               {Object.keys(GROUPSINFO).map((groupId, _index) => {
                 if (groupId.startsWith("player"+N)) return (
-                  <TopBarViewItem key={groupId} groupId={groupId} handleBrowseSelect={handleBrowseSelect} playerN={playerN}/>
+                  <TopBarViewItem key={groupId} groupId={groupId}/>
                 )
               })}
             </ul>

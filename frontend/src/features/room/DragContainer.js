@@ -1,5 +1,5 @@
 
-import React, { useRef, useEffect, useContext } from "react";
+import React, { useRef, useEffect } from "react";
 import { ArrowsBetweenDivsContextProvider, ArrowBetweenDivs, LineOrientation, ArrowAnchorPlacement } from 'react-simple-arrows';
 import { DragDropContext } from "react-beautiful-dnd";
 import { useSelector, useDispatch } from 'react-redux';
@@ -7,11 +7,11 @@ import { setStackIds, setCardIds, setGroupById, setValues } from "./gameUiSlice"
 import { reorderGroupStackIds } from "./Reorder";
 import { Table } from "./Table";
 import { GROUPSINFO } from "./Constants";
-import { getDisplayName, getDisplayNameFlipped, getCurrentFace } from "./Helpers";
-import { useKeypress } from "../../contexts/KeypressContext";
-import { processGameChange } from "../automation/ProcessGameChange";
+import { getDisplayName, getDisplayNameFlipped } from "./Helpers";
 import { useTouchMode } from "../../contexts/TouchModeContext";
 import { useSetTouchAction } from "../../contexts/TouchActionContext";
+import store from "../../store";
+import { setTouchAction } from "./roomUiSlice";
 
 // custom hook for getting previous value 
 function usePrevious(value) {
@@ -23,29 +23,24 @@ function usePrevious(value) {
 }
 
 export const DragContainer = React.memo(({
-  playerN,
   gameBroadcast,
   chatBroadcast,
-  setTyping
 }) => {
   console.log("Rendering DragContainer");
-  const gameStore = state => state?.gameUi?.game;
   const dispatch = useDispatch();
-  const game = useSelector(gameStore);
-  const keypress = useKeypress();
+  const playerData = useSelector(state => state?.gameUi?.game?.playerData);
+  const touchMode = useSelector(state => state?.roomUi?.touchMode);
   //const archerContainerRef = React.createRef();
   const arrowColors = ["rgba(255,0,0,0.6)", "rgba(0,200,0,0.6)", "rgba(0,128,255,0.6)", "rgba(128,0,255,0.6)"];
-  const touchMode = useTouchMode();
-  const setTouchAction = useSetTouchAction();
 
-  const prevGame = usePrevious(game)
-  const arrows1 = game.playerData.player1.arrows;
-  const arrows2 = game.playerData.player1.arrows;
-  const arrows3 = game.playerData.player1.arrows;
-  const arrows4 = game.playerData.player1.arrows;
+  const arrows1 = playerData.player1.arrows;
+  const arrows2 = playerData.player2.arrows;
+  const arrows3 = playerData.player3.arrows;
+  const arrows4 = playerData.player4.arrows;
   const usingArrows = (arrows1 && arrows1.length) || (arrows2 && arrows2.length) || (arrows3 && arrows3.length) || (arrows4 && arrows4.length);
 
   const onDragEnd = (result) => {
+    const game = store.getState()?.gameUi.game;
     const groupById = game.groupById;
     const orig = result.source;
     const origGroupId = orig.droppableId;
@@ -91,7 +86,7 @@ export const DragContainer = React.memo(({
         ...origGroup,
         stackIds: newOrigGroupStackIds
       }   
-      if (!keypress["Shift"] && (origGroup.type === "hand" || origGroup.type === "deck" ) && (destGroup.type !== "hand" && destGroup.type !== "deck" )) {
+      if ((origGroup.type === "hand" || origGroup.type === "deck" ) && (destGroup.type !== "hand" && destGroup.type !== "deck" )) {
         chatBroadcast("game_update",{message: "attached "+getDisplayNameFlipped(topOfOrigStackCard)+" from "+GROUPSINFO[origGroupId].name+" to "+getDisplayName(topOfDestStackCard)+" in "+GROUPSINFO[destGroupId].name+"."})
         // Flip card faceup
         const updates = [["game","cardById",topOfOrigStackCardId,"currentSide", "A"]];
@@ -101,7 +96,7 @@ export const DragContainer = React.memo(({
       }
       dispatch(setStackIds(newOrigGroup));
       dispatch(setCardIds(newDestStack));
-      gameBroadcast("game_action", {action:"move_stack", options:{stack_id: origStackId, dest_group_id: destGroupId, dest_stack_index: dest.index, combine: true, preserve_state: keypress["Shift"]}})
+      gameBroadcast("game_action", {action:"move_stack", options:{stack_id: origStackId, dest_group_id: destGroupId, dest_stack_index: dest.index, combine: true, preserve_state: false}})
     }
 
     // Dropped nowhere
@@ -127,7 +122,7 @@ export const DragContainer = React.memo(({
       const newGroupById = reorderGroupStackIds(groupById, orig, dest);
       const origGroupTitle = GROUPSINFO[origGroupId].name;
       const destGroupTitle = GROUPSINFO[destGroupId].name;
-      if (!keypress["Shift"] && (origGroup.type === "hand" || origGroup.type === "deck" ) && (destGroup.type !== "hand" && destGroup.type !== "deck" )) {
+      if ((origGroup.type === "hand" || origGroup.type === "deck" ) && (destGroup.type !== "hand" && destGroup.type !== "deck" )) {
         chatBroadcast("game_update",{message: "moved "+getDisplayNameFlipped(topOfOrigStackCard)+" from "+origGroupTitle+" to "+destGroupTitle+"."});
         // Flip card faceup
         const updates = [["game","cardById",topOfOrigStackCardId,"currentSide", "A"]];
@@ -137,11 +132,11 @@ export const DragContainer = React.memo(({
         chatBroadcast("game_update",{message: "moved "+getDisplayName(topOfOrigStackCard)+" from "+origGroupTitle+" to "+destGroupTitle+"."});
       }
       dispatch(setGroupById(newGroupById));
-      gameBroadcast("game_action", {action:"move_stack", options:{stack_id: origStackId, dest_group_id: destGroupId, dest_stack_index: dest.index, combine: false, preserve_state: (keypress["Shift"] || destGroupId === origGroupId)}})
+      gameBroadcast("game_action", {action:"move_stack", options:{stack_id: origStackId, dest_group_id: destGroupId, dest_stack_index: dest.index, combine: false, preserve_state: destGroupId === origGroupId}})
     }
     if (touchMode && origGroup.type === "hand" && destGroup.type === "play") {
       const cost = topOfOrigStackCard.sides.A.cost;
-      if (cost) setTouchAction({action: "increment_token", options:{tokenType: "resource", "increment": -1, tokensLeft: cost}, type: "card"});
+      if (cost) dispatch(setTouchAction({action: "increment_token", options:{tokenType: "resource", "increment": -1, tokensLeft: cost}, type: "card"}));
     }
   }
 
@@ -151,9 +146,9 @@ export const DragContainer = React.memo(({
       <ArrowsBetweenDivsContextProvider>
         {({ registerDivToArrowsContext }) => (
           <>
-            {Object.keys(game.playerData).map((playerI, playerIndex) => {
+            {Object.keys(playerData).map((playerI, playerIndex) => {
               return(
-                game.playerData[playerI].arrows.map((arrowStartStop, arrowIndex) => {
+                playerData[playerI].arrows.map((arrowStartStop, arrowIndex) => {
                   return(
                     <ArrowBetweenDivs
                       from={{ id: 'arrow-'+arrowStartStop[0], placement: ArrowAnchorPlacement.TOP }}
@@ -168,10 +163,8 @@ export const DragContainer = React.memo(({
             })}
 
           <Table
-            playerN={playerN}
             gameBroadcast={gameBroadcast}
             chatBroadcast={chatBroadcast}
-            setTyping={setTyping}
             registerDivToArrowsContext={usingArrows ? registerDivToArrowsContext: null}
           />
         </>

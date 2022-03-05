@@ -88,9 +88,14 @@ const gameUiSlice = createSlice({
   initialState,
   reducers: {
     setGameUi: (state, { payload }) => {
-      Object.keys(payload).forEach((key) => {
-        if (key !== "game") state[key] = payload[key];
-      })
+      if (!state) {
+        state = payload;
+      } else {
+        deepUpdate(state, payload);
+      }
+      // Object.keys(payload).forEach((key) => {
+      //   if (key !== "game") state[key] = payload[key];
+      // })
     },
     setGame: (state, { payload }) => {
       if (!state.game) {

@@ -2,6 +2,8 @@ import React from "react";
 import { faTimes } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Draggable from 'react-draggable';
+import { useDispatch, useSelector } from "react-redux";
+import { setShowHotkeys } from "./roomUiSlice";
 
 const keyClass = "m-auto border bg-gray-500 text-center bottom inline-block";
 const keyClassLong = "m-auto border bg-gray-500 text-center bottom inline-block";
@@ -29,10 +31,12 @@ const windowStyleL = {
 const col1Class = "w-1/3";
 const col2Class = "w-2/3";
 
-export const Hotkeys = React.memo(({
-    tabMode,
-    setShowWindow,
-}) => {
+export const Hotkeys = React.memo(({}) => {
+  const dispatch = useDispatch();
+  const showWindow = useSelector(state => state?.roomUi?.showHotkeys);
+  const tabPressed = useSelector(state => state?.roomUi?.keypress?.Tab);
+  if (!showWindow && !tabPressed) return;
+
   const iconImg = (tokenType) => {
     return(<img className="m-auto h-6 inline-block" src={process.env.PUBLIC_URL + '/images/tokens/'+tokenType+'.png'}/>)
   }
@@ -342,7 +346,7 @@ export const Hotkeys = React.memo(({
   }
 
 
-  if (tabMode) {
+  if (tabPressed) {
     return(
       <div className={windowClassL} style={windowStyleL}>
         <div className="w-full p-3 overflow-y-scroll">
@@ -372,7 +376,11 @@ export const Hotkeys = React.memo(({
       <Draggable>
         <div className={windowClass} style={windowStyle}>
           <div className="w-full bg-gray-500" style={{height: "25px"}}>
-            <FontAwesomeIcon className="ml-2" icon={faTimes} onMouseUp={() => setShowWindow(false)} onTouchStart={() => setShowWindow(false)}/>
+            <FontAwesomeIcon 
+              className="ml-2" 
+              icon={faTimes} 
+              onMouseUp={() => dispatch(setShowHotkeys(false))} 
+              onTouchStart={() => dispatch(setShowHotkeys(false))}/>
           </div>
           <div className="w-full p-3 overflow-y-scroll" style={{height: "523px"}}>
             <h2 className="mb-2">Tokens</h2>
