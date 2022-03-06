@@ -262,25 +262,28 @@ export const flatListOfCards = (game) => {
 }
 
 // Takes in something like [["groupId","controllerDeck"],["stackIndex",0]] with "player1" and outputs [["groupId","player1Deck"],["stackIndex",0]]
-export const formatCriteria = (criteria, controller) => {
+export const formatCriteria = (criteria, playerN, controller) => {
   const formattedCriteria = [];
   for (var criterion of criteria) {
     const formattedCriterion = [];
     for (var item of criterion) {
-      if (typeof item === 'string') formattedCriterion.push(item.replace("controller",controller))
-      else formattedCriterion.push(item);
+      if (typeof item === 'string') item = item.replace("controller",controller);
+      if (typeof item === 'string') item = item.replace("playerN",playerN);
+      formattedCriterion.push(item);
     }
     formattedCriteria.push(formattedCriterion);
   }
   return formattedCriteria;
 } 
 // Takes in something like [["groupId","controllerDeck"],["stackIndex",0]] with "player1" and outputs [["groupId","player1Deck"],["stackIndex",0]]
-export const formatOptions = (options, controller) => {
+export const formatOptions = (options, playerN, controller) => {
   const formattedOptions = {};
   for (var option of Object.keys(options)) {
-    const value = options[option];
-    if (typeof value === 'string') formattedOptions[option] = value.replace("controller",controller)
-    else formattedOptions[option] = value;
+    var value = options[option];
+    if (option === "updates") value = formatCriteria(value, playerN, controller);
+    if (typeof value === 'string') value = value.replace("controller",controller);
+    if (typeof value === 'string') value = value.replace("playerN",playerN);
+    formattedOptions[option] = value;
   }
   return formattedOptions;
 } 

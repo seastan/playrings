@@ -27,7 +27,7 @@ import {
 import { setValues } from "../store/gameUiSlice";
 import abilities from "../../cardDB/abilities";
 import { GROUPSINFO, PHASEINFO, roundStepToText, nextRoundStep, prevRoundStep, nextPhase, prevPhase } from "./Constants";
-import { setActiveCardObj, setKeypressW, setObservingPlayerN } from "../store/playerUiSlice";
+import { setActiveCardObj, setKeypressW, setObservingPlayerN, setPlayerUiValues } from "../store/playerUiSlice";
 
 const areMultiplayerHotkeysEnabled = (game, chatBroadcast) => {
     if (!game.options.multiplayerHotkeys) {
@@ -785,6 +785,7 @@ export const cardAction = (action, cardId, options, props) => {
         const matchingTrigger = listOfMatchingCards(gameUi, trigger);
         if (!matchingTrigger || matchingTrigger.length !== 1) return; // Card does not meet trigger condition
         const results = faceAbility.results;
+        console.log("ability 1", results)
         for (var result of results) {
             if (result.type === "card_action") {
                 var criteria = result.criteria;
@@ -799,15 +800,15 @@ export const cardAction = (action, cardId, options, props) => {
                         options: formatOptions(result.options, card.controller)
                     }
                 });
-            } else if (result.type = "game_action") {
-                gameBroadcast("game_action",{action: result.action, options: formatOptions(result.options, card.controller)});
-            } else if (result.type = "ui_action") {
-                const options = formatOptions(result.options, card.controller);
-                dispatch()
-                gameBroadcast("game_action",{action: result.action, options: formatOptions(result.options, card.controller)});
+            } else if (result.type === "game_action") {
+                gameBroadcast("game_action",{action: result.action, options: formatOptions(result.options, playerN, card.controller)});
+            } else if (result.type === "ui_action") {
+                const options = formatOptions(result.options, playerN, card.controller);
+                console.log("ability ",options)
+                dispatch(setPlayerUiValues({updates: options.updates}));
             }
         }
-        chatBroadcast("game_update", {message: "triggerd an ability on "+displayName+"."});
+        chatBroadcast("game_update", {message: "triggered an ability on "+displayName+"."});
     }
 }
 

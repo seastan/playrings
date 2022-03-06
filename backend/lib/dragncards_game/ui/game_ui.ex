@@ -1055,6 +1055,20 @@ defmodule DragnCardsGame.GameUI do
     end
   end
 
+  def peek_at_by_indices(gameui, group_id, indices, player_n, value) do
+    group_stack_ids = get_stack_ids(gameui, group_id)
+    num_stacks = Enum.count(group_stack_ids)
+    selected_stack_ids = Enum.reduce(indices, [], fn(index, acc) ->
+      index = if index < 0 do index = num_stacks + index else index end
+      acc = if index >= num_stacks do
+        acc
+      else
+        acc ++ [Enum.at(group_stack_ids, index)]
+      end
+    end)
+    peek_at(gameui, selected_stack_ids, player_n, value)
+  end
+
   ################################################################
   # Game actions                                                 #
   ################################################################
@@ -1127,6 +1141,8 @@ defmodule DragnCardsGame.GameUI do
           card_action(gameui, options["card_id"], options["action"], options["options"])
         "deal_x" ->
           deal_x(gameui, options["group_id"], options["dest_group_id"], options["top_x"])
+        "peek_at_by_indices" ->
+          peek_at_by_indices(gameui, options["group_id"], options["indices"], player_n, options["value"])
         _ ->
           gameui
       end

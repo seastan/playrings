@@ -1,4 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { updateValues } from "./updateValues";
 
 
 const initialState = {
@@ -37,6 +38,9 @@ const playerUiSlice = createSlice({
   name: "playerUi",
   initialState,
   reducers: {
+    setPlayerUiValues: (state, { payload }) => {
+      updateValues(state, payload.updates);
+    },
     setPlayerN: (state, { payload }) => {
       state.playerN = payload;
     },
@@ -119,6 +123,7 @@ const playerUiSlice = createSlice({
 });
 
 export const { 
+  setPlayerUiValues,
   setPlayerN, 
   setKeypress, 
   setKeypressControl,

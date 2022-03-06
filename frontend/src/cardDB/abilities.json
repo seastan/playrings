@@ -232,7 +232,12 @@
                     },
                     {
                         "type": "ui_action",
-                        "options": {"updates": [["browseGroup","id","controllerDeck"],["browseGroup","topN",5]]}
+                        "options": {"updates": [["browseGroup","id","playerNDeck"],["browseGroup","topN","5"]]}
+                    },
+                    {
+                        "type": "game_action",
+                        "action": "peek_at_by_indices", 
+                        "options": {"for_player_n": "controller", "group_id": "playerNDeck", "indices": [0,1,2,3,4], "value": true}
                     }
                 ]
             }
