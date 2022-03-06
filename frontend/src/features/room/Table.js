@@ -15,7 +15,7 @@ import { TouchBarBottom } from "./TouchBarBottom";
 
 import "../../css/custom-dropdown.css";
 import { TooltipModal } from "./TooltipModal";
-import { setActiveCardObj, setDropdownMenuObj, setMousePosition, setTouchAction } from "./playerUiSlice";
+import { setActiveCardObj, setDropdownMenuObj, setMousePosition, setTouchAction } from "../store/playerUiSlice";
 import { useDispatch, useSelector } from "react-redux";
 
 export const Table = React.memo(({

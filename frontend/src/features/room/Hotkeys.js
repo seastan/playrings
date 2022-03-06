@@ -3,7 +3,7 @@ import { faTimes } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Draggable from 'react-draggable';
 import { useDispatch, useSelector } from "react-redux";
-import { setShowHotkeys } from "./playerUiSlice";
+import { setShowHotkeys } from "../store/playerUiSlice";
 
 const keyClass = "m-auto border bg-gray-500 text-center bottom inline-block";
 const keyClassLong = "m-auto border bg-gray-500 text-center bottom inline-block";

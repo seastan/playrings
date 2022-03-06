@@ -6,7 +6,7 @@ import { faBars, faEye } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { handleBrowseTopN } from "./HandleBrowseTopN"; 
 import store from "../../store";
-import { setDropdownMenuObj } from "./playerUiSlice";
+import { setDropdownMenuObj } from "../store/playerUiSlice";
 
 export const Group = React.memo(({
   groupId,

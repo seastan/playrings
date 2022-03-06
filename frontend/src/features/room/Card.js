@@ -11,7 +11,7 @@ import { getCurrentFace, getVisibleFace, getVisibleFaceSrc, getDefault, usesThre
 import { Target } from "./Target";
 import { useTouchMode } from "../../contexts/TouchModeContext";
 import { AbilityToken } from "./AbilityToken";
-import { setActiveCardObj } from "./playerUiSlice";
+import { setActiveCardObj } from "../store/playerUiSlice";
 
 function useTraceUpdate(props) {
     const prev = useRef(props);

@@ -7,7 +7,7 @@ import { loadDeckFromXmlText } from "./Helpers";
 import { CYCLEORDER, CYCLEINFO } from "./Constants";
 import { calcHeightCommon, DropdownItem, GoBack } from "./DropdownMenuHelpers";
 import useProfile from "../../hooks/useProfile";
-import { setShowModal, setTooltipIds, setTyping } from "./playerUiSlice";
+import { setShowModal, setTooltipIds, setTyping } from "../store/playerUiSlice";
 import store from "../../store";
 
 function requireAll( requireContext ) {

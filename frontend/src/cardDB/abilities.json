@@ -217,5 +217,25 @@
                 ]
             }
         ]
+    },
+    "51223bd0-ffd1-11df-a976-0801212c9019": {
+        "label": "Imladris Stargazer",
+        "A" : [
+            {
+                "trigger": [["groupType","play"],["exhausted",false]],
+                "results": [
+                    {
+                        "type": "card_action",
+                        "criteria": "self", 
+                        "action": "exhaust", 
+                        "options": {}
+                    },
+                    {
+                        "type": "ui_action",
+                        "options": {"updates": [["browseGroup","id","controllerDeck"],["browseGroup","topN",5]]}
+                    }
+                ]
+            }
+        ]
     }
 }

@@ -1,5 +1,5 @@
 import { GROUPSINFO } from "./Constants";
-import { setBrowseGroupId, setBrowseGroupTopN } from "./playerUiSlice";
+import { setBrowseGroupId, setBrowseGroupTopN } from "../store/playerUiSlice";
 
 export const handleBrowseTopN = (
     topNstr, 

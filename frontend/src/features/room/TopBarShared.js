@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from 'react-redux';
 import useFocus from "../../hooks/useFocus";
-import { setValues } from "./gameUiSlice";
-import { setTyping } from "./playerUiSlice";
+import { setValues } from "../store/gameUiSlice";
+import { setTyping } from "../store/playerUiSlice";
 
 var delayBroadcast;
 

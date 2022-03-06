@@ -4,7 +4,7 @@ import { faTimes } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Draggable from 'react-draggable';
 import UserName from "../user/UserName";
-import { setShowPlayersInRoom } from "./playerUiSlice";
+import { setShowPlayersInRoom } from "../store/playerUiSlice";
 
 const windowClass = "insert-auto overflow-auto bg-gray-700 border max-w-lg rounded-lg outline-none text-white";
 const windowStyle = {

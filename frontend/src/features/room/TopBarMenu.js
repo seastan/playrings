@@ -8,7 +8,7 @@ import { loadDeckFromXmlText, getRandomIntInclusive } from "./Helpers";
 import { loadDeckFromModeAndId } from "./SpawnQuestModal";
 import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { setCardSizeFactor, setLoaded, setShowModal, setTouchAction, setTouchMode } from "./playerUiSlice";
+import { setCardSizeFactor, setLoaded, setRandomNumBetween, setShowModal, setTouchAction, setTouchMode } from "../store/playerUiSlice";
 
 export const TopBarMenu = React.memo(({
     gameBroadcast,
@@ -25,7 +25,8 @@ export const TopBarMenu = React.memo(({
   const isHost = myUserID === createdBy;  
   const playerN = useSelector(state => state?.playerUi?.playerN);
   const cardsPerRound = useSelector(state => state.gameUi?.game.playerData[playerN]?.cardsDrawn);
-  const cardSizeFactor = useSelector(state => state?.playerUi?.cardSizeFactor)
+  const cardSizeFactor = useSelector(state => state?.playerUi?.cardSizeFactor);
+  const randomNumBetween = useSelector(state => state?.playerUi?.randomNumBetween);
   
   const dispatch = useDispatch();
   const inputFileDeck = useRef(null);
@@ -144,8 +145,9 @@ export const TopBarMenu = React.memo(({
       if (result) chatBroadcast("game_update",{message: "flipped heads."});
       else chatBroadcast("game_update",{message: "flipped tails."});
     } else if (data.action === "random_number") {
-      const max = parseInt(prompt("Random number between 1 and...","3"));
+      const max = parseInt(prompt("Random number between 1 and...",randomNumBetween));
       if (max>=1) {
+        dispatch(setRandomNumBetween(max))
         const result = getRandomIntInclusive(1,max);
         chatBroadcast("game_update",{message: "chose a random number (1-"+max+"): "+result});
       }

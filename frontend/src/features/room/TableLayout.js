@@ -8,7 +8,7 @@ import "../../css/custom-misc.css";
 import useWindowDimensions from "../../hooks/useWindowDimensions";
 import { QuickAccess } from "./QuickAccess";
 import { SideGroup } from "./SideGroup";
-import { setCardSize } from "./playerUiSlice";
+import { setCardSize } from "../store/playerUiSlice";
 
 var delayBroadcast;
 

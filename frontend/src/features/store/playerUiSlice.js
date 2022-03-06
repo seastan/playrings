@@ -30,6 +30,7 @@ const initialState = {
   touchAction: null,
   sideGroupId: "sharedSetAside",
   favoriteGroupId: null,
+  randomNumBetween: "3",
 };
 
 const playerUiSlice = createSlice({
@@ -78,8 +79,7 @@ const playerUiSlice = createSlice({
     setObservingPlayerN: (state, { payload }) => {
       state.observingPlayerN = payload;
     },
-    setDropdownMenuObj: (state, { payload }) => {      
-      console.log("setting setDropdownMenuObj", payload)
+    setDropdownMenuObj: (state, { payload }) => {
       state.dropdownMenuObj = payload;
     },
     setShowModal: (state, { payload }) => {
@@ -112,6 +112,9 @@ const playerUiSlice = createSlice({
     setFavoriteGroupId: (state, { payload }) => {
       state.favoriteGroupId = payload;
     },
+    setRandomNumBetween: (state, { payload }) => {
+      state.randomNumBetween = payload;
+    },
   }
 });
 
@@ -141,5 +144,6 @@ export const {
   setTouchAction,
   setSideGroupId,
   setFavoriteGroupId,
+  setRandomNumBetween,
  } = playerUiSlice.actions;
 export default playerUiSlice.reducer;

@@ -6,11 +6,11 @@ import { ContextMenuTrigger } from "react-contextmenu";
 import { handleBrowseTopN } from "./HandleBrowseTopN";
 import { GroupContextMenu } from "./GroupContextMenu";
 import { getParentCardsInGroup } from "./Helpers";
-import { setValues } from "./gameUiSlice";
+import { setValues } from "../store/gameUiSlice";
 import { faBars } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useSetDropdownMenu } from "../../contexts/DropdownMenuContext";
-import { setBrowseGroupId, setDropdownMenuObj, setTyping } from "./playerUiSlice";
+import { setBrowseGroupId, setDropdownMenuObj, setTyping } from "../store/playerUiSlice";
 
 const isNormalInteger = (str) => {
   var n = Math.floor(Number(str));

@@ -5,8 +5,8 @@ import useProfile from "../../hooks/useProfile";
 import useFocus from "../../hooks/useFocus";
 import useIsLoggedIn from "../../hooks/useIsLoggedIn";
 import { Link } from "react-router-dom";
-import { setValues } from "./gameUiSlice";
-import { setDropdownMenuObj, setObservingPlayerN, setTyping } from "./playerUiSlice";
+import { setValues } from "../store/gameUiSlice";
+import { setDropdownMenuObj, setObservingPlayerN, setTyping } from "../store/playerUiSlice";
 
 var delayBroadcast;
 

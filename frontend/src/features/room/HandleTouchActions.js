@@ -3,7 +3,7 @@ import { useDispatch } from 'react-redux';
 import { useSelector } from 'react-redux';
 import { gameAction, cardAction } from "./Actions";
 import { getDefault, getDisplayName, processTokenType, tokenPrintName } from "./Helpers";
-import { setActiveCardObj, setDropdownMenuObj, setTouchAction } from "./playerUiSlice";
+import { setActiveCardObj, setDropdownMenuObj, setTouchAction } from "../store/playerUiSlice";
 import store from "../../store";
 
 export const HandleTouchActions = React.memo(({

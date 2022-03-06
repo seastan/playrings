@@ -4,7 +4,7 @@ import { getDisplayName } from "./Helpers";
 import useLongPress from "../../hooks/useLongPress";
 import { useTouchAction } from "../../contexts/TouchActionContext";
 import { useDispatch, useSelector } from "react-redux";
-import { setActiveCardObj, setDropdownMenuObj } from "./playerUiSlice";
+import { setActiveCardObj, setDropdownMenuObj } from "../store/playerUiSlice";
 
 
 export const CardMouseRegion = React.memo(({

@@ -3,13 +3,13 @@ import React, { useRef, useEffect } from "react";
 import { ArrowsBetweenDivsContextProvider, ArrowBetweenDivs, LineOrientation, ArrowAnchorPlacement } from 'react-simple-arrows';
 import { DragDropContext } from "react-beautiful-dnd";
 import { useSelector, useDispatch } from 'react-redux';
-import { setStackIds, setCardIds, setGroupById, setValues } from "./gameUiSlice";
+import { setStackIds, setCardIds, setGroupById, setValues } from "../store/gameUiSlice";
 import { reorderGroupStackIds } from "./Reorder";
 import { Table } from "./Table";
 import { GROUPSINFO } from "./Constants";
 import { getDisplayName, getDisplayNameFlipped } from "./Helpers";
 import store from "../../store";
-import { setTouchAction } from "./playerUiSlice";
+import { setTouchAction } from "../store/playerUiSlice";
 
 // custom hook for getting previous value 
 function usePrevious(value) {

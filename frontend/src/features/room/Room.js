@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import RoomProviders from "./RoomProviders";
 import {useSetMessages} from '../../contexts/MessagesContext';
 import useChannel from "../../hooks/useChannel";
-import { setGameUi, setGame } from "./gameUiSlice";
+import { setGameUi, setGame } from "../store/gameUiSlice";
 import useProfile from "../../hooks/useProfile";
 
 export const Room = ({ slug }) => {

@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { cardDB } from "../../cardDB/cardDB";
 import useProfile from "../../hooks/useProfile";
 import { getCardRowCategory } from "./Helpers";
-import { setShowModal, setTyping } from "./playerUiSlice";
+import { setShowModal, setTyping } from "../store/playerUiSlice";
 
 const RESULTS_LIMIT = 150;
 

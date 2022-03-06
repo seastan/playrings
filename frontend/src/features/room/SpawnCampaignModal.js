@@ -2,7 +2,7 @@ import React, {useState} from "react";
 import ReactModal from "react-modal";
 import { buildLoadList, processLoadList, processPostLoad } from "./Helpers";
 import { DropdownItem } from "./DropdownMenuHelpers";
-import { setShowModal } from "./playerUiSlice";
+import { setShowModal } from "../store/playerUiSlice";
 import { useDispatch, useSelector } from "react-redux";
 
 function requireAll( requireContext ) {

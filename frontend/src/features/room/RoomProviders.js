@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import RoomGame from "./RoomGame";
 import { GetPlayerN } from "./Helpers";
 import useProfile from "../../hooks/useProfile";
-import { setPlayerN } from "./playerUiSlice";
+import { setPlayerN } from "../store/playerUiSlice";
 
 export const RoomProviders = ({ gameBroadcast, chatBroadcast }) => {
   console.log("Rendering RoomProviders");

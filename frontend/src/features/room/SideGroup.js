@@ -5,7 +5,7 @@ import { GROUPSINFO, LAYOUTINFO } from "./Constants";
 import { faBars, faEye } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { handleBrowseTopN } from "./HandleBrowseTopN"; 
-import { setDropdownMenuObj } from "./playerUiSlice";
+import { setDropdownMenuObj } from "../store/playerUiSlice";
 
 export const SideGroup = React.memo(({
   gameBroadcast,

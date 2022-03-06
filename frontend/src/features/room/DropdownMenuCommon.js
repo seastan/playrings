@@ -6,7 +6,7 @@ import { DropdownMenuFirstPlayer } from "./DropdownMenuFirstPlayer";
 import { useDispatch, useSelector } from 'react-redux';
 import { calcHeightCommon, DropdownItem, GoBack } from "./DropdownMenuHelpers";
 import "../../css/custom-dropdown.css";
-import { setDropdownMenuObj } from "./playerUiSlice";
+import { setDropdownMenuObj } from "../store/playerUiSlice";
 import store from "../../store";
 
 export const DropdownMenuCommon = React.memo(({

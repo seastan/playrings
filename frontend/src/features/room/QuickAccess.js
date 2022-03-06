@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { faStar } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { FavoriteGroupModal } from "./FavoriteGroupModal";
-import { setFavoriteGroupId, setShowModal, setSideGroupId } from "./playerUiSlice";
+import { setFavoriteGroupId, setShowModal, setSideGroupId } from "../store/playerUiSlice";
 
 export const QuickAccess = React.memo(({}) => {
   const dispatch = useDispatch();

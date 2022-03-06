@@ -3,7 +3,7 @@ import ReactModal from "react-modal";
 import { useForm } from "react-hook-form";
 import Button from "../../components/basic/Button";
 import Select from 'react-select'
-import { setShowModal, setTyping } from "./playerUiSlice";
+import { setShowModal, setTyping } from "../store/playerUiSlice";
 import { useDispatch } from "react-redux";
 
 export const SpawnCustomModal = React.memo(({
