@@ -1,25 +1,26 @@
 import React, { useState } from "react";
-import { useSelector } from 'react-redux';
-import { useObservingPlayerN } from "../../contexts/ObservingPlayerNContext";
+import { useDispatch, useSelector } from 'react-redux';
 import { faStar } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { FavoriteGroupModal } from "./FavoriteGroupModal";
+import { setFavoriteGroupId, setShowModal, setSideGroupId } from "./playerUiSlice";
 
-export const QuickAccess = React.memo(({sideGroupId, setSideGroupId}) => {
-  const groupByIdStore = state => state.gameUi.game.groupById;
-  const groupById = useSelector(groupByIdStore);
-  const observingPlayerN = useObservingPlayerN();
-  const [showModal, setShowModal] = useState(false);
-  const [favoriteGroupId, setFavoriteGroupId] = useState(null);
+export const QuickAccess = React.memo(({}) => {
+  const dispatch = useDispatch();
+  const groupById = useSelector(state => state?.gameUi?.game?.groupById);
+  const observingPlayerN = useSelector(state => state?.playerUi?.observingPlayerN);
+  const favoriteGroupId = useSelector(state => state?.playerUi?.favoriteGroupId);
+  const sideGroupId = useSelector(state => state?.playerUi?.sideGroupId);
+  const showModal = useSelector(state => state?.playerUi?.showModal);
 
   const handleQuickViewClick = (groupId) => {
-    if (sideGroupId === groupId) setSideGroupId(null);
-    else setSideGroupId(groupId);
+    if (sideGroupId === groupId) dispatch(setSideGroupId(null));
+    else dispatch(setSideGroupId(groupId));
   }
   const handleFavoriteClick = () => {
-    if (!favoriteGroupId) setShowModal(true);
-    else if (sideGroupId === favoriteGroupId) setSideGroupId(null);
-    else setSideGroupId(favoriteGroupId);
+    if (!favoriteGroupId) dispatch(setShowModal("favorite"));
+    else if (sideGroupId === favoriteGroupId) dispatch(setSideGroupId(null));
+    else dispatch(setSideGroupId(favoriteGroupId));
   }
 
   const groupIds = ["sharedSetAside", observingPlayerN+"Sideboard", "sharedVictory", "sharedEncounterDeck2"];
@@ -37,16 +38,9 @@ export const QuickAccess = React.memo(({sideGroupId, setSideGroupId}) => {
       <div 
         className={`h-1/5 w-full bg-gray-800 flex items-center justify-center ${sideGroupId === favoriteGroupId ? "bg-red-800" : "hover:bg-gray-600"}`}
         onClick={() => handleFavoriteClick()}>
-        <FontAwesomeIcon 
-          icon={faStar}/>
+        <FontAwesomeIcon icon={faStar}/>
       </div>
-      <FavoriteGroupModal
-        isOpen={showModal}
-        closeModal={() => setShowModal(false)}
-        favoriteGroupId={favoriteGroupId}
-        setFavoriteGroupId={setFavoriteGroupId}
-        setSideGroupId={setSideGroupId}
-      />
+      {showModal === "favorite" ? <FavoriteGroupModal/> : null}
     </div>
   )
 })

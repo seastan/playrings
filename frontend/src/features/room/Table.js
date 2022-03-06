@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import { TableLayout } from "./TableLayout";
 import { GiantCard } from "./GiantCard";
 import { TopBar } from "./TopBar";
@@ -15,7 +15,7 @@ import { TouchBarBottom } from "./TouchBarBottom";
 
 import "../../css/custom-dropdown.css";
 import { TooltipModal } from "./TooltipModal";
-import { setActiveCardObj, setDropdownMenuObj, setMousePosition, setTouchAction } from "./roomUiSlice";
+import { setActiveCardObj, setDropdownMenuObj, setMousePosition, setTouchAction } from "./playerUiSlice";
 import { useDispatch, useSelector } from "react-redux";
 
 export const Table = React.memo(({
@@ -25,10 +25,10 @@ export const Table = React.memo(({
 }) => {
   console.log('Rendering Table');
   const dispatch = useDispatch();
-  const tooltipIds = useSelector(state => state?.roomUi?.tooltipIds);
-  const touchMode = useSelector(state => state?.roomUi?.touchMode);
-  const showModal = useSelector(state => state?.roomUi?.showModal);
-  const loaded = useSelector(state => state?.roomUi?.loaded);
+  const tooltipIds = useSelector(state => state?.playerUi?.tooltipIds);
+  const touchMode = useSelector(state => state?.playerUi?.touchMode);
+  const showModal = useSelector(state => state?.playerUi?.showModal);
+  const loaded = useSelector(state => state?.playerUi?.loaded);
 
   const handleTableClick = (event) => {
     dispatch(setActiveCardObj(null));
@@ -91,30 +91,10 @@ export const Table = React.memo(({
       </div>
       {/* Card hover view */}
       <GiantCard/>
-      {showModal === "card" && 
-        <SpawnCardModal 
-          gameBroadcast={gameBroadcast}
-          chatBroadcast={chatBroadcast}
-        />
-      }
-      {showModal === "quest" && 
-        <SpawnQuestModal 
-          gameBroadcast={gameBroadcast}
-          chatBroadcast={chatBroadcast}
-        />
-      }
-      {showModal === "custom" && 
-        <SpawnCustomModal 
-          gameBroadcast={gameBroadcast}
-          chatBroadcast={chatBroadcast}
-        />
-      }
-      {showModal === "campaign" && 
-        <SpawnCampaignModal 
-          gameBroadcast={gameBroadcast}
-          chatBroadcast={chatBroadcast}
-        />
-      }
+      {showModal === "card" ? <SpawnCardModal gameBroadcast={gameBroadcast} chatBroadcast={chatBroadcast}/> : null}
+      {showModal === "quest" ? <SpawnQuestModal gameBroadcast={gameBroadcast} chatBroadcast={chatBroadcast}/> : null}
+      {showModal === "custom" ? <SpawnCustomModal gameBroadcast={gameBroadcast} chatBroadcast={chatBroadcast}/> : null}
+      {showModal === "campaign" ? <SpawnCampaignModal gameBroadcast={gameBroadcast} chatBroadcast={chatBroadcast}/> : null}
       {tooltipIds.map((tooltipId, index) => {
         return(
         <TooltipModal

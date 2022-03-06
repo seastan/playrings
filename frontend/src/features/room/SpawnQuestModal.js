@@ -7,7 +7,7 @@ import { loadDeckFromXmlText } from "./Helpers";
 import { CYCLEORDER, CYCLEINFO } from "./Constants";
 import { calcHeightCommon, DropdownItem, GoBack } from "./DropdownMenuHelpers";
 import useProfile from "../../hooks/useProfile";
-import { setShowModal, setTooltipIds, setTyping } from "./roomUiSlice";
+import { setShowModal, setTooltipIds, setTyping } from "./playerUiSlice";
 import store from "../../store";
 
 function requireAll( requireContext ) {
@@ -124,7 +124,7 @@ export const SpawnQuestModal = React.memo(({
       const newOptions = {...options, questModeAndId: modeAndId};
       const res = await fetch(questPath);
       const xmlText = await res.text();
-      const playerN = store.getState()?.roomUi?.playerN;
+      const playerN = store.getState()?.playerUi?.playerN;
       var tooltipIds = loadDeckFromXmlText(xmlText, playerN, gameBroadcast, chatBroadcast, privacyType);
       if (modeAndId.includes("04.2") || modeAndId.includes("A1.7") || modeAndId.includes("05.5") || modeAndId.includes("09.9"))
         tooltipIds = [...tooltipIds, "tooltipAdvancedSetup"];
@@ -163,7 +163,7 @@ export const SpawnQuestModal = React.memo(({
       <ReactModal
         closeTimeoutMS={200}
         isOpen={true}
-        onRequestClose={() => setShowModal(null)}
+        onRequestClose={() => dispatch(setShowModal(null))}
         contentLabel="Load quest"
         overlayClassName="fixed inset-0 bg-black-50 z-10000"
         className="insert-auto p-5 bg-gray-700 border max-w-lg max-h-lg mx-auto my-2 rounded-lg outline-none"
@@ -172,8 +172,7 @@ export const SpawnQuestModal = React.memo(({
             maxHeight: "95vh",
             overflowY: "scroll",
           }
-        }}
-      >
+        }}>
         <h1 className="mb-2">Load a Quest</h1>
         <input 
           autoFocus
@@ -184,8 +183,8 @@ export const SpawnQuestModal = React.memo(({
           className="mb-2 rounded-md" 
           placeholder=" Quest name..." 
           onChange={handleSpawnTyping}
-          onFocus={event => dispatch(setTyping(true))}
-          onBlur={event => dispatch(setTyping(false))}/>
+          onFocus={() => dispatch(setTyping(true))}
+          onBlur={() => dispatch(setTyping(false))}/>
 
         {/* Table */}
         {searchString &&

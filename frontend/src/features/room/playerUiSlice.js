@@ -21,7 +21,6 @@ const initialState = {
   showModal: null,
   loaded: null,
   showPlayersInRoom: false,
-  sittingPlayerN: null,
   browseGroup: {
     id: null,
     topN: 0
@@ -30,10 +29,11 @@ const initialState = {
   mousePosition: null,
   touchAction: null,
   sideGroupId: "sharedSetAside",
+  favoriteGroupId: null,
 };
 
-const roomUiSlice = createSlice({
-  name: "roomUi",
+const playerUiSlice = createSlice({
+  name: "playerUi",
   initialState,
   reducers: {
     setPlayerN: (state, { payload }) => {
@@ -91,9 +91,6 @@ const roomUiSlice = createSlice({
     setShowPlayersInRoom: (state, { payload }) => {
       state.showPlayersInRoom = payload;
     },
-    setSittingPlayerN: (state, { payload }) => {
-      state.sittingPlayerN = payload;
-    },
     setBrowseGroupId: (state, { payload }) => {
       state.browseGroup.id = payload;
     },
@@ -111,6 +108,9 @@ const roomUiSlice = createSlice({
     },
     setSideGroupId: (state, { payload }) => {
       state.sideGroupId = payload;
+    },
+    setFavoriteGroupId: (state, { payload }) => {
+      state.favoriteGroupId = payload;
     },
   }
 });
@@ -134,12 +134,12 @@ export const {
   setShowModal,
   setLoaded,
   setShowPlayersInRoom,
-  setSittingPlayerN,
   setBrowseGroupId,
   setBrowseGroupTopN,
   setTooltipIds,
   setMousePosition,
   setTouchAction,
   setSideGroupId,
- } = roomUiSlice.actions;
-export default roomUiSlice.reducer;
+  setFavoriteGroupId,
+ } = playerUiSlice.actions;
+export default playerUiSlice.reducer;

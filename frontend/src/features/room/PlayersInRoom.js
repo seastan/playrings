@@ -4,7 +4,7 @@ import { faTimes } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Draggable from 'react-draggable';
 import UserName from "../user/UserName";
-import { setShowPlayersInRoom } from "./roomUiSlice";
+import { setShowPlayersInRoom } from "./playerUiSlice";
 
 const windowClass = "insert-auto overflow-auto bg-gray-700 border max-w-lg rounded-lg outline-none text-white";
 const windowStyle = {
@@ -19,7 +19,7 @@ const col1Class = "w-1/3";
 const col2Class = "w-2/3";
 
 export const PlayersInRoom = React.memo(({}) => {
-  const showWindow = useSelector(state => state?.roomUi?.showPlayersInRoom);
+  const showWindow = useSelector(state => state?.playerUi?.showPlayersInRoom);
   const playersInRoom = useSelector(state => state?.gameUi?.playersInRoom);
   const dispatch = useDispatch();
   console.log("Rendering PlayersInRoom", playersInRoom);

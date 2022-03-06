@@ -2,20 +2,19 @@ import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from 'react-redux';
 import useFocus from "../../hooks/useFocus";
 import { setValues } from "./gameUiSlice";
+import { setTyping } from "./playerUiSlice";
 
 var delayBroadcast;
 
 export const TopBarShared = React.memo(({
-  playerN,
   threat,
   progress,
   gameBroadcast,
   chatBroadcast,
-  setTyping,
 }) => {
   const dispatch = useDispatch();
-  const roundStore = state => state?.gameUi?.game?.roundNumber
-  const gameUiRound = useSelector(roundStore);
+  const gameUiRound = useSelector(state => state?.gameUi?.game?.roundNumber);
+  const playerN = useSelector(state => state?.playerUi?.playerN);
   const [roundValue, setRoundValue] = useState(gameUiRound);
   const [inputRefRound, setInputFocusRound] = useFocus();
 
@@ -51,8 +50,8 @@ export const TopBarShared = React.memo(({
             onChange={handleRoundChange}
             type="number" min="0" step="1"
             disabled={playerN ? false : true}
-            onFocus={event => setTyping(true)}
-            onBlur={event => setTyping(false)}
+            onFocus={event => dispatch(setTyping(true))}
+            onBlur={event => dispatch(setTyping(false))}
             ref={inputRefRound}>
           </input>
         </div>

@@ -27,7 +27,7 @@ import {
 import { setValues } from "./gameUiSlice";
 import abilities from "../../cardDB/abilities";
 import { GROUPSINFO, PHASEINFO, roundStepToText, nextRoundStep, prevRoundStep, nextPhase, prevPhase } from "./Constants";
-import { setActiveCardObj, setKeypressW, setObservingPlayerN } from "./roomUiSlice";
+import { setActiveCardObj, setKeypressW, setObservingPlayerN } from "./playerUiSlice";
 
 const areMultiplayerHotkeysEnabled = (game, chatBroadcast) => {
     if (!game.options.multiplayerHotkeys) {
@@ -78,15 +78,15 @@ export const gameAction = (action, actionProps, forPlayerN = null) => {
     //const {gameUi, playerN, gameBroadcast, chatBroadcast, activeCardObj, setActiveCardObj, dispatch, keypress, setKeypress, setObservingPlayerN} = props;
     const {state, dispatch, gameBroadcast, chatBroadcast} = actionProps;
     const gameUi = state?.gameUi;
-    const playerN = forPlayerN || state?.roomUi?.playerN;
+    const playerN = forPlayerN || state?.playerUi?.playerN;
     if (!playerN) {
         alert("Please sit down to do that.")
         return;
     }
-    if (!state?.gameUi || !state?.roomUi) return;
+    if (!state?.gameUi || !state?.playerUi) return;
     const game = gameUi.game;
     const isHost = playerN === leftmostNonEliminatedPlayerN(gameUi);
-    const activeCardObj = state?.roomUi?.activeCardObj;
+    const activeCardObj = state?.playerUi?.activeCardObj;
     if (action === "refresh") {
         const game = gameUi.game;
         const isHost = playerN === leftmostNonEliminatedPlayerN(gameUi);
@@ -478,7 +478,7 @@ export const cardAction = (action, cardId, options, props) => {
     //const {gameUi, playerN, gameBroadcast, chatBroadcast, activeCardObj, setActiveCardObj, dispatch, keypress, setKeypress, setObservingPlayerN} = props;
     const {state, dispatch, gameBroadcast, chatBroadcast} = props;
     const gameUi = state?.gameUi;
-    const playerN = state?.roomUi?.playerN;
+    const playerN = state?.playerUi?.playerN;
     if (!playerN) {
         alert("Please sit down to do that.")
         return;
@@ -499,7 +499,7 @@ export const cardAction = (action, cardId, options, props) => {
     const stackId = group.stackIds[stackIndex];
     const stack = game.stackById[stackId];
     const cardIds = stack.cardIds;
-    const activeCardObj = state.roomUi?.activeCardObj;
+    const activeCardObj = state.playerUi?.activeCardObj;
 
     // Set tokens to 0
     if (action === "zero_tokens") {
@@ -705,7 +705,7 @@ export const cardAction = (action, cardId, options, props) => {
     // Draw an arrow
     else if (action === "draw_arrow") {
         // Determine if this is the start or end of the arrow
-        const drawingArrowFrom = state?.roomUi?.keypress.w;
+        const drawingArrowFrom = state?.playerUi?.keypress.w;
         if (drawingArrowFrom) {
             const drawingArrowTo = cardId;
             const oldArrows = game.playerData[playerN].arrows;
@@ -810,7 +810,7 @@ export const cardAction = (action, cardId, options, props) => {
 
 export const groupAction = (action, groupId, options, actionProps) => {
     const {state, dispatch, gameBroadcast, chatBroadcast} = actionProps;
-    if (!state?.roomUi?.playerN) {
+    if (!state?.playerUi?.playerN) {
         alert("Please sit down to do that.")
         return;
     }

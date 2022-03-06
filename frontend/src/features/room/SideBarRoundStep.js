@@ -6,13 +6,12 @@ import { getDisplayName } from "./Helpers";
 
 export const ReminderButton = React.memo(({
   triggerCardIds,
-  playerN,
   gameBroadcast,
   chatBroadcast,
 }) => {  
   const numTriggers = triggerCardIds ? triggerCardIds.length : 0;
-  const cardByIdStore = state => state?.gameUi?.game?.cardById; 
-  const cardById = useSelector(cardByIdStore);
+  const cardById = useSelector(state => state?.gameUi?.game?.cardById);
+  const playerN = useSelector(state => state?.playerUi?.playerN)
   const triggerCard = triggerCardIds?.length === 1 ? cardById[triggerCardIds[0]] : null;
   const setActiveCardAndLoc = useSetActiveCard();  
   const targetTriggers = (event) => {
@@ -63,22 +62,20 @@ export const ReminderButton = React.memo(({
 })
 
 export const SideBarRoundStep = React.memo(({
-  playerN,
   phase,
   stepInfo, 
   gameBroadcast,
   chatBroadcast,
 }) => {
-  const gameRoundStepStore = state => state?.gameUi?.game?.roundStep;
-  const gameRoundStep = useSelector(gameRoundStepStore);
-  const triggerRoundStepStore = state => state?.gameUi?.game?.triggerMap?.[stepInfo.id];
-  const triggerCardIds = useSelector(triggerRoundStepStore);
+  const gameRoundStep = useSelector(state => state?.gameUi?.game?.roundStep);
+  const playerN = useSelector(state => state?.playerUi?.playerN)
+  const triggerCardIds = useSelector(state => state?.gameUi?.game?.triggerMap?.[stepInfo.id]);
   const numTriggers = triggerCardIds ? triggerCardIds.length : 0;
   const [hovering, setHovering] = useState(null);
   const isRoundStep = (gameRoundStep === stepInfo.id);
 
   console.log("Rendering SideBarRoundStep", stepInfo);
-  const handleButtonClick = (id, text) => { 
+  const handleButtonClick = (id, text) => {
     if (!playerN) return;
     gameBroadcast("game_action", {action: "update_values", options:{updates: [["game", "roundStep", id], ["game", "phase", phase]]}});     
     chatBroadcast("game_update", {message: "set the round step to "+text+"."})
@@ -104,7 +101,6 @@ export const SideBarRoundStep = React.memo(({
       {numTriggers > 0 &&
         <ReminderButton
           triggerCardIds={triggerCardIds}
-          playerN={playerN}
           gameBroadcast={gameBroadcast}
           chatBroadcast={chatBroadcast}
         />

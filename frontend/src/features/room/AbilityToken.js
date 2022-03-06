@@ -1,7 +1,6 @@
 import React from "react";
 import { useSelector } from 'react-redux';
-import { Token } from "./Token";
-import { getCommittedStat, getCurrentFace, getVisibleSide, passesCriteria, usesThreatToken } from "./Helpers";
+import { getVisibleSide, passesCriteria } from "./Helpers";
 import abilities from "../../cardDB/abilities";
 
 export const AbilityToken = React.memo(({ 
@@ -11,7 +10,7 @@ export const AbilityToken = React.memo(({
     cardIndex,
     zIndex,
  }) => {
-    const playerN = useSelector(state => state?.roomUi?.playerN)
+    const playerN = useSelector(state => state?.playerUi?.playerN)
     const cardAbilities = abilities[card.cardDbId];
     if (!cardAbilities) return; // Card is not in ability database
     const visibleSide = getVisibleSide(card, playerN);

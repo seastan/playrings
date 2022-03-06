@@ -4,9 +4,9 @@ import { HandleKeyDown } from "./HandleKeyDown";
 import { DragContainer } from "./DragContainer";
 import { HandleTouchActions } from "./HandleTouchActions";
 
-const RoomGame = React.memo(({ playerN, gameBroadcast, chatBroadcast }) => {
+const RoomGame = React.memo(({ gameBroadcast, chatBroadcast }) => {
   console.log('Rendering RoomGame');
-  const touchMode = useSelector(state => state?.roomUi.touchMode);
+  const touchMode = useSelector(state => state?.playerUi.touchMode);
 
   // useEffect(() => {
   //   const onKeyUp = (event) => {

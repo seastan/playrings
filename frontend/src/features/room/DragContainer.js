@@ -8,10 +8,8 @@ import { reorderGroupStackIds } from "./Reorder";
 import { Table } from "./Table";
 import { GROUPSINFO } from "./Constants";
 import { getDisplayName, getDisplayNameFlipped } from "./Helpers";
-import { useTouchMode } from "../../contexts/TouchModeContext";
-import { useSetTouchAction } from "../../contexts/TouchActionContext";
 import store from "../../store";
-import { setTouchAction } from "./roomUiSlice";
+import { setTouchAction } from "./playerUiSlice";
 
 // custom hook for getting previous value 
 function usePrevious(value) {
@@ -29,7 +27,7 @@ export const DragContainer = React.memo(({
   console.log("Rendering DragContainer");
   const dispatch = useDispatch();
   const playerData = useSelector(state => state?.gameUi?.game?.playerData);
-  const touchMode = useSelector(state => state?.roomUi?.touchMode);
+  const touchMode = useSelector(state => state?.playerUi?.touchMode);
   //const archerContainerRef = React.createRef();
   const arrowColors = ["rgba(255,0,0,0.6)", "rgba(0,200,0,0.6)", "rgba(0,128,255,0.6)", "rgba(128,0,255,0.6)"];
 

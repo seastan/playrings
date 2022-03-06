@@ -11,10 +11,10 @@ export const DropdownMenu = React.memo(({
   gameBroadcast,
   chatBroadcast,
 }) => {
-  const playerN = useSelector(state => state?.roomUi?.playerN);
-  const dropdownMenuObj = useSelector(state => state?.roomUi?.dropdownMenuObj);
-  const touchAction = useSelector(state => state?.roomUi?.touchAction);
-  const mousePosition = useSelector(state => state?.roomUi?.mousePosition);
+  const playerN = useSelector(state => state?.playerUi?.playerN);
+  const dropdownMenuObj = useSelector(state => state?.playerUi?.dropdownMenuObj);
+  const touchAction = useSelector(state => state?.playerUi?.touchAction);
+  const mousePosition = useSelector(state => state?.playerUi?.mousePosition);
   
   const [mouseX, setMouseX] = useState(0);
   const [mouseY, setMouseY] = useState(0); 
@@ -35,7 +35,6 @@ export const DropdownMenu = React.memo(({
 
   return (
     <DropdownMenuCommon
-      playerN={playerN}
       gameBroadcast={gameBroadcast}
       chatBroadcast={chatBroadcast}
       mouseX={mouseX}

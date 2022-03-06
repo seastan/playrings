@@ -10,7 +10,7 @@ import { setValues } from "./gameUiSlice";
 import { faBars } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useSetDropdownMenu } from "../../contexts/DropdownMenuContext";
-import { setBrowseGroupId, setDropdownMenuObj, setTyping } from "./roomUiSlice";
+import { setBrowseGroupId, setDropdownMenuObj, setTyping } from "./playerUiSlice";
 
 const isNormalInteger = (str) => {
   var n = Math.floor(Number(str));
@@ -22,9 +22,9 @@ export const Browse = React.memo(({
   chatBroadcast,
 }) => {
   const dispatch = useDispatch();
-  const playerN = useSelector(state => state?.roomUi?.playerN);
-  const groupId = useSelector(state => state?.roomUi?.browseGroup?.id);
-  const browseGroupTopN = useSelector(state => state?.roomUi?.browseGroup?.topN);
+  const playerN = useSelector(state => state?.playerUi?.playerN);
+  const groupId = useSelector(state => state?.playerUi?.browseGroup?.id);
+  const browseGroupTopN = useSelector(state => state?.playerUi?.browseGroup?.topN);
   const group = useSelector(state => state?.gameUi?.game?.groupById?.[groupId]);
   const groupType = group["type"];
   const game = useSelector(state => state?.gameUi?.game);
@@ -149,7 +149,6 @@ export const Browse = React.memo(({
         <Stacks
           gameBroadcast={gameBroadcast}
           chatBroadcast={chatBroadcast}
-          playerN={playerN}
           groupId={groupId}
           groupType={"hand"}
           selectedStackIndices={filteredStackIndices}

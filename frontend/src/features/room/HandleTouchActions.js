@@ -3,7 +3,7 @@ import { useDispatch } from 'react-redux';
 import { useSelector } from 'react-redux';
 import { gameAction, cardAction } from "./Actions";
 import { getDefault, getDisplayName, processTokenType, tokenPrintName } from "./Helpers";
-import { setActiveCardObj, setDropdownMenuObj, setTouchAction } from "./roomUiSlice";
+import { setActiveCardObj, setDropdownMenuObj, setTouchAction } from "./playerUiSlice";
 import store from "../../store";
 
 export const HandleTouchActions = React.memo(({
@@ -12,11 +12,11 @@ export const HandleTouchActions = React.memo(({
 }) => {
     const dispatch = useDispatch();
     const gameUi = useSelector(state => state?.gameUi);
-    const playerN = useSelector(state => state?.roomUi?.playerN);
-    const touchMode = useSelector(state => state?.roomUi?.touchMode);
-    const touchAction = useSelector(state => state?.roomUi?.touchAction);
-    const activeCardObj = useSelector(state => state?.roomUi?.activeCardObj);
-    const dropdownMenuObj = useSelector(state => state?.roomUi?.dropdownMenuObj);
+    const playerN = useSelector(state => state?.playerUi?.playerN);
+    const touchMode = useSelector(state => state?.playerUi?.touchMode);
+    const touchAction = useSelector(state => state?.playerUi?.touchAction);
+    const activeCardObj = useSelector(state => state?.playerUi?.activeCardObj);
+    const dropdownMenuObj = useSelector(state => state?.playerUi?.dropdownMenuObj);
     var activeCardGameUi = null;
     if (activeCardObj?.card) activeCardGameUi = gameUi.game.cardById[activeCardObj.card.id];
     const [currentDropdownMenuCardId, setCurrentDropdownMenuCardId] = useState(null);

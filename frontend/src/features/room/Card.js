@@ -11,7 +11,7 @@ import { getCurrentFace, getVisibleFace, getVisibleFaceSrc, getDefault, usesThre
 import { Target } from "./Target";
 import { useTouchMode } from "../../contexts/TouchModeContext";
 import { AbilityToken } from "./AbilityToken";
-import { setActiveCardObj } from "./roomUiSlice";
+import { setActiveCardObj } from "./playerUiSlice";
 
 function useTraceUpdate(props) {
     const prev = useRef(props);
@@ -52,8 +52,8 @@ export const Card = React.memo(({
     const dispatch = useDispatch();
     const user = useProfile();
     const card = useSelector(state => state?.gameUi?.game?.cardById[cardId]);
-    const playerN = useSelector(state => state?.roomUi?.playerN);
-    const cardSize = useSelector(state => state?.roomUi?.cardSize);
+    const playerN = useSelector(state => state?.playerUi?.playerN);
+    const cardSize = useSelector(state => state?.playerUi?.cardSize);
     console.log("CardSize ", cardSize);
     if (!card) return;
     const currentFace = getCurrentFace(card);
@@ -134,7 +134,6 @@ export const Card = React.memo(({
                     cardIndex={cardIndex}
                     groupId={groupId}
                     groupType={groupType}
-                    playerN={playerN}
                 />
                 <CardMouseRegion 
                     position={"bottom"}
@@ -146,7 +145,6 @@ export const Card = React.memo(({
                     cardIndex={cardIndex}
                     groupId={groupId}
                     groupType={groupType}
-                    playerN={playerN}
                 />
                 <Tokens
                     cardName={currentFace.name}
@@ -167,7 +165,6 @@ export const Card = React.memo(({
                     groupId={groupId}
                     groupType={groupType}
                     cardIndex={cardIndex}
-                    playerN={playerN}
                     zIndex={zIndex}
                 />}
                 <ArrowRegion
@@ -183,14 +180,10 @@ const ArrowRegion = React.memo(({
     cardId,
     registerDivToArrowsContext
 }) => {  
-    const arrows1Store = state => state?.gameUi?.game?.playerData.player1.arrows;
-    const arrows1 = useSelector(arrows1Store);
-    const arrows2Store = state => state?.gameUi?.game?.playerData.player2.arrows;
-    const arrows2 = useSelector(arrows2Store);
-    const arrows3Store = state => state?.gameUi?.game?.playerData.player3.arrows;
-    const arrows3 = useSelector(arrows3Store);
-    const arrows4Store = state => state?.gameUi?.game?.playerData.player4.arrows;
-    const arrows4 = useSelector(arrows4Store);
+    const arrows1 = useSelector(state => state?.gameUi?.game?.playerData.player1.arrows);
+    const arrows2 = useSelector(state => state?.gameUi?.game?.playerData.player2.arrows);
+    const arrows3 = useSelector(state => state?.gameUi?.game?.playerData.player3.arrows);
+    const arrows4 = useSelector(state => state?.gameUi?.game?.playerData.player4.arrows);
     const allIds = [arrows1, arrows2, arrows3, arrows4].flat(3);
     if (!allIds.includes(cardId)) return null;
     return (

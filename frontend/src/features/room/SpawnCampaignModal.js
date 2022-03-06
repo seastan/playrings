@@ -1,12 +1,9 @@
 import React, {useState} from "react";
-import { useSelector } from 'react-redux';
 import ReactModal from "react-modal";
-import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { buildLoadList, loadDeckFromXmlText, processLoadList, processPostLoad } from "./Helpers";
-import { CYCLEORDER, CYCLEINFO } from "./Constants";
-import { calcHeightCommon, DropdownItem, GoBack } from "./DropdownMenuHelpers";
-import useProfile from "../../hooks/useProfile";
+import { buildLoadList, processLoadList, processPostLoad } from "./Helpers";
+import { DropdownItem } from "./DropdownMenuHelpers";
+import { setShowModal } from "./playerUiSlice";
+import { useDispatch, useSelector } from "react-redux";
 
 function requireAll( requireContext ) {
   return requireContext.keys().map( requireContext );
@@ -21,12 +18,12 @@ const getNameFromPackPath = (packPath) => {
 }
 
 export const SpawnCampaignModal = React.memo(({
-    playerN,
-    setTyping,
-    setShowModal,
     gameBroadcast,
     chatBroadcast,
 }) => { 
+    const dispatch = useDispatch();
+    const playerN = useSelector(state => state?.playerUi?.playerN);
+
     const [menuHeight, setMenuHeight] = useState(null);
 
     const handleDropdownClick = async(props) => {
@@ -38,7 +35,7 @@ export const SpawnCampaignModal = React.memo(({
       gameBroadcast("game_action", {action: "load_cards", options: {load_list: loadList}});
       chatBroadcast("game_update",{message: "loaded campaign cards."});
       processPostLoad(null, loadList, playerN, gameBroadcast, chatBroadcast);
-      setShowModal(null);
+      dispatch(setShowModal(null));
     }
 
     return(

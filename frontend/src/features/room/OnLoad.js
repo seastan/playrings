@@ -15,8 +15,8 @@ export const OnLoad = React.memo(({
   const myUserId = useProfile()?.id;
   const createdBy = useSelector(state => state.gameUi?.created_by);
   const isHost = myUserId === createdBy;
-  const deckToLoad = ringsDbInfo?.[0] || ringsDbInfo?.[1] || ringsDbInfo?.[2] || ringsDbInfo?.[3]
-  const loaded = useSelector(state => state?.roomUi?.loaded);
+  const deckToLoad = ringsDbInfo?.[0] || ringsDbInfo?.[1] || ringsDbInfo?.[2] || ringsDbInfo?.[3];
+  const loaded = useSelector(state => state?.playerUi?.loaded);
   if (loaded) return;
 
   console.log("Rendering OnLoad", options);

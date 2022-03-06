@@ -3,7 +3,7 @@ import { faTimes } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Draggable from 'react-draggable';
 import { useDispatch, useSelector } from "react-redux";
-import { setShowHotkeys } from "./roomUiSlice";
+import { setShowHotkeys } from "./playerUiSlice";
 
 const keyClass = "m-auto border bg-gray-500 text-center bottom inline-block";
 const keyClassLong = "m-auto border bg-gray-500 text-center bottom inline-block";
@@ -33,8 +33,8 @@ const col2Class = "w-2/3";
 
 export const Hotkeys = React.memo(({}) => {
   const dispatch = useDispatch();
-  const showWindow = useSelector(state => state?.roomUi?.showHotkeys);
-  const tabPressed = useSelector(state => state?.roomUi?.keypress?.Tab);
+  const showWindow = useSelector(state => state?.playerUi?.showHotkeys);
+  const tabPressed = useSelector(state => state?.playerUi?.keypress?.Tab);
   if (!showWindow && !tabPressed) return;
 
   const iconImg = (tokenType) => {

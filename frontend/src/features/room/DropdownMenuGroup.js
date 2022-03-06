@@ -14,8 +14,8 @@ export const DropdownMenuGroup = React.memo(({
   calcHeight,
   activeMenu,
 }) => {
-  const dropdownMenuObj = useSelector(state => state?.roomUi?.dropdownMenuObj)
-  const playerN = useSelector(state => state?.roomUi?.playerN)
+  const dropdownMenuObj = useSelector(state => state?.playerUi?.dropdownMenuObj)
+  const playerN = useSelector(state => state?.playerUi?.playerN)
   const menuGroup = dropdownMenuObj.group;
   
   const DropdownMoveTo = (props) => {

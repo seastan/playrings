@@ -30,9 +30,9 @@ export const Stack = React.memo(({
 }) => {
   console.log('Rendering Stack ',stackIndex);
   const stack = useSelector(state => state?.gameUi?.game?.stackById[stackId]);
-  const touchMode = useSelector(state => state?.roomUi?.touchMode);
-  const cardSize = useSelector(state => state?.roomUi?.cardSize);
-  const playerN = useSelector(state => state?.roomUi?.playerN);
+  const touchMode = useSelector(state => state?.playerUi?.touchMode);
+  const cardSize = useSelector(state => state?.playerUi?.cardSize);
+  const playerN = useSelector(state => state?.playerUi?.playerN);
   var spacingFactor = touchMode ? 1.5 : 1;
   if (groupId.includes("Extra")) spacingFactor = 0;
   const { height, width } = useWindowDimensions();

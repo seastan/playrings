@@ -1,19 +1,20 @@
 import React, {useState} from "react";
 import ReactModal from "react-modal";
+import { useDispatch, useSelector } from "react-redux";
 import { cardDB } from "../../cardDB/cardDB";
 import useProfile from "../../hooks/useProfile";
 import { getCardRowCategory } from "./Helpers";
+import { setShowModal, setTyping } from "./playerUiSlice";
 
 const RESULTS_LIMIT = 150;
 
 export const SpawnCardModal = React.memo(({
-    playerN,
-    setTyping,
-    setShowModal,
     gameBroadcast,
     chatBroadcast,
 }) => {
+    const dispatch = useDispatch();
     const myUser = useProfile();
+    const playerN = useSelector(state => state?.playerUi?.playerN);
 
     const [spawnFilteredIDs, setSpawnFilteredIDs] = useState(Object.keys(cardDB));
 
@@ -57,7 +58,7 @@ export const SpawnCardModal = React.memo(({
       <ReactModal
         closeTimeoutMS={200}
         isOpen={true}
-        onRequestClose={() => setShowModal(null)}
+        onRequestClose={() => dispatch(setShowModal(null))}
         contentLabel="Spawn a card"
         overlayClassName="fixed inset-0 bg-black-50 z-10000"
         className="insert-auto overflow-auto p-5 bg-gray-700 border max-w-lg mx-auto my-12 rounded-lg outline-none max-h-3/4"
@@ -72,8 +73,8 @@ export const SpawnCardModal = React.memo(({
           className="mb-6 mt-5" 
           placeholder=" Card name..." 
           onChange={handleSpawnTyping}
-          onFocus={event => setTyping(true)}
-          onBlur={event => setTyping(false)}/>
+          onFocus={event => dispatch(setTyping(true))}
+          onBlur={event => dispatch(setTyping(false))}/>
         {(spawnFilteredIDs.length) ? 
           (spawnFilteredIDs.length>RESULTS_LIMIT) ?
             <div className="text-white">Too many results</div> :

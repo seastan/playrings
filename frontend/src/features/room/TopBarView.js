@@ -6,7 +6,7 @@ import { getQuestNameFromModeAndId } from "./SpawnQuestModal";
 import { TopBarViewItem } from "./TopBarViewItem";
 import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { setShowHotkeys, setShowPlayersInRoom } from "./roomUiSlice";
+import { setShowHotkeys, setShowPlayersInRoom } from "./playerUiSlice";
 
 
 const keyClass = "m-auto border bg-gray-500 text-center bottom inline-block text-xs ml-2 mb-1";

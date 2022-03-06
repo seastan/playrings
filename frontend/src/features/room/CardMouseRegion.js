@@ -4,7 +4,7 @@ import { getDisplayName } from "./Helpers";
 import useLongPress from "../../hooks/useLongPress";
 import { useTouchAction } from "../../contexts/TouchActionContext";
 import { useDispatch, useSelector } from "react-redux";
-import { setActiveCardObj, setDropdownMenuObj } from "./roomUiSlice";
+import { setActiveCardObj, setDropdownMenuObj } from "./playerUiSlice";
 
 
 export const CardMouseRegion = React.memo(({
@@ -20,9 +20,9 @@ export const CardMouseRegion = React.memo(({
 }) => {
     const dispatch = useDispatch();
     const displayName = getDisplayName(card);    
-    const playerN = useSelector(state => state?.roomUi?.playerN)
-    const touchMode = useSelector(state => state?.roomUi?.touchMode)
-    const touchAction = useSelector(state => state?.roomUi?.touchAction)
+    const playerN = useSelector(state => state?.playerUi?.playerN)
+    const touchMode = useSelector(state => state?.playerUi?.touchMode)
+    const touchAction = useSelector(state => state?.playerUi?.touchAction)
 
     const makeActive = (event) => {
         const screenPosition = event.clientX > (window.innerWidth/2) ? "right" : "left";

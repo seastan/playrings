@@ -1,5 +1,5 @@
 import { GROUPSINFO } from "./Constants";
-import { setBrowseGroupId, setBrowseGroupTopN } from "./roomUiSlice";
+import { setBrowseGroupId, setBrowseGroupTopN } from "./playerUiSlice";
 
 export const handleBrowseTopN = (
     topNstr, 

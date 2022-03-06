@@ -8,7 +8,7 @@ import {
 } from "./Helpers";
 import { gameAction, cardAction } from "./Actions";
 import store from "../../store";
-import { setCardSizeFactor, setKeypressAlt, setKeypressControl, setKeypressSpace, setKeypressTab } from "./roomUiSlice";
+import { setCardSizeFactor, setKeypressAlt, setKeypressControl, setKeypressSpace, setKeypressTab } from "./playerUiSlice";
 
 // const keyTokenMap: { [id: string] : Array<string | number>; } = {
 
@@ -110,18 +110,15 @@ export const HandleKeyDown = ({
     chatBroadcast
 }) => {
     const dispatch = useDispatch();
-    const typing = useSelector(state => state?.roomUi?.typing);
-    const keypressControl = useSelector(state => state?.roomUi?.keypress?.Control);
-    const keypressAlt = useSelector(state => state?.roomUi?.keypress?.Alt);
-    // const keypress = useSelector(state => state?.roomUi?.keypress);
-    // const setKeypress = setKeypress();
-
+    const typing = useSelector(state => state?.playerUi?.typing);
+    const keypressControl = useSelector(state => state?.playerUi?.keypress?.Control);
+    const keypressAlt = useSelector(state => state?.playerUi?.keypress?.Alt);
     const [keyBackLog, setKeyBackLog] = useState({});
     console.log("Rendering HandleKeyDown")
 
     const keyUiAction = (action, actionProps) => {
         const {state, dispatch, gameBroadcast, chatBroadcast} = actionProps; 
-        const cardSizeFactor = state.roomUi.cardSizeFactor;
+        const cardSizeFactor = state.playerUi.cardSizeFactor;
         if (action === "increase_card_size") {
             setCardSizeFactor(cardSizeFactor*1.1);
         }
@@ -133,10 +130,10 @@ export const HandleKeyDown = ({
     const keyTokenAction = (rawTokenType, actionProps) => {
         const {state, dispatch, gameBroadcast, chatBroadcast} = actionProps;   
         const game = state?.gameUi?.game;
-        const activeCardObj = state?.roomUi?.activeCardObj;
-        const playerN = state?.roomUi?.playerN;
+        const activeCardObj = state?.playerUi?.activeCardObj;
+        const playerN = state?.playerUi?.playerN;
         if (!game || !playerN || !activeCardObj || !activeCardObj.card) return; 
-        const activeCardId = state.roomUi.activeCardObj.card.id; 
+        const activeCardId = state.playerUi.activeCardObj.card.id; 
         const activeCard = game.cardById[activeCardId];    
         const tokenType = processTokenType(rawTokenType, activeCard);
         // Check if mouse is hoving over top half or bottom half of card
@@ -243,7 +240,7 @@ export const HandleKeyDown = ({
     ) => {
         console.log("handleKeyDown triggered")
         const k = event.key;
-        if (!state?.roomUi?.playerN && !Object.keys(keyUiMap).includes(k)) {
+        if (!state?.playerUi?.playerN && !Object.keys(keyUiMap).includes(k)) {
             alert("Please sit down to do that.")
             return;
         }
@@ -265,7 +262,7 @@ export const HandleKeyDown = ({
         else if ((unix_sec - keypressAlt) < 30 && Object.keys(altKeyGameActionMap).includes(k)) gameAction(altKeyGameActionMap[k], actionProps);
         // else if (keypress["Shift"] && Object.keys(shiftKeyGameActionMap).includes(k)) gameAction(shiftKeyGameActionMap[k], actionProps);
         else if (Object.keys(keyGameActionMap).includes(k)) gameAction(keyGameActionMap[k], actionProps);
-        else if (Object.keys(keyCardActionMap).includes(k)) cardAction(keyCardActionMap[k], state?.roomUi?.activeCardObj?.card.id, {}, actionProps);
+        else if (Object.keys(keyCardActionMap).includes(k)) cardAction(keyCardActionMap[k], state?.playerUi?.activeCardObj?.card.id, {}, actionProps);
         else if (Object.keys(keyTokenMap).includes(k)) keyTokenAction(keyTokenMap[k], actionProps);
         else if (Object.keys(keyUiMap).includes(k)) keyUiAction(keyUiMap[k], actionProps);
 

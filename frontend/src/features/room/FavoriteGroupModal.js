@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import Select from 'react-select'
 import ReactModal from "react-modal";
 import { GROUPSINFO } from "./Constants";
+import { useDispatch } from "react-redux";
+import { setFavoriteGroupId, setShowModal, setSideGroupId } from "./playerUiSlice";
 
 const options = [
   { value: 'public', label: 'Public' },
@@ -10,14 +12,8 @@ const options = [
 ]
 
 
-export const FavoriteGroupModal = ({ 
-  isOpen,
-  closeModal,
-  favoriteGroupId,
-  setFavoriteGroupId,
-  setSideGroupId
-}) => {
-
+export const FavoriteGroupModal = ({}) => {
+  const dispatch = useDispatch();
   const [selected, setSelected] = useState(null);
 
   const groupIds = [
@@ -40,16 +36,16 @@ export const FavoriteGroupModal = ({
   });
 
   const handleDropdownChange = (entry) => {
-    setFavoriteGroupId(entry.value);
-    setSideGroupId(entry.value);
+    dispatch(setFavoriteGroupId(entry.value));
+    dispatch(setSideGroupId(entry.value));
     setSelected(entry);
   }
 
   return (
     <ReactModal
       closeTimeoutMS={200}
-      isOpen={isOpen}
-      onRequestClose={closeModal}
+      isOpen={true}
+      onRequestClose={() => dispatch(setShowModal(null))}
       contentLabel="Select favorite group"
       overlayClassName="fixed inset-0 bg-black-50 z-10000"
       className="insert-auto p-5 bg-gray-700 border mx-auto my-12 rounded-lg outline-none"

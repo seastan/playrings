@@ -1,14 +1,14 @@
 import React from "react";
 import { useDispatch, useSelector } from 'react-redux';
 import { GROUPSINFO } from "./Constants";
-import { setBrowseGroupId, setBrowseGroupTopN } from "./roomUiSlice";
+import { setBrowseGroupId, setBrowseGroupTopN } from "./playerUiSlice";
 
 export const TopBarViewItem = React.memo(({
   groupId,
 }) => {
   const dispatch = useDispatch();
   const group = useSelector(state => state?.gameUi?.game?.groupById[groupId]);
-  const playerN = useSelector(state => state?.roomUi?.playerN);
+  const playerN = useSelector(state => state?.playerUi?.playerN);
 
   const handleMenuClick = (data) => {
     if (!playerN) {

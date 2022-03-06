@@ -6,7 +6,7 @@ import useFocus from "../../hooks/useFocus";
 import useIsLoggedIn from "../../hooks/useIsLoggedIn";
 import { Link } from "react-router-dom";
 import { setValues } from "./gameUiSlice";
-import { setDropdownMenuObj, setObservingPlayerN, setTyping } from "./roomUiSlice";
+import { setDropdownMenuObj, setObservingPlayerN, setTyping } from "./playerUiSlice";
 
 var delayBroadcast;
 
@@ -17,8 +17,8 @@ export const TopBarUser = React.memo(({
 }) => {
   console.log("Rendering TopBarUser ", playerI);
   const dispatch = useDispatch();
-  const playerN = useSelector(state => state?.roomUi?.playerN);
-  const observingPlayerN = useSelector(state => state?.roomUi?.observingPlayerN);
+  const playerN = useSelector(state => state?.playerUi?.playerN);
+  const observingPlayerN = useSelector(state => state?.playerUi?.observingPlayerN);
   const playerIds = useSelector(state => state?.gameUi?.playerIds);
   const playerDataPlayerN = useSelector(state => state?.gameUi?.game?.playerData?.[playerI]);  
   const firstPlayer = useSelector(state => state?.gameUi?.game?.firstPlayer);  
@@ -113,7 +113,7 @@ export const TopBarUser = React.memo(({
       dispatch(setObservingPlayerN(null));
       chatBroadcast("game_update",{message: "stopped observing "+playerI+"."});
     } else {
-      setObservingPlayerN(playerI);
+      dispatch(setObservingPlayerN(playerI));
       chatBroadcast("game_update",{message: "started observing "+playerI+"."});
     }
   }

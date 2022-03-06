@@ -8,7 +8,7 @@ import "../../css/custom-misc.css";
 import useWindowDimensions from "../../hooks/useWindowDimensions";
 import { QuickAccess } from "./QuickAccess";
 import { SideGroup } from "./SideGroup";
-import { setCardSize } from "./roomUiSlice";
+import { setCardSize } from "./playerUiSlice";
 
 var delayBroadcast;
 
@@ -19,8 +19,8 @@ export const TableRegion = React.memo(({
   chatBroadcast,
   registerDivToArrowsContext,
 }) => {
-  const observingPlayerN = useSelector(state => state?.roomUi?.observingPlayerN);
-  const browseGroupId = useSelector(state => state?.roomUi?.browseGroup?.id);
+  const observingPlayerN = useSelector(state => state?.playerUi?.observingPlayerN);
+  const browseGroupId = useSelector(state => state?.playerUi?.browseGroup?.id);
   const groupId = ["Hand", "Deck", "Discard"].includes(region.id) ? observingPlayerN + region.id : region.id;
   const beingBrowsed = groupId === browseGroupId;
   return (
@@ -58,9 +58,9 @@ export const TableLayout = React.memo(({
   const dispatch = useDispatch();
   const numPlayers = useSelector(state => state?.gameUi?.game?.numPlayers);
   const layout = useSelector(state => state?.gameUi?.game?.layout);
-  const cardSizeFactor = useSelector(state => state?.roomUi?.cardSizeFactor);
-  const sideGroupId = useSelector(state => state?.roomUi?.sideGroupId);
-  const browseGroupId = useSelector(state => state?.roomUi?.browseGroup?.id);
+  const cardSizeFactor = useSelector(state => state?.playerUi?.cardSizeFactor);
+  const sideGroupId = useSelector(state => state?.playerUi?.sideGroupId);
+  const browseGroupId = useSelector(state => state?.playerUi?.browseGroup?.id);
   const [chatHover, setChatHover] = useState(false);
   const { height, width } = useWindowDimensions();
   const aspectRatio = width/height;

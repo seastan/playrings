@@ -15,8 +15,8 @@ export const DropdownMenuCard = React.memo(({
   calcHeight,
   activeMenu,
 }) => {    
-  const playerN = useSelector(state => state?.roomUi?.playerN);
-  const dropdownMenuObj = useSelector(state => state?.roomUi?.dropdownMenuObj);
+  const playerN = useSelector(state => state?.playerUi?.playerN);
+  const dropdownMenuObj = useSelector(state => state?.playerUi?.dropdownMenuObj);
   const menuCard = dropdownMenuObj.card;
   const menuCardIndex = dropdownMenuObj.cardIndex;
   const visibleSide = getVisibleSide(menuCard);

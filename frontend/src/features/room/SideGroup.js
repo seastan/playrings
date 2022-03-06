@@ -5,7 +5,7 @@ import { GROUPSINFO, LAYOUTINFO } from "./Constants";
 import { faBars, faEye } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { handleBrowseTopN } from "./HandleBrowseTopN"; 
-import { setDropdownMenuObj } from "./roomUiSlice";
+import { setDropdownMenuObj } from "./playerUiSlice";
 
 export const SideGroup = React.memo(({
   gameBroadcast,
@@ -15,11 +15,11 @@ export const SideGroup = React.memo(({
   console.log("Rendering TableLayout");
   const dispatch = useDispatch();
   const numPlayers = useSelector(state => state?.gameUi?.game?.numPlayers);
-  const sideGroupId = useSelector(state => state?.roomUi?.sideGroupId);
-  const browseGroupId = useSelector(state => state?.roomUi?.browseGroup?.id);
+  const sideGroupId = useSelector(state => state?.playerUi?.sideGroupId);
+  const browseGroupId = useSelector(state => state?.playerUi?.browseGroup?.id);
   const group = useSelector(state => state?.gameUi?.game?.groupById?.[sideGroupId]);
   const layout = useSelector(state => state.gameUi?.game?.layout);    
-  const playerN = useSelector(state => state?.roomUi?.playerN)
+  const playerN = useSelector(state => state?.playerUi?.playerN)
 
   const layoutInfo = LAYOUTINFO["layout" + numPlayers + layout];
   const numRows = layoutInfo.length;

@@ -2,7 +2,6 @@ import React from "react";
 import { useSelector } from 'react-redux';
 import { Token } from "./Token";
 import { getCommittedStat, getCurrentFace, usesThreatToken } from "./Helpers";
-import { useKeypress } from "../../contexts/KeypressContext";
 
 export const CommittedToken = React.memo(({ 
     cardId,

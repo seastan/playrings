@@ -13,7 +13,7 @@ import {
 // dropdownMenu is an object that gets populated with infor about a card when a card is pressed, or about a group when a group is pressed.
 
 export const handleDropdownClickCommon = (dropdownOptions, actionProps) => {
-  const type = actionProps?.state?.roomUi?.dropdownMenuObj?.type;
+  const type = actionProps?.state?.playerUi?.dropdownMenuObj?.type;
   if (type === "card") handleDropdownClickCard(dropdownOptions, actionProps);
   else if (type === "group") handleDropdownClickGroup(dropdownOptions, actionProps);
   else if (type === "firstPlayer") handleDropdownClickFirstPlayer(dropdownOptions, actionProps);
@@ -23,8 +23,8 @@ export const handleDropdownClickCard = (dropdownOptions, actionProps) => {
   const {state, dispatch, gameBroadcast, chatBroadcast} = actionProps;
   const gameUi = state.gameUi;
   const game = gameUi.game;
-  const dropdownMenuObj = state.roomUi.dropdownMenuObj;
-  const playerN = state.roomUi.playerN;
+  const dropdownMenuObj = state.playerUi.dropdownMenuObj;
+  const playerN = state.playerUi.playerN;
   const menuCard = dropdownMenuObj.card;
   const displayName = getDisplayName(menuCard);
   console.log("dropdownClick")
@@ -151,8 +151,8 @@ export const handleDropdownClickGroup = (dropdownOptions, actionProps) => {
   const {state, dispatch, gameBroadcast, chatBroadcast} = actionProps;
   const gameUi = state.gameUi;
   const game = gameUi.game;
-  const dropdownMenuObj = state.roomUi.dropdownMenuObj;
-  const playerN = state.roomUi.playerN;
+  const dropdownMenuObj = state.playerUi.dropdownMenuObj;
+  const playerN = state.playerUi.playerN;
   const group = dropdownMenuObj.group;
   if (dropdownOptions.action === "shuffle") {
     gameBroadcast("game_action", {action: "shuffle_group", options: {group_id: group.id}})

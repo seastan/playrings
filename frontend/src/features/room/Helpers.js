@@ -1,9 +1,7 @@
-import React from 'react';
-import { useSelector } from 'react-redux';
 import { cardDB } from "../../cardDB/cardDB";
 import { sectionToLoadGroupId, sectionToDiscardGroupId, sectionToDeckGroupId } from "./Constants";
 import axios from "axios";
-import { setTooltipIds } from './roomUiSlice';
+import { setTooltipIds } from './playerUiSlice';
 
 export const getCurrentFace = (card) => {
   if (!card?.currentSide) return null;

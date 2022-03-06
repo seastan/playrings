@@ -6,7 +6,7 @@ import { faBars, faEye } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { handleBrowseTopN } from "./HandleBrowseTopN"; 
 import store from "../../store";
-import { setDropdownMenuObj } from "./roomUiSlice";
+import { setDropdownMenuObj } from "./playerUiSlice";
 
 export const Group = React.memo(({
   groupId,
@@ -18,7 +18,7 @@ export const Group = React.memo(({
   console.log("Rendering Group ",groupId);
   const dispatch = useDispatch();
   const group = useSelector(state => state?.gameUi?.game?.groupById?.[groupId]);
-  const playerN = useSelector(state => state?.roomUi?.playerN);
+  const playerN = useSelector(state => state?.playerUi?.playerN);
 
   const handleEyeClick = (event) => {
     event.stopPropagation();

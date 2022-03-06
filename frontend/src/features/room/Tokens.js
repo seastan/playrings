@@ -12,7 +12,7 @@ export const Tokens = React.memo(({
     zIndex,
     aspectRatio,
  }) => {
-    const spacePressed = useSelector(state => state?.roomUi?.keypress?.Space);
+    const spacePressed = useSelector(state => state?.playerUi?.keypress?.Space);
     const showButtons = isActive && spacePressed;
     return(
         <div className="absolute" style={{width:'100%', height:'100%'}}>

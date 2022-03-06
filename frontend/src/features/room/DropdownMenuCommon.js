@@ -6,7 +6,7 @@ import { DropdownMenuFirstPlayer } from "./DropdownMenuFirstPlayer";
 import { useDispatch, useSelector } from 'react-redux';
 import { calcHeightCommon, DropdownItem, GoBack } from "./DropdownMenuHelpers";
 import "../../css/custom-dropdown.css";
-import { setDropdownMenuObj } from "./roomUiSlice";
+import { setDropdownMenuObj } from "./playerUiSlice";
 import store from "../../store";
 
 export const DropdownMenuCommon = React.memo(({
@@ -17,7 +17,7 @@ export const DropdownMenuCommon = React.memo(({
 }) => {
   
   const dispatch = useDispatch();
-  const dropdownMenuObj = useSelector(state => state?.roomUi?.dropdownMenuObj)
+  const dropdownMenuObj = useSelector(state => state?.playerUi?.dropdownMenuObj)
   console.log("dropdownMenuObj",dropdownMenuObj)
   const [activeMenu, setActiveMenu] = useState('main');
   const [menuHeight, setMenuHeight] = useState(null);

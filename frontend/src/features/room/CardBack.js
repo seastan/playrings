@@ -12,12 +12,12 @@ const CardBack = React.memo(({
   isDraggingFrom,
 }) => {
   const user = useProfile();
-  const playerN = useSelector(state => state?.roomUi?.playerN)
+  const playerN = useSelector(state => state?.playerUi?.playerN)
   const stack0 = useSelector(state => state?.gameUi?.game?.stackById[stackIds[0]]);
   const stack1 = useSelector(state => state?.gameUi?.game?.stackById[stackIds[1]]);
   const card0 = useSelector(state => state?.gameUi?.game?.cardById[stack0?.cardIds[0]]);
   const card1 = useSelector(state => state?.gameUi?.game?.cardById[stack1?.cardIds[0]]);
-  const cardSize = useSelector(state => state?.roomUi?.cardSize);
+  const cardSize = useSelector(state => state?.playerUi?.cardSize);
   
 
   var visibleFaceSrc;

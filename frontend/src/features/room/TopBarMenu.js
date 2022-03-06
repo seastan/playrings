@@ -3,13 +3,12 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useHistory } from "react-router-dom";
 import useProfile from "../../hooks/useProfile";
 import store from "../../store";
-import { setGame } from "./gameUiSlice";
 import { flatListOfCards, functionOnMatchingCards, getCardByGroupIdStackIndexCardIndex, getSideAName, getPlayerCommitted, listOfMatchingCards, loadRingsDb, playerNToPlayerIndex, processLoadList, processPostLoad, shuffle } from "./Helpers";
 import { loadDeckFromXmlText, getRandomIntInclusive } from "./Helpers";
 import { loadDeckFromModeAndId } from "./SpawnQuestModal";
 import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { setCardSizeFactor, setLoaded, setShowModal, setTouchAction, setTouchMode } from "./roomUiSlice";
+import { setCardSizeFactor, setLoaded, setShowModal, setTouchAction, setTouchMode } from "./playerUiSlice";
 
 export const TopBarMenu = React.memo(({
     gameBroadcast,
@@ -24,9 +23,9 @@ export const TopBarMenu = React.memo(({
   const ringsDbInfo = options?.ringsDbInfo;
   const round = useSelector(state => state.gameUi?.game.roundNumber);
   const isHost = myUserID === createdBy;  
-  const playerN = useSelector(state => state?.roomUi?.playerN);
+  const playerN = useSelector(state => state?.playerUi?.playerN);
   const cardsPerRound = useSelector(state => state.gameUi?.game.playerData[playerN]?.cardsDrawn);
-  const cardSizeFactor = useSelector(state => state?.roomUi?.cardSizeFactor)
+  const cardSizeFactor = useSelector(state => state?.playerUi?.cardSizeFactor)
   
   const dispatch = useDispatch();
   const inputFileDeck = useRef(null);

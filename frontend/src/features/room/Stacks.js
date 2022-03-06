@@ -1,7 +1,7 @@
 import React from "react";
 import { useSelector } from 'react-redux';
 import styled from "@emotion/styled";
-import { Droppable, Draggable } from "react-beautiful-dnd";
+import { Droppable } from "react-beautiful-dnd";
 import { Stack } from "./Stack";
 import CardBack from "./CardBack"
 

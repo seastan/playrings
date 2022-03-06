@@ -1,16 +1,17 @@
 import React, {useState} from "react";
 import ReactModal from "react-modal";
 import { useForm } from "react-hook-form";
-import { cardDB } from "../../cardDB/cardDB";
 import Button from "../../components/basic/Button";
 import Select from 'react-select'
+import { setShowModal, setTyping } from "./playerUiSlice";
+import { useDispatch } from "react-redux";
 
 export const SpawnCustomModal = React.memo(({
-    setTyping,
-    setShowModal,
     gameBroadcast,
     chatBroadcast,
 }) => {
+  const dispatch = useDispatch();
+
   const { register, handleSubmit } = useForm();
   const backOptions = [
     { value: 'encounter', label: 'Encounter' },
@@ -95,8 +96,8 @@ export const SpawnCustomModal = React.memo(({
             className="form-control mb-1"
             style={{width:"80%"}}
             // style={{width:"80%"}}
-            onFocus={event => setTyping(true)}
-            onBlur={event => setTyping(false)} 
+            onFocus={event => dispatch(setTyping(true))}
+            onBlur={event => dispatch(setTyping(false))} 
             placeholder={title}
           />
         </div>
@@ -164,7 +165,7 @@ export const SpawnCustomModal = React.memo(({
       <ReactModal
         closeTimeoutMS={200}
         isOpen={true}
-        onRequestClose={() => setShowModal(null)}
+        onRequestClose={() => dispatch(setShowModal(null))}
         contentLabel="Spawn a custom card"
         overlayClassName="fixed inset-0 bg-black-50 z-10000"
         className="insert-auto overflow-auto p-5 bg-gray-700 border mx-auto my-12 rounded-lg outline-none"
