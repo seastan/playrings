@@ -7,6 +7,8 @@ import { useTouchMode } from "../../contexts/TouchModeContext";
 import { CARDSCALE } from "./Constants";
 import useWindowDimensions from "../../hooks/useWindowDimensions";
 import store from "../../store";
+import NaturalDragAnimation from 'natural-drag-animation-rbdnd';
+
 
 const Container = styled.div`
   position: relative;
@@ -70,6 +72,12 @@ export const Stack = React.memo(({
       isDragDisabled={playerN === null}
     >
       {(dragProvided, dragSnapshot) => (
+        <NaturalDragAnimation
+	      style={dragProvided.draggableProps.style}
+	      snapshot={dragSnapshot}
+        rotationMultiplier={2}
+	    >
+	      {style => (
         <Container
           isDragging={dragSnapshot.isDragging}
           isGroupedOver={Boolean(dragSnapshot.combineTargetFor)}
@@ -79,7 +87,7 @@ export const Stack = React.memo(({
           ref={dragProvided.innerRef}
           {...dragProvided.draggableProps}
           {...dragProvided.dragHandleProps}
-        >
+          style={style}>
           {cardIds.map((cardId, cardIndex) => {
             return(
               <Card
@@ -95,7 +103,7 @@ export const Stack = React.memo(({
               />
             )
         })}
-        </Container>
+        </Container>)}</NaturalDragAnimation>
       )}
     </Draggable>
   );
