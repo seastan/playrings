@@ -216,7 +216,7 @@ export const TopBarMenu = React.memo(({
         gameBroadcast("game_action", {
           action: "action_on_matching_cards", 
           options: {
-            criteria:[["controller", playerN], ["sides", "A", "type", "Ally"]], 
+            criteria:[["controller", playerI], ["sides", "A", "type", "Ally"]], 
             action: "move_card", 
             options: {dest_group_id: playerI+"Deck2", dest_stack_index: 0, dest_card_index: 0, combine: false, preserve_state: false}
           }
@@ -225,7 +225,7 @@ export const TopBarMenu = React.memo(({
         gameBroadcast("game_action", {
           action: "action_on_matching_cards", 
           options: {
-            criteria:[["controller", playerN], ["sides", "A", "traits", "Item."]], 
+            criteria:[["controller", playerI], ["sides", "A", "traits", "Item."]], 
             action: "move_card", 
             options: {dest_group_id: playerI+"Deck2", dest_stack_index: 0, dest_card_index: 0, combine: false, preserve_state: false}
           }
@@ -234,7 +234,7 @@ export const TopBarMenu = React.memo(({
         gameBroadcast("game_action", {
           action: "action_on_matching_cards", 
           options: {
-            criteria:[["controller", playerN], ["sides", "A", "traits", "Mount."]], 
+            criteria:[["controller", playerI], ["sides", "A", "traits", "Mount."]], 
             action: "move_card", 
             options: {dest_group_id: playerI+"Deck2", dest_stack_index: 0, dest_card_index: 0, combine: false, preserve_state: false}
           }
@@ -243,24 +243,26 @@ export const TopBarMenu = React.memo(({
         gameBroadcast("game_action", {
           action: "action_on_matching_cards", 
           options: {
-            criteria:[["controller", playerN], ["sides", "A", "traits", "Artifact."]], 
+            criteria:[["controller", playerI], ["sides", "A", "traits", "Artifact."]], 
             action: "move_card", 
             options: {dest_group_id: playerI+"Deck2", dest_stack_index: 0, dest_card_index: 0, combine: false, preserve_state: false}
           }
         })
         // Locate facedown heroes
         const faceDownHeroes = listOfMatchingCards(gameUi, [["controller",playerI],["sides","A","type","Hero"],["currentSide","B"]])
-        // Choose set aside hero
-        const setAsideHeroIndex = getRandomIntInclusive(0, faceDownHeroes.length-1);        
-        const setAsideHero = faceDownHeroes[setAsideHeroIndex];
-        // Shuffle other heroes into capture deck
-        for (var j=0; j<faceDownHeroes.length; j++) {
-          if (j===setAsideHeroIndex) continue;
-          gameBroadcast("game_action", {action: "move_card", options: {card_id: faceDownHeroes[j].id, dest_group_id: playerI+"Deck2", dest_stack_index: 0, dest_card_index: 0, combine: false, preserve_state: false}})        
+        if (faceDownHeroes.length > 0) {
+          // Choose set aside hero
+          const setAsideHeroIndex = getRandomIntInclusive(0, faceDownHeroes.length-1);        
+          const setAsideHero = faceDownHeroes[setAsideHeroIndex];
+          // Shuffle other heroes into capture deck
+          for (var j=0; j<faceDownHeroes.length; j++) {
+            if (j===setAsideHeroIndex) continue;
+            gameBroadcast("game_action", {action: "move_card", options: {card_id: faceDownHeroes[j].id, dest_group_id: playerI+"Deck2", dest_stack_index: 0, dest_card_index: 0, combine: false, preserve_state: false}})        
+          }
+          gameBroadcast("game_action", {action: "shuffle_group", options: {group_id: playerI+"Deck2"}})   
+          // Move set aside hero to top of capture deck
+          gameBroadcast("game_action", {action: "move_card", options: {card_id: setAsideHero.id, dest_group_id: playerI+"Deck2", dest_stack_index: 0, dest_card_index: 0, combine: false, preserve_state: false}})
         }
-        gameBroadcast("game_action", {action: "shuffle_group", options: {group_id: playerI+"Deck2"}})   
-        // Move set aside hero to top of capture deck     
-        gameBroadcast("game_action", {action: "move_card", options: {card_id: setAsideHero.id, dest_group_id: playerI+"Deck2", dest_stack_index: 0, dest_card_index: 0, combine: false, preserve_state: false}})
         const remainingHeroes = listOfMatchingCards(gameUi, [["controller",playerI],["sides","A","type","Hero"],["currentSide","A"]]);
         if (remainingHeroes.length === 1) {
           // Set starting threat
@@ -268,13 +270,13 @@ export const TopBarMenu = React.memo(({
           gameBroadcast("game_action", {action: "update_values", options: {updates: [["game", "playerData", playerI, "threat", remainingHero["sides"]["A"]["cost"]]]}});
         }
         // Draw 3 cards
-        gameBroadcast("game_action", {action: "move_stacks", options: {orig_group_id: playerI+"Deck", dest_group_id: playerN+"Hand", top_n: 3, position: "top"}})
+        gameBroadcast("game_action", {action: "move_stacks", options: {orig_group_id: playerI+"Deck", dest_group_id: playerI+"Hand", top_n: 3, position: "top"}})
       }
       // Add a resource to each hero
       gameBroadcast("game_action", {
         action: "action_on_matching_cards", 
         options: {
-            criteria:[["sides","sideUp","type","Hero"],["controller",playerN], ["groupType","play"]], 
+            criteria:[["sides","sideUp","type","Hero"], ["groupType","play"]], 
             action: "increment_token", 
             options: {token_type: "resource", increment: 2}
         }

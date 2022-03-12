@@ -1,5 +1,5 @@
 
-import React, { useRef, useEffect } from "react";
+import React from "react";
 import { ArrowsBetweenDivsContextProvider, ArrowBetweenDivs, LineOrientation, ArrowAnchorPlacement } from 'react-simple-arrows';
 import { DragDropContext } from "react-beautiful-dnd";
 import { useSelector, useDispatch } from 'react-redux';
@@ -10,15 +10,6 @@ import { GROUPSINFO } from "./Constants";
 import { getDisplayName, getDisplayNameFlipped } from "./Helpers";
 import store from "../../store";
 import { setTouchAction } from "../store/playerUiSlice";
-
-// custom hook for getting previous value 
-function usePrevious(value) {
-  const ref = useRef();
-  useEffect(() => {
-    ref.current = value;
-  });
-  return ref.current;
-}
 
 export const DragContainer = React.memo(({
   gameBroadcast,

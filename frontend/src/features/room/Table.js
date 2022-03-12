@@ -99,7 +99,6 @@ export const Table = React.memo(({
         return(
         <TooltipModal
           tooltipId={tooltipId}
-          gameBroadcast={gameBroadcast}
         />)
       })}
     </div>

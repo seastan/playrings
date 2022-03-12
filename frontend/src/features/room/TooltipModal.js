@@ -1,32 +1,19 @@
-import { Checkbox } from "@material-ui/core";
-import React, {useMemo, useState} from "react";
+import React, {useMemo} from "react";
 import ReactModal from "react-modal";
 import Button from "../../components/basic/Button";
 import useProfile from "../../hooks/useProfile";
-import { withStyles } from "@material-ui/core/styles";
 import { TOOLTIPINFO } from "./Constants";
 import axios from "axios";
 import useAuth from "../../hooks/useAuth";
-
-
-const CustomColorCheckbox = withStyles({
-  root: {
-    color: "#ffffff",
-    "&$checked": {
-      color: "#ffffff"
-    }
-  },
-  checked: {}
-})((props) => <Checkbox color="default" {...props} />);
-
+import { useDispatch, useSelector } from "react-redux";
+import { setTooltipIds } from "../store/playerUiSlice";
 
 export const TooltipModal = React.memo(({
     tooltipId,
-    tooltipIds,
-    setTooltipIds,
-    setShowModal,
-    gameBroadcast,
 }) => {
+    const dispatch = useDispatch();
+    const tooltipIds = useSelector(state => state?.playerUi?.tooltipIds);
+
     const myUser = useProfile();
     const { authToken, renewToken, setAuthAndRenewToken } = useAuth();
     const authOptions = useMemo(
@@ -53,11 +40,12 @@ export const TooltipModal = React.memo(({
     }
 
     const removeTooltip = () => {
-      var index = tooltipIds.indexOf(tooltipId);
+      var newTooltipIds = [...tooltipIds];
+      var index = newTooltipIds.indexOf(tooltipId);
       if (index !== -1) {
-        tooltipIds.splice(index, 1);
+        newTooltipIds.splice(index, 1);
       }
-      setTooltipIds([...tooltipIds])
+      dispatch(setTooltipIds(newTooltipIds))
     }
 
     if (myUser.hidden_tooltips && myUser.hidden_tooltips.includes(tooltipId)) {

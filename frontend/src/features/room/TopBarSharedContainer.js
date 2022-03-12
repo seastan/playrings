@@ -1,19 +1,13 @@
-import React, { Component, useState, useRef } from "react";
-import { useSelector, useDispatch } from 'react-redux';
+import React from "react";
+import { useSelector } from 'react-redux';
 import { getCurrentFace } from "./Helpers"
 import { TopBarShared } from "./TopBarShared"
-import { GROUPSINFO, sectionToLoadGroupId, sectionToDiscardGroupId } from "./Constants";
 
 export const TopBarSharedContainer = React.memo(({setPlayerWillpower}) => {
   
-    const stagingStore = state => state?.gameUi?.game?.groupById?.sharedStaging.stackIds;
-    const stagingStackIds = useSelector(stagingStore);
-    const cardStore = state => state?.gameUi?.game?.cardById;
-    const cardById = useSelector(cardStore); 
-    const stackStore = state => state?.gameUi?.game?.stackById;
-    const stackById = useSelector(stackStore);  
-    const playerDataStore = state => state?.gameUi?.game?.playerData;
-    const playerData = useSelector(playerDataStore);  
+    const stagingStackIds = useSelector(state => state?.gameUi?.game?.groupById?.sharedStaging.stackIds);
+    const cardById = useSelector(state => state?.gameUi?.game?.cardById); 
+    const stackById = useSelector(state => state?.gameUi?.game?.stackById);  
     const roundStore = state => state?.gameUi?.game?.roundNumber;
     const round = useSelector(roundStore);  
     

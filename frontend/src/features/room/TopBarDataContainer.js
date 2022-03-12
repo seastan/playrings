@@ -57,43 +57,33 @@ export const TopBarDataContainer = React.memo(({
     return(
       <div className="h-full">
         <TopBarShared 
-          playerN={playerN}
           threat={stagingThreat}
           progress={totalProgress}
           gameBroadcast={gameBroadcast}
           chatBroadcast={chatBroadcast}
-          setTyping={setTyping}
         />
         <TopBarUser
-          playerN={playerN}
           playerI={"player1"}
           gameBroadcast={gameBroadcast}
           chatBroadcast={chatBroadcast}
-          setTyping={setTyping}
         />
         {numPlayers > 1 &&
         <TopBarUser
-          playerN={playerN}
           playerI={"player2"}
           gameBroadcast={gameBroadcast}
           chatBroadcast={chatBroadcast}
-          setTyping={setTyping}
         />}
         {numPlayers > 2 &&
         <TopBarUser
-          playerN={playerN}
           playerI={"player3"}
           gameBroadcast={gameBroadcast}
           chatBroadcast={chatBroadcast}
-          setTyping={setTyping}
         />}
         {numPlayers > 3 &&
         <TopBarUser
-          playerN={playerN}
           playerI={"player4"}
           gameBroadcast={gameBroadcast}
           chatBroadcast={chatBroadcast}
-          setTyping={setTyping}
         />}
       </div>
     )
