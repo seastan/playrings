@@ -45,8 +45,8 @@ Vagrant.configure("2") do |config|
           curl -sL https://deb.nodesource.com/setup_14.x | bash - 
             sudo apt-get install -y nodejs
           #Clone repos
-          git clone https://github.com/seastan/dragncards -b development
           git clone https://github.com/seastan/Lord-of-the-Rings
+          git clone https://github.com/seastan/dragncards -b development
           
           #filewatchers
           echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p
