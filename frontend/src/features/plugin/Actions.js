@@ -13,20 +13,14 @@ import {
   getScore,
   playerNToPlayerSpaceN,
   getNextEmptyPlayerN,
-  functionOnMatchingCards,
-  getSideAName,
-  getCardByGroupIdStackIndexCardIndex,
-  doListsOverlap,
-  getRandomIntInclusive,
   listOfMatchingCards,
   formatCriteria,
   formatOptions,
-  getVisibleFace,
   getVisibleSide,
 } from "./Helpers";
 import { setValues } from "../store/gameUiSlice";
 import abilities from "../../cardDB/abilities";
-import { GROUPSINFO, PHASEINFO, roundStepToText, nextRoundStep, prevRoundStep, nextPhase, prevPhase } from "./Constants";
+import { GROUPSINFO, roundStepToText, nextRoundStep, prevRoundStep, nextPhase, prevPhase } from "./Constants";
 import { setActiveCardObj, setKeypressW, setObservingPlayerN, setPlayerUiValues } from "../store/playerUiSlice";
 
 const areMultiplayerHotkeysEnabled = (game, chatBroadcast) => {
@@ -75,7 +69,6 @@ const reveal = (game, deckGroupId, discardGroupId, gameBroadcast, chatBroadcast,
 }
 
 export const gameAction = (action, actionProps, forPlayerN = null) => {
-    //const {gameUi, playerN, gameBroadcast, chatBroadcast, activeCardObj, setActiveCardObj, dispatch, keypress, setKeypress, setObservingPlayerN} = props;
     const {state, dispatch, gameBroadcast, chatBroadcast} = actionProps;
     const gameUi = state?.gameUi;
     const playerN = forPlayerN || state?.playerUi?.playerN;
@@ -102,33 +95,19 @@ export const gameAction = (action, actionProps, forPlayerN = null) => {
         // This prevents, for example, the token moving multiple times if players refresh at different times.
         if (isHost) {
             // Set phase
-            ///gameBroadcast("game_action", {action: "update_values", options: {updates: [["game","roundStep", "7.R"], ["game", "phase", "Refresh"]]}});
             chatBroadcast("game_update", {message: "set the round step to "+roundStepToText("7.R")+"."})
             const firstPlayerN = game.firstPlayer;
             const nextPlayerN = getNextPlayerN(gameUi, firstPlayerN);
             // If nextPlayerN is null then it's a solo game, so don't pass the token
             if (nextPlayerN) {
-                ///gameBroadcast("game_action", {action: "update_values", options: {updates: [["game","firstPlayer", nextPlayerN]]}});    
                 chatBroadcast("game_update",{message: "moved first player token to "+nextPlayerN+"."});
             }
         }
         // Refresh all cards you control
         chatBroadcast("game_update",{message: "refreshes."});
-/*         gameBroadcast("game_action", {
-            action: "action_on_matching_cards", 
-            options: {
-                criteria:[["controller", playerN], ["locked", false]], 
-                action: "update_card_values", 
-                options: {updates: [["exhausted", false], ["rotation", 0]]}
-            }
-        }); */
         // Raise your threat
         const newThreat = game.playerData[playerN].threat+1;
         chatBroadcast("game_update", {message: "raises threat by 1 ("+newThreat+")."});
-        ///gameBroadcast("game_action", {action: "increment_threat", options: {increment: 1, for_player_n: playerN}});
-        // Set refreshed status
-        ///gameBroadcast("game_action", {action: "update_values", options: {updates: [["game", "playerData", playerN, "refreshed", true]]}});
-
     } 
 
     else if (action === "new_round") {
@@ -138,67 +117,17 @@ export const gameAction = (action, actionProps, forPlayerN = null) => {
 
         // The player in the leftmost non-eliminated seat is the only one that does the framework game actions.
         // This prevents, for example, the round number increasing multiple times.
-        if (isHost) {            
-            // Update round number
-            //const newRoundNumber = parseInt(roundNumber) + 1;
-            // Calculate round number
+        if (isHost) {
             chatBroadcast("game_update", {message: "-----------------------"})
             chatBroadcast("game_update", {message: "-----------------------"})
             chatBroadcast("game_update", {message: "----------------------- New Round"})
             chatBroadcast("game_update", {message: "-----------------------"})
             chatBroadcast("game_update", {message: "-----------------------"})
             chatBroadcast("game_update", {message: "started a new round as host."})
-            ///gameBroadcast("game_action", {action: "update_values", options: {updates: [["game", "phase", "Resource"], ["game", "roundStep", "1.R"]]}})
             chatBroadcast("game_update", {message: "set the round step to "+roundStepToText("1.R")+"."})
-            // Update round number
-            ///gameBroadcast("game_action", {action: "update_values", options:{updates:[["game", "roundNumber", newRoundNumber]]}})
             chatBroadcast("game_update",{message: "increased the round number by 1."})
         }
-        // Draw a card
-            ///gameBroadcast("game_action", {action: "draw_card", options: {player_n: playerN}})
         chatBroadcast("game_update",{message: "drew card(s)."});
-        //}
-        // Add a resource to each hero
-/*         gameBroadcast("game_action", {
-            action: "action_on_matching_cards", 
-            options: {
-                criteria:[["sides","sideUp","type","Hero"],["controller",playerN], ["groupType","play"]], 
-                action: "increment_token", 
-                options: {token_type: "resource", increment: 1}
-            }
-        }); */
-        // Reset willpower count and refresh status
-        ///gameBroadcast("game_action", {action: "update_values", options:{updates:[["game", "playerData", playerN, "willpower", 0], ["game", "playerData", playerN, "refreshed", false]]}})
-        // Add custom set tokens per round
-/*         gameBroadcast("game_action", {
-            action: "action_on_matching_cards", 
-            options: {
-                criteria:[["controller",playerN], ["groupType","play"]], 
-                action: "apply_tokens_per_round", 
-                options: {}
-            }
-        });
-        if (isHost) {
-            gameBroadcast("game_action", {
-                action: "action_on_matching_cards", 
-                options: {
-                    criteria:[["controller","shared"], ["groupType","play"]], 
-                    action: "apply_tokens_per_round", 
-                    options: {}
-                }
-            });
-        } */
-        // Uncommit all characters to the quest
-/*         gameBroadcast("game_action", {
-            action: "action_on_matching_cards", 
-            options: {
-                criteria:[["controller", playerN]], 
-                action: "update_card_values", 
-                options: {updates: [["committed", false]]}
-            }
-        }); */
-        // Save replay
-        //gameBroadcast("game_action", {action: "save_replay", options: {}});
         chatBroadcast("game_update",{message: "saved the replay to their profile."});
         // Check for alerts
         checkAlerts();
@@ -445,7 +374,7 @@ export const gameAction = (action, actionProps, forPlayerN = null) => {
             // Sit in seat
             gameBroadcast("game_action", {action: "set_seat", options: {"player_n": nextPlayerN, "user_id": myUserId}});
             chatBroadcast("game_update",{message: "sat in "+playerNToPlayerSpaceN(nextPlayerN)+"'s seat."});
-            setObservingPlayerN(nextPlayerN);
+            dispatch(setObservingPlayerN(nextPlayerN));
         } else {
             chatBroadcast("game_update",{message: "tried to sit in the next open seat, but there was none."});
         }

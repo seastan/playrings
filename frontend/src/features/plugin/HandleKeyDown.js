@@ -230,7 +230,7 @@ export const HandleKeyDown = ({
         return () => {
             document.removeEventListener('keydown', onKeyDown);
         }
-    }, [keyBackLog, typing, gameBroadcast, chatBroadcast]);
+    }, [keyBackLog, typing, gameBroadcast, chatBroadcast, keypressAlt, keypressControl]);
 
     const handleKeyDown = (
         state,
@@ -258,6 +258,7 @@ export const HandleKeyDown = ({
         const actionProps = {state, dispatch, gameBroadcast, chatBroadcast};
 
         // Hotkeys
+        console.log("ctrl",(unix_sec - keypressControl))
         if ((unix_sec - keypressControl) < 30 && Object.keys(ctrlKeyGameActionMap).includes(k)) gameAction(ctrlKeyGameActionMap[k], actionProps);
         else if ((unix_sec - keypressAlt) < 30 && Object.keys(altKeyGameActionMap).includes(k)) gameAction(altKeyGameActionMap[k], actionProps);
         // else if (keypress["Shift"] && Object.keys(shiftKeyGameActionMap).includes(k)) gameAction(shiftKeyGameActionMap[k], actionProps);
@@ -267,51 +268,6 @@ export const HandleKeyDown = ({
         else if (Object.keys(keyUiMap).includes(k)) keyUiAction(keyUiMap[k], actionProps);
 
     }
-
-    // const memoizedReducer = React.useCallback((state, event) => {
-    //     if (typing) return;
-    //     else if (keyDefaultList.includes(event.key)) return;
-    //     else {
-    //         event.preventDefault();
-    //         handleKeyDown(
-    //             event,
-    //             playerN,
-    //             keypress,
-    //             setKeypress,
-    //             gameBroadcast,
-    //             chatBroadcast,
-    //         )
-    //     }
-    // }, [gameUi, activeCardObj]) // <--- if you have vars/deps inside the reducer that changes, they need to go here
-
-    // const [userGameUi, handleUserKeyPress] = React.useReducer(memoizedReducer, gameUi);
-
-
-    // // const [userGameUi, handleUserKeyPress] = useReducer((state, event) => {
-    // //     if (typing) return;
-    // //     else if (keyDefaultList.includes(event.key)) return;
-    // //     else {
-    // //         event.preventDefault();
-    // //         handleKeyDown(
-    // //             event,
-    // //             playerN,
-    // //             keypress,
-    // //             setKeypress,
-    // //             gameBroadcast,
-    // //             chatBroadcast,
-    // //         )
-    // //     }
-    // // }, gameUi);
-    
-    // useEffect(() => {
-    //     console.log("handleKeyDown added")
-    //     window.addEventListener("keydown", handleUserKeyPress);
-
-    //     return () => {
-    //         console.log("handleKeyDown removed")
-    //         window.removeEventListener("keydown", handleUserKeyPress);
-    //     };
-    // }, []);
 
     return (null);
 
