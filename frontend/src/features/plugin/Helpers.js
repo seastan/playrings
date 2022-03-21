@@ -1,7 +1,8 @@
 import { cardDB } from "../../cardDB/cardDB";
 import { sectionToLoadGroupId, sectionToDiscardGroupId, sectionToDeckGroupId } from "./Constants";
 import axios from "axios";
-import { setTooltipIds } from '../store/playerUiSlice';
+import { setLoaded, setTooltipIds } from '../store/playerUiSlice';
+import store from "../../store";
 
 export const getCurrentFace = (card) => {
   if (!card?.currentSide) return null;
@@ -792,6 +793,58 @@ export const getPlayerCommitted = (gameUi, questMode, playerN) => {
   return totalCommitted;
 }
 
+export const onLoad = (
+  options,
+  gameBroadcast,
+  chatBroadcast,
+  dispatch,
+) => { 
+  // Make sure this only ever gets loaded once
+  if (options?.loaded) return;
+  dispatch(setLoaded(true));
+  const newOptions = {...options, loaded: true}
+  gameBroadcast("game_action", {action: "update_values", options: {updates: [["game", "options", newOptions]]}})
+
+  const ringsDbInfo = options?.ringsDbInfo;
+  const deckToLoad = ringsDbInfo?.[0] || ringsDbInfo?.[1] || ringsDbInfo?.[2] || ringsDbInfo?.[3];
+  const gameUi = store.getState()?.gameUi;
+
+  if (deckToLoad) {
+    // Load ringsdb decks by ids
+    var numDecks = 1;
+    for (var i=1; i<=4; i++) {
+      const playerI = "player"+i;
+      if (!ringsDbInfo[i-1]) continue;
+      numDecks = i;
+      const deckType = ringsDbInfo[i-1].type;
+      const deckId = ringsDbInfo[i-1].id;
+      const deckDomain = ringsDbInfo[i-1].domain;
+      loadRingsDb(gameUi, playerI, deckDomain, deckType, deckId, gameBroadcast, chatBroadcast, dispatch);
+
+    }
+    if (numDecks>1 && numDecks<=4) {
+      gameBroadcast("game_action", {action: "update_values", options: {updates: [["game", "numPlayers", numDecks]]}});
+      chatBroadcast("game_update", {message: "set the number of players to: " + numDecks});
+    }
+    // Loop over decks complete
+  } // End if ringsDb
+  // Shuffle all decks if setting was set
+  if (options["loadShuffle"]) {
+    // Turn off trigger
+    const updates = [["game", "options", "loadShuffle", false]];
+    gameBroadcast("game_action", {action: "update_values", options: {updates: updates}});
+    // TODO: fix this
+    //dispatch(setValues({updates: updates}));
+    // Object.keys(groupById).forEach((groupId) => {
+    //   const group = groupById[groupId];
+    //   if (group.type === "deck" && group.stackIds.length > 0) {
+    //     gameBroadcast("game_action", {action: "shuffle_group", options: {group_id: groupId}})
+    //     chatBroadcast("game_update", {message: " shuffled " + GROUPSINFO[groupId].name+"."})
+    //   }
+    // })
+  }
+}
+
 
 export const loadRingsDb = (gameUi, playerI, ringsDbDomain, ringsDbType, ringsDbId, gameBroadcast, chatBroadcast, dispatch) => {
   chatBroadcast("game_update",{message: "is loading a deck from RingsDb..."});
@@ -799,11 +852,14 @@ export const loadRingsDb = (gameUi, playerI, ringsDbDomain, ringsDbType, ringsDb
   var tooltipMotK = false;
   const urlBase = ringsDbDomain === "test" ? "https://test.ringsdb.com/api/" : "https://www.ringsdb.com/api/"
   const url = ringsDbType === "decklist" ? urlBase+"public/decklist/"+ringsDbId+".json" : urlBase+"oauth2/deck/load/"+ringsDbId;
-  console.log("Fetching ", url);
+  console.log("ringsdb fetching", url);
   fetch(url)
   .then(response => response.json())
   .then((jsonData) => {
     // jsonData is parsed json object received from url
+    console.log("ringsdb json", jsonData);  
+    console.log("ringsdb delay",gameBroadcast)   
+
     const slots = jsonData.slots;
     const sideslots = jsonData.sideslots;
     var loadList = [];
