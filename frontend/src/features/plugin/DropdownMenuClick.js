@@ -8,6 +8,7 @@ import {
   shuffle,
   getRandomIntInclusive,
 } from "./Helpers";
+import { useDispatch } from "react-redux";
 
 
 // dropdownMenu is an object that gets populated with infor about a card when a card is pressed, or about a group when a group is pressed.
@@ -193,6 +194,7 @@ export const useDropdownClickGroup = (dropdownOptions, actionProps) => {
       group,
       gameBroadcast, 
       chatBroadcast,
+      dispatch,
     ) 
   } else if (dropdownOptions.action === "dealX") {
     var topX = parseInt(prompt("Enter a number",0)) || 0;

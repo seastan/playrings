@@ -23,14 +23,14 @@ export const Group = React.memo(({
 
   const handleEyeClick = (event) => {
     event.stopPropagation();
-    browseTopN("All", group, gameBroadcast, chatBroadcast);
+    browseTopN("All", group, gameBroadcast, chatBroadcast, dispatch);
   }
 
   const handleMainQuestClick = (event) => {
     event.stopPropagation();
     const state = store.getState();
     const questDeckGroup = state.gameUi.game.groupById["sharedQuestDeck"];
-    browseTopN("All", questDeckGroup, gameBroadcast, chatBroadcast);
+    browseTopN("All", questDeckGroup, gameBroadcast, chatBroadcast, dispatch);
   }
 
   const handleBarsClick = (event) => {

@@ -33,7 +33,7 @@ export const SideGroup = React.memo(({
 
   const handleEyeClick = (event) => {
     event.stopPropagation();
-    browseTopN("All", group, gameBroadcast, chatBroadcast);
+    browseTopN("All", group, gameBroadcast, chatBroadcast, dispatch);
   }
 
   const handleBarsClick = (event) => {

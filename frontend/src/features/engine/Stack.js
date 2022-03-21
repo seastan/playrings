@@ -85,7 +85,9 @@ export const Stack = React.memo(({
           ref={dragProvided.innerRef}
           {...dragProvided.draggableProps}
           {...dragProvided.dragHandleProps}
-          style={style}>
+          style={
+            dragSnapshot.isDragging ? {...style, transform: style.transform ? style.transform + " scale(1.1)" : "scale(1.1)"} : style
+          }>
           {cardIds.map((cardId, cardIndex) => {
             return(
               <Card
@@ -98,6 +100,7 @@ export const Stack = React.memo(({
                 cardId={cardId} 
                 cardIndex={cardIndex}
                 registerDivToArrowsContext={registerDivToArrowsContext}
+                isDragging={(cardIndex === cardIds.length - 1) ? dragSnapshot.isDragging : false}
               />
             )
         })}

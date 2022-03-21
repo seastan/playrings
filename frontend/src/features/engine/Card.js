@@ -36,7 +36,8 @@ export const Card = React.memo(({
     gameBroadcast,
     chatBroadcast,
     cardIndex,
-    registerDivToArrowsContext
+    registerDivToArrowsContext,
+    isDragging,
 }) => {    
     // useTraceUpdate({
     //     cardId,
@@ -102,6 +103,9 @@ export const Card = React.memo(({
                     MozTransitionProperty: "-moz-transform",
                     OTransitionProperty: "-o-transform",
                     transitionProperty: "transform",
+                    MozBoxShadow: isDragging ? '10px 10px 30px 20px rgba(0, 0, 0, 0.3)' : null,
+                    WebkitBoxShadow: isDragging ? '10px 10px 30px 20px rgba(0, 0, 0, 0.3)': null,
+                    boxShadow: isDragging ? '10px 10px 30px 20px rgba(0, 0, 0, 0.3)': null,
                 }}
                 onMouseLeave={event => handleMouseLeave(event)}>
                 <img className="absolute w-full h-full" style={{borderRadius: '0.6vh'}} src={visibleFaceSrc.src} onError={(e)=>{e.target.onerror = null; e.target.src=visibleFaceSrc.default}} />
