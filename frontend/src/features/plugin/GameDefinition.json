@@ -1,0 +1,1084 @@
+{
+  "gameName": "The Lord of the Rings: The Card Game",
+  "minPlayers": 1,
+  "maxPlayers": 4,
+  "cardTypes": {
+    "Ally":           {"tokens": ["resource","progress","damage","time","willpower","attack","defense","hitPoints"]},
+    "Attachment":     {"tokens": ["resource","progress","damage","time","willpower","attack","defense","hitPoints"]},
+    "Event":          {"tokens": ["resource","progress","damage","time","willpower","attack","defense","hitPoints"]},
+    "Hero":           {"tokens": ["resource","progress","damage","time","willpower","attack","defense","hitPoints"]},
+    "Contract":       {"tokens": ["resource","progress","damage","time","willpower","attack","defense","hitPoints"]},
+    "Objective Ally": {"tokens": ["resource","progress","damage","time","willpower","attack","defense","hitPoints"]},
+    "Treachery":      {"tokens": ["resource","progress","damage","time","threat","attack","defense","hitPoints"]},
+    "Campaign":       {"tokens": ["resource","progress","damage","time","threat","attack","defense","hitPoints"]},
+    "Enemy":          {"tokens": ["resource","progress","damage","time","threat","attack","defense","hitPoints"]},
+    "Location":       {"tokens": ["resource","progress","damage","time","threat","attack","defense","hitPoints"]},
+    "Nightmare":      {"tokens": ["resource","progress","damage","time","threat","attack","defense","hitPoints"]},
+    "Objective":      {"tokens": ["resource","progress","damage","time","threat","attack","defense","hitPoints"]},
+    "Presentation":   {"tokens": ["resource","progress","damage","time","threat","attack","defense","hitPoints"]},
+    "Quest":          {"tokens": ["resource","progress","damage","time","threat","attack","defense","hitPoints"]},
+    "Rules":          {"tokens": ["resource","progress","damage","time","threat","attack","defense","hitPoints"]},
+    "Ship-Enemy":     {"tokens": ["resource","progress","damage","time","threat","attack","defense","hitPoints"]},
+    "Side Quest":     {"tokens": ["resource","progress","damage","time","threat","attack","defense","hitPoints"]},
+    "Treasure":       {"tokens": ["resource","progress","damage","time","threat","attack","defense","hitPoints"]},
+    "Other":          {"tokens": ["resource","progress","damage","time","threat","attack","defense","hitPoints"]}
+  },
+  "tokens": {
+    "resource": {"position": 1},
+    "progress": {"position": 2},
+    "damage":   {"position": 3},
+    "time":     {"position": 4},
+    "willpower":{"position": 5},
+    "threat":   {"position": 5},
+    "attack":   {"position": 6},
+    "defense":  {"position": 7},
+    "hitPoints":{"position": 8}
+  },
+  "cardProperties": {
+    "committed": {"type": "boolean", "default": false},
+    "exhausted": {"type": "boolean", "default": false}
+  },
+  "faceProperties": {
+    "attack":        {"type": "integer", "default": 0},
+    "cost":          {"type": "integer", "default": 0},
+    "defense":       {"type": "integer", "default": 0},
+    "engagementCost":{"type": "integer", "default": 0},
+    "hitPoints":     {"type": "integer", "default": 0},
+    "keywords":      {"type": "string", "default": ""},
+    "name":          {"type": "string", "default": ""},
+    "printName":     {"type": "string", "default": ""},
+    "questPoints":   {"type": "integer", "default": 0},
+    "shadow":        {"type": "string", "default": ""},
+    "sphere":        {"type": "string", "default": ""},
+    "text":          {"type": "string", "default": ""},
+    "threat":        {"type": "integer", "default": 0},
+    "traits":        {"type": "string", "default": ""},
+    "type":          {"type": "integer", "default": "Other"},
+    "unique":        {"type": "boolean", "default": false},
+    "victoryPoints": {"type": "integer", "default": 0},
+    "cornerText":    {"type": "string", "default": ""},
+    "willpower":     {"type": "integer", "default": 0},
+    "triggers":      {"type": "list", "default": []},
+    "customImgUrl":  {"type": "string", "default": ""}
+  },
+  "groups": {
+    "sharedEncounterDeck": {
+      "name": "Encounter Deck", 
+      "tableName": "Encounter",
+      "type": "pile",
+      "defaultSideUp": "B",
+      "defaultPeeking": [],
+      "inPlay": false,
+      "canHaveAttachments": false,
+      "discardGroupId": "sharedEncounterDiscard"
+    },
+    "sharedEncounterDiscard": {
+      "name": "Encounter Discard", 
+      "tablename": "Discard",
+      "type": "pile",
+      "defaultSideUp": "A",
+      "defaultPeeking": [],
+      "inPlay": false,
+      "canHaveAttachments": false,
+      "deckGroupId": "sharedEncounterDeck"
+    },
+    "sharedQuestDeck": {
+      "name": "Quest Deck",
+      "tablename": "Quest Deck",
+      "type": "pile",
+      "defaultSideUp": "A",
+      "defaultPeeking": [],
+      "inPlay": false,
+      "canHaveAttachments": false,
+      "discardGroupId": "sharedQuestDiscard"
+    },
+    "sharedQuestDiscard": {
+      "name": "Quest Discard", 
+      "tablename": "Quest Discard",
+      "type": "pile",
+      "defaultSideUp": "B",
+      "defaultPeeking": [],
+      "inPlay": false,
+      "canHaveAttachments": false,
+      "deckGroupId": "sharedQuestDeck"
+    },
+    "sharedQuestDeck2": {
+      "name": "Second Quest Deck", 
+      "tablename": "Quest Deck 2",
+      "type": "pile",
+      "defaultSideUp": "A",
+      "defaultPeeking": [],
+      "inPlay": false,
+      "canHaveAttachments": false,
+      "discardGroupId": "sharedQuestDiscard2"
+    },
+    "sharedQuestDiscard2": {
+      "name": "Second Quest Discard", 
+      "tablename": "Quest Discard 2",
+      "type": "pile",
+      "defaultSideUp": "B",
+      "defaultPeeking": [],
+      "inPlay": false,
+      "canHaveAttachments": false,
+      "deckGroupId": "sharedQuestDeck2"
+    },
+    "sharedEncounterDeck2": {
+      "name": "Second Encounter Deck", 
+      "tablename": "Encounter Deck 2",
+      "type": "pile",
+      "defaultSideUp": "B",
+      "defaultPeeking": [],
+      "inPlay": false,
+      "canHaveAttachments": false,
+      "discardGroupId": "sharedEncounterDiscard2"
+    },
+    "sharedEncounterDiscard2": {
+      "name": "Second Encounter Discard", 
+      "tablename": "Encounter Discard 2",
+      "type": "pile",
+      "defaultSideUp": "A",
+      "defaultPeeking": [],
+      "inPlay": false,
+      "canHaveAttachments": false,
+      "deckGroupId": "sharedEncounterDeck2"
+    },
+    "sharedEncounterDeck3": {
+      "name": "Third Encounter Deck", 
+      "tablename": "Encounter Deck 3",
+      "type": "pile",
+      "defaultSideUp": "B",
+      "defaultPeeking": [],
+      "inPlay": false,
+      "canHaveAttachments": false,
+      "discardGroupId": "sharedEncounterDiscard2"
+    },
+    "sharedEncounterDiscard3": {
+      "name": "Third Encounter Discard", 
+      "tablename": "Encounter Discard 3",
+      "type": "pile",
+      "defaultSideUp": "A",
+      "defaultPeeking": [],
+      "inPlay": false,
+      "canHaveAttachments": false,
+      "deckGroupId": "sharedEncounterDeck2"
+    },
+    "sharedOther": {
+      "name": "Other", 
+      "tablename": "Other",
+      "type": "pile",
+      "defaultSideUp": "A",
+      "defaultPeeking": [],
+      "inPlay": false,
+      "canHaveAttachments": false,
+      "discardGroupId": "sharedEncounterDiscard"
+    },
+    "sharedSetAside": {
+      "name": "Set Aside", 
+      "tablename": "Set Aside",
+      "type": "pile",
+      "defaultSideUp": "A",
+      "defaultPeeking": [],
+      "inPlay": false,
+      "canHaveAttachments": false,
+      "discardGroupId": "sharedEncounterDiscard"
+    },
+    "sharedVictory": {
+      "name": "Victory Display", 
+      "tablename": "Victory Display",
+      "type": "pile",
+      "defaultSideUp": "A",
+      "defaultPeeking": [],
+      "inPlay": false,
+      "canHaveAttachments": false
+    },
+    "sharedStaging": {
+      "name": "Staging Area", 
+      "tablename": "Staging",
+      "type": "row",
+      "defaultSideUp": "A",
+      "defaultPeeking": [],
+      "inPlay": true,
+      "canHaveAttachments": true
+    },
+    "sharedActive": {
+      "name": "Active Location", 
+      "tablename": "Active",
+      "type": "row",
+      "defaultSideUp": "A",
+      "defaultPeeking": [],
+      "inPlay": true,
+      "canHaveAttachments": true
+    },
+    "sharedMainQuest": {
+      "name": "Main Quest", 
+      "tablename": "Main Quest",
+      "type": "row",
+      "defaultSideUp": "A",
+      "defaultPeeking": [],
+      "inPlay": true,
+      "canHaveAttachments": true
+    },
+    "sharedExtra1": {
+      "name": "Extra 1", 
+      "tablename": "Extra 1",
+      "type": "row",
+      "defaultSideUp": "A",
+      "defaultPeeking": [],
+      "inPlay": true,
+      "canHaveAttachments": true
+    },
+    "sharedExtra2": {
+      "name": "Extra 2", 
+      "tablename": "Extra 2",
+      "type": "row",
+      "defaultSideUp": "A",
+      "defaultPeeking": [],
+      "inPlay": true,
+      "canHaveAttachments": true
+    },
+    "sharedExtra3": {
+      "name": "Extra 3", 
+      "tablename": "Extra 3",
+      "type": "row",
+      "defaultSideUp": "A",
+      "defaultPeeking": [],
+      "inPlay": true,
+      "canHaveAttachments": true
+    },
+    "playerNHand": {
+      "name": "Player N Hand", 
+      "tablename": "Hand",
+      "type": "horizontalFan",
+      "defaultSideUp": "B",
+      "defaultPeeking": ["playerN"],
+      "inPlay": false,
+      "canHaveAttachments": false
+    },
+    "playerNDeck": {
+      "name": "Player N Deck", 
+      "tablename": "Deck",
+      "type": "pile",
+      "defaultSideUp": "B",
+      "defaultPeeking": [],
+      "inPlay": false,
+      "canHaveAttachments": false,
+      "discardGroupId": "playerNDiscard"
+    },
+    "playerNDiscard": {
+      "name": "Player N Discard", 
+      "tablename": "Discard",
+      "type": "row",
+      "defaultSideUp": "A",
+      "defaultPeeking": [],
+      "inPlay": false,
+      "canHaveAttachments": false
+    },
+    "playerNSideboard": {
+      "name": "Player N Sideboard", 
+      "tablename": "Player N Sideboard",
+      "type": "pile",
+      "defaultSideUp": "A",
+      "defaultPeeking": [],
+      "inPlay": false,
+      "canHaveAttachments": false,
+      "discardGroupId": "playerNDiscard"
+    },
+    "playerNDeck2": {
+      "name": "Player N Deck 2", 
+      "tablename": "Player N Deck 2",
+      "type": "pile",
+      "defaultSideUp": "B",
+      "defaultPeeking": [],
+      "inPlay": false,
+      "canHaveAttachments": false,
+      "discardGroupId": "playerNDiscard"
+    },
+    "playerNPlay1": {
+      "name": "Player N Play Area 1", 
+      "tablename": "Play Area",
+      "type": "row",
+      "defaultSideUp": "A",
+      "defaultPeeking": [],
+      "inPlay": true,
+      "canHaveAttachments": true
+    },
+    "playerNPlay2": {
+      "name": "Player N Play Area 2", 
+      "tablename": "Play Area",
+      "type": "row",
+      "defaultSideUp": "A",
+      "defaultPeeking": [],
+      "inPlay": true,
+      "canHaveAttachments": true
+    },
+    "playerNPlay3": {
+      "name": "Player N Play Area 3", 
+      "tablename": "Play Area",
+      "type": "row",
+      "defaultSideUp": "A",
+      "defaultPeeking": [],
+      "inPlay": true,
+      "canHaveAttachments": true
+    },
+    "playerNPlay4": {
+      "name": "Player N Play Area 4", 
+      "tablename": "Play Area",
+      "type": "row",
+      "defaultSideUp": "A",
+      "defaultPeeking": [],
+      "inPlay": true,
+      "canHaveAttachments": true
+    },
+    "playerNEngaged": {
+      "name": "Player N Engaged Area", 
+      "tablename": "Engaged",
+      "type": "row",
+      "defaultSideUp": "A",
+      "defaultPeeking": [],
+      "inPlay": true,
+      "canHaveAttachments": true
+    },
+    "playerNEvent": {
+      "name": "Player N Current Event", 
+      "tablename": "Event",
+      "type": "row",
+      "defaultSideUp": "A",
+      "defaultPeeking": [],
+      "inPlay": true,
+      "canHaveAttachments": true
+    }
+  },
+  "phases": [
+    {
+      "name" : "Beginning",
+      "label" : "α",
+      "height" : "4%",
+      "steps" : [{"id": "0.0"}]
+    },
+    {
+      "name" : "Resource",
+      "label" : "Resource",
+      "height" : "11%",
+      "steps" : [
+        {"id": "1.1", "text": "1.1: Beginning of the Resource phase"},
+        {"id": "1.R", "text": "1.2 & 1.3: Gain resources and draw cards - <u>then player actions</u>", "actions": true},
+        {"id": "1.4", "text": "1.4: End of the Resource phase"},  
+      ]
+    },
+    {
+      "name" : "Planning",
+      "label" : "Planning",
+      "height" : "11%",
+      "steps" : [
+        {"id": "2.1", "text": "2.1: Beginning of the Planning phase"},
+        {"id": "2.P", "text": "2.2 & 2.3: Play cards in turn order - <u>player actions throughout</u>", "actions": true},
+        {"id": "2.4", "text": "2.4: End of the Planning phase"},
+      ]
+    },
+    {
+      "name" : "Quest",
+      "label" : "Quest",
+      "height" : "17%",
+      "steps" : [
+        {"id": "3.1", "text": "3.1: Beginning of the Quest phase - <u>then player actions</u>", "actions": true},
+        {"id": "3.2", "text": "3.2: Commit characters to the quest - <u>then player actions</u>", "actions": true},
+        {"id": "3.3", "text": "3.3: Staging - <u>then player actions</u>", "actions": true},
+        {"id": "3.4", "text": "3.4: Quest resolution - <u>then player actions</u>", "actions": true},
+        {"id": "3.5", "text": "3.5: End of the Quest phase"},
+      ]
+    },
+    {
+      "name" : "Travel",
+      "label" : "Travel",
+      "height" : "11%",
+      "steps" : [
+        {"id": "4.1", "text": "4.1: Beginning of the Travel phase"},
+        {"id": "4.2", "text": "4.2: Travel opportunity - <u>then player actions</u>", "actions": true},
+        {"id": "4.3", "text": "4.3: End of the Travel phase"},
+      ]
+    },
+    {
+      "name" : "Encounter",
+      "label" : "Encounter",
+      "height" : "14%",
+      "steps" : [
+        {"id": "5.1", "text": "5.1: Beginning of the Encounter phase"},
+        {"id": "5.2", "text": "5.2: Optional engagement - <u>then player actions</u>", "actions": true},
+        {"id": "5.3", "text": "5.3: Engagement checks - <u>then player actions</u>", "actions": true},
+        {"id": "5.4", "text": "5.4: End of the Encounter phase"},
+      ]
+    },
+    {
+      "name" : "Combat",
+      "label" : "Combat",
+      "height" : "17%",
+      "steps" : [
+        {"id": "6.1", "text": "6.1: Beginning of the Combat phase"},
+        {"id": "6.2", "text": "6.2: Deal shadow cards"},
+        {"id": "6.E", "text": "6.3-6.6: Enemy attacks - <u>player actions after each combat substep</u>", "actions": true},
+        {"id": "6.P", "text": "6.7-6.10: Player attacks - <u>player actions after each combat substep</u>", "actions": true},
+        {"id": "6.11", "text": "6.11: End of the Combat phase"},
+      ]
+    },
+    {
+      "name" : "Refresh",
+      "label" : "Refresh",
+      "height" : "11%",
+      "steps" : [
+        {"id": "7.1", "text": "7.1: Beginning of the Refresh phase"},
+        {"id": "7.R", "text": "7.2-7.4: Ready cards, raise threat, pass P1 token - <u>then player actions</u>", "actions": true},
+        {"id": "7.5", "text": "7.5: End of the Refresh phase"},
+      ]
+    },
+    {
+      "name" : "End",
+      "label" : "Ω",
+      "height" : "4%",
+      "steps" : [
+        {"id": "0.1", "text": "0.1: End of the round"}
+      ]
+    }
+  ]
+
+}
+
+export const TOOLTIPINFO = {
+  "tooltipMotK": "You will need to search your deck to locate your MotK hero.",
+  "tooltipEncounter2": "This quest has cards in a second encounter deck located in the View > Shared menu.",
+  "tooltipQuest2": "This quest has cards in a second quest deck located in the View > Shared menu.",
+  "tooltipAdvancedSetup": "To aid with the setup of this quest, see Menu > Special Functions.",
+}
+
+export const PHASEINFO = [
+  {
+    "name" : "Beginning",
+    "label" : "α",
+    "height" : "4%",
+    "steps" : [
+      {"id": "0.0", "text": "0.0: Beginning of the round"},
+    ]
+  },
+  {
+    "name" : "Resource",
+    "label" : "Resource",
+    "height" : "11%",
+    "steps" : [
+      {"id": "1.1", "text": "1.1: Beginning of the Resource phase"},
+      {"id": "1.R", "text": "1.2 & 1.3: Gain resources and draw cards - <u>then player actions</u>", "actions": true},
+      {"id": "1.4", "text": "1.4: End of the Resource phase"},  
+    ]
+  },
+  {
+    "name" : "Planning",
+    "label" : "Planning",
+    "height" : "11%",
+    "steps" : [
+      {"id": "2.1", "text": "2.1: Beginning of the Planning phase"},
+      {"id": "2.P", "text": "2.2 & 2.3: Play cards in turn order - <u>player actions throughout</u>", "actions": true},
+      {"id": "2.4", "text": "2.4: End of the Planning phase"},
+    ]
+  },
+  {
+    "name" : "Quest",
+    "label" : "Quest",
+    "height" : "17%",
+    "steps" : [
+      {"id": "3.1", "text": "3.1: Beginning of the Quest phase - <u>then player actions</u>", "actions": true},
+      {"id": "3.2", "text": "3.2: Commit characters to the quest - <u>then player actions</u>", "actions": true},
+      {"id": "3.3", "text": "3.3: Staging - <u>then player actions</u>", "actions": true},
+      {"id": "3.4", "text": "3.4: Quest resolution - <u>then player actions</u>", "actions": true},
+      {"id": "3.5", "text": "3.5: End of the Quest phase"},
+    ]
+  },
+  {
+    "name" : "Travel",
+    "label" : "Travel",
+    "height" : "11%",
+    "steps" : [
+      {"id": "4.1", "text": "4.1: Beginning of the Travel phase"},
+      {"id": "4.2", "text": "4.2: Travel opportunity - <u>then player actions</u>", "actions": true},
+      {"id": "4.3", "text": "4.3: End of the Travel phase"},
+    ]
+  },
+  {
+    "name" : "Encounter",
+    "label" : "Encounter",
+    "height" : "14%",
+    "steps" : [
+      {"id": "5.1", "text": "5.1: Beginning of the Encounter phase"},
+      {"id": "5.2", "text": "5.2: Optional engagement - <u>then player actions</u>", "actions": true},
+      {"id": "5.3", "text": "5.3: Engagement checks - <u>then player actions</u>", "actions": true},
+      {"id": "5.4", "text": "5.4: End of the Encounter phase"},
+    ]
+  },
+  {
+    "name" : "Combat",
+    "label" : "Combat",
+    "height" : "17%",
+    "steps" : [
+      {"id": "6.1", "text": "6.1: Beginning of the Combat phase"},
+      {"id": "6.2", "text": "6.2: Deal shadow cards"},
+      {"id": "6.E", "text": "6.3-6.6: Enemy attacks - <u>player actions after each combat substep</u>", "actions": true},
+      {"id": "6.P", "text": "6.7-6.10: Player attacks - <u>player actions after each combat substep</u>", "actions": true},
+      {"id": "6.11", "text": "6.11: End of the Combat phase"},
+    ]
+  },
+  {
+    "name" : "Refresh",
+    "label" : "Refresh",
+    "height" : "11%",
+    "steps" : [
+      {"id": "7.1", "text": "7.1: Beginning of the Refresh phase"},
+      {"id": "7.R", "text": "7.2-7.4: Ready cards, raise threat, pass P1 token - <u>then player actions</u>", "actions": true},
+      {"id": "7.5", "text": "7.5: End of the Refresh phase"},
+    ]
+  },
+  {
+    "name" : "End",
+    "label" : "Ω",
+    "height" : "4%",
+    "steps" : [
+      {"id": "0.1", "text": "0.1: End of the round"},
+    ]
+  }
+]
+
+export const nextRoundStep = (roundStep) => {
+  var stepFound = false;
+  for (var phase of PHASEINFO) {
+    const steps = phase.steps;
+    for (var step of steps) {
+      if (stepFound) return {roundStep: step.id, phase: phase.name};
+      if (step.id == roundStep) stepFound = true;
+    }
+  }
+  return null;
+}
+
+export const prevRoundStep = (roundStep) => {
+  var prev = null;
+  for (var phase of PHASEINFO) {
+    const steps = phase.steps;
+    for (var step of steps) {
+      if (step.id == roundStep) return prev;
+      prev = {roundStep: step.id, phase: phase.name};
+    }
+  }
+  return null;
+}
+
+export const nextPhase = (currPhase) => {
+  var phaseFound = false;
+  for (var phase of PHASEINFO) {
+    const steps = phase.steps;
+    for (var step of steps) {
+      if (phaseFound && phase.name !== currPhase) return {roundStep: step.id, phase: phase.name};
+      if (phase.name == currPhase) phaseFound = true;
+    }
+  }
+  return null;
+}
+
+export const prevPhase = (currPhase) => {
+  var prev = null;
+  for (var phase of PHASEINFO) {
+    const steps = phase.steps;
+    for (var step of steps) {
+      if (phase.name === currPhase) return prev;
+      if (prev?.phase !== phase.name ) prev = {roundStep: step.id, phase: phase.name};
+    }
+  }
+  return null;
+}
+
+export const playerNum = (playerN) => {
+  switch(playerN) {
+    case 'playerN':
+      return 1;
+    case 'player2':
+      return 2;
+    case 'player3':
+      return 3;
+    case 'player4':
+      return 4;
+  }
+  return null;
+} 
+
+export const sectionToLoadGroupId = (section, playerN) => {
+  switch(section) {
+    case 'Hero':
+      return playerN+'Play1';
+    case 'Ally':
+      return playerN+'Deck';
+    case 'Attachment':
+      return playerN+'Deck';
+    case 'Event':
+      return playerN+'Deck';
+    case 'Side Quest':
+      return playerN+'Deck';
+    case 'Sideboard':
+      return playerN+'Sideboard';
+    case 'Quest':
+      return 'sharedQuestDeck';
+    case 'Encounter':
+      return 'sharedEncounterDeck';
+    case 'Special':
+      return 'sharedEncounterDeck2';
+    case 'Second Special':
+      return 'sharedEncounterDeck3';
+    case 'Setup':
+      return 'sharedSetAside';
+    case 'Staging Setup':
+      return 'sharedStaging';
+    case 'Active Setup':
+      return 'sharedActive';
+    case 'Second Quest Deck':
+      return 'sharedQuestDeck2';
+  }
+  return 'sharedOther';
+}
+
+export const sectionToDeckGroupId = (section, playerN) => {
+  switch(section) {
+    case 'Hero':
+      return playerN+'Deck';
+    case 'Ally':
+      return playerN+'Deck';
+    case 'Attachment':
+      return playerN+'Deck';
+    case 'Event':
+      return playerN+'Deck';
+    case 'Side Quest':
+      return playerN+'Deck';
+    case 'Sideboard':
+      return playerN+'Deck';
+    case 'Quest':
+      return 'sharedQuestDeck';
+    case 'Encounter':
+      return 'sharedEncounterDeck';
+    case 'Special':
+      return 'sharedEncounterDeck2';
+    case 'Second Special':
+      return 'sharedEncounterDeck3';
+    case 'Setup':
+      return 'sharedEncounterDeck';
+    case 'Staging Setup':
+      return 'sharedEncounterDeck';
+    case 'Active Setup':
+      return 'sharedEncounterDeck';
+    case 'Second Quest Deck':
+      return 'sharedQuestDeck2';
+  }
+  return 'sharedOther';
+}
+
+export const sectionToDiscardGroupId = (section, playerN) => {
+  switch(section) {
+    case 'Hero':
+      return playerN+'Discard';
+    case 'Ally':
+      return playerN+'Discard';
+    case 'Attachment':
+      return playerN+'Discard';
+    case 'Event':
+      return playerN+'Discard';
+    case 'Side Quest':
+      return playerN+'Discard';
+    case 'Sideboard':
+      return playerN+'Discard';
+    case 'Quest':
+      return 'sharedQuestDiscard';
+    case 'Encounter':
+      return 'sharedEncounterDiscard';
+    case 'Special':
+      return 'sharedEncounterDiscard2';
+    case 'Second Special':
+      return 'sharedEncounterDiscard3';
+    case 'Setup':
+      return 'sharedEncounterDiscard';
+    case 'Staging Setup':
+      return 'sharedEncounterDiscard';
+    case 'Active Setup':
+      return 'sharedEncounterDiscard';
+    case 'Second Quest Deck':
+      return 'sharedQuestDiscard2';
+  }
+  return 'sharedOther';
+}
+
+export const LAYOUTINFO = {
+  "layout1standard": [
+    {
+      regions: [
+        {id: "sharedMainQuest", width: "12%"},
+        {id: "sharedActive", width: "11%"},
+        {id: "sharedStaging", width: "58%", style: "shaded", boxShadow: "true"},
+        {id: "sharedEncounterDeck", width: "9.5%"},
+        {id: "sharedEncounterDiscard", width: "9.5%"},
+      ]
+    },
+    {
+      regions: [
+        {id: "playerNEngaged", width: "100%"},
+      ]
+    },
+    {
+      regions: [
+        {id: "playerNPlay1", width: "100%"},
+      ]
+    },
+    {
+      regions: [
+        {id: "playerNPlay2", width: "89%"},
+        {id: "playerNEvent", width: "11%"},
+      ]
+    },
+    {
+      regions: [
+        {id: "Hand", width: "56%", style: "shaded"},
+        {id: "Deck", width: "9.5%", style: "shaded"},
+        {id: "Discard", width: "9.5%", style: "shaded"},
+      ]
+    },
+  ],
+  "layout1extra": [
+    {
+      regions: [
+        {id: "sharedMainQuest", width: "12%"},
+        {id: "sharedActive", width: "11%"},
+        {id: "sharedStaging", width: "58%", style: "shaded", boxShadow: "true"},
+        {id: "sharedEncounterDeck", width: "9.5%"},
+        {id: "sharedEncounterDiscard", width: "9.5%"},
+      ]
+    },
+    {
+      regions: [
+        {id: "playerNEngaged", width: "65%"},
+        {id: "sharedExtra1", width: "35%"},
+      ]
+    },
+    {
+      regions: [
+        {id: "playerNPlay1", width: "65%"},
+        {id: "sharedExtra2", width: "35%"},
+      ]
+    },
+    {
+      regions: [
+        {id: "playerNPlay2", width: "55%"},
+        {id: "playerNEvent", width: "10%"},
+        {id: "sharedExtra3", width: "35%"},
+      ]
+    },
+    {
+      regions: [
+        {id: "Hand", width: "56%", style: "shaded"},
+        {id: "Deck", width: "9.5%", style: "shaded"},
+        {id: "Discard", width: "9.5%", style: "shaded"},
+      ]
+    },
+  ],
+  "layout2standard": [
+    {
+      regions: [
+        {id: "sharedMainQuest", width: "9%"},
+        {id: "sharedActive", width: "8%"},
+        {id: "sharedStaging", width: "67%", style: "shaded", boxShadow: "true"},
+        {id: "sharedEncounterDeck", width: "8%"},
+        {id: "sharedEncounterDiscard", width: "8%"},
+      ]
+    },
+    {
+      regions: [
+        {id: "playerNEngaged", width: "50%"},
+        {id: "player2Engaged", width: "50%", hideTitle: true},
+      ]
+    },
+    {
+      regions: [
+        {id: "playerNPlay1", width: "50%"},
+        {id: "player2Play1", width: "50%", hideTitle: true},
+      ]
+    },
+    {
+      regions: [
+        {id: "playerNPlay2", width: "50%"},
+        {id: "player2Play2", width: "50%", hideTitle: true},
+      ]
+    },
+    {
+      regions: [
+        {id: "playerNPlay3", width: "42%"},
+        {id: "playerNEvent", width: "8%"},
+        {id: "player2Play3", width: "42%", hideTitle: true},
+        {id: "player2Event", width: "8%"},
+      ]
+    },
+    {
+      regions: [
+        {id: "Hand", width: "59%", style: "shaded"},
+        {id: "Deck", width: "8%", style: "shaded"},
+        {id: "Discard", width: "8%", style: "shaded"},
+      ]
+    },
+  ],
+  "layout2extra": [
+    {
+      regions: [
+        {id: "sharedMainQuest", width: "9%"},
+        {id: "sharedActive", width: "8%"},
+        {id: "sharedStaging", width: "67%", style: "shaded", boxShadow: "true"},
+        {id: "sharedEncounterDeck", width: "8%"},
+        {id: "sharedEncounterDiscard", width: "8%"},
+      ]
+    },
+    {
+      regions: [
+        {id: "playerNEngaged", width: "37%"},
+        {id: "player2Engaged", width: "36%", hideTitle: true},
+      ]
+    },
+    {
+      regions: [
+        {id: "playerNPlay1", width: "37%"},
+        {id: "player2Play1", width: "36%"},
+        {id: "sharedExtra1", width: "27%"},
+      ]
+    },
+    {
+      regions: [
+        {id: "playerNPlay2", width: "37%"},
+        {id: "player2Play2", width: "36%"},
+        {id: "sharedExtra2", width: "27%"},
+      ]
+    },
+    {
+      regions: [
+        {id: "playerNPlay3", width: "29%"},
+        {id: "playerNEvent", width: "8%"},
+        {id: "player2Play3", width: "28%"},
+        {id: "player2Event", width: "8%"},
+        {id: "sharedExtra3", width: "27%"},
+      ]
+    },
+    {
+      regions: [
+        {id: "Hand", width: "59%", style: "shaded"},
+        {id: "Deck", width: "8%", style: "shaded"},
+        {id: "Discard", width: "8%", style: "shaded"},
+      ]
+    },
+  ],
+  "layout3standard": [
+    {
+      regions: [
+        {id: "sharedMainQuest", width: "9%"},
+        {id: "sharedActive", width: "8%"},
+        {id: "sharedStaging", width: "67%", style: "shaded", boxShadow: "true"},
+        {id: "sharedEncounterDeck", width: "8%"},
+        {id: "sharedEncounterDiscard", width: "8%"},
+      ]
+    },
+    {
+      regions: [
+        {id: "playerNEngaged", width: "34%"},
+        {id: "player2Engaged", width: "33%", hideTitle: true},
+        {id: "player3Engaged", width: "33%", hideTitle: true},
+      ]
+    },
+    {
+      regions: [
+        {id: "playerNPlay1", width: "34%"},
+        {id: "player2Play1", width: "33%", hideTitle: true},
+        {id: "player3Play1", width: "33%", hideTitle: true},
+      ]
+    },
+    {
+      regions: [
+        {id: "playerNPlay2", width: "34%"},
+        {id: "player2Play2", width: "33%", hideTitle: true},
+        {id: "player3Play2", width: "33%", hideTitle: true},
+      ]
+    },
+    {
+      regions: [
+        {id: "playerNPlay3", width: "26%"},
+        {id: "playerNEvent", width: "8%"},
+        {id: "player2Play3", width: "25%", hideTitle: true},
+        {id: "player2Event", width: "8%"},
+        {id: "player3Play3", width: "25%", hideTitle: true},
+        {id: "player3Event", width: "8%"},
+      ]
+    },
+    {
+      regions: [
+        {id: "Hand", width: "59%", style: "shaded"},
+        {id: "Deck", width: "8%", style: "shaded"},
+        {id: "Discard", width: "8%", style: "shaded"},
+      ]
+    },
+  ],
+  "layout3extra": [
+    {
+      regions: [
+        {id: "sharedMainQuest", width: "9%"},
+        {id: "sharedActive", width: "8%"},
+        {id: "sharedStaging", width: "67%", style: "shaded", boxShadow: "true"},
+        {id: "sharedEncounterDeck", width: "8%"},
+        {id: "sharedEncounterDiscard", width: "8%"},
+      ]
+    },
+    {
+      regions: [
+        {id: "playerNEngaged", width: "34%"},
+        {id: "player2Engaged", width: "33%", hideTitle: true},
+        {id: "player3Engaged", width: "33%", hideTitle: true},
+      ]
+    },
+    {
+      regions: [
+        {id: "playerNPlay1", width: "65%"},
+        {id: "playerNEvent", width: "8%"},
+        {id: "sharedExtra1", width: "27%"},
+      ]
+    },
+    {
+      regions: [
+        {id: "player2Play1", width: "65%"},
+        {id: "player2Event", width: "8%"},
+        {id: "sharedExtra2", width: "27%"},
+      ]
+    },
+    {
+      regions: [
+        {id: "player3Play1", width: "65%"},
+        {id: "player3Event", width: "8%"},
+        {id: "sharedExtra3", width: "27%"},
+      ]
+    },
+    {
+      regions: [
+        {id: "Hand", width: "59%", style: "shaded"},
+        {id: "Deck", width: "8%", style: "shaded"},
+        {id: "Discard", width: "8%", style: "shaded"},
+      ]
+    },
+  ],
+  "layout4standard": [
+    {
+      regions: [
+        {id: "sharedMainQuest", width: "8%"},
+        {id: "sharedActive", width: "9%"},
+        {id: "sharedStaging", width: "68%", style: "shaded", boxShadow: "true"},
+        {id: "sharedEncounterDeck", width: "7.5%"},
+        {id: "sharedEncounterDiscard", width: "7.5%"},
+      ]
+    },
+    {
+      regions: [
+        {id: "playerNEngaged", width: "25%"},
+        {id: "player2Engaged", width: "25%", hideTitle: true},
+        {id: "player3Engaged", width: "25%", hideTitle: true},
+        {id: "player4Engaged", width: "25%", hideTitle: true},
+      ]
+    },
+    {
+      regions: [
+        {id: "playerNPlay1", width: "25%"},
+        {id: "player2Play1", width: "25%", hideTitle: true},
+        {id: "player3Play1", width: "25%", hideTitle: true},
+        {id: "player4Play1", width: "25%", hideTitle: true},
+      ]
+    },
+    {
+      regions: [
+        {id: "playerNPlay2", width: "25%"},
+        {id: "player2Play2", width: "25%", hideTitle: true},
+        {id: "player3Play2", width: "25%", hideTitle: true},
+        {id: "player4Play2", width: "25%", hideTitle: true},
+      ]
+    },
+    {
+      regions: [
+        {id: "playerNPlay3", width: "25%"},
+        {id: "player2Play3", width: "25%", hideTitle: true},
+        {id: "player3Play3", width: "25%", hideTitle: true},
+        {id: "player4Play3", width: "25%", hideTitle: true},
+      ]
+    },
+    {
+      regions: [
+        {id: "playerNPlay4", width: "17%"},
+        {id: "playerNEvent", width: "8%"},
+        {id: "player2Play4", width: "17%", hideTitle: true},
+        {id: "player2Event", width: "8%"},
+        {id: "player3Play4", width: "17%", hideTitle: true},
+        {id: "player3Event", width: "8%"},
+        {id: "player4Play4", width: "17%", hideTitle: true},
+        {id: "player4Event", width: "8%"},
+      ]
+    },
+    {
+      regions: [
+        {id: "Hand", width: "60%", style: "shaded"},
+        {id: "Deck", width: "7.5%", style: "shaded"},
+        {id: "Discard", width: "7.5%", style: "shaded"},
+      ]
+    },
+  ],
+  "layout4extra": [
+    {
+      regions: [
+        {id: "sharedMainQuest", width: "8%"},
+        {id: "sharedActive", width: "9%"},
+        {id: "sharedStaging", width: "68%", style: "shaded", boxShadow: "true"},
+        {id: "sharedEncounterDeck", width: "7.5%"},
+        {id: "sharedEncounterDiscard", width: "7.5%"},
+      ]
+    },
+    {
+      regions: [
+        {id: "playerNEngaged", width: "25%"},
+        {id: "player2Engaged", width: "25%", hideTitle: true},
+        {id: "player3Engaged", width: "25%", hideTitle: true},
+        {id: "player4Engaged", width: "25%", hideTitle: true},
+      ]
+    },
+    {
+      regions: [
+        {id: "playerNPlay1", width: "75%"},
+        {id: "sharedExtra1", width: "25%"},
+      ]
+    },
+    {
+      regions: [
+        {id: "player2Play1", width: "75%"},
+        {id: "sharedExtra2", width: "25%"},
+      ]
+    },
+    {
+      regions: [
+        {id: "player3Play1", width: "75%"},
+        {id: "sharedExtra3", width: "25%"},
+      ]
+    },
+    {
+      regions: [
+        {id: "player4Play1", width: "72%"},
+        {id: "playerNEvent", width: "7%"},
+        {id: "player2Event", width: "7%", hideTitle: true},
+        {id: "player3Event", width: "7%", hideTitle: true},
+        {id: "player4Event", width: "7%", hideTitle: true},
+      ]
+    },
+    {
+      regions: [
+        {id: "Hand", width: "60%", style: "shaded"},
+        {id: "Deck", width: "7.5%", style: "shaded"},
+        {id: "Discard", width: "7.5%", style: "shaded"},
+      ]
+    },
+  ]
+
+}

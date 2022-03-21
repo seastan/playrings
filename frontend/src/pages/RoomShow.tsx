@@ -1,6 +1,6 @@
 import React from "react";
 import { RouteComponentProps } from "react-router-dom";
-import Room from "../features/room/Room";
+import Room from "../features/engine/Room";
 import {MessagesProvider} from '../contexts/MessagesContext';
 
 type TParams = { slug: string };
