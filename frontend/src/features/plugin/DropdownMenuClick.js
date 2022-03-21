@@ -1,6 +1,6 @@
 import { cardAction } from "./Actions";
 import { GROUPSINFO } from "./Constants";
-import { handleBrowseTopN } from "../engine/functions/HandleBrowseTopN";
+import { useBrowseTopN } from "../engine/functions/useBrowseTopN";
 import { 
   getDisplayName, 
   getGroupIdStackIndexCardIndex,
@@ -12,14 +12,17 @@ import {
 
 // dropdownMenu is an object that gets populated with infor about a card when a card is pressed, or about a group when a group is pressed.
 
-export const handleDropdownClickCommon = (dropdownOptions, actionProps) => {
+export const useDropdownClickCommon = (dropdownOptions, actionProps) => {
+  const dropdownClickCard = useDropdownClickCard;
+  const dropdownClickGroup = useDropdownClickGroup;
+  const dropdownClickFirstPlayer = useDropdownClickFirstPlayer;
   const type = actionProps?.state?.playerUi?.dropdownMenuObj?.type;
-  if (type === "card") handleDropdownClickCard(dropdownOptions, actionProps);
-  else if (type === "group") handleDropdownClickGroup(dropdownOptions, actionProps);
-  else if (type === "firstPlayer") handleDropdownClickFirstPlayer(dropdownOptions, actionProps);
+  if (type === "card") dropdownClickCard(dropdownOptions, actionProps);
+  else if (type === "group") dropdownClickGroup(dropdownOptions, actionProps);
+  else if (type === "firstPlayer") dropdownClickFirstPlayer(dropdownOptions, actionProps);
 }
 
-export const handleDropdownClickCard = (dropdownOptions, actionProps) => {
+export const useDropdownClickCard = (dropdownOptions, actionProps) => {
   const {state, dispatch, gameBroadcast, chatBroadcast} = actionProps;
   const gameUi = state.gameUi;
   const game = gameUi.game;
@@ -147,13 +150,14 @@ export const handleDropdownClickCard = (dropdownOptions, actionProps) => {
   }
 }
 
-export const handleDropdownClickGroup = (dropdownOptions, actionProps) => {
+export const useDropdownClickGroup = (dropdownOptions, actionProps) => {
   const {state, dispatch, gameBroadcast, chatBroadcast} = actionProps;
   const gameUi = state.gameUi;
   const game = gameUi.game;
   const dropdownMenuObj = state.playerUi.dropdownMenuObj;
   const playerN = state.playerUi.playerN;
   const group = dropdownMenuObj.group;
+  const browseTopN = useBrowseTopN;
   if (dropdownOptions.action === "shuffle") {
     gameBroadcast("game_action", {action: "shuffle_group", options: {group_id: group.id}})
     chatBroadcast("game_update",{message: "shuffled "+GROUPSINFO[group.id].name+"."})
@@ -184,12 +188,11 @@ export const handleDropdownClickGroup = (dropdownOptions, actionProps) => {
     }
   } else if (dropdownOptions.action === "lookAt") {
     const topNstr = dropdownOptions.topN === "X" ? prompt("Enter a number",0) : dropdownOptions.topN;
-    handleBrowseTopN(
+    browseTopN(
       topNstr, 
       group,
       gameBroadcast, 
       chatBroadcast,
-      dispatch,
     ) 
   } else if (dropdownOptions.action === "dealX") {
     var topX = parseInt(prompt("Enter a number",0)) || 0;
@@ -215,7 +218,7 @@ export const handleDropdownClickGroup = (dropdownOptions, actionProps) => {
   }
 }
 
-export const handleDropdownClickFirstPlayer = (dropdownOptions, actionProps) => {
+export const useDropdownClickFirstPlayer = (dropdownOptions, actionProps) => {
   const {state, dispatch, gameBroadcast, chatBroadcast} = actionProps;
   gameBroadcast("game_action", {action: "update_values", options: {updates: [["game", "firstPlayer", dropdownOptions.action]]}})
   chatBroadcast("game_update",{message: "set first player to "+dropdownOptions.title+"."})

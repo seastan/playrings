@@ -4,7 +4,7 @@ import { Stacks } from "./Stacks";
 import { GROUPSINFO } from "../plugin/Constants";
 import { faBars, faEye } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { handleBrowseTopN } from "./functions/HandleBrowseTopN"; 
+import { useBrowseTopN } from "./functions/useBrowseTopN"; 
 import store from "../../store";
 import { setDropdownMenuObj } from "../store/playerUiSlice";
 
@@ -19,17 +19,18 @@ export const Group = React.memo(({
   const dispatch = useDispatch();
   const group = useSelector(state => state?.gameUi?.game?.groupById?.[groupId]);
   const playerN = useSelector(state => state?.playerUi?.playerN);
+  const browseTopN = useBrowseTopN;
 
   const handleEyeClick = (event) => {
     event.stopPropagation();
-    handleBrowseTopN("All", group, gameBroadcast, chatBroadcast, dispatch);
+    browseTopN("All", group, gameBroadcast, chatBroadcast);
   }
 
   const handleMainQuestClick = (event) => {
     event.stopPropagation();
     const state = store.getState();
     const questDeckGroup = state.gameUi.game.groupById["sharedQuestDeck"];
-    handleBrowseTopN("All", questDeckGroup, gameBroadcast, chatBroadcast, dispatch);
+    browseTopN("All", questDeckGroup, gameBroadcast, chatBroadcast);
   }
 
   const handleBarsClick = (event) => {

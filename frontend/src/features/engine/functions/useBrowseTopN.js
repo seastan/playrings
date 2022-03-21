@@ -1,13 +1,14 @@
+import { useDispatch } from "react-redux";
 import { GROUPSINFO } from "../../plugin/Constants";
 import { setBrowseGroupId, setBrowseGroupTopN } from "../../store/playerUiSlice";
 
-export const handleBrowseTopN = (
+export const useBrowseTopN = (
     topNstr, 
     group,
     gameBroadcast, 
     chatBroadcast,
-    dispatch,
 ) => {
+    const dispatch = useDispatch();
     const stackIds = group["stackIds"];
     const numStacks = stackIds.length;
     const groupName = GROUPSINFO[group.id].name;

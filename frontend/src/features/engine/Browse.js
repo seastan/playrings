@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useSelector, useDispatch } from 'react-redux';
 import { Stacks } from "./Stacks";
 import { GROUPSINFO } from "../plugin/Constants";
-import { handleBrowseTopN } from "./functions/HandleBrowseTopN";
+import { useBrowseTopN } from "./functions/useBrowseTopN";
 import { getParentCardsInGroup } from "../plugin/Helpers";
 import { setValues } from "../store/gameUiSlice";
 import { faBars } from "@fortawesome/free-solid-svg-icons";
@@ -30,6 +30,7 @@ export const Browse = React.memo(({
   const [selectedCardName, setSelectedCardName] = useState('');
   const stackIds = group["stackIds"];
   const numStacks = stackIds.length;
+  const browseTopN = useBrowseTopN;
 
   const handleBarsClick = (event) => {
     event.stopPropagation();
@@ -80,12 +81,11 @@ export const Browse = React.memo(({
 
   const handleSelectClick = (event) => {
     const topNstr = event.target.value;
-    handleBrowseTopN(
+    browseTopN(
       topNstr, 
       group,
       gameBroadcast, 
       chatBroadcast,
-      dispatch,
     )
   }
 

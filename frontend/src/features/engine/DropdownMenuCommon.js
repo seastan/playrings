@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { handleDropdownClickCommon } from "../plugin/DropdownMenuClick";
+import { useDropdownClickCommon } from "../plugin/DropdownMenuClick";
 import { DropdownMenuCard } from "../plugin/DropdownMenuCard";
 import { DropdownMenuGroup } from "../plugin/DropdownMenuGroup";
 import { DropdownMenuFirstPlayer } from "./DropdownMenuFirstPlayer";
@@ -18,9 +18,9 @@ export const DropdownMenuCommon = React.memo(({
   
   const dispatch = useDispatch();
   const dropdownMenuObj = useSelector(state => state?.playerUi?.dropdownMenuObj)
-  console.log("dropdownMenuObj",dropdownMenuObj)
   const [activeMenu, setActiveMenu] = useState('main');
   const [menuHeight, setMenuHeight] = useState(null);
+  const dropdownClickCommon = useDropdownClickCommon;
 
   const calcHeight = (el) => {
     calcHeightCommon(el, setMenuHeight);
@@ -33,7 +33,7 @@ export const DropdownMenuCommon = React.memo(({
     }
     const state = store.getState();
     const actionProps = {state, dispatch, gameBroadcast, chatBroadcast};
-    handleDropdownClickCommon(dropdownOptions, actionProps);
+    dropdownClickCommon(dropdownOptions, actionProps);
     setActiveMenu("main");
     dispatch(setDropdownMenuObj(null));
     setMenuHeight(null);

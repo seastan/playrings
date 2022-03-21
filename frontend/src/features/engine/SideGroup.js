@@ -4,7 +4,7 @@ import { Stacks } from "./Stacks";
 import { GROUPSINFO, LAYOUTINFO } from "../plugin/Constants";
 import { faBars, faEye } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { handleBrowseTopN } from "./functions/HandleBrowseTopN"; 
+import { useBrowseTopN } from "./functions/useBrowseTopN"; 
 import { setDropdownMenuObj } from "../store/playerUiSlice";
 
 export const SideGroup = React.memo(({
@@ -19,7 +19,8 @@ export const SideGroup = React.memo(({
   const browseGroupId = useSelector(state => state?.playerUi?.browseGroup?.id);
   const group = useSelector(state => state?.gameUi?.game?.groupById?.[sideGroupId]);
   const layout = useSelector(state => state.gameUi?.game?.layout);    
-  const playerN = useSelector(state => state?.playerUi?.playerN)
+  const playerN = useSelector(state => state?.playerUi?.playerN);
+  const browseTopN = useBrowseTopN;
 
   const layoutInfo = LAYOUTINFO["layout" + numPlayers + layout];
   const numRows = layoutInfo.length;
@@ -32,7 +33,7 @@ export const SideGroup = React.memo(({
 
   const handleEyeClick = (event) => {
     event.stopPropagation();
-    handleBrowseTopN("All", group, gameBroadcast, chatBroadcast, dispatch);
+    browseTopN("All", group, gameBroadcast, chatBroadcast);
   }
 
   const handleBarsClick = (event) => {
