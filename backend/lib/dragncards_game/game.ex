@@ -1,4 +1,4 @@
-defmodule DragnCardsGame.Game do
+  defmodule DragnCardsGame.Game do
   @moduledoc """
   Represents a game of dragncards.
   In early stages of the app, it only represents a
