@@ -10,13 +10,14 @@ import { SideBar } from "../engine/SideBar";
 import { Hotkeys } from "./Hotkeys";
 import { PlayersInRoom } from "../engine/PlayersInRoom";
 import { DropdownMenu } from "../engine/DropdownMenu";
-import { OnLoad } from "./OnLoad";
 import { TouchBarBottom } from "./TouchBarBottom";
 
 import "../../css/custom-dropdown.css";
 import { TooltipModal } from "../engine/TooltipModal";
 import { setActiveCardObj, setDropdownMenuObj, setMousePosition, setTouchAction } from "../store/playerUiSlice";
 import { useDispatch, useSelector } from "react-redux";
+import useProfile from "../../hooks/useProfile";
+import { onLoad } from "./Helpers";
 
 export const Table = React.memo(({
   gameBroadcast,
@@ -28,13 +29,22 @@ export const Table = React.memo(({
   const tooltipIds = useSelector(state => state?.playerUi?.tooltipIds);
   const touchMode = useSelector(state => state?.playerUi?.touchMode);
   const showModal = useSelector(state => state?.playerUi?.showModal);
+  const options = useSelector(state => state?.gameUi?.game?.options); 
   const loaded = useSelector(state => state?.playerUi?.loaded);
+  const myUserId = useProfile()?.id;
+  const createdBy = useSelector(state => state.gameUi?.created_by);
+  const isHost = myUserId === createdBy;
 
   const handleTableClick = (event) => {
     dispatch(setActiveCardObj(null));
     dispatch(setDropdownMenuObj(null));
     dispatch(setTouchAction(null));
   }
+
+  // useEffect(() => {
+  //   if (!loaded && isHost && gameBroadcast) useOnLoad(options, gameBroadcast, chatBroadcast, dispatch);
+  // },[loaded, gameBroadcast])
+  if (!loaded && isHost) onLoad(options, gameBroadcast, chatBroadcast, dispatch);
 
   useEffect(() => {
     const handleMouseDown = (event) => {
@@ -57,7 +67,6 @@ export const Table = React.memo(({
         gameBroadcast={gameBroadcast}
         chatBroadcast={chatBroadcast}
       />
-      {loaded? null : <OnLoad gameBroadcast={gameBroadcast} chatBroadcast={chatBroadcast}/>}
       <Hotkeys/>
       <PlayersInRoom/>
       {/* Side panel */}

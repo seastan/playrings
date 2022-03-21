@@ -105,7 +105,8 @@ export const TopBarMenu = React.memo(({
       newRingsDbInfo[playerIndex] = {id: ringsDbId, type: ringsDbType, domain: ringsDbDomain};
       const newOptions = {...options, ringsDbInfo: newRingsDbInfo, loaded: true}
       gameBroadcast("game_action", {action: "update_values", options: {updates: [["game", "options", newOptions]]}});
-      loadRingsDb(null, playerN, ringsDbDomain, ringsDbType, ringsDbId, gameBroadcast, chatBroadcast, dispatch);
+      const gameUi = store.getState()?.gameUi;
+      loadRingsDb(gameUi, playerN, ringsDbDomain, ringsDbType, ringsDbId, gameBroadcast, chatBroadcast, dispatch);
     } else if (data.action === "unload_my_deck") {
       // Delete all cards you own
       chatBroadcast("game_update",{message: "unloaded their deck."});

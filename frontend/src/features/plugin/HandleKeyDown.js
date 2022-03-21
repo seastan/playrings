@@ -250,10 +250,10 @@ export const HandleKeyDown = ({
         // Keep track of held key
         //if (k === "Shift") setKeypress({...keypress, "Shift": true});
         const unix_sec = Math.floor(Date.now() / 1000);
-        if (k === "Control") setKeypressControl(unix_sec);
-        if (k === "Alt") setKeypressAlt(unix_sec);
-        if (k === "Tab") setKeypressTab(unix_sec);
-        if (k === " ") setKeypressSpace(unix_sec);
+        if (k === "Control") dispatch(setKeypressControl(unix_sec));
+        if (k === "Alt") dispatch(setKeypressAlt(unix_sec));
+        if (k === "Tab") dispatch(setKeypressTab(unix_sec));
+        if (k === " ") dispatch(setKeypressSpace(unix_sec));
         //else setKeypress({"Control": false});
         const actionProps = {state, dispatch, gameBroadcast, chatBroadcast};
 

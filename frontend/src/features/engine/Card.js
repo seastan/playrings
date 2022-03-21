@@ -55,7 +55,6 @@ export const Card = React.memo(({
     const playerN = useSelector(state => state?.playerUi?.playerN);
     const cardSize = useCardSize();
     const touchMode = useSelector(state => state?.playerUi?.touchMode);
-    console.log("CardSize ", cardSize);
     if (!card) return;
     const currentFace = getCurrentFace(card);
     const visibleFace = getVisibleFace(card, playerN);
