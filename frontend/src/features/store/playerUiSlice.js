@@ -51,13 +51,13 @@ const playerUiSlice = createSlice({
       state.keypress.Control = payload;
     },
     setKeypressAlt: (state, { payload }) => {
-      state.keypress.Control = payload;
+      state.keypress.Alt = payload;
     },
     setKeypressTab: (state, { payload }) => {
-      state.keypress.Control = payload;
+      state.keypress.Tab = payload;
     },
     setKeypressSpace: (state, { payload }) => {
-      state.keypress.Control = payload;
+      state.keypress.Space = payload;
     },
     setKeypressW: (state, { payload }) => {
       state.keypress.w = payload;
