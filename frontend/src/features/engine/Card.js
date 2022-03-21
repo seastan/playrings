@@ -10,6 +10,7 @@ import { getCurrentFace, getVisibleFace, getVisibleFaceSrc, getDefault, usesThre
 import { Target } from "./Target";
 import { AbilityToken } from "./AbilityToken";
 import { setActiveCardObj } from "../store/playerUiSlice";
+import { useCardSize } from "../../hooks/useCardSize";
 
 function useTraceUpdate(props) {
     const prev = useRef(props);
@@ -51,7 +52,7 @@ export const Card = React.memo(({
     const user = useProfile();
     const card = useSelector(state => state?.gameUi?.game?.cardById[cardId]);
     const playerN = useSelector(state => state?.playerUi?.playerN);
-    const cardSize = useSelector(state => state?.playerUi?.cardSize);
+    const cardSize = useCardSize();
     const touchMode = useSelector(state => state?.playerUi?.touchMode);
     console.log("CardSize ", cardSize);
     if (!card) return;

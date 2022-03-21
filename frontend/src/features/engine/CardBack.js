@@ -4,6 +4,7 @@ import React from "react";
 import { useSelector } from 'react-redux';
 import { getCurrentFace, getVisibleFaceSrc } from "../plugin/Helpers";
 import useProfile from "../../hooks/useProfile";
+import { useCardSize } from "../../hooks/useCardSize";
 
 const CardBack = React.memo(({
   groupType,
@@ -17,8 +18,7 @@ const CardBack = React.memo(({
   const stack1 = useSelector(state => state?.gameUi?.game?.stackById[stackIds[1]]);
   const card0 = useSelector(state => state?.gameUi?.game?.cardById[stack0?.cardIds[0]]);
   const card1 = useSelector(state => state?.gameUi?.game?.cardById[stack1?.cardIds[0]]);
-  const cardSize = useSelector(state => state?.playerUi?.cardSize);
-  
+  const cardSize = useCardSize();
 
   var visibleFaceSrc;
   var visibleFace;

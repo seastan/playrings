@@ -1,20 +1,17 @@
 import React, { useState } from "react";
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { Group } from "./Group";
 import { Browse } from "./Browse";
-import { CARDSCALE, LAYOUTINFO } from "../plugin/Constants";
+import { LAYOUTINFO } from "../plugin/Constants";
 import Chat from "../chat/Chat";
 import "../../css/custom-misc.css"; 
-import useWindowDimensions from "../../hooks/useWindowDimensions";
 import { QuickAccess } from "./QuickAccess";
 import { SideGroup } from "./SideGroup";
-import { setCardSize } from "../store/playerUiSlice";
 
 var delayBroadcast;
 
 export const TableRegion = React.memo(({
   region,
-  cardSize,
   gameBroadcast,
   chatBroadcast,
   registerDivToArrowsContext,
@@ -38,7 +35,6 @@ export const TableRegion = React.memo(({
       {beingBrowsed ? null :
         <Group
           groupId={groupId}
-          cardSize={cardSize}
           gameBroadcast={gameBroadcast} 
           chatBroadcast={chatBroadcast}
           hideTitle={region.hideTitle}
@@ -55,16 +51,14 @@ export const TableLayout = React.memo(({
   registerDivToArrowsContext,
 }) => {
   console.log("Rendering TableLayout");
-  const dispatch = useDispatch();
   const numPlayers = useSelector(state => state?.gameUi?.game?.numPlayers);
   const layout = useSelector(state => state?.gameUi?.game?.layout);
-  const cardSizeFactor = useSelector(state => state?.playerUi?.cardSizeFactor);
   const sideGroupId = useSelector(state => state?.playerUi?.sideGroupId);
   const browseGroupId = useSelector(state => state?.playerUi?.browseGroup?.id);
   const [chatHover, setChatHover] = useState(false);
-  const { height, width } = useWindowDimensions();
-  const aspectRatio = width/height;
-  console.log("browseGroupId",browseGroupId)
+  const layoutInfo = LAYOUTINFO["layout" + numPlayers + layout];
+  const numRows = layoutInfo.length;
+  const rowHeight = `${100/numRows}%`; 
 
   if (!layout) return;
 
@@ -78,14 +72,6 @@ export const TableLayout = React.memo(({
     if (delayBroadcast) clearTimeout(delayBroadcast);
     setChatHover(false);
   }
-
-  const layoutInfo = LAYOUTINFO["layout" + numPlayers + layout];
-  const numRows = layoutInfo.length;
-  const rowHeight = `${100/numRows}%`; 
-  var cardSize = CARDSCALE/numRows;
-  if (aspectRatio < 1.9) cardSize = cardSize*(1-0.75*(1.9-aspectRatio));
-  cardSize = cardSize*cardSizeFactor;
-  dispatch(setCardSize(cardSize));
 
   var middleRowsWidth = 100;
   if (sideGroupId !== "") {

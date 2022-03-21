@@ -40,7 +40,6 @@ const StacksList = React.memo(({
   chatBroadcast,
   groupId,
   groupType,
-  cardSize,
   stackIds,
   selectedStackIndices,
   registerDivToArrowsContext
@@ -62,7 +61,6 @@ const StacksList = React.memo(({
           groupId={groupId}
           groupType={groupType}
           stackIndex={stackIndex}
-          cardSize={cardSize}
           stackId={stackId}
           numStacks={selectedStackIndices.length}
           registerDivToArrowsContext={registerDivToArrowsContext}
@@ -77,7 +75,6 @@ export const Stacks = React.memo(({
   chatBroadcast,
   groupId,
   groupType,
-  cardSize,
   selectedStackIndices,
   registerDivToArrowsContext
 }) => {
@@ -106,8 +103,7 @@ export const Stacks = React.memo(({
               groupType={groupType} 
               stackIds={stackIds} 
               isDraggingOver={dropSnapshot.isDraggingOver} 
-              isDraggingFrom={Boolean(dropSnapshot.draggingFromThisWith)}
-              cardSize={cardSize}>
+              isDraggingFrom={Boolean(dropSnapshot.draggingFromThisWith)}>
             </CardBack>
             <DropZone ref={dropProvided.innerRef} groupType={groupType}>
               <StacksList
@@ -117,7 +113,6 @@ export const Stacks = React.memo(({
                 chatBroadcast={chatBroadcast} 
                 groupId={groupId}
                 groupType={(groupType ? groupType : group.type)} 
-                cardSize={cardSize}
                 stackIds={stackIds}
                 selectedStackIndices={(selectedStackIndices ? selectedStackIndices : [...Array(stackIds.length).keys()])}
                 registerDivToArrowsContext={registerDivToArrowsContext}

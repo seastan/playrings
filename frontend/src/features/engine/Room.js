@@ -3,15 +3,14 @@ import { useSelector, useDispatch } from 'react-redux';
 import RoomProviders from "./RoomProviders";
 import {useSetMessages} from '../../contexts/MessagesContext';
 import useChannel from "../../hooks/useChannel";
-import { setGameUi, setGame } from "../store/gameUiSlice";
+import { setGameUi } from "../store/gameUiSlice";
 import useProfile from "../../hooks/useProfile";
+import { resetPlayerUi } from "../store/playerUiSlice";
 
 export const Room = ({ slug }) => {
   const dispatch = useDispatch();
-  const gameNameStore = state => state.gameUi.gameName;
-  const gameName = useSelector(gameNameStore);
-  const errorStore = state => state.gameUi.error;
-  const error = useSelector(errorStore);
+  const gameName = useSelector(state => state.gameUi.gameName);
+  const error = useSelector(state => state.gameUi.error);
   const setMessages = useSetMessages();
   const myUser = useProfile();
   const myUserId = myUser?.id;
@@ -30,7 +29,10 @@ export const Room = ({ slug }) => {
       if (game_ui.error && !error) {
         alert("An error occured.");
       }
-      // dispatch(setGame(game_ui.game));
+      if (gameName !== game_ui.gameName) { // Entered a new room
+        // Reset player UI
+        dispatch(resetPlayerUi())
+      }
       dispatch(setGameUi(game_ui));
     } else if (
       event === "phx_reply" &&
@@ -43,7 +45,7 @@ export const Room = ({ slug }) => {
       }
     }
 
-  }, []);
+  }, [gameName]);
 
   const onChatMessage = useCallback((event, payload) => {
     if (

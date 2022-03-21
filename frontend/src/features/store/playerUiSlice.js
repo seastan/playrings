@@ -14,7 +14,6 @@ const initialState = {
   showHotkeys: false,
   touchMode: false,
   typing: false,
-  cardSize: null,
   cardSizeFactor: 1.0,
   activeCardObj: null,
   observingPlayerN: "player1",
@@ -38,6 +37,7 @@ const playerUiSlice = createSlice({
   name: "playerUi",
   initialState,
   reducers: {
+    resetPlayerUi: () => initialState,
     setPlayerUiValues: (state, { payload }) => {
       updateValues(state, payload.updates);
     },
@@ -70,9 +70,6 @@ const playerUiSlice = createSlice({
     },
     setTyping: (state, { payload }) => {
       state.typing = payload;
-    },
-    setCardSize: (state, { payload }) => {
-      state.cardSize = payload;
     },
     setCardSizeFactor: (state, { payload }) => {
       state.cardSizeFactor = payload;
@@ -123,6 +120,7 @@ const playerUiSlice = createSlice({
 });
 
 export const { 
+  resetPlayerUi,
   setPlayerUiValues,
   setPlayerN, 
   setKeypress, 
@@ -133,8 +131,7 @@ export const {
   setKeypressW, 
   setShowHotkeys, 
   setTouchMode, 
-  setTyping, 
-  setCardSize,
+  setTyping,
   setCardSizeFactor,
   setActiveCardObj,
   setObservingPlayerN,

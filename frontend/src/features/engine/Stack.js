@@ -6,6 +6,7 @@ import { Draggable } from "react-beautiful-dnd";
 import useWindowDimensions from "../../hooks/useWindowDimensions";
 import store from "../../store";
 import NaturalDragAnimation from 'natural-drag-animation-rbdnd';
+import { useCardSize } from "../../hooks/useCardSize";
 
 
 const Container = styled.div`
@@ -31,7 +32,7 @@ export const Stack = React.memo(({
   console.log('Rendering Stack ',stackIndex);
   const stack = useSelector(state => state?.gameUi?.game?.stackById[stackId]);
   const touchMode = useSelector(state => state?.playerUi?.touchMode);
-  const cardSize = useSelector(state => state?.playerUi?.cardSize);
+  const cardSize = useCardSize();
   const playerN = useSelector(state => state?.playerUi?.playerN);
   var spacingFactor = touchMode ? 1.5 : 1;
   if (groupId.includes("Extra")) spacingFactor = 0;
@@ -61,7 +62,6 @@ export const Stack = React.memo(({
   var handSpacing = 45*aspectRatio/(numStacksNonZero);
   if (handSpacing > cardSize) handSpacing = cardSize;
   var stackWidth = groupType === "hand" ? handSpacing : cardSize/0.72 + cardSize*spacingFactor/3*(cardIds.length-1);
-  console.log("StackCardSize ", cardSize)
   return (
     <Draggable 
       key={stackId} 

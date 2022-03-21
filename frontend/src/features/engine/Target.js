@@ -1,11 +1,12 @@
 import React from "react";
 import { useSelector } from 'react-redux';
+import { useCardSize } from "../../hooks/useCardSize";
 
 export const Target = React.memo(({
     cardId,
 }) => {
     const targeting = useSelector(state => state?.gameUi?.game?.cardById[cardId]?.targeting);
-    const cardSize = useSelector(state => state?.playerUi?.cardSize);
+    const cardSize = useCardSize();
     if (!targeting) return null;
     var targetString = "";
     if (targeting.player1) targetString += "1";

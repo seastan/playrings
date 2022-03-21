@@ -158,9 +158,9 @@ export const TopBarMenu = React.memo(({
         chatBroadcast("game_update",{message: "set the number of cards they draw during the resource phase to "+num+"."});
       }
     } else if (data.action === "adjust_card_size") {
-      const num = parseInt(prompt("Adjust the apparent card size for yourself only (10-1000):",Math.round(cardSizeFactor)));
+      const num = parseInt(prompt("Adjust the apparent card size for yourself only (10-1000):",Math.round(cardSizeFactor*100)));
       if (num>=10 && num<=1000) {
-        dispatch(setCardSizeFactor(num));
+        dispatch(setCardSizeFactor(num/100));
       }
     } else if (data.action === "spawn_existing") {
       dispatch(setShowModal("card"));
