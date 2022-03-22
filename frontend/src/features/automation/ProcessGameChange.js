@@ -1,5 +1,5 @@
 import { stringify } from "querystring";
-import { flatListOfCards } from "../plugin/Helpers";
+import { flatListOfCards } from "../plugins/Helpers";
 
 // cl refers to a flattened list of all card objects
 

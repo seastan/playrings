@@ -1,8 +1,8 @@
-import { cardDB } from "../../cardDB/cardDB";
-import { sectionToLoadGroupId, sectionToDiscardGroupId, sectionToDeckGroupId } from "./Constants";
+import cardDb from "../definitions/cardDb";
+import { sectionToLoadGroupId, sectionToDiscardGroupId, sectionToDeckGroupId } from "../definitions/constants";
 import axios from "axios";
-import { setLoaded, setTooltipIds } from '../store/playerUiSlice';
-import store from "../../store";
+import { setLoaded, setTooltipIds } from "../../../store/playerUiSlice";
+import store from "../../../../store";
 
 export const getCurrentFace = (card) => {
   if (!card?.currentSide) return null;
@@ -452,7 +452,7 @@ export const buildLoadList = (reducedLoadList) => {
   const loadList = [];
   for (var item of reducedLoadList) {
     if (item.cardRow.cardid) {
-      loadList.push({...item, cardRow: cardDB[item.cardRow.cardid]})
+      loadList.push({...item, cardRow: cardDb[item.cardRow.cardid]})
     } else {
       loadList.push(item)
     }
@@ -640,7 +640,7 @@ export const loadDeckFromXmlText = (xmlText, playerN, gameBroadcast, chatBroadca
       cards.forEach(card => {
         console.log("loadcard", card)
         const cardDbId = card['$'].id;
-        var cardRow = cardDB[cardDbId];
+        var cardRow = cardDb[cardDbId];
         if (cardRow && cardRow["playtest"]) {
           containsPlaytest = true;
         }
@@ -659,7 +659,7 @@ export const loadDeckFromXmlText = (xmlText, playerN, gameBroadcast, chatBroadca
       cards.forEach(card => {
         const cardDbId = card['$'].id;
         const quantity = parseInt(card['$'].qty);
-        var cardRow = cardDB[cardDbId];
+        var cardRow = cardDb[cardDbId];
         if (!cardRow) {
           alert("Encountered unknown card ID for "+card["_"])
         } else if (card["_"].includes("MotK")) {
@@ -871,7 +871,7 @@ export const loadRingsDb = (gameUi, playerI, ringsDbDomain, ringsDbType, ringsDb
         .then(response => response.json())
         .then((slotJsonData) => {
           // jsonData is parsed json object received from url
-          var cardRow = cardDB[slotJsonData.octgnid];
+          var cardRow = cardDb[slotJsonData.octgnid];
           if (slotJsonData.name.includes("MotK")) {
             tooltipMotK = true;
           } else if (cardRow) {
@@ -898,7 +898,7 @@ export const loadRingsDb = (gameUi, playerI, ringsDbDomain, ringsDbType, ringsDb
         .then(response => response.json())
         .then((slotJsonData) => {
           // jsonData is parsed json object received from url
-          var cardRow = cardDB[slotJsonData.octgnid];
+          var cardRow = cardDb[slotJsonData.octgnid];
           if (cardRow) {
             const loadGroupId = playerI+"Sideboard";
             cardRow['deckgroupid'] = playerI+"Deck";

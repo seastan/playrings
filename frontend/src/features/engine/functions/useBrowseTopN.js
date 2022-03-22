@@ -1,5 +1,4 @@
-import { useDispatch } from "react-redux";
-import { GROUPSINFO } from "../../plugin/Constants";
+import { GROUPSINFO } from "../../plugins/lotrlcg/definitions/constants";
 import { setBrowseGroupId, setBrowseGroupTopN } from "../../store/playerUiSlice";
 
 export const useBrowseTopN = (

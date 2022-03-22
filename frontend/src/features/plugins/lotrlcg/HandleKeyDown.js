@@ -1,14 +1,14 @@
 import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from 'react-redux';
-import { setValues } from "../store/gameUiSlice";
+import { setValues } from "../../../store/gameUiSlice";
 import { 
     getDisplayName,
     processTokenType,
     tokenPrintName,
 } from "./Helpers";
-import { gameAction, cardAction } from "./Actions";
-import store from "../../store";
-import { setCardSizeFactor, setKeypressAlt, setKeypressControl, setKeypressSpace, setKeypressTab } from "../store/playerUiSlice";
+import { gameAction, cardAction } from "./functions/actions";
+import store from "../../../../store";
+import { setCardSizeFactor, setKeypressAlt, setKeypressControl, setKeypressSpace, setKeypressTab } from "../../../store/playerUiSlice";
 
 // const keyTokenMap: { [id: string] : Array<string | number>; } = {
 

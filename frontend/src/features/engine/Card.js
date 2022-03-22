@@ -6,7 +6,7 @@ import useProfile from "../../hooks/useProfile";
 import { CardMouseRegion } from "./CardMouseRegion";
 import { faEye } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { getCurrentFace, getVisibleFace, getVisibleFaceSrc, getDefault, usesThreatToken } from "../plugin/Helpers";
+import { getCurrentFace, getVisibleFace, getVisibleFaceSrc, getDefault, usesThreatToken } from "../plugins/lotrlcg/functions/helpers";
 import { Target } from "./Target";
 import { AbilityToken } from "./AbilityToken";
 import { setActiveCardObj } from "../store/playerUiSlice";

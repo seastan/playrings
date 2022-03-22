@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { useSelector, useDispatch } from 'react-redux';
 import { Stacks } from "./Stacks";
-import { GROUPSINFO } from "../plugin/Constants";
+import { GROUPSINFO } from "../plugins/lotrlcg/definitions/constants";
 import { useBrowseTopN } from "./functions/useBrowseTopN";
-import { getParentCardsInGroup } from "../plugin/Helpers";
+import { getParentCardsInGroup } from "../plugins/lotrlcg/functions/helpers";
 import { setValues } from "../store/gameUiSlice";
 import { faBars } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";

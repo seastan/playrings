@@ -1,5 +1,5 @@
 import React from "react";
-import { gameAction } from "../plugin/Actions";
+import { gameAction } from "../plugins/lotrlcg/functions/actions";
 import { faRedoAlt } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import store from "../../store";

@@ -1,9 +1,9 @@
 import React, {useState} from "react";
 import ReactModal from "react-modal";
 import { useDispatch, useSelector } from "react-redux";
-import { cardDB } from "../../cardDB/cardDB";
+import cardDb from "../plugins/lotrlcg/definitions/cardDb";
 import useProfile from "../../hooks/useProfile";
-import { getCardRowCategory } from "../plugin/Helpers";
+import { getCardRowCategory } from "../plugins/lotrlcg/functions/helpers";
 import { setShowModal, setTyping } from "../store/playerUiSlice";
 
 const RESULTS_LIMIT = 150;
@@ -16,10 +16,10 @@ export const SpawnCardModal = React.memo(({
     const myUser = useProfile();
     const playerN = useSelector(state => state?.playerUi?.playerN);
 
-    const [spawnFilteredIDs, setSpawnFilteredIDs] = useState(Object.keys(cardDB));
+    const [spawnFilteredIDs, setSpawnFilteredIDs] = useState(Object.keys(cardDb));
 
     const handleSpawnClick = (cardID) => {
-        const cardRow = cardDB[cardID];
+        const cardRow = cardDb[cardID];
         if (!cardRow || !playerN) return;
         const cardRowCategory = getCardRowCategory(cardRow);
         const loadGroupId = cardRowCategory === "Player" ? playerN + "Play1" : "sharedStaging";
@@ -37,8 +37,8 @@ export const SpawnCardModal = React.memo(({
         //setSpawnCardName(event.target.value);
         const filteredName = event.target.value;
         const filteredIDs = []; //Object.keys(cardDB);
-        Object.keys(cardDB).map((cardID, index) => {
-          const cardRow = cardDB[cardID]
+        Object.keys(cardDb).map((cardID, index) => {
+          const cardRow = cardDb[cardID]
           const sideA = cardRow["sides"]["A"]
           const cardName = sideA["name"];
           const cardPack = cardRow["cardpackname"]
@@ -86,8 +86,8 @@ export const SpawnCardModal = React.memo(({
                 </tr>
               </thead>
               {spawnFilteredIDs.map((cardId, index) => {
-                const card = cardDB[cardId];
-                const sideA = cardDB[cardId]["sides"]["A"];
+                const card = cardDb[cardId];
+                const sideA = cardDb[cardId]["sides"]["A"];
                 const printName = sideA.printname;
                 return(
                   <tr className="bg-gray-600 text-white cursor-pointer hover:bg-gray-500 hover:text-black" onClick={() => handleSpawnClick(cardId)}>

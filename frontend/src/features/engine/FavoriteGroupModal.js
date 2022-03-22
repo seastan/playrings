@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import Select from 'react-select'
 import ReactModal from "react-modal";
-import { GROUPSINFO } from "../plugin/Constants";
+import { GROUPSINFO } from "../plugins/lotrlcg/definitions/constants";
 import { useDispatch } from "react-redux";
 import { setFavoriteGroupId, setShowModal, setSideGroupId } from "../store/playerUiSlice";
 

@@ -1,14 +1,14 @@
 import React, {useState} from "react";
 import ReactModal from "react-modal";
-import { buildLoadList, processLoadList, processPostLoad } from "./Helpers";
-import { DropdownItem } from "../engine/DropdownMenuHelpers";
-import { setShowModal } from "../store/playerUiSlice";
+import { buildLoadList, processLoadList, processPostLoad } from "../functions/helpers";
+import { DropdownItem } from "../../../engine/DropdownMenuHelpers";
+import { setShowModal } from "../../../store/playerUiSlice";
 import { useDispatch, useSelector } from "react-redux";
 
 function requireAll( requireContext ) {
   return requireContext.keys().map( requireContext );
 }
-const packs = requireAll( require.context("../../../../frontend/public/load/campaign/", true, /.txt$/) );
+const packs = requireAll( require.context("../../../../../../frontend/public/load/campaign/", true, /.txt$/) );
 
 const getNameFromPackPath = (packPath) => {
   var name = packPath.split("/").pop();

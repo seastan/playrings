@@ -1,6 +1,6 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setActiveCardObj, setDropdownMenuObj, setTouchAction } from "../store/playerUiSlice";
+import { setActiveCardObj, setDropdownMenuObj, setTouchAction } from "../../../store/playerUiSlice";
 
 export const TouchButton = React.memo(({
   text,

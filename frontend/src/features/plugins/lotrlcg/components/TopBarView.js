@@ -1,12 +1,12 @@
 import React from "react";
 import { useDispatch, useSelector } from 'react-redux';
-import { GROUPSINFO } from "./Constants";
-import { getQuestCompanionCycleFromQuestId } from "./Helpers";
+import { GROUPSINFO } from "../definitions/constants";
+import { getQuestCompanionCycleFromQuestId } from "../functions/helpers";
 import { getQuestNameFromModeAndId } from "./SpawnQuestModal";
 import { TopBarViewItem } from "./TopBarViewItem";
 import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { setShowHotkeys, setShowPlayersInRoom } from "../store/playerUiSlice";
+import { setShowHotkeys, setShowPlayersInRoom } from "../../../store/playerUiSlice";
 
 
 const keyClass = "m-auto border bg-gray-500 text-center bottom inline-block text-xs ml-2 mb-1";

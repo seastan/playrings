@@ -1,10 +1,10 @@
 import React from "react";
-import { tokenTitleName, getVisibleSide, getVisibleFace } from "./Helpers";
+import { tokenTitleName, getVisibleSide, getVisibleFace } from "../functions/helpers";
 import { faArrowUp, faArrowDown, faRandom, faChevronRight, faCheck } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { DropdownItem, GoBack } from "../engine/DropdownMenuHelpers";
-import "../../css/custom-dropdown.css";
-import { PHASEINFO } from "./Constants";
+import { DropdownItem, GoBack } from "../../../engine/DropdownMenuHelpers";
+import "../../../../css/custom-dropdown.css";
+import { PHASEINFO } from "../definitions/constants";
 import { useSelector } from "react-redux";
 
 export const DropdownMenuCard = React.memo(({

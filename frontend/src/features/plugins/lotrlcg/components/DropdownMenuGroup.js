@@ -1,9 +1,8 @@
 import React from "react";
-import { CSSTransition } from 'react-transition-group';
 import { faArrowUp, faArrowDown, faRandom, faChevronRight } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { DropdownItem, GoBack } from "../engine/DropdownMenuHelpers";
-import "../../css/custom-dropdown.css";
+import { DropdownItem, GoBack } from "../../../engine/DropdownMenuHelpers";
+import "../../../../css/custom-dropdown.css";
 import { useSelector } from "react-redux";
 
 export const DropdownMenuGroup = React.memo(({

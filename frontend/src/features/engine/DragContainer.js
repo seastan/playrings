@@ -5,11 +5,11 @@ import { DragDropContext } from "react-beautiful-dnd";
 import { useSelector, useDispatch } from 'react-redux';
 import { setStackIds, setCardIds, setGroupById, setValues } from "../store/gameUiSlice";
 import { reorderGroupStackIds } from "./Reorder";
-import { Table } from "../plugin/Table";
-import { GROUPSINFO } from "../plugin/Constants";
-import { getDisplayName, getDisplayNameFlipped } from "../plugin/Helpers";
 import store from "../../store";
 import { setTouchAction } from "../store/playerUiSlice";
+import { GROUPSINFO } from "../plugins/lotrlcg/definitions/constants";
+import { getDisplayName, getDisplayNameFlipped } from "../plugins/lotrlcg/functions/helpers";
+import { Table } from "../plugins/lotrlcg/components/Table";
 
 export const DragContainer = React.memo(({
   gameBroadcast,

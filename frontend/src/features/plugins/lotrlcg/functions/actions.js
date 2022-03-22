@@ -17,11 +17,11 @@ import {
   formatCriteria,
   formatOptions,
   getVisibleSide,
-} from "./Helpers";
-import { setValues } from "../store/gameUiSlice";
-import abilities from "../../cardDB/abilities";
-import { GROUPSINFO, roundStepToText, nextRoundStep, prevRoundStep, nextPhase, prevPhase } from "./Constants";
-import { setActiveCardObj, setKeypressW, setObservingPlayerN, setPlayerUiValues } from "../store/playerUiSlice";
+} from "./helpers";
+import { setValues } from "../../../store/gameUiSlice";
+import abilities from "../definitions/abilities";
+import { GROUPSINFO, roundStepToText, nextRoundStep, prevRoundStep, nextPhase, prevPhase } from "../definitions/constants";
+import { setActiveCardObj, setKeypressW, setObservingPlayerN, setPlayerUiValues } from "../../../store/playerUiSlice";
 
 const areMultiplayerHotkeysEnabled = (game, chatBroadcast) => {
     if (!game.options.multiplayerHotkeys) {

@@ -1,7 +1,7 @@
 import React from "react";
 import { useDispatch, useSelector } from 'react-redux';
-import { GROUPSINFO } from "../plugin/Constants";
-import { setBrowseGroupId, setBrowseGroupTopN } from "../store/playerUiSlice";
+import { GROUPSINFO } from "../definitions/constants";
+import { setBrowseGroupId, setBrowseGroupTopN } from "../../../store/playerUiSlice";
 
 export const TopBarViewItem = React.memo(({
   groupId,

@@ -1,10 +1,10 @@
 import React, { useState } from "react";
-import { useDropdownClickCommon } from "../plugin/DropdownMenuClick";
-import { DropdownMenuCard } from "../plugin/DropdownMenuCard";
-import { DropdownMenuGroup } from "../plugin/DropdownMenuGroup";
+import { useDropdownClickCommon } from "../plugins/lotrlcg/functions/dropdownMenuClick";
+import { DropdownMenuCard } from "../plugins/lotrlcg/components/DropdownMenuCard";
+import { DropdownMenuGroup } from "../plugins/lotrlcg/components/DropdownMenuGroup";
 import { DropdownMenuFirstPlayer } from "./DropdownMenuFirstPlayer";
 import { useDispatch, useSelector } from 'react-redux';
-import { calcHeightCommon, DropdownItem, GoBack } from "./DropdownMenuHelpers";
+import { calcHeightCommon } from "./DropdownMenuHelpers";
 import "../../css/custom-dropdown.css";
 import { setDropdownMenuObj } from "../store/playerUiSlice";
 import store from "../../store";

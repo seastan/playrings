@@ -3,17 +3,17 @@ import { useDispatch, useSelector } from 'react-redux';
 import ReactModal from "react-modal";
 import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { loadDeckFromXmlText } from "./Helpers";
-import { CYCLEORDER, CYCLEINFO } from "./Constants";
-import { calcHeightCommon, DropdownItem, GoBack } from "../engine/DropdownMenuHelpers";
-import useProfile from "../../hooks/useProfile";
-import { setShowModal, setTooltipIds, setTyping } from "../store/playerUiSlice";
-import store from "../../store";
+import { CYCLEORDER, CYCLEINFO } from "../definitions/constants";
+import { calcHeightCommon, DropdownItem, GoBack } from "../../../engine/DropdownMenuHelpers";
+import useProfile from "../../../../hooks/useProfile";
+import { setShowModal, setTooltipIds, setTyping } from "../../../store/playerUiSlice";
+import store from "../../../../store";
+import { loadDeckFromXmlText } from "../functions/helpers";
 
 function requireAll( requireContext ) {
   return requireContext.keys().map( requireContext );
 }
-const questsOCTGN = requireAll( require.context("../../../../../Lord-of-the-Rings/o8g/Decks/Quests/", true, /.o8d$/) );
+const questsOCTGN = requireAll( require.context("../../../../../../../Lord-of-the-Rings/o8g/Decks/Quests/", true, /.o8d$/) );
 
 const isStringInQuestPath = (str, questPath) => {
   const cleanQuest = getQuestNameFromPath(questPath)

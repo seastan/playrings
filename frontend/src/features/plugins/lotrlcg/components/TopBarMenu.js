@@ -1,14 +1,14 @@
 import React, { useRef } from "react";
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory } from "react-router-dom";
-import useProfile from "../../hooks/useProfile";
-import store from "../../store";
-import { flatListOfCards, functionOnMatchingCards, getCardByGroupIdStackIndexCardIndex, getSideAName, getPlayerCommitted, listOfMatchingCards, loadRingsDb, playerNToPlayerIndex, processLoadList, processPostLoad, shuffle } from "./Helpers";
-import { loadDeckFromXmlText, getRandomIntInclusive } from "./Helpers";
+import useProfile from "../../../../hooks/useProfile";
+import store from "../../../../store";
+import { flatListOfCards, functionOnMatchingCards, getCardByGroupIdStackIndexCardIndex, getSideAName, getPlayerCommitted, listOfMatchingCards, loadRingsDb, playerNToPlayerIndex, processLoadList, processPostLoad, shuffle } from "../functions/helpers";
+import { loadDeckFromXmlText, getRandomIntInclusive } from "../functions/helpers";
 import { loadDeckFromModeAndId } from "./SpawnQuestModal";
 import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { setCardSizeFactor, setLoaded, setRandomNumBetween, setShowModal, setTouchAction, setTouchMode } from "../store/playerUiSlice";
+import { setCardSizeFactor, setLoaded, setRandomNumBetween, setShowModal, setTouchAction, setTouchMode } from "../../../store/playerUiSlice";
 
 export const TopBarMenu = React.memo(({
     gameBroadcast,

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from 'react-redux';
 import { setActiveCardObj } from "../store/playerUiSlice";
-import { getDisplayName } from "../plugin/Helpers";
+import { getDisplayName } from "../plugins/lotrlcg/functions/helpers";
 
 
 export const ReminderButton = React.memo(({

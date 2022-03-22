@@ -1,6 +1,6 @@
 import React from "react";
 import { SideBarPhase } from "./SideBarPhase";
-import { PHASEINFO } from "../plugin/Constants";
+import { PHASEINFO } from "../plugins/lotrlcg/definitions/constants";
 import { SideBarNewRound } from "./SideBarNewRound";
 
 export const SideBar = React.memo(({

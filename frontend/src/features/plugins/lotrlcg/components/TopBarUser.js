@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from 'react-redux';
-import UserName from "../user/UserName";
-import useProfile from "../../hooks/useProfile";
-import useFocus from "../../hooks/useFocus";
-import useIsLoggedIn from "../../hooks/useIsLoggedIn";
+import UserName from "../../../user/UserName";
+import useProfile from "../../../../hooks/useProfile";
+import useFocus from "../../../../hooks/useFocus";
+import useIsLoggedIn from "../../../../hooks/useIsLoggedIn";
 import { Link } from "react-router-dom";
-import { setValues } from "../store/gameUiSlice";
-import { setDropdownMenuObj, setObservingPlayerN, setTyping } from "../store/playerUiSlice";
+import { setDropdownMenuObj, setObservingPlayerN, setTyping } from "../../../store/playerUiSlice";
+import { setValues } from "../../../store/gameUiSlice";
 
 var delayBroadcast;
 

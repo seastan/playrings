@@ -1,6 +1,6 @@
 import React from "react";
 import { useSelector } from 'react-redux';
-import { getCurrentFace } from "./Helpers"
+import { getCurrentFace } from "../functions/helpers"
 import { TopBarShared } from "./TopBarShared"
 
 export const TopBarSharedContainer = React.memo(({setPlayerWillpower}) => {
