@@ -9,6 +9,7 @@ import { loadDeckFromModeAndId } from "./SpawnQuestModal";
 import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { setCardSizeFactor, setLoaded, setRandomNumBetween, setShowModal, setTouchAction, setTouchMode } from "../../../store/playerUiSlice";
+import { useGameL10n } from "../../../../hooks/useGameL10n";
 
 export const TopBarMenu = React.memo(({
     gameBroadcast,
@@ -17,6 +18,7 @@ export const TopBarMenu = React.memo(({
   const myUser = useProfile();
   const myUserID = myUser?.id;
   const history = useHistory();
+  const l10n = useGameL10n();
 
   const createdBy = useSelector(state => state.gameUi?.created_by);
   const options = useSelector(state => state.gameUi?.game?.options);
@@ -585,168 +587,144 @@ export const TopBarMenu = React.memo(({
   }
 
   return(
-    <li key={"Menu"}><div className="h-full flex items-center justify-center select-none" href="#">Menu</div>
+    <li key={"Menu"}><div className="h-full flex items-center justify-center select-none">{l10n("Menu")}</div>
       <ul className="second-level-menu">
         {isHost &&
           <li key={"numPlayers"}>
-            <a className="" href="#">
-              Player count
+              {l10n("Player count")}
               <span className="float-right mr-1"><FontAwesomeIcon icon={faChevronRight}/></span>
-            </a>
             <ul className="third-level-menu">
-                <li key={"numPlayers1"}><a onClick={() => handleMenuClick({action:"num_players", value: 1})} href="#">1</a></li>
-                <li key={"numPlayers2"}><a onClick={() => handleMenuClick({action:"num_players", value: 2})} href="#">2</a></li>
-                <li key={"numPlayers3"}><a onClick={() => handleMenuClick({action:"num_players", value: 3})} href="#">3</a></li>
-                <li key={"numPlayers4"}><a onClick={() => handleMenuClick({action:"num_players", value: 4})} href="#">4</a></li>
+                <li key={"numPlayers1"} onClick={() => handleMenuClick({action:"num_players", value: 1})}>1</li>
+                <li key={"numPlayers2"} onClick={() => handleMenuClick({action:"num_players", value: 2})}>2</li>
+                <li key={"numPlayers3"} onClick={() => handleMenuClick({action:"num_players", value: 3})}>3</li>
+                <li key={"numPlayers4"} onClick={() => handleMenuClick({action:"num_players", value: 4})}>4</li>
             </ul>
           </li>
         }
         {isHost &&
           <li key={"layout"}>
-            <a href="#">
-              Layout
+              {l10n("Layout")}
               <span className="float-right mr-1"><FontAwesomeIcon icon={faChevronRight}/></span>
-            </a>
             <ul className="third-level-menu">
-                <li key={"standard"}><a onClick={() => handleMenuClick({action:"layout", value: "standard"})} href="#">Standard</a></li>
-                <li key={"extra"}><a onClick={() => handleMenuClick({action:"layout", value: "extra"})} href="#">Extra staging areas / map</a></li>
+                <li key={"standard"} onClick={() => handleMenuClick({action:"layout", value: "standard"})}>{l10n("Standard")}</li>
+                <li key={"extra"} onClick={() => handleMenuClick({action:"layout", value: "extra"})}>{l10n("Extra staging areas / map")}</li>
             </ul>
           </li>                
         }
         <li key={"touch_mode"}>
-          <a href="#">
-            Touch/mouse mode
+            {l10n("Touch/mouse mode")}
             <span className="float-right mr-1"><FontAwesomeIcon icon={faChevronRight}/></span>
-          </a>
           <ul className="third-level-menu">
-              <li key={"touch_enabled"}><a onClick={() => dispatch(setTouchMode(true))} href="#">Enable</a></li>
-              <li key={"touch_disabled"}><a onClick={() => {dispatch(setTouchMode(false)) && dispatch(setTouchAction(null))}} href="#">Disable</a></li>
+              <li key={"touch_enabled"} onClick={() => dispatch(setTouchMode(true))}>{l10n("Enable")}</li>
+              <li key={"touch_disabled"} onClick={() => {dispatch(setTouchMode(false)) && dispatch(setTouchAction(null))}}>{l10n("Disable")}</li>
           </ul>
         </li> 
         <li key={"load"}>
-          <a href="#">
-            Load
+            {l10n("Load")}
             <span className="float-right mr-1"><FontAwesomeIcon icon={faChevronRight}/></span>
-          </a>
           <ul className="third-level-menu">
-            <li key={"load_quest"}><a href="#" onClick={() => handleMenuClick({action:"spawn_quest"})}>Load quest</a></li>
-            <li key={"load_campaign"}><a href="#" onClick={() => handleMenuClick({action:"spawn_campaign"})}>Load campaign cards</a></li>
-            <li key={"load_deck"}>
-              <a href="#" onClick={() => handleMenuClick({action:"load_deck"})}>Load deck (OCTGN file)</a>
+            <li key={"load_quest"} onClick={() => handleMenuClick({action:"spawn_quest"})}>{l10n("Load quest")}</li>
+            <li key={"load_campaign"} onClick={() => handleMenuClick({action:"spawn_campaign"})}>{l10n("Load campaign cards")}</li>
+            <li key={"load_deck"} onClick={() => handleMenuClick({action:"load_deck"})}>
+              {l10n("Load deck (OCTGN file)")}
               <input type='file' id='file' ref={inputFileDeck} style={{display: 'none'}} onChange={loadDeck} accept=".o8d"/>
             </li>
-            <li key={"load_ringsdb"}>
-              <a href="#" onClick={() => handleMenuClick({action:"load_ringsdb"})}>Load deck (RingsDB URL)</a>
+            <li key={"load_ringsdb"} onClick={() => handleMenuClick({action:"load_ringsdb"})}>
+              {l10n("Load deck (RingsDB URL)")}
             </li>
-            <li key={"load_game"}>
-              <a  onClick={() => handleMenuClick({action:"load_game"})} href="#">Load game (.json)</a>
+            <li key={"load_game"} onClick={() => handleMenuClick({action:"load_game"})}>
+              {l10n("Load game (.json)")}
               <input type='file' id='file' ref={inputFileGame} style={{display: 'none'}} onChange={uploadGameAsJson} accept=".json"/>
             </li>
-            <li key={"load_custom"}>
-              <a  onClick={() => handleMenuClick({action:"load_custom"})} href="#">Load custom cards (.txt)</a>
+            <li key={"load_custom"} onClick={() => handleMenuClick({action:"load_custom"})}>
+              {l10n("Load custom cards (.txt)")}
               <input type='file' id='file' ref={inputFileCustom} style={{display: 'none'}} onChange={uploadCustomCards} accept=".txt"/>
             </li>
           </ul>
         </li> 
         <li key={"unload"}>
-          <a href="#">
-            Unload
+            {l10n("Unload")}
             <span className="float-right mr-1"><FontAwesomeIcon icon={faChevronRight}/></span>
-          </a>
           <ul className="third-level-menu">        
-            <li key={"unload_my_deck"}><a  onClick={() => handleMenuClick({action:"unload_my_deck"})} href="#">Unload my deck</a></li>
-            <li key={"unload_encounter_deck"}><a  onClick={() => handleMenuClick({action:"unload_encounter_deck"})} href="#">Unload encounter</a></li>
+            <li key={"unload_my_deck"} onClick={() => handleMenuClick({action:"unload_my_deck"})}>{l10n("Unload my deck")}</li>
+            <li key={"unload_encounter_deck"} onClick={() => handleMenuClick({action:"unload_encounter_deck"})}>{l10n("Unload encounter")}</li>
           </ul>
         </li>
         <li key={"spawn"}>
-          <a href="#">
-            Spawn card
+            {l10n("Spawn card")}
             <span className="float-right mr-1"><FontAwesomeIcon icon={faChevronRight}/></span>
-          </a>
           <ul className="third-level-menu">
-            <li key={"spawn_existing"}><a onClick={() => handleMenuClick({action:"spawn_existing"})} href="#">From the card pool</a></li>
-            <li key={"spawn_custom"}><a onClick={() => handleMenuClick({action:"spawn_custom"})} href="#">Create your own card</a></li>
+            <li key={"spawn_existing"} onClick={() => handleMenuClick({action:"spawn_existing"})}>{l10n("From the card pool")}</li>
+            <li key={"spawn_custom"} onClick={() => handleMenuClick({action:"spawn_custom"})}>{l10n("Create your own card")}</li>
           </ul>
         </li> 
         <li key={"random"}>
-          <a href="#">
-            Random
+            {l10n("Random")}
             <span className="float-right mr-1"><FontAwesomeIcon icon={faChevronRight}/></span>
-          </a>
           <ul className="third-level-menu">
-            <li key={"random_coin"}><a onClick={() => handleMenuClick({action:"random_coin"})} href="#">Coin</a></li>
-            <li key={"random_number"}><a onClick={() => handleMenuClick({action:"random_number"})} href="#">Number</a></li>
+            <li key={"random_coin"} onClick={() => handleMenuClick({action:"random_coin"})}>{l10n("Coin")}</li>
+            <li key={"random_number"} onClick={() => handleMenuClick({action:"random_number"})}>{l10n("Number")}</li>
           </ul>
         </li> 
         <li key={"options"}>
-          <a href="#">
-            Options
+            {l10n("Options")}
             <span className="float-right mr-1"><FontAwesomeIcon icon={faChevronRight}/></span>
-          </a>
           <ul className="third-level-menu">
-            <li key={"adjust_card_size"}><a onClick={() => handleMenuClick({action:"adjust_card_size"})} href="#">Adjust card size</a></li>
-            <li key={"cards_per_round"}><a onClick={() => handleMenuClick({action:"cards_per_round"})} href="#">Cards per round</a></li>
-            <li key={"quest_mode_battle"}><a onClick={() => handleMenuClick({action:"quest_mode", mode: "Battle"})} href="#">Battle quest</a></li>
-            <li key={"quest_mode_siege"}><a onClick={() => handleMenuClick({action:"quest_mode", mode: "Siege"})} href="#">Siege quest</a></li>
-            <li key={"quest_mode_normal"}><a onClick={() => handleMenuClick({action:"quest_mode", mode: "Normal"})} href="#">Normal quest</a></li>
+            <li key={"adjust_card_size"} onClick={() => handleMenuClick({action:"adjust_card_size"})}>{l10n("Adjust card size")}</li>
+            <li key={"cards_per_round"} onClick={() => handleMenuClick({action:"cards_per_round"})}>{l10n("Cards per round")}</li>
+            <li key={"quest_mode_battle"} onClick={() => handleMenuClick({action:"quest_mode", mode: "Battle"})}>{l10n("Battle quest")}</li>
+            <li key={"quest_mode_siege"} onClick={() => handleMenuClick({action:"quest_mode", mode: "Siege"})}>{l10n("Siege quest")}</li>
+            <li key={"quest_mode_normal"} onClick={() => handleMenuClick({action:"quest_mode", mode: "Normal"})}>{l10n("Normal quest")}</li>
           </ul>
         </li> 
         <li key={"advanced_functions"}>
-          <a href="#">
-            Special Functions
+            {l10n("Special Functions")}
             <span className="float-right mr-1"><FontAwesomeIcon icon={faChevronRight}/></span>
-          </a>
           <ul className="third-level-menu">
-            <li key={"to_catch_an_orc"}><a onClick={() => handleMenuClick({action:"to_catch_an_orc"})} href="#">To Catch an Orc Setup</a></li>
-            <li key={"escape_from_mount_gram"}><a onClick={() => handleMenuClick({action:"escape_from_mount_gram"})} href="#">Escape from Mount Gram Setup</a></li>
-            <li key={"fortress_of_nurn"}><a onClick={() => handleMenuClick({action:"fortress_of_nurn"})} href="#">The Fortress of Nurn Setup</a></li>
-            <li key={"glittering_caves"}><a onClick={() => handleMenuClick({action:"glittering_caves"})} href="#">Glittering Caves Clues</a></li>
+            <li key={"to_catch_an_orc"} onClick={() => handleMenuClick({action:"to_catch_an_orc"})}>{l10n("To Catch an Orc Setup")}</li>
+            <li key={"escape_from_mount_gram"} onClick={() => handleMenuClick({action:"escape_from_mount_gram"})}>{l10n("Escape from Mount Gram Setup")}</li>
+            <li key={"fortress_of_nurn"} onClick={() => handleMenuClick({action:"fortress_of_nurn"})}>{l10n("The Fortress of Nurn Setup")}</li>
+            <li key={"glittering_caves"} onClick={() => handleMenuClick({action:"glittering_caves"})}>{l10n("Glittering Caves Clues")}</li>
           </ul>
         </li> 
         <li key={"download"}>
-          <a href="#">
-            Download
+            {l10n("Download")}
             <span className="float-right mr-1"><FontAwesomeIcon icon={faChevronRight}/></span>
-          </a>
           <ul className="third-level-menu">        
-            <li key={"download"}><a  onClick={() => handleMenuClick({action:"download"})} href="#">Game state (.json)</a></li>
-            <li key={"export_cards"}><a  onClick={() => handleMenuClick({action:"export_cards"})} href="#">Export cards (.txt)</a></li>
+            <li key={"download"} onClick={() => handleMenuClick({action:"download"})}>{l10n("Game state (.json)")}</li>
+            <li key={"export_cards"} onClick={() => handleMenuClick({action:"export_cards"})}>{l10n("Export cards (.txt)")}</li>
           </ul>
         </li>
         {isHost &&
           <li key={"reload"}>
-            <a href="#">
-              Reload decks
+              {l10n("Reload decks")}
               <span className="float-right mr-1"><FontAwesomeIcon icon={faChevronRight}/></span>
-            </a>
             <ul className="third-level-menu">
-              <li key={"reload_victory"}><a onClick={() => handleMenuClick({action:"reload_game", state: "victory"})} href="#">Mark as victory</a></li>
-              <li key={"reload_defeat"}><a onClick={() => handleMenuClick({action:"reload_game", state: "defeat"})} href="#">Mark as defeat</a></li>
-              <li key={"reload_incomplete"}><a onClick={() => handleMenuClick({action:"reload_game", state: "incomplete"})} href="#">Mark as incomplete</a></li>
+              <li key={"reload_victory"} onClick={() => handleMenuClick({action:"reload_game", state: "victory"})}>{l10n("Mark as victory")}</li>
+              <li key={"reload_defeat"} onClick={() => handleMenuClick({action:"reload_game", state: "defeat"})}>{l10n("Mark as defeat")}</li>
+              <li key={"reload_incomplete"} onClick={() => handleMenuClick({action:"reload_game", state: "incomplete"})}>{l10n("Mark as incomplete")}</li>
             </ul>
           </li> 
         }    
         {isHost &&
           <li key={"reset"}>
-            <a href="#">Clear Table
+            {l10n("Clear table")}
             <span className="float-right mr-1"><FontAwesomeIcon icon={faChevronRight}/></span>
-            </a>
             <ul className="third-level-menu">
-              <li key={"reset_victory"}><a onClick={() => handleMenuClick({action:"clear_table", state: "victory"})} href="#">Mark as victory</a></li>
-              <li key={"reset_defeat"}><a onClick={() => handleMenuClick({action:"clear_table", state: "defeat"})} href="#">Mark as defeat</a></li>
-              <li key={"reset_incomplete"}><a onClick={() => handleMenuClick({action:"clear_table", state: "incomplete"})} href="#">Mark as incomplete</a></li>
+              <li key={"reset_victory"} onClick={() => handleMenuClick({action:"clear_table", state: "victory"})}>{l10n("Mark as victory")}</li>
+              <li key={"reset_defeat"} onClick={() => handleMenuClick({action:"clear_table", state: "defeat"})}>{l10n("Mark as defeat")}</li>
+              <li key={"reset_incomplete"} onClick={() => handleMenuClick({action:"clear_table", state: "incomplete"})}>{l10n("Mark as incomplete")}</li>
             </ul>
           </li> 
         }      
         {isHost &&
           <li key={"shut_down"}>
-            <a href="#">Close room
+            {l10n("Close room")}
               <span className="float-right mr-1"><FontAwesomeIcon icon={faChevronRight}/></span>
-            </a>
             <ul className="third-level-menu">
-              <li key={"close_victory"}><a onClick={() => handleMenuClick({action:"close_room", state: "victory"})} href="#">Mark as victory</a></li>
-              <li key={"close_defeat"}><a onClick={() => handleMenuClick({action:"close_room", state: "defeat"})} href="#">Mark as defeat</a></li>
-              <li key={"close_incomplete"}><a onClick={() => handleMenuClick({action:"close_room", state: "incomplete"})} href="#">Mark as incomplete</a></li>
+              <li key={"close_victory"} onClick={() => handleMenuClick({action:"close_room", state: "victory"})}>{l10n("Mark as victory")}</li>
+              <li key={"close_defeat"} onClick={() => handleMenuClick({action:"close_room", state: "defeat"})}>{l10n("Mark as defeat")}</li>
+              <li key={"close_incomplete"} onClick={() => handleMenuClick({action:"close_room", state: "incomplete"})}>{l10n("Mark as incomplete")}</li>
             </ul>
           </li> 
         }

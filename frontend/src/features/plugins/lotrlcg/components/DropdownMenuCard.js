@@ -6,6 +6,7 @@ import { DropdownItem, GoBack } from "../../../engine/DropdownMenuHelpers";
 import "../../../../css/custom-dropdown.css";
 import { PHASEINFO } from "../definitions/constants";
 import { useSelector } from "react-redux";
+import { useGameL10n } from "../../../../hooks/useGameL10n";
 
 export const DropdownMenuCard = React.memo(({
   mouseX,
@@ -15,6 +16,7 @@ export const DropdownMenuCard = React.memo(({
   calcHeight,
   activeMenu,
 }) => {    
+  const l10n = useGameL10n();
   const playerN = useSelector(state => state?.playerUi?.playerN);
   const dropdownMenuObj = useSelector(state => state?.playerUi?.dropdownMenuObj);
   const menuCard = dropdownMenuObj.card;
@@ -32,7 +34,7 @@ export const DropdownMenuCard = React.memo(({
           destGroupId={props.destGroupId}
           position="top"
           clickCallback={handleDropdownClick}>
-          Top
+          {l10n("Top")}
         </DropdownItem>
         <DropdownItem
           leftIcon={<FontAwesomeIcon icon={faRandom}/>}
@@ -40,7 +42,7 @@ export const DropdownMenuCard = React.memo(({
           destGroupId={props.destGroupId}
           position="shuffle"
           clickCallback={handleDropdownClick}>
-          Shuffle in
+          {l10n("Shuffle in")}
         </DropdownItem>
         <DropdownItem
           leftIcon={<FontAwesomeIcon icon={faRandom}/>}
@@ -48,7 +50,7 @@ export const DropdownMenuCard = React.memo(({
           destGroupId={props.destGroupId}
           position="shuffle_into_top"
           clickCallback={handleDropdownClick}>
-          Shuffle into top X
+          {l10n("Shuffle into top X")}
         </DropdownItem>
         <DropdownItem
           leftIcon={<FontAwesomeIcon icon={faRandom}/>}
@@ -56,7 +58,7 @@ export const DropdownMenuCard = React.memo(({
           destGroupId={props.destGroupId}
           position="shuffle_into_bottom"
           clickCallback={handleDropdownClick}>
-          Shuffle into bottom X
+          {l10n("Shuffle into bottom X")}
         </DropdownItem>
         <DropdownItem
           leftIcon={<FontAwesomeIcon icon={faArrowDown}/>}
@@ -64,7 +66,7 @@ export const DropdownMenuCard = React.memo(({
           destGroupId={props.destGroupId}
           position="bottom"
           clickCallback={handleDropdownClick}>
-          Bottom
+          {l10n("Bottom")}
         </DropdownItem>
       </div>
     )
@@ -81,43 +83,43 @@ export const DropdownMenuCard = React.memo(({
 
         {activeMenu === "main" &&
         <div className="menu">
-          {menuCardIndex>0 ? <DropdownItem action="detach" clickCallback={handleDropdownClick}>Detach</DropdownItem> : null}
-          <DropdownItem action="flip" clickCallback={handleDropdownClick}>Flip</DropdownItem>
-          {(menuCard?.exhausted && dropdownMenuObj?.groupType === "play") ? <DropdownItem action="toggle_exhaust" clickCallback={handleDropdownClick}>Ready</DropdownItem> : null}
-          {(!menuCard?.exhausted && dropdownMenuObj?.groupType === "play") ? <DropdownItem action="toggle_exhaust" clickCallback={handleDropdownClick}>Exhaust</DropdownItem> : null}
-          {(visibleSide === "B" && !menuCard?.peeking[playerN]) ? <DropdownItem action="peek" clickCallback={handleDropdownClick}>Peek</DropdownItem> : null}
-          {menuCard?.peeking[playerN] ? <DropdownItem action="unpeek" clickCallback={handleDropdownClick}>Stop peeking</DropdownItem> : null}
-          {dropdownMenuObj?.groupId === playerN+"Hand" ? <DropdownItem action="swapWithTop" clickCallback={handleDropdownClick}>Swap with top</DropdownItem> : null}
-          {(menuCard?.controller === playerN && dropdownMenuObj?.groupType === "play" && !menuCard?.locked) ? <DropdownItem action="lock" clickCallback={handleDropdownClick}>Prevent refresh</DropdownItem> : null}
-          {(menuCard?.controller === playerN && dropdownMenuObj?.groupType === "play" && menuCard?.locked) ? <DropdownItem action="unlock" clickCallback={handleDropdownClick}>Enable refresh</DropdownItem> : null}
-          <DropdownItem action="delete" clickCallback={handleDropdownClick}>Delete</DropdownItem>
-          {menuCardIndex>0 ? <DropdownItem action="swap_side" clickCallback={handleDropdownClick}>Swap Side</DropdownItem> : null}
+          {menuCardIndex>0 ? <DropdownItem action="detach" clickCallback={handleDropdownClick}>{l10n("Detach")}</DropdownItem> : null}
+          <DropdownItem action="flip" clickCallback={handleDropdownClick}>{l10n("Flip")}</DropdownItem>
+          {(menuCard?.exhausted && dropdownMenuObj?.groupType === "play") ? <DropdownItem action="toggle_exhaust" clickCallback={handleDropdownClick}>{l10n("Ready")}</DropdownItem> : null}
+          {(!menuCard?.exhausted && dropdownMenuObj?.groupType === "play") ? <DropdownItem action="toggle_exhaust" clickCallback={handleDropdownClick}>{l10n("Exhaust")}</DropdownItem> : null}
+          {(visibleSide === "B" && !menuCard?.peeking[playerN]) ? <DropdownItem action="peek" clickCallback={handleDropdownClick}>{l10n("Peek")}</DropdownItem> : null}
+          {menuCard?.peeking[playerN] ? <DropdownItem action="unpeek" clickCallback={handleDropdownClick}>{l10n("Stop peeking")}</DropdownItem> : null}
+          {dropdownMenuObj?.groupId === playerN+"Hand" ? <DropdownItem action="swapWithTop" clickCallback={handleDropdownClick}>{l10n("Swap with top")}</DropdownItem> : null}
+          {(menuCard?.controller === playerN && dropdownMenuObj?.groupType === "play" && !menuCard?.locked) ? <DropdownItem action="lock" clickCallback={handleDropdownClick}>{l10n("Prevent refresh")}</DropdownItem> : null}
+          {(menuCard?.controller === playerN && dropdownMenuObj?.groupType === "play" && menuCard?.locked) ? <DropdownItem action="unlock" clickCallback={handleDropdownClick}>{l10n("Enable refresh")}</DropdownItem> : null}
+          <DropdownItem action="delete" clickCallback={handleDropdownClick}>{l10n("Delete")}</DropdownItem>
+          {menuCardIndex>0 ? <DropdownItem action="swap_side" clickCallback={handleDropdownClick}>{l10n("Swap Side")}</DropdownItem> : null}
           <DropdownItem
             rightIcon={<FontAwesomeIcon icon={faChevronRight}/>}
             goToMenu="moveTo"
             clickCallback={handleDropdownClick}>
-            Move to
+            {l10n("Move to")}
           </DropdownItem>
           {dropdownMenuObj.groupType === "play" && 
             <DropdownItem
               rightIcon={<FontAwesomeIcon icon={faChevronRight}/>}
               goToMenu="perRound"
               clickCallback={handleDropdownClick}>
-              Per round
+              {l10n("Per round")}
             </DropdownItem>}
           {dropdownMenuObj.groupType === "play" && 
             <DropdownItem
               rightIcon={<FontAwesomeIcon icon={faChevronRight}/>}
               goToMenu="toggleTrigger"
               clickCallback={handleDropdownClick}>
-              Toggle triggers
+              {l10n("Toggle triggers")}
             </DropdownItem>}
           {dropdownMenuObj.groupType === "play" && menuCard.cardDbId === "ce1cf93c-68d9-4613-af3a-a08671152358" &&
             <DropdownItem
               rightIcon={<FontAwesomeIcon icon={faChevronRight}/>}
               goToMenu="setRotation"
               clickCallback={handleDropdownClick}>
-              Set rotation
+              {l10n("Set rotation")}
             </DropdownItem>}
         </div>}
         
@@ -128,33 +130,33 @@ export const DropdownMenuCard = React.memo(({
             rightIcon={<FontAwesomeIcon icon={faChevronRight}/>}
             goToMenu="moveToEncounter"
             clickCallback={handleDropdownClick}>
-            Encounter Deck
+            {l10n("Encounter Deck")}
           </DropdownItem>
           <DropdownItem
             rightIcon={<FontAwesomeIcon icon={faChevronRight}/>}
             goToMenu="moveToOwner"
             clickCallback={handleDropdownClick}>
-            Owner's Deck
+            {l10n("Owner's Deck")}
           </DropdownItem>
           <DropdownItem
             rightIcon={<FontAwesomeIcon icon={faChevronRight}/>}
             goToMenu="moveToQuestDeck"
             clickCallback={handleDropdownClick}>
-            Quest Deck
+            {l10n("Quest Deck")}
           </DropdownItem>
           <DropdownItem
             action="moveCard"
             destGroupId="sharedVictory"
             position="top"
             clickCallback={handleDropdownClick}>
-            Victory Display
+            {l10n("Victory Display")}
           </DropdownItem>
           <DropdownItem
             action="moveCard"
             destGroupId="sharedSetAside"
             position="top"
             clickCallback={handleDropdownClick}>
-            Set Aside
+            {l10n("Set Aside")}
           </DropdownItem>
         </div>}
 
@@ -176,7 +178,7 @@ export const DropdownMenuCard = React.memo(({
               goToMenu={tokenType+"PerRound"}
               tokenType={tokenType}
               clickCallback={handleDropdownClick}>
-              {tokenTitleName(tokenType)}
+              {l10n(tokenType)}
             </DropdownItem>
           ))}
         </div>}
@@ -208,7 +210,7 @@ export const DropdownMenuCard = React.memo(({
               rightIcon={<FontAwesomeIcon icon={faChevronRight}/>}
               goToMenu={phase.name+"ToggleTrigger"}
               clickCallback={handleDropdownClick}>
-              {phase.name}
+              {l10n(phase.name)}
             </DropdownItem>
           ))}
         </div>}

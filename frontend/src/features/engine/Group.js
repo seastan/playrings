@@ -7,6 +7,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useBrowseTopN } from "./functions/useBrowseTopN"; 
 import store from "../../store";
 import { setDropdownMenuObj } from "../store/playerUiSlice";
+import { useGameL10n } from "../../hooks/useGameL10n";
 
 export const Group = React.memo(({
   groupId,
@@ -17,6 +18,7 @@ export const Group = React.memo(({
 }) => {
   console.log("Rendering Group ",groupId);
   const dispatch = useDispatch();
+  const l10n = useGameL10n();
   const group = useSelector(state => state?.gameUi?.game?.groupById?.[groupId]);
   const playerN = useSelector(state => state?.playerUi?.playerN);
   const browseTopN = useBrowseTopN;
@@ -59,7 +61,7 @@ export const Group = React.memo(({
               className="absolute mt-1" 
               style={{fontSize: "1.7vh", top: tablename === "Encounter" ? "55%" : "50%", left: "50%", transform: `translate(-50%, -40%) rotate(90deg)`, whiteSpace: "nowrap"}}>
               {playerN && groupId === "sharedMainQuest" && <FontAwesomeIcon onClick={(event) => handleMainQuestClick(event)}  className="hover:text-white mr-2" style={{transform: `rotate(-90deg)`}} icon={faEye}/>}
-                {tablename}
+                {l10n(tablename)}
             </span>
           :
             <div className="relative w-full h-full">
@@ -68,7 +70,7 @@ export const Group = React.memo(({
                 style={{fontSize: "1.7vh", top: tablename === "Encounter" ? "55%" : "50%", left: "50%", transform: `translate(-50%, -40%) rotate(90deg)`, whiteSpace: "nowrap"}}>
                 {(playerN || group.type === "discard") && <FontAwesomeIcon onClick={(event) => handleEyeClick(event)}  className="hover:text-white mr-2" style={{transform: `rotate(-90deg)`}} icon={faEye}/>}
                 {playerN && <FontAwesomeIcon onClick={(event) => handleBarsClick(event)}  className="hover:text-white mr-2" style={{transform: `rotate(-90deg)`}} icon={faBars}/>}
-                  {tablename + (group.type === "deck" ? " ("+numStacks+")" : "")}
+                  {l10n(tablename) + (group.type === "deck" ? " ("+numStacks+")" : "")}
               </span>
             </div>
           }

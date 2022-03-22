@@ -9,6 +9,7 @@ import useProfile from "../../../../hooks/useProfile";
 import { setShowModal, setTooltipIds, setTyping } from "../../../store/playerUiSlice";
 import store from "../../../../store";
 import { loadDeckFromXmlText } from "../functions/helpers";
+import { useGameL10n } from "../../../../hooks/useGameL10n";
 
 function requireAll( requireContext ) {
   return requireContext.keys().map( requireContext );
@@ -110,6 +111,7 @@ export const SpawnQuestModal = React.memo(({
     chatBroadcast,
 }) => {  
     const dispatch = useDispatch();
+    const l10n = useGameL10n();
     const privacyType = useSelector(state => state?.gameUi?.privacyType);
     const options = useSelector(state => state.gameUi?.game?.options);
     const myUser = useProfile();
@@ -173,7 +175,7 @@ export const SpawnQuestModal = React.memo(({
             overflowY: "scroll",
           }
         }}>
-        <h1 className="mb-2">Load a Quest</h1>
+        <h1 className="mb-2">{l10n("Load quest")}</h1>
         <input 
           autoFocus
           style={{width:"50%"}} 

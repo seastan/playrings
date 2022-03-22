@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from 'react-redux';
 import useFocus from "../../../../hooks/useFocus";
+import { useGameL10n } from "../../../../hooks/useGameL10n";
 import { setValues } from "../../../store/gameUiSlice";
 import { setTyping } from "../../../store/playerUiSlice";
 
@@ -13,6 +14,7 @@ export const TopBarShared = React.memo(({
   chatBroadcast,
 }) => {
   const dispatch = useDispatch();
+  const l10n = useGameL10n();
   const gameUiRound = useSelector(state => state?.gameUi?.game?.roundNumber);
   const playerN = useSelector(state => state?.playerUi?.playerN);
   const [roundValue, setRoundValue] = useState(gameUiRound);
@@ -40,7 +42,7 @@ export const TopBarShared = React.memo(({
     <div className="float-left h-full bg-gray-600" style={{fontSize: "1.7vh", width: "16%", borderLeft: "1px solid lightgrey"}}>
       <div className="float-left h-full w-1/3">
         <div className="h-1/2 w-full flex justify-center">
-          Round
+          {l10n("Round")}
         </div>
         <div className="h-1/2 w-full flex justify-center">
           <img className="h-full ml-1" src={process.env.PUBLIC_URL + '/images/tokens/time.png'}></img>
@@ -58,7 +60,7 @@ export const TopBarShared = React.memo(({
       </div>
       <div className="float-left h-full w-1/3">
         <div className="h-1/2 w-full flex justify-center">
-          Staging
+          {l10n("Staging")}
         </div>
         <div className="h-1/2 w-full flex justify-center">
           <div>{threat}</div>
@@ -67,7 +69,7 @@ export const TopBarShared = React.memo(({
       </div>
       <div className="float-left h-full w-1/3">
         <div className="h-1/2 w-full flex justify-center">
-          Progress
+          {l10n("Progress")}
         </div>
         <div className="h-1/2 w-full flex justify-center">
           <div>{progress}</div>

@@ -35,20 +35,20 @@ export const TopBarView = React.memo(({}) => {
     <li>
       <div className="h-full flex items-center justify-center select-none" href="#">{l10n("View")}</div>
         <ul className="second-level-menu">
-          <li key={"Hotkeys"}>
-            <a href="#" onClick={() => dispatch(setShowHotkeys(true))}>Hotkeys <div className={keyClass} style={keyStyleL}>Tab</div></a>
+          <li key={"Hotkeys"} onClick={() => dispatch(setShowHotkeys(true))}>
+            {l10n("Hotkeys")} <div className={keyClass} style={keyStyleL}>Tab</div>
           </li>
-          <li key={"PlayersInRoom"}>
-            <a href="#" onClick={() => dispatch(setShowPlayersInRoom(true))}>Spectators</a>
+          <li key={"PlayersInRoom"} onClick={() => dispatch(setShowPlayersInRoom(true))}>
+            {l10n("Spectators")}
           </li>
           <li key={"QuestCompanion"}>
-            <a href={questCompanionURL} target="_blank">Quest Companion</a>
+            <a href={questCompanionURL} target="_blank">{l10n("Quest Companion")}</a>
           </li>
           <li key={"Shared"}>
-            <a href="#">
-              Shared
+            
+            {l10n("Shared")}
               <span className="float-right mr-1"><FontAwesomeIcon icon={faChevronRight}/></span>
-            </a>
+            
             <ul className="third-level-menu">
               {Object.keys(GROUPSINFO).map((groupId, _index) => {
                 if (groupId.startsWith("shared")) return (
@@ -59,10 +59,8 @@ export const TopBarView = React.memo(({}) => {
           </li>
           {range(numPlayers, 1).map((N, _playerIndex) => (
           <li key={"player"+N}>
-            <a href="#">
-              Player {N}
+            {l10n("Player "+N)}
               <span className="float-right mr-1"><FontAwesomeIcon icon={faChevronRight}/></span>
-            </a>
             <ul className="third-level-menu">
               {Object.keys(GROUPSINFO).map((groupId, _index) => {
                 if (groupId.startsWith("player"+N)) return (

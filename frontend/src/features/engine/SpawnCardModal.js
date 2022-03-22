@@ -5,6 +5,7 @@ import cardDb from "../plugins/lotrlcg/definitions/cardDb";
 import useProfile from "../../hooks/useProfile";
 import { getCardRowCategory } from "../plugins/lotrlcg/functions/helpers";
 import { setShowModal, setTyping } from "../store/playerUiSlice";
+import { useGameL10n } from "../../hooks/useGameL10n";
 
 const RESULTS_LIMIT = 150;
 
@@ -13,6 +14,7 @@ export const SpawnCardModal = React.memo(({
     chatBroadcast,
 }) => {
     const dispatch = useDispatch();
+    const l10n = useGameL10n();
     const myUser = useProfile();
     const playerN = useSelector(state => state?.playerUi?.playerN);
 
@@ -63,7 +65,7 @@ export const SpawnCardModal = React.memo(({
         overlayClassName="fixed inset-0 bg-black-50 z-10000"
         className="insert-auto overflow-auto p-5 bg-gray-700 border max-w-lg mx-auto my-12 rounded-lg outline-none max-h-3/4"
       >
-        <h1 className="mb-2">Spawn a card</h1>
+        <h1 className="mb-2">{l10n("Spawn card")}</h1>
         <input 
           autoFocus
           style={{width:"50%"}} 

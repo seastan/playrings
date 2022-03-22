@@ -8,6 +8,7 @@ import { setValues } from "../store/gameUiSlice";
 import { faBars } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { setBrowseGroupId, setDropdownMenuObj, setTyping } from "../store/playerUiSlice";
+import { useGameL10n } from "../../hooks/useGameL10n";
 
 const isNormalInteger = (str) => {
   var n = Math.floor(Number(str));
@@ -19,6 +20,7 @@ export const Browse = React.memo(({
   chatBroadcast,
 }) => {
   const dispatch = useDispatch();
+  const l10n = useGameL10n();
   const playerN = useSelector(state => state?.playerUi?.playerN);
   const groupId = useSelector(state => state?.playerUi?.browseGroup?.id);
   const browseGroupTopN = useSelector(state => state?.playerUi?.browseGroup?.topN);
@@ -86,6 +88,7 @@ export const Browse = React.memo(({
       group,
       gameBroadcast, 
       chatBroadcast,
+      dispatch,
     )
   }
 
@@ -137,7 +140,7 @@ export const Browse = React.memo(({
           <span 
             className="absolute mt-1" 
             style={{top: "50%", left: "50%", transform: `translate(-50%, 0%) rotate(90deg)`, whiteSpace: "nowrap"}}>
-              {GROUPSINFO[group.id].tablename}
+              {l10n(GROUPSINFO[group.id].tablename)}
           </span>
         </div>
       </div> 
@@ -161,11 +164,11 @@ export const Browse = React.memo(({
               id="numFaceup"
               className="form-control w-full bg-gray-900 text-white border-0 h-full px-1 py-0"
               onChange={handleSelectClick}>
-              <option value="" disabled selected>Turn faceup...</option>
-              <option value="None">None</option>
-              <option value="All">All</option>
-              <option value="5">Top 5</option>
-              <option value="10">Top 10</option>
+              <option value="" disabled selected>{l10n("Turn faceup...")}</option>
+              <option value="None">{l10n("None")}</option>
+              <option value="All">{l10n("All")}</option>
+              <option value="5">{l10n("Top 5")}</option>
+              <option value="10">{l10n("Top 10")}</option>
             </select>
           </div>
           <div className="h-full float-left w-1/2 px-0.5">
@@ -194,7 +197,7 @@ export const Browse = React.memo(({
                   <div className="h-full float-left w-1/2 p-0.5">
                     <div className={"h-full w-full flex items-center justify-center hover:bg-gray-600 rounded" + (selectedCardType === item ? " bg-red-800" : " bg-gray-800")}
                       onClick={() => setSelectedCardType(item)}>    
-                      {row[itemIndex]}
+                      {l10n(row[itemIndex])}
                     </div>
                   </div>
                 )
@@ -223,7 +226,7 @@ export const Browse = React.memo(({
                 <div className="h-full float-left w-full p-0.5">
                   <div className="flex h-full w-full bg-gray-800 hover:bg-gray-600 rounded items-center justify-center"
                     onClick={(event) => handleCloseClick(row[1])}>    
-                    {row[0]}
+                    {l10n(row[0])}
                   </div>
                 </div>
               </div>

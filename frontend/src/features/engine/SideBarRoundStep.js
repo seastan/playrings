@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useDispatch, useSelector } from 'react-redux';
 import { setActiveCardObj } from "../store/playerUiSlice";
 import { getDisplayName } from "../plugins/lotrlcg/functions/helpers";
+import { useGameL10n } from "../../hooks/useGameL10n";
 
 
 export const ReminderButton = React.memo(({
@@ -67,6 +68,7 @@ export const SideBarRoundStep = React.memo(({
   gameBroadcast,
   chatBroadcast,
 }) => {
+  const l10n = useGameL10n();
   const gameRoundStep = useSelector(state => state?.gameUi?.game?.roundStep);
   const playerN = useSelector(state => state?.playerUi?.playerN)
   const triggerCardIds = useSelector(state => state?.gameUi?.game?.triggerMap?.[stepInfo.id]);
@@ -75,10 +77,10 @@ export const SideBarRoundStep = React.memo(({
   const isRoundStep = (gameRoundStep === stepInfo.id);
 
   console.log("Rendering SideBarRoundStep", stepInfo);
-  const handleButtonClick = (id, text) => {
+  const handleButtonClick = (id) => {
     if (!playerN) return;
     gameBroadcast("game_action", {action: "update_values", options:{updates: [["game", "roundStep", id], ["game", "phase", phase]]}});     
-    chatBroadcast("game_update", {message: "set the round step to "+text+"."})
+    chatBroadcast("game_update", {message: "set the round step to "+id+": "+l10n(id)+"."})
   }
 
 
@@ -87,10 +89,10 @@ export const SideBarRoundStep = React.memo(({
       key={stepInfo.id}
       className={`flex flex-1 items-center`} 
       style={{
-        width: hovering ? "575px" : "100%",
+        width: hovering ? "750px" : "100%",
         fontSize: "1.7vh",
       }}
-      onClick={() => handleButtonClick(stepInfo.id, stepInfo.text)}
+      onClick={() => handleButtonClick(stepInfo.id)}
       onMouseEnter={() => setHovering(stepInfo.id)}
       onMouseLeave={() => setHovering(null)}
     >
@@ -106,7 +108,7 @@ export const SideBarRoundStep = React.memo(({
         />
       }
       <div className={`flex flex-1 h-full items-center justify-center ${isRoundStep ? "bg-red-800" : "bg-gray-500"} ${hovering ? "block" : "hidden"}`} >
-        <div dangerouslySetInnerHTML={{ __html: stepInfo.text }} />
+        <div dangerouslySetInnerHTML={{ __html: l10n(stepInfo.id) }} />
       </div>
     </div>
   )

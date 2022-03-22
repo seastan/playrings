@@ -120,10 +120,10 @@ export const HandleKeyDown = ({
         const {state, dispatch, gameBroadcast, chatBroadcast} = actionProps; 
         const cardSizeFactor = state.playerUi.cardSizeFactor;
         if (action === "increase_card_size") {
-            setCardSizeFactor(cardSizeFactor*1.1);
+            dispatch(setCardSizeFactor(cardSizeFactor*1.1));
         }
         else if (action === "decrease_card_size") {
-            setCardSizeFactor(cardSizeFactor/1.1);
+            dispatch(setCardSizeFactor(cardSizeFactor/1.1));
         }
     }
 
