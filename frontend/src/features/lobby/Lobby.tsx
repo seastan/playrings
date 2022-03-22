@@ -1,17 +1,12 @@
 import React, { useState, useCallback, useEffect } from "react";
-import { ChatMessage } from "elixir-backend";
-import { Link } from "react-router-dom";
 import { useHistory } from "react-router-dom";
 import CreateRoomModal from "./CreateRoomModal";
 import LobbyTable from "./LobbyTable";
-import Button from "../../components/basic/Button";
-import Container from "../../components/basic/Container";
-import AdminContact from "../../components/AdminContact";
-import Chat from "../chat/Chat";
 import useDataApi from "../../hooks/useDataApi";
 import useChannel from "../../hooks/useChannel";
 import useProfile from "../../hooks/useProfile";
 import useIsLoggedIn from "../../hooks/useIsLoggedIn";
+import { Announcements } from "./Announcements";
 
 interface Props {}
 
@@ -157,6 +152,7 @@ export const Lobby: React.FC = () => {
               </div>
             </div>
           }
+          <Announcements/>
           {(!isLoading && !isError) &&
             <div className="mb-6 w-full">
               <div className="mb-4 w-full">
