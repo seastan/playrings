@@ -699,26 +699,24 @@ export const cardAction = (action, cardId, options, props) => {
         const matchingTrigger = listOfMatchingCards(gameUi, trigger);
         if (!matchingTrigger || matchingTrigger.length !== 1) return; // Card does not meet trigger condition
         const results = faceAbility.results;
-        console.log("ability 1", results)
         for (var result of results) {
             if (result.type === "card_action") {
                 var criteria = result.criteria;
                 if (criteria === "self") criteria = [["id", card.id]];
                 if (criteria === "parent") criteria = [["stackId", stackId], ["cardIndex", 0]]
-                criteria = formatCriteria(criteria, card.controller);
+                criteria = formatCriteria(criteria, playerN, card.controller);
                 gameBroadcast("game_action", {
                     action: "action_on_matching_cards", 
                     options: {
                         criteria: criteria, 
                         action: result.action, 
-                        options: formatOptions(result.options, card.controller)
+                        options: formatOptions(result.options, playerN, card.controller)
                     }
                 });
             } else if (result.type === "game_action") {
                 gameBroadcast("game_action",{action: result.action, options: formatOptions(result.options, playerN, card.controller)});
             } else if (result.type === "ui_action") {
                 const options = formatOptions(result.options, playerN, card.controller);
-                console.log("ability ",options)
                 dispatch(setPlayerUiValues({updates: options.updates}));
             }
         }
