@@ -7,12 +7,14 @@ import { TopBarViewItem } from "./TopBarViewItem";
 import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { setShowHotkeys, setShowPlayersInRoom } from "../../../store/playerUiSlice";
+import { useGameL10n } from "../../../../hooks/useGameL10n";
 
 
 const keyClass = "m-auto border bg-gray-500 text-center bottom inline-block text-xs ml-2 mb-1";
 const keyStyleL = {width: "35px", height: "20px", borderRadius: "5px"}
 
 export const TopBarView = React.memo(({}) => {
+  const l10n = useGameL10n();
   const numPlayers = useSelector(state => state.gameUi.game.numPlayers);
   const questModeAndId = useSelector(state => state.gameUi.game.questModeAndId);
   const dispatch = useDispatch();
@@ -31,7 +33,7 @@ export const TopBarView = React.memo(({}) => {
   var questCompanionURL = "https://lotr-lcg-quest-companion.gamersdungeon.net/" + extension;
   return(
     <li>
-      <div className="h-full flex items-center justify-center select-none" href="#">View</div>
+      <div className="h-full flex items-center justify-center select-none" href="#">{l10n("View")}</div>
         <ul className="second-level-menu">
           <li key={"Hotkeys"}>
             <a href="#" onClick={() => dispatch(setShowHotkeys(true))}>Hotkeys <div className={keyClass} style={keyStyleL}>Tab</div></a>
