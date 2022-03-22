@@ -1,8 +1,8 @@
-import cardDb from "../definitions/cardDb";
 import { sectionToLoadGroupId, sectionToDiscardGroupId, sectionToDeckGroupId } from "../definitions/constants";
 import axios from "axios";
 import { setLoaded, setTooltipIds } from "../../../store/playerUiSlice";
 import store from "../../../../store";
+import { cardDb } from "./cardDb";
 
 export const getCurrentFace = (card) => {
   if (!card?.currentSide) return null;
