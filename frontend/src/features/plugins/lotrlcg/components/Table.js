@@ -1,23 +1,23 @@
 import React, { useEffect } from "react";
-import { TableLayout } from "../engine/TableLayout";
-import { GiantCard } from "../engine/GiantCard";
+import { TableLayout } from "../../../engine/TableLayout";
+import { GiantCard } from "../../../engine/GiantCard";
 import { TopBar } from "./TopBar";
-import { SpawnCardModal } from "../engine/SpawnCardModal";
+import { SpawnCardModal } from "../../../engine/SpawnCardModal";
 import { SpawnCustomModal } from "./SpawnCustomModal";
 import { SpawnQuestModal } from "./SpawnQuestModal";
 import { SpawnCampaignModal } from "./SpawnCampaignModal";
-import { SideBar } from "../engine/SideBar";
+import { SideBar } from "../../../engine/SideBar";
 import { Hotkeys } from "./Hotkeys";
-import { PlayersInRoom } from "../engine/PlayersInRoom";
-import { DropdownMenu } from "../engine/DropdownMenu";
+import { PlayersInRoom } from "../../../engine/PlayersInRoom";
+import { DropdownMenu } from "../../../engine/DropdownMenu";
 import { TouchBarBottom } from "./TouchBarBottom";
 
-import "../../css/custom-dropdown.css";
-import { TooltipModal } from "../engine/TooltipModal";
-import { setActiveCardObj, setDropdownMenuObj, setMousePosition, setTouchAction } from "../store/playerUiSlice";
+import "../../../../css/custom-dropdown.css";
+import { TooltipModal } from "../../../engine/TooltipModal";
+import { setActiveCardObj, setDropdownMenuObj, setMousePosition, setTouchAction } from "../../../store/playerUiSlice";
 import { useDispatch, useSelector } from "react-redux";
-import useProfile from "../../hooks/useProfile";
-import { onLoad } from "./Helpers";
+import useProfile from "../../../../hooks/useProfile";
+import { onLoad } from "../functions/helpers";
 
 export const Table = React.memo(({
   gameBroadcast,

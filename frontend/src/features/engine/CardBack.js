@@ -2,7 +2,7 @@
 
 import React from "react";
 import { useSelector } from 'react-redux';
-import { getCurrentFace, getVisibleFaceSrc } from "../plugin/Helpers";
+import { getCurrentFace, getVisibleFaceSrc } from "../plugins/lotrlcg/functions/helpers";
 import useProfile from "../../hooks/useProfile";
 import { useCardSize } from "../../hooks/useCardSize";
 

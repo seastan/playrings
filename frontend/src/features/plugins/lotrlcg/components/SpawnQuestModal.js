@@ -3,17 +3,18 @@ import { useDispatch, useSelector } from 'react-redux';
 import ReactModal from "react-modal";
 import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { loadDeckFromXmlText } from "./Helpers";
-import { CYCLEORDER, CYCLEINFO } from "./Constants";
-import { calcHeightCommon, DropdownItem, GoBack } from "../engine/DropdownMenuHelpers";
-import useProfile from "../../hooks/useProfile";
-import { setShowModal, setTooltipIds, setTyping } from "../store/playerUiSlice";
-import store from "../../store";
+import { CYCLEORDER, CYCLEINFO } from "../definitions/constants";
+import { calcHeightCommon, DropdownItem, GoBack } from "../../../engine/DropdownMenuHelpers";
+import useProfile from "../../../../hooks/useProfile";
+import { setShowModal, setTooltipIds, setTyping } from "../../../store/playerUiSlice";
+import store from "../../../../store";
+import { loadDeckFromXmlText } from "../functions/helpers";
+import { useGameL10n } from "../../../../hooks/useGameL10n";
 
 function requireAll( requireContext ) {
   return requireContext.keys().map( requireContext );
 }
-const questsOCTGN = requireAll( require.context("../../../../../Lord-of-the-Rings/o8g/Decks/Quests/", true, /.o8d$/) );
+const questsOCTGN = requireAll( require.context("../../../../../../../Lord-of-the-Rings/o8g/Decks/Quests/", true, /.o8d$/) );
 
 const isStringInQuestPath = (str, questPath) => {
   const cleanQuest = getQuestNameFromPath(questPath)
@@ -110,6 +111,7 @@ export const SpawnQuestModal = React.memo(({
     chatBroadcast,
 }) => {  
     const dispatch = useDispatch();
+    const l10n = useGameL10n();
     const privacyType = useSelector(state => state?.gameUi?.privacyType);
     const options = useSelector(state => state.gameUi?.game?.options);
     const myUser = useProfile();
@@ -173,7 +175,7 @@ export const SpawnQuestModal = React.memo(({
             overflowY: "scroll",
           }
         }}>
-        <h1 className="mb-2">Load a Quest</h1>
+        <h1 className="mb-2">{l10n("Load quest")}</h1>
         <input 
           autoFocus
           style={{width:"50%"}} 

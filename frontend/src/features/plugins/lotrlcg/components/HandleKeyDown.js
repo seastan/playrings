@@ -1,14 +1,14 @@
 import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from 'react-redux';
-import { setValues } from "../store/gameUiSlice";
 import { 
     getDisplayName,
     processTokenType,
     tokenPrintName,
-} from "./Helpers";
-import { gameAction, cardAction } from "./Actions";
-import store from "../../store";
-import { setCardSizeFactor, setKeypressAlt, setKeypressControl, setKeypressSpace, setKeypressTab } from "../store/playerUiSlice";
+} from "../functions/helpers";
+import { gameAction, cardAction } from "../functions/actions";
+import store from "../../../../store";
+import { setCardSizeFactor, setKeypressAlt, setKeypressControl, setKeypressSpace, setKeypressTab } from "../../../store/playerUiSlice";
+import { setValues } from "../../../store/gameUiSlice";
 
 // const keyTokenMap: { [id: string] : Array<string | number>; } = {
 
@@ -120,10 +120,10 @@ export const HandleKeyDown = ({
         const {state, dispatch, gameBroadcast, chatBroadcast} = actionProps; 
         const cardSizeFactor = state.playerUi.cardSizeFactor;
         if (action === "increase_card_size") {
-            setCardSizeFactor(cardSizeFactor*1.1);
+            dispatch(setCardSizeFactor(cardSizeFactor*1.1));
         }
         else if (action === "decrease_card_size") {
-            setCardSizeFactor(cardSizeFactor/1.1);
+            dispatch(setCardSizeFactor(cardSizeFactor/1.1));
         }
     }
 

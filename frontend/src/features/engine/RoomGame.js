@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from 'react-redux';
-import { HandleKeyDown } from "../plugin/HandleKeyDown";
+import { HandleKeyDown } from "../plugins/lotrlcg/components/HandleKeyDown";
 import { setKeypress } from "../store/playerUiSlice";
 import { DragContainer } from "./DragContainer";
 import { HandleTouchActions } from "./functions/HandleTouchActions";

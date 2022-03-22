@@ -1,12 +1,14 @@
 import React from "react";
 import { useDispatch, useSelector } from 'react-redux';
-import { GROUPSINFO } from "../plugin/Constants";
-import { setBrowseGroupId, setBrowseGroupTopN } from "../store/playerUiSlice";
+import { GROUPSINFO } from "../definitions/constants";
+import { setBrowseGroupId, setBrowseGroupTopN } from "../../../store/playerUiSlice";
+import { useGameL10n } from "../../../../hooks/useGameL10n";
 
 export const TopBarViewItem = React.memo(({
   groupId,
 }) => {
   const dispatch = useDispatch();
+  const l10n = useGameL10n();
   const group = useSelector(state => state?.gameUi?.game?.groupById[groupId]);
   const playerN = useSelector(state => state?.playerUi?.playerN);
 
@@ -30,7 +32,7 @@ export const TopBarViewItem = React.memo(({
   return(
     <li className="relative cursor-pointer" onClick={() => handleMenuClick({action:"look_at",groupId:groupId})} key={groupId}>
     <a className="absolute" href="#">
-    {GROUPSINFO[groupId].name}
+    {l10n(GROUPSINFO[groupId].name)}
     </a>
     <div className="absolute right-2 top-1 select-none">{stackIds.length}</div>
     </li>

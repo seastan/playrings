@@ -1,6 +1,6 @@
 import React from "react";
 import { useSelector } from 'react-redux';
-import { getCurrentFace } from "./Helpers";
+import { getCurrentFace } from "../functions/helpers";
 import { TopBarUser } from "./TopBarUser";
 import { TopBarShared } from "./TopBarShared";
 

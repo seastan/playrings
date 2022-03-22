@@ -2,7 +2,7 @@ import React, {useMemo} from "react";
 import ReactModal from "react-modal";
 import Button from "../../components/basic/Button";
 import useProfile from "../../hooks/useProfile";
-import { TOOLTIPINFO } from "../plugin/Constants";
+import { TOOLTIPINFO } from "../plugins/lotrlcg/definitions/constants";
 import axios from "axios";
 import useAuth from "../../hooks/useAuth";
 import { useDispatch, useSelector } from "react-redux";

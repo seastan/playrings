@@ -1,10 +1,11 @@
 import React, {useState} from "react";
 import ReactModal from "react-modal";
 import { useDispatch, useSelector } from "react-redux";
-import { cardDB } from "../../cardDB/cardDB";
+import cardDb from "../plugins/lotrlcg/definitions/cardDb";
 import useProfile from "../../hooks/useProfile";
-import { getCardRowCategory } from "../plugin/Helpers";
+import { getCardRowCategory } from "../plugins/lotrlcg/functions/helpers";
 import { setShowModal, setTyping } from "../store/playerUiSlice";
+import { useGameL10n } from "../../hooks/useGameL10n";
 
 const RESULTS_LIMIT = 150;
 
@@ -13,13 +14,14 @@ export const SpawnCardModal = React.memo(({
     chatBroadcast,
 }) => {
     const dispatch = useDispatch();
+    const l10n = useGameL10n();
     const myUser = useProfile();
     const playerN = useSelector(state => state?.playerUi?.playerN);
 
-    const [spawnFilteredIDs, setSpawnFilteredIDs] = useState(Object.keys(cardDB));
+    const [spawnFilteredIDs, setSpawnFilteredIDs] = useState(Object.keys(cardDb));
 
     const handleSpawnClick = (cardID) => {
-        const cardRow = cardDB[cardID];
+        const cardRow = cardDb[cardID];
         if (!cardRow || !playerN) return;
         const cardRowCategory = getCardRowCategory(cardRow);
         const loadGroupId = cardRowCategory === "Player" ? playerN + "Play1" : "sharedStaging";
@@ -37,8 +39,8 @@ export const SpawnCardModal = React.memo(({
         //setSpawnCardName(event.target.value);
         const filteredName = event.target.value;
         const filteredIDs = []; //Object.keys(cardDB);
-        Object.keys(cardDB).map((cardID, index) => {
-          const cardRow = cardDB[cardID]
+        Object.keys(cardDb).map((cardID, index) => {
+          const cardRow = cardDb[cardID]
           const sideA = cardRow["sides"]["A"]
           const cardName = sideA["name"];
           const cardPack = cardRow["cardpackname"]
@@ -63,7 +65,7 @@ export const SpawnCardModal = React.memo(({
         overlayClassName="fixed inset-0 bg-black-50 z-10000"
         className="insert-auto overflow-auto p-5 bg-gray-700 border max-w-lg mx-auto my-12 rounded-lg outline-none max-h-3/4"
       >
-        <h1 className="mb-2">Spawn a card</h1>
+        <h1 className="mb-2">{l10n("Spawn card")}</h1>
         <input 
           autoFocus
           style={{width:"50%"}} 
@@ -86,8 +88,8 @@ export const SpawnCardModal = React.memo(({
                 </tr>
               </thead>
               {spawnFilteredIDs.map((cardId, index) => {
-                const card = cardDB[cardId];
-                const sideA = cardDB[cardId]["sides"]["A"];
+                const card = cardDb[cardId];
+                const sideA = cardDb[cardId]["sides"]["A"];
                 const printName = sideA.printname;
                 return(
                   <tr className="bg-gray-600 text-white cursor-pointer hover:bg-gray-500 hover:text-black" onClick={() => handleSpawnClick(cardId)}>

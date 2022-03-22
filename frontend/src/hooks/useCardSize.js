@@ -1,7 +1,7 @@
 import React from "react";
 import { useSelector } from "react-redux";
 import useWindowDimensions from "./useWindowDimensions";
-import { CARDSCALE, LAYOUTINFO } from "../features/plugin/Constants";
+import { CARDSCALE, LAYOUTINFO } from "../features/plugins/lotrlcg/definitions/constants";
 
 export const useCardSize = () => {
   const numPlayers = useSelector(state => state?.gameUi?.game?.numPlayers);

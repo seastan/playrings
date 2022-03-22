@@ -1,7 +1,6 @@
 import React from "react";
 import { useSelector } from 'react-redux';
-import { Token } from "../plugin/Token";
-import { getCommittedStat, getCurrentFace, usesThreatToken } from "../plugin/Helpers";
+import { getCommittedStat, getCurrentFace } from "../plugins/lotrlcg/functions/helpers";
 
 export const CommittedToken = React.memo(({ 
     cardId,

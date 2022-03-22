@@ -1,5 +1,5 @@
 import React from "react";
-import { getVisibleFace, getVisibleFaceSrc } from "../plugin/Helpers";
+import { getVisibleFace, getVisibleFaceSrc } from "../plugins/lotrlcg/functions/helpers";
 import useProfile from "../../hooks/useProfile";
 import { useSelector } from "react-redux";
 

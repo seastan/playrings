@@ -174,8 +174,8 @@ padding: 0;
 {
     position: absolute;
     top: 0;
-    right: -300px;
-    width: 300px;
+    right: -400px;
+    width: 400px;
     list-style: none;
     padding: 0;
     margin: 0;
@@ -184,8 +184,10 @@ padding: 0;
 
 .third-level-menu > li
 {
-    height: 30px;
+    height: 40px;
     background: rgb(75, 85, 99);
+    padding-left: 10px;
+    padding-top: 5px;
 }
 .third-level-menu > li:hover { background: rgb(107, 114, 128); }
 
@@ -194,7 +196,7 @@ padding: 0;
     position: absolute;
     top: 100%;
     left: 0;
-    width: 100%;
+    width: 125%;
     list-style: none;
     padding: 0;
     margin: 0;
@@ -204,9 +206,11 @@ padding: 0;
 .second-level-menu > li
 {
     position: relative;
-    height: 30px;
+    height: 40px;
     background: rgb(75, 85, 99);
     z-index: 10000;
+    padding-left: 10px;
+    padding-top: 5px;
 }
 .second-level-menu > li:hover { background: rgb(107, 114, 128); }
 
@@ -243,8 +247,6 @@ padding: 0;
 {
     color: white;
     text-decoration: none;
-    padding: 0 0 0 10px;
-
     /* Make the link cover the entire list item-container */
     display: block;
     line-height: 30px;

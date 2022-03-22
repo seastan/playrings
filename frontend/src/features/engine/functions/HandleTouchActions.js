@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch } from 'react-redux';
 import { useSelector } from 'react-redux';
-import { gameAction, cardAction } from "../../plugin/Actions";
-import { getDefault, getDisplayName, processTokenType, tokenPrintName } from "../../plugin/Helpers";
+import { gameAction, cardAction } from "../../plugins/lotrlcg/functions/actions";
+import { getDefault, getDisplayName, processTokenType, tokenPrintName } from "../../plugins/lotrlcg/functions/helpers";
 import { setActiveCardObj, setDropdownMenuObj, setTouchAction } from "../../store/playerUiSlice";
 import store from "../../../store";
 

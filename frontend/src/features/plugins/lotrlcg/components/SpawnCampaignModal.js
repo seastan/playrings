@@ -1,14 +1,15 @@
 import React, {useState} from "react";
 import ReactModal from "react-modal";
-import { buildLoadList, processLoadList, processPostLoad } from "./Helpers";
-import { DropdownItem } from "../engine/DropdownMenuHelpers";
-import { setShowModal } from "../store/playerUiSlice";
+import { buildLoadList, processLoadList, processPostLoad } from "../functions/helpers";
+import { DropdownItem } from "../../../engine/DropdownMenuHelpers";
+import { setShowModal } from "../../../store/playerUiSlice";
 import { useDispatch, useSelector } from "react-redux";
+import { useGameL10n } from "../../../../hooks/useGameL10n";
 
 function requireAll( requireContext ) {
   return requireContext.keys().map( requireContext );
 }
-const packs = requireAll( require.context("../../../../frontend/public/load/campaign/", true, /.txt$/) );
+const packs = requireAll( require.context("../../../../../../frontend/public/load/campaign/", true, /.txt$/) );
 
 const getNameFromPackPath = (packPath) => {
   var name = packPath.split("/").pop();
@@ -22,6 +23,7 @@ export const SpawnCampaignModal = React.memo(({
     chatBroadcast,
 }) => { 
     const dispatch = useDispatch();
+    const l10n = useGameL10n();
     const playerN = useSelector(state => state?.playerUi?.playerN);
 
     const [menuHeight, setMenuHeight] = useState(null);
@@ -53,7 +55,7 @@ export const SpawnCampaignModal = React.memo(({
           }
         }}
       >
-        <h1 className="mb-2">Load Campaign Cards</h1>
+        <h1 className="mb-2">{l10n("Load campaign cards")}</h1>
         <div 
           className="modalmenu bg-gray-800" 
           style={{ height: menuHeight}}

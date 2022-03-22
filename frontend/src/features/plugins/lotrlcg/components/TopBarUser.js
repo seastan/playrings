@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from 'react-redux';
-import UserName from "../user/UserName";
-import useProfile from "../../hooks/useProfile";
-import useFocus from "../../hooks/useFocus";
-import useIsLoggedIn from "../../hooks/useIsLoggedIn";
+import UserName from "../../../user/UserName";
+import useProfile from "../../../../hooks/useProfile";
+import useFocus from "../../../../hooks/useFocus";
+import useIsLoggedIn from "../../../../hooks/useIsLoggedIn";
 import { Link } from "react-router-dom";
-import { setValues } from "../store/gameUiSlice";
-import { setDropdownMenuObj, setObservingPlayerN, setTyping } from "../store/playerUiSlice";
+import { setDropdownMenuObj, setObservingPlayerN, setTyping } from "../../../store/playerUiSlice";
+import { setValues } from "../../../store/gameUiSlice";
+import { useGameL10n } from "../../../../hooks/useGameL10n";
 
 var delayBroadcast;
 
@@ -17,6 +18,7 @@ export const TopBarUser = React.memo(({
 }) => {
   console.log("Rendering TopBarUser ", playerI);
   const dispatch = useDispatch();
+  const l10n = useGameL10n();
   const playerN = useSelector(state => state?.playerUi?.playerN);
   const observingPlayerN = useSelector(state => state?.playerUi?.observingPlayerN);
   const playerIds = useSelector(state => state?.gameUi?.playerIds);
@@ -123,12 +125,12 @@ export const TopBarUser = React.memo(({
       return(<Link to="/login" className="h-full w-1/2 float-left flex justify-center hover:bg-gray-500 text-white">Log In</Link>)
     } else if (sittingUserID) {
       if (sittingUserID === myUserID) {
-        return(<div onClick={() => handleSitClick("get_up")} className={"h-full w-1/2 float-left flex justify-center bg-gray-500"}>Get up</div>)
+        return(<div onClick={() => handleSitClick("get_up")} className={"h-full w-1/2 float-left flex justify-center bg-gray-500"}>{l10n("Get up")}</div>)
       } else {
-        return(<div className={"h-full w-1/2 float-left flex justify-center text-black"}>Occ</div>)
+        return(<div className={"h-full w-1/2 float-left flex justify-center text-black"}>{l10n("Taken")}</div>)
       }
     } else {
-      return(<div onClick={() => handleSitClick("sit")} className={"h-full w-1/2 float-left flex justify-center hover:bg-gray-500"}>Sit</div>)
+      return(<div onClick={() => handleSitClick("sit")} className={"h-full w-1/2 float-left flex justify-center hover:bg-gray-500"}>{l10n("Sit")}</div>)
     }
   }
   
@@ -157,7 +159,7 @@ export const TopBarUser = React.memo(({
             className={"h-full w-1/2 float-left flex justify-center "+
               ((observingPlayerN===playerI) ? "bg-gray-500" : "hover:bg-gray-500")}
             onClick={() => handleObserveClick()}
-          >Look</div>
+          >{l10n("Look")}</div>
         </div>
 
       </div>

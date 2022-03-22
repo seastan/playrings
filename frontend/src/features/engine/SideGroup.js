@@ -1,11 +1,12 @@
 import React from "react";
 import { useDispatch, useSelector } from 'react-redux';
 import { Stacks } from "./Stacks";
-import { GROUPSINFO, LAYOUTINFO } from "../plugin/Constants";
+import { GROUPSINFO, LAYOUTINFO } from "../plugins/lotrlcg/definitions/constants";
 import { faBars, faEye } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useBrowseTopN } from "./functions/useBrowseTopN"; 
 import { setDropdownMenuObj } from "../store/playerUiSlice";
+import { useGameL10n } from "../../hooks/useGameL10n";
 
 export const SideGroup = React.memo(({
   gameBroadcast,
@@ -14,6 +15,7 @@ export const SideGroup = React.memo(({
 }) => {
   console.log("Rendering TableLayout");
   const dispatch = useDispatch();
+  const l10n = useGameL10n();
   const numPlayers = useSelector(state => state?.gameUi?.game?.numPlayers);
   const sideGroupId = useSelector(state => state?.playerUi?.sideGroupId);
   const browseGroupId = useSelector(state => state?.playerUi?.browseGroup?.id);
@@ -52,7 +54,7 @@ export const SideGroup = React.memo(({
         <div className="relative float-left" style={{height: `${100-2*(100/numRows)}%`, width:`${100-middleRowsWidth}%`}}>
           <div className="absolute text-center w-full select-none text-gray-500">
             <div className="mt-1">
-              {GROUPSINFO[sideGroupId].tablename}
+              {l10n(GROUPSINFO[sideGroupId].tablename)}
             </div>
             {(playerN || group.type === "discard") && <FontAwesomeIcon onClick={(event) => handleEyeClick(event)}  className="hover:text-white mr-2" icon={faEye}/>}
             {playerN && <FontAwesomeIcon onClick={(event) => handleBarsClick(event)}  className="hover:text-white mr-2" icon={faBars}/>}

@@ -1,4 +1,4 @@
-const cardDB_OCTGN = require('./cardDB.json');
+const cardDB_OCTGN = require('../definitions/cardDb.json');
 
 function requireAll( requireContext ) {
   return requireContext.keys().map( requireContext );
@@ -6,7 +6,7 @@ function requireAll( requireContext ) {
 const cardDBs_ALeP = requireAll( require.context("./ALeP", false, /.json$/) );
 const cardDB_ALeP = Object.assign({}, ...cardDBs_ALeP);
 
-export const cardDB = {
+export const cardDb = {
   ...cardDB_OCTGN,
   ...cardDB_ALeP
 };

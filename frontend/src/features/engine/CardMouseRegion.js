@@ -1,6 +1,6 @@
 
 import React from "react";
-import { getDisplayName } from "../plugin/Helpers";
+import { getDisplayName } from "../plugins/lotrlcg/functions/helpers";
 import useLongPress from "../../hooks/useLongPress";
 import { useDispatch, useSelector } from "react-redux";
 import { setActiveCardObj, setDropdownMenuObj } from "../store/playerUiSlice";
