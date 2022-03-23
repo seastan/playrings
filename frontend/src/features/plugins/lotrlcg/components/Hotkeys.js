@@ -45,16 +45,16 @@ export const Hotkeys = React.memo(({}) => {
     return(
       <table className="table-fixed rounded-lg w-full">
         <tr className="bg-gray-800">
-          <th className={col1Class}>Key</th>
-          <th className={col2Class}>Description</th>
+          <th className={col1Class} >{l10n("Key")}</th>
+          <th className={col2Class} >{l10n("Description")}</th>
         </tr>
         <tr className={"bg-gray-500"}>
           <td className="p-1 text-center"><div className={keyClass} style={keyStyleL}>Space</div></td>
-          <td className="p-1 text-center">Display all tokens</td>
+          <td className="p-1 text-center">{l10n("Display all tokens")}</td>
         </tr>
         <tr className={"bg-gray-600"}>
           <td className="p-1 text-center"><div className={keyClass} style={keyStyle}>0</div></td>
-          <td className="text-center">Remove all tokens</td>
+          <td className="text-center">{l10n("Remove all tokens")}</td>
         </tr>
         <tr className={"bg-gray-500"}>
           <td className="p-1 text-center"><div className={keyClass} style={keyStyle}>1</div></td>
@@ -74,7 +74,7 @@ export const Hotkeys = React.memo(({}) => {
         </tr>
         <tr className={"bg-gray-500"}>
           <td className="p-1 text-center"><div className={keyClass} style={keyStyle}>5</div></td>
-          <td className="text-center">{iconImg("willpower")}/{iconImg("threat")}</td>
+          <td className="text-center">{iconImg("willpower"}/{iconImg("threat")}</td>
         </tr>
         <tr className={"bg-gray-600"}>
           <td className="p-1 text-center"><div className={keyClass} style={keyStyle}>6</div></td>
@@ -96,68 +96,68 @@ export const Hotkeys = React.memo(({}) => {
     return(
       <table className="table-fixed rounded-lg w-full">
         <tr className="bg-gray-800">
-            <th className={col1Class}>Key</th>
-            <th className={col2Class}>Description</th>
+            <th className={col1Class} >{l10n("Key")}</th>
+            <th className={col2Class} >{l10n("Description")}</th>
         </tr>
         <tr className={"bg-gray-500"}>
           <td className="p-1 text-center"><div className={keyClass} style={keyStyle}>A</div></td>
-          <td className="text-center">Exhaust / ready. If location, make active.</td>
+          <td className="text-center">{l10n("Exhaust / ready. If location, make active.")}</td>
         </tr>
         <tr className={"bg-gray-600"}>
           <td className="p-1 text-center"><div className={keyClass} style={keyStyle}>C</div></td>
-          <td className="text-center">Detach</td>
+          <td className="text-center">{l10n("Detach")}</td>
         </tr>
         <tr className={"bg-gray-500"}>
           <td className="p-1 text-center"><div className={keyClass} style={keyStyle}>F</div></td>
-          <td className="text-center">Flip</td>
+          <td className="text-center">{l10n("Flip")}</td>
         </tr>
         <tr className={"bg-gray-600"}>
           <td className="p-1 text-center"><div className={keyClass} style={keyStyle}>H</div></td>
-          <td className="text-center">Shuffle into owner's deck</td>
+          <td className="text-center">{l10n("Shuffle into owner's deck")}</td>
         </tr>
         <tr className={"bg-gray-500"}>
           <td className="p-1 text-center"><div className={keyClass} style={keyStyle}>Q</div></td>
-          <td className="text-center">Commit / uncommit from quest</td>
+          <td className="text-center">{l10n("Commit / uncommit from quest")}</td>
         </tr>
         <tr className={"bg-gray-600"}>
           <td className="p-1 text-center">
             <div className={keyClass} style={keyStyleL}>Shift</div>
             <div className={keyClass} style={keyStyle}>Q</div></td>
-          <td className="text-center">Commit / uncommit from quest without exhausting / readying</td>
+          <td className="text-center">{l10n("Commit / uncommit from quest without exhausting / readying")}</td>
         </tr>
         <tr className={"bg-gray-500"}>
           <td className="p-1 text-center"><div className={keyClass} style={keyStyle}>S</div></td>
-          <td className="text-center">Deal shadow card</td>
+          <td className="text-center">{l10n("Deal shadow card")}</td>
         </tr>
         <tr className={"bg-gray-600"}>
           <td className="p-1 text-center"><div className={keyClass} style={keyStyle}>T</div></td>
-          <td className="text-center">Target card</td>
+          <td className="text-center">{l10n("Target card")}</td>
         </tr>
         <tr className={"bg-gray-500"}>
           <td className="p-1 text-center"><div className={keyClass} style={keyStyle}>V</div></td>
-          <td className="text-center">Add to victory display</td>
+          <td className="text-center">{l10n("Add to victory display")}</td>
         </tr>
         <tr className={"bg-gray-600"}>
           <td className="p-1 text-center"><div className={keyClass} style={keyStyle}>W</div></td>
-          <td className="text-center">Start/stop drawing arrow</td>
+          <td className="text-center">{l10n("Start/stop drawing arrow")}</td>
         </tr>
         <tr className={"bg-gray-500"}>
           <td className="p-1 text-center"><div className={keyClass} style={keyStyle}>X</div></td>
-          <td className="text-center">Discard</td>
+          <td className="text-center">{l10n("Discard")}</td>
         </tr>
         <tr className={"bg-gray-600"}>
           <td className="p-1 text-center"><div className={keyClass} style={keyStyleL}>Shift</div>
           <div className={keyClass} style={keyStyle}>C</div></td>
-          <td className="text-center">Discard all other cards in this card's stack</td>
+          <td className="text-center">{l10n("Discard all other cards in this card's stack")}</td>
         </tr>
         <tr className={"bg-gray-500"}>
           <td className="p-1 text-center"><div className={keyClass} style={keyStyle}>B</div></td>
-          <td className="text-center">Send attachment to back of stack</td>
+          <td className="text-center">{l10n("Send attachment to back of stack")}</td>
         </tr>
         <tr className={"bg-gray-600"}>
           <td className="p-1 text-center"><div className={keyClass} style={keyStyleL}>Shift</div>
           <div className={keyClass} style={keyStyle}>A</div></td>
-          <td className="text-center">Trigger ability (only available for select cards).</td>
+          <td className="text-center">{l10n("Trigger ability (only available for select cards).")}</td>
         </tr>
       </table>
     )
@@ -167,79 +167,79 @@ export const Hotkeys = React.memo(({}) => {
     return(
       <table className="table-fixed rounded-lg w-full">
         <tr className="bg-gray-800">
-          <th className={col1Class}>Key</th>
-          <th className={col2Class}>Description</th>
+          <th className={col1Class} >{l10n("Key")}</th>
+          <th className={col2Class} >{l10n("Description")}</th>
         </tr>
         <tr className={"bg-gray-500"}>
           <td className="p-1 text-center"><div className={keyClass} style={keyStyle}>D</div></td>
-          <td className="text-center">Draw card</td>
+          <td className="text-center">{l10n("Draw card")}</td>
         </tr>
         <tr className={"bg-gray-600"}>
           <td className="p-1 text-center"><div className={keyClass} style={keyStyle}>E</div></td>
-          <td className="text-center">Reveal encounter card</td>
+          <td className="text-center">{l10n("Reveal encounter card")}</td>
         </tr>
         <tr className={"bg-gray-500"}>
           <td className="p-1 text-center"><div className={keyClass} style={keyStyleL}>Shift</div>
           <div className={keyClass+" inline-block"} style={keyStyle}>E</div></td>
-          <td className="text-center">Deal facedown encounter card</td>
+          <td className="text-center">{l10n("Deal facedown encounter card")}</td>
         </tr>
         <tr className={"bg-gray-600"}>
           <td className="p-1 text-center"><div className={keyClass} style={keyStyle}>K</div></td>
-          <td className="text-center">Reveal encounter card from second encounter deck</td>
+          <td className="text-center">{l10n("Reveal encounter card from second encounter deck")}</td>
         </tr>
         <tr className={"bg-gray-500"}>
           <td className="p-1 text-center"><div className={keyClass} style={keyStyleL}>Shift</div>
           <div className={keyClass+" inline-block"} style={keyStyle}>K</div></td>
-          <td className="text-center">Deal facedown encounter card from second encounter deck</td>
+          <td className="text-center">{l10n("Deal facedown encounter card from second encounter deck")}</td>
         </tr>
         <tr className={"bg-gray-600"}>
           <td className="p-1 text-center"><div className={keyClass} style={keyStyleL}>Shift</div>
           <div className={keyClass+" inline-block"} style={keyStyle}>M</div></td>
-          <td className="text-center">Mulligan</td>
+          <td className="text-center">{l10n("Mulligan")}</td>
         </tr>
         <tr className={"bg-gray-500"}>
           <td className="p-1 text-center"><div className={keyClass} style={keyStyleL}>Shift</div>
           <div className={keyClass+" inline-block"} style={keyStyle}>N</div></td>
-          <td className="text-center">Draw card and gain resources. If host, increment round.</td>
+          <td className="text-center">{l10n("Draw card and gain resources. If host, increment round.")}</td>
         </tr>
         <tr className={"bg-gray-600"}>
           <td className="p-1 text-center"><div className={keyClass} style={keyStyleL}>Shift</div>
           <div className={keyClass+" inline-block"} style={keyStyle}>O</div></td>
-          <td className="text-center">Calculate score</td>
+          <td className="text-center">{l10n("Calculate score")}</td>
         </tr>
         <tr className={"bg-gray-500"}>
           <td className="p-1 text-center"><div className={keyClass} style={keyStyleL}>Shift</div>
           <div className={keyClass+" inline-block"} style={keyStyle}>R</div></td>
-          <td className="text-center">Refresh and raise threat. If host, move 1st player token.</td>
+          <td className="text-center">{l10n("Refresh and raise threat. If host, move 1st player token.")}</td>
         </tr>
         <tr className={"bg-gray-600"}>
           <td className="p-1 text-center"><div className={keyClass} style={keyStyleL}>Shift</div>
           <div className={keyClass+" inline-block"} style={keyStyle}>S</div></td>
-          <td className="text-center">Deal all shadow cards</td>
+          <td className="text-center">{l10n("Deal all shadow cards")}</td>
         </tr>
         <tr className={"bg-gray-500"}>
           <td className="p-1 text-center"><div className={keyClass} style={keyStyleL}>Shift</div>
           <div className={keyClass+" inline-block"} style={keyStyle}>X</div></td>
-          <td className="text-center">Discard all shadow cards</td>
+          <td className="text-center">{l10n("Discard all shadow cards")}</td>
         </tr>
         <tr className={"bg-gray-600"}>
           <td className="p-1 text-center">
           <div className={keyClass+" inline-block"} style={keyStyle}>U</div></td>
-          <td className="text-center">Raise threat by 1</td>
+          <td className="text-center">{l10n("Raise threat by 1")}</td>
         </tr>
         <tr className={"bg-gray-500"}>
           <td className="p-1 text-center">
           <div className={keyClass+" inline-block"} style={keyStyle}>J</div></td>
-          <td className="text-center">Reduce threat by 1</td>
+          <td className="text-center">{l10n("Reduce threat by 1")}</td>
         </tr>
         <tr className={"bg-gray-600"}>
           <td className="p-1 text-center"><div className={keyClass} style={keyStyleL}>Shift</div>
           <div className={keyClass+" inline-block"} style={keyStyle}>P</div></td>
-          <td className="text-center">Save Game</td>
+          <td className="text-center">{l10n("Save Game")}</td>
         </tr>
         <tr className={"bg-gray-500"}>
           <td className="p-1 text-center"><div className={keyClass} style={keyStyleL}>Esc</div></td>
-          <td className="text-center">Clear targets/arrows</td>
+          <td className="text-center">{l10n("Clear targets/arrows")}</td>
         </tr>
         <tr className={"bg-gray-600"}>
           <td className="p-1 text-center"><div className={keyClass+" inline-block"} style={keyStyle}>←</div>
@@ -247,50 +247,50 @@ export const Hotkeys = React.memo(({}) => {
           <div className={keyClass} style={keyStyleL}>Ctrl</div>
           <div className={keyClass+" inline-block"} style={keyStyle}>Z</div>
           </td>
-          <td className="text-center">Undo one action</td>
+          <td className="text-center">{l10n("Undo one action")}</td>
         </tr>
         <tr className={"bg-gray-500"}>
           <td className="p-1 text-center"><div className={keyClass+" inline-block"} style={keyStyle}>→</div>
           <div className="px-2 inline-block">or</div> 
           <div className={keyClass} style={keyStyleL}>Ctrl</div>
           <div className={keyClass+" inline-block"} style={keyStyle}>Y</div></td>
-          <td className="text-center">Redo one action</td>
+          <td className="text-center">{l10n("Redo one action")}</td>
         </tr>
         <tr className={"bg-gray-600"}>
           <td className="p-1 text-center"><div className={keyClass} style={keyStyleL}>Ctrl</div>
           <div className={keyClass+" inline-block"} style={keyStyle}>←</div></td>
-          <td className="text-center">Undo until last round change</td>
+          <td className="text-center">{l10n("Undo until last round change")}</td>
         </tr>
         <tr className={"bg-gray-500"}>
           <td className="p-1 text-center"><div className={keyClass} style={keyStyleL}>Ctrl</div>
           <div className={keyClass+" inline-block"} style={keyStyle}>→</div></td>
-          <td className="text-center">Redo until next round change</td>
+          <td className="text-center">{l10n("Redo until next round change")}</td>
         </tr>
         <tr className={"bg-gray-600"}>
           <td className="p-1 text-center"><div className={keyClass+" inline-block"} style={keyStyle}>↑</div></td>
-          <td className="text-center">Move to previous game step</td>
+          <td className="text-center">{l10n("Move to previous game step")}</td>
         </tr>
         <tr className={"bg-gray-500"}>
           <td className="p-1 text-center"><div className={keyClass+" inline-block"} style={keyStyle}>↓</div></td>
-          <td className="text-center">Move to next game step</td>
+          <td className="text-center">{l10n("Move to next game step")}</td>
         </tr>
         <tr className={"bg-gray-600"}>
           <td className="p-1 text-center"><div className={keyClass} style={keyStyleL}>Ctrl</div>
           <div className={keyClass+" inline-block"} style={keyStyle}>↑</div></td>
-          <td className="text-center">Move to previous phase</td>
+          <td className="text-center">{l10n("Move to previous phase")}</td>
         </tr>
         <tr className={"bg-gray-500"}>
           <td className="p-1 text-center"><div className={keyClass} style={keyStyleL}>Ctrl</div>
           <div className={keyClass+" inline-block"} style={keyStyle}>↓</div></td>
-          <td className="text-center">Move to next phase</td>
+          <td className="text-center">{l10n("Move to next phase")}</td>
         </tr>
         <tr className={"bg-gray-600"}>
           <td className="p-1 text-center"><div className={keyClass+" inline-block"} style={keyStyle}>+</div></td>
-          <td className="text-center">Increase card size (for your screen only)</td>
+          <td className="text-center">{l10n("Increase card size (for your screen only)")}</td>
         </tr>
         <tr className={"bg-gray-500"}>
           <td className="p-1 text-center"><div className={keyClass+" inline-block"} style={keyStyle}>-</div></td>
-          <td className="text-center">Decrease card size (for your screen only)</td>
+          <td className="text-center">{l10n("Decrease card size (for your screen only)")}</td>
         </tr>
       </table>
     )
@@ -299,47 +299,47 @@ export const Hotkeys = React.memo(({}) => {
     return(
       <table className="table-fixed rounded-lg w-full">
         <tr className="bg-gray-800">
-          <th className={col1Class}>Key</th>
-          <th className={col2Class}>Description</th>
+          <th className={col1Class}>{l10n("Key")}</th>
+          <th className={col2Class}>{l10n("Description")}</th>
         </tr>
         <tr className={"bg-gray-500"}>
           <td className="p-1 text-center"><div className={keyClass} style={keyStyleL}>Shift</div>
           <div className={keyClass+" inline-block"} style={keyStyle}>L</div></td>
-          <td className="text-center">If host, enable multiplayer hotkeys.</td>
+          <td className="text-center">{l10n("If host, enable multiplayer hotkeys.")}</td>
         </tr>
         <tr className={"bg-gray-600"}>
           <td className="p-1 text-center"><div className={keyClass} style={keyStyleL}>Ctrl</div><div className={keyClass} style={keyStyleL}>Shift</div>
           <div className={keyClass+" inline-block"} style={keyStyle}>N</div> <div>or</div> 
           <div className={keyClass} style={keyStyleL}>Alt</div><div className={keyClass} style={keyStyleL}>Shift</div>
           <div className={keyClass+" inline-block"} style={keyStyle}>N</div></td>
-          <td className="text-center">Press Shift+N for all players.</td>
+          <td className="text-center">{l10n("Press Shift+N for all players.")}</td>
         </tr>
         <tr className={"bg-gray-500"}>
           <td className="p-1 text-center"><div className={keyClass} style={keyStyleL}>Ctrl</div><div className={keyClass} style={keyStyleL}>Shift</div>
           <div className={keyClass+" inline-block"} style={keyStyle}>R</div> <div>or</div> 
           <div className={keyClass} style={keyStyleL}>Alt</div><div className={keyClass} style={keyStyleL}>Shift</div>
           <div className={keyClass+" inline-block"} style={keyStyle}>R</div></td>
-          <td className="text-center">Press Shift+R for all players.</td>
+          <td className="text-center">{l10n("Press Shift+R for all players.")}</td>
         </tr>
         <tr className={"bg-gray-600"}>
           <td className="p-1 text-center"><div className={keyClass} style={keyStyleL}>Ctrl</div>
           <div className={keyClass+" inline-block"} style={keyStyle}>U</div></td>
-          <td className="text-center">Raise threat by 1 for all players.</td>
+          <td className="text-center">{l10n("Raise threat by 1 for all players.")}</td>
         </tr>
         <tr className={"bg-gray-500"}>
           <td className="p-1 text-center"><div className={keyClass} style={keyStyleL}>Ctrl</div>
           <div className={keyClass+" inline-block"} style={keyStyle}>J</div></td>
-          <td className="text-center">Reduce threat by 1 for all players.</td>
+          <td className="text-center">{l10n("Reduce threat by 1 for all players.")}</td>
         </tr>
         <tr className={"bg-gray-600"}>
           <td className="p-1 text-center"><div className={keyClass} style={keyStyleL}>Shift</div>
           <div className={keyClass+" inline-block"} style={keyStyle}>W</div></td>
-          <td className="text-center">Sit in next open seat.</td>
+          <td className="text-center">{l10n("Sit in next open seat.")}</td>
         </tr>
         <tr className={"bg-gray-500"}>
           <td className="p-1 text-center"><div className={keyClass} style={keyStyleL}>Shift</div>
           <div className={keyClass} style={keyStyle}>D</div></td>
-          <td className="text-center">Draw card on behalf of next empty seat.</td>
+          <td className="text-center">{l10n("Draw card on behalf of next empty seat.")}</td>
         </tr>
       </table>
     )
@@ -351,20 +351,20 @@ export const Hotkeys = React.memo(({}) => {
       <div className={windowClassL} style={windowStyleL}>
         <div className="w-full p-3 overflow-y-scroll">
           <div className="w-1/3 float-left p-3">
-            <h2 className="mb-2">Tokens</h2>
-            Hover over the top/bottom half of the card when pressing the key to add/remove tokens.
+            <h2 className="mb-2">{l10n("Tokens")}</h2>
+            {l10n("Hover over the top/bottom half of the card when pressing the key to add/remove tokens.")}
             {tokenTable()}
           </div>
           <div className="w-1/3 float-left p-3">
-            <h2 className="mb-2">Card hotkeys</h2>
-            Hover over a card.
+            <h2 className="mb-2">{l10n("Card hotkeys")}</h2>
+            {l10n("Hover over a card.")}
             {cardTable()}
-            <h2 className="mb-2 mt-6">Multiplayer hotkeys</h2>
-            Useful for two-handed play.
+            <h2 className="mb-2 mt-6">{l10n("Multiplayer hotkeys")}</h2>
+            {l10n("Useful for two-handed play.")}
             {multiplayerTable()}
           </div>
           <div className="w-1/3 float-left p-3">
-            <h2 className="mb-2">Game hotkeys</h2>
+            <h2 className="mb-2">{l10n("Game hotkeys")}</h2>
             {gameTable()}
             </div>
         </div>
@@ -383,19 +383,19 @@ export const Hotkeys = React.memo(({}) => {
               onTouchStart={() => dispatch(setShowHotkeys(false))}/>
           </div>
           <div className="w-full p-3 overflow-y-scroll" style={{height: "523px"}}>
-            <h2 className="mb-2">Tokens</h2>
-            Hover over the top/bottom half of the card when pressing the key to add/remove tokens.
+            <h2 className="mb-2">{l10n("Tokens")}</h2>
+            {l10n("Hover over the top/bottom half of the card when pressing the key to add/remove tokens.")}
             {tokenTable()}
             <br />
-            <h2 className="mb-2">Card hotkeys</h2>
-            Hover over a card.
+            <h2 className="mb-2">{l10n("Card hotkeys")}</h2>
+            {l10n("Hover over a card.")}
             {cardTable()}
             <br />
-            <h2 className="mb-2">Game hotkeys</h2>
+            <h2 className="mb-2">{l10n("Game hotkeys")}</h2>
             {gameTable()}
             <br />
-            <h2 className="mb-2">Multiplayer hotkeys</h2>
-            Useful for two-handed play.
+            <h2 className="mb-2">{l10n("Multiplayer hotkeys")}</h2>
+            {l10n("Useful for two-handed play.")}
             {multiplayerTable()}
           </div>
         </div>
