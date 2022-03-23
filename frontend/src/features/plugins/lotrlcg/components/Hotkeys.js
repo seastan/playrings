@@ -4,6 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Draggable from 'react-draggable';
 import { useDispatch, useSelector } from "react-redux";
 import { setShowHotkeys } from "../../../store/playerUiSlice";
+import { useGameL10n } from "../../../../hooks/useGameL10n";
 
 const keyClass = "m-auto border bg-gray-500 text-center bottom inline-block";
 const keyClassLong = "m-auto border bg-gray-500 text-center bottom inline-block";
@@ -33,6 +34,7 @@ const col2Class = "w-2/3";
 
 export const Hotkeys = React.memo(({}) => {
   const dispatch = useDispatch();
+  const l10n = useGameL10n();
   const showWindow = useSelector(state => state?.playerUi?.showHotkeys);
   const tabPressed = useSelector(state => state?.playerUi?.keypress?.Tab);
   if (!showWindow && !tabPressed) return;
@@ -74,7 +76,7 @@ export const Hotkeys = React.memo(({}) => {
         </tr>
         <tr className={"bg-gray-500"}>
           <td className="p-1 text-center"><div className={keyClass} style={keyStyle}>5</div></td>
-          <td className="text-center">{iconImg("willpower"}/{iconImg("threat")}</td>
+          <td className="text-center">{iconImg("willpower")}/{iconImg("threat")}</td>
         </tr>
         <tr className={"bg-gray-600"}>
           <td className="p-1 text-center"><div className={keyClass} style={keyStyle}>6</div></td>

@@ -47,7 +47,7 @@ const StacksList = React.memo(({
   const pile = (groupType=="deck" || groupType=="discard")
   // Truncate stacked piles
   var stackIdsToShow;
-  if (pile && isDraggingOver && !isDraggingFrom) stackIdsToShow = [];
+  if (pile && !isDraggingFrom) stackIdsToShow = [];
   else if (pile && stackIds.length>1) stackIdsToShow = [stackIds[0]]
   else stackIdsToShow = stackIds;
   if (!stackIdsToShow) return null;
