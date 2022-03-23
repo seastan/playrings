@@ -418,7 +418,7 @@
                 "hitpoints": "2",
                 "questpoints": "",
                 "victorypoints": "",
-                "text": "Action: Exhaust Lily Cotton to ready a different Hobbit ally and add Lily Cotton\u2019s [willpower], [attack], and [defense] to that ally\u2019s [willpower], [attack], and [defense] respectively until the end of the phase. At the end of the phase, if that ally is still in play, return it to your hand. (Limit once per phase.)",
+                "text": "Action: Exhaust Lily Cotton to ready a different Hobbit ally and add Lily Cotton\u2019s [willpower], [attack], and [defense] to that ally\u2019s [willpower], [attack], and [defense] respectively until the end of the phase. At the end of the phase, if that ally is still in play, return it to its owner\u2019s hand. (Limit once per phase.)",
                 "shadow": ""
             },
             "B": {
@@ -818,7 +818,7 @@
                 "hitpoints": "1",
                 "questpoints": "",
                 "victorypoints": "",
-                "text": "Cannot have attachments.\nResponse: After resolving the staging of an encounter card without surge, exhaust Gavin to give that card surge and add 1 resource to the pool of a Scout hero you control. If the next encounter card revealed is not a location, discard it without resolving its effects.",
+                "text": "Cannot have attachments.\nResponse: After an encounter card without surge is revealed, exhaust Gavin to give that card surge and add 1 resource to the pool of a Scout hero you control. If the next encounter card revealed is not a location, discard it without resolving its effects.",
                 "shadow": ""
             },
             "B": {
