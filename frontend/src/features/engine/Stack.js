@@ -87,10 +87,12 @@ export const Stack = React.memo(({
           ref={dragProvided.innerRef}
           {...dragProvided.draggableProps}
           {...dragProvided.dragHandleProps}
-          style={
+          style={{...style,
+            transform: style.transform ? (dragSnapshot.isDragging ? style.transform + " scale(1.1)" : style.transform) : null,
+            zIndex: Boolean(dragSnapshot.combineTargetFor) ? 6000 : style.zIndex,
             //Boolean(dragSnapshot.combineTargetFor) ? {...style, zIndex:6000} : style
-            dragSnapshot.isDragging ? {...style, transform: style.transform ? style.transform + " scale(1.1)" : "scale(1.1)"} : style
-          }>
+            //</NaturalDragAnimation>dragSnapshot.isDragging ? {...style, transform: style.transform ? style.transform + " scale(1.1)" : "scale(1.1)"} : style
+          }}>
           {cardIds.map((cardId, cardIndex) => {
             console.log("dragSnapshot",dragSnapshot)
             console.log("dragProvided",dragProvided.draggableProps.style.transform)
