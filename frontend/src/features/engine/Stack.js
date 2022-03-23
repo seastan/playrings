@@ -16,7 +16,7 @@ const Container = styled.div`
   min-width: ${props => props.stackWidth}vh;
   width: ${props => props.stackWidth}vh;
   height: ${props => (props.groupType === "vertical") ? `${props.cardSize/3}vh` : "100%"};
-  display: flex;
+  display: ${props => (props.hidden) ? "none" : "flex"};
 `;
 
 export const Stack = React.memo(({
@@ -27,7 +27,8 @@ export const Stack = React.memo(({
   stackIndex,
   stackId,
   numStacks,
-  registerDivToArrowsContext
+  registerDivToArrowsContext,
+  hidden,
 }) => {
   console.log('Rendering Stack ',stackIndex);
   const stack = useSelector(state => state?.gameUi?.game?.stackById[stackId]);
@@ -82,6 +83,7 @@ export const Stack = React.memo(({
           stackWidth={stackWidth}
           groupType={groupType}
           cardSize={cardSize}
+          hidden={hidden}
           ref={dragProvided.innerRef}
           {...dragProvided.draggableProps}
           {...dragProvided.dragHandleProps}

@@ -14,7 +14,7 @@ const Container = styled.div`
   -moz-transition: all 0.2s;
   -o-transition: all 0.2s;
   transition: all 0.2s;
-  padding-left: 5px;
+  
   height: 100%;
   width: calc(100% - 17px);
   user-select: none;
@@ -47,8 +47,7 @@ const StacksList = React.memo(({
   const pile = (groupType=="deck" || groupType=="discard")
   // Truncate stacked piles
   var stackIdsToShow;
-  if (pile && !isDraggingFrom) stackIdsToShow = [];
-  else if (pile && stackIds.length>1) stackIdsToShow = [stackIds[0]]
+  if (pile && stackIds.length>1) stackIdsToShow = [stackIds[0]]
   else stackIdsToShow = stackIds;
   if (!stackIdsToShow) return null;
   return (
@@ -64,6 +63,7 @@ const StacksList = React.memo(({
           stackId={stackId}
           numStacks={selectedStackIndices.length}
           registerDivToArrowsContext={registerDivToArrowsContext}
+          hidden={pile && isDraggingOver && !isDraggingFrom}
         /> 
       ) : null 
     ))
