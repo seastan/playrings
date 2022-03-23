@@ -74,7 +74,7 @@ export const Hotkeys = React.memo(({}) => {
         </tr>
         <tr className={"bg-gray-500"}>
           <td className="p-1 text-center"><div className={keyClass} style={keyStyle}>5</div></td>
-          <td className="text-center">{iconImg("willpower"}/{iconImg("threat")}</td>
+          <td className="text-center">{iconImg("willpower")}/{iconImg("threat")}</td>
         </tr>
         <tr className={"bg-gray-600"}>
           <td className="p-1 text-center"><div className={keyClass} style={keyStyle}>6</div></td>
