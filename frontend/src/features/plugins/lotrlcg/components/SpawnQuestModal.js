@@ -168,9 +168,10 @@ export const SpawnQuestModal = React.memo(({
         onRequestClose={() => dispatch(setShowModal(null))}
         contentLabel="Load quest"
         overlayClassName="fixed inset-0 bg-black-50 z-10000"
-        className="insert-auto p-5 bg-gray-700 border max-w-lg max-h-lg mx-auto my-2 rounded-lg outline-none"
+        className="insert-auto p-5 bg-gray-700 border max-h-lg mx-auto my-2 rounded-lg outline-none"
         style={{
           content: {
+            width: "600px",
             maxHeight: "95vh",
             overflowY: "scroll",
           }
@@ -191,15 +192,15 @@ export const SpawnQuestModal = React.memo(({
         {/* Table */}
         {searchString &&
           ((filteredIndices.length === 0) ?
-            <div className="text-white">No results</div>
+            <div className="text-white">{l10n("No results")}</div>
             :
             (filteredIndices.length>25) ?
-              <div className="text-white">Too many results</div> 
+              <div className="text-white">{l10n("Too many results")}</div> 
               :
               <table className="table-fixed rounded-lg w-full">
                 <thead>
                   <tr className="text-white bg-gray-800">
-                    <th className="w-1/2">Name</th>
+                    <th className="w-1/2">{l10n("Name")}</th>
                   </tr>
                 </thead>
                 {filteredIndices.map((filteredIndex, index) => {
@@ -229,7 +230,7 @@ export const SpawnQuestModal = React.memo(({
                     rightIcon={<FontAwesomeIcon icon={faChevronRight}/>}
                     goToMenu={cycleId}
                     clickCallback={handleDropdownClick}>
-                    {CYCLEINFO[cycleId].name}
+                    {l10n(CYCLEINFO[cycleId].name)}
                   </DropdownItem>
                 )
               })}
@@ -251,7 +252,7 @@ export const SpawnQuestModal = React.memo(({
                         <DropdownItem
                           questIndex={selectedIndex}
                           clickCallback={handleDropdownClick}>
-                          {getQuestNameFromPath(questPath)}
+                          {l10n(getQuestNameFromPath(questPath))}
                         </DropdownItem>
                       )
                     } else if (questPath.includes("Q"+cycleId) && !questPath.toLowerCase().includes("playtest")) {
@@ -260,7 +261,7 @@ export const SpawnQuestModal = React.memo(({
                           rightIcon={<FontAwesomeIcon icon={faChevronRight}/>}
                           goToMenu={getQuestIdFromPath(questPath)}
                           clickCallback={handleDropdownClick}>
-                          {getQuestNameFromPath(questPath)}
+                          {l10n(getQuestNameFromPath(questPath))}
                         </DropdownItem>
                       )
                     }
@@ -279,7 +280,6 @@ export const SpawnQuestModal = React.memo(({
                 <div className="menu">
                   <GoBack goToMenu={cycleId} clickCallback={handleDropdownClick}/>
                   {["E","Q","N"].map((modeLetter, letterIndex) => {
-                    console.log(cycleId, questPath.toLowerCase())
                     const selectedIndex = getIndexFromModeAndId(modeLetter+questId);
                     if (selectedIndex >= 0) {
                       const selectedPath = questsOCTGN[selectedIndex];
@@ -288,7 +288,7 @@ export const SpawnQuestModal = React.memo(({
                         <DropdownItem
                           questIndex={selectedIndex}
                           clickCallback={handleDropdownClick}>
-                          {getModeNameFromPath(selectedPath)}
+                          {l10n(getModeNameFromPath(selectedPath))}
                         </DropdownItem>
                       )
                     }

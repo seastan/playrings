@@ -65,8 +65,8 @@ export const DropdownMenuGroup = React.memo(({
         <div className="menu">
           <DropdownItem action="shuffle" clickCallback={handleDropdownClick}>{l10n("Shuffle")}</DropdownItem>
           {menuGroup.id === "sharedEncounterDiscard" ? <DropdownItem action="moveStacks" destGroupId={"sharedEncounterDeck"} position="shuffle" clickCallback={handleDropdownClick}>{l10n("Shuffle into deck")}</DropdownItem> : null}
-          {menuGroup.id === "sharedEncounterDeck" ? <DropdownItem action="discardUntil" cardType={"Enemy"} clickCallback={handleDropdownClick}>{l10n("Discard until enemy")}</DropdownItem> : null}
-          {menuGroup.id === "sharedEncounterDeck" ? <DropdownItem action="discardUntil" cardType={"Location"} clickCallback={handleDropdownClick}>{l10n("Discard until location")}</DropdownItem> : null}
+          {menuGroup.id === "sharedEncounterDeck" ? <DropdownItem action="discardUntil" cardType={"Enemy"} clickCallback={handleDropdownClick}>{l10n("Discard until Enemy")}</DropdownItem> : null}
+          {menuGroup.id === "sharedEncounterDeck" ? <DropdownItem action="discardUntil" cardType={"Location"} clickCallback={handleDropdownClick}>{l10n("Discard until Location")}</DropdownItem> : null}
           {menuGroup.id === playerN+"Hand" ? <DropdownItem action="makeVisible" clickCallback={handleDropdownClick}>{l10n("Make visible/hidden")}</DropdownItem> : null}
           <DropdownItem action="lookAt" topN="None" clickCallback={handleDropdownClick}>{l10n("Browse")}</DropdownItem>
           <DropdownItem action="lookAt" topN="5" clickCallback={handleDropdownClick}>{l10n("Look at top 5")}</DropdownItem>
