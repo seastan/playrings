@@ -724,7 +724,7 @@ export const gameL10n = {
   },
   "French": {
     "Menu": "Menu",
-    "Player count": "Compte du joueur",
+    "Player count": "Nombre du joueur",
     "Layout": "Mise en page",
     "Touch mode": "Mode tablette",
     "Touch/mouse mode": "Mode tablette/souris",
