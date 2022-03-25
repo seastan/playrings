@@ -4,6 +4,7 @@ import RoomGame from "./RoomGame";
 import useProfile from "../../hooks/useProfile";
 import { setPlayerN } from "../store/playerUiSlice";
 import { GetPlayerN } from "../plugins/lotrlcg/functions/helpers";
+import BroadcastContext from "../../contexts/BroadcastContext";
 
 export const RoomProviders = ({ gameBroadcast, chatBroadcast }) => {
   console.log("Rendering RoomProviders");
@@ -23,7 +24,9 @@ export const RoomProviders = ({ gameBroadcast, chatBroadcast }) => {
           backgroundPositionY: "50%",
         }}
       >
-        <RoomGame gameBroadcast={gameBroadcast} chatBroadcast={chatBroadcast}/>
+        <BroadcastContext.Provider value={{gameBroadcast, chatBroadcast}}>
+          <RoomGame gameBroadcast={gameBroadcast} chatBroadcast={chatBroadcast}/>
+        </BroadcastContext.Provider>
       </div>
   );
 };

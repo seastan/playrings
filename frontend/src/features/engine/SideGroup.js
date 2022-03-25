@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import { useDispatch, useSelector } from 'react-redux';
 import { Stacks } from "./Stacks";
 import { GROUPSINFO, LAYOUTINFO } from "../plugins/lotrlcg/definitions/constants";
@@ -7,12 +7,15 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useBrowseTopN } from "./functions/useBrowseTopN"; 
 import { setDropdownMenuObj } from "../store/playerUiSlice";
 import { useGameL10n } from "../../hooks/useGameL10n";
+import BroadcastContext from "../../contexts/BroadcastContext";
 
 export const SideGroup = React.memo(({
   gameBroadcast,
   chatBroadcast,
   registerDivToArrowsContext,
 }) => {
+  const bc = useContext(BroadcastContext);
+  console.log("gbcon",bc);
   console.log("Rendering TableLayout");
   const dispatch = useDispatch();
   const l10n = useGameL10n();
@@ -61,8 +64,8 @@ export const SideGroup = React.memo(({
           </div>
           <div className="w-full h-full mt-12">
             <Stacks
-              gameBroadcast={gameBroadcast}
-              chatBroadcast={chatBroadcast}
+              gameBroadcast={bc.gameBroadcast}
+              chatBroadcast={bc.chatBroadcast}
               groupId={sideGroupId}
               groupType={"vertical"}
               registerDivToArrowsContext={registerDivToArrowsContext}
