@@ -1,10 +1,11 @@
-import React, {useState} from "react";
+import React, {useContext, useState} from "react";
 import ReactModal from "react-modal";
 import { buildLoadList, processLoadList, processPostLoad } from "../functions/helpers";
 import { DropdownItem } from "../../../engine/DropdownMenuHelpers";
 import { setShowModal } from "../../../store/playerUiSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { useGameL10n } from "../../../../hooks/useGameL10n";
+import BroadcastContext from "../../../../contexts/BroadcastContext";
 
 function requireAll( requireContext ) {
   return requireContext.keys().map( requireContext );
@@ -18,10 +19,8 @@ const getNameFromPackPath = (packPath) => {
   return name.replace(/_/ig, " ");
 }
 
-export const SpawnCampaignModal = React.memo(({
-    gameBroadcast,
-    chatBroadcast,
-}) => { 
+export const SpawnCampaignModal = React.memo(({}) => { 
+  const {gameBroadcast, chatBroadcast} = useContext(BroadcastContext);
     const dispatch = useDispatch();
     const l10n = useGameL10n();
     const playerN = useSelector(state => state?.playerUi?.playerN);

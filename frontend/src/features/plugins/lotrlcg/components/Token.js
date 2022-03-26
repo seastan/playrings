@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { useSelector } from 'react-redux';
 import { tokenPrintName } from "../functions/helpers";
 import { faChevronDown, faChevronUp } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import BroadcastContext from "../../../../contexts/BroadcastContext";
 
 var delayBroadcast;
 
@@ -13,11 +14,10 @@ export const Token = React.memo(({
     left,
     top,
     showButtons,
-    gameBroadcast,
-    chatBroadcast,
     zIndex,
     aspectRatio,
 }) => {
+    const {gameBroadcast, chatBroadcast} = useContext(BroadcastContext);
     const tokenStore = state => state?.gameUi?.game?.cardById?.[cardId]?.tokens?.[tokenType];
     const tokenValue = useSelector(tokenStore);
     const committedStore = state => state?.gameUi?.game?.cardById?.[cardId]?.committed;

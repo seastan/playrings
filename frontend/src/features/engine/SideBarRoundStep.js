@@ -1,15 +1,15 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { useDispatch, useSelector } from 'react-redux';
 import { setActiveCardObj } from "../store/playerUiSlice";
 import { getDisplayName } from "../plugins/lotrlcg/functions/helpers";
 import { useGameL10n } from "../../hooks/useGameL10n";
+import BroadcastContext from "../../contexts/BroadcastContext";
 
 
 export const ReminderButton = React.memo(({
-  triggerCardIds,
-  gameBroadcast,
-  chatBroadcast,
-}) => {  
+  triggerCardIds
+}) => {
+  const {gameBroadcast, chatBroadcast} = useContext(BroadcastContext);
   const dispatch = useDispatch();
   const numTriggers = triggerCardIds ? triggerCardIds.length : 0;
   const cardById = useSelector(state => state?.gameUi?.game?.cardById);
@@ -64,10 +64,9 @@ export const ReminderButton = React.memo(({
 
 export const SideBarRoundStep = React.memo(({
   phase,
-  stepInfo, 
-  gameBroadcast,
-  chatBroadcast,
+  stepInfo,
 }) => {
+  const {gameBroadcast, chatBroadcast} = useContext(BroadcastContext);
   const l10n = useGameL10n();
   const gameRoundStep = useSelector(state => state?.gameUi?.game?.roundStep);
   const playerN = useSelector(state => state?.playerUi?.playerN)
@@ -102,10 +101,7 @@ export const SideBarRoundStep = React.memo(({
       </div>
       {numTriggers > 0 &&
         <ReminderButton
-          triggerCardIds={triggerCardIds}
-          gameBroadcast={gameBroadcast}
-          chatBroadcast={chatBroadcast}
-        />
+          triggerCardIds={triggerCardIds}/>
       }
       <div className={`flex flex-1 h-full items-center justify-center ${isRoundStep ? "bg-red-800" : "bg-gray-500"} ${hovering ? "block" : "hidden"}`} >
         <div dangerouslySetInnerHTML={{ __html: l10n(stepInfo.id) }} />

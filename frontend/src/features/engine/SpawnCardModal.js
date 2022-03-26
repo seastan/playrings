@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useContext, useState} from "react";
 import ReactModal from "react-modal";
 import { useDispatch, useSelector } from "react-redux";
 import useProfile from "../../hooks/useProfile";
@@ -6,13 +6,12 @@ import { getCardRowCategory } from "../plugins/lotrlcg/functions/helpers";
 import { setShowModal, setTyping } from "../store/playerUiSlice";
 import { useGameL10n } from "../../hooks/useGameL10n";
 import { cardDb } from "../plugins/lotrlcg/functions/cardDb";
+import BroadcastContext from "../../contexts/BroadcastContext";
 
 const RESULTS_LIMIT = 150;
 
-export const SpawnCardModal = React.memo(({
-    gameBroadcast,
-    chatBroadcast,
-}) => {
+export const SpawnCardModal = React.memo(({}) => {
+  const {gameBroadcast, chatBroadcast} = useContext(BroadcastContext);
     const dispatch = useDispatch();
     const l10n = useGameL10n();
     const myUser = useProfile();

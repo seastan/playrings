@@ -20,8 +20,6 @@ const Container = styled.div`
 `;
 
 export const Stack = React.memo(({
-  gameBroadcast,
-  chatBroadcast,
   groupId,
   groupType,
   stackIndex,
@@ -99,8 +97,6 @@ export const Stack = React.memo(({
             return(
               <Card
                 key={cardId}
-                gameBroadcast={gameBroadcast} 
-                chatBroadcast={chatBroadcast} 
                 groupId={groupId}
                 groupType={groupType}
                 offset={offsets[cardIndex]}

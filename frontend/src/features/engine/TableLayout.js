@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { useSelector } from 'react-redux';
 import { Group } from "./Group";
 import { Browse } from "./Browse";
@@ -7,13 +7,12 @@ import Chat from "../chat/Chat";
 import "../../css/custom-misc.css"; 
 import { QuickAccess } from "./QuickAccess";
 import { SideGroup } from "./SideGroup";
+import BroadcastContext from "../../contexts/BroadcastContext";
 
 var delayBroadcast;
 
 export const TableRegion = React.memo(({
   region,
-  gameBroadcast,
-  chatBroadcast,
   registerDivToArrowsContext,
 }) => {
   const observingPlayerN = useSelector(state => state?.playerUi?.observingPlayerN);
@@ -35,8 +34,6 @@ export const TableRegion = React.memo(({
       {beingBrowsed ? null :
         <Group
           groupId={groupId}
-          gameBroadcast={gameBroadcast} 
-          chatBroadcast={chatBroadcast}
           hideTitle={region.hideTitle}
           registerDivToArrowsContext={registerDivToArrowsContext}
         />
@@ -46,10 +43,9 @@ export const TableRegion = React.memo(({
 })
 
 export const TableLayout = React.memo(({
-  gameBroadcast,
-  chatBroadcast,
   registerDivToArrowsContext,
 }) => {
+  const {gameBroadcast, chatBroadcast} = useContext(BroadcastContext);
   console.log("Rendering TableLayout");
   const numPlayers = useSelector(state => state?.gameUi?.game?.numPlayers);
   const layout = useSelector(state => state?.gameUi?.game?.layout);
@@ -88,8 +84,6 @@ export const TableLayout = React.memo(({
         {layoutInfo[0].regions.map((region, _regionIndex) => (
           <TableRegion
             region={region}
-            gameBroadcast={gameBroadcast} 
-            chatBroadcast={chatBroadcast}
             registerDivToArrowsContext={registerDivToArrowsContext}
           />
         ))}
@@ -101,13 +95,11 @@ export const TableLayout = React.memo(({
         {layoutInfo.map((row, rowIndex) => {  
           if (browseGroupId && rowIndex === numRows - 2) {
             return(
-            <div 
-              className="relative bg-gray-700 rounded-lg w-full" 
-              style={{height: `${100/(numRows-2)}%`}}>
-              <Browse
-                groupId={browseGroupId}
-                gameBroadcast={gameBroadcast}
-                chatBroadcast={chatBroadcast}/>
+              <div 
+                className="relative bg-gray-700 rounded-lg w-full" 
+                style={{height: `${100/(numRows-2)}%`}}>
+                <Browse
+                  groupId={browseGroupId}/>
               </div>
             )
           } else if (rowIndex > 0 && rowIndex < numRows - 1) {
@@ -118,8 +110,6 @@ export const TableLayout = React.memo(({
                 {row.regions.map((region, _regionIndex) => (
                   <TableRegion
                     region={region}
-                    gameBroadcast={gameBroadcast} 
-                    chatBroadcast={chatBroadcast}
                     registerDivToArrowsContext={registerDivToArrowsContext}
                   />
                 ))}
@@ -129,8 +119,6 @@ export const TableLayout = React.memo(({
         })}
       </div>
       <SideGroup
-        gameBroadcast={gameBroadcast}
-        chatBroadcast={chatBroadcast}
         registerDivToArrowsContext={registerDivToArrowsContext}/>
       {/* Bottom row */}
       <div 
@@ -139,8 +127,6 @@ export const TableLayout = React.memo(({
         {layoutInfo[numRows-1].regions.map((region, _regionIndex) => (
           <TableRegion
             region={region}
-            gameBroadcast={gameBroadcast} 
-            chatBroadcast={chatBroadcast}
             registerDivToArrowsContext={registerDivToArrowsContext}
           />
         ))}

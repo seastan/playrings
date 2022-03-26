@@ -36,8 +36,6 @@ const DropZone = styled.div`
 const StacksList = React.memo(({
   isDraggingOver,
   isDraggingFrom,
-  gameBroadcast,
-  chatBroadcast,
   groupId,
   groupType,
   stackIds,
@@ -55,8 +53,6 @@ const StacksList = React.memo(({
       (selectedStackIndices.includes(stackIndex)) ? (
         <Stack
           key={stackId}
-          gameBroadcast={gameBroadcast}
-          chatBroadcast={chatBroadcast}
           groupId={groupId}
           groupType={groupType}
           stackIndex={stackIndex}
@@ -71,8 +67,6 @@ const StacksList = React.memo(({
 });
 
 export const Stacks = React.memo(({
-  gameBroadcast,
-  chatBroadcast,
   groupId,
   groupType,
   selectedStackIndices,
@@ -109,8 +103,6 @@ export const Stacks = React.memo(({
               <StacksList
                 isDraggingOver={dropSnapshot.isDraggingOver}
                 isDraggingFrom={Boolean(dropSnapshot.draggingFromThisWith)}
-                gameBroadcast={gameBroadcast} 
-                chatBroadcast={chatBroadcast} 
                 groupId={groupId}
                 groupType={(groupType ? groupType : group.type)} 
                 stackIds={stackIds}

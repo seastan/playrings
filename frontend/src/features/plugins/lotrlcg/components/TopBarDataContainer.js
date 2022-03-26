@@ -4,10 +4,7 @@ import { getCurrentFace } from "../functions/helpers";
 import { TopBarUser } from "./TopBarUser";
 import { TopBarShared } from "./TopBarShared";
 
-export const TopBarDataContainer = React.memo(({
-  gameBroadcast,
-  chatBroadcast,
-}) => {
+export const TopBarDataContainer = React.memo(({}) => {
   
     const stagingStackIds = useSelector(state => state?.gameUi?.game?.groupById?.sharedStaging.stackIds);
     const cardById = useSelector(state => state?.gameUi?.game?.cardById); 
@@ -47,31 +44,21 @@ export const TopBarDataContainer = React.memo(({
         <TopBarShared 
           threat={stagingThreat}
           progress={totalProgress}
-          gameBroadcast={gameBroadcast}
-          chatBroadcast={chatBroadcast}
         />
         <TopBarUser
           playerI={"player1"}
-          gameBroadcast={gameBroadcast}
-          chatBroadcast={chatBroadcast}
         />
         {numPlayers > 1 &&
         <TopBarUser
           playerI={"player2"}
-          gameBroadcast={gameBroadcast}
-          chatBroadcast={chatBroadcast}
         />}
         {numPlayers > 2 &&
         <TopBarUser
           playerI={"player3"}
-          gameBroadcast={gameBroadcast}
-          chatBroadcast={chatBroadcast}
         />}
         {numPlayers > 3 &&
         <TopBarUser
           playerI={"player4"}
-          gameBroadcast={gameBroadcast}
-          chatBroadcast={chatBroadcast}
         />}
       </div>
     )

@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useContext, useEffect } from "react";
 import { TableLayout } from "../../../engine/TableLayout";
 import { GiantCard } from "../../../engine/GiantCard";
 import { TopBar } from "./TopBar";
@@ -18,12 +18,10 @@ import { setActiveCardObj, setDropdownMenuObj, setMousePosition, setTouchAction 
 import { useDispatch, useSelector } from "react-redux";
 import useProfile from "../../../../hooks/useProfile";
 import { onLoad } from "../functions/helpers";
+import BroadcastContext from "../../../../contexts/BroadcastContext";
 
-export const Table = React.memo(({
-  gameBroadcast,
-  chatBroadcast,
-  registerDivToArrowsContext
-}) => {
+export const Table = React.memo(({registerDivToArrowsContext}) => {
+  const {gameBroadcast, chatBroadcast} = useContext(BroadcastContext);
   console.log('Rendering Table');
   const dispatch = useDispatch();
   const tooltipIds = useSelector(state => state?.playerUi?.tooltipIds);
@@ -41,9 +39,6 @@ export const Table = React.memo(({
     dispatch(setTouchAction(null));
   }
 
-  // useEffect(() => {
-  //   if (!loaded && isHost && gameBroadcast) useOnLoad(options, gameBroadcast, chatBroadcast, dispatch);
-  // },[loaded, gameBroadcast])
   if (!loaded && isHost) onLoad(options, gameBroadcast, chatBroadcast, dispatch);
 
   useEffect(() => {
@@ -63,34 +58,21 @@ export const Table = React.memo(({
     <div className="h-full flex" style={{fontSize: "1.7vh"}}
       //onTouchStart={(event) => handleTableClick(event)} onMouseUp={(event) => handleTableClick(event)}
       onClick={(event) => handleTableClick(event)}>
-      <DropdownMenu
-        gameBroadcast={gameBroadcast}
-        chatBroadcast={chatBroadcast}
-      />
+      <DropdownMenu/>
       <Hotkeys/>
       <PlayersInRoom/>
       {/* Side panel */}
-      <SideBar
-        gameBroadcast={gameBroadcast}
-        chatBroadcast={chatBroadcast}
-      />
+      <SideBar/>
       {/* Main panel */}
       <div className="w-full">
         <div className="w-full h-full">
           {/* Game menu bar */}
           <div className="bg-gray-600 text-white w-full" style={{height: "6%"}}>
-            <TopBar
-              gameBroadcast={gameBroadcast}
-              chatBroadcast={chatBroadcast}
-            />
+            <TopBar/>
           </div>
           {/* Table */}
           <div className="relative w-full" style={{height: touchMode ? "82%" : "94%"}}>
-            <TableLayout
-              gameBroadcast={gameBroadcast} 
-              chatBroadcast={chatBroadcast}
-              registerDivToArrowsContext={registerDivToArrowsContext}
-            />
+            <TableLayout registerDivToArrowsContext={registerDivToArrowsContext}/>
           </div>
           {/* Touch Bar */}
           {touchMode && <div className="relative bg-gray-700 w-full" style={{height: "12%"}}>
@@ -100,10 +82,10 @@ export const Table = React.memo(({
       </div>
       {/* Card hover view */}
       <GiantCard/>
-      {showModal === "card" ? <SpawnCardModal gameBroadcast={gameBroadcast} chatBroadcast={chatBroadcast}/> : null}
-      {showModal === "quest" ? <SpawnQuestModal gameBroadcast={gameBroadcast} chatBroadcast={chatBroadcast}/> : null}
-      {showModal === "custom" ? <SpawnCustomModal gameBroadcast={gameBroadcast} chatBroadcast={chatBroadcast}/> : null}
-      {showModal === "campaign" ? <SpawnCampaignModal gameBroadcast={gameBroadcast} chatBroadcast={chatBroadcast}/> : null}
+      {showModal === "card" ? <SpawnCardModal/> : null}
+      {showModal === "quest" ? <SpawnQuestModal/> : null}
+      {showModal === "custom" ? <SpawnCustomModal/> : null}
+      {showModal === "campaign" ? <SpawnCampaignModal/> : null}
       {tooltipIds.map((tooltipId, index) => {
         return(
         <TooltipModal

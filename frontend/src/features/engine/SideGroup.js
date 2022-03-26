@@ -10,15 +10,12 @@ import { useGameL10n } from "../../hooks/useGameL10n";
 import BroadcastContext from "../../contexts/BroadcastContext";
 
 export const SideGroup = React.memo(({
-  gameBroadcast,
-  chatBroadcast,
   registerDivToArrowsContext,
 }) => {
-  const bc = useContext(BroadcastContext);
-  console.log("gbcon",bc);
   console.log("Rendering TableLayout");
   const dispatch = useDispatch();
   const l10n = useGameL10n();
+  const {gameBroadcast, chatBroadcast} = useContext(BroadcastContext);
   const numPlayers = useSelector(state => state?.gameUi?.game?.numPlayers);
   const sideGroupId = useSelector(state => state?.playerUi?.sideGroupId);
   const browseGroupId = useSelector(state => state?.playerUi?.browseGroup?.id);
@@ -64,8 +61,6 @@ export const SideGroup = React.memo(({
           </div>
           <div className="w-full h-full mt-12">
             <Stacks
-              gameBroadcast={bc.gameBroadcast}
-              chatBroadcast={bc.chatBroadcast}
               groupId={sideGroupId}
               groupType={"vertical"}
               registerDivToArrowsContext={registerDivToArrowsContext}

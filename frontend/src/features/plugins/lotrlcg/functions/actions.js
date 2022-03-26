@@ -23,6 +23,10 @@ import abilities from "../definitions/abilities";
 import { GROUPSINFO, roundStepToText, nextRoundStep, prevRoundStep, nextPhase, prevPhase } from "../definitions/constants";
 import { setActiveCardObj, setKeypressW, setObservingPlayerN, setPlayerUiValues } from "../../../store/playerUiSlice";
 
+const useActions = (gameBroadcast, chatBroadcast) => {
+    
+}
+
 const areMultiplayerHotkeysEnabled = (game, chatBroadcast) => {
     if (!game.options.multiplayerHotkeys) {
         chatBroadcast("game_update",{message: "tried to press a multiplayer hotkey (perhaps their Control or Alt key is stuck down?). To enable multiplayer hotkeys, the host must toggle them on first (Shift + L). "});

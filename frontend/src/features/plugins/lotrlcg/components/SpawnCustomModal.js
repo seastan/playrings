@@ -1,16 +1,15 @@
-import React, {useState} from "react";
+import React, {useContext, useState} from "react";
 import ReactModal from "react-modal";
 import { useForm } from "react-hook-form";
 import Button from "../../../../components/basic/Button";
 import Select from 'react-select'
 import { setShowModal, setTyping } from "../../../store/playerUiSlice";
 import { useDispatch } from "react-redux";
+import BroadcastContext from "../../../../contexts/BroadcastContext";
 
-export const SpawnCustomModal = React.memo(({
-    gameBroadcast,
-    chatBroadcast,
-}) => {
+export const SpawnCustomModal = React.memo(({}) => {
   const dispatch = useDispatch();
+  const {gameBroadcast, chatBroadcast} = useContext(BroadcastContext);
 
   const { register, handleSubmit } = useForm();
   const backOptions = [

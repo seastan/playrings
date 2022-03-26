@@ -1,15 +1,14 @@
-import React from "react";
+import React, { useContext } from "react";
 import { gameAction } from "../plugins/lotrlcg/functions/actions";
 import { faRedoAlt } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import store from "../../store";
 import { useDispatch } from "react-redux";
+import BroadcastContext from "../../contexts/BroadcastContext";
 
 
-export const SideBarNewRound = React.memo(({
-    gameBroadcast, 
-    chatBroadcast
-}) => {
+export const SideBarNewRound = React.memo(({}) => {
+    const {gameBroadcast, chatBroadcast} = useContext(BroadcastContext);
     const dispatch = useDispatch();
     const handleClick = () => {
         const state = store.getState();

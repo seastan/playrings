@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { useDropdownClickCommon } from "../plugins/lotrlcg/functions/dropdownMenuClick";
 import { DropdownMenuCard } from "../plugins/lotrlcg/components/DropdownMenuCard";
 import { DropdownMenuGroup } from "../plugins/lotrlcg/components/DropdownMenuGroup";
@@ -8,14 +8,14 @@ import { calcHeightCommon } from "./DropdownMenuHelpers";
 import "../../css/custom-dropdown.css";
 import { setDropdownMenuObj } from "../store/playerUiSlice";
 import store from "../../store";
+import BroadcastContext from "../../contexts/BroadcastContext";
 
 export const DropdownMenuCommon = React.memo(({
-  gameBroadcast,
-  chatBroadcast,
   mouseX,
   mouseY,
 }) => {
   
+  const {gameBroadcast, chatBroadcast} = useContext(BroadcastContext);
   const dispatch = useDispatch();
   const dropdownMenuObj = useSelector(state => state?.playerUi?.dropdownMenuObj)
   const [activeMenu, setActiveMenu] = useState('main');

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { useSelector, useDispatch } from 'react-redux';
 import { Stacks } from "./Stacks";
 import { GROUPSINFO } from "../plugins/lotrlcg/definitions/constants";
@@ -9,16 +9,15 @@ import { faBars } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { setBrowseGroupId, setDropdownMenuObj, setTyping } from "../store/playerUiSlice";
 import { useGameL10n } from "../../hooks/useGameL10n";
+import BroadcastContext from "../../contexts/BroadcastContext";
 
 const isNormalInteger = (str) => {
   var n = Math.floor(Number(str));
   return n !== Infinity && String(n) === str && n >= 0;
 }
 
-export const Browse = React.memo(({
-  gameBroadcast,
-  chatBroadcast,
-}) => {
+export const Browse = React.memo(({}) => {
+  const {gameBroadcast, chatBroadcast} = useContext(BroadcastContext);
   const dispatch = useDispatch();
   const l10n = useGameL10n();
   const playerN = useSelector(state => state?.playerUi?.playerN);

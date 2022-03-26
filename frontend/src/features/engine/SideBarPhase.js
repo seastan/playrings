@@ -4,8 +4,6 @@ import { useGameL10n } from "../../hooks/useGameL10n";
 import { SideBarRoundStep } from "./SideBarRoundStep";
 
 export const SideBarPhase = React.memo(({
-  gameBroadcast,
-  chatBroadcast,
   phaseInfo,
 }) => {
   const l10n = useGameL10n();
@@ -30,9 +28,7 @@ export const SideBarPhase = React.memo(({
             <SideBarRoundStep
               key={step.id}
               phase={phaseInfo.name}
-              stepInfo={step}
-              gameBroadcast={gameBroadcast}
-              chatBroadcast={chatBroadcast}/>
+              stepInfo={step}/>
           )
         })}
       </div>

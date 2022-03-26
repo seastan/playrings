@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useContext, useState} from "react";
 import { useDispatch, useSelector } from 'react-redux';
 import ReactModal from "react-modal";
 import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
@@ -10,6 +10,7 @@ import { setShowModal, setTooltipIds, setTyping } from "../../../store/playerUiS
 import store from "../../../../store";
 import { loadDeckFromXmlText } from "../functions/helpers";
 import { useGameL10n } from "../../../../hooks/useGameL10n";
+import BroadcastContext from "../../../../contexts/BroadcastContext";
 
 function requireAll( requireContext ) {
   return requireContext.keys().map( requireContext );
@@ -106,10 +107,8 @@ const isVisible = (questPath, playtester, privacyType) => {
   else return true;
 }
 
-export const SpawnQuestModal = React.memo(({
-    gameBroadcast,
-    chatBroadcast,
-}) => {  
+export const SpawnQuestModal = React.memo(({}) => { 
+  const {gameBroadcast, chatBroadcast} = useContext(BroadcastContext); 
     const dispatch = useDispatch();
     const l10n = useGameL10n();
     const privacyType = useSelector(state => state?.gameUi?.privacyType);

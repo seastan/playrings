@@ -1,15 +1,14 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { useDispatch } from 'react-redux';
 import { useSelector } from 'react-redux';
 import { gameAction, cardAction } from "../../plugins/lotrlcg/functions/actions";
 import { getDefault, getDisplayName, processTokenType, tokenPrintName } from "../../plugins/lotrlcg/functions/helpers";
 import { setActiveCardObj, setDropdownMenuObj, setTouchAction } from "../../store/playerUiSlice";
 import store from "../../../store";
+import BroadcastContext from "../../../contexts/BroadcastContext";
 
-export const HandleTouchActions = React.memo(({
-    gameBroadcast, 
-    chatBroadcast
-}) => {
+export const HandleTouchActions = React.memo(({}) => {
+    const {gameBroadcast, chatBroadcast} = useContext(BroadcastContext);
     const dispatch = useDispatch();
     const gameUi = useSelector(state => state?.gameUi);
     const playerN = useSelector(state => state?.playerUi?.playerN);

@@ -33,8 +33,6 @@ export const Card = React.memo(({
     groupId,
     groupType,
     offset,
-    gameBroadcast,
-    chatBroadcast,
     cardIndex,
     registerDivToArrowsContext,
     isDragging,
@@ -44,7 +42,6 @@ export const Card = React.memo(({
     //     groupId,
     //     groupType,
     //     offset,
-    //     gameBroadcast,
     //     chatBroadcast,
     //     cardIndex,
     //     registerDivToArrowsContext
@@ -153,8 +150,6 @@ export const Card = React.memo(({
                     cardId={card.id}
                     usesThreatToken={usesThreatToken(card)}
                     isActive={isActive}
-                    gameBroadcast={gameBroadcast}
-                    chatBroadcast={chatBroadcast}
                     zIndex={zIndex}
                     aspectRatio={visibleFace.width/visibleFace.height}
                 />

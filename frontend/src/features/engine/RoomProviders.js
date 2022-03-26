@@ -25,7 +25,7 @@ export const RoomProviders = ({ gameBroadcast, chatBroadcast }) => {
         }}
       >
         <BroadcastContext.Provider value={{gameBroadcast, chatBroadcast}}>
-          <RoomGame gameBroadcast={gameBroadcast} chatBroadcast={chatBroadcast}/>
+          <RoomGame/>
         </BroadcastContext.Provider>
       </div>
   );

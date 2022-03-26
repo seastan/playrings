@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { useSelector, useDispatch } from 'react-redux';
+import BroadcastContext from "../../../../contexts/BroadcastContext";
 import useFocus from "../../../../hooks/useFocus";
 import { useGameL10n } from "../../../../hooks/useGameL10n";
 import { setValues } from "../../../store/gameUiSlice";
@@ -9,10 +10,9 @@ var delayBroadcast;
 
 export const TopBarShared = React.memo(({
   threat,
-  progress,
-  gameBroadcast,
-  chatBroadcast,
+  progress
 }) => {
+  const {gameBroadcast, chatBroadcast} = useContext(BroadcastContext);
   const dispatch = useDispatch();
   const l10n = useGameL10n();
   const gameUiRound = useSelector(state => state?.gameUi?.game?.roundNumber);

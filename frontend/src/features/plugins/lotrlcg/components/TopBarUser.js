@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { useSelector, useDispatch } from 'react-redux';
 import UserName from "../../../user/UserName";
 import useProfile from "../../../../hooks/useProfile";
@@ -8,14 +8,14 @@ import { Link } from "react-router-dom";
 import { setDropdownMenuObj, setObservingPlayerN, setTyping } from "../../../store/playerUiSlice";
 import { setValues } from "../../../store/gameUiSlice";
 import { useGameL10n } from "../../../../hooks/useGameL10n";
+import BroadcastContext from "../../../../contexts/BroadcastContext";
 
 var delayBroadcast;
 
 export const TopBarUser = React.memo(({
-  playerI,
-  gameBroadcast,
-  chatBroadcast,
+  playerI
 }) => {
+  const {gameBroadcast, chatBroadcast} = useContext(BroadcastContext);
   console.log("Rendering TopBarUser ", playerI);
   const dispatch = useDispatch();
   const l10n = useGameL10n();

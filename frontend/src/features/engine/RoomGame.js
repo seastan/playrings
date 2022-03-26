@@ -5,7 +5,7 @@ import { setKeypress } from "../store/playerUiSlice";
 import { DragContainer } from "./DragContainer";
 import { HandleTouchActions } from "./functions/HandleTouchActions";
 
-const RoomGame = React.memo(({ gameBroadcast, chatBroadcast }) => {
+const RoomGame = React.memo(({}) => {
   console.log('Rendering RoomGame');
   const dispatch = useDispatch();
   const touchMode = useSelector(state => state?.playerUi.touchMode);
@@ -27,18 +27,9 @@ const RoomGame = React.memo(({ gameBroadcast, chatBroadcast }) => {
 
   return (
     <div className="h-full w-full">
-      <HandleKeyDown
-        gameBroadcast={gameBroadcast} 
-        chatBroadcast={chatBroadcast}
-      />   
-      {touchMode && <HandleTouchActions
-        gameBroadcast={gameBroadcast} 
-        chatBroadcast={chatBroadcast}
-      />}
-      <DragContainer 
-        gameBroadcast={gameBroadcast}
-        chatBroadcast={chatBroadcast}
-      />
+      <HandleKeyDown/>   
+      {touchMode && <HandleTouchActions/>}
+      <DragContainer/>
     </div>
   )
 })

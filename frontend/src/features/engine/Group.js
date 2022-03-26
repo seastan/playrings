@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import { useDispatch, useSelector } from 'react-redux';
 import { Stacks } from "./Stacks";
 import { GROUPSINFO } from "../plugins/lotrlcg/definitions/constants";
@@ -8,14 +8,14 @@ import { useBrowseTopN } from "./functions/useBrowseTopN";
 import store from "../../store";
 import { setDropdownMenuObj } from "../store/playerUiSlice";
 import { useGameL10n } from "../../hooks/useGameL10n";
+import BroadcastContext from "../../contexts/BroadcastContext";
 
 export const Group = React.memo(({
   groupId,
-  gameBroadcast,
-  chatBroadcast,
   hideTitle,
   registerDivToArrowsContext
 }) => {
+  const {gameBroadcast, chatBroadcast} = useContext(BroadcastContext);
   console.log("Rendering Group ",groupId);
   const dispatch = useDispatch();
   const l10n = useGameL10n();
@@ -77,8 +77,6 @@ export const Group = React.memo(({
         </div>
       }
       <Stacks
-        gameBroadcast={gameBroadcast}
-        chatBroadcast={chatBroadcast}
         groupId={group.id}
         groupType={group.type}
         selectedStackIndices={[...Array(numStacks).keys()]}

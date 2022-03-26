@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useContext, useRef } from "react";
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory } from "react-router-dom";
 import useProfile from "../../../../hooks/useProfile";
@@ -10,11 +10,10 @@ import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { setCardSizeFactor, setLoaded, setRandomNumBetween, setShowModal, setTouchAction, setTouchMode } from "../../../store/playerUiSlice";
 import { useGameL10n } from "../../../../hooks/useGameL10n";
+import BroadcastContext from "../../../../contexts/BroadcastContext";
 
-export const TopBarMenu = React.memo(({
-    gameBroadcast,
-    chatBroadcast,
-}) => {
+export const TopBarMenu = React.memo(({}) => {
+  const {gameBroadcast, chatBroadcast} = useContext(BroadcastContext);
   const myUser = useProfile();
   const myUserID = myUser?.id;
   const history = useHistory();

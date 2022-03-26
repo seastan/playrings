@@ -4,10 +4,7 @@ import { DropdownMenuCommon } from "./DropdownMenuCommon";
 import "../../css/custom-dropdown.css";
 import { useSelector } from "react-redux";
 
-export const DropdownMenu = React.memo(({
-  gameBroadcast,
-  chatBroadcast,
-}) => {
+export const DropdownMenu = React.memo(({}) => {
   const dropdownMenuObj = useSelector(state => state?.playerUi?.dropdownMenuObj);
   const touchAction = useSelector(state => state?.playerUi?.touchAction);
   const mousePosition = useSelector(state => state?.playerUi?.mousePosition);
@@ -31,8 +28,6 @@ export const DropdownMenu = React.memo(({
 
   return (
     <DropdownMenuCommon
-      gameBroadcast={gameBroadcast}
-      chatBroadcast={chatBroadcast}
       mouseX={mouseX}
       mouseY={mouseY}
     />

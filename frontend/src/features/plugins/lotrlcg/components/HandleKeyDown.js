@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { useSelector, useDispatch } from 'react-redux';
 import { 
     getDisplayName,
@@ -9,6 +9,7 @@ import { gameAction, cardAction } from "../functions/actions";
 import store from "../../../../store";
 import { setCardSizeFactor, setKeypressAlt, setKeypressControl, setKeypressSpace, setKeypressTab } from "../../../store/playerUiSlice";
 import { setValues } from "../../../store/gameUiSlice";
+import BroadcastContext from "../../../../contexts/BroadcastContext";
 
 // const keyTokenMap: { [id: string] : Array<string | number>; } = {
 
@@ -105,11 +106,9 @@ const keyLogBase = {
 
 var delayBroadcast;
 
-export const HandleKeyDown = ({
-    gameBroadcast, 
-    chatBroadcast
-}) => {
+export const HandleKeyDown = ({}) => {
     const dispatch = useDispatch();
+    const {gameBroadcast, chatBroadcast} = useContext(BroadcastContext);
     const typing = useSelector(state => state?.playerUi?.typing);
     const keypressControl = useSelector(state => state?.playerUi?.keypress?.Control);
     const keypressAlt = useSelector(state => state?.playerUi?.keypress?.Alt);
@@ -216,12 +215,7 @@ export const HandleKeyDown = ({
             else {
                 event.preventDefault();
                 const state = store.getState();
-                handleKeyDown(
-                    state,
-                    event,
-                    gameBroadcast, 
-                    chatBroadcast,
-                )
+                handleKeyDown(state,event);
             }
         }
 
@@ -230,13 +224,11 @@ export const HandleKeyDown = ({
         return () => {
             document.removeEventListener('keydown', onKeyDown);
         }
-    }, [keyBackLog, typing, gameBroadcast, chatBroadcast, keypressAlt, keypressControl]);
+    }, [keyBackLog, typing, keypressAlt, keypressControl]);
 
     const handleKeyDown = (
         state,
         event,
-        gameBroadcast, 
-        chatBroadcast,
     ) => {
         console.log("handleKeyDown triggered")
         const k = event.key;

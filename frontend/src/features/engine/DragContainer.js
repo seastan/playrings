@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useContext } from "react";
 import { ArrowsBetweenDivsContextProvider, ArrowBetweenDivs, LineOrientation, ArrowAnchorPlacement } from 'react-simple-arrows';
 import { DragDropContext } from "react-beautiful-dnd";
 import { useSelector, useDispatch } from 'react-redux';
@@ -10,13 +10,12 @@ import { setTouchAction } from "../store/playerUiSlice";
 import { GROUPSINFO } from "../plugins/lotrlcg/definitions/constants";
 import { getDisplayName, getDisplayNameFlipped } from "../plugins/lotrlcg/functions/helpers";
 import { Table } from "../plugins/lotrlcg/components/Table";
+import BroadcastContext from "../../contexts/BroadcastContext";
 
-export const DragContainer = React.memo(({
-  gameBroadcast,
-  chatBroadcast,
-}) => {
+export const DragContainer = React.memo(({}) => {
   console.log("Rendering DragContainer");
   const dispatch = useDispatch();
+  const {gameBroadcast, chatBroadcast} = useContext(BroadcastContext);
   const playerData = useSelector(state => state?.gameUi?.game?.playerData);
   const touchMode = useSelector(state => state?.playerUi?.touchMode);
   //const archerContainerRef = React.createRef();
@@ -131,7 +130,6 @@ export const DragContainer = React.memo(({
 
   return(
     <DragDropContext onDragEnd={onDragEnd}>
-      {/* <HandleGameChange gameUi={gameUi} playerN={playerN} gameBroadcast={gameBroadcast} chatBroadcast={chatBroadcast}/> */}
       <ArrowsBetweenDivsContextProvider>
         {({ registerDivToArrowsContext }) => (
           <>
@@ -152,8 +150,6 @@ export const DragContainer = React.memo(({
             })}
 
           <Table
-            gameBroadcast={gameBroadcast}
-            chatBroadcast={chatBroadcast}
             registerDivToArrowsContext={usingArrows ? registerDivToArrowsContext: null}
           />
         </>
@@ -179,8 +175,6 @@ export const DragContainer = React.memo(({
     // <DragDropContext onDragEnd={onDragEnd}>
     //     <Table
     //       playerN={playerN}
-    //       gameBroadcast={gameBroadcast}
-    //       chatBroadcast={chatBroadcast}
     //       setTyping={setTyping}
     //     />
     // </DragDropContext>
