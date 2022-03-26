@@ -31,10 +31,10 @@ Once this is done browse do `http://127.0.0.1:3000`.
 
 The default users are
 ```
-player1@dragoncards.com password1
-player2@dragoncards.com password2
-player3@dragoncards.com password3
-player4@dragoncards.com password4
+player1@dragncards.com password1
+player2@dragncards.com password2
+player3@dragncards.com password3
+player4@dragncards.com password4
 ```
 If you prefer different names please update the `alias` value in `vagrant/sql/users.sql` and run vagrant up.
 
