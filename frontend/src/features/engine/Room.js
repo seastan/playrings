@@ -7,6 +7,8 @@ import { setGameUi } from "../store/gameUiSlice";
 import useProfile from "../../hooks/useProfile";
 import { resetPlayerUi } from "../store/playerUiSlice";
 
+var delayBroadcast;
+
 export const Room = ({ slug }) => {
   const dispatch = useDispatch();
   const gameName = useSelector(state => state.gameUi.gameName);
@@ -33,7 +35,11 @@ export const Room = ({ slug }) => {
         // Reset player UI
         dispatch(resetPlayerUi())
       }
-      dispatch(setGameUi(game_ui));
+      // Simulate high ping/lag;
+      //delayBroadcast = setTimeout(function() {
+        dispatch(setGameUi(game_ui));
+      //}, 2000);
+      
     } else if (
       event === "phx_reply" &&
       payload.response != null &&

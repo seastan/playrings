@@ -18,10 +18,8 @@ export const Token = React.memo(({
     aspectRatio,
 }) => {
     const {gameBroadcast, chatBroadcast} = useContext(BroadcastContext);
-    const tokenStore = state => state?.gameUi?.game?.cardById?.[cardId]?.tokens?.[tokenType];
-    const tokenValue = useSelector(tokenStore);
-    const committedStore = state => state?.gameUi?.game?.cardById?.[cardId]?.committed;
-    const committed = useSelector(committedStore);
+    const tokenValue = useSelector(state => state?.gameUi?.game?.cardById?.[cardId]?.tokens?.[tokenType]);
+    const committed = useSelector(state => state?.gameUi?.game?.cardById?.[cardId]?.committed);
     const [buttonLeftVisible, setButtonLeftVisible] = useState(false);
     const [buttonRightVisible, setButtonRightVisible] = useState(false);
     const [amount, setAmount] = useState(tokenValue);

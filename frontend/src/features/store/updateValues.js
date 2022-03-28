@@ -13,7 +13,7 @@ const isObject = (item) => {
     return true;
   }
   
- export const deepUpdate = (obj1, obj2) => {
+ export const deepUpdate = (obj1, obj2, submittedTimestamp = 0) => {
     // If they are already equal, we are done
     if (obj1 === obj2) return;
     // If obj1 does not exist, set it to obj2
@@ -21,9 +21,18 @@ const isObject = (item) => {
       obj1 = obj2;
       return;
     }
+    // // Optimize sides
+    // if (!obj2 && obj1?.A && obj2?.B) {
+    //   console.log("not updating",obj1,obj2)
+    //   return;
+    // }
     // If obj2 does not exist, update obj1
     if (!obj2) {
       obj1 = obj2;
+      return;
+    }
+    // Don't update obj1 if obj2 was actually submitted to the backend before obj1's most recent update.
+    if (obj1?.lastUpdated && submittedTimestamp && obj1.lastUpdated > submittedTimestamp) {
       return;
     }
     // First we delete properties from obj1 that no longer exist
@@ -32,6 +41,7 @@ const isObject = (item) => {
       //if (!obj1.hasOwnProperty(p)) continue;
       // If property no longer exists in obj2, delete it from obj1
       if (!obj2.hasOwnProperty(p)) {
+        console.log("1updating... ",obj1,obj2,p)
         delete obj1[p]
         continue;
       }
@@ -57,7 +67,10 @@ const isObject = (item) => {
         }
       } else if (isObject(obj1[p]) && isObject(obj2[p])) {
         // Both values are objects
-        deepUpdate(obj1[p], obj2[p]);
+        deepUpdate(obj1[p], obj2[p], submittedTimestamp);
+      } else if (p === "sides" && obj2[p] === null) {
+        // Sides are static, they should never change, so most of the time the backend sends them as null
+        continue; 
       } else {
         // One of the values is not an object/array, so it's a basic type and should be updated
         obj1[p] = obj2[p];
@@ -69,6 +82,9 @@ const isObject = (item) => {
     const updateLength = update.length;
     if (updateLength === 2) {
       obj[update[0]] = update[1];
+      const unix_ms = Math.floor(Date.now());
+      obj["lastUpdated"] = unix_ms;
+      console.log("objupdate",obj["lastUpdated"], update[0], update[1])
     } else if (updateLength > 2) {
       updateValue(obj[update[0]], update.slice(1));
     }

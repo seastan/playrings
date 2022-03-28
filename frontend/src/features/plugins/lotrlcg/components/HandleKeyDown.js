@@ -224,7 +224,7 @@ export const HandleKeyDown = ({}) => {
         return () => {
             document.removeEventListener('keydown', onKeyDown);
         }
-    }, [keyBackLog, typing, keypressAlt, keypressControl]);
+    }, [keyBackLog, typing, keypressAlt, gameBroadcast, chatBroadcast, keypressControl]);
 
     const handleKeyDown = (
         state,

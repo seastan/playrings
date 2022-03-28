@@ -18,7 +18,7 @@ defmodule DragnCardsWeb.RoomChannel do
 
     # {:ok, socket}
     send(self, :after_join)
-    {:ok, client_state(socket), socket}
+    {:ok, client_state(socket, true), socket}
     # else
     #   {:error, %{reason: "unauthorized"}}
     # end
@@ -62,11 +62,13 @@ defmodule DragnCardsWeb.RoomChannel do
     %{
       "action" => action,
       "options" => options,
+      "timestamp" => timestamp,
     },
     %{assigns: %{room_slug: room_slug, user_id: user_id}} = socket
   ) do
     GameUIServer.game_action(room_slug, user_id, action, options)
     state = GameUIServer.state(room_slug)
+    state = put_in(state["submittedTimestamp"], timestamp)
 
     socket = socket |> assign(:game_ui, state)
     notify(socket, user_id)
@@ -144,22 +146,34 @@ defmodule DragnCardsWeb.RoomChannel do
 
   # Remove deltas from a gameui, as it's not needed for rendering
   def remove_deltas(gameui) do
-    if gameui do
+    gameui = if gameui do
       put_in(gameui["game"]["deltas"], [])
     else
       gameui
     end
   end
 
+  def reduce_size(gameui, just_joined) do
+    gameui = if just_joined || gameui["game"]["last_action"] == "load_cards" do
+      gameui
+    else
+      Enum.reduce(gameui["game"]["cardById"], gameui, fn({card_id, card}, acc) ->
+        put_in(acc["game"]["cardById"][card_id]["sides"], nil)
+      end)
+    end
+  end
+
   # This is what part of the state gets sent to the client.
   # It can be used to transform or hide it before they get it.
-  defp client_state(socket) do
+  defp client_state(socket, just_joined \\ false) do
     if Map.has_key?(socket.assigns, :game_ui) do
+      gameui = socket.assigns.game_ui
+      last_delta = Enum.at(gameui["game"]["deltas"],0)
+      gameui = remove_deltas(gameui)
+      #gameui = reduce_size(gameui, just_joined)
       socket.assigns
-      |> Map.put(
-        :game_ui,
-        remove_deltas(socket.assigns.game_ui)
-      )
+      |> Map.put(:game_ui,gameui)
+      |> Map.put(:last_delta,last_delta)
     else
       socket.assigns
     end

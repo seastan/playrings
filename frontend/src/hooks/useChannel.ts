@@ -104,7 +104,8 @@ const joinChannel = (
     );
 
   setBroadcast((_oldstate: any) => (eventName: string, payload: object) =>
-    channel.push(eventName, payload)
+  //channel.push(eventName, payload)
+  channel.push(eventName, {...payload, timestamp: Math.floor(Date.now())})
   );
 
   return () => {

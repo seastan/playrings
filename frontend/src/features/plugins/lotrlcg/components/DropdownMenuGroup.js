@@ -73,18 +73,19 @@ export const DropdownMenuGroup = React.memo(({
           <DropdownItem action="lookAt" topN="10" clickCallback={handleDropdownClick}>{l10n("Look at top 10")}</DropdownItem>
           <DropdownItem action="lookAt" topN="X" clickCallback={handleDropdownClick}>{l10n("Look at top X")}</DropdownItem>
           <DropdownItem action="chooseRandom" clickCallback={handleDropdownClick}>{l10n("Choose Random")}</DropdownItem>
+          <DropdownItem action="dealX" side="B" clickCallback={handleDropdownClick}>{l10n("Deal top X facedown")}</DropdownItem>
           <DropdownItem
             rightIcon={<FontAwesomeIcon icon={faChevronRight}/>}
             goToMenu="moveTo"
             clickCallback={handleDropdownClick}>
             {l10n("Move to")}
           </DropdownItem>
-          <DropdownItem
+          {/* <DropdownItem
             rightIcon={<FontAwesomeIcon icon={faChevronRight}/>}
             goToMenu="more"
             clickCallback={handleDropdownClick}>
             {l10n("More")}
-          </DropdownItem>
+          </DropdownItem> */}
         </div>}
 
         {activeMenu === "moveTo" &&
@@ -123,11 +124,11 @@ export const DropdownMenuGroup = React.memo(({
         <DropdownMoveTo destGroupId="sharedEncounterDeck2"/>}
         {activeMenu === "moveToEncounter3" &&
         <DropdownMoveTo destGroupId="sharedEncounterDeck3"/>}
-        {activeMenu === "more" &&
+        {/* {activeMenu === "more" &&
         <div className="menu">
           <GoBack goToMenu="main" clickCallback={handleDropdownClick}/>
           <DropdownItem action="dealX" side="B" clickCallback={handleDropdownClick}>{l10n("Deal top X facedown")}</DropdownItem>
-        </div>}
+        </div>} */}
     </div>
   );
 })

@@ -8,6 +8,7 @@ import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { setShowHotkeys, setShowPlayersInRoom } from "../../../store/playerUiSlice";
 import { useGameL10n } from "../../../../hooks/useGameL10n";
+import { useGameDefinition } from "../../../engine/functions/useGameDefinition";
 
 
 const keyClass = "m-auto border bg-gray-500 text-center bottom inline-block text-xs ml-2 mb-1";
@@ -18,7 +19,8 @@ export const TopBarView = React.memo(({}) => {
   const numPlayers = useSelector(state => state.gameUi.game.numPlayers);
   const questModeAndId = useSelector(state => state.gameUi.game.questModeAndId);
   const dispatch = useDispatch();
-
+  const gameDef = useGameDefinition();
+  console.log("gamedef", gameDef)
   const range = (size, startAt = 0) => {
     return [...Array(size).keys()].map(i => i + startAt);
   }
@@ -44,26 +46,28 @@ export const TopBarView = React.memo(({}) => {
           <li key={"QuestCompanion"}>
             <a href={questCompanionURL} target="_blank">{l10n("Quest Companion")}</a>
           </li>
+
           <li key={"Shared"}>
             
             {l10n("Shared")}
               <span className="float-right mr-1"><FontAwesomeIcon icon={faChevronRight}/></span>
             
             <ul className="third-level-menu">
-              {Object.keys(GROUPSINFO).map((groupId, _index) => {
-                if (groupId.startsWith("shared")) return (
+              {Object.keys(gameDef.groups).map((groupId, _index) => {
+                const controller = gameDef.groups[groupId].controller;
+                if (controller == "shared") return (
                   <TopBarViewItem key={groupId} groupId={groupId}/>
                 )
               })}
             </ul>
           </li>
-          {range(numPlayers, 1).map((N, _playerIndex) => (
-          <li key={"player"+N}>
-            {l10n("Player "+N)}
+          {gameDef.players.map((playerI, _playerIndex) => (
+          <li key={playerI}>
+            {l10n(playerI)}
               <span className="float-right mr-1"><FontAwesomeIcon icon={faChevronRight}/></span>
             <ul className="third-level-menu">
-              {Object.keys(GROUPSINFO).map((groupId, _index) => {
-                if (groupId.startsWith("player"+N)) return (
+              {Object.keys(gameDef.groups).map((groupId, _index) => {
+                if (groupId.startsWith(playerI)) return (
                   <TopBarViewItem key={groupId} groupId={groupId}/>
                 )
               })}

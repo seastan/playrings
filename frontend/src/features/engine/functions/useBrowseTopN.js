@@ -8,7 +8,7 @@ export const useBrowseTopN = (
     group,
     dispatch,
 ) => {
-  const {gameBroadcast, chatBroadcast} = useContext(BroadcastContext);
+    const {gameBroadcast, chatBroadcast} = useContext(BroadcastContext);
     const stackIds = group["stackIds"];
     const numStacks = stackIds.length;
     const groupName = GROUPSINFO[group.id].name;

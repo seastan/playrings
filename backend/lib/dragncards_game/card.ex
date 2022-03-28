@@ -40,7 +40,7 @@ defmodule DragnCardsGame.Card do
       "tokens" => Tokens.new(),
       "tokensPerRound" => %{},
       "roundEnteredPlay" => nil,
-      "phaseEnteerdPlay" => nil,
+      "phaseEnteredPlay" => nil,
       "locked" => false,
       "inPlay" => false,
       "cardBackOverride" => card_row["cardbackoverride"],

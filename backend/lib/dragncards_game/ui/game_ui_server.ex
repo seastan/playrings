@@ -121,7 +121,8 @@ defmodule DragnCardsGame.GameUIServer do
     Logger.debug("handle game_action #{user_id} #{action}")
     try do
       gameui = GameUI.game_action(gameui, user_id, action, options)
-      put_in(gameui["error"], false)
+      gameui = put_in(gameui["error"], false)
+      gameui = put_in(gameui["game"]["last_action"], action)
     rescue
       e in RuntimeError ->
         IO.inspect(e)

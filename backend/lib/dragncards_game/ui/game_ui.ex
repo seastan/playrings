@@ -16,6 +16,7 @@ defmodule DragnCardsGame.GameUI do
     Logger.debug("game_ui new")
     gameui = %{
       "game" => Game.load(options),
+      "pluginId" => "lotrlcg",
       "gameName" => game_name,
       "options" => options,
       "created_at" => DateTime.utc_now(),
