@@ -18,7 +18,7 @@ defmodule DragnCardsWeb.RoomChannel do
 
     # {:ok, socket}
     send(self, :after_join)
-    {:ok, client_state(socket, true), socket}
+    {:ok, client_state(socket, "join_room"), socket}
     # else
     #   {:error, %{reason: "unauthorized"}}
     # end
@@ -54,7 +54,7 @@ defmodule DragnCardsWeb.RoomChannel do
   def handle_in("request_state", _payload, %{assigns: %{room_slug: room_slug}} = socket) do
     state = GameUIServer.state(room_slug)
     socket = socket |> assign(:game_ui, state)
-    {:reply, {:ok, client_state(socket)}, socket}
+    {:reply, {:ok, client_state(socket, "request_state")}, socket}
   end
 
   def handle_in(
@@ -73,7 +73,25 @@ defmodule DragnCardsWeb.RoomChannel do
     socket = socket |> assign(:game_ui, state)
     notify(socket, user_id)
 
-    {:reply, {:ok, client_state(socket)}, socket}
+    {:reply, {:ok, client_state(socket, "game_action")}, socket}
+  end
+
+  def handle_in(
+    "set_seat",
+    %{
+      "player_i" => player_i,
+      "new_user_id" => new_user_id,
+      "timestamp" => timestamp,
+    },
+    %{assigns: %{room_slug: room_slug, user_id: user_id}} = socket
+  ) do
+    GameUIServer.set_seat(room_slug, user_id, player_i, new_user_id)
+    state = GameUIServer.state(room_slug)
+
+    socket = socket |> assign(:game_ui, state)
+    notify(socket, user_id)
+
+    {:reply, {:ok, client_state(socket, "set_seat")}, socket}
   end
 
   def handle_in(
@@ -87,7 +105,7 @@ defmodule DragnCardsWeb.RoomChannel do
     socket = socket |> assign(:game_ui, state)
     notify(socket, user_id)
 
-    {:reply, {:ok, client_state(socket)}, socket}
+    {:reply, {:ok, client_state(socket,"close_room")}, socket}
   end
 
   @doc """
@@ -165,15 +183,16 @@ defmodule DragnCardsWeb.RoomChannel do
 
   # This is what part of the state gets sent to the client.
   # It can be used to transform or hide it before they get it.
-  defp client_state(socket, just_joined \\ false) do
+  defp client_state(socket, type \\ "") do
     if Map.has_key?(socket.assigns, :game_ui) do
       gameui = socket.assigns.game_ui
-      last_delta = Enum.at(gameui["game"]["deltas"],0)
-      gameui = remove_deltas(gameui)
-      #gameui = reduce_size(gameui, just_joined)
-      socket.assigns
-      |> Map.put(:game_ui,gameui)
-      |> Map.put(:last_delta,last_delta)
+      if type == "game_action" do
+        last_delta = Enum.at(gameui["game"]["deltas"],0)
+        socket.assigns |> Map.put(:last_delta,last_delta)
+      else
+        gameui = remove_deltas(gameui)
+        socket.assigns |> Map.put(:game_ui,gameui)
+      end
     else
       socket.assigns
     end

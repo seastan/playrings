@@ -1130,8 +1130,6 @@ defmodule DragnCardsGame.GameUI do
           reset_game(gameui)
         "load_cards" ->
           load_cards(gameui, player_n, options["load_list"])
-        "set_seat" ->
-          set_seat(gameui, options["user_id"], options["player_n"])
         "target_card_ids" ->
           target_card_ids(gameui, options["card_ids"], player_n)
         "step_through" ->
@@ -1146,13 +1144,6 @@ defmodule DragnCardsGame.GameUI do
           peek_at_by_indices(gameui, options["group_id"], options["indices"], player_n, options["value"])
         _ ->
           gameui
-      end
-    else
-      case action do
-        "set_seat" ->
-          set_seat(gameui, options["user_id"], options["player_n"])
-          _ ->
-            gameui
       end
     end
     # Compare state before and after, and add a delta (unless we are undoing a move or loading a game with undo info)
@@ -1366,10 +1357,6 @@ defmodule DragnCardsGame.GameUI do
     else
       gameui
     end
-  end
-
-  def set_seat(gameui, user_id, player_n) do
-    put_in(gameui["playerIds"][player_n], user_id)
   end
 
   def increment_threat(gameui, player_n, increment) do

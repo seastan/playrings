@@ -70,6 +70,14 @@ defmodule DragnCardsGame.GameUIServer do
   end
 
   @doc """
+  set_seat/3: Set a seat value.
+  """
+  @spec set_seat(String.t(), integer, String.t(), integer) :: GameUI.t()
+  def set_seat(game_name, user_id, player_i, new_user_id) do
+    game_exists?(game_name) && GenServer.call(via_tuple(game_name), {:set_seat, user_id, player_i, new_user_id})
+  end
+
+  @doc """
   add_player_to_room/2: Add a player to the room.
   """
   @spec add_player_to_room(String.t(), integer) :: GameUI.t()
@@ -123,6 +131,17 @@ defmodule DragnCardsGame.GameUIServer do
       gameui = GameUI.game_action(gameui, user_id, action, options)
       gameui = put_in(gameui["error"], false)
       gameui = put_in(gameui["game"]["last_action"], action)
+    rescue
+      e in RuntimeError ->
+        IO.inspect(e)
+        put_in(gameui["error"],true)
+    end
+    |> save_and_reply()
+  end
+
+  def handle_call({:set_seat, user_id, player_i, new_user_id}, _from, gameui) do
+    try do
+      gameui = put_in(gameui["playerIds"][player_i],new_user_id)
     rescue
       e in RuntimeError ->
         IO.inspect(e)

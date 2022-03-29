@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import RoomProviders from "./RoomProviders";
 import {useSetMessages} from '../../contexts/MessagesContext';
 import useChannel from "../../hooks/useChannel";
-import { setGameUi } from "../store/gameUiSlice";
+import { applyDelta, setGameUi } from "../store/gameUiSlice";
 import useProfile from "../../hooks/useProfile";
 import { resetPlayerUi } from "../store/playerUiSlice";
 
@@ -22,6 +22,13 @@ export const Room = ({ slug }) => {
     if (!payload) return;
     console.log("Got new payload: ", event, payload);
     if (
+      event === "phx_reply" &&
+      payload.response != null &&
+      payload.response.last_delta != null
+    ) {
+      dispatch(applyDelta(payload.response.last_delta))
+      
+    } else if (
       event === "phx_reply" &&
       payload.response != null &&
       payload.response.game_ui != null

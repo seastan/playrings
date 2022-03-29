@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { deepUpdate, updateValues } from "./updateValues";
+import { deepUpdate, updateByDelta, updateValues } from "./updateValues";
 //const isEqual = require("react-fast-compare");
 
 const initialState = {};
@@ -17,6 +17,13 @@ const gameUiSlice = createSlice({
       // Object.keys(payload).forEach((key) => {
       //   if (key !== "game") state[key] = payload[key];
       // })
+    },
+    applyDelta: (state, { payload }) => {
+      if (!state?.game) {
+        return;
+      } else {
+        setGame(updateByDelta(state.game, payload));
+      }
     },
     setGame: (state, { payload }) => {
       if (!state.game) {
@@ -40,5 +47,5 @@ const gameUiSlice = createSlice({
   },
 });
 
-export const { setGameUi, setGame, setGroupById, setStackIds, setCardIds, setValues } = gameUiSlice.actions;
+export const { setGameUi, applyDelta, setGame, setGroupById, setStackIds, setCardIds, setValues } = gameUiSlice.actions;
 export default gameUiSlice.reducer;

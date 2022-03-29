@@ -12,6 +12,60 @@ const isObject = (item) => {
     }
     return true;
   }
+
+
+/* def apply_delta(map, delta, direction) do
+# Ignore timestamp
+delta = Map.delete(delta, "unix_ms")
+# Loop over keys in delta and apply the changes to the map
+Enum.reduce(delta, map, fn({k, v}, acc) ->
+  if is_map(v) do
+    put_in(acc[k], apply_delta(map[k], v, direction))
+  else
+    new_val = if direction == "undo" do
+      Enum.at(v,0)
+    else
+      Enum.at(v,1)
+    end
+    if new_val == ":removed" do
+      Map.delete(acc, k)
+    else
+      put_in(acc[k], new_val)
+    end
+  end
+end)
+end */
+
+export const updateByDelta = (obj, delta) => {
+  // Ignore timestamp
+  delete delta["unix_ms"];
+  // The we loop through delta properties and update obj
+  for (var p in delta) { 
+    console.log("mysync",obj[p],delta[p],p)
+    // Ignore prototypes
+    if (!delta.hasOwnProperty(p)) continue;     
+    if (obj[p] === null || obj[p] === undefined) {
+      if (delta[p][0] === ":removed") {
+        // New key was created, add it to obj
+        obj[p] = delta[p][1];
+      } else {
+        console.log("mysync error 1", obj,delta,p);
+        return;
+      }
+    }
+    if (isObject(delta[p])) {
+      updateByDelta(obj[p],delta[p])
+    } else {
+      const newVal = delta[p][1];
+      if (newVal === ":removed") {
+        delete obj[p];
+      } else {
+        console.log("mysync set ",obj,p,newVal)
+        obj[p] = newVal;
+      }
+    }
+  }
+}
   
  export const deepUpdate = (obj1, obj2, submittedTimestamp = 0) => {
     // If they are already equal, we are done

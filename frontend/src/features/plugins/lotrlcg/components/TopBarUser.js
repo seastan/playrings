@@ -98,13 +98,13 @@ export const TopBarUser = React.memo(({
     Object.keys(playerIds).forEach((playeri) => {
       const sittingUserIDi = playerIds[playeri];
       if (sittingUserIDi === myUserID) {
-        gameBroadcast("game_action", {action: "set_seat", options: {"player_n": playeri, "user_id": null}});
+        gameBroadcast("set_seat", {"player_i": playeri, "new_user_id": null});
         chatBroadcast("game_update", {message: "got up from "+playeri+"'s seat."});
       }
     })
     // Sit in seat
     if (action === "sit") {
-      gameBroadcast("game_action", {action: "set_seat", options: {"player_n": playerI, "user_id": myUserID}});
+      gameBroadcast("set_seat", {"player_i": playerI, "new_user_id": myUserID});
       chatBroadcast("game_update",{message: "sat in "+playerI+"'s seat."});
       dispatch(setObservingPlayerN(playerI));
     } 
