@@ -449,23 +449,54 @@ export const cardAction = (action, cardId, options, props) => {
     }
     // Exhaust card
     else if (action === "toggle_exhaust" && groupType === "play") {
-        if (cardFace.type === "Location") {
-            chatBroadcast("game_update", {message: "made "+displayName+" the active location."});
-            gameBroadcast("game_action", {action: "move_stack", options: {stack_id: stackId, dest_group_id: "sharedActive", dest_stack_index: 0, combine: false, preserve_state: false}})
-            dispatch(setActiveCardObj(null));
-        } else {
-            var values = [true, 90];
-            if (card.exhausted) {
-                values = [false, 0];
-                chatBroadcast("game_update", {message: "readied "+displayName+"."});
-            } else {
-                chatBroadcast("game_update", {message: "exhausted "+displayName+"."});
-            }
-            const updates = [["game", "cardById", cardId, "exhausted", values[0]], ["game", "cardById", cardId, "rotation", values[1]]];
-            dispatch(setValues({updates: updates}));
-            console.log("exhaust gameBroadcast", gameBroadcast)
-            gameBroadcast("game_action", {action: "update_values", options:{updates: updates}});
+        const listOfActions =
+        [
+            [ // Action 1
+                { // if statement (card is ready)
+                    if: [
+                        [["cardById", ["id"], "groupType"], "equalTo", "play"],
+                        [["cardById", ["id"], "exhausted"], "equalTo", false]
+                    ],
+                    then: [
+                        [["cardById", ["id"], "exhausted"], "changeTo", true], 
+                        [["cardById", ["id"], "rotation"],  "changeTo", 90],
+                    ]
+                },
+                { // else if
+                    if: [   
+                        [["cardById", ["id"], "groupType"], "equalTo", "play"],
+                        [["cardById", ["id"], "exhausted"], "equalTo", true]
+                    ],
+                    then: [
+                        [["cardById", ["id"], "exhausted"], "changeTo", false], 
+                        [["cardById", ["id"], "rotation"],  "changeTo", 0],
+                    ]
+                },
+            ]
+        ]
+        const cardObj = {
+            activeCardObj
         }
+        gameBroadcast("game_action", {action: "action_list", options: {list_of_actions: listOfActions, type: "card", id: cardId}})
+
+
+        // if (cardFace.type === "Location") {
+        //     chatBroadcast("game_update", {message: "made "+displayName+" the active location."});
+        //     gameBroadcast("game_action", {action: "move_stack", options: {stack_id: stackId, dest_group_id: "sharedActive", dest_stack_index: 0, combine: false, preserve_state: false}})
+        //     dispatch(setActiveCardObj(null));
+        // } else {
+        //     var values = [true, 90];
+        //     if (card.exhausted) {
+        //         values = [false, 0];
+        //         chatBroadcast("game_update", {message: "readied "+displayName+"."});
+        //     } else {
+        //         chatBroadcast("game_update", {message: "exhausted "+displayName+"."});
+        //     }
+        //     const updates = [["game", "cardById", cardId, "exhausted", values[0]], ["game", "cardById", cardId, "rotation", values[1]]];
+        //     dispatch(setValues({updates: updates}));
+        //     console.log("exhaust gameBroadcast", gameBroadcast)
+        //     gameBroadcast("game_action", {action: "update_values", options:{updates: updates}});
+        // }
     }
     // Flip card
     else if (action === "flip") {
@@ -482,6 +513,85 @@ export const cardAction = (action, cardId, options, props) => {
         }
     }
     else if (action === "commit" || action === "commit_without_exhausting") {
+        /* const listOfActions =
+        [
+            [ // Action 1
+                { // if statement (card is ready and not committed or exhausted)
+                    def: {
+                        "questStat": 
+                    }
+                    if: [   
+                        [["cardById", ["id"], "groupType"], "equalTo", "play"], 
+                        [["cardById", ["id"], "committed"], "equalTo", false],
+                        [["cardById", ["id"], "exhausted"], "equalTo", false]
+                    ],
+                    then: [
+                        [["cardById", ["id"], "committed"], "changeTo", true], 
+                        [["cardById", ["id"], "exhausted"], "changeTo", true], 
+                        [["cardById", ["id"], "rotation"],  "changeTo", 90],
+                        [
+                            { // if
+                                if: [["game", "questMode"], "equalTo", "Battle"],
+                                then: [
+                                    [["playerData", ["controller"], "attack"], "increaseBy", ["sides","sideUp","attack"]],
+                                    [["playerData", ["controller"], "attack"], "increaseBy", ["sides","sideUp","tokens","attack"]],
+                                ]
+                            },
+                            { // else if
+                                if: [["game", "questMode"], "equalTo", "Siege"],
+                                then: [
+                                    [["playerData", ["controller"], "defense"], "increaseBy", ["sides","sideUp","defense"]],
+                                    [["playerData", ["controller"], "defense"], "increaseBy", ["sides","sideUp","tokens","defense"]],
+                                ]
+                            },
+                            { // else
+                                if: true,
+                                then: [
+                                    [["playerData", ["controller"], "willpower"], "increaseBy", ["sides","sideUp","willpower"]],
+                                    [["playerData", ["controller"], "willpower"], "increaseBy", ["sides","sideUp","tokens","willpower"]],
+                                ]
+                            },
+                        ]
+                    ]
+                },
+                { // else if
+                    if: [   
+                        [["cardById", ["id"], "groupType"], "equalTo", "play"], 
+                        [["cardById", ["id"], "committed"], "equalTo", true],
+                        [["cardById", ["id"], "exhausted"], "equalTo", true]
+                    ],
+                    then: [
+                        [["cardById", ["id"], "committed"], "changeTo", true], 
+                        [["cardById", ["id"], "exhausted"], "changeTo", true], 
+                        [["cardById", ["id"], "rotation"],  "changeTo", 90],
+                        [
+                            { // if
+                                if: [["game", "questMode"], "equalTo", "Battle"],
+                                then: [
+                                    [["playerData", ["controller"], "attack"], "increaseBy", ["sides","sideUp","attack"]],
+                                    [["playerData", ["controller"], "attack"], "increaseBy", ["sides","sideUp","tokens","attack"]],
+                                ]
+                            },
+                            { // else if
+                                if: [["game", "questMode"], "equalTo", "Siege"],
+                                then: [
+                                    [["playerData", ["controller"], "defense"], "increaseBy", ["sides","sideUp","defense"]],
+                                    [["playerData", ["controller"], "defense"], "increaseBy", ["sides","sideUp","tokens","defense"]],
+                                ]
+                            },
+                            { // else
+                                if: true,
+                                then: [
+                                    [["playerData", ["controller"], "willpower"], "increaseBy", ["sides","sideUp","willpower"]],
+                                    [["playerData", ["controller"], "willpower"], "increaseBy", ["sides","sideUp","tokens","willpower"]],
+                                ]
+                            },
+                        ]
+                    ]
+                },
+            ]
+        ] */
+        
         const playerController = card.controller;
         if (playerController === "shared") return;
         var questingStat = "willpower";

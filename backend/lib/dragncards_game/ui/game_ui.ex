@@ -1080,6 +1080,8 @@ defmodule DragnCardsGame.GameUI do
     game_old = gameui["game"]
     gameui = if player_n do
       case action do
+        "action_list" ->
+          action_list(gameui, player_n, options["action_list"], options["type"], options["id"])
         "draw_card" ->
           draw_card(gameui, player_n)
         "new_round" ->
@@ -1157,6 +1159,10 @@ defmodule DragnCardsGame.GameUI do
     end
     gameui = set_last_update(gameui)
     gameui
+  end
+
+  def action_list(gameui, player_n, action_list, type, id) do
+    draw_card(gameui, player_n)
   end
 
   def get_hero_list(gameui, player_n) do

@@ -11,7 +11,7 @@ export const CardMouseRegion = React.memo(({
     top,
     card,
     isActive,
-    setIsActive,
+    //setIsActive,
     zIndex,
     cardIndex,
     groupId,
@@ -26,11 +26,16 @@ export const CardMouseRegion = React.memo(({
     const makeActive = (event) => {
         const screenPosition = event.clientX > (window.innerWidth/2) ? "right" : "left";
         dispatch(setActiveCardObj({
-            card: card,
+            card: {
+                ...card,
+                groupId: groupId,
+                groupType: groupType,
+                cardIndex: cardIndex,
+            },
             mousePosition: position, 
             screenPosition: screenPosition,
             clicked: true,
-            setIsActive: setIsActive,
+            //setIsActive: setIsActive,
             groupId: groupId,
             groupType: groupType,
             cardIndex: cardIndex,
@@ -63,7 +68,7 @@ export const CardMouseRegion = React.memo(({
     const handleMouseOver = (event) => {
         event.stopPropagation();
         makeActive(event,position);
-        setIsActive(true);
+        //setIsActive(true);
     }
 
     const onLongPress = (event) => {

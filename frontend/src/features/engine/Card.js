@@ -58,12 +58,12 @@ export const Card = React.memo(({
     const visibleFaceSrc = getVisibleFaceSrc(card, playerN, user);
     const zIndex = 1000 - cardIndex;
     console.log('Rendering Card ',visibleFace.name);
-    const [isActive, setIsActive] = useState(false);
+    const isActive = useSelector(state => {return state?.playerUi?.activeCardObj?.card?.id === cardId});
     const touchModeSpacingFactor = touchMode ? 1.5 : 1;
     const defaultAction = getDefault(card, groupId, groupType, cardIndex)
 
     const handleMouseLeave = (_event) => {
-        setIsActive(false);
+        //setIsActive(false);
         dispatch(setActiveCardObj(null));
     }
 
@@ -128,7 +128,7 @@ export const Card = React.memo(({
                     top={"0%"}
                     card={card}
                     isActive={isActive}
-                    setIsActive={setIsActive}
+                    //setIsActive={setIsActive}
                     zIndex={zIndex}
                     cardIndex={cardIndex}
                     groupId={groupId}
@@ -139,7 +139,7 @@ export const Card = React.memo(({
                     top={"50%"}
                     card={card}
                     isActive={isActive}
-                    setIsActive={setIsActive}
+                    //setIsActive={setIsActive}
                     zIndex={zIndex}
                     cardIndex={cardIndex}
                     groupId={groupId}
