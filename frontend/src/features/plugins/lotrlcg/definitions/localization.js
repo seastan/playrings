@@ -741,7 +741,7 @@ export const gameL10n = {
     "Unload my deck": "Désinstaller mon deck",
     "Unload encounter": "Désinstaller deck de rencontre",
     "Spawn card": "Rechercher une carte",
-    "From the card pool": "*Dans l'ensemble des cartes",
+    "From the card pool": "Dans l'ensemble des cartes",
     "Create your own card": "Créer sa propre carte",
     "Random": "Tirage au sort",
     "Coin": "Pile ou Face",
@@ -931,7 +931,7 @@ export const gameL10n = {
     "6.11": "Fin de la phase de Combat",
     "Refresh": "Restauration",
     "7.1": "Début de la phase de Restauration",
-    "7.R": "*Redressement des cartes, augmentation de la menace de 1, transfert du jeton du premier joueur - <u>puis actions des joueurs</u>",
+    "7.R": "Redressement des cartes, augmentation de la menace de 1, transfert du jeton du premier joueur - <u>puis actions des joueurs</u>",
     "7.5": "Fin de la phase de Restauration",
     "End" : "Fin",
     "Go Back": "Retour arrière",
@@ -1060,7 +1060,7 @@ export const gameL10n = {
 
     //Load quest window
 
-"Go Back": "Revenir en arrière",
+"Go Back": "Retour",
 "Core Set & Shadows of Mirkwood": "Boîte de base et Ombres de la Forêt Noire",
 "Khazad-dûm & Dwarrowdelf": "Khazad-dûm et Royaume de Cavenain",
 "Heirs of Númenor & Against the Shadow": "Les Héritiers de Númenor et Face à l'Ombre",
