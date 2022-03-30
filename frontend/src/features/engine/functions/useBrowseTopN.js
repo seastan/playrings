@@ -6,9 +6,10 @@ import { setBrowseGroupId, setBrowseGroupTopN } from "../../store/playerUiSlice"
 export const useBrowseTopN = (
     topNstr, 
     group,
+    gameBroadcast,
+    chatBroadcast,
     dispatch,
 ) => {
-    const {gameBroadcast, chatBroadcast} = useContext(BroadcastContext);
     const stackIds = group["stackIds"];
     const numStacks = stackIds.length;
     const groupName = GROUPSINFO[group.id].name;
