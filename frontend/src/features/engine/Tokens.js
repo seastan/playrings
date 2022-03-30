@@ -10,8 +10,6 @@ export const Tokens = React.memo(({
     zIndex,
     aspectRatio,
  }) => {
-    const tokens = useSelector(state => state?.gameUi?.game?.cardById?.[cardId]?.tokens);
-    console.log(cardName,"tokens",tokens)
     const spacePressed = useSelector(state => state?.playerUi?.keypress?.Space);
     const showButtons = isActive && spacePressed;
     return(

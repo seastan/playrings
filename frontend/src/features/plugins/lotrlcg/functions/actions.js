@@ -226,7 +226,7 @@ export const gameAction = (action, actionProps, forPlayerN = null) => {
         if (game.replayStep <= 0) {
             chatBroadcast("game_update", {message: "tried to undo an action, but no previous actions exist."});
         } else {
-            gameBroadcast("game_action", {action: "step_through", options: {size: "single", direction: "undo", preserve_undo: true}});
+            gameBroadcast("step_through", {action: "step_through", options: {size: "single", direction: "undo", preserve_undo: true}});
             chatBroadcast("game_update", {message: "pressed undo."});
             // Clear GiantCard
             dispatch(setActiveCardObj(null));
@@ -238,7 +238,7 @@ export const gameAction = (action, actionProps, forPlayerN = null) => {
         if (game.replayStep <= 0) {
             chatBroadcast("game_update", {message: "tried to undo an action, but no previous actions exist."});
         } else {
-            gameBroadcast("game_action", {action: "step_through", options: {size: "round", direction: "undo", preserve_undo: true}});
+            gameBroadcast("step_through", {action: "step_through", options: {size: "round", direction: "undo", preserve_undo: true}});
             chatBroadcast("game_update", {message: "rewinds a round."});
             // Clear GiantCard
             dispatch(setActiveCardObj(null));
@@ -250,7 +250,7 @@ export const gameAction = (action, actionProps, forPlayerN = null) => {
         if (game.replayStep >= game.replayLength) {
             chatBroadcast("game_update", {message: "tried to redo an action, but the game is current."});
         } else {
-            gameBroadcast("game_action", {action: "step_through", options: {size: "single", direction: "redo", preserve_undo: true}});
+            gameBroadcast("step_through", {action: "step_through", options: {size: "single", direction: "redo", preserve_undo: true}});
             chatBroadcast("game_update", {message: "pressed redo."});
             // Clear GiantCard
             dispatch(setActiveCardObj(null));
@@ -262,7 +262,7 @@ export const gameAction = (action, actionProps, forPlayerN = null) => {
         if (game.replayStep >= game.replayLength) {
             chatBroadcast("game_update", {message: "tried to redo an action, but the game is current."});
         } else {
-            gameBroadcast("game_action", {action: "step_through", options: {size: "round", direction: "redo", preserve_undo: true}});
+            gameBroadcast("step_through", {action: "step_through", options: {size: "round", direction: "redo", preserve_undo: true}});
             chatBroadcast("game_update", {message: "fast-forwards a round."});
             // Clear GiantCard
             dispatch(setActiveCardObj(null));

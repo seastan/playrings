@@ -92,8 +92,6 @@ export const Stack = React.memo(({
             //</NaturalDragAnimation>dragSnapshot.isDragging ? {...style, transform: style.transform ? style.transform + " scale(1.1)" : "scale(1.1)"} : style
           }}>
           {cardIds.map((cardId, cardIndex) => {
-            console.log("dragSnapshot",dragSnapshot)
-            console.log("dragProvided",dragProvided.draggableProps.style.transform)
             return(
               <Card
                 key={cardId}

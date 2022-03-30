@@ -41,7 +41,6 @@ export const updateByDelta = (obj, delta) => {
   delete delta["unix_ms"];
   // The we loop through delta properties and update obj
   for (var p in delta) { 
-    console.log("mysync",obj[p],delta[p],p)
     // Ignore prototypes
     if (!delta.hasOwnProperty(p)) continue;     
     if (obj[p] === null || obj[p] === undefined) {
@@ -49,7 +48,7 @@ export const updateByDelta = (obj, delta) => {
         // New key was created, add it to obj
         obj[p] = delta[p][1];
       } else {
-        console.log("mysync error 1", obj,delta,p);
+        console.log("sync error");
         return;
       }
     }
@@ -60,7 +59,6 @@ export const updateByDelta = (obj, delta) => {
       if (newVal === ":removed") {
         delete obj[p];
       } else {
-        console.log("mysync set ",obj,p,newVal)
         obj[p] = newVal;
       }
     }

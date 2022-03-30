@@ -18,7 +18,7 @@ const Container = styled.div`
   height: 100%;
   width: calc(100% - 17px);
   user-select: none;
-  overflow-x: ${props => ["deck", "discard", "vertical"].includes(props.groupType) ? "none" : "auto"};
+  overflow-x: ${props => ["deck", "discard", "vertical"].includes(props.groupType) ? "hidden" : "auto"};
   overflow-y: ${props => props.groupType === "vertical" ? "auto" : "hidden"};
   max-height: 100%;
   position: relative;
@@ -27,6 +27,7 @@ const Container = styled.div`
 const DropZone = styled.div`
   /* stop the list collapsing when empty */
   display: ${props => ["deck", "discard", "vertical"].includes(props.groupType) ? "" : "flex"};
+  overflow-x: none;
   width: 100%;
   height: 100%;
   min-height: 100%;

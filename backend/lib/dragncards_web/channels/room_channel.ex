@@ -71,9 +71,30 @@ defmodule DragnCardsWeb.RoomChannel do
     state = put_in(state["submittedTimestamp"], timestamp)
 
     socket = socket |> assign(:game_ui, state)
-    notify(socket, user_id)
+
+    new_delta = Enum.at(state["game"]["deltas"],0)
+    notify_new_delta(socket, user_id, new_delta)
 
     {:reply, {:ok, client_state(socket, "game_action")}, socket}
+  end
+
+  def handle_in(
+    "step_through",
+    %{
+      "action" => action,
+      "options" => options,
+      "timestamp" => timestamp,
+    },
+    %{assigns: %{room_slug: room_slug, user_id: user_id}} = socket
+  ) do
+    GameUIServer.game_action(room_slug, user_id, action, options)
+    state = GameUIServer.state(room_slug)
+    state = put_in(state["submittedTimestamp"], timestamp)
+
+    socket = socket |> assign(:game_ui, state)
+    notify(socket, user_id)
+
+    {:reply, {:ok, client_state(socket, "step_through")}, socket}
   end
 
   def handle_in(
@@ -162,6 +183,15 @@ defmodule DragnCardsWeb.RoomChannel do
     broadcast!(socket, "ask_for_update", payload)
   end
 
+  defp notify_new_delta(socket, user_id, new_delta) do
+    # # Fake a phx_reply event to everyone
+    payload = %{
+      response: %{user_id: user_id, new_delta: new_delta},
+      status: "ok"
+    }
+    broadcast!(socket, "new_delta", payload)
+  end
+
   # Remove deltas from a gameui, as it's not needed for rendering
   def remove_deltas(gameui) do
     gameui = if gameui do
@@ -187,8 +217,8 @@ defmodule DragnCardsWeb.RoomChannel do
     if Map.has_key?(socket.assigns, :game_ui) do
       gameui = socket.assigns.game_ui
       if type == "game_action" do
-        last_delta = Enum.at(gameui["game"]["deltas"],0)
-        socket.assigns |> Map.put(:last_delta,last_delta)
+        my_delta = Enum.at(gameui["game"]["deltas"],0)
+        socket.assigns |> Map.put(:my_delta,my_delta) |> Map.put(:game_ui,nil)
       else
         gameui = remove_deltas(gameui)
         socket.assigns |> Map.put(:game_ui,gameui)
