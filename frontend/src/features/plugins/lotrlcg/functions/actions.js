@@ -114,6 +114,113 @@ export const gameAction = (action, actionProps, forPlayerN = null) => {
     } 
 
     else if (action === "new_round") {
+
+   /*      const listOfActions =
+        [
+            { // Action 1: Change round step
+                action: "conditions",
+                conditions: [ 
+                    { // if statement (is player 1)
+                        if: [
+                            [["playerUi", "playerN"], "equalTo", "player1"]
+                        ],
+                        then: [
+                            {
+                                action: "setValue", 
+                                keylist: ["phase"], 
+                                value: "Resource"
+                            },
+                            {
+                                action: "setValue", 
+                                keylist: ["roundStep"], 
+                                value: "1.R"
+                            },
+                            {
+                                action: "increaseBy", 
+                                keylist: ["roundNumber"], 
+                                value: 1,
+                            },
+                        ]
+                    }
+                ]
+            },
+            { // Action 2: Draw a card
+                action: "moveStack", 
+                stack_id: ["groupById", "playerIDeck", "stackIds", 0],
+                dest_group_id: "playerIHand", 
+                dest_stack_index: -1,
+                combine: false,
+            }
+        ]
+        gameBroadcast("game_action", {
+            action: "game_action_list", 
+            options: {
+                action_list: listOfActions, 
+                player_ui: state.playerUi,
+            }
+        }) */
+
+    //     # Change phase and round
+    // is_host = player_n == leftmost_non_eliminated_player_n(gameui)
+    // gameui = if is_host do
+    //   update_values(gameui,[
+    //     ["game", "phase", "Resource"],
+    //     ["game", "roundStep", "1.R"],
+    //     ["game", "roundNumber", gameui["game"]["roundNumber"]+1]
+    //   ])
+    // else
+    //   gameui
+    // end
+    // # Draw card(s)
+    // cards_per_round = gameui["game"]["playerData"][player_n]["cardsDrawn"]
+    // gameui = if cards_per_round > 0 do Enum.reduce(1..cards_per_round, gameui, fn(n, acc) ->
+    //     acc = draw_card(acc, player_n)
+    //   end)
+    // else
+    //   gameui
+    // end
+    // # Add a resource to each hero
+    // gameui = action_on_matching_cards(gameui, [
+    //     ["sides","sideUp","type","Hero"],
+    //     ["controller",player_n],
+    //     ["groupType","play"]
+    //   ],
+    //   "increment_token",
+    //   %{"token_type" => "resource", "increment" => 1}
+    // )
+    // # Reset willpower count and refresh status
+    // gameui = update_values(gameui,[
+    //   ["game", "playerData", player_n, "willpower", 0],
+    //   ["game", "playerData", player_n, "refreshed", false]
+    // ])
+    // # Add custom set tokens per round
+    // gameui = action_on_matching_cards(gameui, [
+    //     ["controller",player_n],
+    //     ["groupType","play"]
+    //   ],
+    //   "apply_tokens_per_round",
+    //   %{}
+    // );
+    // if is_host do gameui = action_on_matching_cards(gameui, [
+    //       ["controller","shared"],
+    //       ["groupType","play"]
+    //     ],
+    //     "apply_tokens_per_round",
+    //     %{}
+    //   );
+    // else
+    //   gameui
+    // end
+    // # Uncommit all characters to the quest
+    // gameui = action_on_matching_cards(gameui, [
+    //     ["controller",player_n]
+    //   ],
+    //   "update_card_values",
+    //   %{"updates" => [["committed", false]]}
+    // );
+
+
+
         // Check if refresh is needed
         if (!game.playerData[playerN].refreshed) gameBroadcast("game_action", {action: "refresh_and_new_round", options: {for_player_n: playerN}})
         else gameBroadcast("game_action", {action: "new_round", options: {for_player_n: playerN}})
@@ -449,54 +556,90 @@ export const cardAction = (action, cardId, options, props) => {
     }
     // Exhaust card
     else if (action === "toggle_exhaust" && groupType === "play") {
-        const listOfActions =
+       /*  const listOfActions =
         [
-            [ // Action 1
-                { // if statement (card is ready)
-                    if: [
-                        [["cardById", ["id"], "groupType"], "equalTo", "play"],
-                        [["cardById", ["id"], "exhausted"], "equalTo", false]
-                    ],
-                    then: [
-                        [["cardById", ["id"], "exhausted"], "changeTo", true], 
-                        [["cardById", ["id"], "rotation"],  "changeTo", 90],
-                    ]
-                },
-                { // else if
-                    if: [   
-                        [["cardById", ["id"], "groupType"], "equalTo", "play"],
-                        [["cardById", ["id"], "exhausted"], "equalTo", true]
-                    ],
-                    then: [
-                        [["cardById", ["id"], "exhausted"], "changeTo", false], 
-                        [["cardById", ["id"], "rotation"],  "changeTo", 0],
-                    ]
-                },
-            ]
+            { // Action 1
+                action: "conditions",
+                conditions: [ 
+                    { // if statement (card is ready)
+                        if: [
+                            [["cardById", ["playerUi", "activeCardId"], "sides", "sideUp", "type"], "equalTo", "Location"]
+                        ],
+                        then: [
+                            {
+                                action: "moveCard", 
+                                card_id: ["playerUi", "activeCardId"],
+                                dest_group_id: "sharedActive", 
+                                dest_stack_index: 0, 
+                                dest_card_index: 0,
+                            },
+                        ]
+                    },
+                    { // if statement (card is ready)
+                        if: [
+                            [["cardById", ["playerUi", "activeCardId"], "inPlay"], "equalTo", true],
+                            [["cardById", ["playerUi", "activeCardId"], "exhausted"], "equalTo", false]
+                        ],
+                        then: [
+                            {
+                                action: "setValue", 
+                                keylist: ["cardById", ["playerUi", "activeCardId"], "exhausted"], 
+                                value: true
+                            },
+                            {
+                                action: "setValue", 
+                                keylist: ["cardById", ["playerUi", "activeCardId"], "rotation"], 
+                                value: 90
+                            }
+                        ]
+                    },
+                    { // else if
+                        if: [   
+                            [["cardById", ["playerUi", "activeCardId"], "inPlay"], "equalTo", true],
+                            [["cardById", ["playerUi", "activeCardId"], "exhausted"], "equalTo", true]
+                        ],
+                        then: [
+                            {
+                                action: "setValue", 
+                                keylist: ["cardById", ["playerUi", "activeCardId"], "exhausted"], 
+                                value: false
+                            },
+                            {
+                                action: "setValue", 
+                                keylist: ["cardById", ["playerUi", "activeCardId"], "rotation"], 
+                                value: 0
+                            }
+                        ]
+                    },
+                ]
+            }
         ]
-        const cardObj = {
-            activeCardObj
+        gameBroadcast("game_action", {
+            action: "game_action_list", 
+            options: {
+                action_list: listOfActions, 
+                player_ui: state.playerUi,
+            }
+        }) */
+
+
+        if (cardFace.type === "Location") {
+            chatBroadcast("game_update", {message: "made "+displayName+" the active location."});
+            gameBroadcast("game_action", {action: "move_stack", options: {stack_id: stackId, dest_group_id: "sharedActive", dest_stack_index: 0, combine: false, preserve_state: false}})
+            dispatch(setActiveCardObj(null));
+        } else {
+            var values = [true, 90];
+            if (card.exhausted) {
+                values = [false, 0];
+                chatBroadcast("game_update", {message: "readied "+displayName+"."});
+            } else {
+                chatBroadcast("game_update", {message: "exhausted "+displayName+"."});
+            }
+            const updates = [["game", "cardById", cardId, "exhausted", values[0]], ["game", "cardById", cardId, "rotation", values[1]]];
+            dispatch(setValues({updates: updates}));
+            console.log("exhaust gameBroadcast", gameBroadcast)
+            gameBroadcast("game_action", {action: "update_values", options:{updates: updates}});
         }
-        gameBroadcast("game_action", {action: "action_list", options: {list_of_actions: listOfActions, type: "card", id: cardId}})
-
-
-        // if (cardFace.type === "Location") {
-        //     chatBroadcast("game_update", {message: "made "+displayName+" the active location."});
-        //     gameBroadcast("game_action", {action: "move_stack", options: {stack_id: stackId, dest_group_id: "sharedActive", dest_stack_index: 0, combine: false, preserve_state: false}})
-        //     dispatch(setActiveCardObj(null));
-        // } else {
-        //     var values = [true, 90];
-        //     if (card.exhausted) {
-        //         values = [false, 0];
-        //         chatBroadcast("game_update", {message: "readied "+displayName+"."});
-        //     } else {
-        //         chatBroadcast("game_update", {message: "exhausted "+displayName+"."});
-        //     }
-        //     const updates = [["game", "cardById", cardId, "exhausted", values[0]], ["game", "cardById", cardId, "rotation", values[1]]];
-        //     dispatch(setValues({updates: updates}));
-        //     console.log("exhaust gameBroadcast", gameBroadcast)
-        //     gameBroadcast("game_action", {action: "update_values", options:{updates: updates}});
-        // }
     }
     // Flip card
     else if (action === "flip") {

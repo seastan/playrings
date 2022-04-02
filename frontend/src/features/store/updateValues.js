@@ -43,12 +43,13 @@ export const updateByDelta = (obj, delta) => {
   for (var p in delta) { 
     // Ignore prototypes
     if (!delta.hasOwnProperty(p)) continue;     
-    if (obj[p] === null || obj[p] === undefined) {
+    if (obj[p] === undefined) {
       if (delta[p][0] === ":removed") {
         // New key was created, add it to obj
+        console.log("my_delta newkey", obj, p, delta[p][1])
         obj[p] = delta[p][1];
       } else {
-        console.log("sync error");
+        console.log("my_delta sync_error", obj, delta[p], p);
         return;
       }
     }
@@ -59,6 +60,7 @@ export const updateByDelta = (obj, delta) => {
       if (newVal === ":removed") {
         delete obj[p];
       } else {
+        console.log("my_delta newval", obj,p,newVal)
         obj[p] = newVal;
       }
     }
