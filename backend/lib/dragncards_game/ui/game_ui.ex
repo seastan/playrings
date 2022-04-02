@@ -579,6 +579,11 @@ defmodule DragnCardsGame.GameUI do
       dest_group_id = dest_group["id"]
       orig_group_type = get_group_type(gameui, orig_group_id)
       dest_group_type = get_group_type(gameui, dest_group_id)
+      card_index = get_card_index_by_card_id(gameui, card_id)
+      card = put_in(card["inPlay"], dest_group_type == "play")
+      card = put_in(card["groupId"], dest_group_id)
+      card = put_in(card["cardIndex"], card_index)
+
       committed_willpower = if card["committed"] do
         card_face["willpower"] + card["tokens"]["willpower"]
       else
@@ -956,44 +961,49 @@ defmodule DragnCardsGame.GameUI do
   end
 
   def move_stack(gameui, stack_id, dest_group_id, dest_stack_index, combine \\ false, preserve_state \\ false) do
-    orig_group_id = get_group_by_stack_id(gameui, stack_id)["id"]
-    orig_stack_index = get_stack_index_by_stack_id(gameui, stack_id)
-    # If destination is negative, count backward from the end
-    dest_stack_index = if dest_stack_index < 0 do
-      loop_index = Enum.count(GameUI.get_stack_ids(gameui, dest_group_id)) + dest_stack_index
-      if combine do
-        loop_index
+    IO.puts("move_stack #{stack_id} #{dest_group_id} #{dest_stack_index} ")
+    if stack_id == nil do
+      gameui
+    else
+      orig_group_id = get_group_by_stack_id(gameui, stack_id)["id"]
+      orig_stack_index = get_stack_index_by_stack_id(gameui, stack_id)
+      # If destination is negative, count backward from the end
+      dest_stack_index = if dest_stack_index < 0 do
+        loop_index = Enum.count(GameUI.get_stack_ids(gameui, dest_group_id)) + dest_stack_index
+        if combine do
+          loop_index
+        else
+          loop_index + 1
+        end
       else
-        loop_index + 1
+        dest_stack_index
       end
-    else
-      dest_stack_index
-    end
-    # If attaching to same group at higher index, dest_index will end up being 1 less
-    dest_stack_index = if orig_group_id == dest_group_id and combine and orig_stack_index < dest_stack_index do dest_stack_index - 1 else dest_stack_index end
-    # Delete stack id from old group
-    old_orig_stack_ids = get_stack_ids(gameui, orig_group_id)
-    new_orig_stack_ids = List.delete_at(old_orig_stack_ids, orig_stack_index)
-    gameui = update_stack_ids(gameui, orig_group_id, new_orig_stack_ids)
-    # Add to new position
-    gameui = if combine do
-      # Get existing destination stack
-      dest_stack = get_stack_by_index(gameui, dest_group_id, dest_stack_index)
-      dest_stack_id = dest_stack["id"]
-      # Update card ids of destination stack
-      old_orig_card_ids = get_card_ids(gameui, stack_id)
-      old_dest_card_ids = get_card_ids(gameui, dest_stack["id"])
-      new_dest_card_ids = old_dest_card_ids ++ old_orig_card_ids
-      gameui = update_card_ids(gameui, dest_stack_id, new_dest_card_ids)
-      # Delete original stack
-      gameui = delete_stack_from_stack_by_id(gameui, stack_id)
-      gameui = update_stack_state(gameui, dest_stack_id, [preserve_state, orig_group_id])
-    else
-      # Update destination group stack ids
-      old_dest_stack_ids = get_stack_ids(gameui, dest_group_id)
-      new_dest_stack_ids = List.insert_at(old_dest_stack_ids, dest_stack_index, stack_id)
-      gameui = update_stack_ids(gameui, dest_group_id, new_dest_stack_ids)
-      |> update_stack_state(stack_id, [preserve_state, orig_group_id])
+      # If attaching to same group at higher index, dest_index will end up being 1 less
+      dest_stack_index = if orig_group_id == dest_group_id and combine and orig_stack_index < dest_stack_index do dest_stack_index - 1 else dest_stack_index end
+      # Delete stack id from old group
+      old_orig_stack_ids = get_stack_ids(gameui, orig_group_id)
+      new_orig_stack_ids = List.delete_at(old_orig_stack_ids, orig_stack_index)
+      gameui = update_stack_ids(gameui, orig_group_id, new_orig_stack_ids)
+      # Add to new position
+      gameui = if combine do
+        # Get existing destination stack
+        dest_stack = get_stack_by_index(gameui, dest_group_id, dest_stack_index)
+        dest_stack_id = dest_stack["id"]
+        # Update card ids of destination stack
+        old_orig_card_ids = get_card_ids(gameui, stack_id)
+        old_dest_card_ids = get_card_ids(gameui, dest_stack["id"])
+        new_dest_card_ids = old_dest_card_ids ++ old_orig_card_ids
+        gameui = update_card_ids(gameui, dest_stack_id, new_dest_card_ids)
+        # Delete original stack
+        gameui = delete_stack_from_stack_by_id(gameui, stack_id)
+        gameui = update_stack_state(gameui, dest_stack_id, [preserve_state, orig_group_id])
+      else
+        # Update destination group stack ids
+        old_dest_stack_ids = get_stack_ids(gameui, dest_group_id)
+        new_dest_stack_ids = List.insert_at(old_dest_stack_ids, dest_stack_index, stack_id)
+        gameui = update_stack_ids(gameui, dest_group_id, new_dest_stack_ids)
+        |> update_stack_state(stack_id, [preserve_state, orig_group_id])
+      end
     end
   end
 
@@ -1078,10 +1088,11 @@ defmodule DragnCardsGame.GameUI do
     player_n = if options["for_player_n"] do options["for_player_n"] else player_n end
     Logger.debug("game_action #{user_id} #{player_n} #{action}")
     game_old = gameui["game"]
+    gameui = put_in(gameui["game"]["playerUi"], options["player_ui"])
     gameui = if player_n do
       case action do
-        "action_list" ->
-          action_list(gameui, player_n, options["action_list"], options["type"], options["id"])
+        "game_action_list" ->
+          game_action_list(gameui, options["action_list"])
         "draw_card" ->
           draw_card(gameui, player_n)
         "new_round" ->
@@ -1161,8 +1172,200 @@ defmodule DragnCardsGame.GameUI do
     gameui
   end
 
-  def action_list(gameui, player_n, action_list, type, id) do
-    draw_card(gameui, player_n)
+  def game_action_list(gameui, action_list) do
+    Enum.reduce(action_list, gameui, fn(action, acc) ->
+      process_game_action(acc, action)
+    end)
+  end
+
+  def process_game_action(gameui, action) do
+    # An action is a map with an "action" key the dictates how we handle it
+    if is_map(action) and Map.has_key?(action, "action") do
+      case action["action"] do
+        "conditions" ->
+          if Map.has_key?(action,"conditions") and is_list(action["conditions"]) do
+            Enum.reduce_while(action["conditions"], gameui, fn(ifthen, acc) ->
+              if passes_conditions(acc, ifthen["if"]) do
+                IO.puts("passes condtions")
+                {:halt, game_action_list(acc, ifthen["then"])}
+              else
+                {:cont, acc}
+              end
+            end)
+          else gameui end
+        "setValue" ->
+          if Map.has_key?(action, "keylist") and Map.has_key?(action, "value") do
+            put_in(gameui["game"], process_change(gameui["game"], gameui, gameui, action["keylist"], "setValue", %{"value" => action["value"]}))
+          end
+        "increaseBy" ->
+          if Map.has_key?(action, "keylist") and Map.has_key?(action, "value") do
+            put_in(gameui["game"], process_change(gameui["game"], gameui, gameui, action["keylist"], "increaseBy", %{"value" => action["value"], "limit" => action["limit"]}))
+          end
+        "setValue" ->
+          if Map.has_key?(action, "keylist") and Map.has_key?(action, "value") do
+            put_in(gameui["game"], process_change(gameui["game"], gameui, gameui, action["keylist"], "setValue", %{"value" => action["value"]}))
+          end
+        "moveCard" ->
+          card_id = process_key(nil, nil, gameui, action["card_id"])
+          move_card(gameui, card_id, action["dest_group_id"], action["dest_stack_index"], action["dest_card_index"], action["combine"], false)
+        "moveStack" ->
+          stack_id = process_key(nil, nil, gameui, action["stack_id"])
+          dest_group_id = process_key(nil, nil, gameui, action["dest_group_id"])
+          dest_stack_index = process_key(nil, nil, gameui, action["dest_stack_index"])
+          move_stack(gameui, stack_id, dest_group_id, dest_stack_index, action["combine"], false)
+        end
+    else
+      gameui
+    end
+  end
+
+  def passes_conditions(gameui, conditions) do
+    Enum.reduce_while(conditions, true, fn(condition, acc) ->
+      if passes_condition(gameui, condition) do
+        {:cont, true}
+      else
+        {:halt, false}
+      end
+    end)
+  end
+
+  def passes_condition(gameui, condition) do
+    if Enum.count(condition) == 3 do
+      keylist = Enum.at(condition, 0)
+      operator = Enum.at(condition, 1)
+      rhs = Enum.at(condition, 2)
+      lhs = process_key(gameui["game"], gameui, gameui, keylist)
+      case operator do
+        "equalTo" ->
+          IO.puts("is #{lhs} equalto #{rhs}")
+          lhs == rhs
+        "stringContains" ->
+          String.contains?(lhs, rhs)
+        "inString" ->
+          String.contains?(rhs, lhs)
+        "isList" ->
+          Enum.member?(rhs, lhs)
+        "listContains" ->
+          Enum.member?(lhs, rhs)
+        "greaterThan" ->
+          lhs > rhs
+        "lessThan" ->
+          lhs < rhs
+        "notEqualTo" ->
+          lhs != rhs
+      end
+    else
+      false
+    end
+  end
+
+  # def resolve_keylist(obj, parent, gameui, keylist) do
+  #   resolved_keylist = Enum.reduce(keylist, [], fn(key, acc) ->
+  #     if is_list(key) do
+  #       acc ++ get_value_from_keylist(gameui["game"], gameui, gameui, key)
+  #     else
+  #       acc ++ key
+  #     end
+  #   end)
+  # end
+
+  def get_value_from_keylist(obj, parent, gameui, keylist) do
+    case Enum.count(keylist) do
+      0 ->
+        # If there are no more keys in the nested map to parse, we just return the object, which is normally now a base type
+        obj
+      _ ->
+        IO.puts("key 1")
+        IO.inspect(Enum.at(keylist, 0))
+        key = process_key(obj, parent, gameui, Enum.at(keylist, 0))
+        new_keylist = List.delete_at(keylist, 0)
+        if is_integer(key) and is_list(obj) do
+          length = Enum.count(obj)
+          key = if key < 0 do length - key else key end
+          if key < 0 or key >= length do
+            nil
+          else
+            get_value_from_keylist(Enum.at(obj,key), obj, gameui, new_keylist)
+          end
+        else
+          get_value_from_keylist(obj[key], obj, gameui, new_keylist)
+        end
+    end
+  end
+
+  def process_key(obj, parent, gameui, key) do
+    key = if is_list(key) do
+      # If a key is a list, it is a keylist and we need to obtain the key
+      keylist = key
+      get_value_from_keylist(gameui["game"], gameui, gameui, keylist)
+    else key end
+    # Handle special cases
+    IO.puts("process_key 1")
+    IO.inspect(key)
+    key = if is_binary(key) do
+      IO.puts("replacing")
+      String.replace(key, "playerI", gameui["game"]["playerUi"]["playerN"])
+    else key end
+    IO.puts("process_key 2")
+    IO.inspect(key)
+
+    case key do
+      "sideUp" ->
+        IO.puts("sideUp translate")
+        IO.inspect(parent)
+        parent["currentSide"]
+      "sideDown" ->
+        opposite_side(parent["currentSide"])
+      _ ->
+        key
+    end
+  end
+
+  def process_change(obj, parent, gameui, keylist, operation, options) do
+    # A change is [keylist (list), operation (string), options (map)]
+    case Enum.count(keylist) do
+      0 ->
+        process_operation(obj, operation, options)
+      _ ->
+        key = process_key(obj, parent, gameui, Enum.at(keylist,0))
+        new_keylist = List.delete_at(keylist, 0)
+        IO.puts("put in")
+        IO.inspect(key)
+        put_in(obj[key], process_change(obj[key], obj, gameui, new_keylist, operation, options))
+    end
+  end
+
+  def process_operation(obj, operation, options) do
+    IO.puts("process operation")
+    IO.inspect(obj)
+    IO.inspect(operation)
+    IO.inspect(options)
+    case operation do
+      "setValue" ->
+        if Map.has_key?(options, "value") do
+          IO.puts("settingto")
+          IO.inspect(options["value"])
+          options["value"]
+        else obj end
+      "shuffle" ->
+        if is_list(obj) do
+          obj |> Enum.shuffle
+        else obj end
+      "increaseBy" ->
+        if is_number(obj) and Map.has_key?(options, "value") do
+          new_val = obj + options["value"]
+          if Map.has_key?(options, "limit") do
+            min(new_val, options["limit"])
+          else new_val end
+        else obj end
+      "decreaseBy" ->
+        if is_number(obj) and Map.has_key?(options, "value") do
+          new_val = obj - options["value"]
+          if Map.has_key?(options, "limit") do
+            max(new_val, options["limit"])
+          else new_val end
+        else obj end
+    end
   end
 
   def get_hero_list(gameui, player_n) do

@@ -3,7 +3,7 @@ import React from "react";
 import { getDisplayName } from "../plugins/lotrlcg/functions/helpers";
 import useLongPress from "../../hooks/useLongPress";
 import { useDispatch, useSelector } from "react-redux";
-import { setActiveCardObj, setDropdownMenuObj } from "../store/playerUiSlice";
+import { setActiveCardId, setActiveCardObj, setDropdownMenuObj } from "../store/playerUiSlice";
 
 
 export const CardMouseRegion = React.memo(({
@@ -25,6 +25,7 @@ export const CardMouseRegion = React.memo(({
 
     const makeActive = (event) => {
         const screenPosition = event.clientX > (window.innerWidth/2) ? "right" : "left";
+        dispatch(setActiveCardId(card.id))
         dispatch(setActiveCardObj({
             card: {
                 ...card,

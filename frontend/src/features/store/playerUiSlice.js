@@ -15,6 +15,7 @@ const initialState = {
   touchMode: false,
   typing: false,
   cardSizeFactor: 1.0,
+  activeCardId: null,
   activeCardObj: null,
   observingPlayerN: "player1",
   dropdownMenuObj: null,
@@ -73,6 +74,9 @@ const playerUiSlice = createSlice({
     },
     setCardSizeFactor: (state, { payload }) => {
       state.cardSizeFactor = payload;
+    },
+    setActiveCardId: (state, { payload }) => {
+      state.activeCardId = payload;
     },
     setActiveCardObj: (state, { payload }) => {
       state.activeCardObj = payload;
@@ -133,6 +137,7 @@ export const {
   setTouchMode, 
   setTyping,
   setCardSizeFactor,
+  setActiveCardId,
   setActiveCardObj,
   setObservingPlayerN,
   setDropdownMenuObj,
