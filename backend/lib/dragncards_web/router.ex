@@ -19,27 +19,20 @@ defmodule DragnCardsWeb.Router do
     plug(Pow.Plug.RequireAuthenticated, error_handler: DragnCardsWeb.APIAuthErrorHandler)
   end
 
-  scope "/", DragnCardsWeb do
-    pipe_through(:browser)
-
-    get("/json_test", PageController, :json_test)
-    get("/", PageController, :index)
-  end
-
   # Other scopes may use custom stacks.
-  scope "/api", DragnCardsWeb do
+  scope "/be/api", DragnCardsWeb do
     pipe_through(:api)
     resources("/rooms", RoomController, except: [:new, :edit])
   end
 
-  scope "/api", DragnCardsWeb do
+  scope "/be/api", DragnCardsWeb do
     pipe_through(:api)
 
     post("/replays/delete", ReplayController, :delete)
     resources("/replays/:user_id", ReplayController, except: [:new, :edit])
   end
 
-  scope "/api/v1", DragnCardsWeb.API.V1, as: :api_v1 do
+  scope "/be/api/v1", DragnCardsWeb.API.V1, as: :api_v1 do
     pipe_through(:api)
 
     # Sign up / Sign In
@@ -68,9 +61,18 @@ defmodule DragnCardsWeb.Router do
     get("/alerts", AlertController, :show)
   end
 
-  scope "/api/v1", DragnCardsWeb.API.V1, as: :api_v1 do
+  scope "/be/api/v1", DragnCardsWeb.API.V1, as: :api_v1 do
     pipe_through([:api, :api_protected])
 
     # Your protected API endpoints here
   end
+
+  scope "/", DragnCardsWeb do
+    pipe_through(:browser)
+
+    get("/json_test", PageController, :json_test)
+    get("/", PageController, :index)
+    get("/*path", PageController, :index)
+  end
+
 end

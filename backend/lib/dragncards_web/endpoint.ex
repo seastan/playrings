@@ -11,9 +11,11 @@ defmodule DragnCardsWeb.Endpoint do
   # when deploying your static files in production.
   plug Plug.Static,
     at: "/",
-    from: :dragncards,
-    gzip: false,
-    only: ~w(css fonts images js favicon.ico robots.txt)
+    from: :dragncards
+
+  plug Plug.Static,
+    at: "/room",
+    from: :dragncards
 
   # Code reloading can be explicitly enabled under the
   # :code_reloader configuration of your endpoint.

@@ -1,4 +1,12 @@
 use Mix.Config
+#
+# Configure your database
+config :dragncards, DragnCards.Repo,
+  database: "dragncards_dev",
+  hostname: "localhost",
+  show_sensitive_data_on_connection_error: true,
+  pool_size: 10,
+  adapter: Ecto.Adapters.SQLite3
 
 # For production, don't forget to configure the url host
 # to something meaningful, Phoenix uses this information
@@ -12,21 +20,8 @@ use Mix.Config
 config :dragncards, DragnCardsWeb.Endpoint,
   http: [port: 4000],
   url: [host: "dragncards.com", port: 4000],
-  cache_static_manifest: "priv/static/cache_manifest.json",
-  check_origin: ["//localhost", "//dragncards", "//dragncards.com", "//www.dragncards.com"],
-  # check_origin: [
-  #   "//dragncards.com",
-  #   "//api.dragncards.com",
-  #   "//localhost",
-  #   "//172.22.2.30:31231",
-  #   "//172.22.2.31:31231",
-  #   "//172.22.2.32:31231",
-  #   "//172.22.2.33:31231",
-  #   "//172.22.2.30:31232",
-  #   "//172.22.2.31:31232",
-  #   "//172.22.2.32:31232",
-  #   "//172.22.2.33:31232"
-  # ],
+  check_origin: false,
+  server: true,
   front_end_email_confirm_url: "http://dragncards.com/confirm-email/{token}",
   front_end_reset_password_url: "http://dragncards.com/reset-password/{token}"
 
@@ -69,4 +64,3 @@ config :logger, level: :info
 
 # No longer using prod.secret.exs - Letting
 # the release system check releases.exs at runtime
-import_config "prod.secret.exs"
