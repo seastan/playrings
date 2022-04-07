@@ -127,17 +127,17 @@ export const gameAction = (action, actionProps, forPlayerN = null) => {
                         then: [
                             {
                                 action: "setValue", 
-                                keylist: ["phase"], 
+                                key_list: ["phase"], 
                                 value: "Resource"
                             },
                             {
                                 action: "setValue", 
-                                keylist: ["roundStep"], 
+                                key_list: ["roundStep"], 
                                 value: "1.R"
                             },
                             {
                                 action: "increaseBy", 
-                                keylist: ["roundNumber"], 
+                                key_list: ["roundNumber"], 
                                 value: 1,
                             },
                         ]
@@ -150,6 +150,22 @@ export const gameAction = (action, actionProps, forPlayerN = null) => {
                 dest_group_id: "playerIHand", 
                 dest_stack_index: -1,
                 combine: false,
+            },
+            { // Action 3: Resources on heroes
+                action: "forEach",
+                key_list: ["cardById"],
+                action_list: [
+                    {
+                        if: [["controller", "playerI"]],
+                        then: [
+                            {
+                                action: "increaseBy", 
+                                key_list: ["tokens","resource"], 
+                                value: 1,
+                            },
+                        ]
+                    }
+                ],
             }
         ]
         gameBroadcast("game_action", {
