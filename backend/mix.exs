@@ -33,8 +33,8 @@ defmodule DragnCards.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-      {:phoenix, "~> 1.4.16"},
-      {:phoenix_pubsub, "~> 1.1"},
+      {:phoenix, "~> 1.6.6"},
+      {:phoenix_pubsub, "~> 2.0.0"},
       {:phoenix_ecto, "~> 4.0"},
       {:ecto_sql, "~> 3.7"},
       {:ecto_sqlite3, "~> 0.7.4"},
