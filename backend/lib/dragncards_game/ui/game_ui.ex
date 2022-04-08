@@ -1194,16 +1194,16 @@ defmodule DragnCardsGame.GameUI do
             end)
           else gameui end
         "setValue" ->
-          if Map.has_key?(action, "keylist") and Map.has_key?(action, "value") do
-            put_in(gameui["game"], process_change(gameui["game"], gameui, gameui, action["keylist"], "setValue", %{"value" => action["value"]}))
+          if Map.has_key?(action, "key_list") and Map.has_key?(action, "value") do
+            put_in(gameui["game"], process_change(gameui["game"], gameui, gameui, action["key_list"], "setValue", %{"value" => action["value"]}))
           end
         "increaseBy" ->
-          if Map.has_key?(action, "keylist") and Map.has_key?(action, "value") do
-            put_in(gameui["game"], process_change(gameui["game"], gameui, gameui, action["keylist"], "increaseBy", %{"value" => action["value"], "limit" => action["limit"]}))
+          if Map.has_key?(action, "key_list") and Map.has_key?(action, "value") do
+            put_in(gameui["game"], process_change(gameui["game"], gameui, gameui, action["key_list"], "increaseBy", %{"value" => action["value"], "limit" => action["limit"]}))
           end
         "setValue" ->
-          if Map.has_key?(action, "keylist") and Map.has_key?(action, "value") do
-            put_in(gameui["game"], process_change(gameui["game"], gameui, gameui, action["keylist"], "setValue", %{"value" => action["value"]}))
+          if Map.has_key?(action, "key_list") and Map.has_key?(action, "value") do
+            put_in(gameui["game"], process_change(gameui["game"], gameui, gameui, action["key_list"], "setValue", %{"value" => action["value"]}))
           end
         "moveCard" ->
           card_id = process_key(nil, nil, gameui, action["card_id"])
@@ -1213,6 +1213,9 @@ defmodule DragnCardsGame.GameUI do
           dest_group_id = process_key(nil, nil, gameui, action["dest_group_id"])
           dest_stack_index = process_key(nil, nil, gameui, action["dest_stack_index"])
           move_stack(gameui, stack_id, dest_group_id, dest_stack_index, action["combine"], false)
+        "forEach" ->
+          key = process_key(nil, nil, gameui, action["key_list"])
+          objs_old = get_value_from_key_list
         end
     else
       gameui
@@ -1231,10 +1234,10 @@ defmodule DragnCardsGame.GameUI do
 
   def passes_condition(gameui, condition) do
     if Enum.count(condition) == 3 do
-      keylist = Enum.at(condition, 0)
+      key_list = Enum.at(condition, 0)
       operator = Enum.at(condition, 1)
       rhs = Enum.at(condition, 2)
-      lhs = process_key(gameui["game"], gameui, gameui, keylist)
+      lhs = process_key(gameui["game"], gameui, gameui, key_list)
       case operator do
         "equalTo" ->
           IO.puts("is #{lhs} equalto #{rhs}")
@@ -1259,45 +1262,45 @@ defmodule DragnCardsGame.GameUI do
     end
   end
 
-  # def resolve_keylist(obj, parent, gameui, keylist) do
-  #   resolved_keylist = Enum.reduce(keylist, [], fn(key, acc) ->
+  # def resolve_key_list(obj, parent, gameui, key_list) do
+  #   resolved_key_list = Enum.reduce(key_list, [], fn(key, acc) ->
   #     if is_list(key) do
-  #       acc ++ get_value_from_keylist(gameui["game"], gameui, gameui, key)
+  #       acc ++ get_value_from_key_list(gameui["game"], gameui, gameui, key)
   #     else
   #       acc ++ key
   #     end
   #   end)
   # end
 
-  def get_value_from_keylist(obj, parent, gameui, keylist) do
-    case Enum.count(keylist) do
+  def get_value_from_key_list(obj, parent, gameui, key_list) do
+    case Enum.count(key_list) do
       0 ->
         # If there are no more keys in the nested map to parse, we just return the object, which is normally now a base type
         obj
       _ ->
         IO.puts("key 1")
-        IO.inspect(Enum.at(keylist, 0))
-        key = process_key(obj, parent, gameui, Enum.at(keylist, 0))
-        new_keylist = List.delete_at(keylist, 0)
+        IO.inspect(Enum.at(key_list, 0))
+        key = process_key(obj, parent, gameui, Enum.at(key_list, 0))
+        new_key_list = List.delete_at(key_list, 0)
         if is_integer(key) and is_list(obj) do
           length = Enum.count(obj)
           key = if key < 0 do length - key else key end
           if key < 0 or key >= length do
             nil
           else
-            get_value_from_keylist(Enum.at(obj,key), obj, gameui, new_keylist)
+            get_value_from_key_list(Enum.at(obj,key), obj, gameui, new_key_list)
           end
         else
-          get_value_from_keylist(obj[key], obj, gameui, new_keylist)
+          get_value_from_key_list(obj[key], obj, gameui, new_key_list)
         end
     end
   end
 
   def process_key(obj, parent, gameui, key) do
     key = if is_list(key) do
-      # If a key is a list, it is a keylist and we need to obtain the key
-      keylist = key
-      get_value_from_keylist(gameui["game"], gameui, gameui, keylist)
+      # If a key is a list, it is a key_list and we need to obtain the key
+      key_list = key
+      get_value_from_key_list(gameui["game"], gameui, gameui, key_list)
     else key end
     # Handle special cases
     IO.puts("process_key 1")
@@ -1321,17 +1324,17 @@ defmodule DragnCardsGame.GameUI do
     end
   end
 
-  def process_change(obj, parent, gameui, keylist, operation, options) do
-    # A change is [keylist (list), operation (string), options (map)]
-    case Enum.count(keylist) do
+  def process_change(obj, parent, gameui, key_list, operation, options) do
+    # A change is [key_list (list), operation (string), options (map)]
+    case Enum.count(key_list) do
       0 ->
         process_operation(obj, operation, options)
       _ ->
-        key = process_key(obj, parent, gameui, Enum.at(keylist,0))
-        new_keylist = List.delete_at(keylist, 0)
+        key = process_key(obj, parent, gameui, Enum.at(key_list,0))
+        new_key_list = List.delete_at(key_list, 0)
         IO.puts("put in")
         IO.inspect(key)
-        put_in(obj[key], process_change(obj[key], obj, gameui, new_keylist, operation, options))
+        put_in(obj[key], process_change(obj[key], obj, gameui, new_key_list, operation, options))
     end
   end
 

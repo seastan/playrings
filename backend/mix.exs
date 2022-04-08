@@ -53,6 +53,7 @@ defmodule DragnCards.MixProject do
       {:ex_doc, ">= 0.0.0", only: :dev, runtime: false},
       {:sobelow, ">= 0.0.0", only: :dev, runtime: false},
       {:map_diff, "~> 1.3"},
+      {:erlport, "~> 0.10.1"}
     ]
   end
 
