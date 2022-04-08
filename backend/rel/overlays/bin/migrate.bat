@@ -1,0 +1,1 @@
+call "%~dp0\dragncards" eval DragnCards.Release.migrate
