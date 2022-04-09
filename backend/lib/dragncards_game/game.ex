@@ -66,16 +66,16 @@
   end
 
   def add_delta(game, prev_game) do
+    game = put_in(game["replayStep"], prev_game["replayStep"]+1)
     d = get_delta(prev_game, game)
     if d do
       # add timestamp to delta
       timestamp = System.system_time(:millisecond)
       d = put_in(d["unix_ms"], "#{timestamp}")
       ds = game["deltas"]
-      ds = Enum.slice(ds, Enum.count(ds)-game["replayStep"]..-1)
+      ds = Enum.slice(ds, Enum.count(ds)-game["replayStep"]+1..-1)
       ds = [d | ds]
       game = put_in(game["deltas"], ds)
-      put_in(game["replayStep"], game["replayStep"]+1)
     else
       game
     end
@@ -118,9 +118,9 @@
 
   def get_delta(game_old, game_new) do
     game_old = Map.delete(game_old, "deltas")
-    game_old = Map.delete(game_old, "replayStep")
+    #game_old = Map.delete(game_old, "replayStep")
     game_new = Map.delete(game_new, "deltas")
-    game_new = Map.delete(game_new, "replayStep")
+    #game_new = Map.delete(game_new, "replayStep")
     diff_map = MapDiff.diff(game_old, game_new)
     delta("game", diff_map)
   end
