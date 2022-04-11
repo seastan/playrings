@@ -17,32 +17,33 @@ function Invoke-CmdScript {
 }
 
 # Set environment
+$Env:MIX_ENV = "prod"
+$Env:PORT = "4000"
+$Env:RELEASE_DISTRIBUTION = "none"
 Invoke-CmdScript "C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvarsall.bat" amd64
+$RootDir = "$PSScriptRoot\.."
 
 # Build frontend
-cd $PSScriptRoot\frontend
+cd $RootDir\frontend
 npm install
 npx browserslist@latest --update-db
 npm run build:css
 npm run build
 
 # Build backend
-cd $PSScriptRoot\backend
-set MIX_ENV=prod
-set PORT=4000
-mix deps.get -y
+cd $RootDir\backend
+mix deps.get
 mix compile
 mix release
 
-$ReleaseDir = "$PSScriptRoot\backend\_build\dev\rel\dragncards"
+$ReleaseDir = "$RootDir\backend\_build\prod\rel\dragncards"
 
 # Create databases
 cd $ReleaseDir\lib\dragncards-0.1.0
 cmd /c "$ReleaseDir\bin\migrate.bat"
-Get-Content $PSScriptRoot\backend\users.sql -Raw | sqlite3 .\dragncards_dev
+Get-Content $RootDir\backend\users.sql -Raw | sqlite3 .\dragncards_dev
 
 # Move frontend to phoenix
-mv $PSScriptRoot\frontend\build .\priv\static
+mv $RootDir\frontend\build .\priv\static
+mkdir .\priv\static\images\cards
 cd $ReleaseDir
-mkdir cards
-cmd /k "mklink /j .\lib\dragncards-0.1.0\priv\static\images\cards .\cards"

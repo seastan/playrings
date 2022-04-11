@@ -19,7 +19,7 @@ config :dragncards, DragnCards.Repo,
 # before starting your production server.
 config :dragncards, DragnCardsWeb.Endpoint,
   http: [port: 4000],
-  url: [host: "dragncards.com", port: 4000],
+  url: [host: "localhost", port: 4000],
   check_origin: false,
   server: true,
   front_end_email_confirm_url: "http://dragncards.com/confirm-email/{token}",
