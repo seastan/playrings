@@ -9,4 +9,9 @@ defmodule DragnCardsWeb.PageController do
     conn
     |> json(%{id: 123})
   end
+
+  def default_image(conn, _params) do
+    conn
+    |> send_file(200, "./priv/static/images/cardbacks/player.jpg")
+  end
 end

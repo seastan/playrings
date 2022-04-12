@@ -72,6 +72,7 @@ defmodule DragnCardsWeb.Router do
 
     get("/json_test", PageController, :json_test)
     get("/", PageController, :index)
+    get("/images/*path", PageController, :default_image)
     get("/*path", PageController, :index)
   end
 
