@@ -12,6 +12,7 @@ Run a [DragnCards](https://github.com/seastan/DragnCards) instance natively on W
 If the launcher fails to download card images or you have a slow connection, you can manually add card images:
 1. Download images (about 700 MB) from: https://github.com/seastan/DragnCards-CardImages/archive/refs/heads/main.zip
 2. Extract and move images to `<dragncards>/lib/dragncards-0.1.0/priv/static/images/cards/English` where `<dragncards>` is the folder containing `DragnCards.exe`. The `English` folder should contain the `.jpg` images:
+
 ![images location](windows/image-location.JPG)
 
 ## Tech notes
