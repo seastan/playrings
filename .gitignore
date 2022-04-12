@@ -8,3 +8,8 @@ backend/config/releases.exs
 backend/config/prod.secret.exs
 backend/MnesiaCore*
 frontend/src/cardDB/ALeP*
+windows/cs/DragnCards/bin
+windows/cs/DragnCards/obj
+windows/cs/DragnCards/Properties
+windows/cs/DragnCards/.vs
+windows/cs/DragnCards/DragnCards.csproj.user
