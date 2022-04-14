@@ -1213,9 +1213,9 @@ defmodule DragnCardsGame.GameUI do
           dest_group_id = process_key(nil, nil, gameui, action["dest_group_id"])
           dest_stack_index = process_key(nil, nil, gameui, action["dest_stack_index"])
           move_stack(gameui, stack_id, dest_group_id, dest_stack_index, action["combine"], false)
-        "forEach" ->
-          key = process_key(nil, nil, gameui, action["key_list"])
-          objs_old = get_value_from_key_list
+        # "forEach" ->
+        #   key = process_key(nil, nil, gameui, action["key_list"])
+        #   objs_old = get_value_from_key_list
         end
     else
       gameui

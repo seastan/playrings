@@ -117,7 +117,14 @@ defmodule DragnCardsGame.GameUIServer do
         [{^game_name, gameui}] ->
           gameui
       end
+    path = [:code.priv_dir(:dragncards), "python", "lotrlcg"] |> Path.join()
+    {:ok, pypid} = :python.start([{:python_path, to_charlist(path)}, {:python, 'python3'}])
+    IO.puts("b")
+    IO.inspect(:code.priv_dir(:dragncards))
+    gameui = put_in(gameui["pypid"], :erlang.pid_to_list(pypid))
+    IO.puts("c")
     GameRegistry.add(gameui["gameName"], gameui)
+    #GameRegistry.add(gameui["gameName"]<>"-pypid", pypid)
     {:ok, gameui, timeout(gameui)}
   end
 
@@ -130,6 +137,17 @@ defmodule DragnCardsGame.GameUIServer do
     try do
       gameui = GameUI.game_action(gameui, user_id, action, options)
       gameui = put_in(gameui["error"], false)
+      IO.puts("pypid")
+      pypid = gameui["pypid"] |> :erlang.list_to_pid()
+      #IO.inspect(gameui["pypid"])
+      IO.puts("+==================================================================+")
+      IO.inspect(Jason.encode(gameui))
+      {status, gameui_json} = Jason.encode(gameui)
+      plugin_action = gameui["pluginId"]
+      gameui_json = :python.call(pypid, :lotrlcg_action, :increase_threat, [gameui_json])
+      IO.puts("gameui_json")
+      IO.inspect(gameui_json)
+      {status, gameui} = Jason.decode(gameui_json)
       gameui = put_in(gameui["game"]["last_action"], action)
     rescue
       e in RuntimeError ->
