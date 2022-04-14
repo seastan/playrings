@@ -7,8 +7,6 @@ backend/config/releases.exs
 *~
 backend/config/prod.secret.exs
 backend/MnesiaCore*
-backend/mix.lock
-frontend/package-lock.json
 frontend/src/cardDB/ALeP*
 windows/cs/DragnCards/bin
 windows/cs/DragnCards/obj

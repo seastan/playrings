@@ -33,27 +33,20 @@ defmodule DragnCards.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-      {:phoenix, "~> 1.6.6"},
-      {:phoenix_pubsub, "~> 2.0.0"},
-      {:phoenix_ecto, "~> 4.0"},
+      {:accessible, "~> 0.2.1"},
       {:ecto_sql, "~> 3.7"},
       {:ecto_sqlite3, "~> 0.7.4"},
-      {:hackney, "~> 1.9"},
-      {:phoenix_html, "~> 2.11"},
-      {:phoenix_live_reload, "~> 1.2", only: :dev},
       {:gettext, "~> 0.11"},
+      {:hackney, "~> 1.9"},
       {:jason, "~> 1.0"},
+      {:map_diff, "~> 1.3"},
+      {:parent, "~> 0.9.0"},
+      {:phoenix, "~> 1.6.6"},
+      {:phoenix_pubsub, "~> 2.0.0"},
+      {:phoenix_html, "~> 2.11"},
       {:plug_cowboy, "~> 2.0"},
       {:pow, "~> 1.0.19"},
       {:swoosh, "~> 0.25.1"},
-      {:parent, "~> 0.9.0"},
-      {:accessible, "~> 0.2.1"},
-      {:ex_check, ">= 0.0.0", only: :dev, runtime: false},
-      {:credo, ">= 1.3.1", only: :dev, runtime: false},
-      {:dialyxir, ">= 1.0.0", only: :dev, runtime: false},
-      {:ex_doc, ">= 0.0.0", only: :dev, runtime: false},
-      {:sobelow, ">= 0.0.0", only: :dev, runtime: false},
-      {:map_diff, "~> 1.3"},
     ]
   end
 
