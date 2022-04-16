@@ -157,13 +157,18 @@ export const gameAction = (action, actionProps, forPlayerN = null) => {
                 key_list: ["cardById"],
                 action_list: [
                     {
-                        if: [["controller", "playerI"]],
-                        then: [
+                        action: "conditions",
+                        conditions: [
                             {
-                                action: "increaseBy", 
-                                key_list: ["tokens","resource"], 
-                                value: 1,
-                            },
+                                if: [["controller", "playerI"]],
+                                then: [
+                                    {
+                                        action: "increaseBy", 
+                                        key_list: ["tokens","resource"], 
+                                        value: 1,
+                                    },
+                                ]
+                            }
                         ]
                     }
                 ],
@@ -608,12 +613,12 @@ export const cardAction = (action, cardId, options, props) => {
                         then: [
                             {
                                 action: "setValue", 
-                                keylist: ["cardById", ["playerUi", "activeCardId"], "exhausted"], 
+                                key_list: ["cardById", ["playerUi", "activeCardId"], "exhausted"], 
                                 value: true
                             },
                             {
                                 action: "setValue", 
-                                keylist: ["cardById", ["playerUi", "activeCardId"], "rotation"], 
+                                key_list: ["cardById", ["playerUi", "activeCardId"], "rotation"], 
                                 value: 90
                             }
                         ]
@@ -626,12 +631,12 @@ export const cardAction = (action, cardId, options, props) => {
                         then: [
                             {
                                 action: "setValue", 
-                                keylist: ["cardById", ["playerUi", "activeCardId"], "exhausted"], 
+                                key_list: ["cardById", ["playerUi", "activeCardId"], "exhausted"], 
                                 value: false
                             },
                             {
                                 action: "setValue", 
-                                keylist: ["cardById", ["playerUi", "activeCardId"], "rotation"], 
+                                key_list: ["cardById", ["playerUi", "activeCardId"], "rotation"], 
                                 value: 0
                             }
                         ]

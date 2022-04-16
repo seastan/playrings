@@ -137,17 +137,17 @@ defmodule DragnCardsGame.GameUIServer do
     try do
       gameui = GameUI.game_action(gameui, user_id, action, options)
       gameui = put_in(gameui["error"], false)
-      IO.puts("pypid")
-      pypid = gameui["pypid"] |> :erlang.list_to_pid()
-      #IO.inspect(gameui["pypid"])
-      IO.puts("+==================================================================+")
-      IO.inspect(Jason.encode(gameui))
-      {status, gameui_json} = Jason.encode(gameui)
-      plugin_action = gameui["pluginId"]
-      gameui_json = :python.call(pypid, :lotrlcg_action, :increase_threat, [gameui_json])
-      IO.puts("gameui_json")
-      IO.inspect(gameui_json)
-      {status, gameui} = Jason.decode(gameui_json)
+      # IO.puts("pypid")
+      # pypid = gameui["pypid"] |> :erlang.list_to_pid()
+      # #IO.inspect(gameui["pypid"])
+      # IO.puts("+==================================================================+")
+      # IO.inspect(Jason.encode(gameui))
+      # {status, gameui_json} = Jason.encode(gameui)
+      # plugin_action = gameui["pluginId"]
+      # gameui_json = :python.call(pypid, :lotrlcg_action, :increase_threat, [gameui_json])
+      # IO.puts("gameui_json")
+      # IO.inspect(gameui_json)
+      # {status, gameui} = Jason.decode(gameui_json)
       gameui = put_in(gameui["game"]["last_action"], action)
     rescue
       e in RuntimeError ->

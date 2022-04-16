@@ -1172,8 +1172,14 @@ defmodule DragnCardsGame.GameUI do
     gameui
   end
 
+
+
   def game_action_list(gameui, action_list) do
+    IO.puts("action_list")
+    IO.inspect(action_list)
     Enum.reduce(action_list, gameui, fn(action, acc) ->
+      IO.puts("action")
+      IO.inspect(action)
       process_game_action(acc, action)
     end)
   end
@@ -1195,15 +1201,13 @@ defmodule DragnCardsGame.GameUI do
           else gameui end
         "setValue" ->
           if Map.has_key?(action, "key_list") and Map.has_key?(action, "value") do
+            IO.puts("setValue")
+            IO.inspect(action)
             put_in(gameui["game"], process_change(gameui["game"], gameui, gameui, action["key_list"], "setValue", %{"value" => action["value"]}))
           end
         "increaseBy" ->
           if Map.has_key?(action, "key_list") and Map.has_key?(action, "value") do
             put_in(gameui["game"], process_change(gameui["game"], gameui, gameui, action["key_list"], "increaseBy", %{"value" => action["value"], "limit" => action["limit"]}))
-          end
-        "setValue" ->
-          if Map.has_key?(action, "key_list") and Map.has_key?(action, "value") do
-            put_in(gameui["game"], process_change(gameui["game"], gameui, gameui, action["key_list"], "setValue", %{"value" => action["value"]}))
           end
         "moveCard" ->
           card_id = process_key(nil, nil, gameui, action["card_id"])
@@ -1325,6 +1329,10 @@ defmodule DragnCardsGame.GameUI do
   end
 
   def process_change(obj, parent, gameui, key_list, operation, options) do
+    IO.puts("process_change")
+    IO.inspect(operation)
+    IO.inspect(key_list)
+    IO.inspect(options)
     # A change is [key_list (list), operation (string), options (map)]
     case Enum.count(key_list) do
       0 ->
