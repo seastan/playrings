@@ -13,29 +13,6 @@ const isObject = (item) => {
     return true;
   }
 
-
-/* def apply_delta(map, delta, direction) do
-# Ignore timestamp
-delta = Map.delete(delta, "unix_ms")
-# Loop over keys in delta and apply the changes to the map
-Enum.reduce(delta, map, fn({k, v}, acc) ->
-  if is_map(v) do
-    put_in(acc[k], apply_delta(map[k], v, direction))
-  else
-    new_val = if direction == "undo" do
-      Enum.at(v,0)
-    else
-      Enum.at(v,1)
-    end
-    if new_val == ":removed" do
-      Map.delete(acc, k)
-    else
-      put_in(acc[k], new_val)
-    end
-  end
-end)
-end */
-
 export const updateByDelta = (obj, delta) => {
   // Ignore timestamp
   delete delta["unix_ms"];

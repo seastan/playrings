@@ -330,7 +330,9 @@ export const gameAction = (action, actionProps, forPlayerN = null) => {
     
     else if (action === "undo") {
         // Undo an action
-        if (game.replayStep <= 0) {
+        if (game.replayStep > game.replayLength) {
+            chatBroadcast("game_update", {message: "tried to undo an action, but no undo information exists."});
+        } else if (game.replayStep <= 0) {
             chatBroadcast("game_update", {message: "tried to undo an action, but no previous actions exist."});
         } else {
             gameBroadcast("step_through", {action: "step_through", options: {size: "single", direction: "undo", preserve_undo: true}});

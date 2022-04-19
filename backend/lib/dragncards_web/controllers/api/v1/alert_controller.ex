@@ -17,7 +17,7 @@ defmodule DragnCardsWeb.API.V1.AlertController do
       _ ->
         minutes_since_alert = round((DateTime.diff(DateTime.utc_now(),alert[:inserted_at]))/60)
         minutes_remaining = alert[:minutes_until] - minutes_since_alert
-        minutes_remaining = if minutes_remaining > -10 and minutes_remaining < 0 do 0 else minutes_remaining end
+        minutes_remaining = if minutes_remaining > -5 and minutes_remaining < 0 do 0 else minutes_remaining end
         if minutes_remaining >= 0 and minutes_remaining <= 30 do
             json(conn, %{message: alert[:message], minutes_remaining: minutes_remaining})
         else
