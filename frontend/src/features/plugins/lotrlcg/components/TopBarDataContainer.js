@@ -17,10 +17,10 @@ export const TopBarDataContainer = React.memo(({}) => {
     var stagingThreat = 0;
     stagingStackIds.forEach(stackId => {
       const stack = stackById[stackId];
-      const topCardId = stack.cardIds[0];
+      const topCardId = stack?.cardIds[0];
       const topCard = cardById[topCardId];
       const currentFace = getCurrentFace(topCard);
-      stagingThreat = stagingThreat + currentFace["threat"] + topCard["tokens"]["threat"];
+      if (currentFace) stagingThreat = stagingThreat + currentFace["threat"] + topCard["tokens"]["threat"];
     })
 
     const playerWillpower = {"player1": 0, "player2": 0, "player3": 0, "player4": 0};

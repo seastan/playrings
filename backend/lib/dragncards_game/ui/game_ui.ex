@@ -133,7 +133,16 @@ defmodule DragnCardsGame.GameUI do
   def get_stack_index_by_stack_id(gameui, stack_id) do
     group_id = get_group_by_stack_id(gameui, stack_id)["id"]
     stack_ids = get_stack_ids(gameui, group_id)
-    Enum.find_index(stack_ids, fn id -> id == stack_id end)
+    if is_list(stack_ids) do
+      Enum.find_index(stack_ids, fn id -> id == stack_id end)
+    else
+      IO.puts("Error finding stack index")
+      IO.inspect(gameui)
+      IO.inspect(stack_id)
+      IO.inspect(group_id)
+      IO.inspect(stack_ids)
+      0
+    end
   end
 
   def get_stack_by_card_id(gameui, card_id) do
@@ -1153,9 +1162,9 @@ defmodule DragnCardsGame.GameUI do
     gameui = if options["preserve_undo"] != true do
       game_new = Game.add_delta(game_new, game_old)
       gameui = put_in(gameui["game"], game_new)
-      put_in(gameui["game"]["replayLength"], Enum.count(gameui["game"]["deltas"]))
-    else
       gameui
+    else
+      put_in(gameui["game"]["replayLength"], Enum.count(gameui["game"]["deltas"]))
     end
     gameui = set_last_update(gameui)
     gameui
@@ -1637,8 +1646,6 @@ defmodule DragnCardsGame.GameUI do
     else
       next
     end
-    IO.puts("nect_p")
-    IO.inspect(next)
     next
   end
 

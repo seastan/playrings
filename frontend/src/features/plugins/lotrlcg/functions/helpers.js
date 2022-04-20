@@ -6,6 +6,7 @@ import { cardDb } from "./cardDb";
 import { useContext } from "react";
 import BroadcastContext from "../../../../contexts/BroadcastContext";
 import { listOfMatchingCards } from "../../../engine/functions/flatListOfCards";
+import { useSelector } from "react-redux";
 
 export const getCurrentFace = (card) => {
   if (!card?.currentSide) return null;
@@ -688,12 +689,13 @@ export const getPlayerCommitted = (gameUi, questMode, playerN) => {
 
 export const onLoad = (
   options,
+  redoStepsExist,
   gameBroadcast,
   chatBroadcast,
   dispatch,
 ) => { 
   // Make sure this only ever gets loaded once
-  if (options?.loaded) return;
+  if (options?.loaded || redoStepsExist) return;
   dispatch(setLoaded(true));
   const newOptions = {...options, loaded: true}
   gameBroadcast("game_action", {action: "update_values", options: {updates: [["game", "options", newOptions]]}})

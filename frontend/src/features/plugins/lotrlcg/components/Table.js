@@ -29,6 +29,7 @@ export const Table = React.memo(({registerDivToArrowsContext}) => {
   const showModal = useSelector(state => state?.playerUi?.showModal);
   const options = useSelector(state => state?.gameUi?.game?.options); 
   const loaded = useSelector(state => state?.playerUi?.loaded);
+  const redoStepsExist = useSelector(state => state?.gameUi?.game?.replayStep < state?.gameUi?.game?.replayLength-1);
   const myUserId = useProfile()?.id;
   const createdBy = useSelector(state => state.gameUi?.created_by);
   const isHost = myUserId === createdBy;
@@ -39,7 +40,7 @@ export const Table = React.memo(({registerDivToArrowsContext}) => {
     dispatch(setTouchAction(null));
   }
 
-  if (!loaded && isHost) onLoad(options, gameBroadcast, chatBroadcast, dispatch);
+  if (!loaded && isHost) onLoad(options, redoStepsExist, gameBroadcast, chatBroadcast, dispatch);
 
   useEffect(() => {
     const handleMouseDown = (event) => {
