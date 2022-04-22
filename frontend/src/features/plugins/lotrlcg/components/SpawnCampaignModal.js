@@ -43,7 +43,7 @@ export const SpawnCampaignModal = React.memo(({}) => {
       <ReactModal
         closeTimeoutMS={200}
         isOpen={true}
-        onRequestClose={() => setShowModal(null)}
+        onRequestClose={() => dispatch(setShowModal(null))}
         contentLabel="Load quest"
         overlayClassName="fixed inset-0 bg-black-50 z-10000"
         className="insert-auto p-5 bg-gray-700 border max-w-lg max-h-lg mx-auto my-2 rounded-lg outline-none"

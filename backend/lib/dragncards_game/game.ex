@@ -22,7 +22,7 @@
         order_by: [desc: e.inserted_at],
         limit: 1)
       replay = Repo.one(query)
-      if replay.game_json do replay.game_json else Game.new() end
+      if replay.game_json do replay.game_json else Game.new(%{}) end
     else
       Game.new(options)
     end
@@ -66,13 +66,19 @@
   end
 
   def add_delta(game, prev_game) do
-    game = put_in(game["replayStep"], prev_game["replayStep"]+1)
+    ds = game["deltas"]
+    num_deltas = Enum.count(ds)
+    new_step = prev_game["replayStep"]+1
+    new_step = if new_step > num_deltas+1 do
+      num_deltas+1
+    else new_step end
+    game = put_in(game["replayStep"], new_step)
+    game = put_in(game["replayLength"], new_step)
     d = get_delta(prev_game, game)
     if d do
       # add timestamp to delta
       timestamp = System.system_time(:millisecond)
       d = put_in(d["unix_ms"], "#{timestamp}")
-      ds = game["deltas"]
       ds = Enum.slice(ds, Enum.count(ds)-game["replayStep"]+1..-1)
       ds = [d | ds]
       game = put_in(game["deltas"], ds)
@@ -118,9 +124,7 @@
 
   def get_delta(game_old, game_new) do
     game_old = Map.delete(game_old, "deltas")
-    #game_old = Map.delete(game_old, "replayStep")
     game_new = Map.delete(game_new, "deltas")
-    #game_new = Map.delete(game_new, "replayStep")
     diff_map = MapDiff.diff(game_old, game_new)
     delta("game", diff_map)
   end
@@ -152,25 +156,37 @@
   end
 
   def apply_delta(map, delta, direction) do
+    # IO.puts("applying")
+    # IO.inspect(delta)
+    # IO.puts("to")
+    # IO.inspect(map)
     # Ignore timestamp
-    delta = Map.delete(delta, "unix_ms")
-    # Loop over keys in delta and apply the changes to the map
-    Enum.reduce(delta, map, fn({k, v}, acc) ->
-      if is_map(v) do
-        put_in(acc[k], apply_delta(map[k], v, direction))
-      else
-        new_val = if direction == "undo" do
-          Enum.at(v,0)
+    if is_map(map) and is_map(delta) do
+      delta = Map.delete(delta, "unix_ms")
+      # Loop over keys in delta and apply the changes to the map
+      Enum.reduce(delta, map, fn({k, v}, acc) ->
+        if is_map(v) do
+          put_in(acc[k], apply_delta(map[k], v, direction))
         else
-          Enum.at(v,1)
+          new_val = if direction == "undo" do
+            Enum.at(v,0)
+          else
+            Enum.at(v,1)
+          end
+          if new_val == ":removed" do
+            Map.delete(acc, k)
+          else
+            put_in(acc[k], new_val)
+          end
         end
-        if new_val == ":removed" do
-          Map.delete(acc, k)
-        else
-          put_in(acc[k], new_val)
-        end
-      end
-    end)
+      end)
+    else
+      IO.puts("undo error")
+      IO.inspect(map)
+      IO.puts("delta")
+      IO.inspect(delta)
+      map
+    end
   end
 
   def apply_delta_list(game, delta_list, direction) do

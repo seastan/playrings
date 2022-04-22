@@ -23,6 +23,7 @@ export const Room = ({ slug }) => {
   
     if (event === "phx_reply" && payload.response.my_delta != null) {
       // Update store with my own delta
+      console.log("my_delta", payload.response.my_delta)
       dispatch(applyDelta(payload.response.my_delta))
     } else if (event === "phx_reply" && payload.response.game_ui != null) {
       // Update store with the full state received

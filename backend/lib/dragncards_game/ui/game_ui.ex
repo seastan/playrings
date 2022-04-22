@@ -133,7 +133,16 @@ defmodule DragnCardsGame.GameUI do
   def get_stack_index_by_stack_id(gameui, stack_id) do
     group_id = get_group_by_stack_id(gameui, stack_id)["id"]
     stack_ids = get_stack_ids(gameui, group_id)
-    Enum.find_index(stack_ids, fn id -> id == stack_id end)
+    if is_list(stack_ids) do
+      Enum.find_index(stack_ids, fn id -> id == stack_id end)
+    else
+      IO.puts("Error finding stack index")
+      IO.inspect(gameui)
+      IO.inspect(stack_id)
+      IO.inspect(group_id)
+      IO.inspect(stack_ids)
+      0
+    end
   end
 
   def get_stack_by_card_id(gameui, card_id) do
@@ -1092,7 +1101,7 @@ defmodule DragnCardsGame.GameUI do
     gameui = if player_n do
       case action do
         "game_action_list" ->
-          game_action_list(gameui, options["action_list"])
+          put_in(gameui["game"], multiple_map_changes(gameui["game"], options["action_list"]))
         "draw_card" ->
           draw_card(gameui, player_n)
         "new_round" ->
@@ -1164,220 +1173,375 @@ defmodule DragnCardsGame.GameUI do
     gameui = if options["preserve_undo"] != true do
       game_new = Game.add_delta(game_new, game_old)
       gameui = put_in(gameui["game"], game_new)
-      put_in(gameui["game"]["replayLength"], Enum.count(gameui["game"]["deltas"]))
-    else
       gameui
+    else
+      put_in(gameui["game"]["replayLength"], Enum.count(gameui["game"]["deltas"]))
     end
     gameui = set_last_update(gameui)
     gameui
   end
 
 
-
-  def game_action_list(gameui, action_list) do
-    IO.puts("action_list")
-    IO.inspect(action_list)
-    Enum.reduce(action_list, gameui, fn(action, acc) ->
-      IO.puts("action")
-      IO.inspect(action)
-      process_game_action(acc, action)
+  def multiple_map_changes(map, map_changes) do
+    IO.puts("a1")
+    Enum.reduce(map_changes, map, fn(options, acc) ->
+      change_map(acc, options)
     end)
   end
 
-  def process_game_action(gameui, action) do
-    # An action is a map with an "action" key the dictates how we handle it
-    if is_map(action) and Map.has_key?(action, "action") do
-      case action["action"] do
-        "conditions" ->
-          if Map.has_key?(action,"conditions") and is_list(action["conditions"]) do
-            Enum.reduce_while(action["conditions"], gameui, fn(ifthen, acc) ->
-              if passes_conditions(acc, ifthen["if"]) do
-                IO.puts("passes condtions")
-                {:halt, game_action_list(acc, ifthen["then"])}
-              else
-                {:cont, acc}
-              end
-            end)
-          else gameui end
-        "setValue" ->
-          if Map.has_key?(action, "key_list") and Map.has_key?(action, "value") do
-            IO.puts("setValue")
-            IO.inspect(action)
-            put_in(gameui["game"], process_change(gameui["game"], gameui, gameui, action["key_list"], "setValue", %{"value" => action["value"]}))
-          end
-        "increaseBy" ->
-          if Map.has_key?(action, "key_list") and Map.has_key?(action, "value") do
-            put_in(gameui["game"], process_change(gameui["game"], gameui, gameui, action["key_list"], "increaseBy", %{"value" => action["value"], "limit" => action["limit"]}))
-          end
-        "moveCard" ->
-          card_id = process_key(nil, nil, gameui, action["card_id"])
-          move_card(gameui, card_id, action["dest_group_id"], action["dest_stack_index"], action["dest_card_index"], action["combine"], false)
-        "moveStack" ->
-          stack_id = process_key(nil, nil, gameui, action["stack_id"])
-          dest_group_id = process_key(nil, nil, gameui, action["dest_group_id"])
-          dest_stack_index = process_key(nil, nil, gameui, action["dest_stack_index"])
-          move_stack(gameui, stack_id, dest_group_id, dest_stack_index, action["combine"], false)
-        # "forEach" ->
-        #   key = process_key(nil, nil, gameui, action["key_list"])
-        #   objs_old = get_value_from_key_list
-        end
+  def is_path(path) do
+    is_list(path) and Enum.at(path, 0) == "_PATH"
+  end
+
+  def get_nested_value(map, path) do
+    if is_path(path) do
+      get_in(map, get_keylist_from_path(map,path))
     else
-      gameui
+      path
     end
   end
 
-  def passes_conditions(gameui, conditions) do
-    Enum.reduce_while(conditions, true, fn(condition, acc) ->
-      if passes_condition(gameui, condition) do
-        {:cont, true}
+  def flatten_path(map, path) do
+    Enum.reduce(path, [], fn(key, acc) ->
+      acc ++ if is_list(key) do
+        [get_nested_value(map, key)]
       else
-        {:halt, false}
+        [key]
       end
     end)
   end
 
-  def passes_condition(gameui, condition) do
+  def get_keylist_from_path(map, path) do
+    flat_path = flatten_path(map, path)
+    List.delete_at(flat_path, 0) # remove "keyList"
+  end
+
+  def evaluate_condition(map, condition) do
+    IO.puts("checking ")
+    IO.inspect(condition)
+    # A condition is a list of 3 things. Value A, an operator, and value B
     if Enum.count(condition) == 3 do
-      key_list = Enum.at(condition, 0)
+      lhs = Enum.at(condition, 0)
       operator = Enum.at(condition, 1)
       rhs = Enum.at(condition, 2)
-      lhs = process_key(gameui["game"], gameui, gameui, key_list)
-      case operator do
-        "equalTo" ->
-          IO.puts("is #{lhs} equalto #{rhs}")
+      lhs = if Enum.member?(["_AND","_OR"], operator) do lhs else get_nested_value(map, lhs) end
+      rhs = if Enum.member?(["_AND","_OR"], operator) do rhs else get_nested_value(map, rhs) end
+      IO.inspect(lhs)
+      IO.inspect(rhs)
+      res = case operator do
+        "==" ->
           lhs == rhs
-        "stringContains" ->
-          String.contains?(lhs, rhs)
-        "inString" ->
-          String.contains?(rhs, lhs)
-        "isList" ->
-          Enum.member?(rhs, lhs)
-        "listContains" ->
-          Enum.member?(lhs, rhs)
-        "greaterThan" ->
-          lhs > rhs
-        "lessThan" ->
-          lhs < rhs
-        "notEqualTo" ->
+        "!=" ->
           lhs != rhs
+        ">" ->
+          is_number(lhs) and is_number(rhs) and lhs > rhs
+        "<" ->
+          is_number(lhs) and is_number(rhs) and lhs < rhs
+        ">=" ->
+          is_number(lhs) and is_number(rhs) and lhs >= rhs
+        "<=" ->
+          is_number(lhs) and is_number(rhs) and lhs <= rhs
+        "_IN_STRING" ->
+          is_binary(lhs) and is_binary(rhs) and String.contains?(rhs, lhs)
+        "_CONTAINS_IN_STRING" ->
+          is_binary(lhs) and is_binary(rhs) and String.contains?(lhs, rhs)
+        "_IN_LIST" ->
+          is_list(rhs) and Enum.member?(rhs, lhs)
+        "_CONTAINS_IN_LIST" ->
+          is_list(lhs) and Enum.member?(lhs, rhs)
+        "_AND" ->
+          evaluate_condition(map, lhs) and evaluate_condition(map, rhs)
+        "_OR" ->
+          evaluate_condition(map, lhs) or evaluate_condition(map, rhs)
+        _ ->
+          False
       end
+      IO.inspect(res)
+      res
     else
       false
     end
   end
 
-  # def resolve_key_list(obj, parent, gameui, key_list) do
-  #   resolved_key_list = Enum.reduce(key_list, [], fn(key, acc) ->
-  #     if is_list(key) do
-  #       acc ++ get_value_from_key_list(gameui["game"], gameui, gameui, key)
+  def change_map(map, options) do
+    action = options["_ACTION"]
+    IO.puts("action")
+    IO.inspect(options)
+    try do
+      new_map = case action do
+        "_SET_VALUE" ->
+          if Map.has_key?(options, "_PATH") and Map.has_key?(options, "_VALUE") do
+            keylist = get_keylist_from_path(map, options["_PATH"])
+            value = options["_VALUE"]
+            IO.puts("keylist")
+            IO.inspect(keylist)
+            put_in(map, keylist, value)
+          else map end
+        "_INCREASE_BY" ->
+          if Map.has_key?(options, "_PATH") and Map.has_key?(options, "_VALUE") do
+            path = options["_PATH"]
+            keylist = get_keylist_from_path(map, path)
+            old_value = get_nested_value(map, path)
+            amount = options["_VALUE"]
+            new_value = if is_number(old_value) and is_number(amount) do
+              temp_value = old_value + amount
+              if Map.has_key?(options, "_MAX") and is_number(options["_MAX"]) and temp_value > options["_MAX"] do
+                options["_MAX"]
+              else
+                temp_value
+              end
+            else
+              old_value
+            end
+            put_in(map, keylist, new_value)
+          else map end
+        "_DECREASE_BY" ->
+          if Map.has_key?(options, "_PATH") and Map.has_key?(options, "_VALUE") do
+            path = options["_PATH"]
+            keylist = get_keylist_from_path(map, path)
+            old_value = get_nested_value(map, path)
+            amount = options["_VALUE"]
+            new_value = if is_number(old_value) and is_number(amount) do
+              temp_value = old_value - amount
+              if Map.has_key?(options, "_MIN") and is_number(options["_MIN"]) and temp_value < options["_MIN"] do
+                options["_MIN"]
+              else
+                temp_value
+              end
+            else
+              old_value
+            end
+            put_in(map, keylist, new_value)
+          else map end
+        "_CASES" ->
+          IO.puts("a2")
+          if Map.has_key?(options, "_CASES") do
+            IO.puts("a")
+            Enum.reduce_while(options["_CASES"], map, fn(casei, acc) ->
+              if Map.has_key?(casei, "_IF") and Map.has_key?(casei, "_THEN") do
+                if evaluate_condition(acc, casei["_IF"]) do
+                  IO.puts("doing multiple_map_changes")
+                  {:halt, multiple_map_changes(acc, casei["_THEN"])}
+                else
+                  {:cont, acc}
+                end
+              else
+                {:cont, acc}
+              end
+            end)
+          else map end
+        "_FOR_EACH" ->
+          if Map.has_key?(options, "_PATH") and Map.has_key?(options, "_DO") do
+            maps = get_nested_value(map, options["_PATH"])
+            keylist = get_keylist_from_path(map, options["_PATH"])
+            for_each_action = options["_DO"]
+            new_maps = Enum.reduce(Map.keys(maps), maps, fn(k, acc) ->
+              put_in(acc[k], change_map(acc[k], for_each_action))
+            end)
+            put_in(map, keylist, new_maps)
+          end
+        _ ->
+          map
+      end
+    rescue
+      e ->
+        IO.inspect(e)
+    end
+  end
+  # def process_game_action(gameui, action) do
+  #   # An action is a map with an "action" key the dictates how we handle it
+  #   if is_map(action) and Map.has_key?(action, "action") do
+  #     case action["action"] do
+  #       "conditions" ->
+  #         if Map.has_key?(action,"conditions") and is_list(action["conditions"]) do
+  #           Enum.reduce_while(action["conditions"], gameui, fn(ifthen, acc) ->
+  #             if passes_conditions(acc, ifthen["if"]) do
+  #               IO.puts("passes condtions")
+  #               {:halt, game_action_list(acc, ifthen["then"])}
+  #             else
+  #               {:cont, acc}
+  #             end
+  #           end)
+  #         else gameui end
+  #       "setValue" ->
+  #         if Map.has_key?(action, "key_list") and Map.has_key?(action, "value") do
+  #           IO.puts("setValue")
+  #           IO.inspect(action)
+  #           put_in(gameui["game"], process_change(gameui["game"], gameui, gameui, action["key_list"], "setValue", %{"value" => action["value"]}))
+  #         end
+  #       "increaseBy" ->
+  #         if Map.has_key?(action, "key_list") and Map.has_key?(action, "value") do
+  #           put_in(gameui["game"], process_change(gameui["game"], gameui, gameui, action["key_list"], "increaseBy", %{"value" => action["value"], "limit" => action["limit"]}))
+  #         end
+  #       "moveCard" ->
+  #         card_id = process_key(nil, nil, gameui, action["card_id"])
+  #         move_card(gameui, card_id, action["dest_group_id"], action["dest_stack_index"], action["dest_card_index"], action["combine"], false)
+  #       "moveStack" ->
+  #         stack_id = process_key(nil, nil, gameui, action["stack_id"])
+  #         dest_group_id = process_key(nil, nil, gameui, action["dest_group_id"])
+  #         dest_stack_index = process_key(nil, nil, gameui, action["dest_stack_index"])
+  #         move_stack(gameui, stack_id, dest_group_id, dest_stack_index, action["combine"], false)
+  #       # "forEach" ->
+  #       #   key = process_key(nil, nil, gameui, action["key_list"])
+  #       #   objs_old = get_value_from_key_list
+  #       end
+  #   else
+  #     gameui
+  #   end
+  # end
+
+  # def passes_conditions(gameui, conditions) do
+  #   Enum.reduce_while(conditions, true, fn(condition, acc) ->
+  #     if passes_condition(gameui, condition) do
+  #       {:cont, true}
   #     else
-  #       acc ++ key
+  #       {:halt, false}
   #     end
   #   end)
   # end
 
-  def get_value_from_key_list(obj, parent, gameui, key_list) do
-    case Enum.count(key_list) do
-      0 ->
-        # If there are no more keys in the nested map to parse, we just return the object, which is normally now a base type
-        obj
-      _ ->
-        IO.puts("key 1")
-        IO.inspect(Enum.at(key_list, 0))
-        key = process_key(obj, parent, gameui, Enum.at(key_list, 0))
-        new_key_list = List.delete_at(key_list, 0)
-        if is_integer(key) and is_list(obj) do
-          length = Enum.count(obj)
-          key = if key < 0 do length - key else key end
-          if key < 0 or key >= length do
-            nil
-          else
-            get_value_from_key_list(Enum.at(obj,key), obj, gameui, new_key_list)
-          end
-        else
-          get_value_from_key_list(obj[key], obj, gameui, new_key_list)
-        end
-    end
-  end
+  # def passes_condition(gameui, condition) do
+  #   if Enum.count(condition) == 3 do
+  #     key_list = Enum.at(condition, 0)
+  #     operator = Enum.at(condition, 1)
+  #     rhs = Enum.at(condition, 2)
+  #     lhs = process_key(gameui["game"], gameui, gameui, key_list)
+  #     case operator do
+  #       "equalTo" ->
+  #         IO.puts("is #{lhs} equalto #{rhs}")
+  #         lhs == rhs
+  #       "stringContains" ->
+  #         String.contains?(lhs, rhs)
+  #       "inString" ->
+  #         String.contains?(rhs, lhs)
+  #       "isList" ->
+  #         Enum.member?(rhs, lhs)
+  #       "listContains" ->
+  #         Enum.member?(lhs, rhs)
+  #       "greaterThan" ->
+  #         lhs > rhs
+  #       "lessThan" ->
+  #         lhs < rhs
+  #       "notEqualTo" ->
+  #         lhs != rhs
+  #     end
+  #   else
+  #     false
+  #   end
+  # end
 
-  def process_key(obj, parent, gameui, key) do
-    key = if is_list(key) do
-      # If a key is a list, it is a key_list and we need to obtain the key
-      key_list = key
-      get_value_from_key_list(gameui["game"], gameui, gameui, key_list)
-    else key end
-    # Handle special cases
-    IO.puts("process_key 1")
-    IO.inspect(key)
-    key = if is_binary(key) do
-      IO.puts("replacing")
-      String.replace(key, "playerI", gameui["game"]["playerUi"]["playerN"])
-    else key end
-    IO.puts("process_key 2")
-    IO.inspect(key)
+  # # def resolve_key_list(obj, parent, gameui, key_list) do
+  # #   resolved_key_list = Enum.reduce(key_list, [], fn(key, acc) ->
+  # #     if is_list(key) do
+  # #       acc ++ get_value_from_key_list(gameui["game"], gameui, gameui, key)
+  # #     else
+  # #       acc ++ key
+  # #     end
+  # #   end)
+  # # end
 
-    case key do
-      "sideUp" ->
-        IO.puts("sideUp translate")
-        IO.inspect(parent)
-        parent["currentSide"]
-      "sideDown" ->
-        opposite_side(parent["currentSide"])
-      _ ->
-        key
-    end
-  end
+  # def get_value_from_key_list(obj, parent, gameui, key_list) do
+  #   case Enum.count(key_list) do
+  #     0 ->
+  #       # If there are no more keys in the nested map to parse, we just return the object, which is normally now a base type
+  #       obj
+  #     _ ->
+  #       IO.puts("key 1")
+  #       IO.inspect(Enum.at(key_list, 0))
+  #       key = process_key(obj, parent, gameui, Enum.at(key_list, 0))
+  #       new_key_list = List.delete_at(key_list, 0)
+  #       if is_integer(key) and is_list(obj) do
+  #         length = Enum.count(obj)
+  #         key = if key < 0 do length - key else key end
+  #         if key < 0 or key >= length do
+  #           nil
+  #         else
+  #           get_value_from_key_list(Enum.at(obj,key), obj, gameui, new_key_list)
+  #         end
+  #       else
+  #         get_value_from_key_list(obj[key], obj, gameui, new_key_list)
+  #       end
+  #   end
+  # end
 
-  def process_change(obj, parent, gameui, key_list, operation, options) do
-    IO.puts("process_change")
-    IO.inspect(operation)
-    IO.inspect(key_list)
-    IO.inspect(options)
-    # A change is [key_list (list), operation (string), options (map)]
-    case Enum.count(key_list) do
-      0 ->
-        process_operation(obj, operation, options)
-      _ ->
-        key = process_key(obj, parent, gameui, Enum.at(key_list,0))
-        new_key_list = List.delete_at(key_list, 0)
-        IO.puts("put in")
-        IO.inspect(key)
-        put_in(obj[key], process_change(obj[key], obj, gameui, new_key_list, operation, options))
-    end
-  end
+  # def process_key(obj, parent, gameui, key) do
+  #   key = if is_list(key) do
+  #     # If a key is a list, it is a key_list and we need to obtain the key
+  #     key_list = key
+  #     get_value_from_key_list(gameui["game"], gameui, gameui, key_list)
+  #   else key end
+  #   # Handle special cases
+  #   IO.puts("process_key 1")
+  #   IO.inspect(key)
+  #   key = if is_binary(key) do
+  #     IO.puts("replacing")
+  #     String.replace(key, "playerI", gameui["game"]["playerUi"]["playerN"])
+  #   else key end
+  #   IO.puts("process_key 2")
+  #   IO.inspect(key)
 
-  def process_operation(obj, operation, options) do
-    IO.puts("process operation")
-    IO.inspect(obj)
-    IO.inspect(operation)
-    IO.inspect(options)
-    case operation do
-      "setValue" ->
-        if Map.has_key?(options, "value") do
-          IO.puts("settingto")
-          IO.inspect(options["value"])
-          options["value"]
-        else obj end
-      "shuffle" ->
-        if is_list(obj) do
-          obj |> Enum.shuffle
-        else obj end
-      "increaseBy" ->
-        if is_number(obj) and Map.has_key?(options, "value") do
-          new_val = obj + options["value"]
-          if Map.has_key?(options, "limit") do
-            min(new_val, options["limit"])
-          else new_val end
-        else obj end
-      "decreaseBy" ->
-        if is_number(obj) and Map.has_key?(options, "value") do
-          new_val = obj - options["value"]
-          if Map.has_key?(options, "limit") do
-            max(new_val, options["limit"])
-          else new_val end
-        else obj end
-    end
-  end
+  #   case key do
+  #     "sideUp" ->
+  #       IO.puts("sideUp translate")
+  #       IO.inspect(parent)
+  #       parent["currentSide"]
+  #     "sideDown" ->
+  #       opposite_side(parent["currentSide"])
+  #     _ ->
+  #       key
+  #   end
+  # end
+
+  # def process_change(obj, parent, gameui, key_list, operation, options) do
+  #   IO.puts("process_change")
+  #   IO.inspect(operation)
+  #   IO.inspect(key_list)
+  #   IO.inspect(options)
+  #   # A change is [key_list (list), operation (string), options (map)]
+  #   case Enum.count(key_list) do
+  #     0 ->
+  #       process_operation(obj, operation, options)
+  #     _ ->
+  #       key = process_key(obj, parent, gameui, Enum.at(key_list,0))
+  #       new_key_list = List.delete_at(key_list, 0)
+  #       IO.puts("put in")
+  #       IO.inspect(key)
+  #       put_in(obj[key], process_change(obj[key], obj, gameui, new_key_list, operation, options))
+  #   end
+  # end
+
+  # def process_operation(obj, operation, options) do
+  #   IO.puts("process operation")
+  #   IO.inspect(obj)
+  #   IO.inspect(operation)
+  #   IO.inspect(options)
+  #   case operation do
+  #     "setValue" ->
+  #       if Map.has_key?(options, "value") do
+  #         IO.puts("settingto")
+  #         IO.inspect(options["value"])
+  #         options["value"]
+  #       else obj end
+  #     "shuffle" ->
+  #       if is_list(obj) do
+  #         obj |> Enum.shuffle
+  #       else obj end
+  #     "increaseBy" ->
+  #       if is_number(obj) and Map.has_key?(options, "value") do
+  #         new_val = obj + options["value"]
+  #         if Map.has_key?(options, "limit") do
+  #           min(new_val, options["limit"])
+  #         else new_val end
+  #       else obj end
+  #     "decreaseBy" ->
+  #       if is_number(obj) and Map.has_key?(options, "value") do
+  #         new_val = obj - options["value"]
+  #         if Map.has_key?(options, "limit") do
+  #           max(new_val, options["limit"])
+  #         else new_val end
+  #       else obj end
+  #   end
+  # end
 
   def get_hero_list(gameui, player_n) do
     criteria = [["sides","A","type","Hero"], ["owner",player_n], ["groupType","play"]]
@@ -1851,8 +2015,6 @@ defmodule DragnCardsGame.GameUI do
     else
       next
     end
-    IO.puts("nect_p")
-    IO.inspect(next)
     next
   end
 

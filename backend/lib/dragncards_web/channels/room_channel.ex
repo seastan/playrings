@@ -68,7 +68,9 @@ defmodule DragnCardsWeb.RoomChannel do
   ) do
     GameUIServer.game_action(room_slug, user_id, action, options)
     state = GameUIServer.state(room_slug)
-    state = put_in(state["submittedTimestamp"], timestamp)
+    state = if is_map(state) do
+      put_in(state["submittedTimestamp"], timestamp)
+    end
 
     socket = socket |> assign(:game_ui, state)
 
@@ -89,7 +91,11 @@ defmodule DragnCardsWeb.RoomChannel do
   ) do
     GameUIServer.game_action(room_slug, user_id, action, options)
     state = GameUIServer.state(room_slug)
-    state = put_in(state["submittedTimestamp"], timestamp)
+    state = if is_map(state) do
+      put_in(state["submittedTimestamp"], timestamp)
+    else
+      state
+    end
 
     socket = socket |> assign(:game_ui, state)
     notify(socket, user_id)

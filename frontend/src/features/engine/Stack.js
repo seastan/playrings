@@ -72,7 +72,7 @@ export const Stack = React.memo(({
         <NaturalDragAnimation
 	      style={dragProvided.draggableProps.style}
 	      snapshot={dragSnapshot}
-        rotationMultiplier={1.3}
+        rotationMultiplier={1}
 	    >
 	      {style => (
         <Container
