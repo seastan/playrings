@@ -3,7 +3,7 @@ defmodule DragnCardsGame.GameUIServer do
   GenServer for holding GameUI state.
   """
   use GenServer
-  @timeout :timer.minutes(60)
+  @timeout :timer.minutes(20800)
 
   require Logger
   alias DragnCardsGame.{Game, Card, GameUI, GameRegistry, Groups, User, Stack, Tokens}

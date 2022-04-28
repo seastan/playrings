@@ -23,8 +23,10 @@ Console.WriteLine("Starting instance");
 ProcessStartInfo startInfo = new ProcessStartInfo();
 startInfo.WorkingDirectory = Directory.GetCurrentDirectory() + "/lib/dragncards-0.1.0";
 startInfo.FileName = Directory.GetCurrentDirectory() + "/bin/server.bat";
-startInfo.UseShellExecute = true;
-Process.Start(startInfo);
+startInfo.UseShellExecute = false;
+Process p = Process.Start(startInfo);
+Process.Start("explorer.exe", "http://localhost:4000");
+p.WaitForExit();
 
 async Task Download(string path)
 {
