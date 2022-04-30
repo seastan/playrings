@@ -701,40 +701,55 @@ export const cardAction = (action, cardId, options, props) => {
     const listOfActions =
     [
       { // Action 1
-        "_ACTION": "_CASES",
+        "_ACTION": "CASES",
         "_CASES": [
           {
-            "_IF": [["_PATH", "cardById", ["_PATH", "playerUi", "activeCardId"], "inPlay"], "==", true],
+            "_IF": [["_ACTIVE_CARD", "inPlay"], "==", true],
             "_THEN": [
               {
-                "_ACTION": "_CASES",
+                "_ACTION": "CASES",
                 "_CASES": [
                   {
-                    "_IF": [["_PATH", "cardById", ["_PATH", "playerUi", "activeCardId"], "exhausted"], "==", false],
+                    "_IF": [["_ACTIVE_FACE", "type"], "==", "Location"],
                     "_THEN": [
                       {
-                        "_ACTION": "_SET_VALUE",
-                        "_PATH": ["_PATH", "cardById", ["_PATH", "playerUi", "activeCardId"], "exhausted"],
-                        "_VALUE": true
+                        "_ACTION": "MOVE_CARD",
+                        "_CARD_ID": ["_ACTIVE_CARD", "id"],
+                        "_DEST_GROUP_ID": "sharedActive",
+                        "_DEST_STACK_INDEX": 0,
+                        "_DEST_CARD_INDEX": 0,
+                        "_COMBINE": false,
+                        "_MESSAGE": ["made ", ["_ACTIVE_FACE", "name"], " the active location."]
+                      }
+                    ]
+                  },
+                  {
+                    "_IF": [["_ACTIVE_CARD", "exhausted"], "==", false],
+                    "_THEN": [
+                      {
+                        "_ACTION": "SET_VALUE",
+                        "_PATH": ["_ACTIVE_CARD", "exhausted"],
+                        "_VALUE": true,
+                        "_MESSAGES": [["exhausted ", ["_ACTIVE_FACE", "name"], "."]]
                       },
                       {
-                        "_ACTION": "_SET_VALUE",
-                        "_PATH": ["_PATH", "cardById", ["_PATH", "playerUi", "activeCardId"], "rotation"],
+                        "_ACTION": "SET_VALUE",
+                        "_PATH": ["_ACTIVE_CARD", "rotation"],
                         "_VALUE": 90
                       }
                     ]
                   },
                   {
-                    "_IF": [["_PATH", "cardById", ["_PATH", "playerUi", "activeCardId"], "exhausted"], "==", true],
+                    "_IF": [["_ACTIVE_CARD", "exhausted"], "==", true],
                     "_THEN": [
                       {
-                        "_ACTION": "_SET_VALUE",
-                        "_PATH": ["_PATH", "cardById", ["_PATH", "playerUi", "activeCardId"], "exhausted"],
+                        "_ACTION": "SET_VALUE",
+                        "_PATH": ["_ACTIVE_CARD", "exhausted"],
                         "_VALUE": false
                       },
                       {
-                        "_ACTION": "_SET_VALUE",
-                        "_PATH": ["_PATH", "cardById", ["_PATH", "playerUi", "activeCardId"], "rotation"],
+                        "_ACTION": "SET_VALUE",
+                        "_PATH": ["_ACTIVE_CARD", "rotation"],
                         "_VALUE": 0
                       }
                     ]
@@ -747,56 +762,6 @@ export const cardAction = (action, cardId, options, props) => {
       }
     ]
       
-    //             { // if statement (card is ready)
-    //                 if: [
-    //                     [["cardById", ["playerUi", "activeCardId"], "sides", "sideUp", "type"], "equalTo", "Location"]
-    //                 ],
-    //                 then: [
-    //                     {
-    //                         action: "moveCard", 
-    //                         card_id: ["playerUi", "activeCardId"],
-    //                         dest_group_id: "sharedActive", 
-    //                         dest_stack_index: 0, 
-    //                         dest_card_index: 0,
-    //                     },
-    //                 ]
-    //             },
-    //             { // if statement (card is ready)
-    //                 if: [
-    //                     [["cardById", ["playerUi", "activeCardId"], "inPlay"], "equalTo", true],
-    //                     [["cardById", ["playerUi", "activeCardId"], "exhausted"], "equalTo", false]
-    //                 ],
-    //                 then: [
-    //                     {
-    //                         action: "setValue", 
-    //                         key_list: ["cardById", ["playerUi", "activeCardId"], "exhausted"], 
-    //                         value: true
-    //                     },
-    //                     {
-    //                         action: "setValue", 
-    //                         key_list: ["cardById", ["playerUi", "activeCardId"], "rotation"], 
-    //                         value: 90
-    //             { // else if
-    //                 if: [   
-    //                     [["cardById", ["playerUi", "activeCardId"], "inPlay"], "equalTo", true],
-    //                     [["cardById", ["playerUi", "activeCardId"], "exhausted"], "equalTo", true]
-    //                 ],
-    //                 then: [
-    //                     {
-    //                         action: "setValue", 
-    //                         key_list: ["cardById", ["playerUi", "activeCardId"], "exhausted"], 
-    //                         value: false
-    //                     },
-    //                     {
-    //                         action: "setValue", 
-    //                         key_list: ["cardById", ["playerUi", "activeCardId"], "rotation"], 
-    //                         value: 0
-    //                     }
-    //                 ]
-    //             },
-    //         ]
-    //     }
-    // ]
     gameBroadcast("game_action", {
       action: "game_action_list", 
       options: {

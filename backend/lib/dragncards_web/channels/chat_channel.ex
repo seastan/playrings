@@ -25,11 +25,11 @@ defmodule DragnCardsWeb.ChatChannel do
       ) do
     message = ChatMessage.new(message_text, user_id)
 
-    messages = ChatServer.add_message(room_slug, message)
+    #messages = ChatServer.add_message(room_slug, message)
 
     socket =
       socket
-      |> assign(:messages, messages)
+      |> assign(:new_message, message)
 
     notify(socket)
     # use noreply - Notify will send them a reply

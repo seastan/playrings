@@ -6,6 +6,8 @@ defmodule DragnCardsGame.GameUI do
 
   require Logger
   alias DragnCardsGame.{Game, GameUI, GameUISeat, Groups, Group, Stack, Card, User, Tokens, CardFace, Player}
+  alias DragnCardsChat.{ChatMessage}
+
   alias DragnCards.{Repo, Replay}
   alias DragnCards.Rooms.Room
 
@@ -1097,11 +1099,11 @@ defmodule DragnCardsGame.GameUI do
     player_n = if options["for_player_n"] do options["for_player_n"] else player_n end
     Logger.debug("game_action #{user_id} #{player_n} #{action}")
     game_old = gameui["game"]
-    gameui = put_in(gameui["game"]["playerUi"], options["player_ui"])
+    game_old = put_in(game_old["playerUi"], options["player_ui"])
     gameui = if player_n do
       case action do
         "game_action_list" ->
-          put_in(gameui["game"], multiple_map_changes(gameui["game"], options["action_list"]))
+          put_in(gameui["game"], multiple_map_changes(game_old, game_old, options["action_list"]))
         "draw_card" ->
           draw_card(gameui, player_n)
         "new_round" ->
@@ -1170,6 +1172,7 @@ defmodule DragnCardsGame.GameUI do
     end
     # Compare state before and after, and add a delta (unless we are undoing a move or loading a game with undo info)
     game_new = gameui["game"]
+    game_new = Map.delete(game_new, "playerUi")
     gameui = if options["preserve_undo"] != true do
       game_new = Game.add_delta(game_new, game_old)
       gameui = put_in(gameui["game"], game_new)
@@ -1182,41 +1185,58 @@ defmodule DragnCardsGame.GameUI do
   end
 
 
-  def multiple_map_changes(map, map_changes) do
+  def multiple_map_changes(game, map, map_changes) do
     IO.puts("a1")
     Enum.reduce(map_changes, map, fn(options, acc) ->
-      change_map(acc, options)
+      change_map(game, acc, options)
     end)
   end
 
   def is_path(path) do
-    is_list(path) and Enum.at(path, 0) == "_PATH"
+    is_list(path) and Enum.member?(["_GAME", "_ACTIVE_CARD", "_ACTIVE_FACE", "_ITEM"], Enum.at(path, 0))
   end
 
-  def get_nested_value(map, path) do
+  def get_nested_value(game, map, path) do
+#    IO.puts("getting nested value from ")
+#    IO.inspect(map)
+#    IO.puts("path")
+#    IO.inspect(path)
+#    IO.puts("path b")
     if is_path(path) do
-      get_in(map, get_keylist_from_path(map,path))
+      get_in(map, get_keylist_from_path(game, map, path))
     else
       path
     end
   end
 
-  def flatten_path(map, path) do
-    Enum.reduce(path, [], fn(key, acc) ->
+  def flatten_path(game, map, path) do
+    flattened = Enum.reduce(path, [], fn(key, acc) ->
       acc ++ if is_list(key) do
-        [get_nested_value(map, key)]
+        IO.puts("path a")
+        IO.inspect(path)
+        [get_nested_value(game, map, key)]
       else
-        [key]
+        case key do
+          "_ACTIVE_CARD" ->
+            flatten_path(game, map, ["_GAME", "cardById", ["_GAME", "playerUi", "activeCardId"]])
+          "_ACTIVE_FACE" ->
+            flatten_path(game, map, ["_ACTIVE_CARD", "sides", ["_ACTIVE_CARD", "currentSide"]])
+          _ ->
+            [key]
+        end
       end
     end)
+    IO.puts("flattened")
+    IO.inspect(flattened)
+    flattened
   end
 
-  def get_keylist_from_path(map, path) do
-    flat_path = flatten_path(map, path)
+  def get_keylist_from_path(game, map, path) do
+    flat_path = flatten_path(game, map, path)
     List.delete_at(flat_path, 0) # remove "keyList"
   end
 
-  def evaluate_condition(map, condition) do
+  def evaluate_condition(game, map, condition) do
     IO.puts("checking ")
     IO.inspect(condition)
     # A condition is a list of 3 things. Value A, an operator, and value B
@@ -1224,8 +1244,11 @@ defmodule DragnCardsGame.GameUI do
       lhs = Enum.at(condition, 0)
       operator = Enum.at(condition, 1)
       rhs = Enum.at(condition, 2)
-      lhs = if Enum.member?(["_AND","_OR"], operator) do lhs else get_nested_value(map, lhs) end
-      rhs = if Enum.member?(["_AND","_OR"], operator) do rhs else get_nested_value(map, rhs) end
+      IO.puts("path cond")
+      IO.inspect(lhs)
+      IO.inspect(rhs)
+      lhs = if Enum.member?(["AND","OR"], operator) do lhs else get_nested_value(game, map, lhs) end
+      rhs = if Enum.member?(["AND","OR"], operator) do rhs else get_nested_value(game, map, rhs) end
       IO.inspect(lhs)
       IO.inspect(rhs)
       res = case operator do
@@ -1241,18 +1264,18 @@ defmodule DragnCardsGame.GameUI do
           is_number(lhs) and is_number(rhs) and lhs >= rhs
         "<=" ->
           is_number(lhs) and is_number(rhs) and lhs <= rhs
-        "_IN_STRING" ->
+        "IN_STRING" ->
           is_binary(lhs) and is_binary(rhs) and String.contains?(rhs, lhs)
-        "_CONTAINS_IN_STRING" ->
+        "CONTAINS_IN_STRING" ->
           is_binary(lhs) and is_binary(rhs) and String.contains?(lhs, rhs)
-        "_IN_LIST" ->
+        "IN_LIST" ->
           is_list(rhs) and Enum.member?(rhs, lhs)
-        "_CONTAINS_IN_LIST" ->
+        "CONTAINS_IN_LIST" ->
           is_list(lhs) and Enum.member?(lhs, rhs)
-        "_AND" ->
-          evaluate_condition(map, lhs) and evaluate_condition(map, rhs)
-        "_OR" ->
-          evaluate_condition(map, lhs) or evaluate_condition(map, rhs)
+        "AND" ->
+          evaluate_condition(game, map, lhs) and evaluate_condition(game, map, rhs)
+        "OR" ->
+          evaluate_condition(game, map, lhs) or evaluate_condition(game, map, rhs)
         _ ->
           False
       end
@@ -1263,90 +1286,122 @@ defmodule DragnCardsGame.GameUI do
     end
   end
 
-  def change_map(map, options) do
+  def change_map(game, map, options) do
     action = options["_ACTION"]
     IO.puts("action")
     IO.inspect(options)
-    try do
-      new_map = case action do
-        "_SET_VALUE" ->
-          if Map.has_key?(options, "_PATH") and Map.has_key?(options, "_VALUE") do
-            keylist = get_keylist_from_path(map, options["_PATH"])
-            value = options["_VALUE"]
-            IO.puts("keylist")
-            IO.inspect(keylist)
-            put_in(map, keylist, value)
-          else map end
-        "_INCREASE_BY" ->
-          if Map.has_key?(options, "_PATH") and Map.has_key?(options, "_VALUE") do
-            path = options["_PATH"]
-            keylist = get_keylist_from_path(map, path)
-            old_value = get_nested_value(map, path)
-            amount = options["_VALUE"]
-            new_value = if is_number(old_value) and is_number(amount) do
-              temp_value = old_value + amount
-              if Map.has_key?(options, "_MAX") and is_number(options["_MAX"]) and temp_value > options["_MAX"] do
-                options["_MAX"]
-              else
-                temp_value
-              end
+    new_map = case action do
+      "SET_VALUE" ->
+        if Map.has_key?(options, "_PATH") and Map.has_key?(options, "_VALUE") do
+          keylist = get_keylist_from_path(game, map, options["_PATH"])
+          value = options["_VALUE"]
+          IO.puts("setting")
+          IO.inspect(keylist)
+          IO.inspect(value)
+          put_in(map, keylist, value)
+        else map end
+      "INCREASE_BY" ->
+        if Map.has_key?(options, "_PATH") and Map.has_key?(options, "_VALUE") do
+          path = options["_PATH"]
+          keylist = get_keylist_from_path(game, map, path)
+          old_value = get_nested_value(game, map, path)
+          amount = options["_VALUE"]
+          new_value = if is_number(old_value) and is_number(amount) do
+            temp_value = old_value + amount
+            if Map.has_key?(options, "_MAX") and is_number(options["_MAX"]) and temp_value > options["_MAX"] do
+              options["_MAX"]
             else
-              old_value
+              temp_value
             end
-            put_in(map, keylist, new_value)
-          else map end
-        "_DECREASE_BY" ->
-          if Map.has_key?(options, "_PATH") and Map.has_key?(options, "_VALUE") do
-            path = options["_PATH"]
-            keylist = get_keylist_from_path(map, path)
-            old_value = get_nested_value(map, path)
-            amount = options["_VALUE"]
-            new_value = if is_number(old_value) and is_number(amount) do
-              temp_value = old_value - amount
-              if Map.has_key?(options, "_MIN") and is_number(options["_MIN"]) and temp_value < options["_MIN"] do
-                options["_MIN"]
-              else
-                temp_value
-              end
+          else
+            old_value
+          end
+          put_in(map, keylist, new_value)
+        else map end
+      "DECREASE_BY" ->
+        if Map.has_key?(options, "_PATH") and Map.has_key?(options, "_VALUE") do
+          path = options["_PATH"]
+          keylist = get_keylist_from_path(game, map, path)
+          old_value = get_nested_value(game, map, path)
+          amount = options["_VALUE"]
+          new_value = if is_number(old_value) and is_number(amount) do
+            temp_value = old_value - amount
+            if Map.has_key?(options, "_MIN") and is_number(options["_MIN"]) and temp_value < options["_MIN"] do
+              options["_MIN"]
             else
-              old_value
+              temp_value
             end
-            put_in(map, keylist, new_value)
-          else map end
-        "_CASES" ->
-          IO.puts("a2")
-          if Map.has_key?(options, "_CASES") do
-            IO.puts("a")
-            Enum.reduce_while(options["_CASES"], map, fn(casei, acc) ->
-              if Map.has_key?(casei, "_IF") and Map.has_key?(casei, "_THEN") do
-                if evaluate_condition(acc, casei["_IF"]) do
-                  IO.puts("doing multiple_map_changes")
-                  {:halt, multiple_map_changes(acc, casei["_THEN"])}
-                else
-                  {:cont, acc}
-                end
+          else
+            old_value
+          end
+          put_in(map, keylist, new_value)
+        else map end
+      "CASES" ->
+        IO.puts("a2")
+        if Map.has_key?(options, "_CASES") do
+          IO.puts("a")
+          Enum.reduce_while(options["_CASES"], map, fn(casei, acc) ->
+            if Map.has_key?(casei, "_IF") and Map.has_key?(casei, "_THEN") do
+              if evaluate_condition(game, acc, casei["_IF"]) do
+                IO.puts("doing multiple_map_changes")
+                {:halt, multiple_map_changes(game, acc, casei["_THEN"])}
               else
                 {:cont, acc}
               end
-            end)
-          else map end
-        "_FOR_EACH" ->
-          if Map.has_key?(options, "_PATH") and Map.has_key?(options, "_DO") do
-            maps = get_nested_value(map, options["_PATH"])
-            keylist = get_keylist_from_path(map, options["_PATH"])
-            for_each_action = options["_DO"]
-            new_maps = Enum.reduce(Map.keys(maps), maps, fn(k, acc) ->
-              put_in(acc[k], change_map(acc[k], for_each_action))
-            end)
-            put_in(map, keylist, new_maps)
-          end
-        _ ->
-          map
-      end
-    rescue
-      e ->
-        IO.inspect(e)
+            else
+              {:cont, acc}
+            end
+          end)
+        else map end
+      "FOR_EACH" ->
+        if Map.has_key?(options, "_PATH") and Map.has_key?(options, "_DO") do
+          IO.puts("path c")
+          IO.inspect(options["_PATH"])
+          maps = get_nested_value(game, map, options["_PATH"])
+          keylist = get_keylist_from_path(game, map, options["_PATH"])
+          for_each_actions = options["_DO"]
+          new_maps = Enum.reduce(Map.keys(maps), maps, fn(k, acc) ->
+            put_in(acc[k], multiple_map_changes(game, acc[k], for_each_actions))
+          end)
+          put_in(map, keylist, new_maps)
+        end
+      "MOVE_CARD" ->
+        if Map.has_key?(options, "_CARD_ID") and
+            Map.has_key?(options, "_DEST_GROUP_ID") and
+            Map.has_key?(options, "_DEST_STACK_INDEX") and
+            Map.has_key?(options, "_DEST_CARD_INDEX") and
+            Map.has_key?(options, "_COMBINE") do
+
+        else map end
+      _ ->
+        map
     end
+    new_map = if Map.has_key?(options, "_MESSAGES") do
+      latest_chat_messages = Enum.reduce(options["_MESSAGES"], [], fn(message_segments, acc) ->
+        message_text = resolve_message(game, message_segments)
+        chat_message = ChatMessage.new(message_text, 1, 1)
+        IO.puts("adding message")
+        IO.inspect(chat_message)
+        acc ++ [chat_message]
+      end)
+      IO.puts("total messages")
+      IO.inspect(latest_chat_messages)
+      put_in(new_map["latestMessages"], latest_chat_messages)
+    else new_map end
+  end
+
+  def resolve_message(game, message) do
+    Enum.reduce(message, "", fn(segment, acc) ->
+      acc <> resolve_message_segment(game, segment)
+    end)
+  end
+
+  def resolve_message_segment(game, segment) do
+    segment = if is_path(segment) do
+      get_nested_value(game, game, segment)
+    else
+      segment
+    end #|> Kernel.inspect()
   end
   # def process_game_action(gameui, action) do
   #   # An action is a map with an "action" key the dictates how we handle it

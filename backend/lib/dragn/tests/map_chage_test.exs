@@ -1,7 +1,7 @@
 defmodule MyTest do
 
-  def multiple_map_changes(gameui, map_changes) do
-    Enum.reduce(map_changes, gameui, fn(options, acc) ->
+  def multiple_map_changes(map, map_changes) do
+    Enum.reduce(map_changes, map, fn(options, acc) ->
       change_map(acc, options)
     end)
   end
@@ -252,3 +252,4 @@ IO.puts("A")
 newmap = MyTest.change_map(gameui, optionsb)
 IO.inspect(newmap)
 #IO.inspect(MyTest.evaluate_condition(gameui, [["keyList", "playerUi", "activeCardId", "two"], "inString", "abd"]))
+IO.inspect(MyTest.var)
