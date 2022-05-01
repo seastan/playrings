@@ -5,7 +5,7 @@ defmodule DragnCardsGame.GameUI do
 
 
   require Logger
-  alias DragnCardsGame.{Game, GameUI, GameUISeat, Groups, Group, Stack, Card, User, Tokens, CardFace, Player}
+  alias DragnCardsGame.{Game, GameUI, GameUISeat, Groups, Group, Stack, Card, User, Tokens, CardFace, PlayerInfo}
   alias DragnCardsChat.{ChatMessage}
 
   alias DragnCards.{Repo, Replay}
@@ -15,17 +15,17 @@ defmodule DragnCardsGame.GameUI do
 
   @spec new(String.t(), User.t(), Map.t()) :: GameUI.t()
   def new(game_name, user, %{} = options) do
-    Logger.debug("game_ui new")
+    Logger.debug("gameui new")
     gameui = %{
       "game" => Game.load(options),
       "pluginId" => "lotrlcg",
       "gameName" => game_name,
       "options" => options,
       "created_at" => DateTime.utc_now(),
-      "created_by" => user,
+      "created_by" => user.id,
       "privacyType" => options["privacyType"],
-      "playerIds" => %{
-        "player1" => user,
+      "playerInfo" => %{
+        "player1" => PlayerInfo.new(user.id),
         "player2" => nil,
         "player3" => nil,
         "player4" => nil,
@@ -33,6 +33,7 @@ defmodule DragnCardsGame.GameUI do
       "playersInRoom" => %{},
       "lastUpdate" => System.system_time(:second),
     }
+    gameui
   end
 
   def pretty_print(gameui, header \\ nil) do
@@ -1899,15 +1900,15 @@ defmodule DragnCardsGame.GameUI do
   end
 
   def get_player_n(gameui, user_id) do
-    ids = gameui["playerIds"]
+    info = gameui["playerInfo"]
     if user_id == nil do
       nil
     else
       cond do
-        ids["player1"] == user_id -> "player1"
-        ids["player2"] == user_id -> "player2"
-        ids["player3"] == user_id -> "player3"
-        ids["player4"] == user_id -> "player4"
+        info["player1"]["id"] == user_id -> "player1"
+        info["player2"]["id"] == user_id -> "player2"
+        info["player3"]["id"] == user_id -> "player3"
+        info["player4"]["id"] == user_id -> "player4"
         true -> nil
       end
     end
@@ -2085,10 +2086,10 @@ defmodule DragnCardsGame.GameUI do
 
   # List of PlayerN strings of players that are seated and not eliminated
   def seated_non_eliminated(gameui) do
-    player_ids = gameui["playerIds"]
+    player_info = gameui["playerInfo"]
     player_data = gameui["game"]["playerData"]
     Enum.reduce(1..gameui["game"]["numPlayers"], [], fn(player_n, acc) ->
-      acc = if player_ids[player_n] && !player_data[player_n]["eliminated"] do
+      acc = if player_info[player_n] && !player_data[player_n]["eliminated"] do
         acc ++ [player_n]
       else
         acc

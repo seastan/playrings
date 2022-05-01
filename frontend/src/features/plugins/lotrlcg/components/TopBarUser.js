@@ -21,7 +21,7 @@ export const TopBarUser = React.memo(({
   const l10n = useGameL10n();
   const playerN = useSelector(state => state?.playerUi?.playerN);
   const observingPlayerN = useSelector(state => state?.playerUi?.observingPlayerN);
-  const playerIds = useSelector(state => state?.gameUi?.playerIds);
+  const playerInfo = useSelector(state => state?.gameUi?.playerInfo);
   const playerDataPlayerN = useSelector(state => state?.gameUi?.game?.playerData?.[playerI]);  
   const firstPlayer = useSelector(state => state?.gameUi?.game?.firstPlayer);  
   const isLoggedIn = useIsLoggedIn();
@@ -41,10 +41,11 @@ export const TopBarUser = React.memo(({
     if (gameUiWillpower !== willpowerValue) setWillpowerValue(gameUiWillpower);
   }, [gameUiWillpower]);
 
-  if (!playerIds) return null;
+  if (!playerInfo) return null;
   if (!playerDataPlayerN) return null;
 
-  const sittingUserID = playerIds[playerI];
+  const sittingUserID = playerInfo[playerI]?.id;
+  console.log("sittingUserID",sittingUserID)
 
   const handleFirstPlayerClick = (event) => {
     event.stopPropagation();
@@ -95,8 +96,8 @@ export const TopBarUser = React.memo(({
 
   const handleSitClick = (action) => {
     // Get up from any seats first
-    Object.keys(playerIds).forEach((playeri) => {
-      const sittingUserIDi = playerIds[playeri];
+    Object.keys(playerInfo).forEach((playeri) => {
+      const sittingUserIDi = playerInfo[playeri]?.id;
       if (sittingUserIDi === myUserID) {
         gameBroadcast("set_seat", {"player_i": playeri, "new_user_id": null});
         chatBroadcast("game_update", {message: "got up from "+playeri+"'s seat."});
@@ -104,7 +105,7 @@ export const TopBarUser = React.memo(({
     })
     // Sit in seat
     if (action === "sit") {
-      gameBroadcast("set_seat", {"player_i": playerI, "new_user_id": myUserID});
+      gameBroadcast("set_seat", {"player_i": playerI, "new_user_id": myUserID, "new_user_alias": myUser.alias});
       chatBroadcast("game_update",{message: "sat in "+playerI+"'s seat."});
       dispatch(setObservingPlayerN(playerI));
     } 

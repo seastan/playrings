@@ -1,9 +1,10 @@
 defmodule DragnCardsWeb.API.V1.GameController do
   use DragnCardsWeb, :controller
+  import Ecto.Query
 
   require Logger
 
-  alias DragnCards.Rooms
+  alias DragnCards.{Rooms, Users}
   alias DragnCards.Rooms.Room
   alias DragnCardsUtil.{NameGenerator}
   alias DragnCardsGame.GameUISupervisor
@@ -11,7 +12,9 @@ defmodule DragnCardsWeb.API.V1.GameController do
   def create(conn, _params) do
     Logger.debug("game_controller create")
     game_name = NameGenerator.generate()
-    user = _params["room"]["user"]
+    user_id = _params["room"]["user"]
+    #query = from User, where: [id: ^user_id], select: [:alias]
+    user = Users.get_user(user_id)
     options = %{
       "privacyType" => _params["room"]["privacy_type"],
       "replayId" => _params["game_options"]["replay_id"],

@@ -6,11 +6,12 @@ defmodule DragnCardsGame.GameUIServer do
   @timeout :timer.minutes(60)
 
   require Logger
-  alias DragnCardsGame.{Game, Card, GameUI, GameRegistry, Groups, User, Stack, Tokens}
+  alias DragnCardsGame.{Game, Card, GameUI, GameRegistry, Groups, User, Stack, Tokens, PlayerInfo}
+  alias DragnCards.Users
 
   def is_player(gameui, user_id) do
-    ids = gameui["playerIds"]
-    if Enum.member?([ids["player1"], ids["player2"], ids["player3"], ids["player4"]], user_id) do
+    ids = gameui["playerInfo"]
+    if Enum.member?([ids["player1"]["id"], ids["player2"]["id"], ids["player3"]["id"], ids["player4"]["id"]], user_id) do
         true
     else
         false
@@ -107,6 +108,7 @@ defmodule DragnCardsGame.GameUIServer do
   #####################################
 
   def init({game_name, user, options = %{}}) do
+    Logger.debug("gameuiserver init")
     gameui =
       case :ets.lookup(:game_uis, game_name) do
         [] ->
@@ -117,13 +119,14 @@ defmodule DragnCardsGame.GameUIServer do
         [{^game_name, gameui}] ->
           gameui
       end
+    IO.puts("a")
     path = [:code.priv_dir(:dragncards), "python", "lotrlcg"] |> Path.join()
     {:ok, pypid} = :python.start([{:python_path, to_charlist(path)}, {:python, 'python3'}])
     IO.puts("b")
     IO.inspect(:code.priv_dir(:dragncards))
     gameui = put_in(gameui["pypid"], :erlang.pid_to_list(pypid))
-    IO.puts("c")
-    GameRegistry.add(gameui["gameName"], gameui)
+    gr = GameRegistry.add(gameui["gameName"], gameui)
+    IO.inspect(gr)
     #GameRegistry.add(gameui["gameName"]<>"-pypid", pypid)
     {:ok, gameui, timeout(gameui)}
   end
@@ -159,7 +162,7 @@ defmodule DragnCardsGame.GameUIServer do
 
   def handle_call({:set_seat, user_id, player_i, new_user_id}, _from, gameui) do
     try do
-      gameui = put_in(gameui["playerIds"][player_i],new_user_id)
+      gameui = put_in(gameui["playerInfo"][player_i],PlayerInfo.new(new_user_id))
     rescue
       e in RuntimeError ->
         IO.inspect(e)

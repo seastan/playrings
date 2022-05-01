@@ -163,11 +163,11 @@ export const getCardRowCategory = (cardRow) => {
   return "Player";
 }
 
-export const GetPlayerN = (playerIds, id) => {
-  if (!playerIds) return null;
+export const GetPlayerN = (playerInfo, id) => {
+  if (!playerInfo) return null;
   var playerN = null;
-  Object.keys(playerIds).forEach(playerI => {
-    if (playerIds[playerI] === id) playerN = playerI;
+  Object.keys(playerInfo).forEach(playerI => {
+    if (playerInfo[playerI]?.id === id) playerN = playerI;
   })
   return playerN;
 }
@@ -186,7 +186,6 @@ export const getParentCardsInGroup = (game, groupId) => {
 
 // List of playerN strings of seats that are not eliminated
  export const nonEliminated = (gameUi) => {
-  const playerIds = gameUi.playerIds;
   const playerData = gameUi.game.playerData;
   var playerNs = [];
   for (var i = 1; i<= gameUi.game.numPlayers; i++) {
@@ -198,11 +197,11 @@ export const getParentCardsInGroup = (game, groupId) => {
 
  // List of playerN strings of players that are seated and not eliminated
  export const seatedNonEliminated = (gameUi) => {
-  const playerIds = gameUi.playerIds;
+  const playerInfo = gameUi.playerInfo;
   const playerData = gameUi.game.playerData;
   var seated = []
-  Object.keys(playerIds).forEach((PlayerI) => {
-    if (playerIds[PlayerI] && !playerData[PlayerI].eliminated) {
+  Object.keys(playerInfo).forEach((PlayerI) => {
+    if (playerInfo[PlayerI]?.id && !playerData[PlayerI].eliminated) {
       seated.push(PlayerI);
     }
   })
@@ -231,7 +230,7 @@ export const getNextEmptyPlayerN = (gameUi, playerN) => {
   var foundPlayerN = null;
   for (var i=0; i<nonEliminatedPlayerNs2.length; i++) {
     const playerI = nonEliminatedPlayerNs2[i];
-    if (foundPlayerN && gameUi.playerIds[playerI] === null) return playerI; 
+    if (foundPlayerN && gameUi.playerInfo[playerI]?.id === null) return playerI; 
     if (playerI === playerN) foundPlayerN = true;
   }
   return null;

@@ -23,7 +23,7 @@ export const UserName: React.FC<Props> = ({ userID, defaultName }) => {
     (state: RootState) => state.users.usersById[userID || 0]
   );
 
-  if (userID === null) {
+  if (userID === null || userID === undefined) {
     return <span className="text-gray-400">{defaultName ? defaultName : "anonymous"}</span>;
   } 
   if (userID < 0) {

@@ -618,7 +618,7 @@ export const gameAction = (action, actionProps, forPlayerN = null) => {
     if (!areMultiplayerHotkeysEnabled(game,chatBroadcast)) return;
     // Get up from any seats first
     const nextPlayerN = getNextEmptyPlayerN(gameUi, playerN);
-    const myUserId = gameUi.playerIds[playerN];
+    const myUserId = gameUi.playerInfo[playerN]["id"];
     if (nextPlayerN) {
       gameBroadcast("game_action", {action: "set_seat", options: {"player_n": playerN, "user_id": null}});
       chatBroadcast("game_update", {message: "got up from "+playerNToPlayerSpaceN(playerN)+"'s seat."});

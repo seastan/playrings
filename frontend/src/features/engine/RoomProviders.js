@@ -9,9 +9,9 @@ import BroadcastContext from "../../contexts/BroadcastContext";
 export const RoomProviders = ({ gameBroadcast, chatBroadcast }) => {
   console.log("Rendering RoomProviders");
   const dispatch = useDispatch();
-  const playerIds = useSelector(state => state?.gameUi?.playerIds);
+  const playerInfo = useSelector(state => state?.gameUi?.playerInfo);
   const myUser = useProfile();
-  const playerN = GetPlayerN(playerIds, myUser?.id);
+  const playerN = GetPlayerN(playerInfo, myUser?.id);
   dispatch(setPlayerN(playerN));
 
   return (

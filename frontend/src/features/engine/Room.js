@@ -6,7 +6,6 @@ import useChannel from "../../hooks/useChannel";
 import { applyDelta, setGameUi } from "../store/gameUiSlice";
 import useProfile from "../../hooks/useProfile";
 import { resetPlayerUi } from "../store/playerUiSlice";
-import { useAddMessages } from "./functions/useAddMessage";
 
 var delayBroadcast;
 
@@ -14,7 +13,6 @@ export const Room = ({ slug }) => {
   const dispatch = useDispatch();
   const gameName = useSelector(state => state.gameUi.gameName);
   const setMessages = useSetMessages();
-  //const addMessages = useAddMessages();
   const myUser = useProfile();
   const myUserId = myUser?.id;
   const [isClosed, setIsClosed] = useState(false);
