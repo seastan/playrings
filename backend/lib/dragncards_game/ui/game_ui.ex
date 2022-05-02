@@ -1383,7 +1383,7 @@ defmodule DragnCardsGame.GameUI do
             Map.has_key?(options, "_DEST_STACK_INDEX") and
             Map.has_key?(options, "_DEST_CARD_INDEX") and
             Map.has_key?(options, "_COMBINE") do
-
+              move_card(game, options["_CARD_ID"], options["_DEST_GROUP_ID"], options["_DEST_STACK_INDEX"], options["_DEST_STACK_INDEX"], options["_COMBINE"], options["_PRESERVE_STATE"])
         else map end
       _ ->
         map
