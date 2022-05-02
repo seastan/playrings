@@ -1096,6 +1096,7 @@ defmodule DragnCardsGame.GameUI do
   # Game actions                                                 #
   ################################################################
   def game_action(gameui, user_id, action, options) do
+    user_alias = get_alias_by_user_id(gameui, user_id)
     player_n = get_player_n(gameui, user_id)
     player_n = if options["for_player_n"] do options["for_player_n"] else player_n end
     Logger.debug("game_action #{user_id} #{player_n} #{action}")
@@ -1104,7 +1105,7 @@ defmodule DragnCardsGame.GameUI do
     gameui = if player_n do
       case action do
         "game_action_list" ->
-          put_in(gameui["game"], multiple_map_changes(game_old, game_old, options["action_list"]))
+          put_in(gameui["game"], multiple_map_changes(game_old, game_old, options["action_list"], user_alias))
         "draw_card" ->
           draw_card(gameui, player_n)
         "new_round" ->
@@ -1185,11 +1186,21 @@ defmodule DragnCardsGame.GameUI do
     gameui
   end
 
+  def get_alias_by_user_id(gameui, user_id) do
+    user_alias = Enum.reduce_while(gameui["playerInfo"], nil, fn({playerI, playerInfo}, acc) ->
+      if user_id == playerInfo["id"] do
+        {:halt, playerInfo["alias"]}
+      else
+        {:cont, acc}
+      end
+    end)
+  end
 
-  def multiple_map_changes(game, map, map_changes) do
+
+  def multiple_map_changes(game, map, map_changes, user_alias) do
     IO.puts("a1")
     Enum.reduce(map_changes, map, fn(options, acc) ->
-      change_map(game, acc, options)
+      change_map(game, acc, options, user_alias)
     end)
   end
 
@@ -1287,7 +1298,7 @@ defmodule DragnCardsGame.GameUI do
     end
   end
 
-  def change_map(game, map, options) do
+  def change_map(game, map, options, user_alias) do
     action = options["_ACTION"]
     IO.puts("action")
     IO.inspect(options)
@@ -1345,7 +1356,7 @@ defmodule DragnCardsGame.GameUI do
             if Map.has_key?(casei, "_IF") and Map.has_key?(casei, "_THEN") do
               if evaluate_condition(game, acc, casei["_IF"]) do
                 IO.puts("doing multiple_map_changes")
-                {:halt, multiple_map_changes(game, acc, casei["_THEN"])}
+                {:halt, multiple_map_changes(game, acc, casei["_THEN"], user_alias)}
               else
                 {:cont, acc}
               end
@@ -1362,7 +1373,7 @@ defmodule DragnCardsGame.GameUI do
           keylist = get_keylist_from_path(game, map, options["_PATH"])
           for_each_actions = options["_DO"]
           new_maps = Enum.reduce(Map.keys(maps), maps, fn(k, acc) ->
-            put_in(acc[k], multiple_map_changes(game, acc[k], for_each_actions))
+            put_in(acc[k], multiple_map_changes(game, acc[k], for_each_actions, user_alias))
           end)
           put_in(map, keylist, new_maps)
         end
@@ -1379,7 +1390,7 @@ defmodule DragnCardsGame.GameUI do
     end
     new_map = if Map.has_key?(options, "_MESSAGES") do
       latest_chat_messages = Enum.reduce(options["_MESSAGES"], [], fn(message_segments, acc) ->
-        message_text = resolve_message(game, message_segments)
+        message_text = resolve_message(game, message_segments, user_alias)
         chat_message = ChatMessage.new(message_text, 1, 1)
         IO.puts("adding message")
         IO.inspect(chat_message)
@@ -1391,10 +1402,11 @@ defmodule DragnCardsGame.GameUI do
     else new_map end
   end
 
-  def resolve_message(game, message) do
-    Enum.reduce(message, "", fn(segment, acc) ->
+  def resolve_message(game, message, user_alias) do
+    resolved_message = Enum.reduce(message, "", fn(segment, acc) ->
       acc <> resolve_message_segment(game, segment)
     end)
+    processed_message = String.replace(resolved_message, "{playerN}", user_alias)
   end
 
   def resolve_message_segment(game, segment) do

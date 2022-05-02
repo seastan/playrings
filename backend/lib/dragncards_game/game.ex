@@ -157,11 +157,6 @@
   end
 
   def apply_delta(map, delta, direction) do
-    # IO.puts("applying")
-    # IO.inspect(delta)
-    # IO.puts("to")
-    # IO.inspect(map)
-    # Ignore timestamp
     if is_map(map) and is_map(delta) do
       delta = Map.delete(delta, "unix_ms")
       # Loop over keys in delta and apply the changes to the map

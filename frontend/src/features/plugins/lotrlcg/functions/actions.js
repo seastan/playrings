@@ -730,7 +730,7 @@ export const cardAction = (action, cardId, options, props) => {
                         "_ACTION": "SET_VALUE",
                         "_PATH": ["_ACTIVE_CARD", "exhausted"],
                         "_VALUE": true,
-                        "_MESSAGES": [["exhausted ", ["_ACTIVE_FACE", "name"], "."]]
+                        "_MESSAGES": [["{playerN} exhausted ", ["_ACTIVE_FACE", "name"], "."]]
                       },
                       {
                         "_ACTION": "SET_VALUE",
