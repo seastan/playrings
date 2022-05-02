@@ -145,7 +145,7 @@
         diff_value = diff_map[:value]
         Enum.reduce(diff_value, %{}, fn({k,v},acc) ->
           d2 = delta(k, v)
-          if v[:changed] != :equal do
+          if v[:changed] != :equal and k != "playerUi" do
             acc |> Map.put(k, d2)
           else
             acc

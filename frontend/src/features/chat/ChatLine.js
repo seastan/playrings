@@ -1,13 +1,12 @@
 import React from "react";
 import UserName from "../user/UserName";
-import { ChatMessage } from "elixir-backend";
+import { useSelector } from "react-redux";
 
-interface Props {
-  message: ChatMessage;
-}
 
-export const ChatLine: React.FC<Props> = ({ message }) => {
+export const ChatLine = ({ message }) => {
   const cleanText = message.text.replace(/<\/?.+?>/ig, '');
+  const playerInfo = useSelector(state => state?.gameUi?.playerInfo);
+  const numPlayer = useSelector(state => state?.gameUi?.num);
 
   if (message.game_update) {
     return (
