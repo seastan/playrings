@@ -77,7 +77,7 @@ export const DragContainer = React.memo(({}) => {
       if ((origGroup.type === "hand" || origGroup.type === "deck" ) && (destGroup.type !== "hand" && destGroup.type !== "deck" )) {
         chatBroadcast("game_update",{message: "attached "+getDisplayNameFlipped(topOfOrigStackCard)+" from "+GROUPSINFO[origGroupId].name+" to "+getDisplayName(topOfDestStackCard)+" in "+GROUPSINFO[destGroupId].name+"."})
         // Flip card faceup
-        const updates = [["game","cardById",topOfOrigStackCardId,"currentSide", "A"]];
+        const updates = [["cardById",topOfOrigStackCardId,"currentSide", "A"]];
         dispatch(setValues({updates: updates}));
       } else {
         chatBroadcast("game_update",{message: "attached "+getDisplayName(topOfOrigStackCard)+" from "+GROUPSINFO[origGroupId].name+" to "+getDisplayName(topOfDestStackCard)+" in "+GROUPSINFO[destGroupId].name+"."});
@@ -113,7 +113,7 @@ export const DragContainer = React.memo(({}) => {
       if ((origGroup.type === "hand" || origGroup.type === "deck" ) && (destGroup.type !== "hand" && destGroup.type !== "deck" )) {
         chatBroadcast("game_update",{message: "moved "+getDisplayNameFlipped(topOfOrigStackCard)+" from "+origGroupTitle+" to "+destGroupTitle+"."});
         // Flip card faceup
-        const updates = [["game","cardById",topOfOrigStackCardId,"currentSide", "A"]];
+        const updates = [["cardById",topOfOrigStackCardId,"currentSide", "A"]];
         dispatch(setValues({updates: updates}));
       }
       else {

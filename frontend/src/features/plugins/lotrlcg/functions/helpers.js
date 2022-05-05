@@ -100,8 +100,9 @@ export const getVisibleFaceSrc = (card, playerN, user) => {
   const language = user?.language || "English";
   if (visibleSide === "A") {
     return {
-      src: visibleFace.customImgUrl || process.env.PUBLIC_URL + '/images/cards/' + language + '/' + card['cardDbId'] + '.jpg',
-      default: visibleFace.customImgUrl ? "image not found" : process.env.PUBLIC_URL + '/images/cards/English/' + card['cardDbId'] + '.jpg',
+      src: "https://dragncards-lotrlcg.s3.us-east-1.amazonaws.com/" + card['cardDbId'] + '.jpg',
+      //src: visibleFace.customImgUrl || process.env.PUBLIC_URL + '/images/cards/' + language + '/' + card['cardDbId'] + '.jpg',
+      //default: visibleFace.customImgUrl ? "image not found" : process.env.PUBLIC_URL + '/images/cards/English/' + card['cardDbId'] + '.jpg',
     }
   } else { // Side B logic
     const sideBName = card.sides.B.name;
@@ -491,18 +492,18 @@ export const processPostLoad = (gameUi, loadList, playerN, gameBroadcast, chatBr
   }
   const glitteringCaves = isCardDbIdInLoadList(loadList, "03a074ce-d581-4672-b6ea-ed97b7afd415");
   if (glitteringCaves) {
-    gameBroadcast("game_action", {action: "update_values", options: {updates: [["game", "layout", "extra"]]}});
+    gameBroadcast("game_action", {action: "update_values", options: {updates: [["layout", "extra"]]}});
     gameBroadcast("game_action", {action: "shuffle_group", options: {group_id: "sharedExtra1"}})
     gameBroadcast("game_action", {action: "shuffle_group", options: {group_id: "sharedExtra2"}})
     gameBroadcast("game_action", {action: "shuffle_group", options: {group_id: "sharedExtra3"}})
   }
   const wainriders = isCardDbIdInLoadList(loadList, "21165a65-1296-4664-a880-d85eea19a4ae");
   if (wainriders) {
-    gameBroadcast("game_action", {action: "update_values", options: {updates: [["game", "layout", "extra"]]}});
+    gameBroadcast("game_action", {action: "update_values", options: {updates: [["layout", "extra"]]}});
   }
   const templeOfTheDeceived = isCardDbIdInLoadList(loadList, "fb7d55c5-7198-45c5-97d7-be4c6a26fa68");
   if (templeOfTheDeceived) {
-    gameBroadcast("game_action", {action: "update_values", options: {updates: [["game", "layout", "extra"]]}});
+    gameBroadcast("game_action", {action: "update_values", options: {updates: [["layout", "extra"]]}});
     gameBroadcast("game_action", {
       action: "action_on_matching_cards",
       options: {criteria:[["groupId", "sharedExtra1"], ["stackIndex", 0]], action: "flip_card", options: {}
@@ -697,7 +698,7 @@ export const onLoad = (
   if (options?.loaded || redoStepsExist) return;
   dispatch(setLoaded(true));
   const newOptions = {...options, loaded: true}
-  gameBroadcast("game_action", {action: "update_values", options: {updates: [["game", "options", newOptions]]}})
+  gameBroadcast("game_action", {action: "update_values", options: {updates: [["options", newOptions]]}})
 
   const ringsDbInfo = options?.ringsDbInfo;
   const deckToLoad = ringsDbInfo?.[0] || ringsDbInfo?.[1] || ringsDbInfo?.[2] || ringsDbInfo?.[3];
@@ -717,7 +718,7 @@ export const onLoad = (
 
     }
     if (numDecks>1 && numDecks<=4) {
-      gameBroadcast("game_action", {action: "update_values", options: {updates: [["game", "numPlayers", numDecks]]}});
+      gameBroadcast("game_action", {action: "update_values", options: {updates: [["numPlayers", numDecks]]}});
       chatBroadcast("game_update", {message: "set the number of players to: " + numDecks});
     }
     // Loop over decks complete
@@ -725,7 +726,7 @@ export const onLoad = (
   // Shuffle all decks if setting was set
   if (options["loadShuffle"]) {
     // Turn off trigger
-    const updates = [["game", "options", "loadShuffle", false]];
+    const updates = [["options", "loadShuffle", false]];
     gameBroadcast("game_action", {action: "update_values", options: {updates: updates}});
     // TODO: fix this
     //dispatch(setValues({updates: updates}));

@@ -45,7 +45,7 @@ export const Token = React.memo(({
         // Set up a delayed broadcast to update the game state that interupts itself if the button is clicked again shortly after.
         if (delayBroadcast) clearTimeout(delayBroadcast);
         delayBroadcast = setTimeout(function() {
-            gameBroadcast("game_action", {action:"update_values", options: {updates: [["game", "cardById", cardId, "tokens", tokenType, newAmount]]}});
+            gameBroadcast("game_action", {action:"update_values", options: {updates: [["cardById", cardId, "tokens", tokenType, newAmount]]}});
             if (committed && tokenType === "willpower") gameBroadcast("game_action", {action:"increment_willpower", options: {increment: totalDelta}});
             if (totalDelta > 0) {
                 if (totalDelta === 1) {

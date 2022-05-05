@@ -164,9 +164,9 @@ export const gameAction = (action, actionProps, forPlayerN = null) => {
   // is_host = player_n == leftmost_non_eliminated_player_n(gameui)
   // gameui = if is_host do
   //   update_values(gameui,[
-  //     ["game", "phase", "Resource"],
-  //     ["game", "roundStep", "1.R"],
-  //     ["game", "roundNumber", gameui["game"]["roundNumber"]+1]
+  //     ["phase", "Resource"],
+  //     ["roundStep", "1.R"],
+  //     ["roundNumber", gameui["game"]["roundNumber"]+1]
   //   ])
   // else
   //   gameui
@@ -190,8 +190,8 @@ export const gameAction = (action, actionProps, forPlayerN = null) => {
   // )
   // # Reset willpower count and refresh status
   // gameui = update_values(gameui,[
-  //   ["game", "playerData", player_n, "willpower", 0],
-  //   ["game", "playerData", player_n, "refreshed", false]
+  //   ["playerData", player_n, "willpower", 0],
+  //   ["playerData", player_n, "refreshed", false]
   // ])
   // # Add custom set tokens per round
   // gameui = action_on_matching_cards(gameui, [
@@ -295,9 +295,9 @@ export const gameAction = (action, actionProps, forPlayerN = null) => {
   // is_host = player_n == leftmost_non_eliminated_player_n(gameui)
   // gameui = if is_host do
   //   update_values(gameui,[
-  //     ["game", "phase", "Resource"],
-  //     ["game", "roundStep", "1.R"],
-  //     ["game", "roundNumber", gameui["game"]["roundNumber"]+1]
+  //     ["phase", "Resource"],
+  //     ["roundStep", "1.R"],
+  //     ["roundNumber", gameui["game"]["roundNumber"]+1]
   //   ])
   // else
   //   gameui
@@ -321,8 +321,8 @@ export const gameAction = (action, actionProps, forPlayerN = null) => {
   // )
   // # Reset willpower count and refresh status
   // gameui = update_values(gameui,[
-  //   ["game", "playerData", player_n, "willpower", 0],
-  //   ["game", "playerData", player_n, "refreshed", false]
+  //   ["playerData", player_n, "willpower", 0],
+  //   ["playerData", player_n, "refreshed", false]
   // ])
   // # Add custom set tokens per round
   // gameui = action_on_matching_cards(gameui, [
@@ -444,7 +444,7 @@ export const gameAction = (action, actionProps, forPlayerN = null) => {
   else if (action === "shadows") {
     // Deal all shadow cards
     // Set phase
-    gameBroadcast("game_action", {action: "update_values", options: {updates: [["game","roundStep", "6.2"], ["game", "phase", "Combat"]]}});
+    gameBroadcast("game_action", {action: "update_values", options: {updates: [["roundStep", "6.2"], ["phase", "Combat"]]}});
     chatBroadcast("game_update", {message: "set the round step to "+roundStepToText("6.2")+"."});
     gameBroadcast("game_action", {action: "deal_all_shadows", options: {}});
   } 
@@ -452,7 +452,7 @@ export const gameAction = (action, actionProps, forPlayerN = null) => {
   else if (action === "discard_shadows") {
     // Discard all shadow cards
     // Set phase
-    gameBroadcast("game_action", {action: "update_values", options: {updates: [["game","roundStep", "6.11"], ["game", "phase", "Combat"]]}});
+    gameBroadcast("game_action", {action: "update_values", options: {updates: [["roundStep", "6.11"], ["phase", "Combat"]]}});
     chatBroadcast("game_update", {message: "set the round step to "+roundStepToText("6.11")+"."});
 
     gameBroadcast("game_action", {
@@ -521,7 +521,7 @@ export const gameAction = (action, actionProps, forPlayerN = null) => {
     // Next/prev step
     const stepPhase = action === "next_step" ? nextRoundStep(game.roundStep) : prevRoundStep(game.roundStep);
     if (stepPhase) {
-      gameBroadcast("game_action", {action: "update_values", options: {updates: [["game","roundStep", stepPhase["roundStep"]], ["game", "phase", stepPhase["phase"]]]}});
+      gameBroadcast("game_action", {action: "update_values", options: {updates: [["roundStep", stepPhase["roundStep"]], ["phase", stepPhase["phase"]]]}});
       chatBroadcast("game_update", {message: "set the round step to "+roundStepToText(stepPhase["roundStep"])+"."});
       // Handle targeting
       const triggerCardIds = game.triggerMap[stepPhase["roundStep"]];     
@@ -545,7 +545,7 @@ export const gameAction = (action, actionProps, forPlayerN = null) => {
     // Next/prev phase
     const stepPhase = action === "next_phase" ? nextPhase(game.phase) : prevPhase(game.phase);
     if (stepPhase) {
-      gameBroadcast("game_action", {action: "update_values", options: {updates: [["game","roundStep", stepPhase["roundStep"]], ["game", "phase", stepPhase["phase"]]]}});
+      gameBroadcast("game_action", {action: "update_values", options: {updates: [["roundStep", stepPhase["roundStep"]], ["phase", stepPhase["phase"]]]}});
       chatBroadcast("game_update", {message: "set the round step to "+roundStepToText(stepPhase["roundStep"])+"."});
     }
   }
@@ -574,7 +574,7 @@ export const gameAction = (action, actionProps, forPlayerN = null) => {
     gameBroadcast("game_action", {
       action: "update_values", 
       options: {
-        updates:[["game", "playerData", playerN, "arrows", []]], 
+        updates:[["playerData", playerN, "arrows", []]], 
       }
     });
   }
@@ -649,7 +649,7 @@ export const gameAction = (action, actionProps, forPlayerN = null) => {
     const newValue = !game.options.multiplayerHotkeys;
     const newOptions = {...game.options, multiplayerHotkeys: newValue};
     chatBroadcast("game_update", {message: "turned multiplayer hotkeys "+(newValue ? "on" : "off")+"."});
-    gameBroadcast("game_action", {action: "update_values", options: {updates: [["game", "options", newOptions]]}});
+    gameBroadcast("game_action", {action: "update_values", options: {updates: [["options", newOptions]]}});
   }
 }
 
@@ -690,7 +690,7 @@ export const cardAction = (action, cardId, options, props) => {
         //newTokens[tokenType] = 0; 
       }
     }
-    const updates = [["game","cardById",cardId,"tokens", newTokens]];
+    const updates = [["cardById",cardId,"tokens", newTokens]];
     dispatch(setValues({updates: updates}))
     gameBroadcast("game_action", {action:"update_values", options:{updates: updates}});
     chatBroadcast("game_update", {message: "cleared all tokens from "+displayName+"."});
@@ -719,7 +719,7 @@ export const cardAction = (action, cardId, options, props) => {
                         "_DEST_STACK_INDEX": 0,
                         "_DEST_CARD_INDEX": 0,
                         "_COMBINE": false,
-                        "_MESSAGE": ["made ", ["_ACTIVE_FACE", "name"], " the active location."]
+                        "_MESSAGES": ["made ", ["_ACTIVE_FACE", "name"], " the active location."]
                       }
                     ]
                   },
@@ -783,7 +783,7 @@ export const cardAction = (action, cardId, options, props) => {
     //     } else {
     //         chatBroadcast("game_update", {message: "exhausted "+displayName+"."});
     //     }
-    //     const updates = [["game", "cardById", cardId, "exhausted", values[0]], ["game", "cardById", cardId, "rotation", values[1]]];
+    //     const updates = [["cardById", cardId, "exhausted", values[0]], ["cardById", cardId, "rotation", values[1]]];
     //     dispatch(setValues({updates: updates}));
     //     console.log("exhaust gameBroadcast", gameBroadcast)
     //     gameBroadcast("game_action", {action: "update_values", options:{updates: updates}});
@@ -793,7 +793,7 @@ export const cardAction = (action, cardId, options, props) => {
   else if (action === "flip") {
     var newSide = "A";
     if (card["currentSide"] === "A") newSide = "B";
-    const updates = [["game","cardById",cardId,"currentSide", newSide]]
+    const updates = [["cardById",cardId,"currentSide", newSide]]
     dispatch(setValues({updates: updates}))
     dispatch(setActiveCardObj({...activeCardObj, card: {...card, currentSide: newSide}, clicked: false}))
     gameBroadcast("game_action", {action: "flip_card", options:{card_id: cardId}});
@@ -822,14 +822,14 @@ export const cardAction = (action, cardId, options, props) => {
             [["cardById", ["id"], "rotation"],  "changeTo", 90],
             [
               { // if
-                if: [["game", "questMode"], "equalTo", "Battle"],
+                if: [["questMode"], "equalTo", "Battle"],
                 then: [
                   [["playerData", ["controller"], "attack"], "increaseBy", ["sides","sideUp","attack"]],
                   [["playerData", ["controller"], "attack"], "increaseBy", ["sides","sideUp","tokens","attack"]],
                 ]
               },
               { // else if
-                if: [["game", "questMode"], "equalTo", "Siege"],
+                if: [["questMode"], "equalTo", "Siege"],
                 then: [
                   [["playerData", ["controller"], "defense"], "increaseBy", ["sides","sideUp","defense"]],
                   [["playerData", ["controller"], "defense"], "increaseBy", ["sides","sideUp","tokens","defense"]],
@@ -857,14 +857,14 @@ export const cardAction = (action, cardId, options, props) => {
             [["cardById", ["id"], "rotation"],  "changeTo", 90],
             [
               { // if
-                if: [["game", "questMode"], "equalTo", "Battle"],
+                if: [["questMode"], "equalTo", "Battle"],
                 then: [
                   [["playerData", ["controller"], "attack"], "increaseBy", ["sides","sideUp","attack"]],
                   [["playerData", ["controller"], "attack"], "increaseBy", ["sides","sideUp","tokens","attack"]],
                 ]
               },
               { // else if
-                if: [["game", "questMode"], "equalTo", "Siege"],
+                if: [["questMode"], "equalTo", "Siege"],
                 then: [
                   [["playerData", ["controller"], "defense"], "increaseBy", ["sides","sideUp","defense"]],
                   [["playerData", ["controller"], "defense"], "increaseBy", ["sides","sideUp","tokens","defense"]],
@@ -892,9 +892,9 @@ export const cardAction = (action, cardId, options, props) => {
     // Commit to quest and exhaust
     if (action === "commit" && groupType === "play" && !card["committed"] && !card["exhausted"]) {
       const updates = [
-        ["game", "cardById", cardId, "committed", true], 
-        ["game", "cardById", cardId, "exhausted", true], 
-        ["game", "cardById", cardId, "rotation", 90],
+        ["cardById", cardId, "committed", true], 
+        ["cardById", cardId, "exhausted", true], 
+        ["cardById", cardId, "rotation", 90],
       ];
       chatBroadcast("game_update", {message: "committed "+displayName+" to the quest."});
       gameBroadcast("game_action", {action:"increment_willpower", options: {increment: delta}});
@@ -902,7 +902,7 @@ export const cardAction = (action, cardId, options, props) => {
     }
     // Commit to quest without exhausting
     else if (action === "commit_without_exhausting" && groupType === "play" && !card["committed"] && !card["exhausted"]) {
-      const updates = [["game", "cardById", cardId, "committed", true]];
+      const updates = [["cardById", cardId, "committed", true]];
       chatBroadcast("game_update", {message: "committed "+displayName+" to the quest without exhausting."});
       gameBroadcast("game_action", {action:"increment_willpower", options: {increment: delta}});
       gameBroadcast("game_action", {action: "update_values", options:{updates: updates}});
@@ -910,9 +910,9 @@ export const cardAction = (action, cardId, options, props) => {
     // Uncommit to quest and ready
     else if (action === "commit" && groupType === "play" && card["committed"]) {
       const updates = [
-        ["game", "cardById", cardId, "committed", false], 
-        ["game", "cardById", cardId, "exhausted", false], 
-        ["game", "cardById", cardId, "rotation", 0]
+        ["cardById", cardId, "committed", false], 
+        ["cardById", cardId, "exhausted", false], 
+        ["cardById", cardId, "rotation", 0]
       ];
       chatBroadcast("game_update", {message: "uncommitted "+displayName+" to the quest."});
       if (card["exhausted"]) chatBroadcast("game_update", {message: "readied "+displayName+"."});
@@ -921,14 +921,14 @@ export const cardAction = (action, cardId, options, props) => {
     }
     // Uncommit to quest without readying
     else if (action === "commit_without_exhausting" && groupType === "play" && card["committed"]) {
-      const updates = [["game", "cardById", cardId, "committed", false]];
+      const updates = [["cardById", cardId, "committed", false]];
       chatBroadcast("game_update", {message: "uncommitted "+displayName+" to the quest."});
       gameBroadcast("game_action", {action:"increment_willpower", options: {increment: -delta}});
       gameBroadcast("game_action", {action: "update_values", options:{updates: updates}});
     }
 
     if (isHost && game.roundStep !== "3.2") {            
-      gameBroadcast("game_action", {action: "update_values", options: {updates: [["game","roundStep", "3.2"], ["game", "phase", "Quest"]]}});
+      gameBroadcast("game_action", {action: "update_values", options: {updates: [["roundStep", "3.2"], ["phase", "Quest"]]}});
       chatBroadcast("game_update", {message: "set the round step to "+roundStepToText("3.2")+"."});
     }
   }
@@ -955,7 +955,7 @@ export const cardAction = (action, cardId, options, props) => {
       values = [true]
       chatBroadcast("game_update", {message: "targeted "+displayName+"."});
     }
-    const updates = [["game", "cardById", cardId, "targeting", playerN, values[0]]];
+    const updates = [["cardById", cardId, "targeting", playerN, values[0]]];
     dispatch(setValues({updates: updates}));
     gameBroadcast("game_action", {action: "update_values", options:{updates: updates}});
   }
@@ -1028,7 +1028,7 @@ export const cardAction = (action, cardId, options, props) => {
       const drawingArrowTo = cardId;
       const oldArrows = game.playerData[playerN].arrows;
       const newArrows = oldArrows.concat([[drawingArrowFrom, drawingArrowTo]]);
-      const updates = [["game", "playerData", playerN, "arrows", newArrows]];
+      const updates = [["playerData", playerN, "arrows", newArrows]];
       dispatch(setValues({updates: updates}));
       gameBroadcast("game_action", {action: "update_values", options:{updates: updates}});
       dispatch(setKeypressW(false));
@@ -1047,7 +1047,7 @@ export const cardAction = (action, cardId, options, props) => {
   else if (action === "swap_side") {
     if (cardIndex > 0) {
       const newDirection = card.attachmentDirection ? -card.attachmentDirection : -1;
-      const updates = [["game", "cardById", cardId, "attachmentDirection", newDirection]];
+      const updates = [["cardById", cardId, "attachmentDirection", newDirection]];
       gameBroadcast("game_action", {action: "update_values", options:{updates: updates}});            
       gameBroadcast("game_action", {action: "move_card", options: {card_id: cardId, dest_group_id: groupId, dest_stack_index: stackIndex+1, dest_card_index: 0, combine: false, preserve_state: true}})
       gameBroadcast("game_action", {action: "move_card", options: {card_id: cardId, dest_group_id: groupId, dest_stack_index: stackIndex, dest_card_index: cardIndex, combine: true, preserve_state: true}})

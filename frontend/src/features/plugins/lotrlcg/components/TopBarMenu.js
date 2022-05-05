@@ -44,7 +44,7 @@ export const TopBarMenu = React.memo(({}) => {
     if (data.action === "clear_table") {
       // Mark status
       chatBroadcast("game_update", {message: "marked game as "+data.state+"."});
-      gameBroadcast("game_action", {action: "update_values", options: {updates: [["game", "victoryState", data.state]]}});
+      gameBroadcast("game_action", {action: "update_values", options: {updates: [["victoryState", data.state]]}});
       // Save replay
       if (round > 0) {
         gameBroadcast("game_action", {action: "save_replay", options: {}});
@@ -56,7 +56,7 @@ export const TopBarMenu = React.memo(({}) => {
     } else if (data.action === "close_room") {
       // Mark status
       chatBroadcast("game_update", {message: "marked game as "+data.state+"."});
-      gameBroadcast("game_action", {action: "update_values", options: {updates: [["game", "victoryState", data.state]]}});
+      gameBroadcast("game_action", {action: "update_values", options: {updates: [["victoryState", data.state]]}});
       // Save replay
       if (round > 0) {
         gameBroadcast("game_action", {action: "save_replay", options: {}});
@@ -71,7 +71,7 @@ export const TopBarMenu = React.memo(({}) => {
       const resetData = {action: "clear_table", state: data.state};
       handleMenuClick(resetData);
       dispatch(setLoaded(false));
-      gameBroadcast("game_action", {action: "update_values", options: {updates: [["game", "options", newOptions]]}})
+      gameBroadcast("game_action", {action: "update_values", options: {updates: [["options", newOptions]]}})
       if (options.questModeAndId) loadDeckFromModeAndId(options.questModeAndId, playerN, gameBroadcast, chatBroadcast, options["privacyType"]);
     } else if (data.action === "load_deck") {
       loadFileDeck();
@@ -106,7 +106,7 @@ export const TopBarMenu = React.memo(({}) => {
       else newRingsDbInfo = [null, null, null, null];
       newRingsDbInfo[playerIndex] = {id: ringsDbId, type: ringsDbType, domain: ringsDbDomain};
       const newOptions = {...options, ringsDbInfo: newRingsDbInfo, loaded: true}
-      gameBroadcast("game_action", {action: "update_values", options: {updates: [["game", "options", newOptions]]}});
+      gameBroadcast("game_action", {action: "update_values", options: {updates: [["options", newOptions]]}});
       const gameUi = store.getState()?.gameUi;
       loadRingsDb(gameUi, playerN, ringsDbDomain, ringsDbType, ringsDbId, gameBroadcast, chatBroadcast, dispatch);
     } else if (data.action === "unload_my_deck") {
@@ -121,7 +121,7 @@ export const TopBarMenu = React.memo(({}) => {
       });
       // Set threat to 00
       chatBroadcast("game_update",{message: "reset their deck."});
-      gameBroadcast("game_action", {action: "update_values", options: {updates: [["game", "playerData", playerN, "threat", 0]]}});
+      gameBroadcast("game_action", {action: "update_values", options: {updates: [["playerData", playerN, "threat", 0]]}});
       // Set RingsDb info for this player to null
       const playerIndex = playerNToPlayerIndex(playerN);
       var newRingsDbInfo;
@@ -129,7 +129,7 @@ export const TopBarMenu = React.memo(({}) => {
       else newRingsDbInfo = [null, null, null, null];
       newRingsDbInfo[playerIndex] = null;
       const newOptions = {...options, ringsDbInfo: newRingsDbInfo}
-      gameBroadcast("game_action", {action: "update_values", options: {updates: [["game", "options", newOptions]]}});
+      gameBroadcast("game_action", {action: "update_values", options: {updates: [["options", newOptions]]}});
     } else if (data.action === "unload_encounter_deck") {
       // Delete all cards from encounter
       chatBroadcast("game_update",{message: "unloaded the encounter deck."});
@@ -142,7 +142,7 @@ export const TopBarMenu = React.memo(({}) => {
       });
       // Set quest id to null
       const newOptions = {...options, questModeAndId: null};
-      gameBroadcast("game_action", {action: "update_values", options: {updates: [["game", "options", newOptions]]}});
+      gameBroadcast("game_action", {action: "update_values", options: {updates: [["options", newOptions]]}});
     } else if (data.action === "random_coin") {
       const result = getRandomIntInclusive(0,1);
       if (result) chatBroadcast("game_update",{message: "flipped heads."});
@@ -157,7 +157,7 @@ export const TopBarMenu = React.memo(({}) => {
     } else if (data.action === "cards_per_round") {
       const num = parseInt(prompt("Set the number of cards drawn during resource phase:",cardsPerRound));
       if (num>=0) {
-        gameBroadcast("game_action", {action: "update_values", options: {updates: [["game", "playerData", playerN, "cardsDrawn", num]]}});
+        gameBroadcast("game_action", {action: "update_values", options: {updates: [["playerData", playerN, "cardsDrawn", num]]}});
         chatBroadcast("game_update",{message: "set the number of cards they draw during the resource phase to "+num+"."});
       }
     } else if (data.action === "adjust_card_size") {
@@ -183,19 +183,19 @@ export const TopBarMenu = React.memo(({}) => {
       loadFileCustom();
     } else if (data.action === "num_players") {
       const num = data.value;
-      gameBroadcast("game_action", {action: "update_values", options: {updates: [["game", "numPlayers", num]]}});
+      gameBroadcast("game_action", {action: "update_values", options: {updates: [["numPlayers", num]]}});
       chatBroadcast("game_update", {message: "set the number of players to: " + num});
     } else if (data.action === "layout") {
-      gameBroadcast("game_action", {action: "update_values", options: {updates: [["game", "layout", data.value]]}});
+      gameBroadcast("game_action", {action: "update_values", options: {updates: [["layout", data.value]]}});
     } else if (data.action === "quest_mode") {
-      gameBroadcast("game_action", {action: "update_values", options: {updates: [["game", "questMode", data.mode]]}});
+      gameBroadcast("game_action", {action: "update_values", options: {updates: [["questMode", data.mode]]}});
       chatBroadcast("game_update", {message: "set the quest mode to " + data.mode + "."});
       const state = store.getState();
       const gameUi = state.gameUi;
       for (var i=1; i<=gameUi.game.numPlayers; i++) {
         const playerI = "player"+i;      
         const totalCommitted = getPlayerCommitted(gameUi, data.mode, playerI);
-        gameBroadcast("game_action", {action: "update_values", options: {updates: [["game", "playerData", playerI, "willpower", totalCommitted]]}});
+        gameBroadcast("game_action", {action: "update_values", options: {updates: [["playerData", playerI, "willpower", totalCommitted]]}});
       }
 
     } else if (data.action === "escape_from_mount_gram") {
@@ -270,7 +270,7 @@ export const TopBarMenu = React.memo(({}) => {
         if (remainingHeroes.length === 1) {
           // Set starting threat
           const remainingHero = remainingHeroes[0];
-          gameBroadcast("game_action", {action: "update_values", options: {updates: [["game", "playerData", playerI, "threat", remainingHero["sides"]["A"]["cost"]]]}});
+          gameBroadcast("game_action", {action: "update_values", options: {updates: [["playerData", playerI, "threat", remainingHero["sides"]["A"]["cost"]]]}});
         }
         // Draw 3 cards
         gameBroadcast("game_action", {action: "move_stacks", options: {orig_group_id: playerI+"Deck", dest_group_id: playerI+"Hand", top_n: 3, position: "top"}})
@@ -461,10 +461,10 @@ export const TopBarMenu = React.memo(({}) => {
           //dispatch(setGame(gameObj));
           chatBroadcast("game_update", {message: "uploaded a game."});
           if (gameObj?.deltas?.length) {
-            gameBroadcast("game_action", {action: "update_values", options: {updates: [["game", gameObj]], preserve_undo: true}})            
+            gameBroadcast("game_action", {action: "update_values", options: {updates: [[gameObj]], preserve_undo: true}})            
           } else {
-            gameBroadcast("game_action", {action: "update_values", options: {updates: [["game", gameObj]]}})
-            gameBroadcast("game_action", {action: "update_values", options: {updates: [["game", "replayStep", 1]]}})
+            gameBroadcast("game_action", {action: "update_values", options: {updates: [[gameObj]]}})
+            gameBroadcast("game_action", {action: "update_values", options: {updates: [["replayStep", 1]]}})
           }
         }
       } catch(e) {

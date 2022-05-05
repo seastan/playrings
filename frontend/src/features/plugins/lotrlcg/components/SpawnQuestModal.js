@@ -131,7 +131,7 @@ export const SpawnQuestModal = React.memo(({}) => {
         tooltipIds = [...tooltipIds, "tooltipAdvancedSetup"];
       dispatch(setTooltipIds(tooltipIds));
       dispatch(setShowModal(null));
-      gameBroadcast("game_action", {action: "update_values", options: {updates: [["game","options", newOptions]]}});
+      gameBroadcast("game_action", {action: "update_values", options: {updates: [["options", newOptions]]}});
     }
 
     console.log("Rendering SpawnQuestModal", searchString);

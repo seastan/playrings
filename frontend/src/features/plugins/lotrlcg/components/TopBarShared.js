@@ -30,7 +30,7 @@ export const TopBarShared = React.memo(({
     // Set up a delayed broadcast to update the game state that interrupts itself if the button is clicked again shortly after.
     if (delayBroadcast) clearTimeout(delayBroadcast);
     delayBroadcast = setTimeout(function() {
-      const updates = [["game", "roundNumber", parseInt(newValue)]];
+      const updates = [["roundNumber", parseInt(newValue)]];
       dispatch(setValues({updates: updates}));
       gameBroadcast("game_action", {action: "update_values", options:{updates: updates}});
       chatBroadcast("game_update",{message: "set round number to "+newValue+"."});

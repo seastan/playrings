@@ -78,7 +78,7 @@ export const SideBarRoundStep = React.memo(({
   console.log("Rendering SideBarRoundStep", stepInfo);
   const handleButtonClick = (id) => {
     if (!playerN) return;
-    gameBroadcast("game_action", {action: "update_values", options:{updates: [["game", "roundStep", id], ["game", "phase", phase]]}});     
+    gameBroadcast("game_action", {action: "update_values", options:{updates: [["roundStep", id], ["phase", phase]]}});     
     chatBroadcast("game_update", {message: "set the round step to "+id+": "+l10n(id)+"."})
   }
 

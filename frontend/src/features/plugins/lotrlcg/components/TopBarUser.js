@@ -9,6 +9,7 @@ import { setDropdownMenuObj, setObservingPlayerN, setTyping } from "../../../sto
 import { setValues } from "../../../store/gameUiSlice";
 import { useGameL10n } from "../../../../hooks/useGameL10n";
 import BroadcastContext from "../../../../contexts/BroadcastContext";
+import store from "../../../../store";
 
 var delayBroadcast;
 
@@ -67,7 +68,7 @@ export const TopBarUser = React.memo(({
     // Set up a delayed broadcast to update the game state that interrupts itself if the button is clicked again shortly after.
     if (delayBroadcast) clearTimeout(delayBroadcast);
     delayBroadcast = setTimeout(function() {
-      const updates = [["game", "playerData", playerI, "threat", parseInt(newValue)]];
+      const updates = [["playerData", playerI, "threat", parseInt(newValue)]];
       dispatch(setValues({updates: updates}));
       console.log("threat gameBroadcast", gameBroadcast)
       gameBroadcast("game_action", {action: "update_values", options:{updates: updates}});
@@ -79,17 +80,37 @@ export const TopBarUser = React.memo(({
 
 
   const handleWillpowerChange = (event) => {
+    const playerUi = store.getState()?.playerUi;
     const newValue = event.target.value;
     setWillpowerValue(newValue);
     const increment = newValue - gameUiWillpower;
     // Set up a delayed broadcast to update the game state that interrupts itself if the button is clicked again shortly after.
     if (delayBroadcast) clearTimeout(delayBroadcast);
     delayBroadcast = setTimeout(function() {
-      const updates = [["game", "playerData", playerI, "willpower", parseInt(newValue)]];
-      dispatch(setValues({updates: updates}));
-      gameBroadcast("game_action", {action: "update_values", options:{updates: updates}});
-      if (increment > 0) chatBroadcast("game_update",{message: "raises willpower by "+increment+" ("+newValue+")."});
-      if (increment < 0) chatBroadcast("game_update",{message: "reduces willpower by "+(-increment)+" ("+newValue+")."});
+
+      const listOfActions =
+      [
+        {
+          "_ACTION": "SET_VALUE",
+          "_PATH": ["_GAME", "playerData", playerI, "willpower"],
+          "_VALUE": parseInt(newValue),
+          "_MESSAGES": [["{playerN} ", increment > 0 ? "raises": "reduces", " willpower by ", increment > 0 ? increment: -increment, " (", newValue, ")."]]
+        }
+      ]
+        
+      gameBroadcast("game_action", {
+        action: "game_action_list", 
+        options: {
+          action_list: listOfActions, 
+          player_ui: playerUi,
+        }
+      })
+
+      // const updates = [["playerData", playerI, "willpower", parseInt(newValue)]];
+      // dispatch(setValues({updates: updates}));
+      // gameBroadcast("game_action", {action: "update_values", options:{updates: updates}});
+      // if (increment > 0) chatBroadcast("game_update",{message: "raises willpower by "+increment+" ("+newValue+")."});
+      // if (increment < 0) chatBroadcast("game_update",{message: "reduces willpower by "+(-increment)+" ("+newValue+")."});
       setInputFocusWillpower();
     }, 400);
   }

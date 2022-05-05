@@ -50,7 +50,7 @@ export const Browse = React.memo(({}) => {
     const stackId0 = stackIds[0];
     const cardIds = game["stackById"][stackId0]["cardIds"];
     const cardId0 = cardIds[0];
-    const updates = [["game","cardById",cardId0,"peeking",playerN,false]]
+    const updates = [["cardById",cardId0,"peeking",playerN,false]]
     dispatch(setValues({updates: updates})) 
   }
 

@@ -170,7 +170,7 @@ export const HandleKeyDown = ({}) => {
             }
         }
         setKeyBackLog(newKeyBackLog);
-        const updates = [["game","cardById",activeCardId,"tokens", tokenType, newVal]];
+        const updates = [["cardById",activeCardId,"tokens", tokenType, newVal]];
         dispatch(setValues({updates: updates}))
         if (delayBroadcast) clearTimeout(delayBroadcast);
         delayBroadcast = setTimeout(function() {

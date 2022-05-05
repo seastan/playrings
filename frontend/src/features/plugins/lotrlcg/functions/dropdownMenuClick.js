@@ -48,7 +48,7 @@ export const useDropdownClickCard = (dropdownOptions, actionProps) => {
     gameBroadcast("game_action", {action: "peek_card", options: {card_id: menuCard.id, value: false}})
     chatBroadcast("game_update", {message: " stopped peeking at "+displayName+"."})
   } else if (dropdownOptions.action === "lock") {
-    gameBroadcast("game_action", {action: "update_values", options: {updates: [["game", "cardById", menuCard.id, "locked", true]]}})
+    gameBroadcast("game_action", {action: "update_values", options: {updates: [["cardById", menuCard.id, "locked", true]]}})
     chatBroadcast("game_update", {message: " locked "+displayName+"."})
   } else if (dropdownOptions.action === "delete") {
     gameBroadcast("game_action", {
@@ -61,7 +61,7 @@ export const useDropdownClickCard = (dropdownOptions, actionProps) => {
     });
     chatBroadcast("game_update", {message: " deleted "+displayName+"."})
   } else if (dropdownOptions.action === "unlock") {
-    gameBroadcast("game_action", {action: "update_values", options: {updates: [["game", "cardById", menuCard.id, "locked", false]]}})
+    gameBroadcast("game_action", {action: "update_values", options: {updates: [["cardById", menuCard.id, "locked", false]]}})
     chatBroadcast("game_update", {message: " unlocked "+displayName+"."})
   } else if (dropdownOptions.action === "moveCard") {
     const destGroupTitle = GROUPSINFO[dropdownOptions.destGroupId].name;
@@ -87,7 +87,7 @@ export const useDropdownClickCard = (dropdownOptions, actionProps) => {
       //alert(topX)
       const topXShuffled = shuffle(topX);
       const newStackIds = topXShuffled.concat(stackIds.slice(num)); 
-      gameBroadcast("game_action", {action: "update_values", options: {updates: [["game", "groupById", dropdownOptions.destGroupId, "stackIds", newStackIds]]}})
+      gameBroadcast("game_action", {action: "update_values", options: {updates: [["groupById", dropdownOptions.destGroupId, "stackIds", newStackIds]]}})
       // Select random number
       const newIndex = getRandomIntInclusive(0,num);
       // Move card in
@@ -105,7 +105,7 @@ export const useDropdownClickCard = (dropdownOptions, actionProps) => {
       const bottomX = stackIds.slice(numStacks-num);
       const bottomXShuffled = shuffle(bottomX);
       const newStackIds = stackIds.slice(0,numStacks-num).concat(bottomXShuffled); 
-      gameBroadcast("game_action", {action: "update_values", options: {updates: [["game", "groupById", dropdownOptions.destGroupId, "stackIds", newStackIds]]}})
+      gameBroadcast("game_action", {action: "update_values", options: {updates: [["groupById", dropdownOptions.destGroupId, "stackIds", newStackIds]]}})
       // Select random number
       const newIndex = getRandomIntInclusive(numStacks-num,numStacks);
       // Move card in
@@ -115,7 +115,7 @@ export const useDropdownClickCard = (dropdownOptions, actionProps) => {
   } else if (dropdownOptions.action === "incrementTokenPerRound") {
       const increment = dropdownOptions.increment;
       const tokenType = dropdownOptions.tokenType;
-      gameBroadcast("game_action", {action: "update_values", options: {updates: [["game", "cardById", menuCard.id, "tokensPerRound", tokenType, increment]]}})
+      gameBroadcast("game_action", {action: "update_values", options: {updates: [["cardById", menuCard.id, "tokensPerRound", tokenType, increment]]}})
       chatBroadcast("game_update", {message: "added "+increment+" "+tokenType+" token(s) per round to "+displayName+"."})
   } else if (dropdownOptions.action === "toggleTrigger") {
     const stepId = dropdownOptions.stepId;
@@ -131,7 +131,7 @@ export const useDropdownClickCard = (dropdownOptions, actionProps) => {
       chatBroadcast("game_update", {message: "added a step "+stepId+" trigger to "+displayName+"."})
       gameBroadcast("game_action", {action: "card_action", options: {action: "add_trigger", card_id: menuCard.id, options: {round_step: stepId}}})
     }
-    gameBroadcast("game_action", {action: "update_values", options: {updates: [["game", "cardById", menuCard.id, "sides", menuCard.currentSide, "triggers", triggers]]}})
+    gameBroadcast("game_action", {action: "update_values", options: {updates: [["cardById", menuCard.id, "sides", menuCard.currentSide, "triggers", triggers]]}})
     
   } else if (dropdownOptions.action === "swapWithTop") {
     const gsc = getGroupIdStackIndexCardIndex(game, menuCard.id);
@@ -147,7 +147,7 @@ export const useDropdownClickCard = (dropdownOptions, actionProps) => {
     }
   } else if (dropdownOptions.action === "setRotation") {
     chatBroadcast("game_update", {message: "set rotation of "+displayName+" to "+dropdownOptions.rotation+"."})
-    gameBroadcast("game_action", {action: "update_values", options: {updates: [["game", "cardById", menuCard.id, "rotation", dropdownOptions.rotation]]}})
+    gameBroadcast("game_action", {action: "update_values", options: {updates: [["cardById", menuCard.id, "rotation", dropdownOptions.rotation]]}})
   }
 }
 
@@ -165,7 +165,7 @@ export const useDropdownClickGroup = (dropdownOptions, actionProps) => {
   } else if (dropdownOptions.action === "makeVisible") {
     const isVisible = game.playerData[playerN].visibleHand; 
     // Make it so future cards added to hand will be visible
-    gameBroadcast("game_action", {action: "update_values", options: {updates: [["game", "playerData", playerN, "visibleHand", !isVisible]]}})
+    gameBroadcast("game_action", {action: "update_values", options: {updates: [["playerData", playerN, "visibleHand", !isVisible]]}})
     // Make it so all cards currently in hand are visible
     Object.keys(game.playerData).forEach(playerI => {
       if (playerI !== playerN) gameBroadcast("game_action", {action: "peek_at", options: {stack_ids: game.groupById[playerN+"Hand"].stackIds, for_player_n: playerI, value: !isVisible}})  
@@ -222,6 +222,6 @@ export const useDropdownClickGroup = (dropdownOptions, actionProps) => {
 
 export const useDropdownClickFirstPlayer = (dropdownOptions, actionProps) => {
   const {state, dispatch, gameBroadcast, chatBroadcast} = actionProps;
-  gameBroadcast("game_action", {action: "update_values", options: {updates: [["game", "firstPlayer", dropdownOptions.action]]}})
+  gameBroadcast("game_action", {action: "update_values", options: {updates: [["firstPlayer", dropdownOptions.action]]}})
   chatBroadcast("game_update",{message: "set first player to "+dropdownOptions.title+"."})
 } 
