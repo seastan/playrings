@@ -4,11 +4,13 @@ import cx from "classnames";
 import useAuth from "../hooks/useAuth";
 import ProfileLink from "../features/auth/ProfileLink";
 import useWindowDimensions from "../hooks/useWindowDimensions";
+import useProfile from "../hooks/useProfile";
 
 interface Props {}
 
 export const AppNav: React.FC<Props> = () => {
   const { authToken, logOut } = useAuth();
+  const user = useProfile();
   //const { height, width } = useWindowDimensions();
   const headerLinkClass =
     "mt-1 sm:mt-0 sm:ml-2 block px-2 py-1 text-white font-light hover:font-normal rounded no-underline";
@@ -40,6 +42,9 @@ export const AppNav: React.FC<Props> = () => {
         className="flex"
         style={{fontSize: "2vh"}}
       >
+        <Link to={"/myplugins/"+user?.id} className={headerLinkClass}>
+          <span className="ml-1">My Plugins</span>
+        </Link>
         <ProfileLink className={headerLinkClass} />
         {!authToken && (
           <>

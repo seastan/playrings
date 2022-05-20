@@ -1,17 +1,17 @@
-const isObject = (item) => {
+export const isObject = (item) => {
     return (typeof item === "object" && !Array.isArray(item) && item !== null);
   }
   
-  const arraysEqual = (a, b) => {
-    /* WARNING: only works for arrays of primitives */
-    if (a === b) return true;
-    if (a == null || b == null) return false;
-    if (a.length !== b.length) return false;
-    for (var i = 0; i < a.length; ++i) {
-      if (a[i] !== b[i]) return false;
-    }
-    return true;
+export const arraysEqual = (a, b) => {
+  /* WARNING: only works for arrays of primitives */
+  if (a === b) return true;
+  if (a == null || b == null) return false;
+  if (a.length !== b.length) return false;
+  for (var i = 0; i < a.length; ++i) {
+    if (a[i] !== b[i]) return false;
   }
+  return true;
+}
 
 export const updateByDelta = (obj, delta) => {
   // Ignore timestamp

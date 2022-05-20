@@ -22,7 +22,7 @@
         order_by: [desc: e.inserted_at],
         limit: 1)
       replay = Repo.one(query)
-      if replay.game_json do replay.game_json else Game.new(%{}) end
+      if replay.game_json do replay.game_json else Game.new(options) end
     else
       Game.new(options)
     end
@@ -37,6 +37,8 @@
   def new(%{} = options) do
     %{
       "id" => Ecto.UUID.generate,
+      "pluginId" => options["pluginId"],
+      "pluginVersion" => options["pluginVersion"],
       "version" => 0.1,
       "numPlayers" => 1,
       #"questModeAndId" => nil,
