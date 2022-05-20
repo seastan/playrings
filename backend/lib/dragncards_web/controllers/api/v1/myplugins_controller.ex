@@ -9,13 +9,13 @@ defmodule DragnCardsWeb.MyPluginsController do
   def show(conn, %{"id" => user_id}) do
     IO.puts("here")
     # Faster to gather all columns except game_json
-    query = from Plugin, order_by: [desc: :updated_at], where: [user_id: ^user_id], select: [:user_id, :plugin_uuid, :plugin_name, :version, :subscribers, :public]
+    query = from Plugin, order_by: [desc: :updated_at], where: [user_id: ^user_id], select: [:user_id, :plugin_uuid, :plugin_name, :version, :num_favorites, :public]
     my_plugins = Repo.all(query)
     IO.inspect(my_plugins)
     json(conn, %{my_plugins: my_plugins})
   end
 
-  # Create: Creat plugin
+  # Create: Create plugin
   @spec create(Conn.t(), map()) :: Conn.t()
   #def create(conn, %{"user" => user}) do
   def create(conn, %{"plugin" => plugin_params}) do
@@ -24,7 +24,8 @@ defmodule DragnCardsWeb.MyPluginsController do
     IO.inspect(user)
     plugin_uuid = plugin_params["plugin_uuid"]
     user_id = user.id
-    query = from Plugin, order_by: [desc: :version], where: [plugin_uuid: ^plugin_uuid], select: [:user_id, :plugin_uuid, :plugin_name, :version, :subscribers, :public]
+    user_alias = user.alias
+    query = from Plugin, order_by: [desc: :version], where: [plugin_uuid: ^plugin_uuid], select: [:author_user_id, :author_alias, :plugin_uuid, :plugin_name, :version, :num_favorites, :public]
     prev_plugins = Repo.all(query)
     IO.puts("older")
     IO.inspect(prev_plugins)
@@ -35,14 +36,14 @@ defmodule DragnCardsWeb.MyPluginsController do
       plugin_name: plugin_params["game_def"]["pluginName"],
       game_def: plugin_params["game_def"],
       card_db: plugin_params["card_db"],
-      subscribers: 0,
+      num_favorites: 0,
       public: plugin_params["public"]
     }
     IO.puts("updates")
     IO.inspect(updates)
 
     result =
-      %Plugin{user_id: user_id, plugin_uuid: plugin_uuid}
+      %Plugin{author_user_id: user_id, author_alias: user_alias, plugin_uuid: plugin_uuid}
       |> Plugin.changeset(updates)
       |> Repo.insert_or_update
     conn

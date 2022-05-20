@@ -38,8 +38,11 @@ defmodule DragnCardsWeb.Router do
     post("/replays/delete", ReplayController, :delete)
     resources("/replays/:user_id", ReplayController, except: [:new, :edit])
 
-    # My Plugins
+    # My plugins
     resources("/myplugins", MyPluginsController)
+
+    # All plugins
+    get("/plugins", PluginsController, :index)
   end
 
   scope "/api/v1", DragnCardsWeb.API.V1, as: :api_v1 do
