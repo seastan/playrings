@@ -42,7 +42,7 @@ export const LobbyTable = ({ selectedPlugin }) => {
     },
     [setData]
   );
-  useChannel("lobby:lobby", onChannelMessage, myUser.id);
+  useChannel("lobby:lobby", onChannelMessage, myUser?.id);
   const rooms = data != null && data.data != null ? data.data : [];
 
 

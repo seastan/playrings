@@ -21,7 +21,7 @@ defmodule DragnCardsGame.GameUI do
     IO.puts("game_def")
     IO.inspect(game_def)
     gameui = %{
-      "game" => Game.load(options),
+      "game" => Game.load(game_def, options),
       "roomName" => game_name,
       "gameDef" => game_def,
       "options" => options,

@@ -47,13 +47,11 @@ export const TableLayout = React.memo(({
 }) => {
   const {gameBroadcast, chatBroadcast} = useContext(BroadcastContext);
   console.log("Rendering TableLayout");
-  const numPlayers = useSelector(state => state?.gameUi?.game?.numPlayers);
-  const layout = useSelector(state => state?.gameUi?.game?.layout);
   const sideGroupId = useSelector(state => state?.playerUi?.sideGroupId);
   const browseGroupId = useSelector(state => state?.playerUi?.browseGroup?.id);
   const [chatHover, setChatHover] = useState(false);
-  const layoutInfo = LAYOUTINFO["layout" + numPlayers + layout];
-  const numRows = layoutInfo.length;
+  const layout = useSelector(state => state?.gameUi?.game?.layout);
+  const numRows = layout.length;
   const rowHeight = `${100/numRows}%`; 
 
   if (!layout) return;
@@ -81,7 +79,7 @@ export const TableLayout = React.memo(({
       <div 
         className="relative w-full" 
         style={{height: rowHeight}}>
-        {layoutInfo[0].regions.map((region, _regionIndex) => (
+        {layout[0].regions.map((region, _regionIndex) => (
           <TableRegion
             region={region}
             registerDivToArrowsContext={registerDivToArrowsContext}
@@ -92,7 +90,7 @@ export const TableLayout = React.memo(({
       <div 
         className="relative float-left"
         style={{height: `${100-2*(100/numRows)}%`, width:`${middleRowsWidth}%`}}>
-        {layoutInfo.map((row, rowIndex) => {  
+        {layout.map((row, rowIndex) => {  
           if (browseGroupId && rowIndex === numRows - 2) {
             return(
               <div 
@@ -124,7 +122,7 @@ export const TableLayout = React.memo(({
       <div 
         className="relative float-left w-full" 
         style={{height: rowHeight}}>
-        {layoutInfo[numRows-1].regions.map((region, _regionIndex) => (
+        {layout[numRows-1].regions.map((region, _regionIndex) => (
           <TableRegion
             region={region}
             registerDivToArrowsContext={registerDivToArrowsContext}

@@ -24,8 +24,7 @@ export const SideGroup = React.memo(({
   const playerN = useSelector(state => state?.playerUi?.playerN);
   const browseTopN = useBrowseTopN;
 
-  const layoutInfo = LAYOUTINFO["layout" + numPlayers + layout];
-  const numRows = layoutInfo.length;
+  const numRows = layout.length;
 
   var middleRowsWidth = 100;
   if (sideGroupId !== "") {

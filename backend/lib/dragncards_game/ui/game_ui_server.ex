@@ -71,11 +71,19 @@ defmodule DragnCardsGame.GameUIServer do
   end
 
   @doc """
-  set_seat/3: Set a seat value.
+  set_seat/4: Set a seat value.
   """
   @spec set_seat(String.t(), integer, String.t(), integer) :: GameUI.t()
   def set_seat(game_name, user_id, player_i, new_user_id) do
     game_exists?(game_name) && GenServer.call(via_tuple(game_name), {:set_seat, user_id, player_i, new_user_id})
+  end
+
+  @doc """
+  set_game_def/3: Set a game definition.
+  """
+  @spec set_game_def(String.t(), integer, Map.t()) :: GameUI.t()
+  def set_game_def(game_name, user_id, game_def) do
+    game_exists?(game_name) && GenServer.call(via_tuple(game_name), {:set_game_def, user_id, game_def})
   end
 
   @doc """
@@ -163,6 +171,17 @@ defmodule DragnCardsGame.GameUIServer do
   def handle_call({:set_seat, user_id, player_i, new_user_id}, _from, gameui) do
     try do
       gameui = put_in(gameui["playerInfo"][player_i],PlayerInfo.new(new_user_id))
+    rescue
+      e in RuntimeError ->
+        IO.inspect(e)
+        put_in(gameui["error"],true)
+    end
+    |> save_and_reply()
+  end
+
+  def handle_call({:set_game_def, user_id, game_def}, _from, gameui) do
+    try do
+      gameui = put_in(gameui["gameDef"],game_def)
     rescue
       e in RuntimeError ->
         IO.inspect(e)

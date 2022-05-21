@@ -1,5 +1,5 @@
 {
-  "pluginName": "LotR LCG",
+  "pluginName": "LotR LCG 2",
   "minPlayers": 1,
   "maxPlayers": 4,
   "players": ["player1", "player2", "player3", "player4"],
@@ -843,5 +843,389 @@
     "tooltipEncounter2": "This quest has cards in a second encounter deck located in the View > Shared menu.",
     "tooltipQuest2": "This quest has cards in a second quest deck located in the View > Shared menu.",
     "tooltipAdvancedSetup": "To aid with the setup of this quest, see Menu > Special Functions."
+  },
+  "layoutMenu": [
+    {"name": "1 player", "numPlayers": 1, "layoutId": "layout1standard"},
+    {"name": "2 player", "numPlayers": 2, "layoutId": "layout2standard"},
+    {"name": "3 player", "numPlayers": 3, "layoutId": "layout3standard"},
+    {"name": "4 player", "numPlayers": 4, "layoutId": "layout4standard"},
+    {"name": "1 player (extra space)", "numPlayers": 1, "layoutId": "layout1extra"},
+    {"name": "2 player (extra space)", "numPlayers": 2, "layoutId": "layout2extra"},
+    {"name": "3 player (extra space)", "numPlayers": 3, "layoutId": "layout3extra"},
+    {"name": "4 player (extra space)", "numPlayers": 4, "layoutId": "layout4extra"}
+  ],
+  "layouts": {
+    "layout1standard": [
+      {
+        "regions": [
+          {"id": "sharedMainQuest", "width": "12%"},
+          {"id": "sharedActive", "width": "11%"},
+          {"id": "sharedStaging", "width": "58%", "style": "shaded", "boxShadow": "true"},
+          {"id": "sharedEncounterDeck", "width": "9.5%"},
+          {"id": "sharedEncounterDiscard", "width": "9.5%"}
+        ]
+      },
+      {
+        "regions": [
+          {"id": "player1Engaged", "width": "100%"}
+        ]
+      },
+      {
+        "regions": [
+          {"id": "player1Play1", "width": "100%"}
+        ]
+      },
+      {
+        "regions": [
+          {"id": "player1Play2", "width": "89%"},
+          {"id": "player1Event", "width": "11%"}
+        ]
+      },
+      {
+        "regions": [
+          {"id": "Hand", "width": "56%", "style": "shaded"},
+          {"id": "Deck", "width": "9.5%", "style": "shaded"},
+          {"id": "Discard", "width": "9.5%", "style": "shaded"}
+        ]
+      }
+    ],
+    "layout1extra": [
+      {
+        "regions": [
+          {"id": "sharedMainQuest", "width": "12%"},
+          {"id": "sharedActive", "width": "11%"},
+          {"id": "sharedStaging", "width": "58%", "style": "shaded", "boxShadow": "true"},
+          {"id": "sharedEncounterDeck", "width": "9.5%"},
+          {"id": "sharedEncounterDiscard", "width": "9.5%"}
+        ]
+      },
+      {
+        "regions": [
+          {"id": "player1Engaged", "width": "65%"},
+          {"id": "sharedExtra1", "width": "35%"}
+        ]
+      },
+      {
+        "regions": [
+          {"id": "player1Play1", "width": "65%"},
+          {"id": "sharedExtra2", "width": "35%"}
+        ]
+      },
+      {
+        "regions": [
+          {"id": "player1Play2", "width": "55%"},
+          {"id": "player1Event", "width": "10%"},
+          {"id": "sharedExtra3", "width": "35%"}
+        ]
+      },
+      {
+        "regions": [
+          {"id": "Hand", "width": "56%", "style": "shaded"},
+          {"id": "Deck", "width": "9.5%", "style": "shaded"},
+          {"id": "Discard", "width": "9.5%", "style": "shaded"}
+        ]
+      }
+    ],
+    "layout2standard": [
+      {
+        "regions": [
+          {"id": "sharedMainQuest", "width": "9%"},
+          {"id": "sharedActive", "width": "8%"},
+          {"id": "sharedStaging", "width": "67%", "style": "shaded", "boxShadow": "true"},
+          {"id": "sharedEncounterDeck", "width": "8%"},
+          {"id": "sharedEncounterDiscard", "width": "8%"}
+        ]
+      },
+      {
+        "regions": [
+          {"id": "player1Engaged", "width": "50%"},
+          {"id": "player2Engaged", "width": "50%", "hideTitle": true}
+        ]
+      },
+      {
+        "regions": [
+          {"id": "player1Play1", "width": "50%"},
+          {"id": "player2Play1", "width": "50%", "hideTitle": true}
+        ]
+      },
+      {
+        "regions": [
+          {"id": "player1Play2", "width": "50%"},
+          {"id": "player2Play2", "width": "50%", "hideTitle": true}
+        ]
+      },
+      {
+        "regions": [
+          {"id": "player1Play3", "width": "42%"},
+          {"id": "player1Event", "width": "8%"},
+          {"id": "player2Play3", "width": "42%", "hideTitle": true},
+          {"id": "player2Event", "width": "8%"}
+        ]
+      },
+      {
+        "regions": [
+          {"id": "Hand", "width": "59%", "style": "shaded"},
+          {"id": "Deck", "width": "8%", "style": "shaded"},
+          {"id": "Discard", "width": "8%", "style": "shaded"}
+        ]
+      }
+    ],
+    "layout2extra": [
+      {
+        "regions": [
+          {"id": "sharedMainQuest", "width": "9%"},
+          {"id": "sharedActive", "width": "8%"},
+          {"id": "sharedStaging", "width": "67%", "style": "shaded", "boxShadow": "true"},
+          {"id": "sharedEncounterDeck", "width": "8%"},
+          {"id": "sharedEncounterDiscard", "width": "8%"}
+        ]
+      },
+      {
+        "regions": [
+          {"id": "player1Engaged", "width": "37%"},
+          {"id": "player2Engaged", "width": "36%", "hideTitle": true}
+        ]
+      },
+      {
+        "regions": [
+          {"id": "player1Play1", "width": "37%"},
+          {"id": "player2Play1", "width": "36%"},
+          {"id": "sharedExtra1", "width": "27%"}
+        ]
+      },
+      {
+        "regions": [
+          {"id": "player1Play2", "width": "37%"},
+          {"id": "player2Play2", "width": "36%"},
+          {"id": "sharedExtra2", "width": "27%"}
+        ]
+      },
+      {
+        "regions": [
+          {"id": "player1Play3", "width": "29%"},
+          {"id": "player1Event", "width": "8%"},
+          {"id": "player2Play3", "width": "28%"},
+          {"id": "player2Event", "width": "8%"},
+          {"id": "sharedExtra3", "width": "27%"}
+        ]
+      },
+      {
+        "regions": [
+          {"id": "Hand", "width": "59%", "style": "shaded"},
+          {"id": "Deck", "width": "8%", "style": "shaded"},
+          {"id": "Discard", "width": "8%", "style": "shaded"}
+        ]
+      }
+    ],
+    "layout3standard": [
+      {
+        "regions": [
+          {"id": "sharedMainQuest", "width": "9%"},
+          {"id": "sharedActive", "width": "8%"},
+          {"id": "sharedStaging", "width": "67%", "style": "shaded", "boxShadow": "true"},
+          {"id": "sharedEncounterDeck", "width": "8%"},
+          {"id": "sharedEncounterDiscard", "width": "8%"}
+        ]
+      },
+      {
+        "regions": [
+          {"id": "player1Engaged", "width": "34%"},
+          {"id": "player2Engaged", "width": "33%", "hideTitle": true},
+          {"id": "player3Engaged", "width": "33%", "hideTitle": true}
+        ]
+      },
+      {
+        "regions": [
+          {"id": "player1Play1", "width": "34%"},
+          {"id": "player2Play1", "width": "33%", "hideTitle": true},
+          {"id": "player3Play1", "width": "33%", "hideTitle": true}
+        ]
+      },
+      {
+        "regions": [
+          {"id": "player1Play2", "width": "34%"},
+          {"id": "player2Play2", "width": "33%", "hideTitle": true},
+          {"id": "player3Play2", "width": "33%", "hideTitle": true}
+        ]
+      },
+      {
+        "regions": [
+          {"id": "player1Play3", "width": "26%"},
+          {"id": "player1Event", "width": "8%"},
+          {"id": "player2Play3", "width": "25%", "hideTitle": true},
+          {"id": "player2Event", "width": "8%"},
+          {"id": "player3Play3", "width": "25%", "hideTitle": true},
+          {"id": "player3Event", "width": "8%"}
+        ]
+      },
+      {
+        "regions": [
+          {"id": "Hand", "width": "59%", "style": "shaded"},
+          {"id": "Deck", "width": "8%", "style": "shaded"},
+          {"id": "Discard", "width": "8%", "style": "shaded"}
+        ]
+      }
+    ],
+    "layout3extra": [
+      {
+        "regions": [
+          {"id": "sharedMainQuest", "width": "9%"},
+          {"id": "sharedActive", "width": "8%"},
+          {"id": "sharedStaging", "width": "67%", "style": "shaded", "boxShadow": "true"},
+          {"id": "sharedEncounterDeck", "width": "8%"},
+          {"id": "sharedEncounterDiscard", "width": "8%"}
+        ]
+      },
+      {
+        "regions": [
+          {"id": "player1Engaged", "width": "34%"},
+          {"id": "player2Engaged", "width": "33%", "hideTitle": true},
+          {"id": "player3Engaged", "width": "33%", "hideTitle": true}
+        ]
+      },
+      {
+        "regions": [
+          {"id": "player1Play1", "width": "65%"},
+          {"id": "player1Event", "width": "8%"},
+          {"id": "sharedExtra1", "width": "27%"}
+        ]
+      },
+      {
+        "regions": [
+          {"id": "player2Play1", "width": "65%"},
+          {"id": "player2Event", "width": "8%"},
+          {"id": "sharedExtra2", "width": "27%"}
+        ]
+      },
+      {
+        "regions": [
+          {"id": "player3Play1", "width": "65%"},
+          {"id": "player3Event", "width": "8%"},
+          {"id": "sharedExtra3", "width": "27%"}
+        ]
+      },
+      {
+        "regions": [
+          {"id": "Hand", "width": "59%", "style": "shaded"},
+          {"id": "Deck", "width": "8%", "style": "shaded"},
+          {"id": "Discard", "width": "8%", "style": "shaded"}
+        ]
+      }
+    ],
+    "layout4standard": [
+      {
+        "regions": [
+          {"id": "sharedMainQuest", "width": "8%"},
+          {"id": "sharedActive", "width": "9%"},
+          {"id": "sharedStaging", "width": "68%", "style": "shaded", "boxShadow": "true"},
+          {"id": "sharedEncounterDeck", "width": "7.5%"},
+          {"id": "sharedEncounterDiscard", "width": "7.5%"}
+        ]
+      },
+      {
+        "regions": [
+          {"id": "player1Engaged", "width": "25%"},
+          {"id": "player2Engaged", "width": "25%", "hideTitle": true},
+          {"id": "player3Engaged", "width": "25%", "hideTitle": true},
+          {"id": "player4Engaged", "width": "25%", "hideTitle": true}
+        ]
+      },
+      {
+        "regions": [
+          {"id": "player1Play1", "width": "25%"},
+          {"id": "player2Play1", "width": "25%", "hideTitle": true},
+          {"id": "player3Play1", "width": "25%", "hideTitle": true},
+          {"id": "player4Play1", "width": "25%", "hideTitle": true}
+        ]
+      },
+      {
+        "regions": [
+          {"id": "player1Play2", "width": "25%"},
+          {"id": "player2Play2", "width": "25%", "hideTitle": true},
+          {"id": "player3Play2", "width": "25%", "hideTitle": true},
+          {"id": "player4Play2", "width": "25%", "hideTitle": true}
+        ]
+      },
+      {
+        "regions": [
+          {"id": "player1Play3", "width": "25%"},
+          {"id": "player2Play3", "width": "25%", "hideTitle": true},
+          {"id": "player3Play3", "width": "25%", "hideTitle": true},
+          {"id": "player4Play3", "width": "25%", "hideTitle": true}
+        ]
+      },
+      {
+        "regions": [
+          {"id": "player1Play4", "width": "17%"},
+          {"id": "player1Event", "width": "8%"},
+          {"id": "player2Play4", "width": "17%", "hideTitle": true},
+          {"id": "player2Event", "width": "8%"},
+          {"id": "player3Play4", "width": "17%", "hideTitle": true},
+          {"id": "player3Event", "width": "8%"},
+          {"id": "player4Play4", "width": "17%", "hideTitle": true},
+          {"id": "player4Event", "width": "8%"}
+        ]
+      },
+      {
+        "regions": [
+          {"id": "Hand", "width": "60%", "style": "shaded"},
+          {"id": "Deck", "width": "7.5%", "style": "shaded"},
+          {"id": "Discard", "width": "7.5%", "style": "shaded"}
+        ]
+      }
+    ],
+    "layout4extra": [
+      {
+        "regions": [
+          {"id": "sharedMainQuest", "width": "8%"},
+          {"id": "sharedActive", "width": "9%"},
+          {"id": "sharedStaging", "width": "68%", "style": "shaded", "boxShadow": "true"},
+          {"id": "sharedEncounterDeck", "width": "7.5%"},
+          {"id": "sharedEncounterDiscard", "width": "7.5%"}
+        ]
+      },
+      {
+        "regions": [
+          {"id": "player1Engaged", "width": "25%"},
+          {"id": "player2Engaged", "width": "25%", "hideTitle": true},
+          {"id": "player3Engaged", "width": "25%", "hideTitle": true},
+          {"id": "player4Engaged", "width": "25%", "hideTitle": true}
+        ]
+      },
+      {
+        "regions": [
+          {"id": "player1Play1", "width": "75%"},
+          {"id": "sharedExtra1", "width": "25%"}
+        ]
+      },
+      {
+        "regions": [
+          {"id": "player2Play1", "width": "75%"},
+          {"id": "sharedExtra2", "width": "25%"}
+        ]
+      },
+      {
+        "regions": [
+          {"id": "player3Play1", "width": "75%"},
+          {"id": "sharedExtra3", "width": "25%"}
+        ]
+      },
+      {
+        "regions": [
+          {"id": "player4Play1", "width": "72%"},
+          {"id": "player1Event", "width": "7%"},
+          {"id": "player2Event", "width": "7%", "hideTitle": true},
+          {"id": "player3Event", "width": "7%", "hideTitle": true},
+          {"id": "player4Event", "width": "7%", "hideTitle": true}
+        ]
+      },
+      {
+        "regions": [
+          {"id": "Hand", "width": "60%", "style": "shaded"},
+          {"id": "Deck", "width": "7.5%", "style": "shaded"},
+          {"id": "Discard", "width": "7.5%", "style": "shaded"}
+        ]
+      }
+    ]
   }
 }

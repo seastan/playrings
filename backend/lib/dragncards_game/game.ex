@@ -11,10 +11,10 @@
   @type t :: Map.t()
 
   @doc """
-  load/1:  Create a game with specified options.
+  load/2:  Create a game with specified options.
   """
-  @spec load(Map.t()) :: Game.t()
-  def load(%{} = options) do
+  @spec load(Map.t(), Map.t()) :: Game.t()
+  def load(game_def, options) do
     game = if options["replayId"] != nil and options["replayId"] != "" do
       gameid = options["replayId"]
       query = Ecto.Query.from(e in Replay,
@@ -24,17 +24,20 @@
       replay = Repo.one(query)
       if replay.game_json do replay.game_json else Game.new(options) end
     else
-      Game.new(options)
+      Game.new(game_def, options)
     end
     # Refresh id so that replay does not get overwritten
     put_in(game["id"], Ecto.UUID.generate)
   end
 
   @doc """
-  new/1:  Create a game with specified options.
+  new/2:  Create a game with specified options.
   """
-  @spec new(Map.t()) :: Game.t()
-  def new(%{} = options) do
+  @spec new(Map.t(), Map.t()) :: Game.t()
+  def new(game_def, options) do
+    IO.puts("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&")
+    IO.inspect(game_def["layouts"])
+    default_layout = Enum.at(game_def["layoutMenu"],0)
     %{
       "id" => Ecto.UUID.generate,
       "pluginId" => options["pluginId"],
@@ -43,7 +46,7 @@
       "numPlayers" => 1,
       #"questModeAndId" => nil,
       "encounterName" => "Unspecified",
-      "layout" => "standard",
+      "layout" => game_def["layouts"][default_layout["layoutId"]],
       "firstPlayer" => "player1",
       "roundNumber" => 0,
       "phase" => "Beginning",

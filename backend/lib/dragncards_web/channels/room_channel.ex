@@ -122,6 +122,23 @@ defmodule DragnCardsWeb.RoomChannel do
   end
 
   def handle_in(
+    "set_game_def",
+    %{
+      "game_def" => game_def,
+      "timestamp" => timestamp,
+    },
+    %{assigns: %{room_slug: room_slug, user_id: user_id}} = socket
+  ) do
+    GameUIServer.set_game_def(room_slug, user_id, game_def)
+    state = GameUIServer.state(room_slug)
+
+    socket = socket |> assign(:game_ui, state)
+    notify(socket, user_id)
+
+    {:reply, {:ok, client_state(socket, "set_game_def")}, socket}
+  end
+
+  def handle_in(
     "close_room",
     %{},
     %{assigns: %{room_slug: room_slug, user_id: user_id}} = socket

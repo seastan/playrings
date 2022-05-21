@@ -12,6 +12,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { setCardSizeFactor, setLoaded, setRandomNumBetween, setShowModal, setTouchAction, setTouchMode } from "../../../store/playerUiSlice";
 import { useGameL10n } from "../../../../hooks/useGameL10n";
 import BroadcastContext from "../../../../contexts/BroadcastContext";
+import { useGameDefinition } from "../../../engine/functions/useGameDefinition";
 
 export const TopBarMenu = React.memo(({}) => {
   const {gameBroadcast, chatBroadcast} = useContext(BroadcastContext);
@@ -19,6 +20,7 @@ export const TopBarMenu = React.memo(({}) => {
   const myUserID = myUser?.id;
   const history = useHistory();
   const l10n = useGameL10n();
+  const gameDef = useGameDefinition();
 
   const createdBy = useSelector(state => state.gameUi?.createdBy);
   const options = useSelector(state => state.gameUi?.game?.options);
@@ -33,6 +35,7 @@ export const TopBarMenu = React.memo(({}) => {
   const dispatch = useDispatch();
   const inputFileDeck = useRef(null);
   const inputFileGame = useRef(null);
+  const inputFileGameDef = useRef(null);
   const inputFileCustom = useRef(null);
   console.log("Rendering TopBarMenu");
 
@@ -179,6 +182,8 @@ export const TopBarMenu = React.memo(({}) => {
       exportCardsAsTxt();
     } else if (data.action === "load_game") {
       loadFileGame();
+    } else if (data.action === "load_game_def") {
+      loadFileGameDef();
     } else if (data.action === "load_custom") {
       loadFileCustom();
     } else if (data.action === "num_players") {
@@ -186,7 +191,11 @@ export const TopBarMenu = React.memo(({}) => {
       gameBroadcast("game_action", {action: "update_values", options: {updates: [["numPlayers", num]]}});
       chatBroadcast("game_update", {message: "set the number of players to: " + num});
     } else if (data.action === "layout") {
-      gameBroadcast("game_action", {action: "update_values", options: {updates: [["layout", data.value]]}});
+      const num = data.value.numPlayers;
+      const layout = gameDef.layouts[data.value.layoutId];
+      gameBroadcast("game_action", {action: "update_values", options: {updates: [["numPlayers", num]]}});
+      chatBroadcast("game_update", {message: "set the number of players to: " + num});
+      gameBroadcast("game_action", {action: "update_values", options: {updates: [["layout", layout]]}});
     } else if (data.action === "quest_mode") {
       gameBroadcast("game_action", {action: "update_values", options: {updates: [["questMode", data.mode]]}});
       chatBroadcast("game_update", {message: "set the quest mode to " + data.mode + "."});
@@ -436,6 +445,10 @@ export const TopBarMenu = React.memo(({}) => {
     inputFileGame.current.click();
   }
 
+  const loadFileGameDef = () => {
+    inputFileGameDef.current.click();
+  }
+
   const loadFileCustom = () => {
     inputFileCustom.current.click();
   }
@@ -473,6 +486,31 @@ export const TopBarMenu = React.memo(({}) => {
     }
     reader.readAsText(event.target.files[0]);
     inputFileGame.current.value = "";
+  }
+
+  const uploadGameDef = async(event) => {
+    event.preventDefault();
+    const reader = new FileReader();
+    reader.onload = async (event) => {
+      try {
+        const gameObj = JSON.parse(event.target.result);
+        if (gameObj) {
+          gameBroadcast("set_game_def", {game_def: gameObj}) 
+          //dispatch(setGame(gameObj));
+          chatBroadcast("game_update", {message: "uploaded a game."});
+          if (gameObj?.deltas?.length) {
+            gameBroadcast("game_action", {action: "update_values", options: {updates: [[gameObj]], preserve_undo: true}})            
+          } else {
+            gameBroadcast("game_action", {action: "update_values", options: {updates: [[gameObj]]}})
+            gameBroadcast("game_action", {action: "update_values", options: {updates: [["replayStep", 1]]}})
+          }
+        }
+      } catch(e) {
+          alert("Game must be a valid JSON file."); // error in the above string (in this case, yes)!
+      }
+    }
+    reader.readAsText(event.target.files[0]);
+    inputFileGameDef.current.value = "";
   }
 
   const uploadCustomCards = async(event) => {
@@ -606,9 +644,15 @@ export const TopBarMenu = React.memo(({}) => {
               {l10n("Layout")}
               <span className="float-right mr-1"><FontAwesomeIcon icon={faChevronRight}/></span>
             <ul className="third-level-menu">
-                <li key={"standard"} onClick={() => handleMenuClick({action:"layout", value: "standard"})}>{l10n("Standard")}</li>
-                <li key={"extra"} onClick={() => handleMenuClick({action:"layout", value: "extra"})}>{l10n("Extra staging areas / map")}</li>
-            </ul>
+              {gameDef.layoutMenu?.map((info, index) => {
+                return(
+                  <li key={info.layoutId} onClick={() => handleMenuClick({action:"layout", value: info})}>{l10n(info.name)}</li>
+                )
+              })}                
+{/*               <li key={"standard"} onClick={() => handleMenuClick({action:"layout", value: "standard"})}>{l10n("Standard")}</li>
+              <li key={"extra"} onClick={() => handleMenuClick({action:"layout", value: "extra"})}>{l10n("Extra staging areas / map")}</li>
+ */}
+             </ul>
           </li>                
         }
         <li key={"touch_mode"}>
@@ -635,6 +679,10 @@ export const TopBarMenu = React.memo(({}) => {
             <li key={"load_game"} onClick={() => handleMenuClick({action:"load_game"})}>
               {l10n("Load game (.json)")}
               <input type='file' id='file' ref={inputFileGame} style={{display: 'none'}} onChange={uploadGameAsJson} accept=".json"/>
+            </li>
+            <li key={"load_game_def"} onClick={() => handleMenuClick({action:"load_game_def"})}>
+              {l10n("Load game definition (.json)")}
+              <input type='file' id='file' ref={inputFileGameDef} style={{display: 'none'}} onChange={uploadGameDef} accept=".json"/>
             </li>
             <li key={"load_custom"} onClick={() => handleMenuClick({action:"load_custom"})}>
               {l10n("Load custom cards (.txt)")}
