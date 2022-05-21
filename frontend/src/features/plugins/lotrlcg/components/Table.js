@@ -31,7 +31,7 @@ export const Table = React.memo(({registerDivToArrowsContext}) => {
   const loaded = useSelector(state => state?.playerUi?.loaded);
   const redoStepsExist = useSelector(state => state?.gameUi?.game?.replayStep < state?.gameUi?.game?.replayLength-1);
   const myUserId = useProfile()?.id;
-  const createdBy = useSelector(state => state.gameUi?.created_by);
+  const createdBy = useSelector(state => state.gameUi?.createdBy);
   const isHost = myUserId === createdBy;
 
   const handleTableClick = (event) => {

@@ -1,8 +1,33 @@
 {
-  "gameName": "The Lord of the Rings: The Card Game",
+  "pluginName": "LotR LCG",
   "minPlayers": 1,
   "maxPlayers": 4,
   "players": ["player1", "player2", "player3", "player4"],
+  "playerData": {
+    "willpower": {
+      "quickAccess": true,
+      "type": "integer",
+      "default": 0,
+      "min": 0
+    },
+    "threat": {
+      "quickAccess": true,
+      "type": "integer",
+      "default": 0,
+      "min": 0
+    },
+    "cardsDrawn": {
+      "quickAccess": false,
+      "type": "integer",
+      "default": 1,
+      "min": 0
+    },
+    "refreshed": {
+      "quickAccess": false,
+      "type": "boolean",
+      "default": false
+    }
+  },
   "cardTypes": {
     "Ally":           {"tokens": ["resource","progress","damage","time","willpower","attack","defense","hitPoints"]},
     "Attachment":     {"tokens": ["resource","progress","damage","time","willpower","attack","defense","hitPoints"]},
@@ -22,7 +47,11 @@
     "Ship-Enemy":     {"tokens": ["resource","progress","damage","time","threat","attack","defense","hitPoints"]},
     "Side Quest":     {"tokens": ["resource","progress","damage","time","threat","attack","defense","hitPoints"]},
     "Treasure":       {"tokens": ["resource","progress","damage","time","threat","attack","defense","hitPoints"]},
-    "Other":          {"tokens": ["resource","progress","damage","time","threat","attack","defense","hitPoints"]}
+    "_Other":         {"tokens": ["resource","progress","damage","time","threat","attack","defense","hitPoints"]}
+  },
+  "cardBacks": {
+    "encounter": "https://dragncards-lotrlcg.s3.amazonaws.com/cardbacks/encounter.jpg",
+    "player": "https://dragncards-lotrlcg.s3.amazonaws.com/cardbacks/player.jpg"
   },
   "tokens": {
     "resource": {"position": 1},

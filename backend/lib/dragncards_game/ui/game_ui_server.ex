@@ -125,9 +125,9 @@ defmodule DragnCardsGame.GameUIServer do
     IO.puts("b")
     IO.inspect(:code.priv_dir(:dragncards))
     gameui = put_in(gameui["pypid"], :erlang.pid_to_list(pypid))
-    gr = GameRegistry.add(gameui["gameName"], gameui)
+    gr = GameRegistry.add(gameui["roomName"], gameui)
     IO.inspect(gr)
-    #GameRegistry.add(gameui["gameName"]<>"-pypid", pypid)
+    #GameRegistry.add(gameui["roomName"]<>"-pypid", pypid)
     {:ok, gameui, timeout(gameui)}
   end
 
@@ -206,11 +206,11 @@ defmodule DragnCardsGame.GameUIServer do
     # but causes tests to fail.  Not sure it's a real failure
     # spawn_link(fn ->
 
-    GameRegistry.update(new_gameui["gameName"], new_gameui)
+    GameRegistry.update(new_gameui["roomName"], new_gameui)
     # end)
 
     spawn_link(fn ->
-      :ets.insert(:game_uis, {new_gameui["gameName"], new_gameui})
+      :ets.insert(:game_uis, {new_gameui["roomName"], new_gameui})
     end)
 
     {:reply, new_gameui, new_gameui, timeout(new_gameui)}
@@ -242,16 +242,16 @@ defmodule DragnCardsGame.GameUIServer do
   end
 
   def terminate({:shutdown, :timeout}, state) do
-    Logger.info("Terminate (Timeout) running for #{state["gameName"]}")
-    :ets.delete(:game_uis, state["gameName"])
-    GameRegistry.remove(state["gameName"])
+    Logger.info("Terminate (Timeout) running for #{state["roomName"]}")
+    :ets.delete(:game_uis, state["roomName"])
+    GameRegistry.remove(state["roomName"])
     :ok
   end
 
   # Do I need to trap exits here?
   def terminate(_reason, state) do
-    Logger.info("Terminate (Non Timeout) running for #{state["gameName"]}")
-    GameRegistry.remove(state["gameName"])
+    Logger.info("Terminate (Non Timeout) running for #{state["roomName"]}")
+    GameRegistry.remove(state["roomName"])
     :ok
   end
 end

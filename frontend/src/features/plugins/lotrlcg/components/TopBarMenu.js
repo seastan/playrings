@@ -20,7 +20,7 @@ export const TopBarMenu = React.memo(({}) => {
   const history = useHistory();
   const l10n = useGameL10n();
 
-  const createdBy = useSelector(state => state.gameUi?.created_by);
+  const createdBy = useSelector(state => state.gameUi?.createdBy);
   const options = useSelector(state => state.gameUi?.game?.options);
   const ringsDbInfo = options?.ringsDbInfo;
   const round = useSelector(state => state.gameUi?.game.roundNumber);
@@ -500,7 +500,7 @@ export const TopBarMenu = React.memo(({}) => {
   const downloadGameAsJson = () => {
     const state = store.getState();
     const exportObj = state.gameUi.game;
-    const exportName = state.gameUi.gameName;
+    const exportName = state.gameUi.roomName;
     var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(exportObj));
     var downloadAnchorNode = document.createElement('a');
     downloadAnchorNode.setAttribute("href",     dataStr);
@@ -575,7 +575,7 @@ export const TopBarMenu = React.memo(({}) => {
       }
       exportList.push({cardRow: cardRow, quantity: 1, groupId: card.groupId})
     }
-    const exportName = state.gameUi.gameName+"-cards";
+    const exportName = state.gameUi.roomName+"-cards";
     var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(exportList, null, 2));
     var downloadAnchorNode = document.createElement('a');
     downloadAnchorNode.setAttribute("href",     dataStr);

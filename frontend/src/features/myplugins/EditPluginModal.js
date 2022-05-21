@@ -12,6 +12,7 @@ import { useSiteL10n } from "../../hooks/useSiteL10n";
 import { isObject } from "../store/updateValues";
 import useForm from "../../hooks/useForm";
 import useAuth from "../../hooks/useAuth";
+import { setShowModal } from "../store/playerUiSlice";
 const { convertCSVToArray } = require('convert-csv-to-array');
 const converter = require('convert-csv-to-array');
 
@@ -88,6 +89,7 @@ export const EditPluginModal = ({ isOpen, closeModal, shareReplayId}) => {
   const [checked, setChecked] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
+  const [loadingMessage, setLoadingMessage] = useState("");
 
   const [validGameDef, setValidGameDef] = useState(false);
   const [validCardDb, setValidCardDb] = useState(false);
@@ -124,15 +126,22 @@ export const EditPluginModal = ({ isOpen, closeModal, shareReplayId}) => {
       },
     };
     //const res = await axios.post("/be/api/v1/profile/update", data);
+
+    setSuccessMessage("");
+    setErrorMessage("");
+    setLoadingMessage("Please wait...");
     const res = await axios.post("/be/api/myplugins", updateData, authOptions);
     if (
       res.status === 200
     ) {
-      setSuccessMessage("Plugin updated.");
+      setSuccessMessage("Plugin created.");
       setErrorMessage("");
+      setLoadingMessage("");
+      closeModal();
     } else {
       setSuccessMessage("");
       setErrorMessage("Error."); 
+      setLoadingMessage("");
     }
     
   });
@@ -363,6 +372,9 @@ export const EditPluginModal = ({ isOpen, closeModal, shareReplayId}) => {
           )}
           {errorMessage && (
             <div className="alert alert-danger mt-4">{errorMessage}</div>
+          )}
+          {loadingMessage && (
+            <div className="alert alert-info mt-4">{loadingMessage}</div>
           )}
         </fieldset>
       </form>

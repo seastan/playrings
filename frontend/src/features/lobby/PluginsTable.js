@@ -3,10 +3,11 @@ import UserName from "../user/UserName";
 import useProfile from "../../hooks/useProfile";
 import { Link } from "react-router-dom";
 import MUIDataTable, { MUIDataTableOptions } from "mui-datatables";
+import Button from "../../components/basic/Button";
 
 
 
-export const PluginsTable = ({ plugins }) => {
+export const PluginsTable = ({ plugins, setSelectedPlugin}) => {
   console.log("plugins 1", plugins)
   const columns = [
     {name: "plugin_name", label: "Plugin", options: { filter: false, sort: true }},
@@ -29,9 +30,11 @@ export const PluginsTable = ({ plugins }) => {
   }
   console.log("plugins 2", plugins)
   const toggleFavorite = () => null;
-  for (var plugin of plugins) {
-    plugin["options"] =  <div>
-      <div onClick={() => toggleFavorite(plugin.plugin_uuid)} isPrimary className="mx-2 mt-2">Star</div>
+  for (var i=0; i<plugins.length; i++) {
+    const pluginTemp = {...plugins[i]};
+    plugins[i]["options"] =  <div>
+      <Button onClick={() => toggleFavorite(pluginTemp.plugin_uuid)} isPrimary className="mx-2 mt-2">Favorite</Button>
+      <Button onClick={() => setSelectedPlugin(pluginTemp)} isPrimary className="mx-2 mt-2">Play</Button>
     </div>
   }
   

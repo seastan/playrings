@@ -11,7 +11,7 @@ var delayBroadcast;
 
 export const Room = ({ slug }) => {
   const dispatch = useDispatch();
-  const gameName = useSelector(state => state.gameUi.gameName);
+  const roomName = useSelector(state => state.gameUi.roomName);
   const setMessages = useSetMessages();
   const myUser = useProfile();
   const myUserId = myUser?.id;
@@ -43,7 +43,7 @@ export const Room = ({ slug }) => {
     } else if (event === "phx_reply" && payload.response.game_ui != null) {
       // Update store with the full state received
       const { game_ui } = payload.response;
-      if (gameName !== game_ui.gameName) { // Entered a new room
+      if (roomName !== game_ui.roomName) { // Entered a new room
         // Reset player UI
         dispatch(resetPlayerUi())
       }
@@ -66,7 +66,7 @@ export const Room = ({ slug }) => {
       }
     }
 
-  }, [gameName, myUserId]);
+  }, [roomName, myUserId]);
 
   const onChatMessage = useCallback((event, payload) => {
     if (
@@ -91,7 +91,7 @@ export const Room = ({ slug }) => {
 
   console.log('Rendering Room',myUserId);
 
-  if (gameName !== slug) return (<div></div>);
+  if (roomName !== slug) return (<div></div>);
   else {
     return (
       <RoomProviders 

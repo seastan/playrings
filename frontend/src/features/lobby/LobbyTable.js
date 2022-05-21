@@ -1,14 +1,10 @@
-import React from "react";
+import React, { useCallback } from "react";
 import UserName from "../user/UserName";
 import useProfile from "../../hooks/useProfile";
 import { Link } from "react-router-dom";
-import { Room } from "elixir-backend";
 import MUIDataTable, { MUIDataTableOptions } from "mui-datatables";
-
-
-interface Props {
-  rooms: Array<Room>;
-}
+import useDataApi from "../../hooks/useDataApi";
+import useChannel from "../../hooks/useChannel";
 
 const columns = [
   {name: "quest", label: "Quest", options: { filter: false, sort: true }},
@@ -19,10 +15,10 @@ const columns = [
   {name: "status", label: "Status", options: { filter: true, sort: true }},
  ];
 
-export const LobbyTable: React.FC<Props> = ({ rooms }) => {
+export const LobbyTable = ({ selectedPlugin }) => {
   const myUser = useProfile();
   const currentUnixTime = Math.floor(Date.now() / 1000);
-  const options: MUIDataTableOptions = {
+  const options = {
     filterType: "checkbox",
     selectableRows: "none",
     download: false,
@@ -34,7 +30,23 @@ export const LobbyTable: React.FC<Props> = ({ rooms }) => {
     rowsPerPage: 20,
     rowsPerPageOptions: [10, 20, 50, 200],
   }
-  var filteredRooms: any[] = [];
+  const { isLoading, isError, data, setData } = useDataApi(
+    "/be/api/rooms",
+    null
+  );
+  const onChannelMessage = useCallback(
+    (event, payload) => {
+      if (event === "rooms_update" && payload.rooms != null) {
+        setData({ data: payload.rooms });
+      }
+    },
+    [setData]
+  );
+  useChannel("lobby:lobby", onChannelMessage, myUser.id);
+  const rooms = data != null && data.data != null ? data.data : [];
+
+
+  var filteredRooms = [];
   var activePrivate = 0;
   var activeRooms = 0;
   if (rooms) {
@@ -61,7 +73,7 @@ export const LobbyTable: React.FC<Props> = ({ rooms }) => {
     }
   }
 
-  const compare = ( a : any, b : any ) => {
+  const compare = ( a, b ) => {
     if ( a.name < b.name ){
       return -1;
     }
@@ -82,6 +94,9 @@ export const LobbyTable: React.FC<Props> = ({ rooms }) => {
   }
   return (
     <>
+
+      {isLoading && <div className="text-white text-center">Connecting to server...</div>}
+      {isError && <div className="text-white text-center">Error communicating with server...</div>}
       <MUIDataTable
         title={"Rooms ("+activeRooms+" active)"}
         data={filteredRooms}

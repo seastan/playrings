@@ -15,7 +15,7 @@
   """
   @spec load(Map.t()) :: Game.t()
   def load(%{} = options) do
-    game = if options["replayId"] != "" do
+    game = if options["replayId"] != nil and options["replayId"] != "" do
       gameid = options["replayId"]
       query = Ecto.Query.from(e in Replay,
         where: e.uuid == ^gameid,

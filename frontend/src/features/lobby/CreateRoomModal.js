@@ -14,24 +14,13 @@ const options = [
   { value: 'playtest', label: 'Playtest' },
 ]
 
-interface Props {
-  isOpen: boolean;
-  isLoggedIn: boolean;
-  closeModal: () => void;
-  replayId: string;
-  ringsDbInfo: Array<any>;
-  loadShuffle: boolean;
-}
-
 ReactModal.setAppElement("#root");
 
-export const CreateRoomModal: React.FC<Props> = ({ 
+export const CreateRoomModal = ({ 
   isOpen, 
   isLoggedIn, 
   closeModal, 
-  replayId, 
-  ringsDbInfo, 
-  loadShuffle,
+  plugin,
 }) => {
   const [isError, setIsError] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -47,7 +36,7 @@ export const CreateRoomModal: React.FC<Props> = ({
   
   const [privacyType, setPrivacyType] = useState(options[0]);
 
-  console.log("Rendering CreateRoomModal", ringsDbInfo)
+  console.log("Rendering CreateRoomModal")
 
   const createRoom = async () => {
     const data = { 
@@ -57,9 +46,11 @@ export const CreateRoomModal: React.FC<Props> = ({
         privacy_type: privacyType.value,
       },
       game_options: {
-        replay_id: replayId,
-        ringsdb_info: ringsDbInfo,
-        load_shuffle: loadShuffle,
+        plugin_uuid: plugin.plugin_uuid,
+        plugin_version: plugin.version,
+//        replay_id: replayId,
+//        ringsdb_info: ringsDbInfo,
+//        load_shuffle: loadShuffle,
       }
     };
     setIsLoading(true);
@@ -78,7 +69,7 @@ export const CreateRoomModal: React.FC<Props> = ({
     }
   };
 
-  const handlePrivacyChange = (selectedOption: any) => {
+  const handlePrivacyChange = (selectedOption) => {
     setPrivacyType(selectedOption);
   };
 

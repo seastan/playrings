@@ -8,7 +8,7 @@ defmodule DragnCardsGame.GameUI do
   alias DragnCardsGame.{Game, GameUI, GameUISeat, Groups, Group, Stack, Card, User, Tokens, CardFace, PlayerInfo}
   alias DragnCardsChat.{ChatMessage}
 
-  alias DragnCards.{Repo, Replay}
+  alias DragnCards.{Repo, Replay, Plugin}
   alias DragnCards.Rooms.Room
 
   @type t :: Map.t()
@@ -16,12 +16,17 @@ defmodule DragnCardsGame.GameUI do
   @spec new(String.t(), User.t(), Map.t()) :: GameUI.t()
   def new(game_name, user, %{} = options) do
     Logger.debug("gameui new")
+    IO.inspect(options)
+    game_def = Plugin.get_game_def_by_uuid_and_version(options["pluginUuid"], options["pluginVersion"])
+    IO.puts("game_def")
+    IO.inspect(game_def)
     gameui = %{
       "game" => Game.load(options),
-      "gameName" => game_name,
+      "roomName" => game_name,
+      "gameDef" => game_def,
       "options" => options,
-      "created_at" => DateTime.utc_now(),
-      "created_by" => user.id,
+      "createdAt" => DateTime.utc_now(),
+      "createdBy" => user.id,
       "privacyType" => options["privacyType"],
       "playerInfo" => %{
         "player1" => PlayerInfo.new(user.id),
@@ -1694,7 +1699,7 @@ defmodule DragnCardsGame.GameUI do
 
   def set_last_update(gameui) do
     timestamp = System.system_time(:second)
-    room = Repo.get_by(Room, [slug: gameui["gameName"]])
+    room = Repo.get_by(Room, [slug: gameui["roomName"]])
     if room do
       updates = %{
         last_update: timestamp,

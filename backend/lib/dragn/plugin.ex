@@ -32,4 +32,13 @@ defmodule DragnCards.Plugin do
     Repo.all(query)
   end
 
+  def get_by_uuid_and_version(plugin_uuid, version) do
+    Plugin
+    |> Repo.get_by([plugin_uuid: plugin_uuid, version: version])
+  end
+
+  def get_game_def_by_uuid_and_version(plugin_uuid, version) do
+    plugin = get_by_uuid_and_version(plugin_uuid, version)
+    plugin.game_def
+  end
 end
