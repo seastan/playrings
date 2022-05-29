@@ -7,14 +7,15 @@ import { setStackIds, setCardIds, setGroupById, setValues } from "../store/gameU
 import { reorderGroupStackIds } from "./Reorder";
 import store from "../../store";
 import { setTouchAction } from "../store/playerUiSlice";
-import { GROUPSINFO } from "../plugins/lotrlcg/definitions/constants";
 import { getDisplayName, getDisplayNameFlipped } from "../plugins/lotrlcg/functions/helpers";
 import { Table } from "../plugins/lotrlcg/components/Table";
 import BroadcastContext from "../../contexts/BroadcastContext";
+import { useGameDefinition } from "./functions/useGameDefinition";
 
 export const DragContainer = React.memo(({}) => {
   console.log("Rendering DragContainer");
   const dispatch = useDispatch();
+  const gameDef = useGameDefinition();
   const {gameBroadcast, chatBroadcast} = useContext(BroadcastContext);
   const playerData = useSelector(state => state?.gameUi?.game?.playerData);
   const touchMode = useSelector(state => state?.playerUi?.touchMode);
@@ -75,12 +76,12 @@ export const DragContainer = React.memo(({}) => {
         stackIds: newOrigGroupStackIds
       }   
       if ((origGroup.type === "hand" || origGroup.type === "deck" ) && (destGroup.type !== "hand" && destGroup.type !== "deck" )) {
-        chatBroadcast("game_update",{message: "attached "+getDisplayNameFlipped(topOfOrigStackCard)+" from "+GROUPSINFO[origGroupId].name+" to "+getDisplayName(topOfDestStackCard)+" in "+GROUPSINFO[destGroupId].name+"."})
+        chatBroadcast("game_update",{message: "attached "+getDisplayNameFlipped(topOfOrigStackCard)+" from "+gameDef.groups[origGroupId].name+" to "+getDisplayName(topOfDestStackCard)+" in "+gameDef.groups[destGroupId].name+"."})
         // Flip card faceup
         const updates = [["cardById",topOfOrigStackCardId,"currentSide", "A"]];
         dispatch(setValues({updates: updates}));
       } else {
-        chatBroadcast("game_update",{message: "attached "+getDisplayName(topOfOrigStackCard)+" from "+GROUPSINFO[origGroupId].name+" to "+getDisplayName(topOfDestStackCard)+" in "+GROUPSINFO[destGroupId].name+"."});
+        chatBroadcast("game_update",{message: "attached "+getDisplayName(topOfOrigStackCard)+" from "+gameDef.groups[origGroupId].name+" to "+getDisplayName(topOfDestStackCard)+" in "+gameDef.groups[destGroupId].name+"."});
       }
       dispatch(setStackIds(newOrigGroup));
       dispatch(setCardIds(newDestStack));
@@ -108,8 +109,8 @@ export const DragContainer = React.memo(({}) => {
 
       // Moved to a different spot
       const newGroupById = reorderGroupStackIds(groupById, orig, dest);
-      const origGroupTitle = GROUPSINFO[origGroupId].name;
-      const destGroupTitle = GROUPSINFO[destGroupId].name;
+      const origGroupTitle = gameDef.groups[origGroupId].name;
+      const destGroupTitle = gameDef.groups[destGroupId].name;
       if ((origGroup.type === "hand" || origGroup.type === "deck" ) && (destGroup.type !== "hand" && destGroup.type !== "deck" )) {
         chatBroadcast("game_update",{message: "moved "+getDisplayNameFlipped(topOfOrigStackCard)+" from "+origGroupTitle+" to "+destGroupTitle+"."});
         // Flip card faceup

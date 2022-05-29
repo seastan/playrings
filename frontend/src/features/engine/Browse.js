@@ -1,7 +1,6 @@
 import React, { useContext, useState } from "react";
 import { useSelector, useDispatch } from 'react-redux';
 import { Stacks } from "./Stacks";
-import { GROUPSINFO } from "../plugins/lotrlcg/definitions/constants";
 import { useBrowseTopN } from "./functions/useBrowseTopN";
 import { getParentCardsInGroup } from "../plugins/lotrlcg/functions/helpers";
 import { setValues } from "../store/gameUiSlice";
@@ -10,6 +9,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { setBrowseGroupId, setDropdownMenuObj, setTyping } from "../store/playerUiSlice";
 import { useGameL10n } from "../../hooks/useGameL10n";
 import BroadcastContext from "../../contexts/BroadcastContext";
+import { useGameDefinition } from "./functions/useGameDefinition";
 
 const isNormalInteger = (str) => {
   var n = Math.floor(Number(str));
@@ -20,6 +20,7 @@ export const Browse = React.memo(({}) => {
   const {gameBroadcast, chatBroadcast} = useContext(BroadcastContext);
   const dispatch = useDispatch();
   const l10n = useGameL10n();
+  const gameDef = useGameDefinition();
   const playerN = useSelector(state => state?.playerUi?.playerN);
   const groupId = useSelector(state => state?.playerUi?.browseGroup?.id);
   const browseGroupTopN = useSelector(state => state?.playerUi?.browseGroup?.topN);
@@ -31,14 +32,14 @@ export const Browse = React.memo(({}) => {
   const [selectedCardName, setSelectedCardName] = useState('');
   const stackIds = group["stackIds"];
   const numStacks = stackIds.length;
-  const browseTopN = useBrowseTopN;
+  const browseTopN = useBrowseTopN();
 
   const handleBarsClick = (event) => {
     event.stopPropagation();
     const dropdownMenuObj = {
         type: "group",
         group: group,
-        title: GROUPSINFO[groupId].name
+        title: gameDef.groups[groupId].name
     }
     dispatch(setDropdownMenuObj(dropdownMenuObj));
   }
@@ -55,7 +56,7 @@ export const Browse = React.memo(({}) => {
   }
 
   const handleCloseClick = (option) => {
-    chatBroadcast("game_update",{message: "closed "+GROUPSINFO[groupId].name+"."})
+    chatBroadcast("game_update",{message: "closed "+gameDef.groups[groupId].name+"."})
     if (playerN) {
       if (option === "shuffle") closeAndShuffle();
       else if (option === "order") closeAndOrder();
@@ -67,7 +68,7 @@ export const Browse = React.memo(({}) => {
   const closeAndShuffle = () => {
     gameBroadcast("game_action", {action: "peek_at", options: {stack_ids: stackIds, value: false}})
     gameBroadcast("game_action", {action: "shuffle_group", options: {group_id: groupId}})
-    chatBroadcast("game_update",{message: "shuffled "+GROUPSINFO[groupId].name+"."})
+    chatBroadcast("game_update",{message: "shuffled "+gameDef.groups[groupId].name+"."})
     if (groupType === "deck") stopPeekingTopCard();
   }
 
@@ -77,18 +78,12 @@ export const Browse = React.memo(({}) => {
   }
 
   const closeAndPeeking = () => {
-    chatBroadcast("game_update",{message: "is still peeking at "+GROUPSINFO[groupId].name+"."})
+    chatBroadcast("game_update",{message: "is still peeking at "+gameDef.groups[groupId].name+"."})
   }
 
   const handleSelectClick = (event) => {
     const topNstr = event.target.value;
-    browseTopN(
-      topNstr, 
-      group,
-      gameBroadcast, 
-      chatBroadcast,
-      dispatch,
-    )
+    browseTopN(group.id, topNstr)
   }
 
   const handleInputTyping = (event) => {
@@ -139,7 +134,7 @@ export const Browse = React.memo(({}) => {
           <span 
             className="absolute mt-1" 
             style={{top: "50%", left: "50%", transform: `translate(-50%, 0%) rotate(90deg)`, whiteSpace: "nowrap"}}>
-              {l10n(GROUPSINFO[group.id].tablename)}
+              {l10n(gameDef.groups[group.id].tablename)}
           </span>
         </div>
       </div> 

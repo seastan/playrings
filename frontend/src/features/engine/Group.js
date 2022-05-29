@@ -1,7 +1,6 @@
 import React, { useContext } from "react";
 import { useDispatch, useSelector } from 'react-redux';
 import { Stacks } from "./Stacks";
-import { GROUPSINFO } from "../plugins/lotrlcg/definitions/constants";
 import { faBars, faEye } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useBrowseTopN } from "./functions/useBrowseTopN"; 
@@ -9,30 +8,29 @@ import store from "../../store";
 import { setDropdownMenuObj } from "../store/playerUiSlice";
 import { useGameL10n } from "../../hooks/useGameL10n";
 import BroadcastContext from "../../contexts/BroadcastContext";
+import { useGameDefinition } from "./functions/useGameDefinition";
 
 export const Group = React.memo(({
   groupId,
   hideTitle,
   registerDivToArrowsContext
 }) => {
-  const {gameBroadcast, chatBroadcast} = useContext(BroadcastContext);
   console.log("Rendering Group ",groupId);
   const dispatch = useDispatch();
   const l10n = useGameL10n();
+  const gameDef = useGameDefinition();
   const group = useSelector(state => state?.gameUi?.game?.groupById?.[groupId]);
   const playerN = useSelector(state => state?.playerUi?.playerN);
-  const browseTopN = useBrowseTopN;
+  const browseTopN = useBrowseTopN();
 
   const handleEyeClick = (event) => {
     event.stopPropagation();
-    browseTopN("All", group, gameBroadcast, chatBroadcast, dispatch);
+    browseTopN(groupId, "All");
   }
 
   const handleMainQuestClick = (event) => {
     event.stopPropagation();
-    const state = store.getState();
-    const questDeckGroup = state.gameUi.game.groupById["sharedQuestDeck"];
-    browseTopN("All", questDeckGroup, gameBroadcast, chatBroadcast, dispatch);
+    browseTopN("sharedQuestDeck", "All");
   }
 
   const handleBarsClick = (event) => {
@@ -41,7 +39,7 @@ export const Group = React.memo(({
     const dropdownMenuObj = {
         type: "group",
         group: group,
-        title: GROUPSINFO[groupId].name,
+        title: gameDef.groups[groupId].name,
     }
     console.log("dispatch setDropdownMenuObj", dropdownMenuObj)
     if (playerN) dispatch(setDropdownMenuObj(dropdownMenuObj));
@@ -49,7 +47,7 @@ export const Group = React.memo(({
 
   if (!group) return null;
   const numStacks = group.stackIds.length;
-  const tablename = GROUPSINFO[group.id].tablename;
+  const tablename = gameDef.groups[group.id].tablename;
   return(
     <div className="h-full w-full">
       {hideTitle ? null :

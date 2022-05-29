@@ -186,11 +186,7 @@ export const TopBarMenu = React.memo(({}) => {
       loadFileGameDef();
     } else if (data.action === "load_custom") {
       loadFileCustom();
-    } else if (data.action === "num_players") {
-      const num = data.value;
-      gameBroadcast("game_action", {action: "update_values", options: {updates: [["numPlayers", num]]}});
-      chatBroadcast("game_update", {message: "set the number of players to: " + num});
-    } else if (data.action === "layout") {
+    }  else if (data.action === "layout") {
       const num = data.value.numPlayers;
       const layout = gameDef.layouts[data.value.layoutId];
       gameBroadcast("game_action", {action: "update_values", options: {updates: [["numPlayers", num]]}});
@@ -627,18 +623,6 @@ export const TopBarMenu = React.memo(({}) => {
   return(
     <li key={"Menu"}><div className="h-full flex items-center justify-center select-none">{l10n("Menu")}</div>
       <ul className="second-level-menu">
-        {isHost &&
-          <li key={"numPlayers"}>
-              {l10n("Player count")}
-              <span className="float-right mr-1"><FontAwesomeIcon icon={faChevronRight}/></span>
-            <ul className="third-level-menu">
-                <li key={"numPlayers1"} onClick={() => handleMenuClick({action:"num_players", value: 1})}>1</li>
-                <li key={"numPlayers2"} onClick={() => handleMenuClick({action:"num_players", value: 2})}>2</li>
-                <li key={"numPlayers3"} onClick={() => handleMenuClick({action:"num_players", value: 3})}>3</li>
-                <li key={"numPlayers4"} onClick={() => handleMenuClick({action:"num_players", value: 4})}>4</li>
-            </ul>
-          </li>
-        }
         {isHost &&
           <li key={"layout"}>
               {l10n("Layout")}

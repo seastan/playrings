@@ -1,13 +1,13 @@
 import React, { useContext } from "react";
 import { useDispatch, useSelector } from 'react-redux';
 import { Stacks } from "./Stacks";
-import { GROUPSINFO, LAYOUTINFO } from "../plugins/lotrlcg/definitions/constants";
 import { faBars, faEye } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useBrowseTopN } from "./functions/useBrowseTopN"; 
 import { setDropdownMenuObj } from "../store/playerUiSlice";
 import { useGameL10n } from "../../hooks/useGameL10n";
 import BroadcastContext from "../../contexts/BroadcastContext";
+import { useGameDefinition } from "./functions/useGameDefinition";
 
 export const SideGroup = React.memo(({
   registerDivToArrowsContext,
@@ -15,14 +15,14 @@ export const SideGroup = React.memo(({
   console.log("Rendering TableLayout");
   const dispatch = useDispatch();
   const l10n = useGameL10n();
+  const gameDef = useGameDefinition();
   const {gameBroadcast, chatBroadcast} = useContext(BroadcastContext);
-  const numPlayers = useSelector(state => state?.gameUi?.game?.numPlayers);
   const sideGroupId = useSelector(state => state?.playerUi?.sideGroupId);
   const browseGroupId = useSelector(state => state?.playerUi?.browseGroup?.id);
   const group = useSelector(state => state?.gameUi?.game?.groupById?.[sideGroupId]);
   const layout = useSelector(state => state.gameUi?.game?.layout);    
   const playerN = useSelector(state => state?.playerUi?.playerN);
-  const browseTopN = useBrowseTopN;
+  const browseTopN = useBrowseTopN();
 
   const numRows = layout.length;
 
@@ -34,7 +34,7 @@ export const SideGroup = React.memo(({
 
   const handleEyeClick = (event) => {
     event.stopPropagation();
-    browseTopN("All", group, gameBroadcast, chatBroadcast, dispatch);
+    browseTopN(group.id, "All");
   }
 
   const handleBarsClick = (event) => {
@@ -43,17 +43,17 @@ export const SideGroup = React.memo(({
     const dropdownMenuObj = {
         type: "group",
         group: group,
-        title: GROUPSINFO[sideGroupId].name,
+        title: gameDef.groups[sideGroupId].name,
     }
     if (playerN) dispatch(setDropdownMenuObj(dropdownMenuObj));
   }
 
   return (
-      Object.keys(GROUPSINFO).includes(sideGroupId) && browseGroupId !== sideGroupId &&
+      Object.keys(gameDef.groups).includes(sideGroupId) && browseGroupId !== sideGroupId &&
         <div className="relative float-left" style={{height: `${100-2*(100/numRows)}%`, width:`${100-middleRowsWidth}%`}}>
           <div className="absolute text-center w-full select-none text-gray-500">
             <div className="mt-1">
-              {l10n(GROUPSINFO[sideGroupId].tablename)}
+              {l10n(gameDef.groups[sideGroupId].tablename)}
             </div>
             {(playerN || group.type === "discard") && <FontAwesomeIcon onClick={(event) => handleEyeClick(event)}  className="hover:text-white mr-2" icon={faEye}/>}
             {playerN && <FontAwesomeIcon onClick={(event) => handleBarsClick(event)}  className="hover:text-white mr-2" icon={faBars}/>}

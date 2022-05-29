@@ -2,11 +2,11 @@ import React, {useMemo} from "react";
 import ReactModal from "react-modal";
 import Button from "../../components/basic/Button";
 import useProfile from "../../hooks/useProfile";
-import { TOOLTIPINFO } from "../plugins/lotrlcg/definitions/constants";
 import axios from "axios";
 import useAuth from "../../hooks/useAuth";
 import { useDispatch, useSelector } from "react-redux";
 import { setTooltipIds } from "../store/playerUiSlice";
+import { useGameDefinition } from "./functions/useGameDefinition";
 
 export const TooltipModal = React.memo(({
     tooltipId,
@@ -61,7 +61,7 @@ export const TooltipModal = React.memo(({
         overlayClassName="fixed inset-0 bg-black-50 z-10000"
         className="insert-auto overflow-auto p-5 bg-gray-800 max-w-xs mx-auto my-24 rounded-lg outline-none max-h-3/4"
       >
-        <div className="text-white mb-2">{TOOLTIPINFO[tooltipId]}</div>    
+        <div className="text-white mb-2">{useGameDefinition.tooltips[tooltipId]}</div>    
         <span>
           <Button onClick={handleHideClick} className="inline mt-2">
             Never show again

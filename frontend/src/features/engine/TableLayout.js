@@ -2,7 +2,6 @@ import React, { useContext, useState } from "react";
 import { useSelector } from 'react-redux';
 import { Group } from "./Group";
 import { Browse } from "./Browse";
-import { LAYOUTINFO } from "../plugins/lotrlcg/definitions/constants";
 import Chat from "../chat/Chat";
 import "../../css/custom-misc.css"; 
 import { QuickAccess } from "./QuickAccess";

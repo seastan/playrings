@@ -53,7 +53,7 @@ export const TopBarView = React.memo(({}) => {
               <span className="float-right mr-1"><FontAwesomeIcon icon={faChevronRight}/></span>
             
             <ul className="third-level-menu">
-              {Object.keys(gameDef.groups).map((groupId, _index) => {
+              {Object.keys(gameDef.groups).sort().map((groupId, _index) => {
                 const controller = gameDef.groups[groupId].controller;
                 if (controller == "shared") return (
                   <TopBarViewItem key={groupId} groupId={groupId}/>
@@ -66,8 +66,8 @@ export const TopBarView = React.memo(({}) => {
             {l10n(playerI)}
               <span className="float-right mr-1"><FontAwesomeIcon icon={faChevronRight}/></span>
             <ul className="third-level-menu">
-              {Object.keys(gameDef.groups).map((groupId, _index) => {
-                if (groupId.startsWith(playerI)) return (
+              {Object.keys(gameDef.groups).sort().map((groupId, _index) => {
+                if (gameDef.groups[groupId].controller === playerI) return (
                   <TopBarViewItem key={groupId} groupId={groupId}/>
                 )
               })}

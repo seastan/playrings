@@ -747,6 +747,19 @@
       "canHaveAttachments": true
     }
   },
+  "favoriteGroupIds": [
+    "sharedQuestDeck",
+    "sharedEncounterDeck3",
+    "player1Hand",
+    "player1Discard",
+    "player2Hand", 
+    "player2Discard",
+    "player3Hand", 
+    "player3Discard",
+    "player4Hand",
+    "player4Discard",
+    "sharedOther"
+  ],
   "phases": [
     {
       "name" : "Beginning",
