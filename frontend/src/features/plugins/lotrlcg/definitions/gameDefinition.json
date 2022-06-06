@@ -66,7 +66,40 @@
   },
   "cardProperties": {
     "committed": {"type": "boolean", "default": false},
-    "exhausted": {"type": "boolean", "default": false}
+    "exhausted": {"type": "boolean", "default": false},
+    "locked": {"type": "boolean", "default": false}
+  },
+  "cardMenu": [
+    {
+      "title": "Disable refresh",
+      "type": "action",
+      "showIf": [[["_ACTIVE_CARD", "inPlay"], "==", true], "AND", [["_ACTIVE_CARD", "locked"], "==", false]],
+      "actionName": "lockCard"
+    },
+    {
+      "title": "Enable refresh",
+      "type": "action",
+      "showIf": [[["_ACTIVE_CARD", "inPlay"], "==", true], "AND", [["_ACTIVE_CARD", "locked"], "==", true]],
+      "actionName": "unlockCard"
+    }
+  ],
+  "actionLists": {
+    "lockCard": [
+      {
+        "_ACTION": "SET_VALUE",
+        "_PATH": ["_ACTIVE_CARD", "locked"],
+        "_VALUE": true,
+        "_MESSAGES": [["{playerN} locked ", ["_ACTIVE_FACE", "name"], "."]]
+      }
+    ],
+    "unlockCard": [
+      {
+        "_ACTION": "SET_VALUE",
+        "_PATH": ["_ACTIVE_CARD", "locked"],
+        "_VALUE": false,
+        "_MESSAGES": [["{playerN} unlocked ", ["_ACTIVE_FACE", "name"], "."]]
+      }
+    ]
   },
   "faceProperties": {
     "attack":        {"type": "integer", "default": 0},
@@ -105,7 +138,7 @@
     },
     "sharedEncounterDiscard": {
       "name": "Encounter Discard", 
-      "tablename": "Discard",
+      "tableName": "Discard",
       "controller": "shared",
       "type": "pile",
       "defaultSideUp": "A",
@@ -116,7 +149,7 @@
     },
     "sharedQuestDeck": {
       "name": "Quest Deck",
-      "tablename": "Quest Deck",
+      "tableName": "Quest Deck",
       "controller": "shared",
       "type": "pile",
       "defaultSideUp": "A",
@@ -127,7 +160,7 @@
     },
     "sharedQuestDiscard": {
       "name": "Quest Discard", 
-      "tablename": "Quest Discard",
+      "tableName": "Quest Discard",
       "controller": "shared",
       "type": "pile",
       "defaultSideUp": "B",
@@ -138,7 +171,7 @@
     },
     "sharedQuestDeck2": {
       "name": "Second Quest Deck", 
-      "tablename": "Quest Deck 2",
+      "tableName": "Quest Deck 2",
       "controller": "shared",
       "type": "pile",
       "defaultSideUp": "A",
@@ -149,7 +182,7 @@
     },
     "sharedQuestDiscard2": {
       "name": "Second Quest Discard", 
-      "tablename": "Quest Discard 2",
+      "tableName": "Quest Discard 2",
       "controller": "shared",
       "type": "pile",
       "defaultSideUp": "B",
@@ -160,7 +193,7 @@
     },
     "sharedEncounterDeck2": {
       "name": "Second Encounter Deck", 
-      "tablename": "Encounter Deck 2",
+      "tableName": "Encounter Deck 2",
       "controller": "shared",
       "type": "pile",
       "defaultSideUp": "B",
@@ -171,7 +204,7 @@
     },
     "sharedEncounterDiscard2": {
       "name": "Second Encounter Discard", 
-      "tablename": "Encounter Discard 2",
+      "tableName": "Encounter Discard 2",
       "controller": "shared",
       "type": "pile",
       "defaultSideUp": "A",
@@ -182,7 +215,7 @@
     },
     "sharedEncounterDeck3": {
       "name": "Third Encounter Deck", 
-      "tablename": "Encounter Deck 3",
+      "tableName": "Encounter Deck 3",
       "controller": "shared",
       "type": "pile",
       "defaultSideUp": "B",
@@ -193,7 +226,7 @@
     },
     "sharedEncounterDiscard3": {
       "name": "Third Encounter Discard", 
-      "tablename": "Encounter Discard 3",
+      "tableName": "Encounter Discard 3",
       "controller": "shared",
       "type": "pile",
       "defaultSideUp": "A",
@@ -204,7 +237,7 @@
     },
     "sharedOther": {
       "name": "Other", 
-      "tablename": "Other",
+      "tableName": "Other",
       "controller": "shared",
       "type": "pile",
       "defaultSideUp": "A",
@@ -215,7 +248,7 @@
     },
     "sharedSetAside": {
       "name": "Set Aside", 
-      "tablename": "Set Aside",
+      "tableName": "Set Aside",
       "controller": "shared",
       "type": "pile",
       "defaultSideUp": "A",
@@ -226,7 +259,7 @@
     },
     "sharedVictory": {
       "name": "Victory Display", 
-      "tablename": "Victory Display",
+      "tableName": "Victory Display",
       "controller": "shared",
       "type": "pile",
       "defaultSideUp": "A",
@@ -236,7 +269,7 @@
     },
     "sharedStaging": {
       "name": "Staging Area", 
-      "tablename": "Staging",
+      "tableName": "Staging",
       "controller": "shared",
       "type": "row",
       "defaultSideUp": "A",
@@ -246,7 +279,7 @@
     },
     "sharedActive": {
       "name": "Active Location", 
-      "tablename": "Active",
+      "tableName": "Active",
       "type": "row",
       "defaultSideUp": "A",
       "defaultPeeking": [],
@@ -255,7 +288,7 @@
     },
     "sharedMainQuest": {
       "name": "Main Quest", 
-      "tablename": "Main Quest",
+      "tableName": "Main Quest",
       "type": "row",
       "defaultSideUp": "A",
       "defaultPeeking": [],
@@ -264,7 +297,7 @@
     },
     "sharedExtra1": {
       "name": "Extra 1", 
-      "tablename": "Extra 1",
+      "tableName": "Extra 1",
       "type": "row",
       "defaultSideUp": "A",
       "defaultPeeking": [],
@@ -273,7 +306,7 @@
     },
     "sharedExtra2": {
       "name": "Extra 2", 
-      "tablename": "Extra 2",
+      "tableName": "Extra 2",
       "controller": "shared",
       "type": "row",
       "defaultSideUp": "A",
@@ -283,7 +316,7 @@
     },
     "sharedExtra3": {
       "name": "Extra 3", 
-      "tablename": "Extra 3",
+      "tableName": "Extra 3",
       "controller": "shared",
       "type": "row",
       "defaultSideUp": "A",
@@ -293,7 +326,7 @@
     },
     "player1Hand": {
       "name": "Player 1 Hand", 
-      "tablename": "Hand",
+      "tableName": "Hand",
       "controller": "player1",
       "type": "horizontalFan",
       "defaultSideUp": "B",
@@ -303,7 +336,7 @@
     },
     "player1Deck": {
       "name": "Player 1 Deck", 
-      "tablename": "Deck",
+      "tableName": "Deck",
       "controller": "player1",
       "type": "pile",
       "defaultSideUp": "B",
@@ -314,7 +347,7 @@
     },
     "player1Discard": {
       "name": "Player 1 Discard", 
-      "tablename": "Discard",
+      "tableName": "Discard",
       "controller": "player1",
       "type": "row",
       "defaultSideUp": "A",
@@ -324,7 +357,7 @@
     },
     "player1Sideboard": {
       "name": "Player 1 Sideboard", 
-      "tablename": "Player 1 Sideboard",
+      "tableName": "Player 1 Sideboard",
       "controller": "player1",
       "type": "pile",
       "defaultSideUp": "A",
@@ -335,7 +368,7 @@
     },
     "player1Deck2": {
       "name": "Player 1 Deck 2", 
-      "tablename": "Player 1 Deck 2",
+      "tableName": "Player 1 Deck 2",
       "controller": "player1",
       "type": "pile",
       "defaultSideUp": "B",
@@ -346,7 +379,7 @@
     },
     "player1Play1": {
       "name": "Player 1 Play Area 1", 
-      "tablename": "Play Area",
+      "tableName": "Play Area",
       "controller": "player1",
       "type": "row",
       "defaultSideUp": "A",
@@ -356,7 +389,7 @@
     },
     "player1Play2": {
       "name": "Player 1 Play Area 2", 
-      "tablename": "Play Area",
+      "tableName": "Play Area",
       "controller": "player1",
       "type": "row",
       "defaultSideUp": "A",
@@ -366,7 +399,7 @@
     },
     "player1Play3": {
       "name": "Player 1 Play Area 3", 
-      "tablename": "Play Area",
+      "tableName": "Play Area",
       "controller": "player1",
       "type": "row",
       "defaultSideUp": "A",
@@ -376,7 +409,7 @@
     },
     "player1Play4": {
       "name": "Player 1 Play Area 4", 
-      "tablename": "Play Area",
+      "tableName": "Play Area",
       "controller": "player1",
       "type": "row",
       "defaultSideUp": "A",
@@ -386,7 +419,7 @@
     },
     "player1Engaged": {
       "name": "Player 1 Engaged Area", 
-      "tablename": "Engaged",
+      "tableName": "Engaged",
       "controller": "shared",
       "type": "row",
       "defaultSideUp": "A",
@@ -396,7 +429,7 @@
     },
     "player1Event": {
       "name": "Player 1 Current Event", 
-      "tablename": "Event",
+      "tableName": "Event",
       "controller": "player1",
       "type": "row",
       "defaultSideUp": "A",
@@ -407,7 +440,7 @@
 
     "player2Hand": {
       "name": "Player 2 Hand", 
-      "tablename": "Hand",
+      "tableName": "Hand",
       "controller": "player2",
       "type": "horizontalFan",
       "defaultSideUp": "B",
@@ -417,7 +450,7 @@
     },
     "player2Deck": {
       "name": "Player 2 Deck", 
-      "tablename": "Deck",
+      "tableName": "Deck",
       "controller": "player2",
       "type": "pile",
       "defaultSideUp": "B",
@@ -428,7 +461,7 @@
     },
     "player2Discard": {
       "name": "Player 2 Discard", 
-      "tablename": "Discard",
+      "tableName": "Discard",
       "controller": "player2",
       "type": "row",
       "defaultSideUp": "A",
@@ -438,7 +471,7 @@
     },
     "player2Sideboard": {
       "name": "Player 2 Sideboard", 
-      "tablename": "Player 2 Sideboard",
+      "tableName": "Player 2 Sideboard",
       "controller": "player2",
       "type": "pile",
       "defaultSideUp": "A",
@@ -449,7 +482,7 @@
     },
     "player2Deck2": {
       "name": "Player 2 Deck 2", 
-      "tablename": "Player 2 Deck 2",
+      "tableName": "Player 2 Deck 2",
       "controller": "player2",
       "type": "pile",
       "defaultSideUp": "B",
@@ -460,7 +493,7 @@
     },
     "player2Play1": {
       "name": "Player 2 Play Area 2", 
-      "tablename": "Play Area",
+      "tableName": "Play Area",
       "controller": "player2",
       "type": "row",
       "defaultSideUp": "A",
@@ -470,7 +503,7 @@
     },
     "player2Play2": {
       "name": "Player 2 Play Area 2", 
-      "tablename": "Play Area",
+      "tableName": "Play Area",
       "controller": "player2",
       "type": "row",
       "defaultSideUp": "A",
@@ -480,7 +513,7 @@
     },
     "player2Play3": {
       "name": "Player 2 Play Area 3", 
-      "tablename": "Play Area",
+      "tableName": "Play Area",
       "controller": "player2",
       "type": "row",
       "defaultSideUp": "A",
@@ -490,7 +523,7 @@
     },
     "player2Play4": {
       "name": "Player 2 Play Area 4", 
-      "tablename": "Play Area",
+      "tableName": "Play Area",
       "controller": "player2",
       "type": "row",
       "defaultSideUp": "A",
@@ -500,7 +533,7 @@
     },
     "player2Engaged": {
       "name": "Player 2 Engaged Area", 
-      "tablename": "Engaged",
+      "tableName": "Engaged",
       "controller": "shared",
       "type": "row",
       "defaultSideUp": "A",
@@ -510,7 +543,7 @@
     },
     "player2Event": {
       "name": "Player 2 Current Event", 
-      "tablename": "Event",
+      "tableName": "Event",
       "controller": "player2",
       "type": "row",
       "defaultSideUp": "A",
@@ -521,7 +554,7 @@
 
     "player3Hand": {
       "name": "Player 3 Hand", 
-      "tablename": "Hand",
+      "tableName": "Hand",
       "controller": "player3",
       "type": "horizontalFan",
       "defaultSideUp": "B",
@@ -531,7 +564,7 @@
     },
     "player3Deck": {
       "name": "Player 3 Deck", 
-      "tablename": "Deck",
+      "tableName": "Deck",
       "controller": "player3",
       "type": "pile",
       "defaultSideUp": "B",
@@ -542,7 +575,7 @@
     },
     "player3Discard": {
       "name": "Player 3 Discard", 
-      "tablename": "Discard",
+      "tableName": "Discard",
       "controller": "player3",
       "type": "row",
       "defaultSideUp": "A",
@@ -552,7 +585,7 @@
     },
     "player3Sideboard": {
       "name": "Player 3 Sideboard", 
-      "tablename": "Player 3 Sideboard",
+      "tableName": "Player 3 Sideboard",
       "controller": "player3",
       "type": "pile",
       "defaultSideUp": "A",
@@ -563,7 +596,7 @@
     },
     "player3Deck2": {
       "name": "Player 3 Deck 2", 
-      "tablename": "Player 3 Deck 2",
+      "tableName": "Player 3 Deck 2",
       "controller": "player3",
       "type": "pile",
       "defaultSideUp": "B",
@@ -574,7 +607,7 @@
     },
     "player3Play1": {
       "name": "Player 3 Play Area 3", 
-      "tablename": "Play Area",
+      "tableName": "Play Area",
       "controller": "player3",
       "type": "row",
       "defaultSideUp": "A",
@@ -584,7 +617,7 @@
     },
     "player3Play2": {
       "name": "Player 3 Play Area 2", 
-      "tablename": "Play Area",
+      "tableName": "Play Area",
       "controller": "player3",
       "type": "row",
       "defaultSideUp": "A",
@@ -594,7 +627,7 @@
     },
     "player3Play3": {
       "name": "Player 3 Play Area 3", 
-      "tablename": "Play Area",
+      "tableName": "Play Area",
       "controller": "player3",
       "type": "row",
       "defaultSideUp": "A",
@@ -604,7 +637,7 @@
     },
     "player3Play4": {
       "name": "Player 3 Play Area 4", 
-      "tablename": "Play Area",
+      "tableName": "Play Area",
       "controller": "player3",
       "type": "row",
       "defaultSideUp": "A",
@@ -614,7 +647,7 @@
     },
     "player3Engaged": {
       "name": "Player 3 Engaged Area", 
-      "tablename": "Engaged",
+      "tableName": "Engaged",
       "controller": "shared",
       "type": "row",
       "defaultSideUp": "A",
@@ -624,7 +657,7 @@
     },
     "player3Event": {
       "name": "Player 3 Current Event", 
-      "tablename": "Event",
+      "tableName": "Event",
       "controller": "player3",
       "type": "row",
       "defaultSideUp": "A",
@@ -635,7 +668,7 @@
 
     "player4Hand": {
       "name": "Player 4 Hand", 
-      "tablename": "Hand",
+      "tableName": "Hand",
       "controller": "player4",
       "type": "horizontalFan",
       "defaultSideUp": "B",
@@ -645,7 +678,7 @@
     },
     "player4Deck": {
       "name": "Player 4 Deck", 
-      "tablename": "Deck",
+      "tableName": "Deck",
       "controller": "player4",
       "type": "pile",
       "defaultSideUp": "B",
@@ -656,7 +689,7 @@
     },
     "player4Discard": {
       "name": "Player 4 Discard", 
-      "tablename": "Discard",
+      "tableName": "Discard",
       "controller": "player4",
       "type": "row",
       "defaultSideUp": "A",
@@ -666,7 +699,7 @@
     },
     "player4Sideboard": {
       "name": "Player 4 Sideboard", 
-      "tablename": "Player 4 Sideboard",
+      "tableName": "Player 4 Sideboard",
       "controller": "player4",
       "type": "pile",
       "defaultSideUp": "A",
@@ -677,7 +710,7 @@
     },
     "player4Deck2": {
       "name": "Player 4 Deck 2", 
-      "tablename": "Player 4 Deck 2",
+      "tableName": "Player 4 Deck 2",
       "controller": "player4",
       "type": "pile",
       "defaultSideUp": "B",
@@ -688,7 +721,7 @@
     },
     "player4Play1": {
       "name": "Player 4 Play Area 4", 
-      "tablename": "Play Area",
+      "tableName": "Play Area",
       "controller": "player4",
       "type": "row",
       "defaultSideUp": "A",
@@ -698,7 +731,7 @@
     },
     "player4Play2": {
       "name": "Player 4 Play Area 2", 
-      "tablename": "Play Area",
+      "tableName": "Play Area",
       "controller": "player4",
       "type": "row",
       "defaultSideUp": "A",
@@ -708,7 +741,7 @@
     },
     "player4Play3": {
       "name": "Player 4 Play Area 3", 
-      "tablename": "Play Area",
+      "tableName": "Play Area",
       "controller": "player4",
       "type": "row",
       "defaultSideUp": "A",
@@ -718,7 +751,7 @@
     },
     "player4Play4": {
       "name": "Player 4 Play Area 4", 
-      "tablename": "Play Area",
+      "tableName": "Play Area",
       "controller": "player4",
       "type": "row",
       "defaultSideUp": "A",
@@ -728,7 +761,7 @@
     },
     "player4Engaged": {
       "name": "Player 4 Engaged Area", 
-      "tablename": "Engaged",
+      "tableName": "Engaged",
       "controller": "shared",
       "type": "row",
       "defaultSideUp": "A",
@@ -738,7 +771,7 @@
     },
     "player4Event": {
       "name": "Player 4 Current Event", 
-      "tablename": "Event",
+      "tableName": "Event",
       "controller": "player4",
       "type": "row",
       "defaultSideUp": "A",
@@ -759,6 +792,9 @@
     "player4Hand",
     "player4Discard",
     "sharedOther"
+  ],
+  "moveToGroupIds": [
+    "sharedEncounterDeck", "sharedEncounterDeck2", "sharedEncounterDeck3"
   ],
   "phases": [
     {

@@ -47,7 +47,7 @@ export const Group = React.memo(({
 
   if (!group) return null;
   const numStacks = group.stackIds.length;
-  const tablename = gameDef.groups[group.id].tablename;
+  const tablename = gameDef.groups[group.id].tableName;
   return(
     <div className="h-full w-full">
       {hideTitle ? null :

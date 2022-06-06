@@ -1,10 +1,11 @@
 import React from "react";
 import { faArrowUp, faArrowDown, faRandom, faChevronRight } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { DropdownItem, GoBack } from "../../../engine/DropdownMenuHelpers";
-import "../../../../css/custom-dropdown.css";
+import { DropdownItem, GoBack } from "./DropdownMenuHelpers";
+import "../../css/custom-dropdown.css";
 import { useSelector } from "react-redux";
-import { useGameL10n } from "../../../../hooks/useGameL10n";
+import { useGameL10n } from "../../hooks/useGameL10n";
+import { useGameDefinition } from "./functions/useGameDefinition";
 
 export const DropdownMenuGroup = React.memo(({
   mouseX,
@@ -18,6 +19,7 @@ export const DropdownMenuGroup = React.memo(({
   const dropdownMenuObj = useSelector(state => state?.playerUi?.dropdownMenuObj)
   const playerN = useSelector(state => state?.playerUi?.playerN)
   const menuGroup = dropdownMenuObj.group;
+  const gameDef = useGameDefinition();
   
   const DropdownMoveTo = (props) => {
     return (
@@ -64,7 +66,7 @@ export const DropdownMenuGroup = React.memo(({
         {activeMenu === "main" &&
         <div className="menu">
           <DropdownItem action="shuffle" clickCallback={handleDropdownClick}>{l10n("Shuffle")}</DropdownItem>
-          {menuGroup.id === "sharedEncounterDiscard" ? <DropdownItem action="moveStacks" destGroupId={"sharedEncounterDeck"} position="shuffle" clickCallback={handleDropdownClick}>{l10n("Shuffle into deck")}</DropdownItem> : null}
+          {gameDef?.groups?.[menuGroup.id]?.deckGroupId ? <DropdownItem action="moveStacks" destGroupId={gameDef?.groups?.[menuGroup.id]?.deckGroupId} position="shuffle" clickCallback={handleDropdownClick}>{l10n("Shuffle into deck")}</DropdownItem> : null}
           {menuGroup.id === "sharedEncounterDeck" ? <DropdownItem action="discardUntil" cardType={"Enemy"} clickCallback={handleDropdownClick}>{l10n("Discard until Enemy")}</DropdownItem> : null}
           {menuGroup.id === "sharedEncounterDeck" ? <DropdownItem action="discardUntil" cardType={"Location"} clickCallback={handleDropdownClick}>{l10n("Discard until Location")}</DropdownItem> : null}
           {menuGroup.id === playerN+"Hand" ? <DropdownItem action="makeVisible" clickCallback={handleDropdownClick}>{l10n("Make visible/hidden")}</DropdownItem> : null}
@@ -97,38 +99,20 @@ export const DropdownMenuGroup = React.memo(({
             clickCallback={handleDropdownClick}>
             {l10n("My Deck")}
           </DropdownItem>
-          <DropdownItem
-            rightIcon={<FontAwesomeIcon icon={faChevronRight}/>}
-            goToMenu="moveToEncounter1"
-            clickCallback={handleDropdownClick}>
-            {l10n("Encounter Deck")}
-          </DropdownItem>
-          <DropdownItem
-            rightIcon={<FontAwesomeIcon icon={faChevronRight}/>}
-            goToMenu="moveToEncounter2"
-            clickCallback={handleDropdownClick}>
-            {l10n("Encounter Deck 2")}
-          </DropdownItem>
-          <DropdownItem
-            rightIcon={<FontAwesomeIcon icon={faChevronRight}/>}
-            goToMenu="moveToEncounter3"
-            clickCallback={handleDropdownClick}>
-            {l10n("Encounter Deck 3")}
-          </DropdownItem>
+          {gameDef.moveToGroupIds.map((moveToGroupId, _moveToGroupIndex) => (
+            <DropdownItem
+              rightIcon={<FontAwesomeIcon icon={faChevronRight}/>}
+              goToMenu={"moveTo"+moveToGroupId}
+              clickCallback={handleDropdownClick}>
+              {l10n(gameDef?.groups?.[moveToGroupId]?.name)}
+            </DropdownItem>
+            ))}
         </div>}
         {activeMenu === "moveToMy" &&
         <DropdownMoveTo destGroupId={playerN+"Deck"}/>}
-        {activeMenu === "moveToEncounter1" &&
-        <DropdownMoveTo destGroupId="sharedEncounterDeck"/>}
-        {activeMenu === "moveToEncounter2" &&
-        <DropdownMoveTo destGroupId="sharedEncounterDeck2"/>}
-        {activeMenu === "moveToEncounter3" &&
-        <DropdownMoveTo destGroupId="sharedEncounterDeck3"/>}
-        {/* {activeMenu === "more" &&
-        <div className="menu">
-          <GoBack goToMenu="main" clickCallback={handleDropdownClick}/>
-          <DropdownItem action="dealX" side="B" clickCallback={handleDropdownClick}>{l10n("Deal top X facedown")}</DropdownItem>
-        </div>} */}
+        {gameDef.moveToGroupIds.map((moveToGroupId, _moveToGroupIndex) => (
+          (activeMenu === "moveTo" + moveToGroupId) && <DropdownMoveTo destGroupId={moveToGroupId}/>
+        ))}
     </div>
   );
 })

@@ -46,17 +46,15 @@ export const CardMouseRegion = React.memo(({
     const handleSetDropDownMenu = () => {
         const dropdownMenuObj = {
             type: "card",
-            card: card,
+            cardId: card.id,
             title: displayName,
-            cardIndex: cardIndex,
-            groupId: groupId,
-            groupType: groupType,
             visible: true,
         }
         if (playerN) dispatch(setDropdownMenuObj(dropdownMenuObj));
     }
 
     const handleClick = (event) => {
+        console.log("cardclick", card);
         event.stopPropagation();
         // Open the menu
         if (!touchMode) handleSetDropDownMenu();

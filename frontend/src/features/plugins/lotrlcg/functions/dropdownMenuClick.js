@@ -32,9 +32,9 @@ export const useDropdownClickCard = (dropdownOptions, actionProps) => {
   const menuCard = dropdownMenuObj.card;
   const displayName = getDisplayName(menuCard);
   console.log("dropdownClick")
-  if (dropdownOptions.action === "toggle_exhaust") {
+  if (dropdownOptions.action === "toggle_rotate") {
     console.log("dropdownExhaust", menuCard)
-    cardAction("toggle_exhaust", menuCard?.id, null, actionProps);
+    cardAction("toggle_rotate", menuCard?.id, null, actionProps);
   } else if (dropdownOptions.action === "flip") {
     cardAction("flip", menuCard?.id, null, actionProps);
   } else if (dropdownOptions.action === "detach") {
@@ -133,7 +133,7 @@ export const useDropdownClickCard = (dropdownOptions, actionProps) => {
     }
     gameBroadcast("game_action", {action: "update_values", options: {updates: [["cardById", menuCard.id, "sides", menuCard.currentSide, "triggers", triggers]]}})
     
-  } else if (dropdownOptions.action === "swapWithTop") {
+  } else if (dropdownOptions.action === "swap_with_top") {
     const gsc = getGroupIdStackIndexCardIndex(game, menuCard.id);
     const stackIndex = gsc.stackIndex;
     const deckStackIds = game.groupById[playerN+"Deck"].stackIds;

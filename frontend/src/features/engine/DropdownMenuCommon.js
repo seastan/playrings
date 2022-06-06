@@ -1,7 +1,7 @@
 import React, { useContext, useState } from "react";
 import { useDropdownClickCommon } from "../plugins/lotrlcg/functions/dropdownMenuClick";
-import { DropdownMenuCard } from "../plugins/lotrlcg/components/DropdownMenuCard";
-import { DropdownMenuGroup } from "../plugins/lotrlcg/components/DropdownMenuGroup";
+import { DropdownMenuCard } from "./DropdownMenuCard";
+import { DropdownMenuGroup } from "./DropdownMenuGroup";
 import { DropdownMenuFirstPlayer } from "./DropdownMenuFirstPlayer";
 import { useDispatch, useSelector } from 'react-redux';
 import { calcHeightCommon } from "./DropdownMenuHelpers";
@@ -9,6 +9,8 @@ import "../../css/custom-dropdown.css";
 import { setDropdownMenuObj } from "../store/playerUiSlice";
 import store from "../../store";
 import BroadcastContext from "../../contexts/BroadcastContext";
+import { useGameDefinition } from "./functions/useGameDefinition";
+import { useDoActionList } from "./functions/useDoActionList";
 
 export const DropdownMenuCommon = React.memo(({
   mouseX,
@@ -17,23 +19,24 @@ export const DropdownMenuCommon = React.memo(({
   
   const {gameBroadcast, chatBroadcast} = useContext(BroadcastContext);
   const dispatch = useDispatch();
+  const gameDef = useGameDefinition();
   const dropdownMenuObj = useSelector(state => state?.playerUi?.dropdownMenuObj)
   const [activeMenu, setActiveMenu] = useState('main');
   const [menuHeight, setMenuHeight] = useState(null);
   const dropdownClickCommon = useDropdownClickCommon;
+  const doActionList = useDoActionList();
 
   const calcHeight = (el) => {
     calcHeightCommon(el, setMenuHeight);
   }
 
   const handleDropdownClick = (dropdownOptions) => {
+    console.log("handleDropdownClick", gameDef, dropdownOptions)
     if (dropdownOptions.goToMenu) {
       setActiveMenu(dropdownOptions.goToMenu);
       return;
     }
-    const state = store.getState();
-    const actionProps = {state, dispatch, gameBroadcast, chatBroadcast};
-    dropdownClickCommon(dropdownOptions, actionProps);
+    doActionList(dropdownOptions.action);
     setActiveMenu("main");
     dispatch(setDropdownMenuObj(null));
     setMenuHeight(null);

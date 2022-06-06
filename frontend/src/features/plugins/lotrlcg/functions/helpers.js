@@ -37,9 +37,9 @@ export const getDisplayName = (card) => {
   } else { // Side B logic
       const sideBName = card.sides.B.name;
       if (sideBName === "player") {
-          return 'player card';
+          return sideBName+' card';
       } else if (sideBName === "encounter") {
-          return 'encounter card';
+          return sideBName+' card';
       } else if (sideBName) {
           const printName = currentFace.printName;
           const id = card["id"];

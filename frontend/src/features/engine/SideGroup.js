@@ -53,7 +53,7 @@ export const SideGroup = React.memo(({
         <div className="relative float-left" style={{height: `${100-2*(100/numRows)}%`, width:`${100-middleRowsWidth}%`}}>
           <div className="absolute text-center w-full select-none text-gray-500">
             <div className="mt-1">
-              {l10n(gameDef.groups[sideGroupId].tablename)}
+              {l10n(gameDef.groups[sideGroupId].tableName)}
             </div>
             {(playerN || group.type === "discard") && <FontAwesomeIcon onClick={(event) => handleEyeClick(event)}  className="hover:text-white mr-2" icon={faEye}/>}
             {playerN && <FontAwesomeIcon onClick={(event) => handleBarsClick(event)}  className="hover:text-white mr-2" icon={faBars}/>}
