@@ -67,9 +67,9 @@ export const useEvaluateCondition = () => {
   }
 
   const evaluateCondition = (condition) => {
-    console.log("testcase0", getNestedValue(state, ["_GAME", "cardById"]))
-    console.log("testcase1", getNestedValue(state, ["_GAME", "cardById", "afb7e686715f"]))
-    console.log("testcase2", getNestedValue(state, ["_GAME", "cardById", "afb7e686715f", "inPlay"]))
+    // console.log("testcase0", getNestedValue(state, ["_GAME", "cardById"]))
+    // console.log("testcase1", getNestedValue(state, ["_GAME", "cardById", "afb7e686715f"]))
+    // console.log("testcase2", getNestedValue(state, ["_GAME", "cardById", "afb7e686715f", "inPlay"]))
     console.log("eval",condition)
     if (condition.length === 3) {
       var lhs = condition[0]

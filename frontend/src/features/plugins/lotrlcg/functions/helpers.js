@@ -100,7 +100,7 @@ export const getVisibleFaceSrc = (card, playerN, user) => {
   const language = user?.language || "English";
   if (visibleSide === "A") {
     return {
-      src: "https://dragncards-lotrlcg.s3.us-east-1.amazonaws.com/" + card['cardDbId'] + '.jpg',
+      src: "https://dragncards-lotrlcg.s3.us-east-1.amazonaws.com/cards/English/" + card['cardDbId'] + '.jpg',
       //src: visibleFace.customImgUrl || process.env.PUBLIC_URL + '/images/cards/' + language + '/' + card['cardDbId'] + '.jpg',
       //default: visibleFace.customImgUrl ? "image not found" : process.env.PUBLIC_URL + '/images/cards/English/' + card['cardDbId'] + '.jpg',
     }
@@ -513,6 +513,49 @@ export const processPostLoad = (gameUi, loadList, playerN, gameBroadcast, chatBr
       options: {criteria:[["groupId", "sharedExtra3"], ["stackIndex", 0]], action: "flip_card", options: {}
     }});
   }
+}
+
+export const refinedLoadList = (xmlText,playerN) => {
+  var parseString = require('xml2js').parseString;
+  var loadList = [];
+  parseString(xmlText, function (err, deckJSON) {
+    if (!deckJSON) return;
+    const sections = deckJSON.deck.section;
+
+    var containsPlaytest = false;
+    sections.forEach(section => {
+      const cards = section.card;
+      if (!cards) return;
+      cards.forEach(card => {
+        console.log("loadcard", card)
+        const cardDbId = card['$'].id;
+        var cardRow = cardDb[cardDbId];
+        if (cardRow && cardRow["playtest"]) {
+          containsPlaytest = true;
+        }
+      })
+    })
+
+    sections.forEach(section => {
+      const sectionName = section['$'].name;
+      const cards = section.card;
+      if (!cards) return;
+      cards.forEach(card => {
+        const cardDbId = card['$'].id;
+        const quantity = parseInt(card['$'].qty);
+        var cardRow = cardDb[cardDbId];
+        if (!cardRow) {
+          alert("Encountered unknown card ID for "+card["_"])
+        } else {
+          cardRow['deckgroupid'] = sectionToDeckGroupId(sectionName,playerN);
+          cardRow['discardgroupid'] = sectionToDiscardGroupId(sectionName,playerN);
+          if (cardRow['sides']['A']['keywords'].includes("Encounter")) cardRow['discardgroupid'] = "sharedEncounterDiscard";
+          loadList.push({'uuid': cardDbId, 'quantity': quantity, 'loadGroupId': sectionToLoadGroupId(sectionName,playerN)})
+        }
+      })
+    })
+  })
+  return loadList;
 }
 
 export const loadDeckFromXmlText = (xmlText, playerN, gameBroadcast, chatBroadcast, privacyType) => {

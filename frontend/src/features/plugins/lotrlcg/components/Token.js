@@ -4,6 +4,7 @@ import { tokenPrintName } from "../functions/helpers";
 import { faChevronDown, faChevronUp } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import BroadcastContext from "../../../../contexts/BroadcastContext";
+import { useGameDefinition } from "../../../engine/functions/useGameDefinition";
 
 var delayBroadcast;
 
@@ -11,8 +12,6 @@ export const Token = React.memo(({
     cardId,
     cardName,
     tokenType,
-    left,
-    top,
     showButtons,
     zIndex,
     aspectRatio,
@@ -24,6 +23,9 @@ export const Token = React.memo(({
     const [buttonRightVisible, setButtonRightVisible] = useState(false);
     const [amount, setAmount] = useState(tokenValue);
     const printName = tokenPrintName(tokenType);
+    const gameDef = useGameDefinition();
+    const token = gameDef?.tokens?.[tokenType];
+    if (!token) return;
 
     useEffect(() => {    
         if (tokenValue !== amount) setAmount(tokenValue);
@@ -71,9 +73,11 @@ export const Token = React.memo(({
         <div
             style={{
                 position: "absolute",
-                left: left,
-                top: top,
-                height: `${22*(1-0.6*(0.7-aspectRatio))}%`,
+                left: token.left,
+                top: token.top,
+                height: token.height,
+                width: token.width,
+                //height: `${22*(1-0.6*(0.7-aspectRatio))}%`,
                 zIndex: showButtons ? zIndex + 1 : "",
                 display: showButtons || amount!==0 ? "block" : "none"}}>
             <div
@@ -81,7 +85,7 @@ export const Token = React.memo(({
                 style={{
                     textShadow: "rgb(0, 0, 0) 2px 0px 0px, rgb(0, 0, 0) 1.75517px 0.958851px 0px, rgb(0, 0, 0) 1.0806px 1.68294px 0px, rgb(0, 0, 0) 0.141474px 1.99499px 0px, rgb(0, 0, 0) -0.832294px 1.81859px 0px, rgb(0, 0, 0) -1.60229px 1.19694px 0px, rgb(0, 0, 0) -1.97999px 0.28224px 0px, rgb(0, 0, 0) -1.87291px -0.701566px 0px, rgb(0, 0, 0) -1.30729px -1.51361px 0px, rgb(0, 0, 0) -0.421592px -1.95506px 0px, rgb(0, 0, 0) 0.567324px -1.91785px 0px, rgb(0, 0, 0) 1.41734px -1.41108px 0px, rgb(0, 0, 0) 1.92034px -0.558831px 0px",
                 }}>
-                {(tokenType==="threat" || tokenType==="willpower" || tokenType==="attack" || tokenType==="defense" || tokenType==="hitPoints") && amount>0 ? "+"+amount : amount}
+                {token.modifier && amount>0 ? "+"+amount : amount}
             </div>
 
             <div
@@ -137,7 +141,7 @@ export const Token = React.memo(({
             </div>
             <img 
                 className="block h-full"
-                src={process.env.PUBLIC_URL + '/images/tokens/'+tokenType+'.png'}/>
+                src={token.image_url}/> 
         </div>
     )
 })

@@ -1,4 +1,4 @@
-import React, {useContext, useState} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import { useDispatch, useSelector } from 'react-redux';
 import ReactModal from "react-modal";
 import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
@@ -8,9 +8,10 @@ import { calcHeightCommon, DropdownItem, GoBack } from "../../../engine/Dropdown
 import useProfile from "../../../../hooks/useProfile";
 import { setShowModal, setTooltipIds, setTyping } from "../../../store/playerUiSlice";
 import store from "../../../../store";
-import { loadDeckFromXmlText } from "../functions/helpers";
+import { loadDeckFromXmlText, refinedLoadList } from "../functions/helpers";
 import { useGameL10n } from "../../../../hooks/useGameL10n";
 import BroadcastContext from "../../../../contexts/BroadcastContext";
+import { useGameDefinition } from "../../../engine/functions/useGameDefinition";
 
 function requireAll( requireContext ) {
   return requireContext.keys().map( requireContext );
@@ -28,6 +29,7 @@ const isStringInQuestPath = (str, questPath) => {
 
 export const getQuestNameFromModeAndId = (modeAndId) => {
   const index = getIndexFromModeAndId(modeAndId);
+  if (index < 0) return null;
   const questPath = questsOCTGN[index];
   return getQuestNameFromPath(questPath);
 }
@@ -111,13 +113,69 @@ export const SpawnQuestModal = React.memo(({}) => {
   const {gameBroadcast, chatBroadcast} = useContext(BroadcastContext); 
     const dispatch = useDispatch();
     const l10n = useGameL10n();
+    const gameDef = useGameDefinition();
     const privacyType = useSelector(state => state?.gameUi?.privacyType);
     const options = useSelector(state => state.gameUi?.game?.options);
     const myUser = useProfile();
     const [filteredIndices, setFilteredIndices] = useState([]);
-    const [activeMenu, setActiveMenu] = useState("main");
+    const [activeMenu, setActiveMenu] = useState({"name": "Load a deck", "subMenus": gameDef.deckMenu});
+    const [returnToMenu, setReturnToMenu] = useState(null);
     const [menuHeight, setMenuHeight] = useState(null);
     const [searchString, setSearchString] = useState("");
+    const fullobj = {}
+    const submenus = [];
+    const loadAll = async() => {
+      for (var key of CYCLEORDER) {
+        const subsubmenus = [];
+        for (var i = 1; i<20; i++) {
+          const subsubsubmenus = [];
+          var questname = getQuestNameFromModeAndId('Q'+key+"."+i);
+          if (questname === null) continue;
+          questname = getQuestNameFromModeAndId('E'+key+"."+i)
+          if (questname) subsubsubmenus.push({
+            "nameOverride": "Easy",
+            "deckListId": 'E'+key+"."+i
+          })
+          questname = getQuestNameFromModeAndId('Q'+key+"."+i)
+          if (questname) subsubsubmenus.push({
+            "nameOverride": "Normal",
+            "deckListId": 'Q'+key+"."+i
+          })
+          questname = getQuestNameFromModeAndId('N'+key+"."+i)
+          if (questname) subsubsubmenus.push({
+            "nameOverride": "Nightmare",
+            "deckListId": 'N'+key+"."+i
+          })
+          subsubmenus.push({
+            "name": getQuestNameFromModeAndId('Q'+key+"."+i),
+            "deckLists": subsubsubmenus
+          })
+        }
+        submenus.push(
+          {
+            "name": CYCLEINFO[key].name,
+            "subMenus": subsubmenus
+          }
+        )
+      }
+      console.log("questmenu full", submenus)
+      // for (var questPath of questsOCTGN) {
+      //   const modeAndId = getModeLetterQuestIdFromPath(questPath);
+      //   const res = await fetch(questPath);
+      //   const xmlText = await res.text();      
+      //   const playerN = store.getState()?.playerUi?.playerN;
+      //   const rll = refinedLoadList(xmlText,playerN);
+      //   console.log("rll part", modeAndId, rll)
+      //   fullobj[modeAndId] = {
+      //     "name": getQuestNameFromPath(questPath),
+      //     "cards": rll
+      //   }
+      // }
+      // console.log("rll full", fullobj)
+    }
+    useEffect(() => {
+      loadAll();
+    }, [])
 
     const loadQuest = async(index) => {
       const questPath = questsOCTGN[index];
@@ -151,9 +209,21 @@ export const SpawnQuestModal = React.memo(({}) => {
       }
     }
 
-    const handleDropdownClick = (props) => {
-      if (props.goToMenu) setActiveMenu(props.goToMenu);
-      else if (props.questIndex !== null) loadQuest(props.questIndex)
+    const handleSubMenuClick = (props) => {
+      const newMenu = {
+        ...props.goToMenu,
+        goBackMenu: activeMenu,
+      }
+      setActiveMenu(newMenu);
+    }
+    const handleGoBackClick = () => {
+      setActiveMenu(activeMenu.goBackMenu);
+    }
+    const handleDeckListClick = (props) => {
+      const loadList = gameDef.deckLists[props.deckListId].cards;
+      //gameBroadcast("game_action", {action: "load_cards", options: {load_list: loadList}});
+      chatBroadcast("game_update",{message: "loaded a deck."});
+      dispatch(setShowModal(null))
     }
 
     const calcHeight = (el) => {
@@ -165,7 +235,7 @@ export const SpawnQuestModal = React.memo(({}) => {
         closeTimeoutMS={200}
         isOpen={true}
         onRequestClose={() => dispatch(setShowModal(null))}
-        contentLabel="Load quest"
+        contentLabel={"Load quest"}
         overlayClassName="fixed inset-0 bg-black-50 z-10000"
         className="insert-auto p-5 bg-gray-700 border max-h-lg mx-auto my-2 rounded-lg outline-none"
         style={{
@@ -220,27 +290,51 @@ export const SpawnQuestModal = React.memo(({}) => {
           style={{ height: menuHeight}}
           >
           {/* Cycle Menu */}
-          {activeMenu === "main" &&
-            <div className="menu">
-              {CYCLEORDER.map((cycleId, index) => {
-                if (cycleId === "PT" && (!myUser.playtester || privacyType === "public")) return null;
-                else return(
-                  <DropdownItem
-                    rightIcon={<FontAwesomeIcon icon={faChevronRight}/>}
-                    goToMenu={cycleId}
-                    clickCallback={handleDropdownClick}>
-                    {l10n(CYCLEINFO[cycleId].name)}
-                  </DropdownItem>
-                )
-              })}
-            </div>
-          }
+          <div className="menu">
+            {activeMenu.goBackMenu ?
+              <GoBack clickCallback={handleGoBackClick}/> 
+              : null
+            }
+            {activeMenu.subMenus?.map((subMenuOption, index) => {
+              return(
+                <DropdownItem
+                  rightIcon={<FontAwesomeIcon icon={faChevronRight}/>}
+                  goToMenu={subMenuOption}
+                  clickCallback={handleSubMenuClick}>
+                  {l10n(subMenuOption.name)}
+                </DropdownItem>
+              )
+            })}
+            {activeMenu.deckLists?.map((deckListOption, index) => {
+              return(
+                <DropdownItem
+                  returnToMenu={activeMenu}
+                  deckListId={deckListOption.deckListId}
+                  clickCallback={handleDeckListClick}>
+                  {l10n(deckListOption.nameOverride || gameDef.deckLists?.[deckListOption.deckListId]?.name)}
+                </DropdownItem>
+              )
+            })}
+            {/* {CYCLEORDER.map((cycleId, index) => {
+              if (cycleId === "PT" && (!myUser.playtester || privacyType === "public")) return null;
+              else return(
+                <DropdownItem
+                  rightIcon={<FontAwesomeIcon icon={faChevronRight}/>}
+                  goToMenu={cycleId}
+                  clickCallback={handleDropdownClick}>
+                  {l10n(CYCLEINFO[cycleId].name)}
+                </DropdownItem>
+              )
+            })} */}
+          </div>
+
+
           {/* Quest Menu */}
           {CYCLEORDER.map((cycleId, index) => {
             return(<>
               {activeMenu === cycleId &&
                 <div className="menu">
-                  <GoBack goToMenu="main" clickCallback={handleDropdownClick}/>
+                  <GoBack goToMenu="main" clickCallback={handleSubMenuClick}/>
                   {questsOCTGN.map((questPath, index) => {
                     const modeLetter = getModeLetterFromPath(questPath);
                     if (cycleId === "PT" && questPath.toLowerCase().includes("playtest") && modeLetter !== "E" && privacyType !== "public") {
@@ -250,7 +344,7 @@ export const SpawnQuestModal = React.memo(({}) => {
                       if (selectedIndex >= 0) return(
                         <DropdownItem
                           questIndex={selectedIndex}
-                          clickCallback={handleDropdownClick}>
+                          clickCallback={handleSubMenuClick}>
                           {l10n(getQuestNameFromPath(questPath))}
                         </DropdownItem>
                       )
@@ -259,7 +353,7 @@ export const SpawnQuestModal = React.memo(({}) => {
                         <DropdownItem
                           rightIcon={<FontAwesomeIcon icon={faChevronRight}/>}
                           goToMenu={getQuestIdFromPath(questPath)}
-                          clickCallback={handleDropdownClick}>
+                          clickCallback={handleSubMenuClick}>
                           {l10n(getQuestNameFromPath(questPath))}
                         </DropdownItem>
                       )
@@ -277,7 +371,7 @@ export const SpawnQuestModal = React.memo(({}) => {
             if (modeLetter === "Q") return(<>
               {activeMenu === questId &&
                 <div className="menu">
-                  <GoBack goToMenu={cycleId} clickCallback={handleDropdownClick}/>
+                  <GoBack goToMenu={cycleId} clickCallback={handleSubMenuClick}/>
                   {["E","Q","N"].map((modeLetter, letterIndex) => {
                     const selectedIndex = getIndexFromModeAndId(modeLetter+questId);
                     if (selectedIndex >= 0) {
@@ -286,7 +380,7 @@ export const SpawnQuestModal = React.memo(({}) => {
                       else return(
                         <DropdownItem
                           questIndex={selectedIndex}
-                          clickCallback={handleDropdownClick}>
+                          clickCallback={handleSubMenuClick}>
                           {l10n(getModeNameFromPath(selectedPath))}
                         </DropdownItem>
                       )

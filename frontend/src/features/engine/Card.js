@@ -148,6 +148,7 @@ export const Card = React.memo(({
                 <Tokens
                     cardName={currentFace.name}
                     cardId={card.id}
+                    cardType={visibleFace.type}
                     usesThreatToken={usesThreatToken(card)}
                     isActive={isActive}
                     zIndex={zIndex}
