@@ -15,14 +15,15 @@ defmodule DragnCardsGame.Card do
     end
   end
 
-  @spec card_from_cardrow(Map.t(), String.t()) :: Map.t()
-  def card_from_cardrow(card_row, controller) do
-    %{
-      "id" => String.slice(Ecto.UUID.generate,24..-1),
-      "rotation" => 0,
-      "exhausted" => false,
-      "committed" => false,
+  @spec card_from_card_details(Map.t(), Map.t(), String.t()) :: Map.t()
+  def card_from_card_details(card_details, game_def, group_id) do
+    group = game_def["groups"][group_id]
+    controller = group["controller"]
+    base = %{
+      "id" => Ecto.UUID.generate,
+      "cardDbId" => card_details["cardid"],
       "currentSide" => "A",
+      "rotation" => 0,
       "owner" => controller,
       "controller" => controller,
       "peeking" => %{
@@ -41,24 +42,18 @@ defmodule DragnCardsGame.Card do
       "tokensPerRound" => %{},
       "roundEnteredPlay" => nil,
       "phaseEnteredPlay" => nil,
-      "locked" => false,
       "inPlay" => false,
-      "cardBackOverride" => card_row["cardbackoverride"],
-      "cardEncounterSet" => card_row["cardencounterset"],
-      "cardDbId" => card_row["cardid"],
-      "cardNumber" => convert_to_integer(card_row["cardnumber"]),
-      "cardQuantity" => convert_to_integer(card_row["cardquantity"]),
-      "cardSetId" => card_row["cardsetid"],
-      "cardPackName" => card_row["cardpackname"],
 
-      "deckGroupId" => card_row["deckgroupid"],
-      "discardGroupId" => card_row["discardgroupid"],
+      "deckGroupId" => group["deckGroupId"],
+      "discardGroupId" => group["discardGroupId"],
 
       "sides"=> %{
-        "A"=>CardFace.cardface_from_cardrowside(card_row["sides"]["A"]),
-        "B"=>CardFace.cardface_from_cardrowside(card_row["sides"]["B"]),
+        "A"=>CardFace.card_face_from_card_face_details(card_details["A"], game_def),
+        "B"=>CardFace.card_face_from_card_face_details(card_details["B"], game_def),
       }
     }
+    card = Enum.reduce(game_def["cardProperties"], base, fn({key,val}, acc) ->
+      put_in(acc[key], val["default"])
+    end)
   end
-
 end

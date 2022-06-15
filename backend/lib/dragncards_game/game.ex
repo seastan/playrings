@@ -40,9 +40,8 @@
     default_layout = Enum.at(game_def["layoutMenu"],0)
     %{
       "id" => Ecto.UUID.generate,
-      "pluginId" => options["pluginId"],
+      "pluginUuid" => options["pluginUuid"],
       "pluginVersion" => options["pluginVersion"],
-      "version" => 0.1,
       "numPlayers" => 1,
       #"questModeAndId" => nil,
       "encounterName" => "Unspecified",

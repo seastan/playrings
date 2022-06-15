@@ -41,4 +41,10 @@ defmodule DragnCards.Plugin do
     plugin = get_by_uuid_and_version(plugin_uuid, version)
     plugin.game_def
   end
+
+  def get_card_db_by_uuid_and_version(plugin_uuid, version) do
+    plugin = get_by_uuid_and_version(plugin_uuid, version)
+    plugin.card_db
+  end
+
 end

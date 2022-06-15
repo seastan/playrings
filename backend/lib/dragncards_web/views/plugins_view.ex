@@ -17,6 +17,12 @@ defmodule DragnCardsWeb.PluginsView do
     end)}
     #%{data: render_many(plugins, PluginsView, "plugin.json")} # This wasn't working for some reason
   end
+  def render("single.json", %{plugin: plugin}) do
+    IO.puts("here p")
+    IO.inspect(plugin)
+    plugin
+    #%{data: render_many(plugins, PluginsView, "plugin.json")} # This wasn't working for some reason
+  end
 
 #  def render("show.json", %{plugin: plugin}) do
 #    %{data: render_one(plugin, PluginsView, "plugin.json")}

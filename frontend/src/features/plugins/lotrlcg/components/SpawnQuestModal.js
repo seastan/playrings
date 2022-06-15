@@ -12,6 +12,7 @@ import { loadDeckFromXmlText, refinedLoadList } from "../functions/helpers";
 import { useGameL10n } from "../../../../hooks/useGameL10n";
 import BroadcastContext from "../../../../contexts/BroadcastContext";
 import { useGameDefinition } from "../../../engine/functions/useGameDefinition";
+import { useLoadList } from "../../../engine/functions/useLoadList";
 
 function requireAll( requireContext ) {
   return requireContext.keys().map( requireContext );
@@ -122,6 +123,7 @@ export const SpawnQuestModal = React.memo(({}) => {
     const [returnToMenu, setReturnToMenu] = useState(null);
     const [menuHeight, setMenuHeight] = useState(null);
     const [searchString, setSearchString] = useState("");
+    const loadList = useLoadList();
     const fullobj = {}
     const submenus = [];
     const loadAll = async() => {
@@ -220,8 +222,7 @@ export const SpawnQuestModal = React.memo(({}) => {
       setActiveMenu(activeMenu.goBackMenu);
     }
     const handleDeckListClick = (props) => {
-      const loadList = gameDef.deckLists[props.deckListId].cards;
-      //gameBroadcast("game_action", {action: "load_cards", options: {load_list: loadList}});
+      loadList(gameDef.deckLists[props.deckListId].cards);
       chatBroadcast("game_update",{message: "loaded a deck."});
       dispatch(setShowModal(null))
     }

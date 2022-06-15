@@ -70,35 +70,11 @@ defmodule DragnCardsGame.CardFace do
     steps
   end
 
-  @spec cardface_from_cardrowside(Map.t()) :: Map.t()
-  def cardface_from_cardrowside(card_row_side) do
-    type = card_row_side["type"]
-    width = if(type=="Quest" || type=="Side Quest", do: 1.39, else: 1.0)
-    height = if(type=="Quest" || type=="Side Quest", do: 1.0, else: 1.39)
-    %{
-      "width"=> width,
-      "height"=> height,
-      "attack" => convert_to_integer(card_row_side["attack"]) || 0,
-      "cost" => convert_to_integer(card_row_side["cost"]) || 0,
-      "defense" => convert_to_integer(card_row_side["defense"]) || 0,
-      "engagementCost" => convert_to_integer(card_row_side["engagementcost"]) || 0,
-      "hitPoints" => convert_to_integer(card_row_side["hitpoints"]) || 0,
-      "keywords" => card_row_side["keywords"] || "",
-      "name" => card_row_side["name"],
-      "printName" => card_row_side["printname"],
-      "questPoints" => convert_to_integer(card_row_side["questpoints"]) || 0,
-      "shadow" => card_row_side["shadow"] || "",
-      "sphere" => card_row_side["sphere"] || "",
-      "text" => card_row_side["text"] || "",
-      "threat" => convert_to_integer(card_row_side["threat"]),
-      "traits" => card_row_side["traits"],
-      "type" => card_row_side["type"] || "Hero",
-      "unique" => card_row_side["unique"] || false,
-      "victoryPoints" => convert_to_integer(card_row_side["victorypoints"]),
-      "cornerText" => card_row_side["victorypoints"],
-      "willpower" => convert_to_integer(card_row_side["willpower"]) || 0,
-      "triggers" => trigger_steps_from_text(card_row_side["keywords"], card_row_side["text"]) || [],
-      "customImgUrl" => card_row_side["customimgurl"],
-    }
+  @spec card_face_from_card_face_details(Map.t(), Map.t()) :: Map.t()
+  def card_face_from_card_face_details(card_face_details, game_def) do
+    type = card_face_details["type"]
+    card_face = card_face_details
+    |> Map.put("width",game_def["cardTypes"][type]["width"])
+    |> Map.put("height",game_def["cardTypes"][type]["height"])
   end
 end

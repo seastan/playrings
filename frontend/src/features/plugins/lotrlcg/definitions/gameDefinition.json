@@ -29,25 +29,25 @@
     }
   },
   "cardTypes": {
-    "Ally":           {"tokens": ["resource","progress","damage","time","willpower","attack","defense","hitPoints"]},
-    "Attachment":     {"tokens": ["resource","progress","damage","time","willpower","attack","defense","hitPoints"]},
-    "Event":          {"tokens": ["resource","progress","damage","time","willpower","attack","defense","hitPoints"]},
-    "Hero":           {"tokens": ["resource","progress","damage","time","willpower","attack","defense","hitPoints"]},
-    "Contract":       {"tokens": ["resource","progress","damage","time","willpower","attack","defense","hitPoints"]},
-    "Objective Ally": {"tokens": ["resource","progress","damage","time","willpower","attack","defense","hitPoints"]},
-    "Treachery":      {"tokens": ["resource","progress","damage","time","threat","attack","defense","hitPoints"]},
-    "Campaign":       {"tokens": ["resource","progress","damage","time","threat","attack","defense","hitPoints"]},
-    "Enemy":          {"tokens": ["resource","progress","damage","time","threat","attack","defense","hitPoints"]},
-    "Location":       {"tokens": ["resource","progress","damage","time","threat","attack","defense","hitPoints"]},
-    "Nightmare":      {"tokens": ["resource","progress","damage","time","threat","attack","defense","hitPoints"]},
-    "Objective":      {"tokens": ["resource","progress","damage","time","threat","attack","defense","hitPoints"]},
-    "Presentation":   {"tokens": ["resource","progress","damage","time","threat","attack","defense","hitPoints"]},
-    "Quest":          {"tokens": ["resource","progress","damage","time","threat","attack","defense","hitPoints"]},
-    "Rules":          {"tokens": ["resource","progress","damage","time","threat","attack","defense","hitPoints"]},
-    "Ship-Enemy":     {"tokens": ["resource","progress","damage","time","threat","attack","defense","hitPoints"]},
-    "Side Quest":     {"tokens": ["resource","progress","damage","time","threat","attack","defense","hitPoints"]},
-    "Treasure":       {"tokens": ["resource","progress","damage","time","threat","attack","defense","hitPoints"]},
-    "_Other":         {"tokens": ["resource","progress","damage","time","threat","attack","defense","hitPoints"]}
+    "Ally":           {"width": 1.0, "height": 1.39, "tokens": ["resource","progress","damage","time","willpower","attack","defense","hitPoints"]},
+    "Attachment":     {"width": 1.0, "height": 1.39, "tokens": ["resource","progress","damage","time","willpower","attack","defense","hitPoints"]},
+    "Event":          {"width": 1.0, "height": 1.39, "tokens": ["resource","progress","damage","time","willpower","attack","defense","hitPoints"]},
+    "Hero":           {"width": 1.0, "height": 1.39, "tokens": ["resource","progress","damage","time","willpower","attack","defense","hitPoints"]},
+    "Contract":       {"width": 1.0, "height": 1.39, "tokens": ["resource","progress","damage","time","willpower","attack","defense","hitPoints"]},
+    "Objective Ally": {"width": 1.0, "height": 1.39, "tokens": ["resource","progress","damage","time","willpower","attack","defense","hitPoints"]},
+    "Treachery":      {"width": 1.0, "height": 1.39, "tokens": ["resource","progress","damage","time","threat","attack","defense","hitPoints"]},
+    "Campaign":       {"width": 1.0, "height": 1.39, "tokens": ["resource","progress","damage","time","threat","attack","defense","hitPoints"]},
+    "Enemy":          {"width": 1.0, "height": 1.39, "tokens": ["resource","progress","damage","time","threat","attack","defense","hitPoints"]},
+    "Location":       {"width": 1.0, "height": 1.39, "tokens": ["resource","progress","damage","time","threat","attack","defense","hitPoints"]},
+    "Nightmare":      {"width": 1.0, "height": 1.39, "tokens": ["resource","progress","damage","time","threat","attack","defense","hitPoints"]},
+    "Objective":      {"width": 1.0, "height": 1.39, "tokens": ["resource","progress","damage","time","threat","attack","defense","hitPoints"]},
+    "Presentation":   {"width": 1.0, "height": 1.39, "tokens": ["resource","progress","damage","time","threat","attack","defense","hitPoints"]},
+    "Quest":          {"width": 1.39, "height": 1.0, "tokens": ["resource","progress","damage","time","threat","attack","defense","hitPoints"]},
+    "Rules":          {"width": 1.0, "height": 1.39, "tokens": ["resource","progress","damage","time","threat","attack","defense","hitPoints"]},
+    "Ship-Enemy":     {"width": 1.0, "height": 1.39, "tokens": ["resource","progress","damage","time","threat","attack","defense","hitPoints"]},
+    "Side Quest":     {"width": 1.39, "height": 1.0, "tokens": ["resource","progress","damage","time","threat","attack","defense","hitPoints"]},
+    "Treasure":       {"width": 1.0, "height": 1.39, "tokens": ["resource","progress","damage","time","threat","attack","defense","hitPoints"]},
+    "_Other":         {"width": 1.0, "height": 1.39, "tokens": ["resource","progress","damage","time","threat","attack","defense","hitPoints"]}
   },
   "cardBacks": {
     "encounter": "https://dragncards-lotrlcg.s3.amazonaws.com/cardbacks/encounter.jpg",
@@ -53619,6 +53619,7 @@
       "defaultPeeking": [],
       "inPlay": false,
       "canHaveAttachments": false,
+      "deckGroupId": "sharedEncounterDeck",
       "discardGroupId": "sharedEncounterDiscard"
     },
     "sharedEncounterDiscard": {
@@ -53630,7 +53631,8 @@
       "defaultPeeking": [],
       "inPlay": false,
       "canHaveAttachments": false,
-      "deckGroupId": "sharedEncounterDeck"
+      "deckGroupId": "sharedEncounterDeck",
+      "discardGroupId": "sharedEncounterDiscard"
     },
     "sharedQuestDeck": {
       "name": "Quest Deck",
@@ -53641,6 +53643,7 @@
       "defaultPeeking": [],
       "inPlay": false,
       "canHaveAttachments": false,
+      "deckGroupId": "sharedQuestDeck",
       "discardGroupId": "sharedQuestDiscard"
     },
     "sharedQuestDiscard": {
@@ -53652,7 +53655,8 @@
       "defaultPeeking": [],
       "inPlay": false,
       "canHaveAttachments": false,
-      "deckGroupId": "sharedQuestDeck"
+      "deckGroupId": "sharedQuestDeck",
+      "discardGroupId": "sharedQuestDiscard"
     },
     "sharedQuestDeck2": {
       "name": "Second Quest Deck", 
@@ -53663,6 +53667,7 @@
       "defaultPeeking": [],
       "inPlay": false,
       "canHaveAttachments": false,
+      "deckGroupId": "sharedQuestDeck2",
       "discardGroupId": "sharedQuestDiscard2"
     },
     "sharedQuestDiscard2": {
@@ -53674,7 +53679,8 @@
       "defaultPeeking": [],
       "inPlay": false,
       "canHaveAttachments": false,
-      "deckGroupId": "sharedQuestDeck2"
+      "deckGroupId": "sharedQuestDeck2",
+      "discardGroupId": "sharedQuestDiscard2"
     },
     "sharedEncounterDeck2": {
       "name": "Second Encounter Deck", 
@@ -53685,6 +53691,7 @@
       "defaultPeeking": [],
       "inPlay": false,
       "canHaveAttachments": false,
+      "deckGroupId": "sharedEncounterDeck2",
       "discardGroupId": "sharedEncounterDiscard2"
     },
     "sharedEncounterDiscard2": {
@@ -53696,7 +53703,8 @@
       "defaultPeeking": [],
       "inPlay": false,
       "canHaveAttachments": false,
-      "deckGroupId": "sharedEncounterDeck2"
+      "deckGroupId": "sharedEncounterDeck2",
+      "discardGroupId": "sharedEncounterDiscard2"
     },
     "sharedEncounterDeck3": {
       "name": "Third Encounter Deck", 
@@ -53707,6 +53715,7 @@
       "defaultPeeking": [],
       "inPlay": false,
       "canHaveAttachments": false,
+      "deckGroupId": "sharedEncounterDeck2",
       "discardGroupId": "sharedEncounterDiscard2"
     },
     "sharedEncounterDiscard3": {
@@ -53718,7 +53727,8 @@
       "defaultPeeking": [],
       "inPlay": false,
       "canHaveAttachments": false,
-      "deckGroupId": "sharedEncounterDeck2"
+      "deckGroupId": "sharedEncounterDeck2",
+      "discardGroupId": "sharedEncounterDiscard2"
     },
     "sharedOther": {
       "name": "Other", 
@@ -53729,6 +53739,7 @@
       "defaultPeeking": [],
       "inPlay": false,
       "canHaveAttachments": false,
+      "discardDeckId": "sharedEncounterDeck",
       "discardGroupId": "sharedEncounterDiscard"
     },
     "sharedSetAside": {
@@ -53740,6 +53751,7 @@
       "defaultPeeking": [],
       "inPlay": false,
       "canHaveAttachments": false,
+      "discardDeckId": "sharedEncounterDeck",
       "discardGroupId": "sharedEncounterDiscard"
     },
     "sharedVictory": {
@@ -53817,7 +53829,9 @@
       "defaultSideUp": "B",
       "defaultPeeking": ["player1"],
       "inPlay": false,
-      "canHaveAttachments": false
+      "canHaveAttachments": false,
+      "deckGroupId": "player1Deck",
+      "discardGroupId": "player1Discard"
     },
     "player1Deck": {
       "name": "Player 1 Deck", 
@@ -53828,6 +53842,7 @@
       "defaultPeeking": [],
       "inPlay": false,
       "canHaveAttachments": false,
+      "deckGroupId": "player1Deck",
       "discardGroupId": "player1Discard"
     },
     "player1Discard": {
@@ -53838,7 +53853,9 @@
       "defaultSideUp": "A",
       "defaultPeeking": [],
       "inPlay": false,
-      "canHaveAttachments": false
+      "canHaveAttachments": false,
+      "deckGroupId": "player1Deck",
+      "discardGroupId": "player1Discard"
     },
     "player1Sideboard": {
       "name": "Player 1 Sideboard", 
@@ -53849,6 +53866,7 @@
       "defaultPeeking": [],
       "inPlay": false,
       "canHaveAttachments": false,
+      "deckGroupId": "player1Deck",
       "discardGroupId": "player1Discard"
     },
     "player1Deck2": {
@@ -53860,6 +53878,7 @@
       "defaultPeeking": [],
       "inPlay": false,
       "canHaveAttachments": false,
+      "deckGroupId": "player1Deck2",
       "discardGroupId": "player1Discard"
     },
     "player1Play1": {
@@ -53931,7 +53950,9 @@
       "defaultSideUp": "B",
       "defaultPeeking": ["player2"],
       "inPlay": false,
-      "canHaveAttachments": false
+      "canHaveAttachments": false,
+      "deckGroupId": "player2Deck",
+      "discardGroupId": "player2Discard"
     },
     "player2Deck": {
       "name": "Player 2 Deck", 
@@ -53942,6 +53963,7 @@
       "defaultPeeking": [],
       "inPlay": false,
       "canHaveAttachments": false,
+      "deckGroupId": "player2Deck",
       "discardGroupId": "player2Discard"
     },
     "player2Discard": {
@@ -53952,7 +53974,9 @@
       "defaultSideUp": "A",
       "defaultPeeking": [],
       "inPlay": false,
-      "canHaveAttachments": false
+      "canHaveAttachments": false,
+      "deckGroupId": "player2Deck",
+      "discardGroupId": "player2Discard"
     },
     "player2Sideboard": {
       "name": "Player 2 Sideboard", 
@@ -53963,6 +53987,7 @@
       "defaultPeeking": [],
       "inPlay": false,
       "canHaveAttachments": false,
+      "deckGroupId": "player2Deck",
       "discardGroupId": "player2Discard"
     },
     "player2Deck2": {
@@ -53974,6 +53999,7 @@
       "defaultPeeking": [],
       "inPlay": false,
       "canHaveAttachments": false,
+      "deckGroupId": "player2Deck2",
       "discardGroupId": "player2Discard"
     },
     "player2Play1": {
@@ -54045,7 +54071,9 @@
       "defaultSideUp": "B",
       "defaultPeeking": ["player3"],
       "inPlay": false,
-      "canHaveAttachments": false
+      "canHaveAttachments": false,
+      "deckGroupId": "player3Deck",
+      "discardGroupId": "player3Discard"
     },
     "player3Deck": {
       "name": "Player 3 Deck", 
@@ -54056,6 +54084,7 @@
       "defaultPeeking": [],
       "inPlay": false,
       "canHaveAttachments": false,
+      "deckGroupId": "player3Deck",
       "discardGroupId": "player3Discard"
     },
     "player3Discard": {
@@ -54066,7 +54095,9 @@
       "defaultSideUp": "A",
       "defaultPeeking": [],
       "inPlay": false,
-      "canHaveAttachments": false
+      "canHaveAttachments": false,
+      "deckGroupId": "player3Deck",
+      "discardGroupId": "player3Discard"
     },
     "player3Sideboard": {
       "name": "Player 3 Sideboard", 
@@ -54077,6 +54108,7 @@
       "defaultPeeking": [],
       "inPlay": false,
       "canHaveAttachments": false,
+      "deckGroupId": "player3Deck",
       "discardGroupId": "player3Discard"
     },
     "player3Deck2": {
@@ -54088,6 +54120,7 @@
       "defaultPeeking": [],
       "inPlay": false,
       "canHaveAttachments": false,
+      "deckGroupId": "player3Deck2",
       "discardGroupId": "player3Discard"
     },
     "player3Play1": {
@@ -54159,7 +54192,9 @@
       "defaultSideUp": "B",
       "defaultPeeking": ["player4"],
       "inPlay": false,
-      "canHaveAttachments": false
+      "canHaveAttachments": false,
+      "deckGroupId": "player4Deck",
+      "discardGroupId": "player4Discard"
     },
     "player4Deck": {
       "name": "Player 4 Deck", 
@@ -54170,6 +54205,7 @@
       "defaultPeeking": [],
       "inPlay": false,
       "canHaveAttachments": false,
+      "deckGroupId": "player4Deck",
       "discardGroupId": "player4Discard"
     },
     "player4Discard": {
@@ -54180,7 +54216,9 @@
       "defaultSideUp": "A",
       "defaultPeeking": [],
       "inPlay": false,
-      "canHaveAttachments": false
+      "canHaveAttachments": false,
+      "deckGroupId": "player4Deck",
+      "discardGroupId": "player4Discard"
     },
     "player4Sideboard": {
       "name": "Player 4 Sideboard", 
@@ -54191,6 +54229,7 @@
       "defaultPeeking": [],
       "inPlay": false,
       "canHaveAttachments": false,
+      "deckGroupId": "player4Deck",
       "discardGroupId": "player4Discard"
     },
     "player4Deck2": {
@@ -54202,6 +54241,7 @@
       "defaultPeeking": [],
       "inPlay": false,
       "canHaveAttachments": false,
+      "deckGroupId": "player4Deck2",
       "discardGroupId": "player4Discard"
     },
     "player4Play1": {
