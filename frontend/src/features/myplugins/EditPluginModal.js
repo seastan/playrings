@@ -197,9 +197,9 @@ export const EditPluginModal = ({ isOpen, closeModal, shareReplayId}) => {
   const processArrayOfRows = (arrayOfRows) => {
     const header0 = arrayOfRows[0][0];
     if (!header0.includes("uuid")) throw new Error("Missing uuid column.")
-    if (!header0.includes("deckbuilder_quantity")) throw new Error("Missing deckbuilder_quantity column.")
-    if (!header0.includes("image_url")) throw new Error("Missing image_url column.")
-    if (!header0.includes("card_back")) throw new Error("Missing card_back column.")
+    if (!header0.includes("deckbuilderQuantity")) throw new Error("Missing deckbuilderQuantity column.")
+    if (!header0.includes("imageUrl")) throw new Error("Missing imageUrl column.")
+    if (!header0.includes("cardBack")) throw new Error("Missing cardBack column.")
     const header0Str = JSON.stringify(header0);
     const cardDb = {};
     for (var rows of arrayOfRows) {
@@ -209,15 +209,15 @@ export const EditPluginModal = ({ isOpen, closeModal, shareReplayId}) => {
         const row = rows[i];
         const faceA = row;
         var faceB = {};
-        if (faceA.card_back === "double_sided") {
+        if (faceA.cardBack === "double_sided") {
           faceB = rows[i+1];
           i += 1;
         } else {
           for (var key of header0) {
             faceB[key] = null;
           }
-          faceB["name"] = faceA.card_back;
-          if (!inputs?.gameDef?.cardBacks || !Object.keys(inputs.gameDef.cardBacks).includes(faceB["name"])) throw new Error(`card_back for ${faceA.name} not found in gameDef.cardBacks`)
+          faceB["name"] = faceA.cardBack;
+          if (!inputs?.gameDef?.cardBacks || !Object.keys(inputs.gameDef.cardBacks).includes(faceB["name"])) throw new Error(`cardBack for ${faceA.name} not found in gameDef.cardBacks`)
         }
         cardDb[faceA.uuid] = {
           "A": faceA,

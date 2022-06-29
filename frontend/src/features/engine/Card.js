@@ -11,6 +11,7 @@ import { Target } from "./Target";
 import { AbilityToken } from "./AbilityToken";
 import { setActiveCardObj } from "../store/playerUiSlice";
 import { useCardSize } from "../../hooks/useCardSize";
+import { useGameDefinition } from "./functions/useGameDefinition";
 
 function useTraceUpdate(props) {
     const prev = useRef(props);
@@ -48,6 +49,7 @@ export const Card = React.memo(({
     // });
     const dispatch = useDispatch();
     const user = useProfile();
+    const gameDef = useGameDefinition();
     const card = useSelector(state => state?.gameUi?.game?.cardById[cardId]);
     const playerN = useSelector(state => state?.playerUi?.playerN);
     const cardSize = useCardSize();
@@ -55,7 +57,7 @@ export const Card = React.memo(({
     if (!card) return;
     const currentFace = getCurrentFace(card);
     const visibleFace = getVisibleFace(card, playerN);
-    const visibleFaceSrc = getVisibleFaceSrc(card, playerN, user);
+    const visibleFaceSrc = getVisibleFaceSrc(card, playerN, user, gameDef);
     const zIndex = 1000 - cardIndex;
     console.log('Rendering Card ',visibleFace.name);
     const isActive = useSelector(state => {return state?.playerUi?.activeCardObj?.card?.id === cardId});

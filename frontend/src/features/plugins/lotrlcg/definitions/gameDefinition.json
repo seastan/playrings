@@ -1,5 +1,5 @@
 {
-  "pluginName": "LotR LCG 2",
+  "pluginName": "LotR LCG 3",
   "minPlayers": 1,
   "maxPlayers": 4,
   "players": ["player1", "player2", "player3", "player4"],
@@ -51618,7 +51618,402 @@
             "loadGroupId": "sharedStaging"
           }
         ]
-      }
+    },
+    "CCH.1": {
+      "name": "The Hobbit",
+      "cards": [
+        {
+          "uuid": "51223bd0-ffd1-11df-a976-1801204c9075",
+          "quantity": 1,
+          "loadGroupId": "sharedSetAside"
+        },
+        {
+          "uuid": "51223bd0-ffd1-11df-a976-1801204c9064",
+          "quantity": 1,
+          "loadGroupId": "sharedSetAside"
+        },
+        {
+          "uuid": "51223bd0-ffd1-11df-a976-1801204c9037",
+          "quantity": 1,
+          "loadGroupId": "sharedSetAside"
+        },
+        {
+          "uuid": "9dd6bf3e-e090-4ebf-a056-765c94e8a199",
+          "quantity": 1,
+          "loadGroupId": "sharedSetAside"
+        },
+        {
+          "uuid": "ae774680-c6e9-49eb-96b8-fcdebe90b49d",
+          "quantity": 1,
+          "loadGroupId": "sharedSetAside"
+        },
+        {
+          "uuid": "12d51424-0edd-4977-9df1-5f6a7a5a96e1",
+          "quantity": 1,
+          "loadGroupId": "sharedSetAside"
+        },
+        {
+          "uuid": "857d6dc8-ba1e-4839-8e96-a8a0136a2302",
+          "quantity": 1,
+          "loadGroupId": "sharedSetAside"
+        },
+        {
+          "uuid": "7adc49c0-640d-4934-89c5-312ab584b77c",
+          "quantity": 1,
+          "loadGroupId": "sharedSetAside"
+        },
+        {
+          "uuid": "ff7b0b9d-f8ae-4464-9db3-7205c5ae4db7",
+          "quantity": 1,
+          "loadGroupId": "sharedSetAside"
+        }
+      ]
+    },
+    "CCL.1": {
+      "name": "The Lord of the Rings",
+      "cards": [
+        {   
+          "uuid": "d0ed393c-162a-4715-bed4-e338c24e9e36",
+          "quantity": 1,
+          "loadGroupId": "sharedSetAside"
+        },
+        {   
+          "uuid": "6c04a40a-0666-4b4f-a768-ddff46857cf0",
+          "quantity": 1,
+          "loadGroupId": "sharedSetAside"
+        },
+        {   
+          "uuid": "d95a6076-3ead-4ff6-a1ba-ca320d2bd4e1",
+          "quantity": 1,
+          "loadGroupId": "sharedSetAside"
+        },
+        {   
+          "uuid": "1c5f4854-c10c-430b-9c40-2d84c5997b8f",
+          "quantity": 1,
+          "loadGroupId": "sharedSetAside"
+        },
+        {   
+          "uuid": "40c95b3d-6216-4def-bb93-f44871f3ec70",
+          "quantity": 1,
+          "loadGroupId": "sharedSetAside"
+        },
+        {   
+          "uuid": "074cad39-ce55-4dc1-9775-e95363682ef7",
+          "quantity": 1,
+          "loadGroupId": "sharedSetAside"
+        },
+        {   
+          "uuid": "e8f413bf-3593-47fc-8813-4553d55dbb2a",
+          "quantity": 1,
+          "loadGroupId": "sharedSetAside"
+        },
+        {   
+          "uuid": "50c19cd1-3094-4bf7-b2dc-e21b145827b7",
+          "quantity": 1,
+          "loadGroupId": "sharedSetAside"
+        },
+        {   
+          "uuid": "cdc303cb-bb1a-4409-a479-aa4155bd8ed5",
+          "quantity": 1,
+          "loadGroupId": "sharedSetAside"
+        },
+        {   
+          "uuid": "4f945fb5-6307-4b31-91c5-5e6459f7e5bd",
+          "quantity": 1,
+          "loadGroupId": "sharedSetAside"
+        },
+        {   
+          "uuid": "381821e5-7bf6-44cd-91d7-e5a5e9ff8066",
+          "quantity": 1,
+          "loadGroupId": "sharedSetAside"
+        },
+        {   
+          "uuid": "ef014a91-c2d9-44ca-acd0-cc1a339c051f",
+          "quantity": 1,
+          "loadGroupId": "sharedSetAside"
+        },
+        {   
+          "uuid": "1d1ab8a3-ad76-4992-ae5c-6a89fd0ed463",
+          "quantity": 1,
+          "loadGroupId": "sharedSetAside"
+        },
+        {   
+          "uuid": "ff574390-bd68-4277-9065-dd9dbf552d00",
+          "quantity": 1,
+          "loadGroupId": "sharedSetAside"
+        },
+        {   
+          "uuid": "af49e5ea-c6a2-4be4-bbf3-ac53c100e887",
+          "quantity": 1,
+          "loadGroupId": "sharedSetAside"
+        },
+        {   
+          "uuid": "7791cd04-7ffe-41f3-9633-cf57ad3a34ca",
+          "quantity": 1,
+          "loadGroupId": "sharedSetAside"
+        },
+        {   
+          "uuid": "23acfc2e-3262-4f22-8496-a753fa9089bd",
+          "quantity": 1,
+          "loadGroupId": "sharedSetAside"
+        },
+        {   
+          "uuid": "c7f5eac0-dbda-419f-994c-c182775682b3",
+          "quantity": 1,
+          "loadGroupId": "sharedSetAside"
+        },
+        {   
+          "uuid": "24eabbac-62b1-4d2c-93a0-f97c04a2aefa",
+          "quantity": 1,
+          "loadGroupId": "sharedSetAside"
+        },
+        {   
+          "uuid": "14cbe0e1-0916-427f-8f19-abef59232dd2",
+          "quantity": 1,
+          "loadGroupId": "sharedSetAside"
+        },
+        {   
+          "uuid": "37488d87-8c07-4f13-b354-66bbdc9e5263",
+          "quantity": 1,
+          "loadGroupId": "sharedSetAside"
+        },
+        {   
+          "uuid": "606ee31e-a9cf-4ccf-8eed-003c006e5168",
+          "quantity": 1,
+          "loadGroupId": "sharedSetAside"
+        },
+        {   
+          "uuid": "8b15901c-c6b2-421e-8c6d-3200558e3609",
+          "quantity": 1,
+          "loadGroupId": "sharedSetAside"
+        },
+        {   
+          "uuid": "7068731b-3837-40f3-9e98-6c996af4dddc",
+          "quantity": 1,
+          "loadGroupId": "sharedSetAside"
+        },
+        {   
+          "uuid": "d2e3342e-f2eb-47fe-a653-2b1824b808dc",
+          "quantity": 1,
+          "loadGroupId": "sharedSetAside"
+        },
+        {   
+          "uuid": "3b05acf1-2c72-4e6c-9f59-a2bacde4820b",
+          "quantity": 1,
+          "loadGroupId": "sharedSetAside"
+        },
+        {   
+          "uuid": "0c4b67f7-6bd3-452b-8a7d-8b1e206dca0e",
+          "quantity": 1,
+          "loadGroupId": "sharedSetAside"
+        },
+        {   
+          "uuid": "7056509d-298d-4a21-be0c-9780f30b149e",
+          "quantity": 1,
+          "loadGroupId": "sharedSetAside"
+        },
+        {   
+          "uuid": "9317bbd9-12e5-47e1-a038-360df6c837b1",
+          "quantity": 1,
+          "loadGroupId": "sharedSetAside"
+        },
+        {   
+          "uuid": "a09670b1-ccfe-449a-8743-e468c9d76782",
+          "quantity": 1,
+          "loadGroupId": "sharedSetAside"
+        },
+        {   
+          "uuid": "d490e091-b01c-4067-9c60-01f2b41ad6cf",
+          "quantity": 1,
+          "loadGroupId": "sharedSetAside"
+        },
+        {   
+          "uuid": "36ed632c-33be-452c-97a5-17201a5cc381",
+          "quantity": 1,
+          "loadGroupId": "sharedSetAside"
+        },
+        {   
+          "uuid": "528de9d6-9da4-4ac4-b265-773f70d68102",
+          "quantity": 1,
+          "loadGroupId": "sharedSetAside"
+        },
+        {   
+          "uuid": "3892b2e4-358c-42af-b5be-2f54d252ea2a",
+          "quantity": 1,
+          "loadGroupId": "sharedSetAside"
+        },
+        {   
+          "uuid": "1665d088-793c-4350-82f3-e35fd307463d",
+          "quantity": 1,
+          "loadGroupId": "sharedSetAside"
+        },
+        {   
+          "uuid": "58001a33-adef-4766-872d-334b2570e167",
+          "quantity": 1,
+          "loadGroupId": "sharedSetAside"
+        },
+        {   
+          "uuid": "c7ada690-5aa3-4855-b2c1-35e30336edac",
+          "quantity": 1,
+          "loadGroupId": "sharedSetAside"
+        },
+        {   
+          "uuid": "c7ada690-5aa3-4855-b2c1-35e30336edac",
+          "quantity": 1,
+          "loadGroupId": "sharedSetAside"
+        },
+        {   
+          "uuid": "c7ada690-5aa3-4855-b2c1-35e30336edac",
+          "quantity": 1,
+          "loadGroupId": "sharedSetAside"
+        },
+        {   
+          "uuid": "c7ada690-5aa3-4855-b2c1-35e30336edac",
+          "quantity": 1,
+          "loadGroupId": "sharedSetAside"
+        },
+        {   
+          "uuid": "c759124f-3bf2-4820-a1af-285c740c4a5b",
+          "quantity": 1,
+          "loadGroupId": "sharedSetAside"
+        },
+        {   
+          "uuid": "a40aef89-ca91-467c-93f3-9afc97bdbc24",
+          "quantity": 1,
+          "loadGroupId": "sharedSetAside"
+        },
+        {   
+          "uuid": "9eb45361-6325-4e39-9029-9a8401d0d294",
+          "quantity": 1,
+          "loadGroupId": "sharedSetAside"
+        },
+        {   
+          "uuid": "b2df0294-f962-4e05-998a-d824d88cc13c",
+          "quantity": 1,
+          "loadGroupId": "sharedSetAside"
+        },
+        {   
+          "uuid": "ca60c111-b903-4859-9825-0958cfd7b7a5",
+          "quantity": 1,
+          "loadGroupId": "sharedSetAside"
+        }
+      ]
+    },
+    "CCC.1": {
+      "name": "Revised Core Set",
+      "cards": [
+        {
+          "uuid": "f36b6f95-59bc-4d1f-9f03-be1645fe3b58",
+          "quantity": 1,
+          "loadGroupId": "sharedSetAside"
+        },
+        {
+          "uuid": "6b61a3fd-1e84-4516-8a42-972524daaf50",
+          "quantity": 1,
+          "loadGroupId": "sharedSetAside"
+        },
+        {
+          "uuid": "586c2dcd-2157-455b-a195-b9452149427c",
+          "quantity": 1,
+          "loadGroupId": "sharedSetAside"
+        },
+        {
+          "uuid": "f0235b2f-7d6d-4868-8d3e-15c6d59f151a",
+          "quantity": 4,
+          "loadGroupId": "sharedSetAside"
+        },
+        {
+          "uuid": "90625d04-76cb-43cc-a66c-2e0eaf80ba3e",
+          "quantity": 4,
+          "loadGroupId": "sharedSetAside"
+        },
+        {
+          "uuid": "129afdd2-fd59-4e66-93ad-0fdcac795a48",
+          "quantity": 1,
+          "loadGroupId": "sharedSetAside"
+        },
+        {
+          "uuid": "27bfa88c-9090-4d17-9796-bbebbe9f2af6",
+          "quantity": 1,
+          "loadGroupId": "sharedSetAside"
+        },
+        {
+          "uuid": "0fd2ea73-0c15-40c5-b648-fc772f091756",
+          "quantity": 1,
+          "loadGroupId": "sharedSetAside"
+        },
+        {
+          "uuid": "c49a24f2-9237-4e25-8dfd-2abc5bcb6922",
+          "quantity": 1,
+          "loadGroupId": "sharedSetAside"
+        },
+        {
+          "uuid": "1937d06b-cba7-41f3-85c9-273323e96fb1",
+          "quantity": 4,
+          "loadGroupId": "sharedSetAside"
+        }
+      ]
+    },
+    "CCC.2": {
+      "name": "The Dark of Mirkwood",
+      "cards": [
+        {
+          "uuid": "75c3ac9e-b4e2-4c26-95a3-df99e6f22c6d",
+          "quantity": 1,
+          "loadGroupId": "sharedSetAside"
+        },
+        {
+          "uuiid": "5642b7b9-b194-46e3-bf69-7aa7ec9efc62",
+          "quantity": 1,
+          "loadGroupId": "sharedSetAside"
+        },
+        {
+          "uuiid": "7aff02d0-0b2d-4927-b685-03ccc5c7cb15",
+          "quantity": 1,
+          "loadGroupId": "sharedSetAside"
+        },
+        {
+          "uuiid": "2b724cca-d2f1-4012-8567-4223d3842aa5",
+          "quantity": 1,
+          "loadGroupId": "sharedSetAside"
+        },
+        {
+          "uuiid": "a4b3de91-8df7-4cb6-81e9-8d0205f48e05",
+          "quantity": 1,
+          "loadGroupId": "sharedSetAside"
+        },
+        {
+          "uuiid": "d25ffeeb-134f-42aa-8eba-665b68302c6b",
+          "quantity": 1,
+          "loadGroupId": "sharedSetAside"
+        },
+        {
+          "uuiid": "6d78c2c3-7683-499f-baaa-f018d822178a",
+          "quantity": 4,
+          "loadGroupId": "sharedSetAside"
+        },
+        {
+          "uuiid": "5f27b9a9-7cb4-47ca-8397-e86b18b6b0de",
+          "quantity": 4,
+          "loadGroupId": "sharedSetAside"
+        },
+        {
+          "uuiid": "f3c1abe3-48dc-4f61-8a4e-830c94bde22e",
+          "quantity": 1,
+          "loadGroupId": "sharedSetAside"
+        },
+        {
+          "uuiid": "a34422e3-4cac-448d-a23f-15ce17f852b5",
+          "quantity": 1,
+          "loadGroupId": "sharedSetAside"
+        },
+        {
+          "uuiid": "10ce5d5e-27ad-4220-a2b9-8811c1b0fc53",
+          "quantity": 1,
+          "loadGroupId": "sharedSetAside"
+        }
+      ]
+    }
   },
   "deckMenu": [
     {
@@ -53451,6 +53846,23 @@
               "deckListId": "Q99.16"
             }
           ]
+        }
+      ]
+    },
+    {
+      "name": "Campaign",
+      "deckLists": [
+        {
+          "deckListId": "CCH.1"
+        },
+        {
+          "deckListId": "CCL.1"
+        },
+        {
+          "deckListId": "CCC.1"
+        },
+        {
+          "deckListId": "CCC.2"
         }
       ]
     },

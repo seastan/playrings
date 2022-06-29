@@ -3,8 +3,6 @@ defmodule DragnCardsWeb.PluginsView do
   alias DragnCardsWeb.PluginsView
 
   def render("index.json", %{plugins: plugins}) do
-    IO.puts("here 1")
-    IO.inspect(plugins)
     %{data: Enum.map(plugins, fn plugin ->
       %{
         plugin_uuid: plugin.plugin_uuid,
@@ -18,8 +16,6 @@ defmodule DragnCardsWeb.PluginsView do
     #%{data: render_many(plugins, PluginsView, "plugin.json")} # This wasn't working for some reason
   end
   def render("single.json", %{plugin: plugin}) do
-    IO.puts("here p")
-    IO.inspect(plugin)
     plugin
     #%{data: render_many(plugins, PluginsView, "plugin.json")} # This wasn't working for some reason
   end

@@ -9,7 +9,7 @@ defmodule DragnCardsWeb.MyPluginsController do
   def show(conn, %{"id" => user_id}) do
     IO.puts("here")
     # Faster to gather all columns except game_json
-    query = from Plugin, order_by: [desc: :updated_at], where: [user_id: ^user_id], select: [:user_id, :plugin_uuid, :plugin_name, :version, :num_favorites, :public]
+    query = from Plugin, order_by: [desc: :updated_at], where: [author_user_id: ^user_id], select: [:author_user_id, :plugin_uuid, :plugin_name, :version, :num_favorites, :public]
     my_plugins = Repo.all(query)
     IO.inspect(my_plugins)
     json(conn, %{my_plugins: my_plugins})

@@ -789,9 +789,13 @@ defmodule DragnCardsGame.GameUI do
 
   def add_triggers_card_face(game, card_id, card_face) do
     card_triggers = card_face["triggers"]
-    Enum.reduce(card_triggers, game, fn(round_step, acc) ->
-      acc = add_trigger(acc, card_id, round_step)
-    end)
+    if card_triggers do
+      Enum.reduce(card_triggers, game, fn(round_step, acc) ->
+        acc = add_trigger(acc, card_id, round_step)
+      end)
+    else
+      game
+    end
   end
 
   def remove_trigger(game, card_id, round_step) do
@@ -810,9 +814,13 @@ defmodule DragnCardsGame.GameUI do
 
   def remove_triggers_card_face(game, card_id, card_face) do
     card_triggers = card_face["triggers"]
-    Enum.reduce(card_triggers, game, fn(round_step, acc) ->
-      acc = remove_trigger(acc, card_id, round_step)
-    end)
+    if card_triggers do
+      Enum.reduce(card_triggers, game, fn(round_step, acc) ->
+        acc = remove_trigger(acc, card_id, round_step)
+      end)
+    else
+      game
+    end
   end
 
   ### Card helper functions
@@ -1947,6 +1955,8 @@ defmodule DragnCardsGame.GameUI do
   end
 
   def create_card_in_group(game, group_id, load_list_item, game_def) do
+    IO.inspect("load_list_item")
+    IO.inspect(load_list_item)
     group_size = Enum.count(get_stack_ids(game, group_id))
     # Can't insert a card directly into a group need to make a stack first
     new_card = Card.card_from_card_details(load_list_item["cardDetails"], game_def, group_id)
@@ -1986,6 +1996,7 @@ defmodule DragnCardsGame.GameUI do
   end
 
   def load_cards(game, player_n, load_list, game_def) do
+    IO.inspect(load_list)
     # Get deck size before load
     player_n_deck_id = player_n<>"Deck"
     deck_size_before = Enum.count(get_stack_ids(game, player_n_deck_id))
@@ -1994,6 +2005,8 @@ defmodule DragnCardsGame.GameUI do
     game = Enum.reduce(load_list, game, fn load_list_item, acc ->
       load_card(acc, load_list_item, game_def)
     end)
+    IO.puts("gamecards")
+    IO.inspect(game["cardById"])
 
     # Check if we should load the first quest card
     main_quest_stack_ids = get_stack_ids(game, "sharedMainQuest")

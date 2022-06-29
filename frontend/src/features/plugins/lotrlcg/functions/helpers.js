@@ -93,15 +93,22 @@ export const getVisibleFace = (card, playerN) => {
   else return null;
 }
 
-export const getVisibleFaceSrc = (card, playerN, user) => {
+export const getVisibleFaceSrc = (card, playerN, user, gameDef) => {
   if (!card) return {src: "image not found", default: "image not found"};
   const visibleSide = getVisibleSide(card, playerN);
   const visibleFace = getVisibleFace(card, playerN);
+  const src = visibleFace.imageUrl || gameDef?.cardBacks?.[visibleFace.name]
   const language = user?.language || "English";
+  const srcLanguage = src.replace('/English/',language);
+  return {
+    src: srcLanguage,
+    default: src
+  }
+/* 
   if (visibleSide === "A") {
     return {
-      src: "https://dragncards-lotrlcg.s3.us-east-1.amazonaws.com/cards/English/" + card['cardDbId'] + '.jpg',
-      //src: visibleFace.customImgUrl || process.env.PUBLIC_URL + '/images/cards/' + language + '/' + card['cardDbId'] + '.jpg',
+      //src: "https://dragncards-lotrlcg.s3.us-east-1.amazonaws.com/cards/English/" + card['cardDbId'] + '.jpg',
+      src: visibleFace.imageUrl || process.env.PUBLIC_URL + '/images/cards/' + language + '/' + card['cardDbId'] + '.jpg',
       //default: visibleFace.customImgUrl ? "image not found" : process.env.PUBLIC_URL + '/images/cards/English/' + card['cardDbId'] + '.jpg',
     }
   } else { // Side B logic
@@ -124,7 +131,7 @@ export const getVisibleFaceSrc = (card, playerN, user) => {
     } else {
       return {src: "image not found", default: "image not found"};
     }
-  }
+  } */
 }
 
 export const usesThreatToken = (card) => {

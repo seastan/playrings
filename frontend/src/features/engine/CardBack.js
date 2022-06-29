@@ -5,6 +5,7 @@ import { useSelector } from 'react-redux';
 import { getCurrentFace, getVisibleFaceSrc } from "../plugins/lotrlcg/functions/helpers";
 import useProfile from "../../hooks/useProfile";
 import { useCardSize } from "../../hooks/useCardSize";
+import { useGameDefinition } from "./functions/useGameDefinition";
 
 const CardBack = React.memo(({
   groupType,
@@ -13,6 +14,7 @@ const CardBack = React.memo(({
   isDraggingFrom,
 }) => {
   const user = useProfile();
+  const gameDef = useGameDefinition();
   const playerN = useSelector(state => state?.playerUi?.playerN)
   const stack0 = useSelector(state => state?.gameUi?.game?.stackById[stackIds[0]]);
   const stack1 = useSelector(state => state?.gameUi?.game?.stackById[stackIds[1]]);
@@ -24,16 +26,16 @@ const CardBack = React.memo(({
   var visibleFace;
   const groupSize = stackIds.length;
   if (groupType === "deck" && groupSize>0 && isDraggingOver && !isDraggingFrom) {
-    visibleFaceSrc = getVisibleFaceSrc(card0, playerN, user)
+    visibleFaceSrc = getVisibleFaceSrc(card0, playerN, user, gameDef)
     visibleFace = getCurrentFace(card0)
   } else if (groupType === "deck" && groupSize>1 && isDraggingFrom) {
-    visibleFaceSrc = getVisibleFaceSrc(card1, playerN, user)
+    visibleFaceSrc = getVisibleFaceSrc(card1, playerN, user, gameDef)
     visibleFace = getCurrentFace(card1)
   } else if (groupType === "discard" && groupSize>0 && isDraggingOver && !isDraggingFrom) {
-    visibleFaceSrc = getVisibleFaceSrc(card0, playerN, user)
+    visibleFaceSrc = getVisibleFaceSrc(card0, playerN, user, gameDef)
     visibleFace = getCurrentFace(card0)
   } else if (groupType === "discard" && groupSize>1 && isDraggingFrom) {
-    visibleFaceSrc = getVisibleFaceSrc(card1, playerN, user)
+    visibleFaceSrc = getVisibleFaceSrc(card1, playerN, user, gameDef)
     visibleFace = getCurrentFace(card1)
   }
   if (visibleFace) {
