@@ -103,6 +103,7 @@ export const TOOLTIPINFO = {
   "tooltipEncounter2": "This quest has cards in a second encounter deck located in the View > Shared menu.",
   "tooltipQuest2": "This quest has cards in a second quest deck located in the View > Shared menu.",
   "tooltipAdvancedSetup": "To aid with the setup of this quest, see Menu > Special Functions.",
+  "tooltipBlackRiderX": "To add progress tokens to the Black Rider X cards, hover your mouse over the card and hold down the spacebar.",
 }
 
 export const PHASEINFO = [
