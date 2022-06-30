@@ -4,6 +4,7 @@ import { tokenPrintName } from "../functions/helpers";
 import { faChevronDown, faChevronUp } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import BroadcastContext from "../../../../contexts/BroadcastContext";
+import Draggable from "react-draggable";
 
 var delayBroadcast;
 
@@ -18,13 +19,15 @@ export const Token = React.memo(({
     aspectRatio,
 }) => {
     const {gameBroadcast, chatBroadcast} = useContext(BroadcastContext);
-    const tokenValue = useSelector(state => state?.gameUi?.game?.cardById?.[cardId]?.tokens?.[tokenType]);
+    const tokenValue = useSelector(state => state?.gameUi?.game?.cardById?.[cardId]?.tokens?.[tokenType]) || 0;
     const committed = useSelector(state => state?.gameUi?.game?.cardById?.[cardId]?.committed);
     const [buttonLeftVisible, setButtonLeftVisible] = useState(false);
     const [buttonRightVisible, setButtonRightVisible] = useState(false);
     const [amount, setAmount] = useState(tokenValue);
     const printName = tokenPrintName(tokenType);
-
+    var tokenSrc = process.env.PUBLIC_URL + '/images/tokens/'+tokenType+'.png';
+    var blackRiderX = false;
+    for (var i=1; i<10; i++) {if (cardName === "Black Rider "+i) blackRiderX = true} 
     useEffect(() => {    
         if (tokenValue !== amount) setAmount(tokenValue);
     }, [tokenValue]);
@@ -68,6 +71,7 @@ export const Token = React.memo(({
     }
 
     return(
+        <Draggable>
         <div
             style={{
                 position: "absolute",
@@ -75,7 +79,7 @@ export const Token = React.memo(({
                 top: top,
                 height: `${22*(1-0.6*(0.7-aspectRatio))}%`,
                 zIndex: showButtons ? zIndex + 1 : "",
-                display: showButtons || amount!==0 ? "block" : "none"}}>
+                display: showButtons || (amount!==0 && amount !==null && amount !==undefined) ? "block" : "none"}}>
             <div
                 className="flex absolute text-white text-center w-full h-full items-center justify-center"
                 style={{
@@ -137,7 +141,8 @@ export const Token = React.memo(({
             </div>
             <img 
                 className="block h-full"
-                src={process.env.PUBLIC_URL + '/images/tokens/'+tokenType+'.png'}/>
+                src={tokenSrc}/>
         </div>
+        </Draggable>
     )
 })
