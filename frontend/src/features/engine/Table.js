@@ -1,24 +1,23 @@
 import React, { useContext, useEffect } from "react";
-import { TableLayout } from "../../../engine/TableLayout";
-import { GiantCard } from "../../../engine/GiantCard";
-import { TopBar } from "./TopBar";
-import { SpawnCardModal } from "../../../engine/SpawnCardModal";
-import { SpawnCustomModal } from "./SpawnCustomModal";
-import { SpawnQuestModal } from "./SpawnQuestModal";
-import { SpawnCampaignModal } from "./SpawnCampaignModal";
-import { SideBar } from "../../../engine/SideBar";
-import { Hotkeys } from "./Hotkeys";
-import { PlayersInRoom } from "../../../engine/PlayersInRoom";
-import { DropdownMenu } from "../../../engine/DropdownMenu";
-import { TouchBarBottom } from "./TouchBarBottom";
+import { TableLayout } from "./TableLayout";
+import { GiantCard } from "./GiantCard";
+import { TopBar } from "../plugins/lotrlcg/components/TopBar";
+import { SpawnCardModal } from "./SpawnCardModal";
+import { SpawnCustomModal } from "../plugins/lotrlcg/components/SpawnCustomModal";
+import { SpawnPrebuiltModal } from "../plugins/lotrlcg/components/SpawnPrebuiltModal";
+import { SideBar } from "./SideBar";
+import { Hotkeys } from "../plugins/lotrlcg/components/Hotkeys";
+import { PlayersInRoom } from "./PlayersInRoom";
+import { DropdownMenu } from "./DropdownMenu";
+import { TouchBarBottom } from "../plugins/lotrlcg/components/TouchBarBottom";
 
-import "../../../../css/custom-dropdown.css";
-import { TooltipModal } from "../../../engine/TooltipModal";
-import { setActiveCardObj, setDropdownMenuObj, setMousePosition, setTouchAction } from "../../../store/playerUiSlice";
+import "../../css/custom-dropdown.css";
+import { TooltipModal } from "./TooltipModal";
+import { setActiveCardObj, setDropdownMenuObj, setMousePosition, setTouchAction } from "../store/playerUiSlice";
 import { useDispatch, useSelector } from "react-redux";
-import useProfile from "../../../../hooks/useProfile";
-import { onLoad } from "../functions/helpers";
-import BroadcastContext from "../../../../contexts/BroadcastContext";
+import useProfile from "../../hooks/useProfile";
+import { onLoad } from "../plugins/lotrlcg/functions/helpers";
+import BroadcastContext from "../../contexts/BroadcastContext";
 
 export const Table = React.memo(({registerDivToArrowsContext}) => {
   const {gameBroadcast, chatBroadcast} = useContext(BroadcastContext);
@@ -84,9 +83,8 @@ export const Table = React.memo(({registerDivToArrowsContext}) => {
       {/* Card hover view */}
       <GiantCard/>
       {showModal === "card" ? <SpawnCardModal/> : null}
-      {showModal === "quest" ? <SpawnQuestModal/> : null}
+      {showModal === "prebuilt_deck" ? <SpawnPrebuiltModal/> : null}
       {showModal === "custom" ? <SpawnCustomModal/> : null}
-      {showModal === "campaign" ? <SpawnCampaignModal/> : null}
       {tooltipIds.map((tooltipId, index) => {
         return(
         <TooltipModal

@@ -8,7 +8,7 @@ import { reorderGroupStackIds } from "./Reorder";
 import store from "../../store";
 import { setTouchAction } from "../store/playerUiSlice";
 import { getDisplayName, getDisplayNameFlipped } from "../plugins/lotrlcg/functions/helpers";
-import { Table } from "../plugins/lotrlcg/components/Table";
+import { Table } from "./Table";
 import BroadcastContext from "../../contexts/BroadcastContext";
 import { useGameDefinition } from "./functions/useGameDefinition";
 

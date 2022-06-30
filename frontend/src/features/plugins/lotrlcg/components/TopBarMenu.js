@@ -6,7 +6,7 @@ import store from "../../../../store";
 import { getCardByGroupIdStackIndexCardIndex, getSideAName, getPlayerCommitted, loadRingsDb, playerNToPlayerIndex, processLoadList, processPostLoad, shuffle } from "../functions/helpers";
 import { flatListOfCards, functionOnMatchingCards, listOfMatchingCards } from "../../../engine/functions/flatListOfCards";
 import { loadDeckFromXmlText, getRandomIntInclusive } from "../functions/helpers";
-import { loadDeckFromModeAndId } from "./SpawnQuestModal";
+import { loadDeckFromModeAndId } from "./SpawnPrebuiltModal";
 import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { setCardSizeFactor, setLoaded, setRandomNumBetween, setShowModal, setTouchAction, setTouchMode } from "../../../store/playerUiSlice";
@@ -172,10 +172,8 @@ export const TopBarMenu = React.memo(({}) => {
       dispatch(setShowModal("card"));
     } else if (data.action === "spawn_custom") {
       dispatch(setShowModal("custom"));
-    } else if (data.action === "spawn_quest") {
-      dispatch(setShowModal("quest"));
-    } else if (data.action === "spawn_campaign") {
-      dispatch(setShowModal("campaign"));
+    } else if (data.action === "spawn_deck") {
+      dispatch(setShowModal("prebuilt_deck"));
     } else if (data.action === "download") {
       downloadGameAsJson();
     } else if (data.action === "export_cards") {
@@ -651,8 +649,7 @@ export const TopBarMenu = React.memo(({}) => {
             {l10n("Load")}
             <span className="float-right mr-1"><FontAwesomeIcon icon={faChevronRight}/></span>
           <ul className="third-level-menu">
-            <li key={"load_quest"} onClick={() => handleMenuClick({action:"spawn_quest"})}>{l10n("Load quest")}</li>
-            <li key={"load_campaign"} onClick={() => handleMenuClick({action:"spawn_campaign"})}>{l10n("Load campaign cards")}</li>
+            <li key={"load_prebuilt_deck"} onClick={() => handleMenuClick({action:"spawn_deck"})}>{l10n("Load prebuilt deck")}</li>
             <li key={"load_deck"} onClick={() => handleMenuClick({action:"load_deck"})}>
               {l10n("Load deck (OCTGN file)")}
               <input type='file' id='file' ref={inputFileDeck} style={{display: 'none'}} onChange={loadDeck} accept=".o8d"/>

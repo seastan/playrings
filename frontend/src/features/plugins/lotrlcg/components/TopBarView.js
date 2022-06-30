@@ -2,7 +2,7 @@ import React from "react";
 import { useDispatch, useSelector } from 'react-redux';
 import { GROUPSINFO } from "../definitions/constants";
 import { getQuestCompanionCycleFromQuestId } from "../functions/helpers";
-import { getQuestNameFromModeAndId } from "./SpawnQuestModal";
+import { getQuestNameFromModeAndId } from "./SpawnPrebuiltModal";
 import { TopBarViewItem } from "./TopBarViewItem";
 import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";

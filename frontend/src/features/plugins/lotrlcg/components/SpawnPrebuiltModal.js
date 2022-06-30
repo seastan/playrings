@@ -110,7 +110,7 @@ const isVisible = (questPath, playtester, privacyType) => {
   else return true;
 }
 
-export const SpawnQuestModal = React.memo(({}) => { 
+export const SpawnPrebuiltModal = React.memo(({}) => { 
   const {gameBroadcast, chatBroadcast} = useContext(BroadcastContext); 
     const dispatch = useDispatch();
     const l10n = useGameL10n();
@@ -194,7 +194,6 @@ export const SpawnQuestModal = React.memo(({}) => {
       gameBroadcast("game_action", {action: "update_values", options: {updates: [["options", newOptions]]}});
     }
 
-    console.log("Rendering SpawnQuestModal", searchString);
     const handleSpawnClick = (index) => {
       loadQuest(index)
     }
@@ -246,7 +245,7 @@ export const SpawnQuestModal = React.memo(({}) => {
             overflowY: "scroll",
           }
         }}>
-        <h1 className="mb-2">{l10n("Load quest")}</h1>
+        <h1 className="mb-2">{l10n("Load prebuilt deck")}</h1>
         <input 
           autoFocus
           style={{width:"50%"}} 
@@ -254,7 +253,7 @@ export const SpawnQuestModal = React.memo(({}) => {
           id="name" 
           name="name" 
           className="mb-2 rounded-md" 
-          placeholder=" Quest name..." 
+          placeholder=" Deck name..." 
           onChange={handleSpawnTyping}
           onFocus={() => dispatch(setTyping(true))}
           onBlur={() => dispatch(setTyping(false))}/>
@@ -286,7 +285,7 @@ export const SpawnQuestModal = React.memo(({}) => {
         }
         {/* Menu */}
         {searchString === "" &&
-          <div 
+        <div 
           className="modalmenu bg-gray-800" 
           style={{ height: menuHeight}}
           >
@@ -316,82 +315,8 @@ export const SpawnQuestModal = React.memo(({}) => {
                 </DropdownItem>
               )
             })}
-            {/* {CYCLEORDER.map((cycleId, index) => {
-              if (cycleId === "PT" && (!myUser.playtester || privacyType === "public")) return null;
-              else return(
-                <DropdownItem
-                  rightIcon={<FontAwesomeIcon icon={faChevronRight}/>}
-                  goToMenu={cycleId}
-                  clickCallback={handleDropdownClick}>
-                  {l10n(CYCLEINFO[cycleId].name)}
-                </DropdownItem>
-              )
-            })} */}
           </div>
-
-
-          {/* Quest Menu */}
-          {CYCLEORDER.map((cycleId, index) => {
-            return(<>
-              {activeMenu === cycleId &&
-                <div className="menu">
-                  <GoBack goToMenu="main" clickCallback={handleSubMenuClick}/>
-                  {questsOCTGN.map((questPath, index) => {
-                    const modeLetter = getModeLetterFromPath(questPath);
-                    if (cycleId === "PT" && questPath.toLowerCase().includes("playtest") && modeLetter !== "E" && privacyType !== "public") {
-                      const questId = getQuestIdFromPath(questPath);
-                      const selectedIndex = getIndexFromModeAndId(modeLetter+questId);
-                      const selectedPath = questsOCTGN[selectedIndex];
-                      if (selectedIndex >= 0) return(
-                        <DropdownItem
-                          questIndex={selectedIndex}
-                          clickCallback={handleSubMenuClick}>
-                          {l10n(getQuestNameFromPath(questPath))}
-                        </DropdownItem>
-                      )
-                    } else if (questPath.includes("Q"+cycleId) && !questPath.toLowerCase().includes("playtest")) {
-                      return(
-                        <DropdownItem
-                          rightIcon={<FontAwesomeIcon icon={faChevronRight}/>}
-                          goToMenu={getQuestIdFromPath(questPath)}
-                          clickCallback={handleSubMenuClick}>
-                          {l10n(getQuestNameFromPath(questPath))}
-                        </DropdownItem>
-                      )
-                    }
-                  })}
-                </div>
-              }
-            </>)
-          })}
-          {/* Difficulty menu */}
-          {questsOCTGN.map((questPath, _) => {
-            const questId = getQuestIdFromPath(questPath);
-            const modeLetter = getModeLetterFromPath(questPath);
-            const cycleId = getCycleIdFromPath(questPath);
-            if (modeLetter === "Q") return(<>
-              {activeMenu === questId &&
-                <div className="menu">
-                  <GoBack goToMenu={cycleId} clickCallback={handleSubMenuClick}/>
-                  {["E","Q","N"].map((modeLetter, letterIndex) => {
-                    const selectedIndex = getIndexFromModeAndId(modeLetter+questId);
-                    if (selectedIndex >= 0) {
-                      const selectedPath = questsOCTGN[selectedIndex];
-                      if (cycleId !== "PT" && selectedPath?.toLowerCase().includes("playtest")) return null;
-                      else return(
-                        <DropdownItem
-                          questIndex={selectedIndex}
-                          clickCallback={handleSubMenuClick}>
-                          {l10n(getModeNameFromPath(selectedPath))}
-                        </DropdownItem>
-                      )
-                    }
-                  })}
-                </div>
-              }
-            </>)
-          })}
-          </div>
+        </div>
         }
       </ReactModal>
     )

@@ -1,10 +1,13 @@
 import React, { useState, useEffect, useContext } from "react";
 import { useSelector } from 'react-redux';
-import { tokenPrintName } from "../functions/helpers";
+import { tokenPrintName } from "../plugins/lotrlcg/functions/helpers";
 import { faChevronDown, faChevronUp } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import BroadcastContext from "../../../../contexts/BroadcastContext";
-import { useGameDefinition } from "../../../engine/functions/useGameDefinition";
+import BroadcastContext from "../../contexts/BroadcastContext";
+import { useGameDefinition } from "./functions/useGameDefinition";
+import store from "../../store";
+import { useDoActionList } from "./functions/useDoActionList";
+import Draggable from "react-draggable";
 
 var delayBroadcast;
 
@@ -16,11 +19,11 @@ export const Token = React.memo(({
     zIndex,
     aspectRatio,
 }) => {
-    const {gameBroadcast, chatBroadcast} = useContext(BroadcastContext);
+    const doActionList = useDoActionList();
     const tokenValue = useSelector(state => state?.gameUi?.game?.cardById?.[cardId]?.tokens?.[tokenType]);
     const committed = useSelector(state => state?.gameUi?.game?.cardById?.[cardId]?.committed);
-    const [buttonLeftVisible, setButtonLeftVisible] = useState(false);
-    const [buttonRightVisible, setButtonRightVisible] = useState(false);
+    const [buttonDownVisible, setButtonDownVisible] = useState(false);
+    const [buttonUpVisible, setButtonUpVisible] = useState(false);
     const [amount, setAmount] = useState(tokenValue);
     const printName = tokenPrintName(tokenType);
     const gameDef = useGameDefinition();
@@ -36,7 +39,7 @@ export const Token = React.memo(({
     function clickArrow(event,delta) {
         event.stopPropagation();
         var newAmount = 0;
-        if ((tokenType==="resource" || tokenType==="progress" || tokenType==="damage" || tokenType==="time") && (amount+delta < 0)) {
+        if (!gameDef?.tokens[tokenType]?.modifier && (amount+delta < 0)) {
             newAmount = 0;
         } else {
             newAmount = amount+delta;
@@ -47,21 +50,19 @@ export const Token = React.memo(({
         // Set up a delayed broadcast to update the game state that interupts itself if the button is clicked again shortly after.
         if (delayBroadcast) clearTimeout(delayBroadcast);
         delayBroadcast = setTimeout(function() {
-            gameBroadcast("game_action", {action:"update_values", options: {updates: [["cardById", cardId, "tokens", tokenType, newAmount]]}});
-            if (committed && tokenType === "willpower") gameBroadcast("game_action", {action:"increment_willpower", options: {increment: totalDelta}});
-            if (totalDelta > 0) {
-                if (totalDelta === 1) {
-                    chatBroadcast("game_update",{message: "added "+totalDelta+" "+printName+" token to "+cardName+"."});
-                } else {
-                    chatBroadcast("game_update",{message: "added "+totalDelta+" "+printName+" tokens to "+cardName+"."});
+            if (totalDelta === 0) return;
+            const state = store.getState();
+            const listOfActions = 
+            [
+                {
+                    "_ACTION": "SET_VALUE",
+                    "_PATH": ["_ACTIVE_CARD", "tokens", tokenType],
+                    "_VALUE": newAmount,
+                    "_MESSAGES": [["{playerN} ", totalDelta >= 0 ? "added " : "removed ", Math.abs(totalDelta), " token",
+                       Math.abs(totalDelta) > 1 ? "s" : "", totalDelta >= 0 ? " to " : " from ", ["_ACTIVE_FACE", "name"], "."]]
                 }
-            } else if (totalDelta < 0) {
-                if (totalDelta === -1) {
-                    chatBroadcast("game_update",{message: "removed "+(-totalDelta)+" "+printName+" token from "+cardName+"."});
-                } else {
-                    chatBroadcast("game_update",{message: "removed "+(-totalDelta)+" "+printName+" tokens from "+cardName+"."});
-                }                
-            }
+            ]
+            doActionList("_custom", listOfActions);
         }, 500);
     }
     // Prevent doubleclick from interfering with 2 clicks
@@ -70,6 +71,7 @@ export const Token = React.memo(({
     }
 
     return(
+        <Draggable>
         <div
             style={{
                 position: "absolute",
@@ -96,12 +98,12 @@ export const Token = React.memo(({
                     width: "100%",
                     top: "50%",
                     backgroundColor: "black",
-                    opacity: buttonLeftVisible ? "65%" : "0%",
+                    opacity: buttonDownVisible ? "65%" : "0%",
                     display: showButtons ? "block" : "none",
                     zIndex: zIndex + 2,
                 }}
-                onMouseOver={() => setButtonLeftVisible(true)}
-                onMouseLeave={() => setButtonLeftVisible(false)}
+                onMouseOver={() => setButtonDownVisible(true)}
+                onMouseLeave={() => setButtonDownVisible(false)}
                 onClick={(event) => clickArrow(event,-1)}
                 onDoubleClick={(event) => handleDoubleClick(event)}>
                 <FontAwesomeIcon 
@@ -121,12 +123,12 @@ export const Token = React.memo(({
                     height: "50%",
                     width: "100%",
                     backgroundColor: "black",
-                    opacity: buttonRightVisible ? "65%" : "0%",
+                    opacity: buttonUpVisible ? "65%" : "0%",
                     display: showButtons ? "block" : "none",
                     zIndex: zIndex + 2,
                 }}
-                onMouseOver={() => setButtonRightVisible(true)}
-                onMouseLeave={() => setButtonRightVisible(false)}
+                onMouseOver={() => setButtonUpVisible(true)}
+                onMouseLeave={() => setButtonUpVisible(false)}
                 onClick={(event) => clickArrow(event,1)}
                 onDoubleClick={(event) => handleDoubleClick(event)}>
                 <FontAwesomeIcon 
@@ -143,5 +145,6 @@ export const Token = React.memo(({
                 className="block h-full"
                 src={token.image_url}/> 
         </div>
+        </Draggable>
     )
 })

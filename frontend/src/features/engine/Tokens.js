@@ -1,6 +1,6 @@
 import React from "react";
 import { useSelector } from 'react-redux';
-import { Token } from "../plugins/lotrlcg/components/Token";
+import { Token } from "./Token";
 import { useGameDefinition } from "./functions/useGameDefinition";
 
 export const Tokens = React.memo(({ 

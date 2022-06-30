@@ -9,9 +9,8 @@ export const useDoActionList = () => {
     const gameDef = useGameDefinition();  
     const {gameBroadcast, chatBroadcast} = useContext(BroadcastContext);
 
-    return (actionListName, _options = null) => {
+    return (actionListName, actionList = null, _options = null) => {
         const state = store.getState();
-        var actionList = null;
         if (Object.keys(gameDef.actionLists).includes(actionListName)) {
             actionList = gameDef.actionLists[actionListName]
         } else if (actionListName === "flipCard") {

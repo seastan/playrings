@@ -138,7 +138,6 @@ export const SpawnDeckModal = React.memo(({}) => {
     gameBroadcast("game_action", {action: "update_values", options: {updates: [["options", newOptions]]}});
   }
 
-  console.log("Rendering SpawnQuestModal", searchString);
   const handleSpawnClick = (index) => {
     loadQuest(index)
   }

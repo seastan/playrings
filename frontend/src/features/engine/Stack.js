@@ -66,46 +66,45 @@ export const Stack = React.memo(({
       key={stackId} 
       draggableId={stackId} 
       index={stackIndex}
-      isDragDisabled={playerN === null}
-    >
+      isDragDisabled={playerN === null}>
       {(dragProvided, dragSnapshot) => (
         <NaturalDragAnimation
-	      style={dragProvided.draggableProps.style}
-	      snapshot={dragSnapshot}
-        rotationMultiplier={1}
-	    >
-	      {style => (
-        <Container
-          isDragging={dragSnapshot.isDragging}
-          isGroupedOver={Boolean(dragSnapshot.combineTargetFor)}
-          stackWidth={stackWidth}
-          groupType={groupType}
-          cardSize={cardSize}
-          hidden={hidden}
-          ref={dragProvided.innerRef}
-          {...dragProvided.draggableProps}
-          {...dragProvided.dragHandleProps}
-          style={{...style,
-            transform: style.transform ? (dragSnapshot.isDragging ? style.transform + " scale(1.1)" : style.transform) : null,
-            zIndex: Boolean(dragSnapshot.combineTargetFor) ? 6000 : style.zIndex,
-            //Boolean(dragSnapshot.combineTargetFor) ? {...style, zIndex:6000} : style
-            //</NaturalDragAnimation>dragSnapshot.isDragging ? {...style, transform: style.transform ? style.transform + " scale(1.1)" : "scale(1.1)"} : style
-          }}>
-          {cardIds.map((cardId, cardIndex) => {
-            return(
-              <Card
-                key={cardId}
-                groupId={groupId}
-                groupType={groupType}
-                offset={offsets[cardIndex]}
-                cardId={cardId} 
-                cardIndex={cardIndex}
-                registerDivToArrowsContext={registerDivToArrowsContext}
-                isDragging={(cardIndex === cardIds.length - 1) ? dragSnapshot.isDragging : false}
-              />
-            )
-        })}
-        </Container>)}</NaturalDragAnimation>
+          style={dragProvided.draggableProps.style}
+          snapshot={dragSnapshot}
+          rotationMultiplier={1}>
+          {style => (
+          <Container
+            isDragging={dragSnapshot.isDragging}
+            isGroupedOver={Boolean(dragSnapshot.combineTargetFor)}
+            stackWidth={stackWidth}
+            groupType={groupType}
+            cardSize={cardSize}
+            hidden={hidden}
+            ref={dragProvided.innerRef}
+            {...dragProvided.draggableProps}
+            {...dragProvided.dragHandleProps}
+            style={{...style,
+              transform: style.transform ? (dragSnapshot.isDragging ? style.transform + " scale(1.1)" : style.transform) : null,
+              zIndex: Boolean(dragSnapshot.combineTargetFor) ? 6000 : style.zIndex,
+              //Boolean(dragSnapshot.combineTargetFor) ? {...style, zIndex:6000} : style
+              //</NaturalDragAnimation>dragSnapshot.isDragging ? {...style, transform: style.transform ? style.transform + " scale(1.1)" : "scale(1.1)"} : style
+            }}>
+            {cardIds.map((cardId, cardIndex) => {
+              return(
+                <Card
+                  key={cardId}
+                  groupId={groupId}
+                  groupType={groupType}
+                  offset={offsets[cardIndex]}
+                  cardId={cardId} 
+                  cardIndex={cardIndex}
+                  registerDivToArrowsContext={registerDivToArrowsContext}
+                  isDragging={(cardIndex === cardIds.length - 1) ? dragSnapshot.isDragging : false}
+                />
+              )
+          })}
+          </Container>)}
+        </NaturalDragAnimation>
       )}
     </Draggable>
   );
