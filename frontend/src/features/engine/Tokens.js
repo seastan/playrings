@@ -9,11 +9,12 @@ export const Tokens = React.memo(({
     isActive,
     zIndex,
     aspectRatio,
+    side,
  }) => {
     const spacePressed = useSelector(state => state?.playerUi?.keypress?.Space);
     const showButtons = isActive && spacePressed;
     var blackRiderX = false;
-    for (var i=1; i<10; i++) {if (cardName === "Black Rider "+i) blackRiderX = true} 
+    for (var i=1; i<10; i++) {if (cardName === "Black Rider "+i && side === "A") blackRiderX = true} 
     if (blackRiderX) return (
         <div className="absolute" style={{width:'100%', height:'100%'}}>
             <Token tokenType="resource"  cardId={cardId} cardName={cardName} zIndex={zIndex} aspectRatio={aspectRatio} left={"10%"} top={"50%"} showButtons={showButtons}/>
