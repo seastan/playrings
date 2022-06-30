@@ -19,7 +19,6 @@ import { useDispatch, useSelector } from "react-redux";
 import useProfile from "../../../../hooks/useProfile";
 import { onLoad } from "../functions/helpers";
 import BroadcastContext from "../../../../contexts/BroadcastContext";
-import { TableElements } from "./TableElements";
 
 export const Table = React.memo(({registerDivToArrowsContext}) => {
   const {gameBroadcast, chatBroadcast} = useContext(BroadcastContext);
