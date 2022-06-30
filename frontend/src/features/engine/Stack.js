@@ -66,8 +66,7 @@ export const Stack = React.memo(({
       key={stackId} 
       draggableId={stackId} 
       index={stackIndex}
-      //isDragDisabled={playerN === null}
-      isDragDisabled={true}
+      isDragDisabled={playerN === null}
     >
       {(dragProvided, dragSnapshot) => (
         <NaturalDragAnimation
