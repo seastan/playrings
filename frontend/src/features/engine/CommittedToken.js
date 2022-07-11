@@ -6,8 +6,7 @@ export const CommittedToken = React.memo(({
     cardId,
     zIndex,
  }) => {
-    const cardStore = state => state?.gameUi?.game?.cardById?.[cardId];
-    const card = useSelector(cardStore);
+    const card = useSelector(state => state?.gameUi?.game?.cardById?.[cardId]);
     const questModeStore = state => state?.gameUi?.game?.questMode;
     const questMode = useSelector(questModeStore);
     const tokenType = getCommittedStat(questMode);

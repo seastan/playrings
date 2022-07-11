@@ -9,17 +9,16 @@ defmodule DragnCardsGame.PlayerData do
   @doc """
   new/1:  Create a player.
   """
-  @spec new() :: PlayerData.t()
-  def new() do
-    %{
-      "threat" => 0,
-      "willpower" => 0,
-      "eliminated" => false,
-      "cardsDrawn" => 1,
+  @spec new(Map.t()) :: PlayerData.t()
+  def new(game_def) do
+    base = %{
       "arrows" => [],
       "visibleHand" => false,
-      "refreshed" => true,
     }
+    # Add custom properties
+    player_data = Enum.reduce(game_def["playerProperties"], base, fn({key,val}, acc) ->
+      put_in(acc[key], val["default"])
+    end)
   end
 
 end

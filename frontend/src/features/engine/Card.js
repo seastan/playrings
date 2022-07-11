@@ -69,9 +69,17 @@ export const Card = React.memo(({
         dispatch(setActiveCardObj(null));
     }
 
-    const horizontalOffset = 0.2 + (1.39-visibleFace.width)*cardSize/2 + cardSize*touchModeSpacingFactor/3*offset;
+    var [height, width] = [visibleFace.height, visibleFace.width];
+    if (!height || !width) {
+        height = gameDef?.cardBacks?.[visibleFace.name]?.height;
+        width = gameDef?.cardBacks?.[visibleFace.name]?.width;
+    }
+    // FIXME: display error if height and width still not defined?
+
+    const horizontalOffset = 0.2 + (1.39-width)*cardSize/2 + cardSize*touchModeSpacingFactor/3*offset;
     const destroyed = currentFace.hitPoints > 0 && card.tokens.damage >= currentFace.hitPoints + card.tokens.hitPoints;
     const explored = currentFace.questPoints > 0 && card.tokens.progress >= currentFace.questPoints + card.tokens.hitPoints;
+
 
     var className = "";
     if (isActive) className = "shadow-yellow"
@@ -84,9 +92,8 @@ export const Card = React.memo(({
                 key={card.id}
                 style={{
                     position: "absolute",
-                    //background: `url(${getVisibleFaceSRC(card, playerN, user)}) no-repeat scroll 0% 0% / contain`, //group.type === "deck" ? `url(${card.sides["B"].src}) no-repeat` : `url(${card.sides["A"].src}) no-repeat`,
-                    height: `${cardSize*visibleFace.height}vh`,
-                    width: `${cardSize*visibleFace.width}vh`,
+                    height: `${cardSize*height}vh`,
+                    width: `${cardSize*width}vh`,
                     left: `${horizontalOffset}vh`,
                     top: "50%",
                     borderRadius: '0.6vh',
@@ -108,12 +115,6 @@ export const Card = React.memo(({
                 onMouseLeave={event => handleMouseLeave(event)}>
                 <img className="absolute w-full h-full" style={{borderRadius: '0.6vh'}} src={visibleFaceSrc.src} onError={(e)=>{e.target.onerror = null; e.target.src=visibleFaceSrc.default}} />
 
-                {/* {destroyed &&
-                    <div className="absolute w-full h-full bg-red-700" style={{opacity: 0.3}}/>
-                }                
-                {explored &&
-                    <div className="absolute w-full h-full bg-green-700" style={{opacity: 0.3}}/>
-                } */}
                 {isActive && touchMode && defaultAction &&
                     <div 
                         className={"absolute w-full pointer-events-none bg-green-700 font-bold rounded text-white text-xs text-center" + (card.rotation === -30 ? " bottom-0" : "")}
@@ -151,10 +152,9 @@ export const Card = React.memo(({
                     cardName={currentFace.name}
                     cardId={card.id}
                     cardType={visibleFace.type}
-                    usesThreatToken={usesThreatToken(card)}
                     isActive={isActive}
                     zIndex={zIndex}
-                    aspectRatio={visibleFace.width/visibleFace.height}
+                    aspectRatio={width/height}
                 />
                 {card.committed && <CommittedToken
                     cardId={card.id}

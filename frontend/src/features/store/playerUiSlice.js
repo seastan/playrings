@@ -54,6 +54,9 @@ const playerUiSlice = createSlice({
     setKeypressAlt: (state, { payload }) => {
       state.keypress.Alt = payload;
     },
+    setKeypressShift: (state, { payload }) => {
+      state.keypress.Shift = payload;
+    },
     setKeypressTab: (state, { payload }) => {
       state.keypress.Tab = payload;
     },
@@ -129,6 +132,7 @@ export const {
   setPlayerN, 
   setKeypress, 
   setKeypressControl,
+  setKeypressShift,
   setKeypressAlt,
   setKeypressTab,
   setKeypressSpace,

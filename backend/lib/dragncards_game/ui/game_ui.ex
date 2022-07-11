@@ -18,8 +18,6 @@ defmodule DragnCardsGame.GameUI do
     Logger.debug("gameui new")
     IO.inspect(options)
     game_def = Plugin.get_game_def_by_uuid_and_version(options["pluginUuid"], options["pluginVersion"])
-    IO.puts("game_def")
-    IO.inspect(game_def)
     gameui = %{
       "game" => Game.load(game_def, options),
       "roomName" => game_name,
@@ -1206,6 +1204,7 @@ defmodule DragnCardsGame.GameUI do
           game
       end
     end
+    game_new = save_replay(game_new, user_id)
     # Compare state before and after, and add a delta (unless we are undoing a move or loading a game with undo info)
     game_new = Map.delete(game_new, "playerUi")
     gameui = if options["preserve_undo"] != true do
@@ -1711,7 +1710,7 @@ defmodule DragnCardsGame.GameUI do
     if room do
       updates = %{
         last_update: timestamp,
-        encounter_name: gameui["game"]["encounterName"],
+        room_title: gameui["game"]["roomTitle"],
         num_players: gameui["game"]["numPlayers"]
       }
       room
@@ -2031,7 +2030,7 @@ defmodule DragnCardsGame.GameUI do
       game
     end
     # Update encounter name
-    game = put_in(game["encounterName"], get_encounter_name(game))
+    game = put_in(game["roomTitle"], get_encounter_name(game))
 
     # Calculate threat cost
     threat = Enum.reduce(load_list, 0, fn(r, acc) ->

@@ -55,10 +55,13 @@ defmodule DragnCards.Rooms do
 
   """
   def create_room(attrs \\ %{}) do
+    room =
     %Room{}
     |> Room.changeset(attrs)
     |> Repo.insert()
     |> notify_lobby()
+    IO.inspect(room)
+    room
   end
 
   @doc """

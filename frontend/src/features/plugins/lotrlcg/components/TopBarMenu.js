@@ -6,7 +6,6 @@ import store from "../../../../store";
 import { getCardByGroupIdStackIndexCardIndex, getSideAName, getPlayerCommitted, loadRingsDb, playerNToPlayerIndex, processLoadList, processPostLoad, shuffle } from "../functions/helpers";
 import { flatListOfCards, functionOnMatchingCards, listOfMatchingCards } from "../../../engine/functions/flatListOfCards";
 import { loadDeckFromXmlText, getRandomIntInclusive } from "../functions/helpers";
-import { loadDeckFromModeAndId } from "./SpawnPrebuiltModal";
 import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { setCardSizeFactor, setLoaded, setRandomNumBetween, setShowModal, setTouchAction, setTouchMode } from "../../../store/playerUiSlice";
@@ -75,7 +74,7 @@ export const TopBarMenu = React.memo(({}) => {
       handleMenuClick(resetData);
       dispatch(setLoaded(false));
       gameBroadcast("game_action", {action: "update_values", options: {updates: [["options", newOptions]]}})
-      if (options.questModeAndId) loadDeckFromModeAndId(options.questModeAndId, playerN, gameBroadcast, chatBroadcast, options["privacyType"]);
+      //if (options.questModeAndId) loadDeckFromModeAndId(options.questModeAndId, playerN, gameBroadcast, chatBroadcast, options["privacyType"]);
     } else if (data.action === "load_deck") {
       loadFileDeck();
     } else if (data.action === "load_ringsdb") {

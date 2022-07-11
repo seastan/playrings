@@ -9,19 +9,23 @@ const RoomGame = React.memo(({}) => {
   console.log('Rendering RoomGame');
   const dispatch = useDispatch();
   const touchMode = useSelector(state => state?.playerUi.touchMode);
+  const onKeyDown = useKeyDown(event);
 
   useEffect(() => {
     const onKeyUp = (event) => {
       if (event.key === "Alt") dispatch(setKeypress({"Alt": 0}));
       if (event.key === " ") dispatch(setKeypress({"Space": 0}));
       if (event.key === "Control") dispatch(setKeypress({"Control": 0}));
+      if (event.key === "Shift") dispatch(setKeypress({"Shift": 0}));
       if (event.key === "Tab") dispatch(setKeypress({"Tab": 0}));
     }
 
     document.addEventListener('keyup', onKeyUp);
+    document.addEventListener('keydown', onKeyDown);
 
     return () => {
-        document.removeEventListener('keyup', onKeyUp);
+      document.removeEventListener('keyup', onKeyUp);
+      document.removeEventListener('keydown', onKeyDown);
     }
   }, []);
 

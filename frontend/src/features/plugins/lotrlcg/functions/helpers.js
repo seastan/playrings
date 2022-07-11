@@ -97,9 +97,16 @@ export const getVisibleFaceSrc = (card, playerN, user, gameDef) => {
   if (!card) return {src: "image not found", default: "image not found"};
   const visibleSide = getVisibleSide(card, playerN);
   const visibleFace = getVisibleFace(card, playerN);
-  const src = visibleFace.imageUrl || gameDef?.cardBacks?.[visibleFace.name]
+  var src = visibleFace.imageUrl;
+  // If there's no src listed, it's probably a card back
+  if (!src || src ==="") {
+    src = gameDef?.cardBacks?.[visibleFace.name]?.imageUrl;
+  }
+  // If there's still no src listed, there's a problem with the card or game definition #FIXME: visual idicator of missing image
+  if (!src || src ==="") src = ""
   const language = user?.language || "English";
   const srcLanguage = src.replace('/English/',language);
+  
   return {
     src: srcLanguage,
     default: src

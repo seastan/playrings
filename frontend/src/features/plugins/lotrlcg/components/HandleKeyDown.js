@@ -7,11 +7,83 @@ import {
 } from "../functions/helpers";
 import { gameAction, cardAction } from "../functions/actions";
 import store from "../../../../store";
-import { setCardSizeFactor, setKeypressAlt, setKeypressControl, setKeypressSpace, setKeypressTab } from "../../../store/playerUiSlice";
+import { setCardSizeFactor, setKeypressAlt, setKeypressControl, setKeypressShift, setKeypressSpace, setKeypressTab } from "../../../store/playerUiSlice";
 import { setValues } from "../../../store/gameUiSlice";
 import BroadcastContext from "../../../../contexts/BroadcastContext";
+import { useGameDefinition } from "../../../engine/functions/useGameDefinition";
+import { useDoActionList } from "../../../engine/functions/useDoActionList";
 
 // const keyTokenMap: { [id: string] : Array<string | number>; } = {
+
+const hotkeys = {
+    "ui": {
+        "+": "increase_card_size",
+        "-": "decrease_card_size",
+    },
+    "game": {
+        "D": "draw",
+        "E": "reveal",
+        "Shift+E": "reveal_facedown",
+        "K": "reveal_second",
+        "Shift+K": "reveal_second_facedown",
+        "Shift+R": "refresh",
+        "Shift+N": "new_round",
+        "Shift+P": "save",
+        "Shift+S": "shadows",
+        "Shift+X": "discard_shadows",
+        "N": "caps_lock_n",
+        "ArrowLeft": "undo",
+        "ArrowRight": "redo",
+        "ArrowDown": "next_step",
+        "ArrowUp": "prev_step",
+        "Shift+M": "mulligan",
+        "Escape": "clear_targets",
+        "Shift+O": "score",
+        "U": "increase_threat",
+        "J": "decrease_threat",
+        "Shift+W": "next_seat",
+        "Shift+D": "draw_next_seat",
+        "Ctrl+Shift+R": "refresh_all",
+        "Ctrl+Shift+N": "new_round_all",
+        "Ctrl+U": "increase_threat_all",
+        "Ctrl+J": "decrease_threat_all",
+        "Ctrl+Z": "undo",
+        "Ctrl+Y": "redo",
+        "Ctrl+ArrowLeft": "undo_many",
+        "Ctrl+ArrowRight": "redo_many",
+        "Ctrl+ArrowUp": "prev_phase",
+        "Ctrl+ArrowDown": "next_phase",
+        "Alt+Shift+N": "new_round_all",
+        "Alt+Shift+R": "refresh_all",
+    },
+    "card": {
+        "0": "zero_tokens",
+        "A": "toggle_exhaust",
+        "F": "flip",
+        "Q": "commit",
+        "H": "shuffle_into_deck",
+        "W": "draw_arrow",
+        "Shift+Q": "commit_without_exhausting",
+        "S": "deal_shadow",
+        "T": "target",
+        "V": "victory",
+        "X": "discard",
+        "C": "detach",
+        "Shift+C": "detach_and_discard",
+        "B": "move_to_back",
+        "Shift+A": "card_ability",
+    },
+    "token": {
+        "1": "resource",
+        "2": "progress",
+        "3": "damage",
+        "4": "time",
+        "5": "willpowerThreat",
+        "6": "attack",
+        "7": "defense",
+        "8": "hitPoints",
+    }
+}
 
 const keyUiMap = {
     "+": "increase_card_size",
@@ -93,24 +165,16 @@ const keyTokenMap = {
 
 const keyDefaultList = ["F11"];
 
-const keyLogBase = {
-    "1": 0,
-    "2": 0,
-    "3": 0,
-    "4": 0,
-    "5": 0,
-    "6": 0,
-    "7": 0,
-    "8": 0,
-}
-
 var delayBroadcast;
 
 export const HandleKeyDown = ({}) => {
     const dispatch = useDispatch();
     const {gameBroadcast, chatBroadcast} = useContext(BroadcastContext);
+    const gameDef = useGameDefinition();
+    const doActionList = useDoActionList();
     const typing = useSelector(state => state?.playerUi?.typing);
     const keypressControl = useSelector(state => state?.playerUi?.keypress?.Control);
+    const keypressShift = useSelector(state => state?.playerUi?.keypress?.Shift);
     const keypressAlt = useSelector(state => state?.playerUi?.keypress?.Alt);
     const [keyBackLog, setKeyBackLog] = useState({});
     console.log("Rendering HandleKeyDown")
@@ -126,8 +190,8 @@ export const HandleKeyDown = ({}) => {
         }
     }
 
-    const keyTokenAction = (rawTokenType, actionProps) => {
-        const {state, dispatch, gameBroadcast, chatBroadcast} = actionProps;   
+    const keyTokenAction = (rawTokenType) => {
+
         const game = state?.gameUi?.game;
         const activeCardObj = state?.playerUi?.activeCardObj;
         const playerN = state?.playerUi?.playerN;
@@ -181,6 +245,21 @@ export const HandleKeyDown = ({}) => {
                 const thisDisplayName = getDisplayName(game.cardById[cardId])
                 Object.keys(cardKeyBackLog).map((tok, index) => {
                     if (tok === "displayName") return;
+
+                    if (totalDelta === 0) return;
+                    const state = store.getState();
+                    const listOfActions = 
+                    [
+                        {
+                            "_ACTION": "SET_VALUE",
+                            "_PATH": ["_ACTIVE_CARD", "tokens", tokenType],
+                            "_VALUE": newAmount,
+                            "_MESSAGES": [["{playerN} ", totalDelta >= 0 ? "added " : "removed ", Math.abs(totalDelta), " ", tokenType, " token",
+                               Math.abs(totalDelta) > 1 ? "s" : "", totalDelta >= 0 ? " to " : " from ", ["_ACTIVE_FACE", "name"], "."]]
+                        }
+                    ]
+                    doActionList("_custom", listOfActions);
+
                     const val = cardKeyBackLog[tok]; 
                     if (val > 0) {
                         if (val === 1) {
@@ -224,7 +303,7 @@ export const HandleKeyDown = ({}) => {
         return () => {
             document.removeEventListener('keydown', onKeyDown);
         }
-    }, [keyBackLog, typing, keypressAlt, gameBroadcast, chatBroadcast, keypressControl]);
+    }, [keyBackLog, typing, keypressAlt, gameBroadcast, chatBroadcast, keypressControl, keypressShift]);
 
     const handleKeyDown = (
         state,
@@ -243,6 +322,7 @@ export const HandleKeyDown = ({}) => {
         //if (k === "Shift") setKeypress({...keypress, "Shift": true});
         const unix_sec = Math.floor(Date.now() / 1000);
         if (k === "Control") dispatch(setKeypressControl(unix_sec));
+        if (k === "Shift") dispatch(setKeypressShift(unix_sec));
         if (k === "Alt") dispatch(setKeypressAlt(unix_sec));
         if (k === "Tab") dispatch(setKeypressTab(unix_sec));
         if (k === " ") dispatch(setKeypressSpace(unix_sec));
@@ -251,14 +331,23 @@ export const HandleKeyDown = ({}) => {
 
         // Hotkeys
         console.log("ctrl",(unix_sec - keypressControl))
-        if ((unix_sec - keypressControl) < 30 && Object.keys(ctrlKeyGameActionMap).includes(k)) gameAction(ctrlKeyGameActionMap[k], actionProps);
+        var dictKey = k.toUpperCase();
+        if ((unix_sec - keypressShift) < 30) dictKey = "Shift+"+dictKey;
+        if ((unix_sec - keypressShift) < 30) dictKey = "Ctrl+"+dictKey;
+        if ((unix_sec - keypressShift) < 30) dictKey = "Alt+"+dictKey;
+        if (Object.keys(hotkeys["card"].includes(dictKey))) doActionList(hotkeys["card"][dictKey]);
+        else if (Object.keys(hotkeys["ui"].includes(dictKey))) doActionList(hotkeys["ui"][dictKey]);
+        else if (Object.keys(hotkeys["game"].includes(dictKey))) doActionList(hotkeys["game"][dictKey]);
+        else if (Object.keys(hotkeys["token"].includes(dictKey))) keyTokenAction(hotkeys["token"][dictKey]);
+
+
+/*         if ((unix_sec - keypressControl) < 30 && Object.keys(ctrlKeyGameActionMap).includes(k)) gameAction(ctrlKeyGameActionMap[k], actionProps);
         else if ((unix_sec - keypressAlt) < 30 && Object.keys(altKeyGameActionMap).includes(k)) gameAction(altKeyGameActionMap[k], actionProps);
         // else if (keypress["Shift"] && Object.keys(shiftKeyGameActionMap).includes(k)) gameAction(shiftKeyGameActionMap[k], actionProps);
         else if (Object.keys(keyGameActionMap).includes(k)) gameAction(keyGameActionMap[k], actionProps);
         else if (Object.keys(keyCardActionMap).includes(k)) cardAction(keyCardActionMap[k], state?.playerUi?.activeCardObj?.card.id, {}, actionProps);
         else if (Object.keys(keyTokenMap).includes(k)) keyTokenAction(keyTokenMap[k], actionProps);
-        else if (Object.keys(keyUiMap).includes(k)) keyUiAction(keyUiMap[k], actionProps);
-
+        else if (Object.keys(keyUiMap).includes(k)) keyUiAction(keyUiMap[k], actionProps); */
     }
 
     return (null);

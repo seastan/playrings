@@ -1,10 +1,10 @@
 import React, { useContext, useEffect } from "react";
 import { TableLayout } from "./TableLayout";
 import { GiantCard } from "./GiantCard";
-import { TopBar } from "../plugins/lotrlcg/components/TopBar";
+import { TopBar } from "./TopBar";
 import { SpawnCardModal } from "./SpawnCardModal";
 import { SpawnCustomModal } from "../plugins/lotrlcg/components/SpawnCustomModal";
-import { SpawnPrebuiltModal } from "../plugins/lotrlcg/components/SpawnPrebuiltModal";
+import { SpawnPrebuiltModal } from "./SpawnPrebuiltModal";
 import { SideBar } from "./SideBar";
 import { Hotkeys } from "../plugins/lotrlcg/components/Hotkeys";
 import { PlayersInRoom } from "./PlayersInRoom";

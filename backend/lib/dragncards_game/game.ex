@@ -35,31 +35,25 @@
   """
   @spec new(Map.t(), Map.t()) :: Game.t()
   def new(game_def, options) do
-    IO.puts("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&")
-    IO.inspect(game_def["layouts"])
     default_layout = Enum.at(game_def["layoutMenu"],0)
-    %{
+    start_phase = Enum.at(game_def["phases"],0)
+    start_step = Enum.at(start_phase["steps"],0)
+    base = %{
       "id" => Ecto.UUID.generate,
       "pluginUuid" => options["pluginUuid"],
       "pluginVersion" => options["pluginVersion"],
       "numPlayers" => 1,
       #"questModeAndId" => nil,
-      "encounterName" => "Unspecified",
+      "roomTitle" => "Unspecified",
       "layout" => game_def["layouts"][default_layout["layoutId"]],
       "firstPlayer" => "player1",
       "roundNumber" => 0,
-      "phase" => "Beginning",
-      "roundStep" => "0.0",
+      "phase" => start_phase["name"],
+      "roundStep" => start_step["id"],
       "groupById" => Groups.new(),
       "stackById" => %{},
       "cardById"  => %{},
       "triggerMap" => %{},
-      "playerData" => %{
-        "player1" => PlayerData.new(),
-        "player2" => PlayerData.new(),
-        "player3" => PlayerData.new(),
-        "player4" => PlayerData.new(),
-      },
       "deltas" => [],
       "replayStep" => 0,
       "replayLength" => 0, # Length of deltas. We need this because the delta array is not broadcast.
@@ -68,6 +62,18 @@
       "questMode" => "Normal",
       "options" => options,
     }
+    # Add player data
+    player_data = %{}
+    player_data = Enum.reduce(game_def["minPlayers"]..game_def["maxPlayers"], player_data, fn(n, acc) ->
+      put_in(acc["player"<>Integer.to_string(n)], PlayerData.new(game_def))
+    end)
+    base = put_in(base["playerData"], player_data)
+    # Add custom properties
+    game = Enum.reduce(game_def["gameProperties"], base, fn({key,val}, acc) ->
+      put_in(acc[key], val["default"])
+    end)
+    IO.inspect(game)
+    game
   end
 
   def add_delta(game, prev_game) do

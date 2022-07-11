@@ -20,7 +20,8 @@ export const Token = React.memo(({
     aspectRatio,
 }) => {
     const doActionList = useDoActionList();
-    const tokenValue = useSelector(state => state?.gameUi?.game?.cardById?.[cardId]?.tokens?.[tokenType]);
+    const rotation = useSelector(state => state?.gameUi?.game?.cardById?.[cardId]?.rotation);
+    const tokenValue = useSelector(state => state?.gameUi?.game?.cardById?.[cardId]?.tokens?.[tokenType]) || 0;
     const committed = useSelector(state => state?.gameUi?.game?.cardById?.[cardId]?.committed);
     const [buttonDownVisible, setButtonDownVisible] = useState(false);
     const [buttonUpVisible, setButtonUpVisible] = useState(false);
@@ -58,7 +59,7 @@ export const Token = React.memo(({
                     "_ACTION": "SET_VALUE",
                     "_PATH": ["_ACTIVE_CARD", "tokens", tokenType],
                     "_VALUE": newAmount,
-                    "_MESSAGES": [["{playerN} ", totalDelta >= 0 ? "added " : "removed ", Math.abs(totalDelta), " token",
+                    "_MESSAGES": [["{playerN} ", totalDelta >= 0 ? "added " : "removed ", Math.abs(totalDelta), " ", tokenType, " token",
                        Math.abs(totalDelta) > 1 ? "s" : "", totalDelta >= 0 ? " to " : " from ", ["_ACTIVE_FACE", "name"], "."]]
                 }
             ]
@@ -69,7 +70,7 @@ export const Token = React.memo(({
     function handleDoubleClick(event) {
         event.stopPropagation();
     }
-
+    console.log("tokenscheck", showButtons, amount)
     return(
         <Draggable>
         <div
@@ -81,10 +82,11 @@ export const Token = React.memo(({
                 width: token.width,
                 //height: `${22*(1-0.6*(0.7-aspectRatio))}%`,
                 zIndex: showButtons ? zIndex + 1 : "",
-                display: showButtons || amount!==0 ? "block" : "none"}}>
+                display: showButtons || (amount!==0 && amount!==null && amount!==undefined) ? "block" : "none"}}>
             <div
                 className="flex absolute text-white text-center w-full h-full items-center justify-center"
                 style={{
+                    transform: `rotate(${-rotation}deg)`,
                     textShadow: "rgb(0, 0, 0) 2px 0px 0px, rgb(0, 0, 0) 1.75517px 0.958851px 0px, rgb(0, 0, 0) 1.0806px 1.68294px 0px, rgb(0, 0, 0) 0.141474px 1.99499px 0px, rgb(0, 0, 0) -0.832294px 1.81859px 0px, rgb(0, 0, 0) -1.60229px 1.19694px 0px, rgb(0, 0, 0) -1.97999px 0.28224px 0px, rgb(0, 0, 0) -1.87291px -0.701566px 0px, rgb(0, 0, 0) -1.30729px -1.51361px 0px, rgb(0, 0, 0) -0.421592px -1.95506px 0px, rgb(0, 0, 0) 0.567324px -1.91785px 0px, rgb(0, 0, 0) 1.41734px -1.41108px 0px, rgb(0, 0, 0) 1.92034px -0.558831px 0px",
                 }}>
                 {token.modifier && amount>0 ? "+"+amount : amount}
@@ -143,7 +145,7 @@ export const Token = React.memo(({
             </div>
             <img 
                 className="block h-full"
-                src={token.image_url}/> 
+                src={token.imageUrl}/> 
         </div>
         </Draggable>
     )
