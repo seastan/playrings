@@ -1238,6 +1238,26 @@ defmodule DragnCardsGame.GameUI do
     is_list(path) and Enum.member?(["_GAME", "_ACTIVE_CARD", "_ACTIVE_FACE", "_ITEM"], Enum.at(path, 0))
   end
 
+
+  def interpret_value(game, map, value) do
+        cond do
+          !is_list(value) ->
+            value
+          is_path(value) ->
+            get_in(map, get_keylist_from_path(game, map, value))
+          Enum.at(value, 0) == "+" && Enum.count(value) == 3 ->
+            interpret_value(game, map, Enum.at(value,1)) + interpret_value(game, map, Enum.at(value,2))
+          Enum.at(value, 0) == "-" && Enum.count(value) == 3 ->
+            interpret_value(game, map, Enum.at(value,1)) - interpret_value(game, map, Enum.at(value,2))
+          Enum.at(value, 0) == "*" && Enum.count(value) == 3 ->
+            interpret_value(game, map, Enum.at(value,1)) * interpret_value(game, map, Enum.at(value,2))
+          Enum.at(value, 0) == "/" && Enum.count(value) == 3 ->
+            interpret_value(game, map, Enum.at(value,1)) / interpret_value(game, map, Enum.at(value,2))
+          true ->
+            value
+        end
+      end
+
   def get_nested_value(game, map, path) do
 #    IO.puts("getting nested value from ")
 #    IO.inspect(map)
@@ -1336,7 +1356,7 @@ defmodule DragnCardsGame.GameUI do
       "SET_VALUE" ->
         if Map.has_key?(options, "_PATH") and Map.has_key?(options, "_VALUE") do
           keylist = get_keylist_from_path(game, map, options["_PATH"])
-          value = options["_VALUE"]
+          value = interpret_value(game, map, options["_VALUE"])
           IO.puts("setting")
           IO.inspect(keylist)
           IO.inspect(value)
@@ -1347,7 +1367,7 @@ defmodule DragnCardsGame.GameUI do
           path = options["_PATH"]
           keylist = get_keylist_from_path(game, map, path)
           old_value = get_nested_value(game, map, path)
-          amount = options["_VALUE"]
+          amount = interpret_value(game, map, options["_VALUE"])
           new_value = if is_number(old_value) and is_number(amount) do
             temp_value = old_value + amount
             if Map.has_key?(options, "_MAX") and is_number(options["_MAX"]) and temp_value > options["_MAX"] do
@@ -1365,7 +1385,7 @@ defmodule DragnCardsGame.GameUI do
           path = options["_PATH"]
           keylist = get_keylist_from_path(game, map, path)
           old_value = get_nested_value(game, map, path)
-          amount = options["_VALUE"]
+          amount = interpret_value(game, map, options["_VALUE"])
           new_value = if is_number(old_value) and is_number(amount) do
             temp_value = old_value - amount
             if Map.has_key?(options, "_MIN") and is_number(options["_MIN"]) and temp_value < options["_MIN"] do

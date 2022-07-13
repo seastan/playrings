@@ -4,12 +4,13 @@ import { HandleKeyDown } from "../plugins/lotrlcg/components/HandleKeyDown";
 import { setKeypress } from "../store/playerUiSlice";
 import { DragContainer } from "./DragContainer";
 import { HandleTouchActions } from "./functions/HandleTouchActions";
+import { useKeyDown } from "./functions/useKeyDown";
 
 const RoomGame = React.memo(({}) => {
   console.log('Rendering RoomGame');
   const dispatch = useDispatch();
   const touchMode = useSelector(state => state?.playerUi.touchMode);
-  const onKeyDown = useKeyDown(event);
+  const onKeyDown = useKeyDown();
 
   useEffect(() => {
     const onKeyUp = (event) => {
@@ -31,8 +32,8 @@ const RoomGame = React.memo(({}) => {
 
   return (
     <div className="h-full w-full">
-      <HandleKeyDown/>   
-      {touchMode && <HandleTouchActions/>}
+{/*       <HandleKeyDown/>   
+ */}      {touchMode && <HandleTouchActions/>}
       <DragContainer/>
     </div>
   )

@@ -191,7 +191,7 @@ export const HandleKeyDown = ({}) => {
     }
 
     const keyTokenAction = (rawTokenType) => {
-
+        const state = store.getState();
         const game = state?.gameUi?.game;
         const activeCardObj = state?.playerUi?.activeCardObj;
         const playerN = state?.playerUi?.playerN;
@@ -246,7 +246,7 @@ export const HandleKeyDown = ({}) => {
                 Object.keys(cardKeyBackLog).map((tok, index) => {
                     if (tok === "displayName") return;
 
-                    if (totalDelta === 0) return;
+/*                     if (totalDelta === 0) return;
                     const state = store.getState();
                     const listOfActions = 
                     [
@@ -258,7 +258,7 @@ export const HandleKeyDown = ({}) => {
                                Math.abs(totalDelta) > 1 ? "s" : "", totalDelta >= 0 ? " to " : " from ", ["_ACTIVE_FACE", "name"], "."]]
                         }
                     ]
-                    doActionList("_custom", listOfActions);
+                    doActionList("_custom", listOfActions); */
 
                     const val = cardKeyBackLog[tok]; 
                     if (val > 0) {
