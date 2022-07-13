@@ -14,6 +14,23 @@ const defaultActionLists = {
         }
     ],
     "toggle_rotate": [
+        ["COND",
+            ["EQUAL", ["ACTIVE_CARD", "inPlay"], true],
+            ["COND",
+                ["EQUAL", ["GET", "$ACTIVE_CARD", "rotation"], 0],
+                [
+                    ["SET", "$ACTIVE_CARD", "rotation", 90], 
+                    ["PRINT","$playerN"," rotated ", ["GET", "$ACTIVE_FACE", "name"], " 90 degrees."]
+                ],
+                ["EQUAL", ["GET", "$ACTIVE_CARD", "rotation"], 90],
+                [
+                    ["SET", "$ACTIVE_CARD", "rotation", 0], 
+                    ["PRINT","$playerN"," rotated ", ["GET", "$ACTIVE_FACE", "name"], " 90 degrees."]
+                ],
+            ]
+        ]
+    ],
+/*     "toggle_rotate": [
         {
             "_ACTION": "CASES",
             "_CASES": [
@@ -51,7 +68,7 @@ const defaultActionLists = {
                 }
             ]
         }
-    ],
+    ], */
     "flip": [
         {
             "_ACTION": "CASES",

@@ -1137,7 +1137,8 @@ defmodule DragnCardsGame.GameUI do
     game_new = if player_n do
       case action do
         "game_action_list" ->
-          multiple_map_changes(game, game, options["action_list"], user_alias)
+          evaluate(game, options["action_list"])
+          #multiple_map_changes(game, game, options["action_list"], user_alias)
         "draw_card" ->
           draw_card(game, player_n)
         "new_round" ->
@@ -1224,6 +1225,38 @@ defmodule DragnCardsGame.GameUI do
         {:cont, acc}
       end
     end)
+  end
+
+  def evaluate(game, code) do
+    if is_list(code) && Enum.count(code) > 0 do
+      code = Enum.reduce(code, [], fn(code_line, acc) ->
+        acc ++ evaluate(game, code_line)
+      end)
+      item0 = Enum.at(code,0)
+        case item0 do
+          "EQUAL" ->
+            Enum.at(code,1) == Enum.at(code,2)
+          "GET" ->
+            get_in(Enum.at(code,1), Enum.at(code,2))
+          "SET" ->
+            put_in(game, Enum.at(code,1), Enum.at(code,1))
+        end
+      end
+    else # value
+      case code do
+        "$GAME" ->
+          game
+        "$CARD_BY_ID" ->
+          game["cardById"]
+        "$ACTIVE_CARD" ->
+          game["cardById"][game["playerUi"]["activeCardId"]]
+        "$ACTIVE_FACE" ->
+          active_card = game["cardById"][game["playerUi"]["activeCardId"]]
+          active_card["sides"][active_card["currentSide"]]
+        _ ->
+          code
+      end
+    end
   end
 
 
