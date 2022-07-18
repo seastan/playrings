@@ -1233,14 +1233,13 @@ defmodule DragnCardsGame.GameUI do
         acc ++ evaluate(game, code_line)
       end)
       item0 = Enum.at(code,0)
-        case item0 do
-          "EQUAL" ->
-            Enum.at(code,1) == Enum.at(code,2)
-          "GET" ->
-            get_in(Enum.at(code,1), Enum.at(code,2))
-          "SET" ->
-            put_in(game, Enum.at(code,1), Enum.at(code,1))
-        end
+      case item0 do
+        "EQUAL" ->
+          Enum.at(code,1) == Enum.at(code,2)
+        "GET" ->
+          get_in(Enum.at(code,1), Enum.at(code,2))
+        "SET" ->
+          put_in(game, Enum.at(code,1), Enum.at(code,1))
       end
     else # value
       case code do

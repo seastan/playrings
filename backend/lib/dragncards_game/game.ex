@@ -31,6 +31,13 @@
   end
 
   @doc """
+  new/0:  Create a game with specified options.
+  """
+  @spec new() :: Game.t()
+  def new() do
+    %{}
+  end
+  @doc """
   new/2:  Create a game with specified options.
   """
   @spec new(Map.t(), Map.t()) :: Game.t()
@@ -72,7 +79,6 @@
     game = Enum.reduce(game_def["gameProperties"], base, fn({key,val}, acc) ->
       put_in(acc[key], val["default"])
     end)
-    IO.inspect(game)
     game
   end
 
