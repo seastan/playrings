@@ -68,6 +68,8 @@
       "victoryState" => nil,
       "questMode" => "Normal",
       "options" => options,
+      "variables" => %{},
+      "messages" => []
     }
     # Add player data
     player_data = %{}

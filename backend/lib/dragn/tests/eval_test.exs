@@ -1,5 +1,5 @@
 defmodule MyTest do
-  alias DragnCardsGame.{Game, Stack, GameUI}
+  alias DragnCardsGame.{GameUI}
 
   def assert(test_num, evaluated, result) do
     if evaluated != result do
@@ -29,12 +29,34 @@ defmodule MyTest do
             Enum.reduce(list, [], fn(item,acc)->
               acc ++ [evaluate(game, item)]
             end)
+          "NEXT_PLAYER" ->
+            current_player_i = evaluate(game, Enum.at(code, 1))
+            current_i = String.to_integer(String.slice(current_player_i, -1..-1))
+            next_i = current_i + 1
+            next_i = if next_i > game["numPlayers"] do 1 else next_i end
+            "player" <> Integer.to_string(next_i)
+          "AT_INDEX" ->
+            #raise "stop"
+            list = evaluate(game, Enum.at(code, 1))
+            index = evaluate(game, Enum.at(code, 2))
+            if list do Enum.at(list, index) else nil end
           "LENGTH" ->
             Enum.count(Enum.at(code,1))
+          "AND" ->
+            statements = Enum.slice(code, 1, Enum.count(code))
+            Enum.reduce_while(statements, false, fn(statement, acc) ->
+              if evaluate(game, statement) == true do
+                {:cont, true}
+              else
+                {:halt, false}
+              end
+            end)
           "EQUAL" ->
             evaluate(game, Enum.at(code,1)) == evaluate(game, Enum.at(code,2))
           "NOT" ->
             !evaluate(game, Enum.at(code,1))
+          "JOIN_STRING" ->
+            evaluate(game, Enum.at(code,1)) <> evaluate(game, Enum.at(code,2))
           "ADD" ->
             evaluate(game, Enum.at(code,1)) + evaluate(game, Enum.at(code,2))
           "SUBTRACT" ->
@@ -43,27 +65,46 @@ defmodule MyTest do
             evaluate(game, Enum.at(code,1)) * evaluate(game, Enum.at(code,2))
           "DIVIDE" ->
             evaluate(game, Enum.at(code,1)) / evaluate(game, Enum.at(code,2))
-          "GET" ->
+          "OBJ_GET_BY_KEY" ->
             map = evaluate(game, Enum.at(code,1))
             key = evaluate(game, Enum.at(code,2))
-            # if not Map.has_key?(map,key) do
-            #   raise(inspect(map) <> " does not have key '" <> key <> "'.")
-            # else
             map[key]
-            # end
-          "SET" ->
-            obj = evaluate(game, Enum.at(code,1))
-            key = evaluate(game, Enum.at(code,2))
-            value = evaluate(game, Enum.at(code,3))
-            put_in(obj[key], value)
-          "UPDATE" ->
+          "OBJ_GET_BY_PATH" ->
+            map = evaluate(game, Enum.at(code,1))
+            path = evaluate(game, Enum.at(code,2))
+            get_in(map, path)
+          "GAME_GET_VAL" ->
+            path = evaluate(game, Enum.at(code,1))
+            get_in(game, path)
+          "GET_STACK_ID" ->
+            group_id = evaluate(game, Enum.at(code,1))
+            stack_index = evaluate(game, Enum.at(code,2))
+            evaluate(game, ["AT_INDEX", ["GAME_GET_VAL", ["groupById", group_id, "stackIds"]], stack_index])
+          "GET_CARD_ID" ->
+            group_id = evaluate(game, Enum.at(code,1))
+            stack_index = evaluate(game, Enum.at(code,2))
+            stack_id = evaluate(game, ["GET_STACK_ID", group_id, stack_index])
+            card_index = evaluate(game, Enum.at(code,3))
+            evaluate(game, ["AT_INDEX", ["GAME_GET_VAL", ["stackById", stack_id, "cardIds"]], card_index])
+          "OBJ_SET_VAL" ->
+            case Enum.count(code) do
+              4 ->
+                obj = evaluate(game, Enum.at(code,1))
+                key = evaluate(game, Enum.at(code,2))
+                value = evaluate(game, Enum.at(code,3))
+                put_in(obj[key], value)
+              5 ->
+                obj = evaluate(game, Enum.at(code,1))
+                path = evaluate(game, Enum.at(code,2))
+                key = evaluate(game, Enum.at(code,3))
+                value = evaluate(game, Enum.at(code,4))
+                put_in(obj, path ++ [key], value)
+            end
+          "GAME_SET_VAL" ->
             case Enum.count(code) do
               3 ->
                 path = evaluate(game, Enum.at(code,1))
                 value = evaluate(game, Enum.at(code,2))
-                IO.puts("putting")
-                IO.inspect(value)
-                IO.inspect(path)
                 put_in(game, path, value)
               4 ->
                 path = evaluate(game, Enum.at(code,1))
@@ -71,12 +112,24 @@ defmodule MyTest do
                 value = evaluate(game, Enum.at(code,3))
                 put_in(game, path ++ [key], value)
             end
+          "GAME_INCREASE_VAL" ->
+            case Enum.count(code) do
+              3 ->
+                path = evaluate(game, Enum.at(code,1))
+                delta = evaluate(game, Enum.at(code,2))
+                old_value = get_in(game, path)
+                put_in(game, path, old_value + delta)
+              4 ->
+                path = evaluate(game, Enum.at(code,1))
+                key = evaluate(game, Enum.at(code,2))
+                delta = evaluate(game, Enum.at(code,3))
+                old_value = get_in(game, path ++ [key])
+                put_in(game, path ++ [key], old_value + delta)
+            end
           "COND" ->
             ifthens = Enum.slice(code, 1, Enum.count(code))
             Enum.reduce_while(0..Enum.count(ifthens)-1//2, nil, fn(i, acc) ->
               if evaluate(game, Enum.at(ifthens, i)) == true do
-                IO.inspect(Enum.at(ifthens, i))
-                IO.puts("was true")
                 {:halt, evaluate(game, Enum.at(ifthens, i+1))}
               else
                 {:cont, nil}
@@ -85,34 +138,56 @@ defmodule MyTest do
             #IO.puts("COND then")
             #IO.inspect("then")
             #evaluate(game, then)
-          "PRINT" ->
+          "GAME_ADD_MESSAGE" ->
             statements = Enum.slice(code, 1, Enum.count(code))
             message = Enum.reduce(statements, "", fn(statement, acc) ->
-              acc <> evaluate(game, statement)
+              str_statement = inspect(evaluate(game, statement))
+              acc <> String.replace(str_statement,"\"","")
             end)
             put_in(game["messages"], game["messages"] ++ [message])
-          "FOR_EACH_KEY_VAL" ->
-            key_name = evaluate(game, Enum.at(code, 1))
+          "FOR_EACH_START_STOP_STEP" ->
+            var_name = Enum.at(code, 1)
+            start = evaluate(game, Enum.at(code, 2))
+            stop = evaluate(game, Enum.at(code, 3))
+            step = evaluate(game, Enum.at(code, 4))
+            function = Enum.at(code, 5)
+            Enum.reduce(start..stop-1//step, game, fn(i, acc) ->
+              acc = put_in(acc, ["variables", var_name], i)
+              acc = evaluate(acc, function)
+            end)
+          "FOR_EACH_KEY_VAL_AT_PATH" ->
+            key_name = Enum.at(code, 1)
             val_name = evaluate(game, Enum.at(code, 2))
             obj_path = evaluate(game, Enum.at(code, 3))
+            old_obj = evaluate(game, ["GAME_GET_VAL", obj_path])
             function = Enum.at(code, 4)
-            old_obj = get_in(game, obj_path)
-            new_obj = Enum.reduce(old_obj, %{}, fn({key, val}, acc) ->
-              game = put_in(game, ["variables", key_name], key)
-              game = put_in(game, ["variables", val_name], val)
-              new_val = evaluate(game, function)
-              put_in(acc[key], new_val)
+            IO.inspect(game["variables"])
+            Enum.reduce(old_obj, game, fn({key, val}, acc) ->
+              acc = put_in(acc, ["variables", key_name], key)
+              acc = put_in(acc, ["variables", val_name], val)
+              evaluate(acc, function)
             end)
           "MOVE_CARD" ->
             argc = Enum.count(code) - 1
             card_id = evaluate(game, Enum.at(code, 1))
+            if card_id do
+              dest_group_id = evaluate(game, Enum.at(code, 2))
+              dest_stack_index = evaluate(game, Enum.at(code, 3))
+              dest_card_index = evaluate(game, Enum.at(code, 4))
+              combine = if argc == 5 do evaluate(game, Enum.at(code, 5)) else nil end
+              preserve_state = if argc == 6 do evaluate(game, Enum.at(code, 6)) else nil end
+              GameUI.move_card(game, card_id, dest_group_id, dest_stack_index, dest_card_index, combine, preserve_state)
+            else
+              game
+            end
+          "MOVE_STACK" ->
+            argc = Enum.count(code) - 1
+            stack_id = evaluate(game, Enum.at(code, 1))
             dest_group_id = evaluate(game, Enum.at(code, 2))
             dest_stack_index = evaluate(game, Enum.at(code, 3))
-            dest_card_index = evaluate(game, Enum.at(code, 4))
-            combine = if argc == 5 do evaluate(game, Enum.at(code, 5)) else nil end
-            preserve_state = if argc == 6 do evaluate(game, Enum.at(code, 6)) else nil end
-            GameUI.move_card(game, card_id, dest_group_id, dest_stack_index, dest_card_index, combine, preserve_state)
-
+            combine = if argc == 4 do evaluate(game, Enum.at(code, 4)) else nil end
+            preserve_state = if argc == 5 do evaluate(game, Enum.at(code, 5)) else nil end
+            GameUI.move_stack(game, stack_id, dest_group_id, dest_stack_index, combine, preserve_state)
           _ ->
             code
         end
@@ -120,8 +195,12 @@ defmodule MyTest do
     else # value
       #IO.puts("parsing value #{code}")
       cond do
+        code == "$PLAYER_N" ->
+          game["playerUi"]["playerN"]
         code == "$GAME" ->
           game
+        code == "$GAME_PATH" ->
+          []
         code == "$CARD_BY_ID" ->
           game["cardById"]
         code == "$CARD_BY_ID_PATH" ->
@@ -139,7 +218,7 @@ defmodule MyTest do
           get_in(game, evaluate(game, "$ACTIVE_FACE_PATH"))
         code == "$ACTIVE_TOKENS" ->
           get_in(game, evaluate(game, "$ACTIVE_TOKENS_PATH"))
-        Map.has_key?(game["variables"], code) ->
+        Map.has_key?(game, "variables") && Map.has_key?(game["variables"], code) ->
           game["variables"][code]
         true ->
           code
@@ -188,111 +267,81 @@ game = %{
 }
 
 
-_game2 = %{
-  "cardById" => %{
-    "abc" => %{
-      "currentSide" => "A",
-      "rotation" => 0,
-      "sides" => %{"A" => %{"name" => "testname"}},
-      "tokens" => %{"damage" => 1}
-    },
-    "def" => %{"exhausted" => true, "tokens" => %{"damage" => 1}},
-    "ghi" => %{"exhausted" => false, "tokens" => %{"damage" => 1}}
-  },
-  "messages" => [],
-  "playerUi" => %{"activeCardId" => "abc"},
-  "variables" => %{
-    "$CARD" => %{"exhausted" => false, "tokens" => %{"damage" => 1}}
-  }
-}
-_code2 = [
-  "COND",
-  ["EQUAL", ["GET", "$CARD", "exhausted"], False],
-  ["SET", "$CARD", "rotation", 77],
-  [true],
-  ["$CARD"]
-]
-_code2 = [["UPDATE",["variables"],"x",1],["UPDATE",["variables"],"y",2]]
-#r = MyTest.evaluate(game2, code2)
-#IO.inspect(r)
-
-#raise "stop"
-
 code = "$ACTIVE_CARD_PATH"
 MyTest.assert(1, MyTest.evaluate(game, code), ["cardById", "abc"])
 
-code = ["UPDATE", "$ACTIVE_CARD_PATH", "rotation", 45]
+code = ["GAME_SET_VAL", "$ACTIVE_CARD_PATH", "rotation", 45]
 MyTest.assert(2, MyTest.evaluate(game, code)["cardById"]["abc"]["rotation"], 45)
 
-code = [["UPDATE", "$ACTIVE_CARD_PATH", "rotation", 45],["UPDATE", "$ACTIVE_CARD_PATH", "rotation", 65]]
+code = [["GAME_SET_VAL", "$ACTIVE_CARD_PATH", "rotation", 45],["GAME_SET_VAL", "$ACTIVE_CARD_PATH", "rotation", 65]]
 MyTest.assert(3, MyTest.evaluate(game, code)["cardById"]["abc"]["rotation"], 65)
 
-code = ["EQUAL", ["GET", "$ACTIVE_CARD", "rotation"], 0]
+code = ["EQUAL", ["OBJ_GET_BY_KEY", "$ACTIVE_CARD", "rotation"], 0]
 MyTest.assert(4, MyTest.evaluate(game, code), true)
 
-code = ["COND", ["EQUAL", ["GET", "$ACTIVE_CARD", "rotation"], 0], ["UPDATE", "$ACTIVE_CARD_PATH", "rotation", 95]]
+code = ["COND", ["EQUAL", ["OBJ_GET_BY_KEY", "$ACTIVE_CARD", "rotation"], 0], ["GAME_SET_VAL", "$ACTIVE_CARD_PATH", "rotation", 95]]
 MyTest.assert(5, MyTest.evaluate(game, code)["cardById"]["abc"]["rotation"], 95)
 
 code =
   [
     ["COND",
-      ["EQUAL", ["GET", "$ACTIVE_CARD", "rotation"], 0],
+      ["EQUAL", ["OBJ_GET_BY_KEY", "$ACTIVE_CARD", "rotation"], 0],
       [
-          ["UPDATE", "$ACTIVE_CARD_PATH", "rotation", 90],
-          ["PRINT","$playerN"," rotated ", ["GET", "$ACTIVE_FACE", "name"], " 90 degrees."]
+          ["GAME_SET_VAL", "$ACTIVE_CARD_PATH", "rotation", 90],
+          ["GAME_ADD_MESSAGE","$playerN"," rotated ", ["OBJ_GET_BY_KEY", "$ACTIVE_FACE", "name"], " 90 degrees."]
       ],
-      ["EQUAL", ["GET", "$ACTIVE_CARD", "rotation"], 90],
+      ["EQUAL", ["OBJ_GET_BY_KEY", "$ACTIVE_CARD", "rotation"], 90],
       [
-          ["UPDATE", "$ACTIVE_CARD_PATH", "rotation", 0],
-          ["PRINT","$playerN"," rotated ", ["GET", "$ACTIVE_FACE", "name"], " -90 degrees."]
+          ["GAME_SET_VAL", "$ACTIVE_CARD_PATH", "rotation", 0],
+          ["GAME_ADD_MESSAGE","$playerN"," rotated ", ["OBJ_GET_BY_KEY", "$ACTIVE_FACE", "name"], " -90 degrees."]
       ]
     ],
     ["COND",
-      ["EQUAL", ["GET", "$ACTIVE_CARD", "rotation"], 0],
+      ["EQUAL", ["OBJ_GET_BY_KEY", "$ACTIVE_CARD", "rotation"], 0],
       [
-          ["UPDATE", "$ACTIVE_CARD_PATH", "rotation", 90],
-          ["PRINT","$playerN"," rotated ", ["GET", "$ACTIVE_FACE", "name"], " 90 degrees."]
+          ["GAME_SET_VAL", "$ACTIVE_CARD_PATH", "rotation", 90],
+          ["GAME_ADD_MESSAGE","$playerN"," rotated ", ["OBJ_GET_BY_KEY", "$ACTIVE_FACE", "name"], " 90 degrees."]
       ],
-      ["EQUAL", ["GET", "$ACTIVE_CARD", "rotation"], 90],
+      ["EQUAL", ["OBJ_GET_BY_KEY", "$ACTIVE_CARD", "rotation"], 90],
       [
-          ["UPDATE", "$ACTIVE_CARD_PATH", "rotation", -10],
-          ["PRINT","$playerN"," rotated ", ["GET", "$ACTIVE_FACE", "name"], " -90 degrees."]
+          ["GAME_SET_VAL", "$ACTIVE_CARD_PATH", "rotation", -10],
+          ["GAME_ADD_MESSAGE","$playerN"," rotated ", ["OBJ_GET_BY_KEY", "$ACTIVE_FACE", "name"], " -90 degrees."]
       ]
     ]
   ]
 MyTest.assert(6, MyTest.evaluate(game, code)["cardById"]["abc"]["rotation"], -10)
 
-code = ["SET", "$ACTIVE_CARD", "rotation", 44]
+code = ["OBJ_SET_VAL", "$ACTIVE_CARD", "rotation", 44]
 MyTest.assert(7, MyTest.evaluate(game, code)["rotation"], 44)
 
-code = ["UPDATE", "$CARD_BY_ID_PATH", ["FOR_EACH_KEY_VAL", "$CARD_ID", "$CARD", "$CARD_BY_ID_PATH", ["SET", "$CARD", "rotation", 77]]]
+code = ["FOR_EACH_KEY_VAL_AT_PATH", "$CARD_ID", "$CARD", "$CARD_BY_ID_PATH", ["GAME_SET_VAL", "$CARD_BY_ID_PATH", "$CARD_ID", ["OBJ_SET_VAL", "$CARD", "rotation", 77]]]
 MyTest.assert(8, MyTest.evaluate(game, code)["cardById"]["ghi"]["rotation"], 77)
 
-code = ["UPDATE", "$CARD_BY_ID_PATH",
-  ["FOR_EACH_KEY_VAL", "$CARD_ID", "$CARD", "$CARD_BY_ID_PATH",
+code = ["FOR_EACH_KEY_VAL_AT_PATH", "$CARD_ID", "$CARD", "$CARD_BY_ID_PATH", ["GAME_SET_VAL", ["LIST", "cardById", "$CARD_ID", "rotation"], 77]]
+MyTest.assert(8, MyTest.evaluate(game, code)["cardById"]["ghi"]["rotation"], 77)
+
+code =
+  ["FOR_EACH_KEY_VAL_AT_PATH", "$CARD_ID", "$CARD", "$CARD_BY_ID_PATH",
     ["COND",
-      ["EQUAL", ["GET", "$CARD", "exhausted"], true],
-      ["SET", "$CARD", "rotation", 77],
+      ["EQUAL", ["OBJ_GET_BY_KEY", "$CARD", "exhausted"], true],
+      ["GAME_SET_VAL", ["LIST", "cardById", "$CARD_ID", "rotation"], 77],
       true,
-      "$CARD"
+      "$GAME"
     ]
   ]
-]
 MyTest.assert(9, MyTest.evaluate(game, code)["cardById"]["def"]["rotation"], 77)
 
-code = ["UPDATE", ["playerData"],
-  ["FOR_EACH_KEY_VAL", "$PLAYER_I", "$PLAYER_I_DATA", ["playerData"],
+code =
+  ["FOR_EACH_KEY_VAL_AT_PATH", "$PLAYER_I", "$PLAYER_I_DATA", ["playerData"],
     ["COND",
-      ["EQUAL", ["GET", "$PLAYER_I_DATA", "willpower"], 0],
-      ["SET", "$PLAYER_I_DATA", "willpower", 22],
+      ["EQUAL", ["OBJ_GET_BY_KEY", "$PLAYER_I_DATA", "willpower"], 0],
+      ["GAME_SET_VAL", ["LIST", "playerData", "$PLAYER_I", "willpower"], 22],
       true,
-      "$PLAYER_I_DATA"
+      "$GAME",
     ]
   ]
-]
 MyTest.assert(10, MyTest.evaluate(game, code)["playerData"]["player1"]["willpower"], 22)
 
-import DragnCardsGame.GameUI
 alias DragnCardsGame.GameUI
 game_def = "./../frontend/src/features/plugins/lotrlcg/definitions/gameDefinition.json" |> File.read! |> Poison.decode!
 gameui = GameUI.new("test", %{:id => 1}, %{"pluginUuid" => "10018538-89f9-49b9-9e28-af863a9e579c", "pluginVersion" => 1})
@@ -301,9 +350,9 @@ cards = game_def["preBuiltDecks"]["Q01.1"]["cards"]
 
 load_list = [
   %{
-    "loadGroupId" => "sharedEncounterDeck",
+    "loadGroupId" => "player1Deck",
     "quantity" => 1,
-    "uuid" => "51223bd0-ffd1-11df-a976-0801200c9092",
+    "uuid" => "myuuid",
     "cardDetails" => %{
       "A" => %{
         "attack" => "",
@@ -362,7 +411,7 @@ load_list = [
     }
   },
   %{
-    "loadGroupId" => "sharedEncounterDeck",
+    "loadGroupId" => "player1Deck",
     "quantity" => 3,
     "uuid" => "51223bd0-ffd1-11df-a976-0801200c9093",
     "cardDetails" => %{
@@ -423,7 +472,7 @@ load_list = [
     }
   },
   %{
-    "loadGroupId" => "sharedStaging",
+    "loadGroupId" => "sharedEncounterDeck",
     "quantity" => 1,
     "uuid" => "51223bd0-ffd1-11df-a976-0801200c9099",
     "cardDetails" => %{
@@ -484,7 +533,7 @@ load_list = [
     }
   },
   %{
-    "loadGroupId" => "sharedStaging",
+    "loadGroupId" => "player1Deck",
     "quantity" => 1,
     "uuid" => "51223bd0-ffd1-11df-a976-0801200c9096",
     "cardDetails" => %{
@@ -547,11 +596,131 @@ load_list = [
 ]
 
 gameui = GameUI.game_action(gameui, 1, "load_cards", %{"load_list" => load_list})
-IO.inspect(gameui["game"]["cardById"])
+game = gameui["game"]
+game = put_in(game, ["variables", "$i"], 1)
+game = put_in(game, ["playerData", "player1", "cardsDrawn"], 2)
+game = put_in(game["playerUi"], %{"playerN" => "player1"})
+game = put_in(game["numPlayers"], 3)
+
+stack_id = Enum.at(game["groupById"]["sharedEncounterDeck"]["stackIds"],0)
+card_id = Enum.at(game["stackById"][stack_id]["cardIds"],0)
+
+code = ["MOVE_CARD", card_id, "sharedVictory", 0, 0]
+MyTest.assert(11, MyTest.evaluate(game, code)["cardById"][card_id]["groupId"], "sharedVictory")
+
+code = ["FOR_EACH_START_STOP_STEP", "$i", 1, 30, 2, ["GAME_ADD_MESSAGE", "$i"]]
+MyTest.assert(12, MyTest.evaluate(game, code)["variables"]["$i"], 29)
+
+code = ["FOR_EACH_START_STOP_STEP", "$i", 0, 10, 1, ["MOVE_CARD", ["GET_CARD_ID", "sharedEncounterDeck", 0, 0], "sharedVictory", 0, 0]]
+MyTest.assert(13, Enum.count(MyTest.evaluate(game, code)["groupById"]["sharedVictory"]["stackIds"]), 1)
+
+code = ["NEXT_PLAYER", ["NEXT_PLAYER", ["NEXT_PLAYER", ["GAME_GET_VAL", ["LIST", "firstPlayer"]]]]]
+MyTest.assert(14, MyTest.evaluate(game, code), "player1")
+
+
+actions = %{
+  "newRound" => [
+    ["COND",
+      ["EQUAL", ["GAME_GET_VAL", ["LIST", "playerUi", "playerN"]], "player1"],
+      [
+        ["GAME_INCREASE_VAL", ["roundNumber"], 1],
+        ["GAME_ADD_MESSAGE", "player1 increased the round."],
+        ["GAME_SET_VAL", ["phase"], "Resource"],
+        ["GAME_ADD_MESSAGE", "player1 set the phase to Resource."],
+        ["GAME_SET_VAL", ["roundStep"], "1.R"],
+        ["GAME_ADD_MESSAGE", "player1 set the round step to 1.R."]
+      ],
+      true,
+      "$GAME"
+    ],
+    ["FOR_EACH_KEY_VAL_AT_PATH", "$CARD_ID", "$CARD", "$CARD_BY_ID_PATH", [
+      ["COND",
+        ["AND",
+          ["EQUAL", ["OBJ_GET_BY_KEY", "$CARD", "sides", ["OBJ_GET_BY_KEY", "$CARD", "currentSide"], "type"], "Hero"],
+          ["EQUAL", ["OBJ_GET_BY_KEY", "$CARD", "controller"], "playerN"],
+          ["EQUAL", ["OBJ_GET_BY_KEY", "$CARD", "inPlay"], true],
+        ],
+        [
+          ["GAME_INCREASE_VAL", ["LIST", "cardById", "$CARD_ID", "tokens", "resource"], 1],
+          ["GAME_ADD_MESSAGE", "$PLAYER_N", " added 1 resource token to ", ["OBJ_GET_BY_KEY", "$CARD", "sides", ["OBJ_GET_BY_KEY", "$CARD", "currentSide"], "name"], "."],
+        ],
+        true,
+        "$GAME"
+      ],
+      ["COND",
+        ["EQUAL", ["OBJ_GET_BY_KEY", "$CARD", "controller"], "playerN"],
+        ["GAME_SET_VAL", ["LIST", "cardById", "$CARD_ID", "committed"], false],
+        true,
+        "$GAME"
+      ],
+      ["COND",
+        ["AND",
+          ["EQUAL", ["OBJ_GET_BY_KEY", "$CARD", "controller"], "playerN"],
+          ["EQUAL", ["OBJ_GET_BY_KEY", "$CARD", "inPlay"], true],
+        ],
+        [
+          ["GAME_SET_VAL", ["LIST", "cardById", "$CARD_ID", "tokens", "resource"], 1], #["OBJ_GET_VAL", "$CARD", "extraResources"]],
+          ["GAME_ADD_MESSAGE", "$PLAYER_N", " added ", ["OBJ_GET_VAL", "$CARD", "extraResources"]," extra resource token(s) to ", ["OBJ_GET_BY_KEY", "$CARD", "sides", ["OBJ_GET_BY_KEY", "$CARD", "currentSide"], "type"]]
+        ],
+        true,
+        "$GAME"
+      ],
+    ]],
+    ["FOR_EACH_START_STOP_STEP", "$i", 0, ["GAME_GET_VAL", ["LIST", "playerData", "player1", "cardsDrawn"]], 1,
+      [
+        ["MOVE_CARD", ["GET_CARD_ID", ["JOIN_STRING", "$PLAYER_N", "Deck"], 0, 0], ["JOIN_STRING", "$PLAYER_N", "Hand"], 0, 0],
+        ["GAME_ADD_MESSAGE", "$PLAYER_N", " drew 1 card."]
+      ]
+    ],
+    ["GAME_SET_VAL", ["LIST", "playerData", "$PLAYER_N", "willpower"], 0],
+    ["GAME_SET_VAL", ["LIST", "playerData", "$PLAYER_N", "refreshed"], false],
+  ],
+  "refresh" => [
+    ["COND",
+      ["EQUAL", ["GAME_GET_VAL", ["LIST", "playerUi", "playerN"]], "player1"],
+      [
+        ["GAME_SET_VAL", ["LIST", "phase"], "Refresh"],
+        ["GAME_SET_VAL", ["LIST", "roundStep"], "7.R"],
+        ["GAME_SET_VAL", ["LIST", "firstPlayer"], ["NEXT_PLAYER", ["GAME_GET_VAL", ["LIST", "firstPlayer"]]]],
+        ["GAME_ADD_MESSAGE", "player1 set the phase to Refresh."],
+        ["GAME_ADD_MESSAGE", "player1 set the round step to 7.R."]
+      ],
+      true,
+      "$GAME"
+    ],
+    ["FOR_EACH_KEY_VAL_AT_PATH", "$CARD_ID", "$CARD", "$CARD_BY_ID_PATH", [
+      ["COND",
+        ["AND",
+          ["EQUAL", ["OBJ_GET_BY_KEY", "$CARD", "controller"], "playerN"],
+          ["EQUAL", ["OBJ_GET_BY_KEY", "$CARD", "inPlay"], true],
+        ],
+        [
+          ["GAME_SET_VAL", ["LIST", "cardById", "$CARD_ID", "rotation"], 0],
+          ["GAME_SET_VAL", ["LIST", "cardById", "$CARD_ID", "exhausted"], false]
+        ],
+        true,
+        "$GAME"
+      ],
+    ]],
+    ["GAME_ADD_MESSAGE", "player1 refeshed."]
+  ]
+}
+
+MyTest.assert(15, MyTest.evaluate(game, actions["newRound"])["roundStep"], "1.R")
+
+
+MyTest.assert(16, MyTest.evaluate(game, actions["refresh"])["roundStep"], "7.R")
+IO.inspect(MyTest.evaluate(game, actions["refresh"])["messages"])
+
+#code = ["GET_CARD_ID", "sharedEncounterDeck", 0, 0]
+#r = MyTest.evaluate(game, code)
+#IO.inspect(r)
+#MyTest.assert(13, MyTest.evaluate(game, code)["variables"]["$i"], 29)
+
 
 #MyTest.assert(8, MyTest.evaluate(game, code), nil)
 
-#code = ["ACTIONS", ["SET","$ACTIVE_CARD_PATH","rotation",10],["SET","$ACTIVE_CARD_PATH","rotation",20],["PRINT","testprint"],["PRINT","testprint2"]]
+#code = ["ACTIONS", ["SET","$ACTIVE_CARD_PATH","rotation",10],["SET","$ACTIVE_CARD_PATH","rotation",20],["GAME_ADD_MESSAGE","testprint"],["GAME_ADD_MESSAGE","testprint2"]]
 #r = MyTest.evaluate(game, code)
 #IO.inspect(r)
 #r = try do
