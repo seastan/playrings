@@ -68,6 +68,7 @@
       "victoryState" => nil,
       "questMode" => "Normal",
       "options" => options,
+      "actionLists" => game_def["actionLists"],
       "variables" => %{},
       "messages" => []
     }

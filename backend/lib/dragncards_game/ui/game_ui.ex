@@ -1023,6 +1023,10 @@ defmodule DragnCardsGame.GameUI do
         dest_stack_index
       end
       # If attaching to same group at higher index, dest_index will end up being 1 less
+      IO.inspect(orig_group_id)
+      IO.inspect(dest_group_id)
+      IO.inspect(orig_stack_index)
+      IO.inspect(dest_stack_index)
       dest_stack_index = if orig_group_id == dest_group_id and combine and orig_stack_index < dest_stack_index do dest_stack_index - 1 else dest_stack_index end
       # Delete stack id from old group
       old_orig_stack_ids = get_stack_ids(game, orig_group_id)
