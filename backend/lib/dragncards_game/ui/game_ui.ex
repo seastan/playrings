@@ -600,7 +600,7 @@ defmodule DragnCardsGame.GameUI do
 
   # Update a card state
   # Modify the card orientation/tokens based on where it is now
-  def update_card_state(game, card_id, preserve_state, orig_group_id) do
+  def update_card_state(game, card_id, preserve_state, orig_group_id \\ nil) do
     if preserve_state do
       # We still remove arrows
       #card = put_in(card["arrowIds"], [])
@@ -613,7 +613,7 @@ defmodule DragnCardsGame.GameUI do
       card_face = get_current_card_face(game, card_id)
       dest_group = get_group_by_card_id(game, card_id)
       dest_group_id = dest_group["id"]
-      orig_group_type = get_group_type(game, orig_group_id)
+      orig_group_type = if orig_group_id do get_group_type(game, orig_group_id) else "play" end
       dest_group_type = get_group_type(game, dest_group_id)
       card_index = get_card_index_by_card_id(game, card_id)
       card = put_in(card["inPlay"], dest_group_type == "play")
@@ -2016,11 +2016,16 @@ defmodule DragnCardsGame.GameUI do
     # Can't insert a card directly into a group need to make a stack first
     new_card = Card.card_from_card_details(load_list_item["cardDetails"], game_def, group_id)
     new_stack = Stack.stack_from_card(new_card)
+    new_card = new_card
+    |> Map.put("groupId", group_id)
+    |> Map.put("stackId", new_stack["id"])
+    |> Map.put("stackIndex", group_size)
+    |> Map.put("cardIndex", 0)
     game
     |> insert_stack_in_group(group_id, new_stack["id"], group_size)
     |> update_stack(new_stack)
     |> update_card(new_card)
-    |> update_card_state(new_card["id"], false, "sharedEncounterDeck")
+    |> update_card_state(new_card["id"], false, nil)
   end
 
   def load_card(game, load_list_item, game_def) do

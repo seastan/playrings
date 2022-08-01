@@ -14,6 +14,7 @@ defmodule DragnCardsGame.PlayerData do
     base = %{
       "arrows" => [],
       "visibleHand" => false,
+      "currentPosition" => nil,
     }
     # Add custom properties
     player_data = Enum.reduce(game_def["playerProperties"], base, fn({key,val}, acc) ->
