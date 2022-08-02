@@ -4,6 +4,7 @@ import { setActiveCardObj } from "../store/playerUiSlice";
 import { getDisplayName } from "../plugins/lotrlcg/functions/helpers";
 import { useGameL10n } from "../../hooks/useGameL10n";
 import BroadcastContext from "../../contexts/BroadcastContext";
+import { useGameDefinition } from "./functions/useGameDefinition";
 
 
 export const ReminderButton = React.memo(({
@@ -63,48 +64,49 @@ export const ReminderButton = React.memo(({
 })
 
 export const SideBarRoundStep = React.memo(({
-  phase,
-  stepInfo,
+  phaseId,
+  stepId,
 }) => {
   const {gameBroadcast, chatBroadcast} = useContext(BroadcastContext);
   const l10n = useGameL10n();
-  const gameRoundStep = useSelector(state => state?.gameUi?.game?.roundStep);
+  const gameDef = useGameDefinition();
+  const stepInfo = gameDef?.steps?.[stepId];
+  const gameRoundStep = useSelector(state => state?.gameUi?.game?.stepId);
   const playerN = useSelector(state => state?.playerUi?.playerN)
-  const triggerCardIds = useSelector(state => state?.gameUi?.game?.triggerMap?.[stepInfo.id]);
+  const triggerCardIds = useSelector(state => state?.gameUi?.game?.triggerMap?.[stepId]);
   const numTriggers = triggerCardIds ? triggerCardIds.length : 0;
   const [hovering, setHovering] = useState(null);
-  const isRoundStep = (gameRoundStep === stepInfo.id);
+  const isRoundStep = (gameRoundStep === stepId);
 
   console.log("Rendering SideBarRoundStep", stepInfo);
   const handleButtonClick = (id) => {
     if (!playerN) return;
-    gameBroadcast("game_action", {action: "update_values", options:{updates: [["roundStep", id], ["phase", phase]]}});     
+    gameBroadcast("game_action", {action: "update_values", options:{updates: [["stepId", id], ["phaseId", phaseId]]}});     
     chatBroadcast("game_update", {message: "set the round step to "+id+": "+l10n(id)+"."})
   }
 
 
   return (
     <div 
-      key={stepInfo.id}
+      key={stepId}
       className={`flex flex-1 items-center`} 
       style={{
         width: hovering ? "750px" : "100%",
         fontSize: "1.7vh",
       }}
-      onClick={() => handleButtonClick(stepInfo.id)}
-      onMouseEnter={() => setHovering(stepInfo.id)}
-      onMouseLeave={() => setHovering(null)}
-    >
+      onClick={() => handleButtonClick(stepId)}
+      onMouseEnter={() => setHovering(stepId)}
+      onMouseLeave={() => setHovering(null)}>
       <div className="flex justify-center" style={{width:"3vh"}}/>
       <div className={`flex h-full items-center justify-center ${isRoundStep ? "bg-red-800" : "bg-gray-500"} ${stepInfo.actions ? "underline" : ""}`} style={{width:"3vh"}}>
-        {stepInfo.id}
+        {stepId}
       </div>
       {numTriggers > 0 &&
         <ReminderButton
           triggerCardIds={triggerCardIds}/>
       }
       <div className={`flex flex-1 h-full items-center justify-center ${isRoundStep ? "bg-red-800" : "bg-gray-500"} ${hovering ? "block" : "hidden"}`} >
-        <div dangerouslySetInnerHTML={{ __html: l10n(stepInfo.id) }} />
+        <div dangerouslySetInnerHTML={{ __html: l10n(stepId) }} />
       </div>
     </div>
   )

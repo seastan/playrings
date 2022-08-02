@@ -25,6 +25,7 @@ defmodule DragnCardsWeb.API.V1.GameController do
     }
     GameUISupervisor.start_game(game_name, user, options)
     room = Rooms.get_room_by_name(game_name)
+    IO.inspect(room)
     if room do
       Logger.debug("game ok")
       conn

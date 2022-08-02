@@ -22,7 +22,7 @@ import {
 } from "../../../engine/functions/flatListOfCards";
 import { setValues } from "../../../store/gameUiSlice";
 import abilities from "../definitions/abilities";
-import { GROUPSINFO, roundStepToText, nextRoundStep, prevRoundStep, nextPhase, prevPhase } from "../definitions/constants";
+import { GROUPSINFO, stepIdToText, nextRoundStep, prevRoundStep, nextPhase, prevPhase } from "../definitions/constants";
 import { setActiveCardObj, setKeypressW, setObservingPlayerN, setPlayerUiValues } from "../../../store/playerUiSlice";
 
 
@@ -41,7 +41,7 @@ const reveal = (game, deckGroupId, discardGroupId, gameBroadcast, chatBroadcast,
   // If no cards, check phase of game
   if (stacksLeft === 0) {
     // If quest phase, shuffle encounter discard pile into deck
-    if (game.phase === "Quest") {
+    if (game.phaseId === "Quest") {
       gameBroadcast("game_action",{action:"move_stacks", options:{orig_group_id: discardGroupId, dest_group_id: deckGroupId, top_n: encounterDiscardStackIds.length, position: "s"}});
       chatBroadcast("game_update",{message: " shuffles "+GROUPSINFO[discardGroupId].name+" into "+GROUPSINFO[deckGroupId].name+"."});
       return;
@@ -65,7 +65,7 @@ const reveal = (game, deckGroupId, discardGroupId, gameBroadcast, chatBroadcast,
   gameBroadcast("game_action", {action: "move_stack", options: {stack_id: topStackId, dest_group_id: "sharedStaging", dest_stack_index: -1, combine: false, preserve_state: facedown}})
 
   // If there was only 1 card left, then it's now empty. If it's the quest phase we need to reshuffle.
-  if (stacksLeft === 1 && game.phase === "Quest") {
+  if (stacksLeft === 1 && game.phaseId === "Quest") {
     gameBroadcast("game_action",{action:"move_stacks", options:{orig_group_id: discardGroupId, dest_group_id: deckGroupId, top_n: encounterDiscardStackIds.length, position: "s"}});
     chatBroadcast("game_update",{message: " shuffles "+GROUPSINFO[discardGroupId].name+" into "+GROUPSINFO[deckGroupId].name+"."});
   }
@@ -98,7 +98,7 @@ export const gameAction = (action, actionProps, forPlayerN = null) => {
     // This prevents, for example, the token moving multiple times if players refresh at different times.
     if (isHost) {
       // Set phase
-      chatBroadcast("game_update", {message: "set the round step to "+roundStepToText("7.R")+"."})
+      chatBroadcast("game_update", {message: "set the round step to "+stepIdToText("7.R")+"."})
       const firstPlayerN = game.firstPlayer;
       const nextPlayerN = getNextPlayerN(gameUi, firstPlayerN);
       // If nextPlayerN is null then it's a solo game, so don't pass the token
@@ -127,12 +127,12 @@ export const gameAction = (action, actionProps, forPlayerN = null) => {
             then: [
               {
                 action: "setValue", 
-                keylist: ["phase"], 
+                keylist: ["phaseId"], 
                 value: "Resource"
               },
               {
                 action: "setValue", 
-                keylist: ["roundStep"], 
+                keylist: ["stepId"], 
                 value: "1.R"
               },
               {
@@ -164,8 +164,8 @@ export const gameAction = (action, actionProps, forPlayerN = null) => {
   // is_host = player_n == leftmost_non_eliminated_player_n(gameui)
   // gameui = if is_host do
   //   update_values(gameui,[
-  //     ["phase", "Resource"],
-  //     ["roundStep", "1.R"],
+  //     ["phaseId", "Resource"],
+  //     ["stepId", "1.R"],
   //     ["roundNumber", gameui["game"]["roundNumber"]+1]
   //   ])
   // else
@@ -237,12 +237,12 @@ export const gameAction = (action, actionProps, forPlayerN = null) => {
             then: [
               {
                 action: "setValue", 
-                key_list: ["phase"], 
+                key_list: ["phaseId"], 
                 value: "Resource"
               },
               {
                 action: "setValue", 
-                key_list: ["roundStep"], 
+                key_list: ["stepId"], 
                 value: "1.R"
               },
               {
@@ -295,8 +295,8 @@ export const gameAction = (action, actionProps, forPlayerN = null) => {
   // is_host = player_n == leftmost_non_eliminated_player_n(gameui)
   // gameui = if is_host do
   //   update_values(gameui,[
-  //     ["phase", "Resource"],
-  //     ["roundStep", "1.R"],
+  //     ["phaseId", "Resource"],
+  //     ["stepId", "1.R"],
   //     ["roundNumber", gameui["game"]["roundNumber"]+1]
   //   ])
   // else
@@ -373,7 +373,7 @@ export const gameAction = (action, actionProps, forPlayerN = null) => {
   //         chatBroadcast("game_update", {message: "-----------------------"})
   //         chatBroadcast("game_update", {message: "-----------------------"})
   //         chatBroadcast("game_update", {message: "started a new round as host."})
-  //         chatBroadcast("game_update", {message: "set the round step to "+roundStepToText("1.R")+"."})
+  //         chatBroadcast("game_update", {message: "set the round step to "+stepIdToText("1.R")+"."})
   //         chatBroadcast("game_update",{message: "increased the round number by 1."})
   //     }
   //     chatBroadcast("game_update",{message: "drew card(s)."});
@@ -444,16 +444,16 @@ export const gameAction = (action, actionProps, forPlayerN = null) => {
   else if (action === "shadows") {
     // Deal all shadow cards
     // Set phase
-    gameBroadcast("game_action", {action: "update_values", options: {updates: [["roundStep", "6.2"], ["phase", "Combat"]]}});
-    chatBroadcast("game_update", {message: "set the round step to "+roundStepToText("6.2")+"."});
+    gameBroadcast("game_action", {action: "update_values", options: {updates: [["stepId", "6.2"], ["phaseId", "Combat"]]}});
+    chatBroadcast("game_update", {message: "set the round step to "+stepIdToText("6.2")+"."});
     gameBroadcast("game_action", {action: "deal_all_shadows", options: {}});
   } 
   
   else if (action === "discard_shadows") {
     // Discard all shadow cards
     // Set phase
-    gameBroadcast("game_action", {action: "update_values", options: {updates: [["roundStep", "6.11"], ["phase", "Combat"]]}});
-    chatBroadcast("game_update", {message: "set the round step to "+roundStepToText("6.11")+"."});
+    gameBroadcast("game_action", {action: "update_values", options: {updates: [["stepId", "6.11"], ["phaseId", "Combat"]]}});
+    chatBroadcast("game_update", {message: "set the round step to "+stepIdToText("6.11")+"."});
 
     gameBroadcast("game_action", {
       action: "action_on_matching_cards", 
@@ -519,12 +519,12 @@ export const gameAction = (action, actionProps, forPlayerN = null) => {
   
   else if (action === "next_step" || action === "prev_step") {
     // Next/prev step
-    const stepPhase = action === "next_step" ? nextRoundStep(game.roundStep) : prevRoundStep(game.roundStep);
+    const stepPhase = action === "next_step" ? nextRoundStep(game.stepId) : prevRoundStep(game.stepId);
     if (stepPhase) {
-      gameBroadcast("game_action", {action: "update_values", options: {updates: [["roundStep", stepPhase["roundStep"]], ["phase", stepPhase["phase"]]]}});
-      chatBroadcast("game_update", {message: "set the round step to "+roundStepToText(stepPhase["roundStep"])+"."});
+      gameBroadcast("game_action", {action: "update_values", options: {updates: [["stepId", stepPhase["stepId"]], ["phaseId", stepPhase["phaseId"]]]}});
+      chatBroadcast("game_update", {message: "set the round step to "+stepIdToText(stepPhase["stepId"])+"."});
       // Handle targeting
-      const triggerCardIds = game.triggerMap[stepPhase["roundStep"]];     
+      const triggerCardIds = game.triggerMap[stepPhase["stepId"]];     
       // Remove targets from all cards you targeted
       gameBroadcast("game_action", {
         action: "action_on_matching_cards", 
@@ -543,10 +543,10 @@ export const gameAction = (action, actionProps, forPlayerN = null) => {
 
   else if (action === "next_phase" || action === "prev_phase") {
     // Next/prev phase
-    const stepPhase = action === "next_phase" ? nextPhase(game.phase) : prevPhase(game.phase);
+    const stepPhase = action === "next_phase" ? nextPhase(game.phaseId) : prevPhase(game.phaseId);
     if (stepPhase) {
-      gameBroadcast("game_action", {action: "update_values", options: {updates: [["roundStep", stepPhase["roundStep"]], ["phase", stepPhase["phase"]]]}});
-      chatBroadcast("game_update", {message: "set the round step to "+roundStepToText(stepPhase["roundStep"])+"."});
+      gameBroadcast("game_action", {action: "update_values", options: {updates: [["stepId", stepPhase["stepId"]], ["phaseId", stepPhase["phaseId"]]]}});
+      chatBroadcast("game_update", {message: "set the round step to "+stepIdToText(stepPhase["stepId"])+"."});
     }
   }
 
@@ -927,9 +927,9 @@ export const cardAction = (action, cardId, options, props) => {
       gameBroadcast("game_action", {action: "update_values", options:{updates: updates}});
     }
 
-    if (isHost && game.roundStep !== "3.2") {            
-      gameBroadcast("game_action", {action: "update_values", options: {updates: [["roundStep", "3.2"], ["phase", "Quest"]]}});
-      chatBroadcast("game_update", {message: "set the round step to "+roundStepToText("3.2")+"."});
+    if (isHost && game.stepId !== "3.2") {            
+      gameBroadcast("game_action", {action: "update_values", options: {updates: [["stepId", "3.2"], ["phaseId", "Quest"]]}});
+      chatBroadcast("game_update", {message: "set the round step to "+stepIdToText("3.2")+"."});
     }
   }
   // Deal shadow card

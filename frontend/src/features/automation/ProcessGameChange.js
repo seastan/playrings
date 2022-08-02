@@ -32,7 +32,7 @@ export const processGameChange = (g1, g2, playerN, gameBroadcast, chatBroadcast)
     const cl2 = flatListOfCards(g2);
 
     // Thurindir 
-    if (g2.roundStep === "0.0") {
+    if (g2.stepId === "0.0") {
         const thurindir1 = filterByProperties(cl1, [["cardDbId", "12946b30-a231-4074-a524-960365081360"],"controller",playerN])
         const thurindir2 = filterByProperties(cl2, [["cardDbId", "12946b30-a231-4074-a524-960365081360"],"controller",playerN])
         if (thurindir2.length > thurindir1.length) {

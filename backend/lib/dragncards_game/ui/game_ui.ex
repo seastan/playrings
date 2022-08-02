@@ -635,7 +635,7 @@ defmodule DragnCardsGame.GameUI do
       card = if dest_group_type == "play" and orig_group_type != "play" do
         card
         |> Map.put("roundEnteredPlay", game["round"])
-        |> Map.put("phaseEnteredPlay", game["phase"])
+        |> Map.put("phaseEnteredPlay", game["phaseId"])
         |> Map.put("inPlay", true)
       else card end
       # Leaving player control
@@ -1792,8 +1792,8 @@ defmodule DragnCardsGame.GameUI do
     # Set phase
     game = if is_host do
       update_values(game,[
-        ["phase", "Refresh"],
-        ["roundStep", "7.R"]
+        ["phaseId", "Refresh"],
+        ["stepId", "7.R"]
       ])
     else
       game
@@ -1822,8 +1822,8 @@ defmodule DragnCardsGame.GameUI do
     is_host = player_n == leftmost_non_eliminated_player_n(game)
     game = if is_host do
       update_values(game,[
-        ["phase", "Resource"],
-        ["roundStep", "1.R"],
+        ["phaseId", "Resource"],
+        ["stepId", "1.R"],
         ["roundNumber", game["roundNumber"]+1]
       ])
     else
@@ -2108,7 +2108,7 @@ defmodule DragnCardsGame.GameUI do
 
     # If deck size has increased from 0, assume it is at start of game and a draw of 6 is needed
     round_number = game["roundNumber"]
-    round_step = game["roundStep"]
+    round_step = game["stepId"]
     deck_size_after = Enum.count(get_stack_ids(game, player_n_deck_id))
 
     # Shuffle decks with new cards
