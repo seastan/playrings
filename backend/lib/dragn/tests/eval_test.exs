@@ -100,13 +100,13 @@ defmodule MyTest do
           "GET_STACK_ID" ->
             group_id = evaluate(game, Enum.at(code,1))
             stack_index = evaluate(game, Enum.at(code,2))
-            evaluate(game, ["AT_INDEX", ["GAME_GET_VAL", ["groupById", group_id, "stackIds"]], stack_index])
+            if group_id do evaluate(game, ["AT_INDEX", "$GAME.groupById." <> group_id <> ".stackIds", stack_index]) else nil end
           "GET_CARD_ID" ->
             group_id = evaluate(game, Enum.at(code,1))
             stack_index = evaluate(game, Enum.at(code,2))
             stack_id = evaluate(game, ["GET_STACK_ID", group_id, stack_index])
             card_index = evaluate(game, Enum.at(code,3))
-            evaluate(game, ["AT_INDEX", ["GAME_GET_VAL", ["stackById", stack_id, "cardIds"]], card_index])
+            if stack_id do evaluate(game, ["AT_INDEX", "$GAME.stackById." <> stack_id <> ".cardIds", card_index]) else nil end
           "OBJ_SET_VAL" ->
             case Enum.count(code) do
               4 ->
@@ -122,31 +122,30 @@ defmodule MyTest do
                 put_in(obj, path ++ [key], value)
             end
           "GAME_SET_VAL" ->
-            case Enum.count(code) do
-              3 ->
-                path = evaluate(game, Enum.at(code,1))
-                value = evaluate(game, Enum.at(code,2))
-                put_in(game, path, value)
-              4 ->
-                path = evaluate(game, Enum.at(code,1))
-                key = evaluate(game, Enum.at(code,2))
-                value = evaluate(game, Enum.at(code,3))
-                put_in(game, path ++ [key], value)
-            end
+            path = Enum.slice(code, 1, Enum.count(code)-2)
+            path = Enum.reduce(path, [], fn(path_item, acc)->
+              eval_path_item = evaluate(game, path_item)
+              if is_binary(eval_path_item) do
+                acc ++ [eval_path_item]
+              else
+                acc ++ eval_path_item
+              end
+            end)
+            value = evaluate(game, Enum.at(code, Enum.count(code)-1))
+            put_in(game, path, value)
           "GAME_INCREASE_VAL" ->
-            case Enum.count(code) do
-              3 ->
-                path = evaluate(game, Enum.at(code,1))
-                delta = evaluate(game, Enum.at(code,2))
-                old_value = get_in(game, path)
-                put_in(game, path, old_value + delta)
-              4 ->
-                path = evaluate(game, Enum.at(code,1))
-                key = evaluate(game, Enum.at(code,2))
-                delta = evaluate(game, Enum.at(code,3))
-                old_value = get_in(game, path ++ [key])
-                put_in(game, path ++ [key], old_value + delta)
-            end
+            path = Enum.slice(code, 1, Enum.count(code)-2)
+            path = Enum.reduce(path, [], fn(path_item, acc)->
+              eval_path_item = evaluate(game, path_item)
+              if is_binary(eval_path_item) do
+                acc ++ [eval_path_item]
+              else
+                acc ++ eval_path_item
+              end
+            end)
+            delta = evaluate(game, Enum.at(code, Enum.count(code)-1))
+            old_value = get_in(game, path)
+            put_in(game, path, old_value + delta)
           "COND" ->
             ifthens = Enum.slice(code, 1, Enum.count(code))
             Enum.reduce_while(0..Enum.count(ifthens)-1//2, nil, fn(i, acc) ->
@@ -176,12 +175,12 @@ defmodule MyTest do
               acc = put_in(acc, ["variables", var_name], i)
               acc = evaluate(acc, function)
             end)
-          "FOR_EACH_KEY_VAL_AT_PATH" ->
+          "FOR_EACH_KEY_VAL" ->
             argc = Enum.count(code) - 1
             key_name = Enum.at(code, 1)
             val_name = Enum.at(code, 2)
-            obj_path = evaluate(game, Enum.at(code, 3))
-            old_list = evaluate(game, ["GAME_GET_VAL", obj_path])
+            old_list = evaluate(game, Enum.at(code, 3))
+            #old_list = evaluate(game, ["GAME_GET_VAL", obj_path])
             function = Enum.at(code, 4)
             old_list = if argc >= 5 do
               order = if argc >= 6 and evaluate(game, Enum.at(code, 6)) == "DESC" do :desc else :asc end
@@ -278,6 +277,11 @@ defmodule MyTest do
           get_in(game, evaluate(game, "$ACTIVE_TOKENS_PATH"))
         Map.has_key?(game, "variables") && Map.has_key?(game["variables"], code) ->
           game["variables"][code]
+        is_binary(code) and String.starts_with?(code, "$") and String.contains?(code, ".") ->
+          split = String.split(code, ".")
+          obj = evaluate(game, Enum.at(split, 0))
+          path = ["LIST"] ++ Enum.slice(split, 1, Enum.count(split))
+          evaluate(game, ["OBJ_GET_BY_PATH", obj, path])
         true ->
           code
       end
@@ -324,7 +328,7 @@ game = %{
   "messages" => []
 }
 
-if false do
+if true do
   code = "$ACTIVE_CARD_PATH"
   MyTest.assert(1, MyTest.evaluate(game, code), ["cardById", "abc"])
 
@@ -343,27 +347,27 @@ if false do
   code =
     [
       ["COND",
-        ["EQUAL", ["OBJ_GET_VAL", "$ACTIVE_CARD", "rotation"], 0],
+        ["EQUAL", "$ACTIVE_CARD.rotation", 0],
         [
             ["GAME_SET_VAL", "$ACTIVE_CARD_PATH", "rotation", 90],
-            ["GAME_ADD_MESSAGE","$playerN"," rotated ", ["OBJ_GET_VAL", "$ACTIVE_FACE", "name"], " 90 degrees."]
+            ["GAME_ADD_MESSAGE","$playerN"," rotated ", "$ACTIVE_FACE.name", " 90 degrees."]
         ],
-        ["EQUAL", ["OBJ_GET_VAL", "$ACTIVE_CARD", "rotation"], 90],
+        ["EQUAL", "$ACTIVE_CARD.rotation", 90],
         [
             ["GAME_SET_VAL", "$ACTIVE_CARD_PATH", "rotation", 0],
-            ["GAME_ADD_MESSAGE","$playerN"," rotated ", ["OBJ_GET_VAL", "$ACTIVE_FACE", "name"], " -90 degrees."]
+            ["GAME_ADD_MESSAGE","$playerN"," rotated ", "$ACTIVE_FACE.name", " -90 degrees."]
         ]
       ],
       ["COND",
-        ["EQUAL", ["OBJ_GET_VAL", "$ACTIVE_CARD", "rotation"], 0],
+        ["EQUAL", "$ACTIVE_CARD.rotation", 0],
         [
             ["GAME_SET_VAL", "$ACTIVE_CARD_PATH", "rotation", 90],
-            ["GAME_ADD_MESSAGE","$playerN"," rotated ", ["OBJ_GET_VAL", "$ACTIVE_FACE", "name"], " 90 degrees."]
+            ["GAME_ADD_MESSAGE","$playerN"," rotated ", "$ACTIVE_FACE.name", " 90 degrees."]
         ],
-        ["EQUAL", ["OBJ_GET_VAL", "$ACTIVE_CARD", "rotation"], 90],
+        ["EQUAL", "$ACTIVE_CARD.rotation", 90],
         [
             ["GAME_SET_VAL", "$ACTIVE_CARD_PATH", "rotation", -10],
-            ["GAME_ADD_MESSAGE","$playerN"," rotated ", ["OBJ_GET_VAL", "$ACTIVE_FACE", "name"], " -90 degrees."]
+            ["GAME_ADD_MESSAGE","$playerN"," rotated ", "$ACTIVE_FACE.name", " -90 degrees."]
         ]
       ]
     ]
@@ -372,16 +376,16 @@ if false do
   code = ["OBJ_SET_VAL", "$ACTIVE_CARD", "rotation", 44]
   MyTest.assert(7, MyTest.evaluate(game, code)["rotation"], 44)
 
-  code = ["FOR_EACH_KEY_VAL_AT_PATH", "$CARD_ID", "$CARD", "$CARD_BY_ID_PATH", ["GAME_SET_VAL", "$CARD_BY_ID_PATH", "$CARD_ID", ["OBJ_SET_VAL", "$CARD", "rotation", 77]]]
+  code = ["FOR_EACH_KEY_VAL", "$CARD_ID", "$CARD", "$CARD_BY_ID", ["GAME_SET_VAL", "$CARD_BY_ID_PATH", "$CARD_ID", ["OBJ_SET_VAL", "$CARD", "rotation", 77]]]
   MyTest.assert(8, MyTest.evaluate(game, code)["cardById"]["ghi"]["rotation"], 77)
 
-  code = ["FOR_EACH_KEY_VAL_AT_PATH", "$CARD_ID", "$CARD", "$CARD_BY_ID_PATH", ["GAME_SET_VAL", ["LIST", "cardById", "$CARD_ID", "rotation"], 77]]
+  code = ["FOR_EACH_KEY_VAL", "$CARD_ID", "$CARD", "$CARD_BY_ID", ["GAME_SET_VAL", ["LIST", "cardById", "$CARD_ID", "rotation"], 77]]
   MyTest.assert(8, MyTest.evaluate(game, code)["cardById"]["ghi"]["rotation"], 77)
 
   code =
-    ["FOR_EACH_KEY_VAL_AT_PATH", "$CARD_ID", "$CARD", "$CARD_BY_ID_PATH",
+    ["FOR_EACH_KEY_VAL", "$CARD_ID", "$CARD", "$CARD_BY_ID",
       ["COND",
-        ["EQUAL", ["OBJ_GET_VAL", "$CARD", "exhausted"], true],
+        ["EQUAL", "$CARD.exhausted", true],
         ["GAME_SET_VAL", ["LIST", "cardById", "$CARD_ID", "rotation"], 77],
         true,
         "$GAME"
@@ -390,10 +394,10 @@ if false do
   MyTest.assert(9, MyTest.evaluate(game, code)["cardById"]["def"]["rotation"], 77)
 
   code =
-    ["FOR_EACH_KEY_VAL_AT_PATH", "$PLAYER_I", "$PLAYER_I_DATA", ["playerData"],
+    ["FOR_EACH_KEY_VAL", "$PLAYER_I", "$PLAYER_I_DATA", "$GAME.playerData",
       ["COND",
-        ["EQUAL", ["OBJ_GET_VAL", "$PLAYER_I_DATA", "willpower"], 0],
-        ["GAME_SET_VAL", ["LIST", "playerData", "$PLAYER_I", "willpower"], 22],
+        ["EQUAL", "$PLAYER_I_DATA.willpower", 0],
+        ["GAME_SET_VAL", "playerData", "$PLAYER_I", "willpower", 22],
         true,
         "$GAME",
       ]
@@ -718,101 +722,102 @@ MyTest.assert(12, MyTest.evaluate(game, code)["variables"]["$i"], 29)
 code = ["FOR_EACH_START_STOP_STEP", "$i", 0, 10, 1, ["MOVE_CARD", ["GET_CARD_ID", "sharedEncounterDeck", 0, 0], "sharedVictory", 0, 0]]
 MyTest.assert(13, Enum.count(MyTest.evaluate(game, code)["groupById"]["sharedVictory"]["stackIds"]), 5)
 
-code = ["NEXT_PLAYER", ["NEXT_PLAYER", ["NEXT_PLAYER", ["GAME_GET_VAL", ["LIST", "firstPlayer"]]]]]
+code = ["NEXT_PLAYER", ["NEXT_PLAYER", ["NEXT_PLAYER", "$GAME.firstPlayer"]]]
 MyTest.assert(14, MyTest.evaluate(game, code), "player1")
 
 
 actions = %{
   "newRound" => [
     ["COND",
-      ["EQUAL", ["GAME_GET_VAL", ["LIST", "playerData", "$PLAYER_N", "refreshed"]], false],
+      ["EQUAL", "$GAME.playerData.$PLAYER_N.refreshed", false],
       ["ACTION_LIST", "refresh"],
       true,
       "$GAME"
     ],
     ["COND",
-      ["EQUAL", ["GAME_GET_VAL", ["LIST", "playerUi", "playerN"]], "player1"],
+      ["EQUAL", "$GAME.playerUi.playerN", "player1"],
       [
-        ["GAME_INCREASE_VAL", ["roundNumber"], 1],
+        ["GAME_INCREASE_VAL", "roundNumber", 1],
         ["GAME_ADD_MESSAGE", "player1 increased the round."],
-        ["GAME_SET_VAL", ["phase"], "Resource"],
+        ["GAME_SET_VAL", "phase", "Resource"],
         ["GAME_ADD_MESSAGE", "player1 set the phase to Resource."],
-        ["GAME_SET_VAL", ["roundStep"], "1.R"],
+        ["GAME_SET_VAL", "roundStep", "1.R"],
         ["GAME_ADD_MESSAGE", "player1 set the round step to 1.R."]
       ],
       true,
       "$GAME"
     ],
-    ["FOR_EACH_KEY_VAL_AT_PATH", "$CARD_ID", "$CARD", "$CARD_BY_ID_PATH", [
+    ["FOR_EACH_KEY_VAL", "$CARD_ID", "$CARD", "$CARD_BY_ID", [
+      ["DEFINE", "$CURRENT_SIDE", "$CARD.currentSide"],
       ["COND",
         ["AND",
-          ["EQUAL", ["OBJ_GET_VAL", "$CARD", "sides", ["OBJ_GET_VAL", "$CARD", "currentSide"], "type"], "Hero"],
-          ["EQUAL", ["OBJ_GET_VAL", "$CARD", "controller"], "playerN"],
-          ["EQUAL", ["OBJ_GET_VAL", "$CARD", "inPlay"], true],
+          ["EQUAL", "$CARD.sides.$CURRENT_SIDE.type", "Hero"],
+          ["EQUAL", "$CARD.controller", "playerN"],
+          ["EQUAL", "$CARD.inPlay", true],
         ],
         [
-          ["GAME_INCREASE_VAL", ["LIST", "cardById", "$CARD_ID", "tokens", "resource"], 1],
+          ["GAME_INCREASE_VAL", "cardById", "$CARD_ID", "tokens", "resource", 1],
           ["GAME_ADD_MESSAGE", "$PLAYER_N", " added 1 resource token to ", ["OBJ_GET_VAL", "$CARD", "sides", ["OBJ_GET_VAL", "$CARD", "currentSide"], "name"], "."],
         ],
         true,
         "$GAME"
       ],
       ["COND",
-        ["EQUAL", ["OBJ_GET_VAL", "$CARD", "controller"], "playerN"],
-        ["GAME_SET_VAL", ["LIST", "cardById", "$CARD_ID", "committed"], false],
+        ["EQUAL", "$CARD.controller", "playerN"],
+        ["GAME_SET_VAL", "cardById", "$CARD_ID", "committed", false],
         true,
         "$GAME"
       ],
       ["COND",
         ["AND",
-          ["EQUAL", ["OBJ_GET_VAL", "$CARD", "controller"], "playerN"],
-          ["EQUAL", ["OBJ_GET_VAL", "$CARD", "inPlay"], true],
+          ["EQUAL", "$CARD.controller", "playerN"],
+          ["EQUAL", "$CARD.inPlay", true],
         ],
         [
-          ["GAME_SET_VAL", ["LIST", "cardById", "$CARD_ID", "tokens", "resource"], 1], #["OBJ_GET_VAL", "$CARD", "extraResources"]],
+          ["GAME_SET_VAL", "cardById", "$CARD_ID", "tokens", "resource", 1], #["OBJ_GET_VAL", "$CARD", "extraResources"]],
           ["GAME_ADD_MESSAGE", "$PLAYER_N", " added ", ["OBJ_GET_VAL", "$CARD", "extraResources"]," extra resource token(s) to ", ["OBJ_GET_VAL", "$CARD", "sides", ["OBJ_GET_VAL", "$CARD", "currentSide"], "type"]]
         ],
         true,
         "$GAME"
       ],
     ]],
-    ["FOR_EACH_START_STOP_STEP", "$i", 0, ["GAME_GET_VAL", ["LIST", "playerData", "player1", "cardsDrawn"]], 1,
+    ["FOR_EACH_START_STOP_STEP", "$i", 0, "$GAME.playerData.player1.cardsDrawn", 1,
       [
         ["MOVE_CARD", ["GET_CARD_ID", ["JOIN_STRING", "$PLAYER_N", "Deck"], 0, 0], ["JOIN_STRING", "$PLAYER_N", "Hand"], 0, 0],
         ["GAME_ADD_MESSAGE", "$PLAYER_N", " drew 1 card."]
       ]
     ],
-    ["GAME_SET_VAL", ["LIST", "playerData", "$PLAYER_N", "willpower"], 0],
-    ["GAME_SET_VAL", ["LIST", "playerData", "$PLAYER_N", "refreshed"], false],
+    ["GAME_SET_VAL", "playerData", "$PLAYER_N", "willpower", 0],
+    ["GAME_SET_VAL", "playerData", "$PLAYER_N", "refreshed", false],
   ],
   "refresh" => [
     ["COND",
-      ["EQUAL", ["GAME_GET_VAL", ["LIST", "playerUi", "playerN"]], "player1"],
+      ["EQUAL", "$GAME.playerUi.playerN", "player1"],
       [
-        ["GAME_SET_VAL", ["LIST", "phase"], "Refresh"],
-        ["GAME_SET_VAL", ["LIST", "roundStep"], "7.R"],
-        ["GAME_SET_VAL", ["LIST", "firstPlayer"], ["NEXT_PLAYER", ["GAME_GET_VAL", ["LIST", "firstPlayer"]]]],
+        ["GAME_SET_VAL", "phase", "Refresh"],
+        ["GAME_SET_VAL", "roundStep", "7.R"],
+        ["GAME_SET_VAL", "firstPlayer", ["NEXT_PLAYER", "$GAME.firstPlayer"]],
         ["GAME_ADD_MESSAGE", "player1 set the phase to Refresh."],
         ["GAME_ADD_MESSAGE", "player1 set the round step to 7.R."]
       ],
       true,
       "$GAME"
     ],
-    ["FOR_EACH_KEY_VAL_AT_PATH", "$CARD_ID", "$CARD", "$CARD_BY_ID_PATH", [
+    ["FOR_EACH_KEY_VAL", "$CARD_ID", "$CARD", "$CARD_BY_ID", [
       ["COND",
         ["AND",
-          ["EQUAL", ["OBJ_GET_VAL", "$CARD", "controller"], "playerN"],
-          ["EQUAL", ["OBJ_GET_VAL", "$CARD", "inPlay"], true],
+          ["EQUAL", "$CARD.controller", "playerN"],
+          ["EQUAL", "$CARD.inPlay", true],
         ],
         [
-          ["GAME_SET_VAL", ["LIST", "cardById", "$CARD_ID", "rotation"], 0],
-          ["GAME_SET_VAL", ["LIST", "cardById", "$CARD_ID", "exhausted"], false]
+          ["GAME_SET_VAL", "cardById", "$CARD_ID", "rotation", 0],
+          ["GAME_SET_VAL", "cardById", "$CARD_ID", "exhausted", false]
         ],
         true,
         "$GAME"
       ],
     ]],
-    ["GAME_SET_VAL", ["LIST", "playerData", "$PLAYER_N", "refreshed"], true],
+    ["GAME_SET_VAL", "playerData", "$PLAYER_N", "refreshed", true],
     ["GAME_ADD_MESSAGE", "player1 refeshed."]
   ],
   "revealEncounterFaceup" => [
@@ -833,11 +838,11 @@ actions = %{
   ],
   "revealEncounter" => [
     ["COND",
-      ["EQUAL", ["LENGTH", ["GAME_GET_VAL", ["LIST", "groupById", "sharedEncounterDeck", "stackIds"]]], 0],
+      ["EQUAL", ["LENGTH", "$GAME.groupById.sharedEncounterDeck.stackIds"], 0],
       ["COND",
-        ["EQUAL", ["GAME_GET_VAL", ["LIST", "phase"]], "Quest"],
+        ["EQUAL", "$GAME.phase", "Quest"],
         [
-          ["MOVE_STACKS", "sharedEncounterDiscard", "sharedEncounterDeck", ["LENGTH", ["GAME_GET_VAL", ["LIST", "groupById", "sharedEncounterDiscard", "stackIds"]]], "shuffle"],
+          ["MOVE_STACKS", "sharedEncounterDiscard", "sharedEncounterDeck", ["LENGTH", "$GAME.groupById.sharedEncounterDiscard.stackIds"], "shuffle"],
           ["GAME_ADD_MESSAGE", "$PLAYER_N"," shuffled the encounter discard pile into the encounter deck."]
         ],
         true,
@@ -845,15 +850,15 @@ actions = %{
       ],
       true,
       [
-        ["DEFINE", "$STACK_ID", ["AT_INDEX", ["GAME_GET_VAL", ["LIST", "groupById", "sharedEncounterDeck", "stackIds"]], 0]],
+        ["DEFINE", "$STACK_ID", ["AT_INDEX", "$GAME.groupById.sharedEncounterDeck.stackIds", 0]],
         ["MOVE_STACK", "$STACK_ID", "sharedStaging", -1, false, "$REVEAL_FACEDOWN"],
         ["GAME_ADD_MESSAGE", "$PLAYER_N", " revealed ", ["FACEUP_NAME_FROM_STACK_ID", "$STACK_ID"]]
       ]
     ],
     ["COND",
-      ["EQUAL", ["LENGTH", ["GAME_GET_VAL", ["LIST", "groupById", "sharedEncounterDeck", "stackIds"]]], 0],
+      ["EQUAL", ["LENGTH", "$GAME.groupById.sharedEncounterDeck.stackIds"], 0],
       [
-        ["MOVE_STACKS", "sharedEncounterDiscard", "sharedEncounterDeck", ["LENGTH", ["GAME_GET_VAL", ["LIST", "groupById", "sharedEncounterDiscard", "stackIds"]]], "shuffle"],
+        ["MOVE_STACKS", "sharedEncounterDiscard", "sharedEncounterDeck", ["LENGTH", "$GAME.groupById.sharedEncounterDiscard.stackIds"], "shuffle"],
         ["GAME_ADD_MESSAGE", "$PLAYER_N"," shuffled the encounter discard pile into the encounter deck."]
       ],
       true,
@@ -862,11 +867,11 @@ actions = %{
   ],
   "revealSecondary" => [
     ["COND",
-      ["EQUAL", ["LENGTH", ["GAME_GET_VAL", ["LIST", "groupById", "sharedEncounterDeck2", "stackIds"]]], 0],
+      ["EQUAL", ["LENGTH", "$GAME.groupById.sharedEncounterDeck2.stackIds"], 0],
       ["GAME_ADD_MESSAGE", "$PLAYER_N", " tried to reveal a card from the second encounter deck, but it's empty."],
       true,
       [
-        ["DEFINE", "$STACK_ID", ["AT_INDEX", ["GAME_GET_VAL", ["LIST", "groupById", "sharedEncounterDeck2", "stackIds"]], 0]],
+        ["DEFINE", "$STACK_ID", ["AT_INDEX", "$GAME.groupById.sharedEncounterDeck2.stackIds", 0]],
         ["MOVE_STACK", "$STACK_ID", "sharedStaging", -1, false, "$REVEAL_FACEDOWN"],
         ["GAME_ADD_MESSAGE", "$PLAYER_N", " revealed ", ["FACEUP_NAME_FROM_STACK_ID", "$STACK_ID"]]
       ]
@@ -876,34 +881,35 @@ actions = %{
     ["MOVE_CARD", ["GET_CARD_ID", ["JOIN_STRING", "$PLAYER_N", "Deck"], 0, 0], ["JOIN_STRING", "$PLAYER_N", "Hand"], 0, 0],
   ],
   "shadows" => [
-    ["FOR_EACH_KEY_VAL_AT_PATH", "$PLAYER_DATA", "$PLAYER_I", "$PLAYER_I_DATA", [
+    ["FOR_EACH_KEY_VAL", "$PLAYER_DATA", "$PLAYER_I", "$PLAYER_I_DATA", [
+      ["DEFINE", "$CURRENT_SIDE", "$CARD.currentSide"],
       ["COND",
         ["AND",
-          ["EQUAL", ["OBJ_GET_VAL", "$CARD", "sides", ["OBJ_GET_VAL", "$CARD", "currentSide"], "type"], "Hero"],
-          ["EQUAL", ["OBJ_GET_VAL", "$CARD", "controller"], "playerN"],
-          ["EQUAL", ["OBJ_GET_VAL", "$CARD", "inPlay"], true],
+          ["EQUAL", "$CARD.sides.$CURRENT_SIDE.type", "Hero"],
+          ["EQUAL", "$CARD.controller", "playerN"],
+          ["EQUAL", "$CARD.inPlay", true],
         ],
         [
-          ["GAME_INCREASE_VAL", ["LIST", "cardById", "$CARD_ID", "tokens", "resource"], 1],
-          ["GAME_ADD_MESSAGE", "$PLAYER_N", " added 1 resource token to ", ["OBJ_GET_VAL", "$CARD", "sides", ["OBJ_GET_VAL", "$CARD", "currentSide"], "name"], "."],
+          ["GAME_INCREASE_VAL", "cardById", "$CARD_ID", "tokens", "resource", 1],
+          ["GAME_ADD_MESSAGE", "$PLAYER_N", " added 1 resource token to ", "$CARD.sides.$CURRENT_SIDE.name", "."],
         ],
         true,
         "$GAME"
       ],
       ["COND",
-        ["EQUAL", ["OBJ_GET_VAL", "$CARD", "controller"], "playerN"],
-        ["GAME_SET_VAL", ["LIST", "cardById", "$CARD_ID", "committed"], false],
+        ["EQUAL", "$CARD.controller", "playerN"],
+        ["GAME_SET_VAL", "cardById", "$CARD_ID", "committed", false],
         true,
         "$GAME"
       ],
       ["COND",
         ["AND",
-          ["EQUAL", ["OBJ_GET_VAL", "$CARD", "controller"], "playerN"],
-          ["EQUAL", ["OBJ_GET_VAL", "$CARD", "inPlay"], true],
+          ["EQUAL", "$CARD.controller", "playerN"],
+          ["EQUAL", "$CARD.inPlay", true],
         ],
         [
-          ["GAME_SET_VAL", ["LIST", "cardById", "$CARD_ID", "tokens", "resource"], 1], #["OBJ_GET_VAL", "$CARD", "extraResources"]],
-          ["GAME_ADD_MESSAGE", "$PLAYER_N", " added ", ["OBJ_GET_VAL", "$CARD", "extraResources"]," extra resource token(s) to ", ["OBJ_GET_VAL", "$CARD", "sides", ["OBJ_GET_VAL", "$CARD", "currentSide"], "type"]]
+          ["GAME_SET_VAL", "cardById", "$CARD_ID", "tokens", "resource", 1], #["OBJ_GET_VAL", "$CARD", "extraResources"]],
+          ["GAME_ADD_MESSAGE", "$PLAYER_N", " added ", "$CARD.extraResources"," extra resource token(s) to ", "$CARD.sides.$CURRENT_SIDE.type"]
         ],
         true,
         "$GAME"
@@ -933,22 +939,22 @@ game = MyTest.evaluate(game, actions["revealSecondaryFacedown"])
 #MyTest.assert(13, MyTest.evaluate(game, code)["variables"]["$i"], 29)
 IO.inspect(Enum.count(game["cardById"]))
 code = [
-  ["FOR_EACH_KEY_VAL_AT_PATH", "$PLAYER_I", "$PLAYER_I_DATA", "$PLAYER_DATA_PATH",
+  ["FOR_EACH_KEY_VAL", "$PLAYER_I", "$PLAYER_I_DATA", "$GAME.playerData",
     [
       #["LOGGER", "$PLAYER_I"],
-      ["FOR_EACH_KEY_VAL_AT_PATH", "$CARD_ID", "$CARD", "$CARD_BY_ID_PATH",
+      ["FOR_EACH_KEY_VAL", "$CARD_ID", "$CARD", "$CARD_BY_ID",
         [
           ["COND",
             ["AND",
-              ["EQUAL", ["OBJ_GET_VAL", "$CARD", "groupId"], ["JOIN_STRING", "$PLAYER_I", "Engaged"]],
-              ["EQUAL", ["OBJ_GET_VAL", "$CARD", "cardIndex"], 0],
-              ["EQUAL", ["OBJ_GET_BY_PATH", "$CARD", ["LIST", "sides", "A", "type"]], "Enemy"],
+              ["EQUAL", "$CARD.groupId", ["JOIN_STRING", "$PLAYER_I", "Engaged"]],
+              ["EQUAL", "$CARD.cardIndex", 0],
+              ["EQUAL", "$CARD.sides.A.type", "Enemy"],
             ],
             [
             #["LOGGER", "true!"],
             #["LOGGER", ["LENGTH", ["GAME_GET_VAL", ["LIST", "groupById", "sharedEncounterDeck", "stackIds"]]]],
             ["COND",
-              ["EQUAL", ["LENGTH", ["GAME_GET_VAL", ["LIST", "groupById", "sharedEncounterDeck", "stackIds"]]], 0],
+              ["EQUAL", ["LENGTH", "$GAME.groupById.sharedEncounterDeck.stackIds"], 0],
               [
                 ["GAME_ADD_MESSAGE", "$PLAYER_N", " tried to deal a shadow card but the encounter deck is empty."],
                 ["LOGGER", "tried to deal shadow but couldn't"],
@@ -957,10 +963,9 @@ code = [
               [
                 ["DEFINE", "$SHADOW_CARD_ID", ["GET_CARD_ID", "sharedEncounterDeck", 0, 0]],
                 ["ATTACH_CARD", "$SHADOW_CARD_ID", "$CARD_ID"],
-                ["GAME_SET_VAL", ["LIST", "cardById", "$SHADOW_CARD_ID", "rotation"], -30],
-                ["GAME_SET_VAL", ["LIST", "cardById", "$SHADOW_CARD_ID", "currentSide"], "B"],
-                ["GAME_ADD_MESSAGE", "$PLAYER_N", " dealt a shadow card to ", ["FACEUP_NAME_FROM_CARD_ID", "$CARD_ID"], "."],
-                ["LOGGER", "dealt shadow to ",["FACEUP_NAME_FROM_CARD_ID", "$CARD_ID"], " ", ["OBJ_GET_BY_PATH", "$CARD", ["LIST", "sides", "A", "engagementCost"]]]
+                ["GAME_SET_VAL", "cardById", "$SHADOW_CARD_ID", "rotation", -30],
+                ["GAME_SET_VAL", "cardById", "$SHADOW_CARD_ID", "currentSide", "B"],
+                ["GAME_ADD_MESSAGE", "$PLAYER_N", " dealt a shadow card to ", ["FACEUP_NAME_FROM_CARD_ID", "$CARD_ID"], "."]
               ]
             ]],
             true,
