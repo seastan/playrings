@@ -48,6 +48,10 @@ defmodule MyTest do
             next_i = current_i + 1
             next_i = if next_i > game["numPlayers"] do 1 else next_i end
             "player" <> Integer.to_string(next_i)
+          "GET_INDEX" ->
+            list = evaluate(game, Enum.at(code, 1))
+            value = evaluate(game, Enum.at(code, 2))
+            Enum.find_index(list, fn(x) -> x == value end)
           "AT_INDEX" ->
             #raise "stop"
             list = evaluate(game, Enum.at(code, 1))
@@ -408,7 +412,7 @@ end
 
 alias DragnCardsGame.GameUI
 game_def = "./../frontend/src/features/plugins/lotrlcg/definitions/gameDefinition.json" |> File.read! |> Poison.decode!
-gameui = GameUI.new("test", %{:id => 1}, %{"pluginUuid" => "10018538-89f9-49b9-9e28-af863a9e579c", "pluginVersion" => 1})
+gameui = GameUI.new("test", %{:id => 1}, %{"pluginUuid" => "3280e40f-8e25-451d-91ec-06283285a0ad", "pluginVersion" => 1})
 #IO.inspect(gameui)
 cards = game_def["preBuiltDecks"]["Q01.1"]["cards"]
 
@@ -932,8 +936,29 @@ actions = %{
   ],
   "next_step" => [
     ["COND",
-      ["EQUAL", "$GAME.stepId"]
-    ]
+      ["EQUAL", "$GAME.stepId", ["AT_INDEX", "$GAME.gameDef.stepOrder", -1]],
+      ["GAME_SET_VAL", "stepId", ["AT_INDEX", "$GAME.gameDef.stepOrder", 0]],
+      true,
+      [["LOGGER", "here"],
+      ["GAME_SET_VAL", "stepId", ["AT_INDEX", "$GAME.gameDef.stepOrder", ["ADD", ["GET_INDEX", "$GAME.gameDef.stepOrder", "$GAME.stepId"], 1]]]
+      ]
+    ],
+    ["DEFINE", "$STEP_ID", "$GAME.stepId"],
+    ["DEFINE", "$STEP", "$GAME.gameDef.steps.$STEP_ID"],
+    ["GAME_ADD_MESSAGE", "$PLAYER_N", " set the round step to ", "$STEP.text", "."]
+  ],
+  "prev_step" => [
+    ["COND",
+      ["EQUAL", "$GAME.stepId", ["AT_INDEX", "$GAME.gameDef.stepOrder", 0]],
+      ["GAME_SET_VAL", "stepId", ["AT_INDEX", "$GAME.gameDef.stepOrder", -1]],
+      true,
+      [["LOGGER", "here"],
+      ["GAME_SET_VAL", "stepId", ["AT_INDEX", "$GAME.gameDef.stepOrder", ["SUBTRACT", ["GET_INDEX", "$GAME.gameDef.stepOrder", "$GAME.stepId"], 1]]]
+      ]
+    ],
+    ["DEFINE", "$STEP_ID", "$GAME.stepId"],
+    ["DEFINE", "$STEP", "$GAME.gameDef.steps.$STEP_ID"],
+    ["GAME_ADD_MESSAGE", "$PLAYER_N", " set the round step to ", "$STEP.text", "."]
   ],
 
 }
@@ -941,75 +966,6 @@ actions = %{
 game = put_in(game["actionLists"], actions)
 
 MyTest.assert(15, MyTest.evaluate(game, actions["newRound"])["stepId"], "1.R")
-
-
 MyTest.assert(16, MyTest.evaluate(game, actions["refresh"])["stepId"], "7.R")
-
-
-#MyTest.assert(16, MyTest.evaluate(game, actions["reveal"])["groupById"]["sharedStaging"], "7.R")
-game = MyTest.evaluate(game, actions["revealEncounterFaceup"])
-game = MyTest.evaluate(game, actions["revealSecondaryFacedown"])
-#IO.inspect(MyTest.evaluate(game, actions["reveal"])["groupById"]["sharedStaging"])
-#IO.inspect(MyTest.evaluate(game, actions["reveal"])["messages"])
-
-#code = ["GET_CARD_ID", "sharedEncounterDeck", 0, 0]
-#r = MyTest.evaluate(game, code)
-#IO.inspect(r)
-#MyTest.assert(13, MyTest.evaluate(game, code)["variables"]["$i"], 29)
-IO.inspect(Enum.count(game["cardById"]))
-code = [
-  ["FOR_EACH_KEY_VAL", "$PLAYER_I", "$PLAYER_I_DATA", "$GAME.playerData",
-    [
-      ["FOR_EACH_KEY_VAL", "$CARD_ID", "$CARD", "$CARD_BY_ID",
-        [
-          ["COND",
-            ["AND",
-              ["EQUAL", "$CARD.groupId", ["JOIN_STRING", "$PLAYER_I", "Engaged"]],
-              ["EQUAL", "$CARD.cardIndex", 0],
-              ["EQUAL", "$CARD.sides.A.type", "Enemy"],
-            ],
-            ["COND",
-              ["EQUAL", ["LENGTH", "$GAME.groupById.sharedEncounterDeck.stackIds"], 0],
-              [
-                ["GAME_ADD_MESSAGE", "$PLAYER_N", " tried to deal a shadow card but the encounter deck is empty."],
-                ["LOGGER", "tried to deal shadow but couldn't"],
-              ],
-              true,
-              [
-                ["DEFINE", "$SHADOW_CARD_ID", ["GET_CARD_ID", "sharedEncounterDeck", 0, 0]],
-                ["ATTACH_CARD", "$SHADOW_CARD_ID", "$CARD_ID"],
-                ["GAME_SET_VAL", "cardById", "$SHADOW_CARD_ID", "rotation", -30],
-                ["GAME_SET_VAL", "cardById", "$SHADOW_CARD_ID", "currentSide", "B"],
-                ["GAME_ADD_MESSAGE", "$PLAYER_N", " dealt a shadow card to ", ["FACEUP_NAME_FROM_CARD_ID", "$CARD_ID"], "."]
-              ]
-            ],
-            true,
-            "$GAME"
-          ]
-        ],
-        ["sides", "A", "engagementCost"],
-        "DESC"
-      ]
-    ],
-    ["currentPosition"]
-  ]
-]
-r = MyTest.evaluate(game, code)
-#sortedbyid = evaluate(game, ["cardById"], fn({card_id, card}) -> get_in(card, ["id"]) end)
-#Enum.reduce(r["cardById"], nil, fn({card_id, card}, acc) ->
-  #IO.inspect("#{card_id} #{card["rotation"]}")
-#end)
-#MyTest.assert(8, MyTest.evaluate(game, code), nil)
-
-#code = ["ACTIONS", ["SET","$ACTIVE_CARD_PATH","rotation",10],["SET","$ACTIVE_CARD_PATH","rotation",20],["GAME_ADD_MESSAGE","testprint"],["GAME_ADD_MESSAGE","testprint2"]]
-#r = MyTest.evaluate(game, code)
-#IO.inspect(r)
-#r = try do
-#  MyTest.evaluate(game, code3)
-#rescue
-#  e ->
-#    message = "Failed to resolve: " <> inspect(code3) <> ". Error: " <> inspect(e)
-#    put_in(game["error"],String.replace(message,"\"","'"))
-#end
-
-#IO.inspect(r)
+MyTest.assert(17, MyTest.evaluate(game, actions["next_step"])["stepId"], "1.1")
+MyTest.assert(18, MyTest.evaluate(game, actions["prev_step"])["stepId"], "0.1")

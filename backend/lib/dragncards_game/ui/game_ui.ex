@@ -313,7 +313,7 @@ defmodule DragnCardsGame.GameUI do
   end
 
   # Move a card
-  def move_card_gameui(gameui, card_id, dest_group_id, dest_stack_index, dest_card_index, combine, preserve_state) do
+  def move_card_gameui(gameui, card_id, dest_group_id, dest_stack_index, dest_card_index, combine \\ false, preserve_state \\ false) do
     # Get position of card
     {orig_group_id, orig_stack_index, orig_card_index} = gsc(gameui, card_id)
     # Get origin stack
@@ -335,7 +335,7 @@ defmodule DragnCardsGame.GameUI do
   end
 
   # Move a card
-  def move_card(game, card_id, dest_group_id, dest_stack_index, dest_card_index, combine, preserve_state) do
+  def move_card(game, card_id, dest_group_id, dest_stack_index, dest_card_index, combine \\ false, preserve_state \\ false) do
     # Get position of card
     {orig_group_id, orig_stack_index, orig_card_index} = gsc(game, card_id)
     # Get origin stack

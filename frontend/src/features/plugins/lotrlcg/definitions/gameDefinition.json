@@ -1,5 +1,5 @@
 {
-  "pluginName": "LotR LCG 6",
+  "pluginName": "LotR LCG 7",
   "minPlayers": 1,
   "maxPlayers": 4,
   "playerProperties": {
@@ -3395,80 +3395,71 @@
   "phaseOrder": ["Beginning", "Resource", "Planning", "Quest", "Travel", "Encounter", "Combat", "Refresh", "End"],
   "stepOrder": ["0.0", "1.1", "1.R", "1.4", "2.1", "2.P", "2.4", "3.1", "3.2", "3.3", "3.4", "3.5", "4.1", "4.2", "4.3", "5.1", "5.2", "5.3", "5.4", "6.1", "6.2", "6.3", "6.E", "6.P", "6.11", "7.1", "7.R", "7.7", "0.1"],
   "steps": {
-    "0.0": {"text": "0.0: Beginning of the round"},
-    "1.1": {"text": "1.1: Beginning of the Resource phase"},
-    "1.R": {"text": "1.2 & 1.3: Gain resources and draw cards - <u>then player actions</u>"},
-    "1.4": {"text": "1.4: End of the Resource phase"},
-    "2.1": {"text": "2.1: Beginning of the Planning phase"},
-    "2.P": {"text": "2.2 & 2.3: Play cards in turn order - <u>player actions throughout</u>"},
-    "2.4": {"text": "2.4: End of the Planning phase"},
-    "3.1": {"text": "3.1: Beginning of the Quest phase - <u>then player actions</u>"},
-    "3.2": {"text": "3.2: Commit characters to the quest - <u>then player actions</u>"},
-    "3.3": {"text": "3.3: Staging - <u>then player actions</u>"},
-    "3.4": {"text": "3.4: Quest resolution - <u>then player actions</u>"},
-    "3.5": {"text": "3.5: End of the Quest phase"},
-    "4.1": {"text": "4.1: Beginning of the Travel phase"},
-    "4.2": {"text": "4.2: Travel opportunity - <u>then player actions</u>"},
-    "4.3": {"text": "4.3: End of the Travel phase"},
-    "5.1": {"text": "5.1: Beginning of the Encounter phase"},
-    "5.2": {"text": "5.2: Optional engagement - <u>then player actions</u>"},
-    "5.3": {"text": "5.3: Engagement checks - <u>then player actions</u>"},
-    "5.4": {"text": "5.4: End of the Encounter phase"},
-    "6.1": {"text": "6.1: Beginning of the Combat phase"},
-    "6.2": {"text": "6.2: Deal shadow cards"},
-    "6.E": {"text": "6.3-6.6: Enemy attacks - <u>player actions after each combat substep</u>"},
-    "6.P": {"text": "6.7-6.10: Player attacks - <u>player actions after each combat substep</u>"},
-    "6.11": {"text": "6.11: End of the Combat phase"},
-    "7.1": {"text": "7.1: Beginning of the Refresh phase"},
-    "7.R": {"text": "7.2-7.4: Ready cards, raise threat, pass P1 token - <u>then player actions</u>"},
-    "7.5": {"text": "7.5: End of the Refresh phase"},
-    "0.1": {"text": "0.1: End of the round"}
+    "0.0": {"phaseId": "Beginning", "text": "0.0: Beginning of the round"},
+    "1.1": {"phaseId": "Resource", "text": "1.1: Beginning of the Resource phase"},
+    "1.R": {"phaseId": "Resource", "text": "1.2 & 1.3: Gain resources and draw cards - <u>then player actions</u>"},
+    "1.4": {"phaseId": "Resource", "text": "1.4: End of the Resource phase"},
+    "2.1": {"phaseId": "Planning", "text": "2.1: Beginning of the Planning phase"},
+    "2.P": {"phaseId": "Planning", "text": "2.2 & 2.3: Play cards in turn order - <u>player actions throughout</u>"},
+    "2.4": {"phaseId": "Planning", "text": "2.4: End of the Planning phase"},
+    "3.1": {"phaseId": "Quest", "text": "3.1: Beginning of the Quest phase - <u>then player actions</u>"},
+    "3.2": {"phaseId": "Quest", "text": "3.2: Commit characters to the quest - <u>then player actions</u>"},
+    "3.3": {"phaseId": "Quest", "text": "3.3: Staging - <u>then player actions</u>"},
+    "3.4": {"phaseId": "Quest", "text": "3.4: Quest resolution - <u>then player actions</u>"},
+    "3.5": {"phaseId": "Quest", "text": "3.5: End of the Quest phase"},
+    "4.1": {"phaseId": "Travel", "text": "4.1: Beginning of the Travel phase"},
+    "4.2": {"phaseId": "Travel", "text": "4.2: Travel opportunity - <u>then player actions</u>"},
+    "4.3": {"phaseId": "Travel", "text": "4.3: End of the Travel phase"},
+    "5.1": {"phaseId": "Encounter", "text": "5.1: Beginning of the Encounter phase"},
+    "5.2": {"phaseId": "Encounter", "text": "5.2: Optional engagement - <u>then player actions</u>"},
+    "5.3": {"phaseId": "Encounter", "text": "5.3: Engagement checks - <u>then player actions</u>"},
+    "5.4": {"phaseId": "Encounter", "text": "5.4: End of the Encounter phase"},
+    "6.1": {"phaseId": "Combat", "text": "6.1: Beginning of the Combat phase"},
+    "6.2": {"phaseId": "Combat", "text": "6.2: Deal shadow cards"},
+    "6.E": {"phaseId": "Combat", "text": "6.3-6.6: Enemy attacks - <u>player actions after each combat substep</u>"},
+    "6.P": {"phaseId": "Combat", "text": "6.7-6.10: Player attacks - <u>player actions after each combat substep</u>"},
+    "6.11": {"phaseId": "Combat", "text": "6.11: End of the Combat phase"},
+    "7.1": {"phaseId": "Refresh", "text": "7.1: Beginning of the Refresh phase"},
+    "7.R": {"phaseId": "Refresh", "text": "7.2-7.4: Ready cards, raise threat, pass P1 token - <u>then player actions</u>"},
+    "7.5": {"phaseId": "Refresh", "text": "7.5: End of the Refresh phase"},
+    "0.1": {"phaseId": "End", "text": "0.1: End of the round"}
   },
   "phases": {
     "Beginning": {
       "label" : "α",
-      "height" : "4%",
-      "steps" : ["0.0"]
+      "height" : "4%"
     },
     "Resource": {
       "label" : "Resource",
-      "height" : "11%",
-      "steps": ["1.1","1.R","1.4"]
+      "height" : "11%"
     },
     "Planning": {
       "label" : "Planning",
-      "height" : "11%",
-      "steps": ["2.1","2.P","2.4"]
+      "height" : "11%"
     },
     "Quest": {
       "label" : "Quest",
-      "height" : "17%",
-      "steps": ["3.1","3.2","3.3","3.4","3.5"]
+      "height" : "17%"
     },
     "Travel": {
       "label" : "Travel",
-      "height" : "11%",
-      "steps": ["4.1","4.2","4.3"]
+      "height" : "11%"
     },
     "Encounter": {
       "label" : "Encounter",
-      "height" : "14%",
-      "steps": ["5.1","5.2","5.3","5.4"]
+      "height" : "14%"
     },
     "Combat": {
       "label" : "Combat",
-      "height" : "17%",
-      "steps": ["6.1","6.2","6.E","6.P","6.11"]
+      "height" : "17%"
     },
     "Refresh": {
       "label" : "Refresh",
-      "height" : "11%",
-      "steps": ["7.1","7.R","7.5"]
+      "height" : "11%"
     },
     "End": {
       "label" : "Ω",
-      "height" : "4%",
-      "steps": ["0.1"]
+      "height" : "4%"
     }
   },
   "tooltips": {

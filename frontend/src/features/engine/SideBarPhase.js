@@ -10,10 +10,11 @@ export const SideBarPhase = React.memo(({
   const l10n = useGameL10n();
   const gameDef = useGameDefinition();
   const phaseInfo = gameDef?.phases?.[phaseId];
-  const phaseStore = state => state?.gameUi?.game?.phaseId;
-  const currentPhase = useSelector(phaseStore);
-  console.log("Rendering SideBarPhase", currentPhase, phaseInfo.label);
-  const isPhase = phaseId === currentPhase;
+  const currentStepId = useSelector(state => state?.gameUi?.game?.stepId);
+  const currentStep = gameDef?.steps?.[currentStepId];
+  const currentPhaseId = currentStep?.phaseId;
+  console.log("Rendering SideBarPhase", phaseId);
+  const isPhase = phaseId === currentPhaseId;
   return (
     <div 
       className={"relative text-center select-none text-gray-100"}
@@ -26,13 +27,13 @@ export const SideBarPhase = React.memo(({
         </div>
       </div>
       <div className="w-full h-full flex flex-col float-left">
-        {phaseInfo.steps.map((stepId, _stepIndex) => {
-          return (
-            <SideBarRoundStep
-              key={stepId}
-              phaseId={phaseId}
-              stepId={stepId}/>
-          )
+        {gameDef.stepOrder.map((stepId, _stepIndex) => {
+          if (gameDef?.steps?.[stepId]?.phaseId == phaseId)
+            return (
+              <SideBarRoundStep
+                key={stepId}
+                stepId={stepId}/>
+            )
         })}
       </div>
     </div>

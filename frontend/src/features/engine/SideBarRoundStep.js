@@ -64,24 +64,23 @@ export const ReminderButton = React.memo(({
 })
 
 export const SideBarRoundStep = React.memo(({
-  phaseId,
-  stepId,
+  stepId
 }) => {
   const {gameBroadcast, chatBroadcast} = useContext(BroadcastContext);
   const l10n = useGameL10n();
   const gameDef = useGameDefinition();
   const stepInfo = gameDef?.steps?.[stepId];
-  const gameRoundStep = useSelector(state => state?.gameUi?.game?.stepId);
+  const currentStepId = useSelector(state => state?.gameUi?.game?.stepId);
   const playerN = useSelector(state => state?.playerUi?.playerN)
   const triggerCardIds = useSelector(state => state?.gameUi?.game?.triggerMap?.[stepId]);
   const numTriggers = triggerCardIds ? triggerCardIds.length : 0;
   const [hovering, setHovering] = useState(null);
-  const isRoundStep = (gameRoundStep === stepId);
+  const isRoundStep = (currentStepId === stepId);
 
   console.log("Rendering SideBarRoundStep", stepInfo);
   const handleButtonClick = (id) => {
     if (!playerN) return;
-    gameBroadcast("game_action", {action: "update_values", options:{updates: [["stepId", id], ["phaseId", phaseId]]}});     
+    gameBroadcast("game_action", {action: "update_values", options:{updates: [["stepId", stepId]]}});     
     chatBroadcast("game_update", {message: "set the round step to "+id+": "+l10n(id)+"."})
   }
 

@@ -43,10 +43,9 @@
   @spec new(Map.t(), Map.t()) :: Game.t()
   def new(game_def, options) do
     default_layout = Enum.at(game_def["layoutMenu"],0)
-    start_phase_id = Enum.at(game_def["phaseOrder"],0)
-    start_step_id = Enum.at(game_def["stepOrder"],0)
     base = %{
       "id" => Ecto.UUID.generate,
+      "gameDef" => game_def,
       "pluginUuid" => options["pluginUuid"],
       "pluginVersion" => options["pluginVersion"],
       "numPlayers" => 1,
@@ -55,8 +54,7 @@
       "layout" => game_def["layouts"][default_layout["layoutId"]],
       "firstPlayer" => "player1",
       "roundNumber" => 0,
-      "phaseId" => start_phase_id,
-      "stepId" => start_step_id,
+      "stepId" => Enum.at(game_def["stepOrder"],0),
       "groupById" => Groups.new(),
       "stackById" => %{},
       "cardById"  => %{},
