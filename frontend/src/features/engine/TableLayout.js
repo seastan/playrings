@@ -78,8 +78,9 @@ export const TableLayout = React.memo(({
       <div 
         className="relative w-full" 
         style={{height: rowHeight}}>
-        {layout[0].regions.map((region, _regionIndex) => (
+        {layout[0].regions.map((region, regionIndex) => (
           <TableRegion
+            key={regionIndex}
             region={region}
             registerDivToArrowsContext={registerDivToArrowsContext}
           />

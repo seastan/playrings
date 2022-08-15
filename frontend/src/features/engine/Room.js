@@ -16,7 +16,7 @@ export const Room = ({ slug }) => {
   const setMessages = useSetMessages();
   const myUser = useProfile();
   const myUserId = myUser?.id;
-  const plugin = usePlugin();
+  //const plugin = usePlugin();
   const [isClosed, setIsClosed] = useState(false);
 
   const onChannelMessage = useCallback((event, payload) => {
@@ -92,8 +92,8 @@ export const Room = ({ slug }) => {
   const chatBroadcast = useChannel(`chat:${slug}`, onChatMessage, myUserId);
 
   console.log('Rendering Room',myUserId);
-  console.log("plugin room",plugin)
-  if (plugin === null) return (<div className="text-white m-4">Plugin not found.</div>);
+  // console.log("plugin room",plugin)
+  // if (plugin === null) return (<div className="text-white m-4">Plugin not found.</div>);
 
   if (roomName !== slug) return (<div></div>);
   else {

@@ -7,7 +7,7 @@ import { useDispatch } from "react-redux";
 import BroadcastContext from "../../contexts/BroadcastContext";
 
 
-export const SideBarNewRound = React.memo(({}) => {
+export const SideBarNewRound = React.memo(() => {
     const {gameBroadcast, chatBroadcast} = useContext(BroadcastContext);
     const dispatch = useDispatch();
     const handleClick = () => {

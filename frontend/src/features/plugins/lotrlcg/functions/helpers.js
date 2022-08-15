@@ -103,7 +103,7 @@ export const getVisibleFaceSrc = (visibleFace, user, gameDef) => {
   // If there's still no src listed, there's a problem with the card or game definition #FIXME: visual idicator of missing image
   if (!src || src ==="") src = ""
   const language = user?.language || "English";
-  const srcLanguage = src.replace('/English/',language);
+  const srcLanguage = src.replace('/English/','/'+language+'/');
   
   return {
     src: srcLanguage,
