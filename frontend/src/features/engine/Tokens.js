@@ -17,9 +17,10 @@ export const Tokens = React.memo(({
     const tokenTypes = gameDef.cardTypes?.[cardType]?.tokens || gameDef.cardTypes?._Other?.tokens || [];
     return(
         <div className="absolute" style={{width:'100%', height:'100%'}}>
-            {tokenTypes.map((tokenType, _tokenIndex) => {
+            {tokenTypes.map((tokenType, tokenIndex) => {
                 return (
                     <Token 
+                        key={tokenIndex}
                         tokenType={tokenType} 
                         cardId={cardId} 
                         cardName={cardName} 

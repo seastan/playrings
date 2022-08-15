@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useDispatch, useSelector } from 'react-redux';
 import RoomGame from "./RoomGame";
 import useProfile from "../../hooks/useProfile";
@@ -13,7 +13,10 @@ export const RoomProviders = ({ gameBroadcast, chatBroadcast }) => {
   const playerInfo = useSelector(state => state?.gameUi?.playerInfo);
   const myUser = useProfile();
   const playerN = GetPlayerN(playerInfo, myUser?.id);
-  dispatch(setPlayerN(playerN));
+  useEffect(() => {
+    dispatch(setPlayerN(playerN));
+  }, [playerN])
+  
 
   return (
       <div className="background"

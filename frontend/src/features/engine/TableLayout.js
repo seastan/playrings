@@ -103,10 +103,12 @@ export const TableLayout = React.memo(({
           } else if (rowIndex > 0 && rowIndex < numRows - 1) {
             return(
               <div 
+                key={rowIndex}
                 className="relative w-full" 
                 style={{height: `${100/(numRows-2)}%`}}>
-                {row.regions.map((region, _regionIndex) => (
+                {row.regions.map((region, regionIndex) => (
                   <TableRegion
+                    key={regionIndex}
                     region={region}
                     registerDivToArrowsContext={registerDivToArrowsContext}
                   />
@@ -122,8 +124,9 @@ export const TableLayout = React.memo(({
       <div 
         className="relative float-left w-full" 
         style={{height: rowHeight}}>
-        {layout[numRows-1].regions.map((region, _regionIndex) => (
+        {layout[numRows-1].regions.map((region, regionIndex) => (
           <TableRegion
+            key={regionIndex}
             region={region}
             registerDivToArrowsContext={registerDivToArrowsContext}
           />
