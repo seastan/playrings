@@ -97,7 +97,7 @@ export const getVisibleFaceSrc = (visibleFace, user, gameDef) => {
   if (!visibleFace) return {src: "image not found", default: "image not found"};
   var src = visibleFace.imageUrl;
   // If there's no src listed, it's probably a card back
-  if (!src || src ==="") {
+  if (!src || src ==="") {    
     src = gameDef?.cardBacks?.[visibleFace.name]?.imageUrl;
   }
   // If there's still no src listed, there's a problem with the card or game definition #FIXME: visual idicator of missing image

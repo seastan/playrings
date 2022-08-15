@@ -999,7 +999,7 @@ defmodule DragnCardsGame.GameUI do
   end
 
   def move_stack(game, stack_id, dest_group_id, dest_stack_index, combine \\ false, preserve_state \\ false) do
-    IO.puts("move_stack #{stack_id} #{dest_group_id} #{dest_stack_index} ")
+    IO.puts("move_stack #{stack_id} #{dest_group_id} #{dest_stack_index} #{combine} #{preserve_state}")
     if stack_id == nil do
       game
     else
