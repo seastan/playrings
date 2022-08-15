@@ -43,7 +43,7 @@ const StacksList = React.memo(({
   selectedStackIndices,
   registerDivToArrowsContext
 }) => {
-  const pile = (groupType=="deck" || groupType=="discard")
+  const pile = groupType=="pile";
   // Truncate stacked piles
   var stackIdsToShow;
   if (pile && stackIds.length>1) stackIdsToShow = [stackIds[0]]
@@ -73,18 +73,16 @@ export const Stacks = React.memo(({
   selectedStackIndices,
   registerDivToArrowsContext
 }) => {
-  console.log("Rendering Stacks for ",groupId);
+  console.log("Rendering Stacks for ",groupId, groupType);
   const group = useSelector(state => state?.gameUi?.game?.groupById?.[groupId]);
   const stackIds = group.stackIds;
-  const isCombineEnabled = (groupType === "play");
   return(
     <Droppable
       droppableId={groupId}
       key={groupId}
       isDropDisabled={false}
-      isCombineEnabled={isCombineEnabled}
-      direction={["deck", "discard", "vertical"].includes(groupType) ? "vertical" : "horizontal"}
-    >
+      isCombineEnabled={group.inPlay}
+      direction={["pile", "vertical"].includes(groupType) ? "vertical" : "horizontal"}>
       {(dropProvided, dropSnapshot) => (
         <Container
           isDraggingOver={dropSnapshot.isDraggingOver}
@@ -96,6 +94,7 @@ export const Stacks = React.memo(({
           <div className="h-full">
             <CardBack 
               groupType={groupType} 
+              defaultSideUp={group.defaultSideUp} 
               stackIds={stackIds} 
               isDraggingOver={dropSnapshot.isDraggingOver} 
               isDraggingFrom={Boolean(dropSnapshot.draggingFromThisWith)}>

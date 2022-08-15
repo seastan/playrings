@@ -144,9 +144,14 @@ export const useKeyDown = () => {
         //if ((unix_sec - keypressAlt) < 30) dictKey = "Alt+"+dictKey;
 
         console.log("keypress",k)
-        if (Object.keys(defaultHotkeys["card"]).includes(dictKey)) doActionList("_custom",defaultActionLists[defaultHotkeys["card"][dictKey]]);
-        else if (Object.keys(defaultHotkeys["ui"]).includes(dictKey)) doActionList("_custom",defaultActionLists[defaultHotkeys["ui"][dictKey]]);
-        else if (Object.keys(defaultHotkeys["game"]).includes(dictKey)) doActionList("_custom",defaultActionLists[defaultHotkeys["game"][dictKey]]);
+        console.log("keypress",dictKey)
+        console.log("keypress",gameDef.hotkeys[dictKey])
+        console.log("keypress",k)
+
+        if (Object.keys(gameDef.hotkeys).includes(dictKey)) doActionList(gameDef.hotkeys[dictKey]);
+        //if (Object.keys(defaultHotkeys["card"]).includes(dictKey)) doActionList("_custom",defaultActionLists[defaultHotkeys["card"][dictKey]]);
+        //else if (Object.keys(defaultHotkeys["ui"]).includes(dictKey)) doActionList("_custom",defaultActionLists[defaultHotkeys["ui"][dictKey]]);
+        //else if (Object.keys(defaultHotkeys["game"]).includes(dictKey)) doActionList("_custom",defaultActionLists[defaultHotkeys["game"][dictKey]]);
         //else if (Object.keys(defaultHotkeys["token"]).includes(dictKey)) keyTokenAction(defaultHotkeys["token"][dictKey]);
     }
 

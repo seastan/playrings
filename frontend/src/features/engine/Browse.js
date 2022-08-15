@@ -69,12 +69,12 @@ export const Browse = React.memo(({}) => {
     gameBroadcast("game_action", {action: "peek_at", options: {stack_ids: stackIds, value: false}})
     gameBroadcast("game_action", {action: "shuffle_group", options: {group_id: groupId}})
     chatBroadcast("game_update",{message: "shuffled "+gameDef.groups[groupId].name+"."})
-    if (groupType === "deck") stopPeekingTopCard();
+    if (groupType === "pile") stopPeekingTopCard();
   }
 
   const closeAndOrder = () => {
     gameBroadcast("game_action", {action: "peek_at", options: {stack_ids: stackIds, value: false}})
-    if (groupType === "deck") stopPeekingTopCard();
+    if (groupType === "pile") stopPeekingTopCard();
   }
 
   const closeAndPeeking = () => {

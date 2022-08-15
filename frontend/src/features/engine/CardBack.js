@@ -9,6 +9,7 @@ import { useGameDefinition } from "./functions/useGameDefinition";
 
 const CardBack = React.memo(({
   groupType,
+  defaultSideUp,
   stackIds,
   isDraggingOver,
   isDraggingFrom,
@@ -21,23 +22,29 @@ const CardBack = React.memo(({
   const card0 = useSelector(state => state?.gameUi?.game?.cardById[stack0?.cardIds[0]]);
   const card1 = useSelector(state => state?.gameUi?.game?.cardById[stack1?.cardIds[0]]);
   const cardSize = useCardSize();
-
+  
   var visibleFaceSrc;
   var visibleFace;
   const groupSize = stackIds.length;
-  if (groupType === "deck" && groupSize>0 && isDraggingOver && !isDraggingFrom) {
-    visibleFaceSrc = getVisibleFaceSrc(card0, playerN, user, gameDef)
-    visibleFace = getCurrentFace(card0)
-  } else if (groupType === "deck" && groupSize>1 && isDraggingFrom) {
-    visibleFaceSrc = getVisibleFaceSrc(card1, playerN, user, gameDef)
-    visibleFace = getCurrentFace(card1)
-  } else if (groupType === "discard" && groupSize>0 && isDraggingOver && !isDraggingFrom) {
-    visibleFaceSrc = getVisibleFaceSrc(card0, playerN, user, gameDef)
-    visibleFace = getCurrentFace(card0)
-  } else if (groupType === "discard" && groupSize>1 && isDraggingFrom) {
-    visibleFaceSrc = getVisibleFaceSrc(card1, playerN, user, gameDef)
-    visibleFace = getCurrentFace(card1)
+  if (groupType === "pile") {
+    if (defaultSideUp === "B" && groupSize>0 && isDraggingOver && !isDraggingFrom) {
+      visibleFace = getCurrentFace(card0)
+      visibleFaceSrc = getVisibleFaceSrc(visibleFace, user, gameDef)
+    } else if (defaultSideUp === "B" && groupSize>1 && isDraggingFrom) {
+
+      visibleFace = getCurrentFace(card1)
+      visibleFaceSrc = getVisibleFaceSrc(visibleFace, user, gameDef)
+      console.log("Rendering CardBack ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~", visibleFace, visibleFaceSrc)
+    } else if (defaultSideUp === "A" && groupSize>0 && isDraggingOver && !isDraggingFrom) {
+      visibleFace = getCurrentFace(card0)
+      visibleFaceSrc = getVisibleFaceSrc(visibleFace, user, gameDef)
+    } else if (defaultSideUp === "A" && groupSize>1 && isDraggingFrom) {
+      visibleFace = getCurrentFace(card1)
+      visibleFaceSrc = getVisibleFaceSrc(visibleFace, user, gameDef)
+    }
   }
+  console.log("Rendering CardBack", groupType, defaultSideUp, visibleFaceSrc)
+
   if (visibleFace) {
     return (
         <div 

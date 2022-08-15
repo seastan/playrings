@@ -5,7 +5,7 @@ defmodule DragnCardsGame.GameUI do
 
 
   require Logger
-  alias DragnCardsGame.{Game, GameUI, GameUISeat, Groups, Group, Stack, Card, User, Tokens, CardFace, PlayerInfo}
+  alias DragnCardsGame.{Game, GameUI, GameUISeat, Groups, Group, Stack, Card, User, Tokens, CardFace, PlayerInfo, Evaluate}
   alias DragnCardsChat.{ChatMessage}
 
   alias DragnCards.{Repo, Replay, Plugin}
@@ -16,7 +16,6 @@ defmodule DragnCardsGame.GameUI do
   @spec new(String.t(), User.t(), Map.t()) :: GameUI.t()
   def new(game_name, user, %{} = options) do
     Logger.debug("gameui new")
-    IO.inspect(options)
     game_def = Plugin.get_game_def_by_uuid_and_version(options["pluginUuid"], options["pluginVersion"])
     gameui = %{
       "game" => Game.load(game_def, options),
@@ -141,11 +140,6 @@ defmodule DragnCardsGame.GameUI do
     if is_list(stack_ids) do
       Enum.find_index(stack_ids, fn id -> id == stack_id end)
     else
-      IO.puts("Error finding stack index")
-      IO.inspect(game)
-      IO.inspect(stack_id)
-      IO.inspect(group_id)
-      IO.inspect(stack_ids)
       0
     end
   end
@@ -1023,10 +1017,6 @@ defmodule DragnCardsGame.GameUI do
         dest_stack_index
       end
       # If attaching to same group at higher index, dest_index will end up being 1 less
-      IO.inspect(orig_group_id)
-      IO.inspect(dest_group_id)
-      IO.inspect(orig_stack_index)
-      IO.inspect(dest_stack_index)
       dest_stack_index = if orig_group_id == dest_group_id and combine and orig_stack_index < dest_stack_index do dest_stack_index - 1 else dest_stack_index end
       # Delete stack id from old group
       old_orig_stack_ids = get_stack_ids(game, orig_group_id)
@@ -1138,8 +1128,11 @@ defmodule DragnCardsGame.GameUI do
     Logger.debug("game_action #{user_id} #{player_n} #{action}")
     game = gameui["game"]
     game = put_in(game["playerUi"], options["player_ui"])
+    game = put_in(game["gameDef"], gameui["gameDef"])
     game_new = if player_n do
       case action do
+        "evaluate" ->
+          Evaluate.evaluate(game, options["action_list"])
         "game_action_list" ->
           evaluate(game, options["action_list"])
           #multiple_map_changes(game, game, options["action_list"], user_alias)
@@ -1208,8 +1201,10 @@ defmodule DragnCardsGame.GameUI do
         _ ->
           game
       end
+    else
+      game
     end
-    game_new = save_replay(game_new, user_id)
+    #game_new = save_replay(game_new, user_id)
     # Compare state before and after, and add a delta (unless we are undoing a move or loading a game with undo info)
     game_new = Map.delete(game_new, "playerUi")
     gameui = if options["preserve_undo"] != true do
@@ -1335,20 +1330,13 @@ defmodule DragnCardsGame.GameUI do
   end
 
   def evaluate_condition(game, map, condition) do
-    IO.puts("checking ")
-    IO.inspect(condition)
     # A condition is a list of 3 things. Value A, an operator, and value B
     if Enum.count(condition) == 3 do
       lhs = Enum.at(condition, 0)
       operator = Enum.at(condition, 1)
       rhs = Enum.at(condition, 2)
-      IO.puts("path cond")
-      IO.inspect(lhs)
-      IO.inspect(rhs)
       lhs = if Enum.member?(["AND","OR"], operator) do lhs else get_nested_value(game, map, lhs) end
       rhs = if Enum.member?(["AND","OR"], operator) do rhs else get_nested_value(game, map, rhs) end
-      IO.inspect(lhs)
-      IO.inspect(rhs)
       res = case operator do
         "==" ->
           lhs == rhs
@@ -1393,9 +1381,6 @@ defmodule DragnCardsGame.GameUI do
         if Map.has_key?(options, "_PATH") and Map.has_key?(options, "_VALUE") do
           keylist = get_keylist_from_path(game, map, options["_PATH"])
           value = interpret_value(game, map, options["_VALUE"])
-          IO.puts("setting")
-          IO.inspect(keylist)
-          IO.inspect(value)
           put_in(map, keylist, value)
         else map end
       "INCREASE_BY" ->
@@ -1903,7 +1888,7 @@ defmodule DragnCardsGame.GameUI do
   end
 
   def reset_game(game) do
-    Game.new(game["options"])
+    Game.new(game["gameDef"], game["options"])
   end
 
   def reveal_encounter(game, player_n, options) do
@@ -2010,11 +1995,11 @@ defmodule DragnCardsGame.GameUI do
   end
 
   def create_card_in_group(game, group_id, load_list_item, game_def) do
-    IO.inspect("load_list_item")
-    IO.inspect(load_list_item)
     group_size = Enum.count(get_stack_ids(game, group_id))
     # Can't insert a card directly into a group need to make a stack first
-    new_card = Card.card_from_card_details(load_list_item["cardDetails"], game_def, group_id)
+    IO.inspect("cciig")
+    IO.inspect(group_id)
+    new_card = Card.card_from_card_details(load_list_item["cardDetails"], game_def, load_list_item["uuid"], group_id)
     new_stack = Stack.stack_from_card(new_card)
     new_card = new_card
     |> Map.put("groupId", group_id)
@@ -2056,7 +2041,6 @@ defmodule DragnCardsGame.GameUI do
   end
 
   def load_cards(game, player_n, load_list, game_def) do
-    IO.inspect(load_list)
     # Get deck size before load
     player_n_deck_id = player_n<>"Deck"
     deck_size_before = Enum.count(get_stack_ids(game, player_n_deck_id))
@@ -2065,8 +2049,6 @@ defmodule DragnCardsGame.GameUI do
     game = Enum.reduce(load_list, game, fn load_list_item, acc ->
       load_card(acc, load_list_item, game_def)
     end)
-    IO.puts("gamecards")
-    IO.inspect(game["cardById"])
 
     # Check if we should load the first quest card
     main_quest_stack_ids = get_stack_ids(game, "sharedMainQuest")

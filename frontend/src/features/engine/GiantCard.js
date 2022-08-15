@@ -5,7 +5,6 @@ import { useSelector } from "react-redux";
 import { useGameDefinition } from "./functions/useGameDefinition";
 
 export const GiantCard = React.memo(({}) => {
-  console.log("Rendering GiantCard");
   const user = useProfile();
   const gameDef = useGameDefinition();
   const playerN = useSelector(state => state?.playerUi?.playerN);
@@ -13,7 +12,8 @@ export const GiantCard = React.memo(({}) => {
   const activeCardObj = useSelector(state => state?.playerUi?.activeCardObj);
   const activeCard = activeCardObj?.card;
   const visibleFace = getVisibleFace(activeCard, playerN);
-  const visibleFaceSrc = getVisibleFaceSrc(activeCard, playerN, user, gameDef);
+  const visibleFaceSrc = getVisibleFaceSrc(visibleFace, user, gameDef);
+  console.log("Rendering GiantCard", activeCard, visibleFace, visibleFaceSrc);
   if (activeCard && !touchAction) {
     var height = visibleFace.height >= visibleFace.width ? "70vh" : "50vh";
     if (user?.language === "English_HD") height = visibleFace.height >= visibleFace.width ? "90vh" : "70vh";

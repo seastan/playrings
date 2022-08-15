@@ -11,11 +11,13 @@ import { getDisplayName, getDisplayNameFlipped } from "../plugins/lotrlcg/functi
 import { Table } from "./Table";
 import BroadcastContext from "../../contexts/BroadcastContext";
 import { useGameDefinition } from "./functions/useGameDefinition";
+import { useDoActionList } from "./functions/useDoActionList";
 
 export const DragContainer = React.memo(({}) => {
   console.log("Rendering DragContainer");
   const dispatch = useDispatch();
   const gameDef = useGameDefinition();
+  const doActionList = useDoActionList();
   const {gameBroadcast, chatBroadcast} = useContext(BroadcastContext);
   const playerData = useSelector(state => state?.gameUi?.game?.playerData);
   const touchMode = useSelector(state => state?.playerUi?.touchMode);
@@ -106,22 +108,28 @@ export const DragContainer = React.memo(({}) => {
       ) {
         return;
       }
-
+      console.log("draginfo", origGroupId)
+      console.log("draginfo", gameDef.groups[origGroupId])
+      console.log("draginfo", destGroupId)
+      console.log("draginfo", gameDef.groups[destGroupId])
+      console.log("draginfo", gameDef.groups[destGroupId])
       // Moved to a different spot
       const newGroupById = reorderGroupStackIds(groupById, orig, dest);
       const origGroupTitle = gameDef.groups[origGroupId].name;
       const destGroupTitle = gameDef.groups[destGroupId].name;
-      if ((origGroup.type === "hand" || origGroup.type === "deck" ) && (destGroup.type !== "hand" && destGroup.type !== "deck" )) {
+      if (!origGroup.inPlay && destGroup.inPlay) {
         chatBroadcast("game_update",{message: "moved "+getDisplayNameFlipped(topOfOrigStackCard)+" from "+origGroupTitle+" to "+destGroupTitle+"."});
         // Flip card faceup
-        const updates = [["cardById",topOfOrigStackCardId,"currentSide", "A"]];
+        const updates = [["game", "cardById",topOfOrigStackCardId,"currentSide", "A"]];
+        console.log("draginfo", updates)
         dispatch(setValues({updates: updates}));
       }
       else {
         chatBroadcast("game_update",{message: "moved "+getDisplayName(topOfOrigStackCard)+" from "+origGroupTitle+" to "+destGroupTitle+"."});
       }
       dispatch(setGroupById(newGroupById));
-      gameBroadcast("game_action", {action:"move_stack", options:{stack_id: origStackId, dest_group_id: destGroupId, dest_stack_index: dest.index, combine: false, preserve_state: destGroupId === origGroupId}})
+      doActionList("evaluate", ["MOVE_STACK", origStackId, destGroupId, dest.index, false, destGroupId === origGroupId])
+      //gameBroadcast("game_action", {action:"move_stack", options:{stack_id: origStackId, dest_group_id: destGroupId, dest_stack_index: dest.index, combine: false, preserve_state: destGroupId === origGroupId}})
     }
     if (touchMode && origGroup.type === "hand" && destGroup.type === "play") {
       const cost = topOfOrigStackCard.sides.A.cost;

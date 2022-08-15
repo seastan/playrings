@@ -1,5 +1,5 @@
 {
-  "pluginName": "LotR LCG 7",
+  "pluginName": "LotR LCG 9",
   "minPlayers": 1,
   "maxPlayers": 4,
   "playerProperties": {
@@ -2639,23 +2639,482 @@
       "subMenus": []
     }
   ],
+  "hotkeys": {
+    "D": "draw",
+    "ArrowLeft": "undo",
+    "ArrowRight": "redo",
+    "ArrowDown": "next_step",
+    "ArrowUp": "prev_step",
+    "Escape": "clear_targets",
+    "Ctrl+Shift+R": "refresh_all",
+    "Ctrl+Z": "undo",
+    "Ctrl+Y": "redo",
+    "0": "zero_tokens",
+    "A": "toggleExhaust",
+    "F": "flip",
+    "H": "shuffle_into_deck",
+    "W": "draw_arrow",
+    "T": "target",
+    "X": "discard",
+    "C": "detach",
+    "B": "move_to_back",
+    "Shift+A": "card_ability"
+  },
   "actionLists": {
-    "lockCard": [
-      {
-        "_ACTION": "SET_VALUE",
-        "_PATH": ["_ACTIVE_CARD", "locked"],
-        "_VALUE": true,
-        "_MESSAGES": [["{playerN} locked ", ["_ACTIVE_FACE", "name"], "."]]
-      }
+    "newRound": [
+      ["COND",
+        ["EQUAL", "$GAME.playerData.$PLAYER_N.refreshed", false],
+        ["ACTION_LIST", "refresh"],
+        true,
+        "$GAME"
+      ],
+      ["COND",
+        ["EQUAL", "$GAME.playerUi.playerN", "player1"],
+        [
+          ["GAME_INCREASE_VAL", "roundNumber", 1],
+          ["GAME_ADD_MESSAGE", "player1 increased the round."],
+          ["GAME_SET_VAL", "phaseId", "Resource"],
+          ["GAME_ADD_MESSAGE", "player1 set the phase to Resource."],
+          ["GAME_SET_VAL", "stepId", "1.R"],
+          ["GAME_ADD_MESSAGE", "player1 set the round step to 1.R."]
+        ],
+        true,
+        "$GAME"
+      ],
+      ["FOR_EACH_KEY_VAL", "$CARD_ID", "$CARD", "$CARD_BY_ID", [
+        ["DEFINE", "$CURRENT_SIDE", "$CARD.currentSide"],
+        ["COND",
+          ["AND",
+            ["EQUAL", "$CARD.sides.$CURRENT_SIDE.type", "Hero"],
+            ["EQUAL", "$CARD.controller", "playerN"],
+            ["EQUAL", "$CARD.inPlay", true]
+          ],
+          [
+            ["GAME_INCREASE_VAL", "cardById", "$CARD_ID", "tokens", "resource", 1],
+            ["GAME_ADD_MESSAGE", "$PLAYER_N", " added 1 resource token to ", ["OBJ_GET_VAL", "$CARD", "sides", ["OBJ_GET_VAL", "$CARD", "currentSide"], "name"], "."]
+          ],
+          true,
+          "$GAME"
+        ],
+        ["COND",
+          ["EQUAL", "$CARD.controller", "playerN"],
+          ["GAME_SET_VAL", "cardById", "$CARD_ID", "committed", false],
+          true,
+          "$GAME"
+        ],
+        ["COND",
+          ["AND",
+            ["EQUAL", "$CARD.controller", "playerN"],
+            ["EQUAL", "$CARD.inPlay", true]
+          ],
+          [
+            ["GAME_INCREASE_VAL", "cardById", "$CARD_ID", "tokens", "resource", "$CARD.extraResources"],
+            ["GAME_ADD_MESSAGE", "$PLAYER_N", " added ", ["OBJ_GET_VAL", "$CARD", "extraResources"]," extra resource token(s) to ", ["OBJ_GET_VAL", "$CARD", "sides", ["OBJ_GET_VAL", "$CARD", "currentSide"], "type"]]
+          ],
+          true,
+          "$GAME"
+        ]
+      ]],
+      ["FOR_EACH_START_STOP_STEP", "$i", 0, "$GAME.playerData.player1.cardsDrawn", 1,
+        [
+          ["MOVE_CARD", ["GET_CARD_ID", ["JOIN_STRING", "$PLAYER_N", "Deck"], 0, 0], ["JOIN_STRING", "$PLAYER_N", "Hand"], 0, 0],
+          ["GAME_ADD_MESSAGE", "$PLAYER_N", " drew 1 card."]
+        ]
+      ],
+      ["GAME_SET_VAL", "playerData", "$PLAYER_N", "willpower", 0],
+      ["GAME_SET_VAL", "playerData", "$PLAYER_N", "refreshed", false]
     ],
-    "unlockCard": [
-      {
-        "_ACTION": "SET_VALUE",
-        "_PATH": ["_ACTIVE_CARD", "locked"],
-        "_VALUE": false,
-        "_MESSAGES": [["{playerN} unlocked ", ["_ACTIVE_FACE", "name"], "."]]
-      }
+    "refresh": [
+      ["COND",
+        ["EQUAL", "$GAME.playerUi.playerN", "player1"],
+        [
+          ["GAME_SET_VAL", "phaseId", "Refresh"],
+          ["GAME_SET_VAL", "stepId", "7.R"],
+          ["GAME_SET_VAL", "firstPlayer", ["NEXT_PLAYER", "$GAME.firstPlayer"]],
+          ["GAME_ADD_MESSAGE", "player1 set the phase to Refresh."],
+          ["GAME_ADD_MESSAGE", "player1 set the round step to 7.R."]
+        ],
+        true,
+        "$GAME"
+      ],
+      ["FOR_EACH_KEY_VAL", "$CARD_ID", "$CARD", "$CARD_BY_ID", [
+        ["COND",
+          ["AND",
+            ["EQUAL", "$CARD.controller", "playerN"],
+            ["EQUAL", "$CARD.inPlay", true]
+          ],
+          [
+            ["GAME_SET_VAL", "cardById", "$CARD_ID", "rotation", 0],
+            ["GAME_SET_VAL", "cardById", "$CARD_ID", "exhausted", false]
+          ],
+          true,
+          "$GAME"
+        ]
+      ]],
+      ["GAME_SET_VAL", "playerData", "$PLAYER_N", "refreshed", true],
+      ["GAME_ADD_MESSAGE", "player1 refeshed."]
+    ],
+    "revealEncounterFaceup": [
+      ["DEFINE", "$REVEAL_FACEDOWN", false],
+      ["ACTION_LIST", "revealEncounter"]
+    ],
+    "revealEncounterFacedown": [
+      ["DEFINE", "$REVEAL_FACEDOWN", false],
+      ["ACTION_LIST", "revealEncounter"]
+    ],
+    "revealSecondaryFaceup": [
+      ["DEFINE", "$REVEAL_FACEDOWN", false],
+      ["ACTION_LIST", "revealSecondary"]
+    ],
+    "revealSecondaryFacedown": [
+      ["DEFINE", "$REVEAL_FACEDOWN", false],
+      ["ACTION_LIST", "revealSecondary"]
+    ],
+    "revealEncounter": [
+      ["COND",
+        ["EQUAL", ["LENGTH", "$GAME.groupById.sharedEncounterDeck.stackIds"], 0],
+        ["COND",
+          ["EQUAL", "$GAME.phaseId", "Quest"],
+          [
+            ["MOVE_STACKS", "sharedEncounterDiscard", "sharedEncounterDeck", ["LENGTH", "$GAME.groupById.sharedEncounterDiscard.stackIds"], "shuffle"],
+            ["GAME_ADD_MESSAGE", "$PLAYER_N"," shuffled the encounter discard pile into the encounter deck."]
+          ],
+          true,
+          ["GAME_ADD_MESSAGE", "$PLAYER_N", "tried to reveal a card, but the encounter deck is empty and it's not the quest phase."]
+        ],
+        true,
+        [
+          ["DEFINE", "$STACK_ID", ["AT_INDEX", "$GAME.groupById.sharedEncounterDeck.stackIds", 0]],
+          ["MOVE_STACK", "$STACK_ID", "sharedStaging", -1, false, "$REVEAL_FACEDOWN"],
+          ["GAME_ADD_MESSAGE", "$PLAYER_N", " revealed ", ["FACEUP_NAME_FROM_STACK_ID", "$STACK_ID"]]
+        ]
+      ],
+      ["COND",
+        ["EQUAL", ["LENGTH", "$GAME.groupById.sharedEncounterDeck.stackIds"], 0],
+        [
+          ["MOVE_STACKS", "sharedEncounterDiscard", "sharedEncounterDeck", ["LENGTH", "$GAME.groupById.sharedEncounterDiscard.stackIds"], "shuffle"],
+          ["GAME_ADD_MESSAGE", "$PLAYER_N"," shuffled the encounter discard pile into the encounter deck."]
+        ],
+        true,
+        "$GAME"
+      ]
+    ],
+    "revealSecondary": [
+      ["COND",
+        ["EQUAL", ["LENGTH", "$GAME.groupById.sharedEncounterDeck2.stackIds"], 0],
+        ["GAME_ADD_MESSAGE", "$PLAYER_N", " tried to reveal a card from the second encounter deck, but it's empty."],
+        true,
+        [
+          ["DEFINE", "$STACK_ID", ["AT_INDEX", "$GAME.groupById.sharedEncounterDeck2.stackIds", 0]],
+          ["MOVE_STACK", "$STACK_ID", "sharedStaging", -1, false, "$REVEAL_FACEDOWN"],
+          ["GAME_ADD_MESSAGE", "$PLAYER_N", " revealed ", ["FACEUP_NAME_FROM_STACK_ID", "$STACK_ID"]]
+        ]
+      ]
+    ],
+    "draw": [
+      ["DRAW_CARD"]
+    ],
+    "shadows": [
+      ["DEFINE", "$STEP_ID", "6.2"],
+      ["COND",
+        ["AND", ["EQUAL", "$GAME.playerUi.playerN", "player1"], ["NOT_EQUAL", "$STEP_ID", "$GAME.stepId"]],
+        [
+          ["GAME_SET_VAL", "stepId", "$STEP_ID"],
+          ["GAME_ADD_MESSAGE", "$PLAYER_N", " set the round step to ", "$GAME.gameDef.steps.$STEP_ID.text", "."]
+        ],
+        true,
+        "$GAME"
+      ],
+      ["FOR_EACH_KEY_VAL", "$PLAYER_I", "$PLAYER_I_DATA", "$GAME.playerData",
+        [
+          ["FOR_EACH_KEY_VAL", "$CARD_ID", "$CARD", "$CARD_BY_ID",
+            [
+              ["COND",
+                ["AND",
+                  ["EQUAL", "$CARD.groupId", ["JOIN_STRING", "$PLAYER_I", "Engaged"]],
+                  ["EQUAL", "$CARD.cardIndex", 0],
+                  ["EQUAL", "$CARD.sides.A.type", "Enemy"]
+                ],
+                ["COND",
+                  ["EQUAL", ["LENGTH", "$GAME.groupById.sharedEncounterDeck.stackIds"], 0],
+                  [
+                    ["GAME_ADD_MESSAGE", "$PLAYER_N", " tried to deal a shadow card but the encounter deck is empty."],
+                    ["LOGGER", "tried to deal shadow but couldn't"]
+                  ],
+                  true,
+                  [
+                    ["DEFINE", "$SHADOW_CARD_ID", ["GET_CARD_ID", "sharedEncounterDeck", 0, 0]],
+                    ["ATTACH_CARD", "$SHADOW_CARD_ID", "$CARD_ID"],
+                    ["GAME_SET_VAL", "cardById", "$SHADOW_CARD_ID", "rotation", -30],
+                    ["GAME_SET_VAL", "cardById", "$SHADOW_CARD_ID", "currentSide", "B"],
+                    ["GAME_ADD_MESSAGE", "$PLAYER_N", " dealt a shadow card to ", ["FACEUP_NAME_FROM_CARD_ID", "$CARD_ID"], "."]
+                  ]
+                ],
+                true,
+                "$GAME"
+              ]
+            ],
+            ["sides", "A", "engagementCost"],
+            "DESC"
+          ]
+        ],
+        ["currentPosition"]
+      ]
+    ],
+    "discard_shadows": [
+      ["FOR_EACH_KEY_VAL", "$CARD_ID", "$CARD", "$CARD_BY_ID",
+        [
+          ["COND",
+            ["EQUAL", "$CARD.rotation", -30],
+            ["DISCARD_CARD", "$CARD_ID"],
+            true,
+            "$GAME"
+          ]
+        ]
+      ]
+    ],
+    "next_step": [
+      ["COND",
+        ["EQUAL", "$GAME.stepId", ["AT_INDEX", "$GAME.gameDef.stepOrder", -1]],
+        ["GAME_SET_VAL", "stepId", ["AT_INDEX", "$GAME.gameDef.stepOrder", 0]],
+        true,
+        [["LOGGER", "here"],
+        ["GAME_SET_VAL", "stepId", ["AT_INDEX", "$GAME.gameDef.stepOrder", ["ADD", ["GET_INDEX", "$GAME.gameDef.stepOrder", "$GAME.stepId"], 1]]]
+        ]
+      ],
+      ["DEFINE", "$STEP_ID", "$GAME.stepId"],
+      ["DEFINE", "$STEP", "$GAME.gameDef.steps.$STEP_ID"],
+      ["GAME_ADD_MESSAGE", "$PLAYER_N", " set the round step to ", "$STEP.text", "."]
+    ],
+    "prev_step": [
+      ["COND",
+        ["EQUAL", "$GAME.stepId", ["AT_INDEX", "$GAME.gameDef.stepOrder", 0]],
+        ["GAME_SET_VAL", "stepId", ["AT_INDEX", "$GAME.gameDef.stepOrder", -1]],
+        true,
+        [["LOGGER", "here"],
+        ["GAME_SET_VAL", "stepId", ["AT_INDEX", "$GAME.gameDef.stepOrder", ["SUBTRACT", ["GET_INDEX", "$GAME.gameDef.stepOrder", "$GAME.stepId"], 1]]]
+        ]
+      ],
+      ["DEFINE", "$STEP_ID", "$GAME.stepId"],
+      ["DEFINE", "$STEP", "$GAME.gameDef.steps.$STEP_ID"],
+      ["GAME_ADD_MESSAGE", "$PLAYER_N", " set the round step to ", "$STEP.text", "."]
+    ],
+    "mulligan": [
+      ["DEFINE", "$HAND_GROUP_ID", ["JOIN_STRING", "$PLAYER_N", "Hand"]],
+      ["DEFINE", "$DECK_GROUP_ID", ["JOIN_STRING", "$PLAYER_N", "Deck"]],
+      ["DEFINE", "$HAND_SIZE", ["LENGTH", "$GAME.groupById.$HAND_GROUP_ID.stackIds"]],
+      ["MOVE_STACKS", "$HAND_GROUP_ID", "$DECK_GROUP_ID", "$HAND_SIZE", "shuffle"],
+      ["DRAW", "$HAND_SIZE"]
+    ],
+    "clear_targets": [
+      ["FOR_EACH_KEY_VAL", "$CARD_ID", "$CARD", "$CARD_BY_ID",
+        ["GAME_SET_VAL", "$GAME", "cardById", "$CARD_ID", "targeting", "$PLAYER_N", false]
+      ],
+      ["GAME_ADD_MESSAGE", "PLAYER_N", " cleared their targets."]
+    ],
+    "increase_threat": [
+      ["GAME_INCREASE_VAL", "playerData", "$PLAYER_N", "threat", 1],
+      ["GAME_ADD_MESSAGE", "PLAYER_N", " increased their threat by 1."]
+    ],
+    "increase_threat_all": [
+      ["FOR_EACH_KEY_VAL", "$PLAYER_I", "$PLAYER_I_DATA", "$GAME.playerData",
+        ["GAME_INCREASE_VAL", "playerData", "$PLAYER_I", "threat", 1]
+      ],
+      ["GAME_ADD_MESSAGE", "PLAYER_N", " increased each player's threat by 1."]
+    ],
+    "decrease_threat": [
+      ["GAME_INCREASE_VAL", "playerData", "$PLAYER_N", "threat", -1],
+      ["GAME_ADD_MESSAGE", "PLAYER_N", " decreased their threat by 1."]
+    ],
+    "decrease_threat_all": [
+      ["FOR_EACH_KEY_VAL", "$PLAYER_I", "$PLAYER_I_DATA", "$GAME.playerData",
+        ["GAME_INCREASE_VAL", "playerData", "$PLAYER_I", "threat", -1]
+      ],
+      ["GAME_ADD_MESSAGE", "PLAYER_N", " increased each player's threat by 1."]
+    ],
+    "draw_next_seat": [
+      ["DRAW", 1, ["NEXT_PLAYER", "$PLAYER_N"]],
+      ["GAME_ADD_MESSAGE", "PLAYER_N", " drew 1 card."]
+    ],
+    "zero_tokens": [
+      ["GAME_SET_VAL", "$ACTIVE_TOKENS_PATH", {}],
+      ["GAME_ADD_MESSAGE", "PLAYER_N", " removed all tokens from ", "$ACTIVE_FACE.name", "."]
+    ],
+    "toggleExhaust": [
+      ["COND",
+        ["AND", ["EQUAL", "$ACTIVE_CARD.rotation", 90], "$ACTIVE_CARD.inPlay"],
+        [
+          ["GAME_SET_VAL", "$ACTIVE_CARD_PATH", "rotation", 0],
+          ["GAME_SET_VAL", "$ACTIVE_CARD_PATH", "exhausted", false],
+          ["GAME_ADD_MESSAGE", "$PLAYER_N", " readied ", "$ACTIVE_FACE.name", "."]
+        ],
+        ["AND", ["EQUAL", "$ACTIVE_CARD.rotation", 0], "$ACTIVE_CARD.inPlay"],
+        [
+          ["GAME_SET_VAL", "$ACTIVE_CARD_PATH", "rotation", 90],
+          ["GAME_SET_VAL", "$ACTIVE_CARD_PATH", "exhausted", true],
+          ["GAME_ADD_MESSAGE", "$PLAYER_N", " exhausted ", "$ACTIVE_FACE.name", "."]
+        ],
+        true,
+        "$GAME"
+      ]
+    ],
+    "flip": [
+      ["COND",
+        ["EQUAL", "$ACTIVE_CARD.currentSide", "A"],
+        [
+          ["GAME_ADD_MESSAGE", "$PLAYER_N", " flipped ", "$ACTIVE_FACE.name", " facedown."],
+          ["GAME_SET_VAL", "$ACTIVE_CARD_PATH", "currentSide", "B"]
+        ],
+        true,
+        [
+          ["GAME_SET_VAL", "$ACTIVE_CARD_PATH", "currentSide", "A"],
+          ["GAME_ADD_MESSAGE", "PLAYER_N", " flipped ", "$ACTIVE_FACE.name", " faceup."]
+        ]
+      ]
+    ],
+    "toggle_commit": [
+      ["DEFINE", "$STEP_ID", "3.2"],
+      ["COND",
+        ["AND", ["EQUAL", "$GAME.playerUi.playerN", "player1"], ["NOT_EQUAL", "$STEP_ID", "$GAME.stepId"]],
+        [
+          ["GAME_SET_VAL", "stepId", "$STEP_ID"],
+          ["GAME_ADD_MESSAGE", "$PLAYER_N", " set the round step to ", "$GAME.gameDef.steps.$STEP_ID.text", "."]
+        ],
+        true,
+        "$GAME"
+      ],
+      ["COND",
+        ["AND", ["EQUAL", "$ACTIVE_CARD.rotation", 0], ["EQUAL", "$ACTIVE_CARD.committed", false], "$CARD.inPlay"],
+        [
+          ["GAME_SET_VAL", "$ACTIVE_CARD_PATH", "rotation", 90],
+          ["GAME_SET_VAL", "$ACTIVE_CARD_PATH", "exhausted", true],
+          ["GAME_INCREASE_VAL", "playerData", "$ACTIVE_CARD.controller", "willpower", "$ACTIVE_FACE.willpower"],
+          ["GAME_SET_VAL", "PLAYER_N", " committed ", "$ACTIVE_FACE.name", "to the quest."]
+        ],
+        ["AND", ["EQUAL", "$ACTIVE_CARD.committed", true], "$CARD.inPlay"],
+        [
+          ["GAME_SET_VAL", "$ACTIVE_CARD_PATH", "rotation", 0],
+          ["GAME_SET_VAL", "$ACTIVE_CARD_PATH", "exhausted", false],
+          ["GAME_DECREASE_VAL", "playerData", "$ACTIVE_CARD.controller", "willpower", "$ACTIVE_FACE.willpower"],
+          ["GAME_SET_VAL", "PLAYER_N", " uncommitted ", "$ACTIVE_FACE.name", "to the quest."]
+        ],
+        true,
+        "$GAME"
+      ]
+    ],
+    "toggle_commit_without_exhausting": [
+      ["DEFINE", "$STEP_ID", "3.2"],
+      ["COND",
+        ["AND", ["EQUAL", "$GAME.playerUi.playerN", "player1"], ["NOT_EQUAL", "$STEP_ID", "$GAME.stepId"]],
+        [
+          ["GAME_SET_VAL", "stepId", "$STEP_ID"],
+          ["GAME_ADD_MESSAGE", "$PLAYER_N", " set the round step to ", "$GAME.gameDef.steps.$STEP_ID.text", "."]
+        ],
+        true,
+        "$GAME"
+      ],
+      ["COND",
+        ["AND", ["EQUAL", "$ACTIVE_CARD.rotation", 0], ["EQUAL", "$ACTIVE_CARD.committed", false], "$CARD.inPlay"],
+        [
+          ["GAME_INCREASE_VAL", "playerData", "$ACTIVE_CARD.controller", "willpower", "$ACTIVE_FACE.willpower"],
+          ["GAME_SET_VAL", "PLAYER_N", " committed ", "$ACTIVE_FACE.name", "to the quest without exhausting."]
+        ],
+        ["AND", ["EQUAL", "$ACTIVE_CARD.committed", true], "$CARD.inPlay"],
+        [
+          ["GAME_DECREASE_VAL", "playerData", "$ACTIVE_CARD.controller", "willpower", "$ACTIVE_FACE.willpower"],
+          ["GAME_SET_VAL", "PLAYER_N", " removed ", "$ACTIVE_FACE.name", "from the quest."]
+        ],
+        true,
+        "$GAME"
+      ]
+    ],
+    "deal_shadow": [
+      ["COND",
+        "$CARD.inPlay",
+        ["COND",
+          ["EQUAL", ["LENGTH", "$GAME.groupById.sharedEncounterDeck.stackIds"], 0],
+          ["GAME_ADD_MESSAGE", "$PLAYER_N", " tried to deal a shadow card but the encounter deck is empty."],
+          true,
+          [
+            ["DEFINE", "$SHADOW_CARD_ID", ["GET_CARD_ID", "sharedEncounterDeck", 0, 0]],
+            ["ATTACH_CARD", "$SHADOW_CARD_ID", "$ACTIVE_CARD_ID"],
+            ["GAME_SET_VAL", "cardById", "$SHADOW_CARD_ID", "rotation", -30],
+            ["GAME_SET_VAL", "cardById", "$SHADOW_CARD_ID", "currentSide", "B"],
+            ["GAME_ADD_MESSAGE", "$PLAYER_N", " dealt a shadow card to ", "$ACTIVE_FACE.name", "."]
+          ]
+        ],
+        true,
+        "$GAME"
+      ]
+    ],
+    "target_card": [
+      ["GAME_SET_VAL", "playerData", "targeting", "$PLAYER_N", "$ACTIVE_CARD_ID", true],
+      ["GAME_ADD_MESSAGE", "$PLAYER_N", " targeted ", "$ACTIVE_FACE.name", "."]
+    ],
+    "victory": [
+      ["MOVE_CARD", "$ACTIVE_CARD_ID", "sharedVictory", 0, 0]
+    ],
+    "discard": [
+      ["LOGGER", "0"],
+      ["COND",
+        ["EQUAL", "$ACTIVE_CARD.cardIndex", 0],
+        [
+          ["LOGGER", "A"],
+          ["DEFINE", "$STACK_ID", "$ACTIVE_CARD.stackId"],
+          ["DEFINE", "$CARD_IDS", "$GAME.stackById.$STACK_ID.cardIds"],
+          ["FOR_EACH_VAL", "$CARD_ID", "$CARD_IDS",
+            [
+              ["DEFINE", "$CARD", "$GAME.cardById.$CARD_ID"],
+              ["LOGGER", "$CARD"],
+              ["DEFINE", "$CURRENT_SIDE", "$CARD.currentSide"],
+              ["GAME_ADD_MESSAGE", "$PLAYER_N", " discarded ", "$CARD.sides.$CURRENT_SIDE.name", "."],
+              ["DISCARD_CARD", "$CARD_ID"]
+            ]
+          ]
+        ],
+        true,
+        [
+          ["LOGGER", "B"],
+          ["DEFINE", "$CURRENT_SIDE", "$ACTIVE_CARD.currentSide"],
+          ["GAME_ADD_MESSAGE", "$PLAYER_N", " discarded ", "$ACTIVE_CARD.sides.$CURRENT_SIDE.name", "."],
+          ["DISCARD_CARD", "$ACTIVE_CARD_ID"]
+        ]
+      ] 
+    ],
+    "shuffle_into_deck": [
+      ["MOVE_CARD", "$ACTIVE_CARD_ID", "$ACTIVE_CARD.deckGroupId", 0, 0],
+      ["DEFINE", "$GROUP_ID", "$ACTIVE_CARD.deckGroupId"],
+      ["SHUFFLE_GROUP", "$GROUP_ID"],
+      ["GAME_ADD_MESSAGE", "$PLAYER_N", " shuffled ", "$GAME.groupById.$GROUP_ID.name", "."]
+    ],
+    "detach": [
+      ["COND",
+        ["GREATER_THAN", "$ACTIVE_CARD.cardIndex", 0],
+        [
+          ["MOVE_CARD", "$ACTIVE_CARD_ID", "$ACTIVE_CARD.groupId", ["ADD", "$ACTIVE_CARD.stackIndex", 1], 0],
+          ["GAME_ADD_MESSAGE", "$PLAYER_N", " detached ", "$ACTIVE_FACE.name", "."]
+        ],
+        true,
+        "$GAME"
+      ]
+    ],
+    "swap_side": [
+      ["COND",
+        ["GREATER_THAN", "$ACTIVE_CARD.cardIndex", 0],
+        ["COND",
+          ["EQUAL", "$ACTIVE_CARD.attachmentDirection", -1],
+          ["GAME_SET_VAL", "cardById", "$ACTIVE_CARD_ID", "attachmentDirection", 1],
+          true,
+          ["GAME_SET_VAL", "cardById", "$ACTIVE_CARD_ID", "attachmentDirection", -1]
+        ],
+        true,
+        "$GAME"
+      ]
+    ],
+    "move_to_back": [
+      ["MOVE_CARD", "$ACTIVE_CARD_ID", "$ACTIVE_CARD.groupId", "$ACTIVE_CARD.stackIndex", -1, true]
     ]
+  
   },
   "faceProperties": {
     "attack":        {"type": "integer", "default": 0},
@@ -2843,7 +3302,9 @@
       "defaultSideUp": "A",
       "defaultPeeking": [],
       "inPlay": true,
-      "canHaveAttachments": true
+      "canHaveAttachments": true,
+      "discardDeckId": "sharedEncounterDeck",
+      "discardGroupId": "sharedEncounterDiscard"
     },
     "sharedActive": {
       "name": "Active Location", 

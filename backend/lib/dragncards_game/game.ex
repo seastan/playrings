@@ -45,7 +45,6 @@
     default_layout = Enum.at(game_def["layoutMenu"],0)
     base = %{
       "id" => Ecto.UUID.generate,
-      "gameDef" => game_def,
       "pluginUuid" => options["pluginUuid"],
       "pluginVersion" => options["pluginVersion"],
       "numPlayers" => 1,
@@ -55,7 +54,7 @@
       "firstPlayer" => "player1",
       "roundNumber" => 0,
       "stepId" => Enum.at(game_def["stepOrder"],0),
-      "groupById" => Groups.new(),
+      "groupById" => Groups.new(game_def["groups"]),
       "stackById" => %{},
       "cardById"  => %{},
       "triggerMap" => %{},
@@ -80,9 +79,6 @@
     game = Enum.reduce(game_def["gameProperties"], base, fn({key,val}, acc) ->
       put_in(acc[key], val["default"])
     end)
-    IO.inspect("game result")
-    IO.inspect(game)
-    game
   end
 
   def add_delta(game, prev_game) do

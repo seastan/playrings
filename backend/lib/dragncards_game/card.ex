@@ -15,14 +15,15 @@ defmodule DragnCardsGame.Card do
     end
   end
 
-  @spec card_from_card_details(Map.t(), Map.t(), String.t()) :: Map.t()
-  def card_from_card_details(card_details, game_def, group_id) do
+  @spec card_from_card_details(Map.t(), Map.t(), String.t(), String.t()) :: Map.t()
+  def card_from_card_details(card_details, game_def, card_db_id, group_id) do
+
     group = game_def["groups"][group_id]
     controller = group["controller"]
     base = %{
       "id" => Ecto.UUID.generate,
-      "cardDbId" => card_details["cardid"],
-      "currentSide" => "A",
+      "cardDbId" => card_db_id,
+      "currentSide" => group["defaultSideUp"],
       "rotation" => 0,
       "owner" => controller,
       "controller" => controller,
@@ -55,5 +56,16 @@ defmodule DragnCardsGame.Card do
     card = Enum.reduce(game_def["cardProperties"], base, fn({key,val}, acc) ->
       put_in(acc[key], val["default"])
     end)
+    #if group["id"] == "sharedStaging" do
+      IO.puts("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
+      IO.inspect(game_def["groups"])
+      IO.inspect(group_id)
+      IO.inspect(game_def["groups"][group_id])
+      IO.inspect(card_details["uuid"])
+      IO.inspect(card["cardDbId"])
+      IO.inspect(card["deckGroupId"])
+      card
+    #end
+    card
   end
 end

@@ -12,8 +12,9 @@ export const usePlugin = () => {
         null
     );
     useEffect(() => {
+        console.log("plugininfo",pluginUuid, pluginVersion)
         doFetchUrl("/be/api/plugins/"+pluginUuid+"/"+pluginVersion);
-    }, [pluginUuid, pluginVersion]);
+    }, [pluginUuid, pluginVersion, data]);
     console.log("pluginuP", pluginUuid, data)
     return data;
 }

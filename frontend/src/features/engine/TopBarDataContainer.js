@@ -10,8 +10,8 @@ export const TopBarDataContainer = React.memo(({}) => {
     return(
       <div className="h-full">
         <TopBarShared/>
-        {playerIList.map((playerI, _playerIndex) => (
-          <TopBarUser playerI={playerI}/>
+        {playerIList.map((playerI, playerIndex) => (
+          <TopBarUser key={playerIndex} playerI={playerI}/>
         ))}
       </div>
     )

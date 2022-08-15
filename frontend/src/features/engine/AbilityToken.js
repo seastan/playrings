@@ -5,12 +5,13 @@ import { passesCriteria } from "./functions/flatListOfCards";
 import abilities from "../plugins/lotrlcg/definitions/abilities";
 
 export const AbilityToken = React.memo(({ 
-    card,
+    cardId,
     groupId,
     groupType,
     cardIndex,
     zIndex,
  }) => {
+    const card = useSelector(state => state?.gameUi?.game?.cardById[cardId]);
     const playerN = useSelector(state => state?.playerUi?.playerN)
     const cardAbilities = abilities[card.cardDbId];
     if (!cardAbilities) return; // Card is not in ability database

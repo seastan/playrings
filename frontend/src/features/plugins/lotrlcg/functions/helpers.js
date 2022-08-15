@@ -93,10 +93,8 @@ export const getVisibleFace = (card, playerN) => {
   else return null;
 }
 
-export const getVisibleFaceSrc = (card, playerN, user, gameDef) => {
-  if (!card) return {src: "image not found", default: "image not found"};
-  const visibleSide = getVisibleSide(card, playerN);
-  const visibleFace = getVisibleFace(card, playerN);
+export const getVisibleFaceSrc = (visibleFace, user, gameDef) => {
+  if (!visibleFace) return {src: "image not found", default: "image not found"};
   var src = visibleFace.imageUrl;
   // If there's no src listed, it's probably a card back
   if (!src || src ==="") {

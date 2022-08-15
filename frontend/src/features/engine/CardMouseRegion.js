@@ -9,7 +9,7 @@ import { setActiveCardId, setActiveCardObj, setDropdownMenuObj } from "../store/
 export const CardMouseRegion = React.memo(({
     position,
     top,
-    card,
+    cardId,
     isActive,
     //setIsActive,
     zIndex,
@@ -18,6 +18,7 @@ export const CardMouseRegion = React.memo(({
     groupType,
 }) => {
     const dispatch = useDispatch();
+    const card = useSelector(state => state?.gameUi?.game?.cardById[cardId]);
     const displayName = getDisplayName(card);    
     const playerN = useSelector(state => state?.playerUi?.playerN)
     const touchMode = useSelector(state => state?.playerUi?.touchMode)

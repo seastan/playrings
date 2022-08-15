@@ -50,35 +50,44 @@ export const Card = React.memo(({
     const dispatch = useDispatch();
     const user = useProfile();
     const gameDef = useGameDefinition();
-    const card = useSelector(state => state?.gameUi?.game?.cardById[cardId]);
+    //const card = useSelector(state => state?.gameUi?.game?.cardById[cardId]);
+    const cardCurrentSide = useSelector(state => state?.gameUi?.game?.cardById[cardId]?.currentSide);
+    const cardSides = useSelector(state => state?.gameUi?.game?.cardById[cardId]?.sides);
+    const cardPeeking = useSelector(state => state?.gameUi?.game?.cardById[cardId]?.peeking);
+    const cardTokens = useSelector(state => state?.gameUi?.game?.cardById[cardId]?.tokens);
+    const cardRotation = useSelector(state => state?.gameUi?.game?.cardById[cardId]?.rotation);
+    const cardCommitted = useSelector(state => state?.gameUi?.game?.cardById[cardId]?.committed);
     const playerN = useSelector(state => state?.playerUi?.playerN);
     const cardSize = useCardSize();
     const touchMode = useSelector(state => state?.playerUi?.touchMode);
-    if (!card) return;
-    const currentFace = getCurrentFace(card);
-    const visibleFace = getVisibleFace(card, playerN);
-    const visibleFaceSrc = getVisibleFaceSrc(card, playerN, user, gameDef);
+    if (!cardCurrentSide) return;
+    var cardVisibleSide = cardCurrentSide;
+    if (cardPeeking[playerN] && cardCurrentSide == "A") cardVisibleSide = "B";
+    else if (cardPeeking[playerN] && cardCurrentSide == "B") cardVisibleSide = "A";
+    const currentFace = cardSides[cardCurrentSide];
+    const cardVisibleFace = cardSides[cardVisibleSide];
+    const visibleFaceSrc = getVisibleFaceSrc(cardVisibleFace, playerN, gameDef);
     const zIndex = 1000 - cardIndex;
-    console.log('Rendering Card ',visibleFace.name);
+    console.log('Rendering Card ',cardVisibleFace.name);
     const isActive = useSelector(state => {return state?.playerUi?.activeCardObj?.card?.id === cardId});
     const touchModeSpacingFactor = touchMode ? 1.5 : 1;
-    const defaultAction = getDefault(card, groupId, groupType, cardIndex)
+    const defaultAction = null; //FIXME getDefault(card, groupId, groupType, cardIndex)
 
     const handleMouseLeave = (_event) => {
         //setIsActive(false);
         dispatch(setActiveCardObj(null));
     }
 
-    var [height, width] = [visibleFace.height, visibleFace.width];
+    var [height, width] = [cardVisibleFace.height, cardVisibleFace.width];
     if (!height || !width) {
-        height = gameDef?.cardBacks?.[visibleFace.name]?.height;
-        width = gameDef?.cardBacks?.[visibleFace.name]?.width;
+        height = gameDef?.cardBacks?.[cardVisibleFace.name]?.height;
+        width = gameDef?.cardBacks?.[cardVisibleFace.name]?.width;
     }
     // FIXME: display error if height and width still not defined?
 
     const horizontalOffset = 0.2 + (1.39-width)*cardSize/2 + cardSize*touchModeSpacingFactor/3*offset;
-    const destroyed = currentFace.hitPoints > 0 && card.tokens.damage >= currentFace.hitPoints + card.tokens.hitPoints;
-    const explored = currentFace.questPoints > 0 && card.tokens.progress >= currentFace.questPoints + card.tokens.hitPoints;
+    const destroyed = currentFace.hitPoints > 0 && cardTokens.damage >= currentFace.hitPoints + cardTokens.hitPoints;
+    const explored = currentFace.questPoints > 0 && cardTokens.progress >= currentFace.questPoints + cardTokens.hitPoints;
 
 
     var className = "";
@@ -86,10 +95,10 @@ export const Card = React.memo(({
     if (destroyed) className = "shadow-red";
     if (explored) className = "shadow-green";
     return (
-        <div id={card.id}>
+        <div id={cardId}>
             <div 
                 className={className}
-                key={card.id}
+                key={cardId}
                 style={{
                     position: "absolute",
                     height: `${cardSize*height}vh`,
@@ -97,7 +106,7 @@ export const Card = React.memo(({
                     left: `${horizontalOffset}vh`,
                     top: "50%",
                     borderRadius: '0.6vh',
-                    transform: `translate(0%, ${groupType === "vertical" ? "0%" : "-50%"}) rotate(${card.rotation}deg)`,
+                    transform: `translate(0%, ${groupType === "vertical" ? "0%" : "-50%"}) rotate(${cardRotation}deg)`,
                     zIndex: zIndex,
                     cursor: "default",
                     WebkitTransitionDuration: "0.1s",
@@ -117,19 +126,19 @@ export const Card = React.memo(({
 
                 {isActive && touchMode && defaultAction &&
                     <div 
-                        className={"absolute w-full pointer-events-none bg-green-700 font-bold rounded text-white text-xs text-center" + (card.rotation === -30 ? " bottom-0" : "")}
+                        className={"absolute w-full pointer-events-none bg-green-700 font-bold rounded text-white text-xs text-center" + (cardRotation === -30 ? " bottom-0" : "")}
                         style={{height:"40px", opacity: "80%"}}>
                             <div>Tap to</div>
                             {defaultAction.title}
                     </div>}
-                {(card["peeking"][playerN] && groupType !== "hand" && (card["currentSide"] === "B")) ? <FontAwesomeIcon className="absolute top-0 right-0 text-2xl" icon={faEye}/>:null}
+                {(cardPeeking[playerN] && groupType !== "hand" && (cardCurrentSide === "B")) ? <FontAwesomeIcon className="absolute top-0 right-0 text-2xl" icon={faEye}/>:null}
                 <Target
                     cardId={cardId}
                 />
                 <CardMouseRegion 
                     position={"top"}
                     top={"0%"}
-                    card={card}
+                    cardId={cardId}
                     isActive={isActive}
                     //setIsActive={setIsActive}
                     zIndex={zIndex}
@@ -140,7 +149,7 @@ export const Card = React.memo(({
                 <CardMouseRegion 
                     position={"bottom"}
                     top={"50%"}
-                    card={card}
+                    cardId={cardId}
                     isActive={isActive}
                     //setIsActive={setIsActive}
                     zIndex={zIndex}
@@ -150,25 +159,25 @@ export const Card = React.memo(({
                 />
                 <Tokens
                     cardName={currentFace.name}
-                    cardId={card.id}
-                    cardType={visibleFace.type}
+                    cardId={cardId}
+                    cardType={cardVisibleFace.type}
                     isActive={isActive}
                     zIndex={zIndex}
                     aspectRatio={width/height}
                 />
-                {card.committed && <CommittedToken
-                    cardId={card.id}
+                {cardCommitted && <CommittedToken
+                    cardId={cardId}
                     zIndex={zIndex}
                 />}
                 {isActive && <AbilityToken
-                    card={card}
+                    cardId={cardId}
                     groupId={groupId}
                     groupType={groupType}
                     cardIndex={cardIndex}
                     zIndex={zIndex}
                 />}
                 <ArrowRegion
-                    cardId={card.id}
+                    cardId={cardId}
                     registerDivToArrowsContext={registerDivToArrowsContext}
                 />
             </div>
