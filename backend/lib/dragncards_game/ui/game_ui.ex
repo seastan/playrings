@@ -1122,6 +1122,8 @@ defmodule DragnCardsGame.GameUI do
   # Game actions                                                 #
   ################################################################
   def game_action(gameui, user_id, action, options) do
+    IO.inspect("action")
+    IO.inspect(action)
     user_alias = get_alias_by_user_id(gameui, user_id)
     player_n = get_player_n(gameui, user_id)
     player_n = if options["for_player_n"] do options["for_player_n"] else player_n end

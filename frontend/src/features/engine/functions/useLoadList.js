@@ -8,6 +8,10 @@ export const useLoadList = () => {
     const cardDb = usePlugin()?.card_db;
     return (list) => {
         console.log("loadlist1", list)
+        if (!cardDb) {
+            alert("Plugin not fully loaded.")
+            return;
+        }
         const newList = [];
         for (var item of list) {
             newList.push({...item, cardDetails: cardDb[item.uuid]})

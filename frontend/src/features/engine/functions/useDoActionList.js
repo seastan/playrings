@@ -14,12 +14,15 @@ export const useDoActionList = () => {
         if (Object.keys(gameDef.actionLists).includes(actionListName)) {
             actionList = gameDef.actionLists[actionListName]
         }
-        if (actionList != null) gameBroadcast("game_action", {
-            action: "evaluate", 
-            options: {
-                action_list: actionList, 
-                player_ui: state.playerUi,
-            }
-        })
+        console.log("actionlistprint", actionList)
+        if (actionList != null) 
+            console.log("game_action", gameBroadcast)
+            gameBroadcast("game_action", {
+                action: "evaluate", 
+                options: {
+                    action_list: actionList, 
+                    player_ui: state.playerUi,
+                }
+            })
     }
 }

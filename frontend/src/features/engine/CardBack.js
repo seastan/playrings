@@ -34,7 +34,9 @@ const CardBack = React.memo(({
 
       visibleFace = getCurrentFace(card1)
       visibleFaceSrc = getVisibleFaceSrc(visibleFace, user, gameDef)
-      console.log("Rendering CardBack ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~", visibleFace, visibleFaceSrc)
+      console.log("Rendering CardBack ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~", visibleFaceSrc)
+      console.log("Rendering CardBack", groupType, defaultSideUp, visibleFaceSrc,cardSize*visibleFace?.width, cardSize*visibleFace?.height)
+
     } else if (defaultSideUp === "A" && groupSize>0 && isDraggingOver && !isDraggingFrom) {
       visibleFace = getCurrentFace(card0)
       visibleFaceSrc = getVisibleFaceSrc(visibleFace, user, gameDef)
@@ -43,7 +45,6 @@ const CardBack = React.memo(({
       visibleFaceSrc = getVisibleFaceSrc(visibleFace, user, gameDef)
     }
   }
-  console.log("Rendering CardBack", groupType, defaultSideUp, visibleFaceSrc)
 
   if (visibleFace) {
     return (
@@ -60,9 +61,8 @@ const CardBack = React.memo(({
                 left: `${0.2 + (1.39-visibleFace.width)*cardSize/2}vh`,
                 top: "50%", //`${0.2 + (1.39-currentFace.height)*cardSize/2}vw`,
                 transform: "translate(0%,-50%)",
-            }}
-        >                
-        <img className="absolute w-full h-full" style={{borderRadius: '0.6vh'}} src={visibleFaceSrc.src} onerror={`this.onerror=null; this.src=${visibleFaceSrc.default}`} />
+            }}>                
+        <img className="absolute w-full h-full" style={{borderRadius: '0.6vh'}} src={"https://dragncards-lotrlcg.s3.amazonaws.com/cardbacks/encounter.jpg"} onerror={`this.onerror=null; this.src=${visibleFaceSrc.default}`} />
 
         </div>)
   } else {

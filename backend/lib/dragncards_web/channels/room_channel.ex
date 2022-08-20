@@ -66,6 +66,7 @@ defmodule DragnCardsWeb.RoomChannel do
     },
     %{assigns: %{room_slug: room_slug, user_id: user_id}} = socket
   ) do
+    IO.inspect("room_channel game_action")
     GameUIServer.game_action(room_slug, user_id, action, options)
     state = GameUIServer.state(room_slug)
     state = if is_map(state) do
