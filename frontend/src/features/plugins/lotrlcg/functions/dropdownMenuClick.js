@@ -14,6 +14,7 @@ import { useDispatch } from "react-redux";
 // dropdownMenu is an object that gets populated with infor about a card when a card is pressed, or about a group when a group is pressed.
 
 export const useDropdownClickCommon = (dropdownOptions, actionProps) => {
+  alert("here 1")
   const dropdownClickCard = useDropdownClickCard;
   const dropdownClickGroup = useDropdownClickGroup;
   const dropdownClickFirstPlayer = useDropdownClickFirstPlayer;
@@ -35,7 +36,8 @@ export const useDropdownClickCard = (dropdownOptions, actionProps) => {
   if (dropdownOptions.action === "toggle_rotate") {
     console.log("dropdownExhaust", menuCard)
     cardAction("toggle_rotate", menuCard?.id, null, actionProps);
-  } else if (dropdownOptions.action === "flip") {
+  } else if (dropdownOptions.action === "flipCard") {
+    alert("here")
     cardAction("flip", menuCard?.id, null, actionProps);
   } else if (dropdownOptions.action === "detach") {
     cardAction("detach", menuCard?.id, null, actionProps);

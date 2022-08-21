@@ -28,7 +28,7 @@ const RoomGame = React.memo(({}) => {
       document.removeEventListener('keyup', onKeyUp);
       document.removeEventListener('keydown', onKeyDown);
     }
-  }, []);
+  }, [onKeyDown]);
 
   return (
     <div className="h-full w-full">

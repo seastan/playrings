@@ -31,7 +31,7 @@ export const DropdownMenuCommon = React.memo(({
   }
 
   const handleDropdownClick = (dropdownOptions) => {
-    console.log("handleDropdownClick", gameDef, dropdownOptions)
+    console.log("handleDropdownClick", dropdownOptions)
     if (dropdownOptions.goToMenu) {
       setActiveMenu(dropdownOptions.goToMenu);
       return;

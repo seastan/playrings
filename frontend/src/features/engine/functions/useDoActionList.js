@@ -8,15 +8,17 @@ import { useGameDefinition } from './useGameDefinition';
 export const useDoActionList = () => {
     const gameDef = useGameDefinition();  
     const {gameBroadcast, chatBroadcast} = useContext(BroadcastContext);
-
+    console.log("gameb render usedoaction 1", gameBroadcast)
     return (actionListName, actionList = null, _options = null) => {
         const state = store.getState();
         if (Object.keys(gameDef.actionLists).includes(actionListName)) {
             actionList = gameDef.actionLists[actionListName]
         }
         console.log("actionlistprint", actionList)
-        if (actionList != null) 
-            console.log("game_action", gameBroadcast)
+        if (actionList != null) {
+            console.log("game_action", gameBroadcast)    
+            console.log("gameb render usedoaction 2", gameBroadcast)
+
             gameBroadcast("game_action", {
                 action: "evaluate", 
                 options: {
@@ -24,5 +26,6 @@ export const useDoActionList = () => {
                     player_ui: state.playerUi,
                 }
             })
+        }
     }
 }

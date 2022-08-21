@@ -87,7 +87,7 @@ export const DragContainer = React.memo(({}) => {
       }
       dispatch(setStackIds(newOrigGroup));
       dispatch(setCardIds(newDestStack));
-      gameBroadcast("game_action", {action:"move_stack", options:{stack_id: origStackId, dest_group_id: destGroupId, dest_stack_index: dest.index, combine: true, preserve_state: false}})
+      doActionList("evaluate", ["MOVE_STACK", origStackId, destGroupId, dest.index, true, false])
     }
 
     // Dropped nowhere

@@ -1,4 +1,4 @@
-import { useContext } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import BroadcastContext from '../../../contexts/BroadcastContext';
 import store from '../../../store';
 import { flipCard } from '../actionLists/flipCard';
@@ -132,8 +132,9 @@ const defaultHotkeys = {
 
 export const useKeyDown = () => {
     const gameDef = useGameDefinition();
-    const doActionList = useDoActionList();
     const {gameBroadcast, chatBroadcast} = useContext(BroadcastContext);
+    const doActionList = useDoActionList();
+    console.log("gameb render keydown 1", gameBroadcast)
 
     return (event) => {
         const k = event.key;
@@ -148,7 +149,10 @@ export const useKeyDown = () => {
         console.log("keypress",gameDef.hotkeys[dictKey])
         console.log("keypress",k)
 
-        if (Object.keys(gameDef.hotkeys).includes(dictKey)) doActionList(gameDef.hotkeys[dictKey]);
+        if (Object.keys(gameDef.hotkeys).includes(dictKey)) {
+            doActionList(gameDef.hotkeys[dictKey]);
+            console.log("gameb render keydown 2", gameBroadcast)
+        }
         //if (Object.keys(defaultHotkeys["card"]).includes(dictKey)) doActionList("_custom",defaultActionLists[defaultHotkeys["card"][dictKey]]);
         //else if (Object.keys(defaultHotkeys["ui"]).includes(dictKey)) doActionList("_custom",defaultActionLists[defaultHotkeys["ui"][dictKey]]);
         //else if (Object.keys(defaultHotkeys["game"]).includes(dictKey)) doActionList("_custom",defaultActionLists[defaultHotkeys["game"][dictKey]]);

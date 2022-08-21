@@ -89,6 +89,8 @@ export const Room = ({ slug }) => {
     }
   }, []);
   const gameBroadcast = useChannel(`room:${slug}`, onChannelMessage, myUserId);
+  console.log("gameb render room", gameBroadcast)
+
   const chatBroadcast = useChannel(`chat:${slug}`, onChatMessage, myUserId);
 
   console.log('Rendering Room',myUserId);

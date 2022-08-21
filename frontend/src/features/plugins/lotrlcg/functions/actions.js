@@ -791,6 +791,8 @@ export const cardAction = (action, cardId, options, props) => {
   }
   // Flip card
   else if (action === "flip") {
+
+    console.log("game_action", gameBroadcast)
     var newSide = "A";
     if (card["currentSide"] === "A") newSide = "B";
     const updates = [["cardById",cardId,"currentSide", newSide]]

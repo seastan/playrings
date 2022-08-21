@@ -1,6 +1,6 @@
 
 import React from "react";
-import { getDisplayName } from "../plugins/lotrlcg/functions/helpers";
+import { getDisplayName, getVisibleFace } from "../plugins/lotrlcg/functions/helpers";
 import useLongPress from "../../hooks/useLongPress";
 import { useDispatch, useSelector } from "react-redux";
 import { setActiveCardId, setActiveCardObj, setDropdownMenuObj } from "../store/playerUiSlice";
@@ -48,7 +48,7 @@ export const CardMouseRegion = React.memo(({
         const dropdownMenuObj = {
             type: "card",
             cardId: card.id,
-            title: displayName,
+            title: getVisibleFace(card, playerN)?.name,
             visible: true,
         }
         if (playerN) dispatch(setDropdownMenuObj(dropdownMenuObj));
