@@ -43,7 +43,7 @@ defmodule DragnCardsGame.Card do
       "tokensPerRound" => %{},
       "roundEnteredPlay" => nil,
       "phaseEnteredPlay" => nil,
-      "inPlay" => false,
+      "inPlay" => group["inPlay"],
 
       "deckGroupId" => group["deckGroupId"],
       "discardGroupId" => group["discardGroupId"],

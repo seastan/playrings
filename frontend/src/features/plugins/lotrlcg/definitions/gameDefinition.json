@@ -2640,8 +2640,110 @@
     }
   ],
   "hotkeys": {
-    "D": "draw",
-    "ArrowLeft": "undo",
+    "tokens": [
+      {"key": "1", "action": "adjustToken1", "label": "icon(https://dragncards-lotrlcg.s3.amazonaws.com/tokens/resource.png)"},
+      {"key": "2", "action": "adjustToken2", "label": "icon(https://dragncards-lotrlcg.s3.amazonaws.com/tokens/progress.png)"},
+      {"key": "3", "action": "adjustToken3", "label": "icon(https://dragncards-lotrlcg.s3.amazonaws.com/tokens/damage.png)"},
+      {"key": "4", "action": "adjustToken4", "label": "icon(https://dragncards-lotrlcg.s3.amazonaws.com/tokens/time.png)"},
+      {"key": "5", "action": "adjustToken5", "label": "icon(https://dragncards-lotrlcg.s3.amazonaws.com/tokens/willpower.png) / icon(https://dragncards-lotrlcg.s3.amazonaws.com/tokens/threat.png)"},
+      {"key": "6", "action": "adjustToken6", "label": "icon(https://dragncards-lotrlcg.s3.amazonaws.com/tokens/attack.png)"},
+      {"key": "7", "action": "adjustToken7", "label": "icon(https://dragncards-lotrlcg.s3.amazonaws.com/tokens/defense.png)"},
+      {"key": "8", "action": "adjustToken8", "label": "icon(https://dragncards-lotrlcg.s3.amazonaws.com/tokens/hitPoints.png)"}
+    ],
+    "game": [
+      {"key": "D", "actionId": "draw", "label": "Draw a card"},
+      {"key": "E", "actionId": "revealEncounterFaceup", "label": "Reveal encounter card"},
+      {"key": "Shift+E", "actionId": "revealEncounterFacedown", "label": "Reveal facedown encounter card"},
+      {"key": "K", "actionId": "revealSecondaryFaceup", "label": "Reveal card from second encounter deck"},
+      {"key": "Shift+K", "actionId": "revealSecondaryFacedown", "label": "Reveal facedown card from second encounter deck"},
+      {"key": "Shift+M", "actionId": "mulligan", "label": "Reveal facedown card from second encounter deck"},
+      {"key": "Shift+N", "actionId": "newRound", "label": "Draw card and gain resources. If host, increment round."},
+      {"key": "Shift+O", "actionId": "calculateScore", "label": "Calculate score"},
+      {"key": "Shift+R", "actionId": "refresh", "label": "Refresh and raise threat. If host, move 1st player token."},
+      {"key": "Shift+S", "actionId": "dealShadows", "label": "Deal all shadow cards"},
+      {"key": "Shift+S", "actionId": "discardShadows", "label": "Discard all shadow cards"},
+      {"key": "U", "actionId": "raiseThreat", "label": "Raise threat by 1"},
+      {"key": "J", "actionId": "reduceThreat", "label": "Raise threat by 1"},
+
+
+    <tr className={"bg-gray-500"}>
+      <td className="p-1 text-center"><div className={keyClass} style={keyStyleL}>Shift</div>
+      <div className={keyClass+" inline-block"} style={keyStyle}>X</div></td>
+      <td className="text-center">{l10n("Discard all shadow cards")}</td>
+    </tr>
+    <tr className={"bg-gray-600"}>
+      <td className="p-1 text-center">
+      <div className={keyClass+" inline-block"} style={keyStyle}>U</div></td>
+      <td className="text-center">{l10n("Raise threat by 1")}</td>
+    </tr>
+    <tr className={"bg-gray-500"}>
+      <td className="p-1 text-center">
+      <div className={keyClass+" inline-block"} style={keyStyle}>J</div></td>
+      <td className="text-center">{l10n("Reduce threat by 1")}</td>
+    </tr>
+    <tr className={"bg-gray-600"}>
+      <td className="p-1 text-center"><div className={keyClass} style={keyStyleL}>Shift</div>
+      <div className={keyClass+" inline-block"} style={keyStyle}>P</div></td>
+      <td className="text-center">{l10n("Save Game")}</td>
+    </tr>
+    <tr className={"bg-gray-500"}>
+      <td className="p-1 text-center"><div className={keyClass} style={keyStyleL}>Esc</div></td>
+      <td className="text-center">{l10n("Clear targets/arrows")}</td>
+    </tr>
+    <tr className={"bg-gray-600"}>
+      <td className="p-1 text-center"><div className={keyClass+" inline-block"} style={keyStyle}>←</div>
+      <div className="px-2 inline-block">or</div> 
+      <div className={keyClass} style={keyStyleL}>Ctrl</div>
+      <div className={keyClass+" inline-block"} style={keyStyle}>Z</div>
+      </td>
+      <td className="text-center">{l10n("Undo one action")}</td>
+    </tr>
+    <tr className={"bg-gray-500"}>
+      <td className="p-1 text-center"><div className={keyClass+" inline-block"} style={keyStyle}>→</div>
+      <div className="px-2 inline-block">or</div> 
+      <div className={keyClass} style={keyStyleL}>Ctrl</div>
+      <div className={keyClass+" inline-block"} style={keyStyle}>Y</div></td>
+      <td className="text-center">{l10n("Redo one action")}</td>
+    </tr>
+    <tr className={"bg-gray-600"}>
+      <td className="p-1 text-center"><div className={keyClass} style={keyStyleL}>Ctrl</div>
+      <div className={keyClass+" inline-block"} style={keyStyle}>←</div></td>
+      <td className="text-center">{l10n("Undo until last round change")}</td>
+    </tr>
+    <tr className={"bg-gray-500"}>
+      <td className="p-1 text-center"><div className={keyClass} style={keyStyleL}>Ctrl</div>
+      <div className={keyClass+" inline-block"} style={keyStyle}>→</div></td>
+      <td className="text-center">{l10n("Redo until next round change")}</td>
+    </tr>
+    <tr className={"bg-gray-600"}>
+      <td className="p-1 text-center"><div className={keyClass+" inline-block"} style={keyStyle}>↑</div></td>
+      <td className="text-center">{l10n("Move to previous game step")}</td>
+    </tr>
+    <tr className={"bg-gray-500"}>
+      <td className="p-1 text-center"><div className={keyClass+" inline-block"} style={keyStyle}>↓</div></td>
+      <td className="text-center">{l10n("Move to next game step")}</td>
+    </tr>
+    <tr className={"bg-gray-600"}>
+      <td className="p-1 text-center"><div className={keyClass} style={keyStyleL}>Ctrl</div>
+      <div className={keyClass+" inline-block"} style={keyStyle}>↑</div></td>
+      <td className="text-center">{l10n("Move to previous phase")}</td>
+    </tr>
+    <tr className={"bg-gray-500"}>
+      <td className="p-1 text-center"><div className={keyClass} style={keyStyleL}>Ctrl</div>
+      <div className={keyClass+" inline-block"} style={keyStyle}>↓</div></td>
+      <td className="text-center">{l10n("Move to next phase")}</td>
+    </tr>
+    <tr className={"bg-gray-600"}>
+      <td className="p-1 text-center"><div className={keyClass+" inline-block"} style={keyStyle}>+</div></td>
+      <td className="text-center">{l10n("Increase card size (for your screen only)")}</td>
+    </tr>
+    <tr className={"bg-gray-500"}>
+      <td className="p-1 text-center"><div className={keyClass+" inline-block"} style={keyStyle}>-</div></td>
+      <td className="text-center">{l10n("Decrease card size (for your screen only)")}</td>
+    </tr>
+      
+    ]
+    
     "ArrowRight": "redo",
     "ArrowDown": "next_step",
     "ArrowUp": "prev_step",
