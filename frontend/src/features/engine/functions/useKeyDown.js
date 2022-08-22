@@ -1,144 +1,26 @@
 import { useContext, useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import BroadcastContext from '../../../contexts/BroadcastContext';
-import store from '../../../store';
-import { flipCard } from '../actionLists/flipCard';
+import { setKeypress } from '../../store/playerUiSlice';
 import { useDoActionList } from './useDoActionList';
 import { useGameDefinition } from './useGameDefinition';
 
-const defaultActionLists = {
-    "increase_card_size": [
-        {
-            "_ACTION": "SET_VALUE",
-            "_PATH": ["_GAME", "playerUi", "cardSizeFactor"],
-            "_VALUE": ["*",["_GAME", "playerUi", "cardSizeFactor"],1.1],
-        }
-    ],
-    "toggle_rotate": [
-        ["COND",
-            ["EQUAL", ["ACTIVE_CARD", "inPlay"], true],
-            ["COND",
-                ["EQUAL", ["GET", "$ACTIVE_CARD", "rotation"], 0],
-                [
-                    ["SET", "$ACTIVE_CARD", "rotation", 90], 
-                    ["PRINT","$playerN"," rotated ", ["GET", "$ACTIVE_FACE", "name"], " 90 degrees."]
-                ],
-                ["EQUAL", ["GET", "$ACTIVE_CARD", "rotation"], 90],
-                [
-                    ["SET", "$ACTIVE_CARD", "rotation", 0], 
-                    ["PRINT","$playerN"," rotated ", ["GET", "$ACTIVE_FACE", "name"], " 90 degrees."]
-                ],
-            ]
-        ]
-    ],
-/*     "toggle_rotate": [
-        {
-            "_ACTION": "CASES",
-            "_CASES": [
-                {
-                    "_IF": [["_ACTIVE_CARD", "inPlay"], "==", true],
-                    "_THEN": [
-                        {
-                        "_ACTION": "CASES",
-                        "_CASES": [
-                            {
-                            "_IF": [["_ACTIVE_CARD", "rotation"], "==", 0],
-                            "_THEN": [
-                                {
-                                "_ACTION": "SET_VALUE",
-                                "_PATH": ["_ACTIVE_CARD", "rotation"],
-                                "_VALUE": 90,
-                                "_MESSAGES": [["{playerN} rotated ", ["_ACTIVE_FACE", "name"], " 90 degrees."]]
-                                }
-                            ]
-                            },
-                            {
-                            "_IF": [["_ACTIVE_CARD", "rotation"], "==", 90],
-                            "_THEN": [
-                                {
-                                "_ACTION": "SET_VALUE",
-                                "_PATH": ["_ACTIVE_CARD", "rotation"],
-                                "_VALUE": 0,
-                                "_MESSAGES": [["{playerN} rotated ", ["_ACTIVE_FACE", "name"], " -90 degrees."]]
-                                }
-                            ]
-                            }
-                        ]
-                        }
-                    ]
-                }
-            ]
-        }
-    ], */
-    "flip": [
-        {
-            "_ACTION": "CASES",
-            "_CASES": [
-                {
-                    "_IF": [["_ACTIVE_CARD", "currentSide"], "==", "A"],
-                    "_THEN": [
-                        {
-                            "_ACTION": "SET_VALUE",
-                            "_PATH": ["_ACTIVE_CARD", "currentSide"],
-                            "_VALUE": "B",
-                            "_MESSAGES": [["{playerN} flipped ", ["_ACTIVE_FACE", "name"], " facedown."]]
-                        }
-                    ]
-                },
-                {
-                    "_IF": [["_ACTIVE_CARD", "currentSide"], "==", "B"],
-                    "_THEN": [
-                        {
-                            "_ACTION": "SET_VALUE",
-                            "_PATH": ["_ACTIVE_CARD", "currentSide"],
-                            "_VALUE": "A",
-                            "_MESSAGES": [["{playerN} flipped ", ["_ACTIVE_CARD", "sides", "A", "name"], " faceup."]]
-                        }
-                    ]
-                }
-            ]
-        }
-    ]
-}
-
-const defaultHotkeys = {
-    "ui": {
-        "+": "increase_card_size",
-        "-": "decrease_card_size",
-    },
-    "game": {
-        "D": "draw",
-        "ArrowLeft": "undo",
-        "ArrowRight": "redo",
-        "ArrowDown": "next_step",
-        "ArrowUp": "prev_step",
-        "Escape": "clear_targets",
-        "Ctrl+Shift+R": "refresh_all",
-        "Ctrl+Z": "undo",
-        "Ctrl+Y": "redo",
-    },
-    "card": {
-        "0": "zero_tokens",
-        "A": "toggle_rotate",
-        "F": "flip",
-        "H": "shuffle_into_deck",
-        "W": "draw_arrow",
-        "T": "target",
-        "X": "discard",
-        "C": "detach",
-        "B": "move_to_back",
-        "Shift+A": "card_ability",
-    }
-}
-
 export const useKeyDown = () => {
     const gameDef = useGameDefinition();
+    const dispatch = useDispatch();
     const {gameBroadcast, chatBroadcast} = useContext(BroadcastContext);
     const doActionList = useDoActionList();
     console.log("gameb render keydown 1", gameBroadcast)
 
     return (event) => {
+        event.preventDefault();
         const k = event.key;
         const unix_sec = Math.floor(Date.now() / 1000);
+        if (k === "Alt") dispatch(setKeypress({"Alt": unix_sec}));
+        if (k === " ") dispatch(setKeypress({"Space": unix_sec}));
+        if (k === "Control") dispatch(setKeypress({"Control": unix_sec}));
+        if (k === "Shift") dispatch(setKeypress({"Shift": unix_sec}));
+        if (k === "Tab") dispatch(setKeypress({"Tab": unix_sec}));
         var dictKey = k.toUpperCase();
         //if ((unix_sec - keypressShift) < 30) dictKey = "Shift+"+dictKey;
         //if ((unix_sec - keypressControl) < 30) dictKey = "Ctrl+"+dictKey;

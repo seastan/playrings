@@ -6,9 +6,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { setShowHotkeys } from "../../../store/playerUiSlice";
 import { useGameL10n } from "../../../../hooks/useGameL10n";
 import { useGameDefinition } from "../../../engine/functions/useGameDefinition";
+import { red } from "@material-ui/core/colors";
 
 const keyClass = "m-auto border bg-gray-500 text-center bottom inline-block";
-const keyClassLong = "m-auto border bg-gray-500 text-center bottom inline-block";
 const keyStyle = {width: "3vh", height: "3vh", borderRadius: "0.5vh"}
 const keyStyleL = {width: "7vh", height: "3vh", borderRadius: "0.5vh"}
 const keyStyleXL = {width: "12vh", height: "3vh", borderRadius: "0.5vh"}
@@ -33,6 +33,29 @@ const windowStyleL = {
 const col1Class = "w-1/3";
 const col2Class = "w-2/3";
 
+const processLabel = (label) => {
+  const tokList = [];
+  var currentTok = "";
+  const len = label.length;
+  for (var i=0; i<len; i++) {
+    if (i > len - 6) {
+      currentTok += label.charAt(i);
+    } else if (label.slice(i,i+5) === "icon(") {
+      if (currentTok !== "") tokList.push(currentTok);
+      currentTok = "";
+      const remainder = label.slice(i);
+      const nextClose = remainder.indexOf(")");
+      const iconString = label.slice(i,nextClose+i+1);
+      i += nextClose;
+      tokList.push(iconString)
+    } else {
+      currentTok += label.charAt(i);
+    }
+  }
+  if (currentTok !== "") tokList.push(currentTok);
+  return tokList;
+}
+
 export const HotkeyTable = React.memo(({hotkeyList}) => {
   const l10n = useGameL10n();
   if (hotkeyList) return(
@@ -43,6 +66,8 @@ export const HotkeyTable = React.memo(({hotkeyList}) => {
       </tr>
       {hotkeyList.map((el, elIndex) => {
       const keys = el.key.split("+")
+      const labelList = processLabel(el.label);
+      //console.log("processlabel",processLabel(el.label))
       return (
         <tr className={elIndex % 2 == 0 ? "bg-gray-500" : "bg-gray-600"}>
           <td className="p-1 text-center">
@@ -52,7 +77,13 @@ export const HotkeyTable = React.memo(({hotkeyList}) => {
               else return <div className={keyClass} style={keyStyle}>{key}</div>
             })}
           </td>
-          <td className="text-center">{l10n(el.label)}</td>
+          
+          <td className="text-center">
+            {labelList.map((labelEl, _labelElIndex) => {
+              if (labelEl.startsWith("icon(")) return <img className="m-auto h-6 inline-block" src={labelEl.slice(5,-1)}/> 
+              else return l10n(labelEl)
+            })}
+          </td>
         </tr>
       )
     })}

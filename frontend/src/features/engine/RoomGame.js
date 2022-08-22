@@ -14,11 +14,12 @@ const RoomGame = React.memo(({}) => {
 
   useEffect(() => {
     const onKeyUp = (event) => {
-      if (event.key === "Alt") dispatch(setKeypress({"Alt": 0}));
-      if (event.key === " ") dispatch(setKeypress({"Space": 0}));
-      if (event.key === "Control") dispatch(setKeypress({"Control": 0}));
-      if (event.key === "Shift") dispatch(setKeypress({"Shift": 0}));
-      if (event.key === "Tab") dispatch(setKeypress({"Tab": 0}));
+      const k = event.key;
+      if (k === "Alt") dispatch(setKeypress({"Alt": 0}));
+      if (k === " ") dispatch(setKeypress({"Space": 0}));
+      if (k === "Control") dispatch(setKeypress({"Control": 0}));
+      if (k === "Shift") dispatch(setKeypress({"Shift": 0}));
+      if (k === "Tab") dispatch(setKeypress({"Tab": 0}));
     }
 
     document.addEventListener('keyup', onKeyUp);

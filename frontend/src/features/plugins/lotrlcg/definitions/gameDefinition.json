@@ -2640,7 +2640,7 @@
     }
   ],
   "hotkeys": {
-    "tokens": [
+    "token": [
       {"key": "1", "action": "adjustToken1", "label": "icon(https://dragncards-lotrlcg.s3.amazonaws.com/tokens/resource.png)"},
       {"key": "2", "action": "adjustToken2", "label": "icon(https://dragncards-lotrlcg.s3.amazonaws.com/tokens/progress.png)"},
       {"key": "3", "action": "adjustToken3", "label": "icon(https://dragncards-lotrlcg.s3.amazonaws.com/tokens/damage.png)"},
