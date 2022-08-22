@@ -5,6 +5,7 @@ import Draggable from 'react-draggable';
 import { useDispatch, useSelector } from "react-redux";
 import { setShowHotkeys } from "../../../store/playerUiSlice";
 import { useGameL10n } from "../../../../hooks/useGameL10n";
+import { useGameDefinition } from "../../../engine/functions/useGameDefinition";
 
 const keyClass = "m-auto border bg-gray-500 text-center bottom inline-block";
 const keyClassLong = "m-auto border bg-gray-500 text-center bottom inline-block";
@@ -34,6 +35,7 @@ const col2Class = "w-2/3";
 
 export const Hotkeys = React.memo(({}) => {
   const dispatch = useDispatch();
+  const gameDef = useGameDefinition();
   const l10n = useGameL10n();
   const showWindow = useSelector(state => state?.playerUi?.showHotkeys);
   const tabPressed = useSelector(state => state?.playerUi?.keypress?.Tab);
@@ -95,17 +97,30 @@ export const Hotkeys = React.memo(({}) => {
   }
 
   const cardTable = () => {
+    const cardHotkeys = gameDef.hotkeys?.card;
+    console.log("cardHotkeys",cardHotkeys)
+    if (cardHotkeys)
     return(
       <table className="table-fixed rounded-lg w-full">
         <tr className="bg-gray-800">
-            <th className={col1Class} >{l10n("Key")}</th>
-            <th className={col2Class} >{l10n("Description")}</th>
+            <th className={col1Class}>{l10n("Key")}</th>
+            <th className={col2Class}>{l10n("Description")}</th>
         </tr>
-        <tr className={"bg-gray-500"}>
-          <td className="p-1 text-center"><div className={keyClass} style={keyStyle}>A</div></td>
-          <td className="text-center">{l10n("Exhaust / ready. If location, make active.")}</td>
-        </tr>
-        <tr className={"bg-gray-600"}>
+        {cardHotkeys.map((el, elIndex) => {
+          console.log("cardHotkey",el)
+          const keys = el.key.split("+")
+          return (
+            <tr className={elIndex % 2 == 0 ? "bg-gray-500" : "bg-gray-600"}>
+              <td className="p-1 text-center">
+                {keys.map((key, _keyIndex) => {
+                  return (<div className={keyClass} style={key.length > 1 ? keyStyleL : keyStyle}>{key}</div>)
+                })}
+              </td>
+              <td className="text-center">{l10n(el.label)}</td>
+            </tr>
+          );
+        })}
+{/*         <tr className={"bg-gray-600"}>
           <td className="p-1 text-center"><div className={keyClass} style={keyStyle}>C</div></td>
           <td className="text-center">{l10n("Detach")}</td>
         </tr>
@@ -160,7 +175,7 @@ export const Hotkeys = React.memo(({}) => {
           <td className="p-1 text-center"><div className={keyClass} style={keyStyleL}>Shift</div>
           <div className={keyClass} style={keyStyle}>A</div></td>
           <td className="text-center">{l10n("Trigger ability (only available for select cards).")}</td>
-        </tr>
+        </tr> */}
       </table>
     )
   }

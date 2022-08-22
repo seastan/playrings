@@ -2664,103 +2664,40 @@
       {"key": "Shift+S", "actionId": "discardShadows", "label": "Discard all shadow cards"},
       {"key": "U", "actionId": "raiseThreat", "label": "Raise threat by 1"},
       {"key": "J", "actionId": "reduceThreat", "label": "Raise threat by 1"},
-
-
-    <tr className={"bg-gray-500"}>
-      <td className="p-1 text-center"><div className={keyClass} style={keyStyleL}>Shift</div>
-      <div className={keyClass+" inline-block"} style={keyStyle}>X</div></td>
-      <td className="text-center">{l10n("Discard all shadow cards")}</td>
-    </tr>
-    <tr className={"bg-gray-600"}>
-      <td className="p-1 text-center">
-      <div className={keyClass+" inline-block"} style={keyStyle}>U</div></td>
-      <td className="text-center">{l10n("Raise threat by 1")}</td>
-    </tr>
-    <tr className={"bg-gray-500"}>
-      <td className="p-1 text-center">
-      <div className={keyClass+" inline-block"} style={keyStyle}>J</div></td>
-      <td className="text-center">{l10n("Reduce threat by 1")}</td>
-    </tr>
-    <tr className={"bg-gray-600"}>
-      <td className="p-1 text-center"><div className={keyClass} style={keyStyleL}>Shift</div>
-      <div className={keyClass+" inline-block"} style={keyStyle}>P</div></td>
-      <td className="text-center">{l10n("Save Game")}</td>
-    </tr>
-    <tr className={"bg-gray-500"}>
-      <td className="p-1 text-center"><div className={keyClass} style={keyStyleL}>Esc</div></td>
-      <td className="text-center">{l10n("Clear targets/arrows")}</td>
-    </tr>
-    <tr className={"bg-gray-600"}>
-      <td className="p-1 text-center"><div className={keyClass+" inline-block"} style={keyStyle}>←</div>
-      <div className="px-2 inline-block">or</div> 
-      <div className={keyClass} style={keyStyleL}>Ctrl</div>
-      <div className={keyClass+" inline-block"} style={keyStyle}>Z</div>
-      </td>
-      <td className="text-center">{l10n("Undo one action")}</td>
-    </tr>
-    <tr className={"bg-gray-500"}>
-      <td className="p-1 text-center"><div className={keyClass+" inline-block"} style={keyStyle}>→</div>
-      <div className="px-2 inline-block">or</div> 
-      <div className={keyClass} style={keyStyleL}>Ctrl</div>
-      <div className={keyClass+" inline-block"} style={keyStyle}>Y</div></td>
-      <td className="text-center">{l10n("Redo one action")}</td>
-    </tr>
-    <tr className={"bg-gray-600"}>
-      <td className="p-1 text-center"><div className={keyClass} style={keyStyleL}>Ctrl</div>
-      <div className={keyClass+" inline-block"} style={keyStyle}>←</div></td>
-      <td className="text-center">{l10n("Undo until last round change")}</td>
-    </tr>
-    <tr className={"bg-gray-500"}>
-      <td className="p-1 text-center"><div className={keyClass} style={keyStyleL}>Ctrl</div>
-      <div className={keyClass+" inline-block"} style={keyStyle}>→</div></td>
-      <td className="text-center">{l10n("Redo until next round change")}</td>
-    </tr>
-    <tr className={"bg-gray-600"}>
-      <td className="p-1 text-center"><div className={keyClass+" inline-block"} style={keyStyle}>↑</div></td>
-      <td className="text-center">{l10n("Move to previous game step")}</td>
-    </tr>
-    <tr className={"bg-gray-500"}>
-      <td className="p-1 text-center"><div className={keyClass+" inline-block"} style={keyStyle}>↓</div></td>
-      <td className="text-center">{l10n("Move to next game step")}</td>
-    </tr>
-    <tr className={"bg-gray-600"}>
-      <td className="p-1 text-center"><div className={keyClass} style={keyStyleL}>Ctrl</div>
-      <div className={keyClass+" inline-block"} style={keyStyle}>↑</div></td>
-      <td className="text-center">{l10n("Move to previous phase")}</td>
-    </tr>
-    <tr className={"bg-gray-500"}>
-      <td className="p-1 text-center"><div className={keyClass} style={keyStyleL}>Ctrl</div>
-      <div className={keyClass+" inline-block"} style={keyStyle}>↓</div></td>
-      <td className="text-center">{l10n("Move to next phase")}</td>
-    </tr>
-    <tr className={"bg-gray-600"}>
-      <td className="p-1 text-center"><div className={keyClass+" inline-block"} style={keyStyle}>+</div></td>
-      <td className="text-center">{l10n("Increase card size (for your screen only)")}</td>
-    </tr>
-    <tr className={"bg-gray-500"}>
-      <td className="p-1 text-center"><div className={keyClass+" inline-block"} style={keyStyle}>-</div></td>
-      <td className="text-center">{l10n("Decrease card size (for your screen only)")}</td>
-    </tr>
-      
+      {"key": "Shift+P", "actionId": "saveGame", "label": "Save game"},
+      {"key": "Escape", "actionId": "clearTargets", "label": "Clear targets/arrows"},
+      {"key": "Ctrl+Z", "actionId": "undo", "label": "Undo one action"},
+      {"key": "Ctrl+Y", "actionId": "redo", "label": "Redo one action"},
+      {"key": "ArrowUp", "actionId": "prevStep", "label": "Move to previous game step"},
+      {"key": "ArrowDown", "actionId": "nextStep", "label": "Move to next game step"},
+      {"key": "ArrowUp", "actionId": "prevPhase", "label": "Move to previous phase"},
+      {"key": "ArrowDown", "actionId": "nextPhase", "label": "Move to next phase"},
+      {"key": "Shift+L", "actionId": "enableMultiplayerHotkeys", "label": "If host, enable multiplayer hotkeys"},
+      {"key": "Ctrl+Shift+N", "actionId": "newRoundAll", "label": "Press Shift+N for all players"},
+      {"key": "Alt+Shift+N", "actionId": "newRoundAll", "label": "Press Shift+N for all players"},
+      {"key": "Ctrl+Shift+R", "actionId": "refreshAll", "label": "Press Shift+R for all players"},
+      {"key": "Alt+Shift+R", "actionId": "refreshAll", "label": "Press Shift+R for all players"},
+      {"key": "Ctrl+U", "actionId": "raiseAll", "label": "Raise threat by 1 for all players"},
+      {"key": "Ctrl+J", "actionId": "reduceAll", "label": "Reduce threat by 1 for all players"},
+      {"key": "Shift+D", "actionId": "drawNextPlayer", "label": "Draw card on behalf of next empty seat"}
+    ],
+    "card": [
+      {"key": "A", "actionId": "toggleExhaust", "label": "Exhaust / ready. If location, make active."},
+      {"key": "C", "actionId": "detach", "label": "Detach"},
+      {"key": "F", "actionId": "flipCard", "label": "Flip"},
+      {"key": "C", "actionId": "detach", "label": "Detach"},
+      {"key": "H", "actionId": "shuffleintoDeck", "label": "Shuffle into owner's deck"},
+      {"key": "Q", "actionId": "toggleCommit", "label": "Commit / uncommit from quest"},
+      {"key": "Shift+Q", "actionId": "toggleCommitWithoutExhausting", "label": "Commit / uncommit from quest without exhausting / readying"},
+      {"key": "S", "actionId": "dealShadow", "label": "Deal shadow card"},
+      {"key": "T", "actionId": "targetCard", "label": "Target card"},
+      {"key": "V", "actionId": "addToVictoryDisplay", "label": "Add to victory display"},
+      {"key": "Q", "actionId": "toggleCommit", "label": "Commit / uncommit from quest"},
+      {"key": "X", "actionId": "discardCard", "label": "Discard"},
+      {"key": "Shift+C", "actionId": "discardOtherCardsInStack", "label": "Discard all other cards in this card's stack"},
+      {"key": "B", "actionId": "sendToBack", "label": "Send attachment to back of stack"},
+      {"key": "Shift+A", "actionId": "triggerAbility", "label": "Trigger ability (only available for select cards)"}
     ]
-    
-    "ArrowRight": "redo",
-    "ArrowDown": "next_step",
-    "ArrowUp": "prev_step",
-    "Escape": "clear_targets",
-    "Ctrl+Shift+R": "refresh_all",
-    "Ctrl+Z": "undo",
-    "Ctrl+Y": "redo",
-    "0": "zero_tokens",
-    "A": "toggleExhaust",
-    "F": "flip",
-    "H": "shuffle_into_deck",
-    "W": "draw_arrow",
-    "T": "target",
-    "X": "discard",
-    "C": "detach",
-    "B": "move_to_back",
-    "Shift+A": "card_ability"
   },
   "actionLists": {
     "newRound": [
