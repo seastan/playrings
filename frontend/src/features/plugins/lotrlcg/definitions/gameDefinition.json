@@ -2651,52 +2651,52 @@
       {"key": "8", "action": "adjustToken8", "label": "icon(https://dragncards-lotrlcg.s3.amazonaws.com/tokens/hitPoints.png)"}
     ],
     "game": [
-      {"key": "D", "actionId": "draw", "label": "Draw a card"},
-      {"key": "E", "actionId": "revealEncounterFaceup", "label": "Reveal encounter card"},
-      {"key": "Shift+E", "actionId": "revealEncounterFacedown", "label": "Reveal facedown encounter card"},
-      {"key": "K", "actionId": "revealSecondaryFaceup", "label": "Reveal card from second encounter deck"},
-      {"key": "Shift+K", "actionId": "revealSecondaryFacedown", "label": "Reveal facedown card from second encounter deck"},
-      {"key": "Shift+M", "actionId": "mulligan", "label": "Reveal facedown card from second encounter deck"},
-      {"key": "Shift+N", "actionId": "newRound", "label": "Draw card and gain resources. If host, increment round."},
-      {"key": "Shift+O", "actionId": "calculateScore", "label": "Calculate score"},
-      {"key": "Shift+R", "actionId": "refresh", "label": "Refresh and raise threat. If host, move 1st player token."},
-      {"key": "Shift+S", "actionId": "dealShadows", "label": "Deal all shadow cards"},
-      {"key": "Shift+S", "actionId": "discardShadows", "label": "Discard all shadow cards"},
-      {"key": "U", "actionId": "raiseThreat", "label": "Raise threat by 1"},
-      {"key": "J", "actionId": "reduceThreat", "label": "Raise threat by 1"},
-      {"key": "Shift+P", "actionId": "saveGame", "label": "Save game"},
-      {"key": "Escape", "actionId": "clearTargets", "label": "Clear targets/arrows"},
-      {"key": "Ctrl+Z", "actionId": "undo", "label": "Undo one action"},
-      {"key": "Ctrl+Y", "actionId": "redo", "label": "Redo one action"},
-      {"key": "ArrowUp", "actionId": "prevStep", "label": "Move to previous game step"},
-      {"key": "ArrowDown", "actionId": "nextStep", "label": "Move to next game step"},
-      {"key": "ArrowUp", "actionId": "prevPhase", "label": "Move to previous phase"},
-      {"key": "ArrowDown", "actionId": "nextPhase", "label": "Move to next phase"},
-      {"key": "Shift+L", "actionId": "enableMultiplayerHotkeys", "label": "If host, enable multiplayer hotkeys"},
-      {"key": "Ctrl+Shift+N", "actionId": "newRoundAll", "label": "Press Shift+N for all players"},
-      {"key": "Alt+Shift+N", "actionId": "newRoundAll", "label": "Press Shift+N for all players"},
-      {"key": "Ctrl+Shift+R", "actionId": "refreshAll", "label": "Press Shift+R for all players"},
-      {"key": "Alt+Shift+R", "actionId": "refreshAll", "label": "Press Shift+R for all players"},
-      {"key": "Ctrl+U", "actionId": "raiseAll", "label": "Raise threat by 1 for all players"},
-      {"key": "Ctrl+J", "actionId": "reduceAll", "label": "Reduce threat by 1 for all players"},
-      {"key": "Shift+D", "actionId": "drawNextPlayer", "label": "Draw card on behalf of next empty seat"}
+      {"key": "D", "actionListId": "draw", "label": "Draw a card"},
+      {"key": "E", "actionListId": "revealEncounterFaceup", "label": "Reveal encounter card"},
+      {"key": "Shift+E", "actionListId": "revealEncounterFacedown", "label": "Reveal facedown encounter card"},
+      {"key": "K", "actionListId": "revealSecondaryFaceup", "label": "Reveal card from second encounter deck"},
+      {"key": "Shift+K", "actionListId": "revealSecondaryFacedown", "label": "Reveal facedown card from second encounter deck"},
+      {"key": "Shift+M", "actionListId": "mulligan", "label": "Reveal facedown card from second encounter deck"},
+      {"key": "Shift+N", "actionListId": "newRound", "label": "Draw card and gain resources. If host, increment round."},
+      {"key": "Shift+O", "actionListId": "calculateScore", "label": "Calculate score"},
+      {"key": "Shift+R", "actionListId": "refresh", "label": "Refresh and raise threat. If host, move 1st player token."},
+      {"key": "Shift+S", "actionListId": "dealShadows", "label": "Deal all shadow cards"},
+      {"key": "Shift+S", "actionListId": "discardShadows", "label": "Discard all shadow cards"},
+      {"key": "U", "actionListId": "increasehreat", "label": "Raise threat by 1"},
+      {"key": "J", "actionListId": "decreaseThreat", "label": "Raise threat by 1"},
+      {"key": "Shift+P", "actionListId": "saveGame", "label": "Save game"},
+      {"key": "Escape", "actionListId": "clearTargets", "label": "Clear targets/arrows"},
+      {"key": "Ctrl+Z", "actionListId": "undo", "label": "Undo one action"},
+      {"key": "Ctrl+Y", "actionListId": "redo", "label": "Redo one action"},
+      {"key": "ArrowUp", "actionListId": "prevStep", "label": "Move to previous game step"},
+      {"key": "ArrowDown", "actionListId": "nextStep", "label": "Move to next game step"},
+      {"key": "ArrowUp", "actionListId": "prevPhase", "label": "Move to previous phase"},
+      {"key": "ArrowDown", "actionListId": "nextPhase", "label": "Move to next phase"},
+      {"key": "Shift+L", "actionListId": "enableMultiplayerHotkeys", "label": "If host, enable multiplayer hotkeys"},
+      {"key": "Ctrl+Shift+N", "actionListId": "newRoundAll", "label": "Press Shift+N for all players"},
+      {"key": "Alt+Shift+N", "actionListId": "newRoundAll", "label": "Press Shift+N for all players"},
+      {"key": "Ctrl+Shift+R", "actionListId": "refreshAll", "label": "Press Shift+R for all players"},
+      {"key": "Alt+Shift+R", "actionListId": "refreshAll", "label": "Press Shift+R for all players"},
+      {"key": "Ctrl+U", "actionListId": "raiseAll", "label": "Raise threat by 1 for all players"},
+      {"key": "Ctrl+J", "actionListId": "reduceAll", "label": "Reduce threat by 1 for all players"},
+      {"key": "Shift+D", "actionListId": "drawNextPlayer", "label": "Draw card on behalf of next empty seat"}
     ],
     "card": [
-      {"key": "A", "actionId": "toggleExhaust", "label": "Exhaust / ready. If location, make active."},
-      {"key": "C", "actionId": "detach", "label": "Detach"},
-      {"key": "F", "actionId": "flipCard", "label": "Flip"},
-      {"key": "C", "actionId": "detach", "label": "Detach"},
-      {"key": "H", "actionId": "shuffleintoDeck", "label": "Shuffle into owner's deck"},
-      {"key": "Q", "actionId": "toggleCommit", "label": "Commit / uncommit from quest"},
-      {"key": "Shift+Q", "actionId": "toggleCommitWithoutExhausting", "label": "Commit / uncommit from quest without exhausting / readying"},
-      {"key": "S", "actionId": "dealShadow", "label": "Deal shadow card"},
-      {"key": "T", "actionId": "targetCard", "label": "Target card"},
-      {"key": "V", "actionId": "addToVictoryDisplay", "label": "Add to victory display"},
-      {"key": "Q", "actionId": "toggleCommit", "label": "Commit / uncommit from quest"},
-      {"key": "X", "actionId": "discardCard", "label": "Discard"},
-      {"key": "Shift+C", "actionId": "discardOtherCardsInStack", "label": "Discard all other cards in this card's stack"},
-      {"key": "B", "actionId": "sendToBack", "label": "Send attachment to back of stack"},
-      {"key": "Shift+A", "actionId": "triggerAbility", "label": "Trigger ability (only available for select cards)"}
+      {"key": "A", "actionListId": "toggleExhaust", "label": "Exhaust / ready. If location, make active."},
+      {"key": "C", "actionListId": "detach", "label": "Detach"},
+      {"key": "F", "actionListId": "flipCard", "label": "Flip"},
+      {"key": "C", "actionListId": "detach", "label": "Detach"},
+      {"key": "H", "actionListId": "shuffleintoDeck", "label": "Shuffle into owner's deck"},
+      {"key": "Q", "actionListId": "toggleCommit", "label": "Commit / uncommit from quest"},
+      {"key": "Shift+Q", "actionListId": "toggleCommitWithoutExhausting", "label": "Commit / uncommit from quest without exhausting / readying"},
+      {"key": "S", "actionListId": "dealShadow", "label": "Deal shadow card"},
+      {"key": "T", "actionListId": "targetCard", "label": "Target card"},
+      {"key": "V", "actionListId": "addToVictoryDisplay", "label": "Add to victory display"},
+      {"key": "Q", "actionListId": "toggleCommit", "label": "Commit / uncommit from quest"},
+      {"key": "X", "actionListId": "discardCard", "label": "Discard"},
+      {"key": "Shift+C", "actionListId": "discardOtherCardsInStack", "label": "Discard all other cards in this card's stack"},
+      {"key": "B", "actionListId": "sendToBack", "label": "Send attachment to back of stack"},
+      {"key": "Shift+A", "actionListId": "triggerAbility", "label": "Trigger ability (only available for select cards)"}
     ]
   },
   "actionLists": {
@@ -2900,7 +2900,7 @@
         ["currentPosition"]
       ]
     ],
-    "discard_shadows": [
+    "discardShadows": [
       ["FOR_EACH_KEY_VAL", "$CARD_ID", "$CARD", "$CARD_BY_ID",
         [
           ["COND",
@@ -2912,7 +2912,7 @@
         ]
       ]
     ],
-    "next_step": [
+    "nextStep": [
       ["COND",
         ["EQUAL", "$GAME.stepId", ["AT_INDEX", "$GAME.gameDef.stepOrder", -1]],
         ["GAME_SET_VAL", "stepId", ["AT_INDEX", "$GAME.gameDef.stepOrder", 0]],
@@ -2925,7 +2925,7 @@
       ["DEFINE", "$STEP", "$GAME.gameDef.steps.$STEP_ID"],
       ["GAME_ADD_MESSAGE", "$PLAYER_N", " set the round step to ", "$STEP.text", "."]
     ],
-    "prev_step": [
+    "prevStep": [
       ["COND",
         ["EQUAL", "$GAME.stepId", ["AT_INDEX", "$GAME.gameDef.stepOrder", 0]],
         ["GAME_SET_VAL", "stepId", ["AT_INDEX", "$GAME.gameDef.stepOrder", -1]],
@@ -2945,37 +2945,37 @@
       ["MOVE_STACKS", "$HAND_GROUP_ID", "$DECK_GROUP_ID", "$HAND_SIZE", "shuffle"],
       ["DRAW", "$HAND_SIZE"]
     ],
-    "clear_targets": [
+    "clearTargets": [
       ["FOR_EACH_KEY_VAL", "$CARD_ID", "$CARD", "$CARD_BY_ID",
-        ["GAME_SET_VAL", "$GAME", "cardById", "$CARD_ID", "targeting", "$PLAYER_N", false]
+        ["GAME_SET_VAL", "cardById", "$CARD_ID", "targeting", "$PLAYER_N", false]
       ],
       ["GAME_ADD_MESSAGE", "PLAYER_N", " cleared their targets."]
     ],
-    "increase_threat": [
+    "increaseThreat": [
       ["GAME_INCREASE_VAL", "playerData", "$PLAYER_N", "threat", 1],
       ["GAME_ADD_MESSAGE", "PLAYER_N", " increased their threat by 1."]
     ],
-    "increase_threat_all": [
+    "increaseThreatAll": [
       ["FOR_EACH_KEY_VAL", "$PLAYER_I", "$PLAYER_I_DATA", "$GAME.playerData",
         ["GAME_INCREASE_VAL", "playerData", "$PLAYER_I", "threat", 1]
       ],
       ["GAME_ADD_MESSAGE", "PLAYER_N", " increased each player's threat by 1."]
     ],
-    "decrease_threat": [
+    "decreaseThreat": [
       ["GAME_INCREASE_VAL", "playerData", "$PLAYER_N", "threat", -1],
       ["GAME_ADD_MESSAGE", "PLAYER_N", " decreased their threat by 1."]
     ],
-    "decrease_threat_all": [
+    "decreaseThreatAll": [
       ["FOR_EACH_KEY_VAL", "$PLAYER_I", "$PLAYER_I_DATA", "$GAME.playerData",
         ["GAME_INCREASE_VAL", "playerData", "$PLAYER_I", "threat", -1]
       ],
       ["GAME_ADD_MESSAGE", "PLAYER_N", " increased each player's threat by 1."]
     ],
-    "draw_next_seat": [
+    "drawNextSeat": [
       ["DRAW", 1, ["NEXT_PLAYER", "$PLAYER_N"]],
       ["GAME_ADD_MESSAGE", "PLAYER_N", " drew 1 card."]
     ],
-    "zero_tokens": [
+    "zeroTokens": [
       ["GAME_SET_VAL", "$ACTIVE_TOKENS_PATH", {}],
       ["GAME_ADD_MESSAGE", "PLAYER_N", " removed all tokens from ", "$ACTIVE_FACE.name", "."]
     ],
@@ -3011,7 +3011,7 @@
         ]
       ]
     ],
-    "toggle_commit": [
+    "toggleCommit": [
       ["DEFINE", "$STEP_ID", "3.2"],
       ["COND",
         ["AND", ["EQUAL", "$GAME.playerUi.playerN", "player1"], ["NOT_EQUAL", "$STEP_ID", "$GAME.stepId"]],
@@ -3041,7 +3041,7 @@
         "$GAME"
       ]
     ],
-    "toggle_commit_without_exhausting": [
+    "toggleCommitWithoutExhausting": [
       ["DEFINE", "$STEP_ID", "3.2"],
       ["COND",
         ["AND", ["EQUAL", "$GAME.playerUi.playerN", "player1"], ["NOT_EQUAL", "$STEP_ID", "$GAME.stepId"]],
@@ -3067,7 +3067,7 @@
         "$GAME"
       ]
     ],
-    "deal_shadow": [
+    "dealShadow": [
       ["COND",
         "$CARD.inPlay",
         ["COND",
@@ -3086,8 +3086,8 @@
         "$GAME"
       ]
     ],
-    "target_card": [
-      ["GAME_SET_VAL", "playerData", "targeting", "$PLAYER_N", "$ACTIVE_CARD_ID", true],
+    "targetCard": [
+      ["GAME_SET_VAL", "$ACTIVE_CARD_PATH", "targeting", "$PLAYER_N", true],
       ["GAME_ADD_MESSAGE", "$PLAYER_N", " targeted ", "$ACTIVE_FACE.name", "."]
     ],
     "victory": [
@@ -3120,7 +3120,7 @@
         ]
       ] 
     ],
-    "shuffle_into_deck": [
+    "shuffleIntoDeck": [
       ["MOVE_CARD", "$ACTIVE_CARD_ID", "$ACTIVE_CARD.deckGroupId", 0, 0],
       ["DEFINE", "$GROUP_ID", "$ACTIVE_CARD.deckGroupId"],
       ["SHUFFLE_GROUP", "$GROUP_ID"],
@@ -3137,7 +3137,7 @@
         "$GAME"
       ]
     ],
-    "swap_side": [
+    "swapSide": [
       ["COND",
         ["GREATER_THAN", "$ACTIVE_CARD.cardIndex", 0],
         ["COND",
@@ -3150,7 +3150,7 @@
         "$GAME"
       ]
     ],
-    "move_to_back": [
+    "moveToBack": [
       ["MOVE_CARD", "$ACTIVE_CARD_ID", "$ACTIVE_CARD.groupId", "$ACTIVE_CARD.stackIndex", -1, true]
     ]
   

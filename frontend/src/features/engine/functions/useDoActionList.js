@@ -9,10 +9,10 @@ export const useDoActionList = () => {
     const gameDef = useGameDefinition();  
     const {gameBroadcast, chatBroadcast} = useContext(BroadcastContext);
     console.log("gameb render usedoaction 1", gameBroadcast)
-    return (actionListName, actionList = null, _options = null) => {
+    return (actionListId, actionList = null, _options = null) => {
         const state = store.getState();
-        if (Object.keys(gameDef.actionLists).includes(actionListName)) {
-            actionList = gameDef.actionLists[actionListName]
+        if (Object.keys(gameDef.actionLists).includes(actionListId)) {
+            actionList = gameDef.actionLists[actionListId]
         }
         console.log("actionlistprint", actionList)
         if (actionList != null) {
