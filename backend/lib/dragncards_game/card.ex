@@ -20,6 +20,9 @@ defmodule DragnCardsGame.Card do
 
     group = game_def["groups"][group_id]
     controller = group["controller"]
+    IO.inspect("loadcard")
+    IO.inspect(group["id"])
+    IO.inspect(group["inPlay"])
     base = %{
       "id" => Ecto.UUID.generate,
       "cardDbId" => card_db_id,
@@ -27,18 +30,8 @@ defmodule DragnCardsGame.Card do
       "rotation" => 0,
       "owner" => controller,
       "controller" => controller,
-      "peeking" => %{
-        "player1" => false,
-        "player2" => false,
-        "player3" => false,
-        "player4" => false,
-      },
-      "targeting" => %{
-        "player1" => false,
-        "player2" => false,
-        "player3" => false,
-        "player4" => false,
-      },
+      "peeking" => %{},
+      "targeting" => %{},
       "tokens" => Tokens.new(),
       "tokensPerRound" => %{},
       "roundEnteredPlay" => nil,

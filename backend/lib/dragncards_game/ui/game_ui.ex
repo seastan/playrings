@@ -457,141 +457,6 @@ defmodule DragnCardsGame.GameUI do
     move_card(game, card_id, group_id, stack_index + 1, 0, false, true)
   end
 
-  def deck_group_id_for_dest_group_id(dest_group_id) do
-    case dest_group_id do
-      "player1Deck" ->
-        "player1Deck"
-      "player1Discard" ->
-        "player1Deck"
-      "player1Deck2" ->
-        "player1Deck"
-      "player2Deck" ->
-        "player2Deck"
-      "player2Discard" ->
-        "player2Deck"
-      "player2Deck2" ->
-        "player2Deck"
-      "player3Deck" ->
-        "player3Deck"
-      "player3Discard" ->
-        "player3Deck"
-      "player3Deck2" ->
-        "player3Deck"
-      "player4Deck" ->
-        "player4Deck"
-      "player4Discard" ->
-        "player4Deck"
-      "player4Deck2" ->
-        "player4Deck"
-      "sharedEncounterDeck" ->
-        "sharedEncounterDeck"
-      "sharedEncounterDeck2" ->
-        "sharedEncounterDeck2"
-      "sharedEncounterDeck3" ->
-        "sharedEncounterDeck3"
-      "sharedEncounterDiscard" ->
-        "sharedEncounterDeck"
-      "sharedEncounterDiscard2" ->
-        "sharedEncounterDeck2"
-      "sharedEncounterDiscard3" ->
-        "sharedEncounterDeck3"
-      "sharedQuestDeck" ->
-        "sharedQuestDeck"
-      "sharedQuestDeck2" ->
-        "sharedQuestDeck2"
-      "sharedQuestDiscard" ->
-        "sharedQuestDeck"
-      "sharedQuestDiscard2" ->
-        "sharedQuestDeck2"
-      _ ->
-        "sharedEncounterDeck"
-    end
-  end
-
-  def discard_group_id_for_dest_group_id(dest_group_id) do
-    case dest_group_id do
-      "player1Deck" ->
-        "player1Discard"
-      "player1Discard" ->
-        "player1Discard"
-      "player1Deck2" ->
-        "player1Discard"
-      "player2Deck" ->
-        "player2Discard"
-      "player2Discard" ->
-        "player2Discard"
-      "player2Deck2" ->
-        "player2Discard"
-      "player3Deck" ->
-        "player3Discard"
-      "player3Discard" ->
-        "player3Discard"
-      "player3Deck2" ->
-        "player3Discard"
-      "player4Deck" ->
-        "player4Discard"
-      "player4Discard" ->
-        "player4Discard"
-      "player4Deck2" ->
-        "player4Discard"
-      "sharedEncounterDeck" ->
-        "sharedEncounterDiscard"
-      "sharedEncounterDeck2" ->
-        "sharedEncounterDiscard2"
-      "sharedEncounterDeck3" ->
-        "sharedEncounterDiscard3"
-      "sharedEncounterDiscard" ->
-        "sharedEncounterDiscard"
-      "sharedEncounterDiscard2" ->
-        "sharedEncounterDiscard2"
-      "sharedEncounterDiscard3" ->
-        "sharedEncounterDiscard3"
-      "sharedQuestDeck" ->
-        "sharedQuestDiscard"
-      "sharedQuestDeck2" ->
-        "sharedQuestDiscard2"
-      "sharedQuestDiscard" ->
-        "sharedQuestDiscard"
-      "sharedQuestDiscard2" ->
-        "sharedQuestDiscard2"
-      _ ->
-        "sharedEncounterDiscard"
-    end
-  end
-
-  def discard_group_id_for_deck_group_id(deck_group_id) do
-    case deck_group_id do
-      "player1Deck" ->
-        "player1Discard"
-      "player1Deck2" ->
-        "player1Discard"
-      "player2Deck" ->
-        "player2Discard"
-      "player2Deck2" ->
-        "player2Discard"
-      "player3Deck" ->
-        "player3Discard"
-      "player3Deck2" ->
-        "player3Discard"
-      "player4Deck" ->
-        "player4Discard"
-      "player4Deck2" ->
-        "player4Discard"
-      "sharedEncounterDeck" ->
-        "sharedEncounterDiscard"
-      "sharedEncounterDeck2" ->
-        "sharedEncounterDiscard2"
-      "sharedEncounterDeck3" ->
-        "sharedEncounterDiscard3"
-      "sharedQuestDeck" ->
-        "sharedQuestDiscard"
-      "sharedQuestDeck2" ->
-        "sharedQuestDiscard2"
-      _ ->
-        "sharedEncounterDiscard"
-    end
-  end
-
   # Update a card state
   # Modify the card orientation/tokens based on where it is now
   def update_card_state(game, card_id, preserve_state, orig_group_id \\ nil) do
@@ -606,11 +471,13 @@ defmodule DragnCardsGame.GameUI do
       card_name = card["sides"]["A"]["name"]
       card_face = get_current_card_face(game, card_id)
       dest_group = get_group_by_card_id(game, card_id)
+      orig_group = get_group(game, orig_group_id)
       dest_group_id = dest_group["id"]
-      orig_group_type = if orig_group_id do get_group_type(game, orig_group_id) else "play" end
-      dest_group_type = get_group_type(game, dest_group_id)
       card_index = get_card_index_by_card_id(game, card_id)
-      card = put_in(card["inPlay"], dest_group_type == "play")
+      card = put_in(card["inPlay"], dest_group["inPlay"])
+      IO.inspect("new inplay")
+      IO.inspect(dest_group)
+      IO.inspect(dest_group["inPlay"])
       card = put_in(card["groupId"], dest_group_id)
       card = put_in(card["cardIndex"], card_index)
 
@@ -626,96 +493,33 @@ defmodule DragnCardsGame.GameUI do
       # Set new controller
       card = put_in(card["controller"], new_controller)
       # Entering play
-      card = if dest_group_type == "play" and orig_group_type != "play" do
-        card
-        |> Map.put("roundEnteredPlay", game["round"])
-        |> Map.put("phaseEnteredPlay", game["phaseId"])
-        |> Map.put("inPlay", true)
-      else card end
-      # Leaving player control
-      card = if old_controller !== "shared" and new_controller == "shared" do
-        card
-        |> Map.put("committed", false)
-      else card end
+      card = Map.put(card, "inPlay", dest_group["inPlay"])
       # Leaving play
-      card = if dest_group_type != "play" do
+      card = if not dest_group["inPlay"] do
         card
-        |> Map.put("tokens", Tokens.new())
-        |> Map.put("tokensPerRound", Tokens.new())
+        |> Map.put("tokens", %{})
+        |> Map.put("tokensPerRound", %{})
         |> Map.put("exhausted", false)
         |> Map.put("rotation", 0)
-        |> Map.put("committed", false)
-        |> Map.put("roundEnteredPlay", nil)
-        |> Map.put("phaseEnteredPlay", nil)
         |> Map.put("inPlay", false)
-        |> clear_targets()
+        |> Map.put("targeting", %{})
       else card end
-      # Entering deck: flip card facedown, no peeking
-      card = if dest_group_type == "deck" do
-        new_deck_id = deck_group_id_for_dest_group_id(dest_group_id)
-        new_discard_id = discard_group_id_for_dest_group_id(dest_group_id)
-        card
-        |> Map.put("currentSide", "B")
-        |> Map.put("owner", new_controller)
-        |> Map.put("deckGroupId", new_deck_id)
-        |> Map.put("discardGroupId", new_discard_id)
-        |> set_all_peeking(false)
-      else card end
-      # Entering discard: flip card faceup, no peeking
-      card = if dest_group_type == "discard" do
-        new_deck_id = deck_group_id_for_dest_group_id(dest_group_id)
-        new_discard_id = discard_group_id_for_dest_group_id(dest_group_id)
-        card
-        |> Map.put("currentSide", "A")
-        |> Map.put("deckGroupId", new_deck_id)
-        |> Map.put("discardGroupId", new_discard_id)
-        |> set_all_peeking(false)
-      else card end
-      # Leaving hand/deck: flip card faceup
-      card = if (orig_group_type == "deck" or orig_group_type =="hand") and dest_group_type != "deck" and dest_group_type != "hand" do
-        flipped_card = Map.put(card, "currentSide", "A")
-        set_all_peeking(flipped_card, false)
-      else card end
-      # Entering hand: flip facedown and only controller can peek
-      card = if dest_group_type == "hand" do
-        card = Map.put(card, "currentSide", "B")
-        card = set_all_peeking(card, false)
-        controller = get_group_controller(game, dest_group_id)
-        put_in(card["peeking"][controller], true)
-      else card end
-      # Entering hand that is visible. Set all peeking to true
-      card = if dest_group_type == "hand" and game["playerData"][dest_group["controller"]]["visibleHand"] do
-        card = set_all_peeking(card, true)
-      else
-        card
-      end
+      # Set deck/discard
+      card = Map.put(card, "deckGroupId", dest_group["deckGroupId"])
+      card = Map.put(card, "discardGroupId", dest_group["discardGroupId"])
+      # Set correct side
+      card = Map.put(card, "currentSide", dest_group["defaultSideUp"])
+      # Set peeking players
+      card = Enum.reduce(dest_group["defaultPeeking"], card, fn(player_i, acc) ->
+        acc |> put_in(["peeking", player_i], true)
+      end)
       game = update_card(game, card)
       # Update game based on card moving
-      # Handle triggers
-      game = if dest_group_type == "play" do
-        add_triggers_card_face(game, card_id, card_face)
+      # Handle reminders
+      game = if dest_group["inPlay"] do
+        add_reminders_card_face(game, card_id, card_face)
       else
-        remove_triggers_card_face(game, card_id, card_face)
-      end
-      # Handle committed willpower leaving play
-      game = if committed_willpower > 0 and dest_group_type !== "play" and old_controller !== "shared" do
-        old_controller_willpower = game["playerData"][old_controller]["willpower"]
-        put_in(game["playerData"][old_controller]["willpower"], old_controller_willpower - committed_willpower)
-      else
-        game
-      end
-      # Handle committed willpower changing control
-      game = if committed_willpower > 0 and old_controller !== new_controller and old_controller !== "shared" do
-        old_controller_willpower = game["playerData"][old_controller]["willpower"]
-        game = put_in(game["playerData"][old_controller]["willpower"], old_controller_willpower - committed_willpower)
-        if new_controller !== "shared" do
-          new_controller_willpower = game["playerData"][new_controller]["willpower"]
-          put_in(game["playerData"][new_controller]["willpower"], new_controller_willpower + committed_willpower)
-        else
-          game
-        end
-      else
-        game
+        remove_reminders_card_face(game, card_id, card_face)
       end
     end
   end
@@ -746,20 +550,6 @@ defmodule DragnCardsGame.GameUI do
     end
   end
 
-  def peek_card(game, player_n, card_id, value) do
-    card = get_card(game, card_id)
-    card = if card["currentSide"] == "B" do # Only peek if card is facedown
-      if player_n == "all" do
-        set_all_peeking(card, value)
-      else
-        put_in(card["peeking"][player_n], value)
-      end
-    else
-      card
-    end
-    update_card(game, card)
-  end
-
   def add_trigger(game, card_id, round_step) do
     old_round_step_triggers = game["triggerMap"][round_step]
     if old_round_step_triggers && Enum.member?(old_round_step_triggers, card_id) do
@@ -776,10 +566,10 @@ defmodule DragnCardsGame.GameUI do
 
   def add_triggers(game, card_id) do
     card_face = get_current_card_face(game, card_id)
-    add_triggers_card_face(game, card_id, card_face)
+    add_reminders_card_face(game, card_id, card_face)
   end
 
-  def add_triggers_card_face(game, card_id, card_face) do
+  def add_reminders_card_face(game, card_id, card_face) do
     card_triggers = card_face["triggers"]
     if card_triggers do
       Enum.reduce(card_triggers, game, fn(round_step, acc) ->
@@ -801,10 +591,10 @@ defmodule DragnCardsGame.GameUI do
 
   def remove_triggers(game, card_id) do
     card_face = get_current_card_face(game, card_id)
-    remove_triggers_card_face(game, card_id, card_face)
+    remove_reminders_card_face(game, card_id, card_face)
   end
 
-  def remove_triggers_card_face(game, card_id, card_face) do
+  def remove_reminders_card_face(game, card_id, card_face) do
     card_triggers = card_face["triggers"]
     if card_triggers do
       Enum.reduce(card_triggers, game, fn(round_step, acc) ->
@@ -816,17 +606,6 @@ defmodule DragnCardsGame.GameUI do
   end
 
   ### Card helper functions
-
-  # Clear all targets from card
-  def clear_targets(card) do
-    new_targeting = %{
-      "player1" => false,
-      "player2" => false,
-      "player3" => false,
-      "player4" => false,
-    }
-    put_in(card["targeting"], new_targeting)
-  end
 
   # Obtain a value from card based on cardpath
   def get_value_from_cardpath(card, cardpath) do
@@ -896,38 +675,10 @@ defmodule DragnCardsGame.GameUI do
     end)
   end
 
-  def set_all_peeking(card, value) do
-    Map.put(card, "peeking", %{
-      "player1" => value,
-      "player2" => value,
-      "player3" => value,
-      "player4" => value
-    })
-  end
-
   #################################################################
   # Stack actions                                                 #
   #################################################################
 
-  def peek_stack(game, stack_id, player_n, value) do
-    card_ids = get_card_ids(game, stack_id)
-    Enum.reduce(card_ids, game, fn(card_id, acc) ->
-      card = get_card(game, card_id)
-      acc = peek_card(acc, player_n, card_id, value)
-    end)
-  end
-
-  def peek_at(game, stack_ids, player_n, value) do
-    Enum.reduce(stack_ids, game, fn(stack_id, acc) ->
-      acc = peek_stack(acc, stack_id, player_n, value)
-    end)
-  end
-
-  def set_stack_ids_peeking_all(game, stack_ids, value) do
-    Enum.reduce(["player1" ,"player2", "player3", "player4"], game, fn(player_n, acc) ->
-      peek_at(acc, stack_ids, player_n, value)
-    end)
-  end
 
   def get_top_card_of_stack(game, stack_id) do
     stack = get_stack(game, stack_id)
@@ -987,7 +738,7 @@ defmodule DragnCardsGame.GameUI do
         acc = update_card_state(acc, card_id, preserve_state, orig_group_id)
       end)
       # If a stack is out of play, we need to split it up
-      if Enum.count(card_ids)>1 && get_group_type(game, dest_group_id) != "play" do
+      if Enum.count(card_ids)>1 && not dest_group["inPlay"] do
         reverse_card_ids = Enum.reverse(card_ids)
         Enum.reduce(reverse_card_ids, game, fn(card_id, acc) ->
           acc = detach(acc, card_id)
@@ -1089,7 +840,6 @@ defmodule DragnCardsGame.GameUI do
     stack_ids = get_stack_ids(game, group_id)
     top_x = if Enum.count(stack_ids) < top_x do Enum.count(stack_ids) else top_x end
     top_x_stack_ids = Enum.slice(stack_ids, 0, top_x)
-    game = set_stack_ids_peeking_all(game, stack_ids, false)
     game = if top_x > 0 do
       move_stack(game, Enum.at(top_x_stack_ids,0), dest_group_id, -1, false, true)
     else
@@ -1102,20 +852,6 @@ defmodule DragnCardsGame.GameUI do
     else
       game
     end
-  end
-
-  def peek_at_by_indices(game, group_id, indices, player_n, value) do
-    group_stack_ids = get_stack_ids(game, group_id)
-    num_stacks = Enum.count(group_stack_ids)
-    selected_stack_ids = Enum.reduce(indices, [], fn(index, acc) ->
-      index = if index < 0 do index = num_stacks + index else index end
-      acc = if index >= num_stacks do
-        acc
-      else
-        acc ++ [Enum.at(group_stack_ids, index)]
-      end
-    end)
-    peek_at(game, selected_stack_ids, player_n, value)
   end
 
   ################################################################
@@ -1146,10 +882,6 @@ defmodule DragnCardsGame.GameUI do
           refresh(game, player_n)
         "refresh_and_new_round" ->
           refresh_and_new_round(game, player_n, user_id)
-        "peek_at" ->
-          peek_at(game, options["stack_ids"], player_n, options["value"])
-        "peek_card" ->
-          peek_card(game, player_n, options["card_id"], options["value"])
         "flip_card" ->
           flip_card(game, options["card_id"])
         "move_card" ->
@@ -1198,8 +930,6 @@ defmodule DragnCardsGame.GameUI do
           card_action(game, options["card_id"], options["action"], options["options"])
         "deal_x" ->
           deal_x(game, options["group_id"], options["dest_group_id"], options["top_x"])
-        "peek_at_by_indices" ->
-          peek_at_by_indices(game, options["group_id"], options["indices"], player_n, options["value"])
         _ ->
           game
       end
@@ -1273,23 +1003,23 @@ defmodule DragnCardsGame.GameUI do
 
 
   def interpret_value(game, map, value) do
-        cond do
-          !is_list(value) ->
-            value
-          is_path(value) ->
-            get_in(map, get_keylist_from_path(game, map, value))
-          Enum.at(value, 0) == "+" && Enum.count(value) == 3 ->
-            interpret_value(game, map, Enum.at(value,1)) + interpret_value(game, map, Enum.at(value,2))
-          Enum.at(value, 0) == "-" && Enum.count(value) == 3 ->
-            interpret_value(game, map, Enum.at(value,1)) - interpret_value(game, map, Enum.at(value,2))
-          Enum.at(value, 0) == "*" && Enum.count(value) == 3 ->
-            interpret_value(game, map, Enum.at(value,1)) * interpret_value(game, map, Enum.at(value,2))
-          Enum.at(value, 0) == "/" && Enum.count(value) == 3 ->
-            interpret_value(game, map, Enum.at(value,1)) / interpret_value(game, map, Enum.at(value,2))
-          true ->
-            value
-        end
-      end
+    cond do
+      !is_list(value) ->
+        value
+      is_path(value) ->
+        get_in(map, get_keylist_from_path(game, map, value))
+      Enum.at(value, 0) == "+" && Enum.count(value) == 3 ->
+        interpret_value(game, map, Enum.at(value,1)) + interpret_value(game, map, Enum.at(value,2))
+      Enum.at(value, 0) == "-" && Enum.count(value) == 3 ->
+        interpret_value(game, map, Enum.at(value,1)) - interpret_value(game, map, Enum.at(value,2))
+      Enum.at(value, 0) == "*" && Enum.count(value) == 3 ->
+        interpret_value(game, map, Enum.at(value,1)) * interpret_value(game, map, Enum.at(value,2))
+      Enum.at(value, 0) == "/" && Enum.count(value) == 3 ->
+        interpret_value(game, map, Enum.at(value,1)) / interpret_value(game, map, Enum.at(value,2))
+      true ->
+        value
+    end
+  end
 
   def get_nested_value(game, map, path) do
 #    IO.puts("getting nested value from ")

@@ -1,5 +1,5 @@
 {
-  "pluginName": "LotR LCG 9",
+  "pluginName": "LotR LCG 10",
   "minPlayers": 1,
   "maxPlayers": 4,
   "playerProperties": {
@@ -3308,7 +3308,7 @@
       "defaultPeeking": [],
       "inPlay": false,
       "canHaveAttachments": false,
-      "discardDeckId": "sharedEncounterDeck",
+      "deckGroupId": "sharedEncounterDeck",
       "discardGroupId": "sharedEncounterDiscard"
     },
     "sharedSetAside": {
@@ -3320,7 +3320,7 @@
       "defaultPeeking": [],
       "inPlay": false,
       "canHaveAttachments": false,
-      "discardDeckId": "sharedEncounterDeck",
+      "deckGroupId": "sharedEncounterDeck",
       "discardGroupId": "sharedEncounterDiscard"
     },
     "sharedVictory": {
@@ -3342,7 +3342,7 @@
       "defaultPeeking": [],
       "inPlay": true,
       "canHaveAttachments": true,
-      "discardDeckId": "sharedEncounterDeck",
+      "deckGroupId": "sharedEncounterDeck",
       "discardGroupId": "sharedEncounterDiscard"
     },
     "sharedActive": {
