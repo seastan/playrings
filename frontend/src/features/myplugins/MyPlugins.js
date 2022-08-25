@@ -49,32 +49,10 @@ export const MyPlugins = () => {
 
   return (
     <div className="mt-4 mx-auto w-full p-2" style={{maxWidth: "600px"}}>
-      <div style={{height: "200px"}}>
-        <div className="w-1/2 h-full float-left">
-          <div className="w-full h-full flex items-center justify-center">
-            <img 
-              className="" 
-              style={{height: "200px"}} 
-              src={process.env.PUBLIC_URL + '/logosvg.svg'}/>
-          </div>
-        </div>
-        <div className="w-1/2 h-full float-right">
-          <div className="w-full h-1/3 p-2">
-            <a className={lobbyButtonClass} target="_blank" onClick={() => handleNewClick()}>
-              New Plugin
-            </a>
-          </div>
-          <div className="w-full h-1/3 p-2">
-            <a className={lobbyButtonClass} target="_blank" href="https://discord.gg/7BQv5ethUm">
-              Discord
-            </a>
-          </div>
-          <div className="w-full h-1/3 p-2">
-            <a className={lobbyButtonClass} target="_blank" href="https://github.com/seastan/DragnCards">
-              GitHub
-            </a>
-          </div>
-        </div>
+      <div className="w-full h-1/3 p-2">
+        <a className={lobbyButtonClass} target="_blank" onClick={() => handleNewClick()}>
+          New Plugin
+        </a>
       </div>
       <EditPluginModal
         isOpen={showModal}

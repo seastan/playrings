@@ -13,6 +13,8 @@ import { isObject } from "../store/updateValues";
 import useForm from "../../hooks/useForm";
 import useAuth from "../../hooks/useAuth";
 import { setShowModal } from "../store/playerUiSlice";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCheck } from "@fortawesome/free-solid-svg-icons";
 const { convertCSVToArray } = require('convert-csv-to-array');
 const converter = require('convert-csv-to-array');
 
@@ -356,15 +358,19 @@ export const EditPluginModal = ({ isOpen, closeModal, shareReplayId}) => {
           <label className="block text-sm font-bold mb-2 mt-4 text-white">
             Visibility
           </label>
-          <select 
-            name="public"
-            className="form-control w-full"
-            onChange={handleInputChange}
-            value={inputs.public || false}>
-            <option value={false}>{l10n("Private")}</option>
-            <option value={true}>{l10n("Public")}</option>
-          </select>
-          <Button disabled={!validGameDef || !validCardDb} isSubmit isPrimary className="mt-2">
+          <div className="w-full">
+            <div className="p-1 float-left w-1/2">
+          <Button isPrimary={inputs.public} onClick={() => setInputs({...inputs, public: true})}>
+            {inputs.public && <FontAwesomeIcon className="" icon={faCheck}/>} Public
+          </Button>
+          </div>
+          <div className="p-1 float-left w-1/2">
+          <Button isPrimary={!inputs.public}  onClick={() => setInputs({...inputs, public: false})}>
+            {!inputs.public && <FontAwesomeIcon className="" icon={faCheck}/>} Private
+          </Button>
+          </div>
+          </div>
+          <Button disabled={!validGameDef || !validCardDb} isSubmit isPrimary className="mt-4">
             Create Plugin
           </Button>
           {successMessage && (
