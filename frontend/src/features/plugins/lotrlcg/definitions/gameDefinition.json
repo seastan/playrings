@@ -3153,7 +3153,6 @@
     "moveToBack": [
       ["MOVE_CARD", "$ACTIVE_CARD_ID", "$ACTIVE_CARD.groupId", "$ACTIVE_CARD.stackIndex", -1, true]
     ]
-  
   },
   "faceProperties": {
     "attack":        {"type": "integer", "default": 0},

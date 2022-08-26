@@ -18,6 +18,7 @@ export const ProfileProvider = ({ children }) => {
     null,
     onError
   );
+  console.log("Rendering ProfileProvider", data)
 
   // Every 10 minutes, re-check our profile.
   // This will cause our auth tokens to be refreshed, automatically
