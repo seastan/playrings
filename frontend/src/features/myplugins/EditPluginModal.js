@@ -1,4 +1,4 @@
-import React, { useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Redirect } from "react-router";
 import Select from 'react-select'
 import { v4 as uuidv4 } from 'uuid';
@@ -78,7 +78,7 @@ const checkValidGameDef = (gameDef) => {
 
 ReactModal.setAppElement("#root");
 
-export const EditPluginModal = ({ isOpen, closeModal, shareReplayId}) => {
+export const EditPluginModal = ({ plugin, isOpen, closeModal }) => {
   const { authToken, renewToken, setAuthAndRenewToken } = useAuth();
   const authOptions = useMemo(
     () => ({
@@ -147,6 +147,10 @@ export const EditPluginModal = ({ isOpen, closeModal, shareReplayId}) => {
     }
     
   });
+
+  useEffect(() => {
+    if (inputs) setInputs({...inputs, public: plugin.public});
+  })
 
   function readFileAsText(file){
     return new Promise(function(resolve,reject){
@@ -310,7 +314,8 @@ export const EditPluginModal = ({ isOpen, closeModal, shareReplayId}) => {
       }}
     >
       
-      <h1 className="mb-2">New Plugin</h1>
+      <h1 className="mb-2">Edit Plugin</h1>
+      <h2 className="mb-2">{plugin?.plugin_name}</h2>
 
       <form action="POST" onSubmit={handleSubmit}>
         <fieldset>{/* 

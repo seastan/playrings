@@ -11,13 +11,15 @@ import { EditPluginModal } from "./EditPluginModal";
 import * as moment from 'moment';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEdit, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { NewPluginModal } from "./NewPluginModal";
 
 const lobbyButtonClass = "border cursor-pointer hover:bg-white hover:text-black h-full w-full flex items-center justify-center text-white no-underline select-none"
 const iconButtonClass = "cursor-pointer hover:bg-white hover:text-black h-full w-full flex items-center justify-center text-white no-underline select-none"
 
-const MyPluginEntry = ({plugin}) => {
+const MyPluginEntry = ({plugin, setSelectedPlugin}) => {
 
   const handleEditClick = () => {
+    setSelectedPlugin(plugin);
     // setPluginId(null);
     // setShowModal(true);
   }
@@ -44,8 +46,8 @@ const MyPluginEntry = ({plugin}) => {
 export const MyPlugins = () => {
   const user = useProfile();
   const history = useHistory();
-  const [showModal, setShowModal] = useState(false);
-  const [pluginId, setPluginId] = useState(null);
+  const [showNewModal, setShowNewModal] = useState(false);
+  const [selectedPlugin, setSelectedPlugin] = useState(null);
   const [deletedIndices, setDeletedIndices] = useState([]); 
   var [wins, losses, incompletes] = [0, 0, 0];
   const { data, isLoading, isError, doFetchUrl, doFetchHash, setData } = useDataApi(
@@ -65,8 +67,8 @@ export const MyPlugins = () => {
     addSuffix: true,
   });
   const handleNewClick = () => {
-    setPluginId(null);
-    setShowModal(true);
+    setSelectedPlugin(null);
+    setShowNewModal(true);
   }
 
   return (
@@ -77,13 +79,18 @@ export const MyPlugins = () => {
         </a>
       </div>
       {data?.my_plugins.map((plugin, index) => {
-        return(<MyPluginEntry key={index} plugin={plugin}/>)
+        return(<MyPluginEntry key={index} plugin={plugin} setSelectedPlugin={setSelectedPlugin}/>)
       })}
-      <EditPluginModal
-        isOpen={showModal}
-        closeModal={() => setShowModal(false)}
-        pluginId={pluginId}
+      <NewPluginModal
+        isOpen={showNewModal}
+        closeModal={() => {setShowNewModal(false); setSelectedPlugin(null)}}
       />
+      {selectedPlugin !== null &&
+      <EditPluginModal
+        plugin={selectedPlugin}
+        isOpen={selectedPlugin}
+        closeModal={() => {setShowNewModal(false); setSelectedPlugin(null)}}
+      />}
     </div>
   );
 };
