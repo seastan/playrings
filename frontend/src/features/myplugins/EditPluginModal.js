@@ -149,8 +149,8 @@ export const EditPluginModal = ({ plugin, isOpen, closeModal }) => {
   });
 
   useEffect(() => {
-    if (inputs) setInputs({...inputs, public: plugin.public});
-  })
+    if (inputs && inputs.public !== plugin.public) setInputs({...inputs, public: plugin.public});
+  },[])
 
   function readFileAsText(file){
     return new Promise(function(resolve,reject){
@@ -335,7 +335,7 @@ export const EditPluginModal = ({ plugin, isOpen, closeModal }) => {
             You may upload multiple jsons at once that define different aspects of the game and they will be merged automatically.
           </label>
           <Button onClick={() => loadFileGameDef()}>
-            {l10n("Load game definition (.json)")}
+            {l10n("Update game definition (.json)")}
             <input type='file' multiple id='file' ref={inputFileGameDef} style={{display: 'none'}} onChange={uploadGameDefJson} accept=".json"/>
           </Button>
           {successMessageGameDef && (
@@ -351,7 +351,7 @@ export const EditPluginModal = ({ plugin, isOpen, closeModal }) => {
             You may upload multiple tab-separated-value (.tsv) files at once that define different cards and they will be merged automatically. Eech file must share the same header information. A valid game definition must be uploaded first.
           </label>
           <Button disabled={!validGameDef} onClick={() => loadFileCardDb()}>
-            {l10n("Load card database (.tsv)")}
+            {l10n("Update card database (.tsv)")}
             <input type='file' multiple id='file' ref={inputFileCardDb} style={{display: 'none'}} onChange={uploadCardDbTsv} accept=".tsv"/>
           </Button>
           {successMessageCardDb && (
