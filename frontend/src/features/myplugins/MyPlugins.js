@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useReducer, useState } from "react";
 import { useHistory } from "react-router-dom";
 import MUIDataTable, { MUIDataTableOptions } from "mui-datatables";
 import Container from "../../components/basic/Container";
@@ -12,29 +12,48 @@ import * as moment from 'moment';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEdit, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { NewPluginModal } from "./NewPluginModal";
+import { useSiteL10n } from "../../hooks/useSiteL10n";
+import useAuth from "../../hooks/useAuth";
 
 const lobbyButtonClass = "border cursor-pointer hover:bg-white hover:text-black h-full w-full flex items-center justify-center text-white no-underline select-none"
 const iconButtonClass = "cursor-pointer hover:bg-white hover:text-black h-full w-full flex items-center justify-center text-white no-underline select-none"
 
-const MyPluginEntry = ({plugin, setSelectedPlugin}) => {
+const MyPluginEntry = ({plugin, setSelectedPlugin, forceUpdate}) => {
+  const siteL10n = useSiteL10n();
+  const { authToken, renewToken, setAuthAndRenewToken } = useAuth();
+  const authOptions = useMemo(
+    () => ({
+      headers: {
+        Authorization: authToken,
+      },
+    }),
+    [authToken]
+  );
 
   const handleEditClick = () => {
     setSelectedPlugin(plugin);
     // setPluginId(null);
     // setShowModal(true);
   }
+  const handleDeleteClick = () => {
+    const conf = window.confirm(siteL10n("Are you sure you want to delete your plugin?")+" ("+plugin.plugin_name+")");
+    if (conf) {
+      const res = axios.delete("/be/api/myplugins/"+plugin.id, authOptions);
+    }
+  }
   return(
     <div className="relative w-full p-2 border-t-2 text-white">
       <h1>{plugin.plugin_name}</h1>
       {/* <div className="text-xs">{plugin.plugin_uuid}</div> */}
-      <div className="text-xs">Last update: {moment(plugin.updated_at).local().format("YYYY-MM-DD HH:MM")}</div>
+      <div className="text-xs">Last update: {moment.utc(plugin.updated_at).local().format("YYYY-MM-DD HH:mm:ss")}</div>
+      <div className={plugin.public ? "text-xs text-green-500" : "text-xs text-red-500" }>{plugin.public ? "Public" : "Private"}</div>
       <div className="absolute top-0" style={{height: "30px", width: "30px", right: "30px"}}>
         <a className={iconButtonClass} target="_blank" onClick={() => handleEditClick()}>
           <FontAwesomeIcon className="" icon={faEdit}/>
         </a>
       </div>
       <div className="absolute top-0" style={{height: "30px", width: "30px", right: "0px"}}>
-        <a className={iconButtonClass} target="_blank" onClick={() => handleEditClick()}>
+        <a className={iconButtonClass} target="_blank" onClick={() => handleDeleteClick()}>
           <FontAwesomeIcon className="" icon={faTrash}/>
         </a>
       </div>
@@ -49,6 +68,8 @@ export const MyPlugins = () => {
   const [showNewModal, setShowNewModal] = useState(false);
   const [selectedPlugin, setSelectedPlugin] = useState(null);
   const [deletedIndices, setDeletedIndices] = useState([]); 
+  const [_, forceUpdate] = useReducer((x) => x + 1, 0);
+
   var [wins, losses, incompletes] = [0, 0, 0];
   const { data, isLoading, isError, doFetchUrl, doFetchHash, setData } = useDataApi(
     "/be/api/myplugins/"+user?.id,
@@ -79,7 +100,7 @@ export const MyPlugins = () => {
         </a>
       </div>
       {data?.my_plugins.map((plugin, index) => {
-        return(<MyPluginEntry key={index} plugin={plugin} setSelectedPlugin={setSelectedPlugin}/>)
+        return(<MyPluginEntry key={index} plugin={plugin} setSelectedPlugin={setSelectedPlugin} forceUpdate={doFetchUrl}/>)
       })}
       <NewPluginModal
         isOpen={showNewModal}

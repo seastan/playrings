@@ -15,70 +15,14 @@ import useAuth from "../../hooks/useAuth";
 import { setShowModal } from "../store/playerUiSlice";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheck } from "@fortawesome/free-solid-svg-icons";
+import { checkValidGameDef, mergeJSONs, readFileAsText } from "./PluginFileImport";
 const { convertCSVToArray } = require('convert-csv-to-array');
 const converter = require('convert-csv-to-array');
-
-export const deepMerge = (obj1, obj2) => {
-  // If they are already equal, we are done
-  if (obj1 === obj2) return;
-  // If obj1 does not exist, set it to obj2
-  if (!obj1) {
-    obj1 = obj2;
-    return;
-  }
-  // The we loop through obj2 properties and update obj1
-  for (var p in obj2) {
-    // Ignore prototypes
-    if (!obj2.hasOwnProperty(p)) continue;
-    // If property does not exists in obj1, add it to obj1
-    if (!obj1.hasOwnProperty(p)) {
-      obj1[p] = obj2[p];
-      continue;
-    }
-    // Both objects have the property
-    // If they have the same strict value or identity then no need to update
-    if (obj1[p] === obj2[p]) continue;
-    // Objects are not equal. We need to examine their data type to decide what to do
-    if (Array.isArray(obj1[p]) && Array.isArray(obj2[p])) {
-      // Both values are arrays. Concatenate them.
-      obj1[p] = obj1[p].concat(obj2[p]);
-    } else if (isObject(obj1[p]) && isObject(obj2[p])) {
-      // Both values are objects
-      deepMerge(obj1[p], obj2[p]);
-    }
-  }
-} 
-
-const mergeJSONs = (jsonList) => {
-  const json0 = JSON.parse(jsonList[0]);
-  for (var i = 1; i < jsonList.length; i++) {
-    deepMerge(json0, JSON.parse(jsonList[i]));
-  }
-  return json0;
-}
-
-/* const csvToJson = (csv) => {
-  const json0 = JSON.parse(jsonList[0]);
-  for (var i = 1; i < jsonList.length; i++) {
-    deepMerge(json0, JSON.parse(jsonList[i]));
-  }
-  return json0;
-} */
-
-const checkValidGameDef = (gameDef) => {
-  // Needs to be a non-empty string
-  const pluginName = gameDef?.pluginName;
-  if (pluginName && (typeof pluginName === 'string' || pluginName instanceof String) && pluginName.length > 0) {
-    return true;
-  } else {
-    return "Invalid or missing pluginName value."
-  }
-}
-
 
 ReactModal.setAppElement("#root");
 
 export const EditPluginModal = ({ plugin, isOpen, closeModal }) => {
+  console.log("Rendering EditPluginModal", plugin)
   const { authToken, renewToken, setAuthAndRenewToken } = useAuth();
   const authOptions = useMemo(
     () => ({
@@ -107,7 +51,7 @@ export const EditPluginModal = ({ plugin, isOpen, closeModal }) => {
 
   const { inputs, handleSubmit, handleInputChange, setInputs } = useForm(async () => {
     console.log("inputs", inputs);
-    if (!inputs.gameDef.pluginName || inputs.gameDef.pluginName.length == 0) {
+    if (inputs.gameDef && (!inputs.gameDef.pluginName || inputs.gameDef.pluginName.length == 0)) {
       setErrorMessage("Invalid plugin name");
       return;
     }
@@ -121,7 +65,7 @@ export const EditPluginModal = ({ plugin, isOpen, closeModal }) => {
     } */
     const updateData = {
       plugin: {
-        plugin_uuid: uuidv4(),
+        plugin_uuid: plugin.plugin_uuid,
         game_def: inputs.gameDef,
         card_db: inputs.cardDb,
         public: inputs.public || false,
@@ -132,7 +76,7 @@ export const EditPluginModal = ({ plugin, isOpen, closeModal }) => {
     setSuccessMessage("");
     setErrorMessage("");
     setLoadingMessage("Please wait...");
-    const res = await axios.post("/be/api/myplugins", updateData, authOptions);
+    const res = await axios.patch("/be/api/myplugins/"+plugin.id, updateData, authOptions);
     if (
       res.status === 200
     ) {
@@ -151,22 +95,6 @@ export const EditPluginModal = ({ plugin, isOpen, closeModal }) => {
   useEffect(() => {
     if (inputs && inputs.public !== plugin.public) setInputs({...inputs, public: plugin.public});
   },[])
-
-  function readFileAsText(file){
-    return new Promise(function(resolve,reject){
-      let fr = new FileReader();
-
-      fr.onload = function(){
-          resolve(fr.result);
-      };
-
-      fr.onerror = function(){
-          reject(fr);
-      };
-
-      fr.readAsText(file);
-    });
-  }
 
   const uploadGameDefJson = async(event) => {
     event.preventDefault();
@@ -201,6 +129,7 @@ export const EditPluginModal = ({ plugin, isOpen, closeModal }) => {
 
 
   const processArrayOfRows = (arrayOfRows) => {
+    const gameDef = plugin.gameDef || inputs.gameDef;
     const header0 = arrayOfRows[0][0];
     if (!header0.includes("uuid")) throw new Error("Missing uuid column.")
     if (!header0.includes("deckbuilderQuantity")) throw new Error("Missing deckbuilderQuantity column.")
@@ -223,7 +152,7 @@ export const EditPluginModal = ({ plugin, isOpen, closeModal }) => {
             faceB[key] = null;
           }
           faceB["name"] = faceA.cardBack;
-          if (!inputs?.gameDef?.cardBacks || !Object.keys(inputs.gameDef.cardBacks).includes(faceB["name"])) throw new Error(`cardBack for ${faceA.name} not found in gameDef.cardBacks`)
+          if (!gameDef?.cardBacks || !Object.keys(gameDef.cardBacks).includes(faceB["name"])) throw new Error(`cardBack for ${faceA.name} not found in gameDef.cardBacks`)
         }
         cardDb[faceA.uuid] = {
           "A": faceA,
@@ -296,6 +225,8 @@ export const EditPluginModal = ({ plugin, isOpen, closeModal }) => {
     downloadAnchorNode.click();
     downloadAnchorNode.remove();
   }
+
+  const changesMade = (inputs.public !== plugin.public) || inputs.gameDef || inputs.cardDb;
   
   return (
     <ReactModal
@@ -335,7 +266,7 @@ export const EditPluginModal = ({ plugin, isOpen, closeModal }) => {
             You may upload multiple jsons at once that define different aspects of the game and they will be merged automatically.
           </label>
           <Button onClick={() => loadFileGameDef()}>
-            {l10n("Update game definition (.json)")}
+            {l10n("Replace game definition (.json)")}
             <input type='file' multiple id='file' ref={inputFileGameDef} style={{display: 'none'}} onChange={uploadGameDefJson} accept=".json"/>
           </Button>
           {successMessageGameDef && (
@@ -350,8 +281,8 @@ export const EditPluginModal = ({ plugin, isOpen, closeModal }) => {
           <label className="block text-xs mb-2 text-white">
             You may upload multiple tab-separated-value (.tsv) files at once that define different cards and they will be merged automatically. Eech file must share the same header information. A valid game definition must be uploaded first.
           </label>
-          <Button disabled={!validGameDef} onClick={() => loadFileCardDb()}>
-            {l10n("Update card database (.tsv)")}
+          <Button onClick={() => loadFileCardDb()}>
+            {l10n("Replace card database (.tsv)")}
             <input type='file' multiple id='file' ref={inputFileCardDb} style={{display: 'none'}} onChange={uploadCardDbTsv} accept=".tsv"/>
           </Button>
           {successMessageCardDb && (
@@ -374,10 +305,11 @@ export const EditPluginModal = ({ plugin, isOpen, closeModal }) => {
             {!inputs.public && <FontAwesomeIcon className="" icon={faCheck}/>} Private
           </Button>
           </div>
-          </div>
-          <Button disabled={!validGameDef || !validCardDb} isSubmit isPrimary className="mt-4">
-            Create Plugin
+          </div> 
+          <Button disabled={!changesMade} isSubmit={changesMade} className="mt-4">
+            Update Plugin
           </Button>
+          {changesMade && <div className="alert alert-info mt-4">You have unsaved changes.</div>}
           {successMessage && (
             <div className="alert alert-info mt-4">{successMessage}</div>
           )}
