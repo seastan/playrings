@@ -1,0 +1,30 @@
+[
+  {
+    "cardRow": {
+      "cardid": "81f744b1-aa0e-4326-bd18-d701390141bf"
+    },
+    "quantity": 1,
+    "groupId": "sharedSetAside"
+  },
+  {
+    "cardRow": {
+      "cardid": "349c853c-1e27-480e-9c16-f5dc19cf77b0"
+    },
+    "quantity": 1,
+    "groupId": "sharedSetAside"
+  },
+  {
+    "cardRow": {
+      "cardid": "ebb992f0-710c-4e3f-bf56-5d3266d0c856"
+    },
+    "quantity": 1,
+    "groupId": "sharedSetAside"
+  },
+  {
+    "cardRow": {
+      "cardid": "e8a121ac-c51c-48dc-9fdd-b6afcd6069fc"
+    },
+    "quantity": 1,
+    "groupId": "sharedSetAside"
+  }  
+]
