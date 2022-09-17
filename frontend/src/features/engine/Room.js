@@ -95,7 +95,7 @@ export const Room = ({ slug }) => {
 
   console.log('Rendering Room',myUserId);
   // console.log("plugin room",plugin)
-  // if (plugin === null) return (<div className="text-white m-4">Plugin not found.</div>);
+  //if (plugin === null) return (<div className="text-white m-4">Loading...</div>);
 
   if (roomName !== slug) return (<div></div>);
   else {
