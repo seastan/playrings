@@ -6,7 +6,7 @@ import { SpawnCardModal } from "./SpawnCardModal";
 import { SpawnCustomModal } from "../plugins/lotrlcg/components/SpawnCustomModal";
 import { SpawnPrebuiltModal } from "./SpawnPrebuiltModal";
 import { SideBar } from "./SideBar";
-import { Hotkeys } from "../plugins/lotrlcg/components/Hotkeys";
+import { Hotkeys } from "./Hotkeys";
 import { PlayersInRoom } from "./PlayersInRoom";
 import { DropdownMenu } from "./DropdownMenu";
 import { TouchBarBottom } from "../plugins/lotrlcg/components/TouchBarBottom";

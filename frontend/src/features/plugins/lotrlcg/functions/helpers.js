@@ -92,6 +92,19 @@ export const getVisibleFace = (card, playerN) => {
   if (visibleSide) return card.sides[visibleSide];
   else return null;
 }
+export const getVisibleFaceWidthHeight = (visibleFace, gameDef) => {
+  if (!visibleFace) return {width: 0, height: 0};
+  var width = visibleFace.width;
+  var height = visibleFace.height;
+  // If there's no size listed, it's probably a card back
+  if (!height || !width) {   
+    const cardName = visibleFace.name;
+    if (Object.keys(gameDef?.cardBacks).includes(cardName))
+      return {width: gameDef.cardBacks[cardName].width, height: gameDef.cardBacks[cardName].height};
+    else return {width: 0, height: 0};
+  }
+  return {width: width, height: height};
+}
 
 export const getVisibleFaceSrc = (visibleFace, user, gameDef) => {
   if (!visibleFace) return {src: "image not found", default: "image not found"};
