@@ -2798,7 +2798,7 @@
       ["ACTION_LIST", "revealEncounter"]
     ],
     "revealEncounterFacedown": [
-      ["DEFINE", "$REVEAL_FACEDOWN", false],
+      ["DEFINE", "$REVEAL_FACEDOWN", true],
       ["ACTION_LIST", "revealEncounter"]
     ],
     "revealSecondaryFaceup": [
@@ -2806,7 +2806,7 @@
       ["ACTION_LIST", "revealSecondary"]
     ],
     "revealSecondaryFacedown": [
-      ["DEFINE", "$REVEAL_FACEDOWN", false],
+      ["DEFINE", "$REVEAL_FACEDOWN", true],
       ["ACTION_LIST", "revealSecondary"]
     ],
     "revealEncounter": [

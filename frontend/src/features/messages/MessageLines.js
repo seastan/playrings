@@ -1,15 +1,12 @@
 import React, { useRef, useEffect, useState } from "react";
-import ChatLine from "./ChatLine";
+import MessageLine from "./MessageLine";
 import { useMessages } from "../../contexts/MessagesContext";
 import { useSelector } from "react-redux";
 
-export const ChatMessages = ({ hover, chatOnly }) => {
-  console.log("Rendering ChatMessages")
-  const newMessages = useMessages();
+export const MessageLines = ({ hover, messages }) => {
   const touchMode = useSelector(state => state?.playerUi?.touchMode);
-  console.log("phxmessage chatmessages", newMessages)
   const bottomRef = useRef();
-  const [totalMessages, setTotalMessages] = useState([]);
+  console.log("Rendering ChatMessages", messages)
 
   const scrollToBottom = () => {
     if (bottomRef?.current)
@@ -20,27 +17,20 @@ export const ChatMessages = ({ hover, chatOnly }) => {
   };
 
   useEffect(() => {
-    if (newMessages) setTotalMessages([...totalMessages, ...newMessages]);
-  }, [newMessages])
-
-
-  useEffect(() => {
     if (!touchMode) scrollToBottom();
-  }, [totalMessages, hover, touchMode])
+  }, [messages, hover, touchMode])
 
   return (
     <div>
-      {totalMessages?.map((m, i) => {
-        if (chatOnly && m.game_update) return null;
-        if (!chatOnly && !m.game_update) return null;
-        return(<ChatLine key={m.shortcode} message={m} />)
+      {messages?.map((m, i) => {
+        return(<MessageLine key={i} message={{text: m, sent_by: null}} />)
       })}
       <div ref={bottomRef} className="list-bottom"></div>
     </div>
   );
 
 };
-export default ChatMessages;
+export default MessageLines;
 
 
 // import React from "react";

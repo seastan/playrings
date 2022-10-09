@@ -8,7 +8,6 @@ import { setTyping } from "../store/playerUiSlice";
 
 interface Props {
   chatBroadcast: (eventName: string, payload: object) => void;
-  setTyping: React.Dispatch<React.SetStateAction<Boolean>>
 }
 
 export const ChatInput: React.FC<Props> = ({ chatBroadcast }) => {

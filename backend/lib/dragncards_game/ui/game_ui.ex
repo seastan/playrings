@@ -867,6 +867,7 @@ defmodule DragnCardsGame.GameUI do
     game = gameui["game"]
     game = put_in(game["playerUi"], options["player_ui"])
     game = put_in(game["gameDef"], gameui["gameDef"])
+    game = put_in(game["messages"], [])
     game_new = if player_n do
       case action do
         "evaluate" ->

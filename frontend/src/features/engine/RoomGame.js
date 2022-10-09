@@ -10,9 +10,11 @@ const RoomGame = React.memo(({}) => {
   console.log('Rendering RoomGame');
   const dispatch = useDispatch();
   const touchMode = useSelector(state => state?.playerUi.touchMode);
+  const typing = useSelector(state => state?.playerUi.typing);
   const onKeyDown = useKeyDown();
 
   useEffect(() => {
+    if (typing) return null;
     const onKeyUp = (event) => {
       const k = event.key;
       if (k === "Alt") dispatch(setKeypress({"Alt": 0}));

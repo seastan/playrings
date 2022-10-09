@@ -2,7 +2,7 @@ import React, { useContext, useState } from "react";
 import { useSelector } from 'react-redux';
 import { Group } from "./Group";
 import { Browse } from "./Browse";
-import Chat from "../chat/Chat";
+import MessageBox from "../messages/MessageBox";
 import "../../css/custom-misc.css"; 
 import { QuickAccess } from "./QuickAccess";
 import { SideGroup } from "./SideGroup";
@@ -132,14 +132,14 @@ export const TableLayout = React.memo(({
           />
         ))}
       </div>
-      {/* Quickview and Chat */}
+      {/* Quickview and MessageBox */}
       <div className="absolute right-0 bottom-0 h-full" style={{width:"25%", height: rowHeight}}>
         <div 
           className="absolute bottom-0 left-0" 
           style={{height: chatHover ? `${numRows*100}%` : `100%`, width:'100%', paddingRight:"30px", opacity: 0.7, zIndex: chatHover ? 1e6 : 1e3}}
           onMouseEnter={() => handleStartChatHover()}
           onMouseLeave={() => handleStopChatHover()}>
-          <Chat hover={chatHover} chatBroadcast={chatBroadcast}/>
+          <MessageBox hover={chatHover} chatBroadcast={chatBroadcast}/>
         </div>
         <QuickAccess/>
       </div>
