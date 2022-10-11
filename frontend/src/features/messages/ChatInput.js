@@ -6,11 +6,8 @@ import { useDispatch } from "react-redux";
 import useForm from "../../hooks/useForm";
 import { setTyping } from "../store/playerUiSlice";
 
-interface Props {
-  chatBroadcast: (eventName: string, payload: object) => void;
-}
 
-export const ChatInput: React.FC<Props> = ({ chatBroadcast }) => {
+export const ChatInput = ({ chatBroadcast }) => {
   const dispatch = useDispatch();
   const { inputs, handleSubmit, handleInputChange, setInputs } = useForm(
     async () => {

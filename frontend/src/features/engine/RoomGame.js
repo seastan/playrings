@@ -14,7 +14,7 @@ const RoomGame = React.memo(({}) => {
   const onKeyDown = useKeyDown();
 
   useEffect(() => {
-    if (typing) return null;
+    
     const onKeyUp = (event) => {
       const k = event.key;
       if (k === "Alt") dispatch(setKeypress({"Alt": 0}));
@@ -24,14 +24,16 @@ const RoomGame = React.memo(({}) => {
       if (k === "Tab") dispatch(setKeypress({"Tab": 0}));
     }
 
-    document.addEventListener('keyup', onKeyUp);
-    document.addEventListener('keydown', onKeyDown);
+    if (!typing) {
+      document.addEventListener('keyup', onKeyUp);
+      document.addEventListener('keydown', onKeyDown);
+    }
 
     return () => {
       document.removeEventListener('keyup', onKeyUp);
       document.removeEventListener('keydown', onKeyDown);
     }
-  }, [onKeyDown]);
+  }, [onKeyDown]); //, typing]);
 
   return (
     <div className="h-full w-full">

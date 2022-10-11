@@ -5,12 +5,15 @@ import useIsLoggedIn from "../../hooks/useIsLoggedIn";
 import { useMessages } from "../../contexts/MessagesContext";
 import { useSelector } from "react-redux";
 
-export const MessageBox = ({ hover, chatBroadcast, setTyping }) => {
-  const allChatMessages = useMessages();
+export const MessageBox = ({ hover, chatBroadcast }) => {
+  const newChatMessageObjects = useMessages();
   const [showingLog, setShowingLog] = useState(true);
   const [smoothScroll, setSmoothScroll] = useState(false);
   const newLogMessages = useSelector(state => state?.gameUi?.game?.messages);
-  const [allLogMessages, setAllLogMessages] = useState([]);
+  const newLogMessageObjects = newLogMessages.map(lm => {return {text: lm, set_by: null}});
+
+  const [allLogMessageObjects, setAllLogMessageObjects] = useState([]);
+  const [allChatMessageObjects, setAllChatMessageObjects] = useState([]);
 
   console.log("Rendering Chat")
 
@@ -20,13 +23,17 @@ export const MessageBox = ({ hover, chatBroadcast, setTyping }) => {
   } 
 
   useEffect(() => {
-    setAllLogMessages([...allLogMessages, ...newLogMessages])
+    if (newLogMessageObjects) setAllLogMessageObjects([...allLogMessageObjects, ...newLogMessageObjects])
   }, [newLogMessages]);
+
+  useEffect(() => {
+    if (newChatMessageObjects) setAllChatMessageObjects([...allChatMessageObjects, ...newChatMessageObjects])
+  }, [newChatMessageObjects]);
 
   return (
     <div className="overflow-hidden h-full">
       <div className="bg-gray-800 overflow-y-auto" style={{height: "calc(100% - 3vh)"}}>
-        <ChatMessages hover={hover} messages={showingLog ? allLogMessages : allChatMessages}/>
+        <ChatMessages hover={hover} messages={showingLog ? allLogMessageObjects : allChatMessageObjects}/>
       </div>
       <div 
         className="flex items-center justify-center float-left text-white bg-gray-700 hover:bg-gray-600 select-none"  

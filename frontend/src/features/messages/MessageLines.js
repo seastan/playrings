@@ -23,7 +23,7 @@ export const MessageLines = ({ hover, messages }) => {
   return (
     <div>
       {messages?.map((m, i) => {
-        return(<MessageLine key={i} message={{text: m, sent_by: null}} />)
+        return(<MessageLine key={i} message={m} />)
       })}
       <div ref={bottomRef} className="list-bottom"></div>
     </div>
