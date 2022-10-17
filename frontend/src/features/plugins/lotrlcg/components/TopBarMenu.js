@@ -219,7 +219,7 @@ export const TopBarMenu = React.memo(({}) => {
         gameBroadcast("game_action", {
           action: "action_on_matching_cards", 
           options: {
-            criteria:[["controller", playerI], ["sides", "A", "type", "Ally"]], 
+            criteria:[["groupId", playerI+"Deck"], ["sides", "A", "type", "Ally"]], 
             action: "move_card", 
             options: {dest_group_id: playerI+"Deck2", dest_stack_index: 0, dest_card_index: 0, combine: false, preserve_state: false}
           }
@@ -228,7 +228,7 @@ export const TopBarMenu = React.memo(({}) => {
         gameBroadcast("game_action", {
           action: "action_on_matching_cards", 
           options: {
-            criteria:[["controller", playerI], ["sides", "A", "traits", "Item."]], 
+            criteria:[["groupId", playerI+"Deck"], ["sides", "A", "traits", "Item."]], 
             action: "move_card", 
             options: {dest_group_id: playerI+"Deck2", dest_stack_index: 0, dest_card_index: 0, combine: false, preserve_state: false}
           }
@@ -237,7 +237,7 @@ export const TopBarMenu = React.memo(({}) => {
         gameBroadcast("game_action", {
           action: "action_on_matching_cards", 
           options: {
-            criteria:[["controller", playerI], ["sides", "A", "traits", "Mount."]], 
+            criteria:[["groupId", playerI+"Deck"], ["sides", "A", "traits", "Mount."]], 
             action: "move_card", 
             options: {dest_group_id: playerI+"Deck2", dest_stack_index: 0, dest_card_index: 0, combine: false, preserve_state: false}
           }
@@ -246,7 +246,7 @@ export const TopBarMenu = React.memo(({}) => {
         gameBroadcast("game_action", {
           action: "action_on_matching_cards", 
           options: {
-            criteria:[["controller", playerI], ["sides", "A", "traits", "Artifact."]], 
+            criteria:[["groupId", playerI+"Deck"], ["sides", "A", "traits", "Artifact."]], 
             action: "move_card", 
             options: {dest_group_id: playerI+"Deck2", dest_stack_index: 0, dest_card_index: 0, combine: false, preserve_state: false}
           }
@@ -607,7 +607,8 @@ export const TopBarMenu = React.memo(({}) => {
               <span className="float-right mr-1"><FontAwesomeIcon icon={faChevronRight}/></span>
             <ul className="third-level-menu">
                 <li key={"standard"} onClick={() => handleMenuClick({action:"layout", value: "standard"})}>{l10n("Standard")}</li>
-                <li key={"extra"} onClick={() => handleMenuClick({action:"layout", value: "extra"})}>{l10n("Extra staging areas / map")}</li>
+                <li key={"extra"} onClick={() => handleMenuClick({action:"layout", value: "extra"})}>{l10n("Extra space (3 rows)")}</li>
+                <li key={"extra4"} onClick={() => handleMenuClick({action:"layout", value: "extra4"})}>{l10n("Extra space (4 rows)")}</li>
             </ul>
           </li>                
         }
