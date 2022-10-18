@@ -129,8 +129,6 @@ export const SpawnQuestModal = React.memo(({}) => {
       var tooltipIds = loadDeckFromXmlText(xmlText, playerN, gameBroadcast, chatBroadcast, privacyType);
       if (modeAndId.includes("04.2") || modeAndId.includes("A1.7") || modeAndId.includes("05.5") || modeAndId.includes("09.9"))
         tooltipIds = [...tooltipIds, "tooltipAdvancedSetup"];
-      if (questPath.includes("99.17"))
-        tooltipIds = [...tooltipIds, "tooltipBlackRiderX"];
       dispatch(setTooltipIds(tooltipIds));
       dispatch(setShowModal(null));
       gameBroadcast("game_action", {action: "update_values", options: {updates: [["game","options", newOptions]]}});

@@ -13,24 +13,7 @@ export const Tokens = React.memo(({
  }) => {
     const spacePressed = useSelector(state => state?.playerUi?.keypress?.Space);
     const showButtons = isActive && spacePressed;
-    var blackRiderX = false;
-    for (var i=1; i<10; i++) {if (cardName === "Black Rider "+i && side === "A") blackRiderX = true} 
-    if (blackRiderX) return (
-        <div className="absolute" style={{width:'100%', height:'100%'}}>
-            <Token tokenType="resource"  cardId={cardId} cardName={cardName} zIndex={zIndex} aspectRatio={aspectRatio} left={"10%"} top={"50%"} showButtons={showButtons}/>
-            <Token tokenType="progress1"  cardId={cardId} cardName={cardName} zIndex={zIndex} aspectRatio={aspectRatio} left={"10%"} top={"0%"} showButtons={showButtons}/>
-            <Token tokenType="progress2"  cardId={cardId} cardName={cardName} zIndex={zIndex} aspectRatio={aspectRatio} left={"40%"} top={"0%"} showButtons={showButtons}/>
-            <Token tokenType="progress3"  cardId={cardId} cardName={cardName} zIndex={zIndex} aspectRatio={aspectRatio} left={"70%"} top={"0%"} showButtons={showButtons}/>
-            <Token tokenType="progress4"  cardId={cardId} cardName={cardName} zIndex={zIndex} aspectRatio={aspectRatio} left={"10%"} top={"20%"} showButtons={showButtons}/>
-            <Token tokenType="progress5"  cardId={cardId} cardName={cardName} zIndex={zIndex} aspectRatio={aspectRatio} left={"40%"} top={"20%"} showButtons={showButtons}/>
-            <Token tokenType="progress6"  cardId={cardId} cardName={cardName} zIndex={zIndex} aspectRatio={aspectRatio} left={"70%"} top={"20%"} showButtons={showButtons}/>
-            <Token tokenType="progress7"  cardId={cardId} cardName={cardName} zIndex={zIndex} aspectRatio={aspectRatio} left={"40%"} top={"40%"} showButtons={showButtons}/>
-            <Token tokenType="progress8"  cardId={cardId} cardName={cardName} zIndex={zIndex} aspectRatio={aspectRatio} left={"70%"} top={"40%"} showButtons={showButtons}/>
-            <Token tokenType="progress9"  cardId={cardId} cardName={cardName} zIndex={zIndex} aspectRatio={aspectRatio} left={"40%"} top={"60%"} showButtons={showButtons}/>
-            <Token tokenType="progress10" cardId={cardId} cardName={cardName} zIndex={zIndex} aspectRatio={aspectRatio} left={"70%"} top={"60%"} showButtons={showButtons}/>
-        </div>
-    ) 
-    else return(
+    return(
         <div className="absolute" style={{width:'100%', height:'100%'}}>
             <Token tokenType="resource"  cardId={cardId} cardName={cardName} zIndex={zIndex} aspectRatio={aspectRatio} left={"10%"} top={"0%"}  showButtons={showButtons}/>
             <Token tokenType="progress"  cardId={cardId} cardName={cardName} zIndex={zIndex} aspectRatio={aspectRatio} left={"10%"} top={"25%"} showButtons={showButtons}/>
