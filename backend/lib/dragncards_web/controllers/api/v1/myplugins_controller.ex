@@ -38,7 +38,7 @@ defmodule DragnCardsWeb.MyPluginsController do
     IO.puts("older")
     IO.inspect(prev_plugins)
     prev_plugin = Enum.at(prev_plugins, 0)
-    prev_version = prev_plugin.version || 0
+    prev_version = if prev_plugin do prev_plugin.version else 0 end
     updates = %{
       version: prev_version+1,
       plugin_name: plugin_params["game_def"]["pluginName"],
