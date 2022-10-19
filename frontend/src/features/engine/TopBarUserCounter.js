@@ -29,12 +29,13 @@ export const TopBarUserCounter = React.memo(({
       const totalDelta = newValue - previousValue;
       setPreviousValue(newValue);
       const listOfActions = [
-          {
-              "_ACTION": "SET_VALUE",
-              "_PATH": ["_GAME", "playerData", playerI, playerProperty],
-              "_VALUE": newValue,
-              "_MESSAGES": [["{playerN} set ", playerIAlias,"'s ", name, " to ",newValue," (change: ",totalDelta,")."]]
-          }
+        ["GAME_INCREASE_VAL", "playerData", "$PLAYER_N", playerProperty, totalDelta],
+        ["COND",
+          ["GREATER_THAN", totalDelta, 0],
+          ["GAME_ADD_MESSAGE", "$PLAYER_N", " increased their ", playerProperty," by ", totalDelta, "."],
+          true,
+          ["GAME_ADD_MESSAGE", "$PLAYER_N", " decreased their ", playerProperty," by ", -totalDelta, "."]
+        ]
       ]
       doActionList("_custom", listOfActions);
       setInputFocus();

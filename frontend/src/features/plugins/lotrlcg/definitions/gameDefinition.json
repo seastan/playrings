@@ -2949,35 +2949,35 @@
       ["FOR_EACH_KEY_VAL", "$CARD_ID", "$CARD", "$CARD_BY_ID",
         ["GAME_SET_VAL", "cardById", "$CARD_ID", "targeting", "$PLAYER_N", false]
       ],
-      ["GAME_ADD_MESSAGE", "PLAYER_N", " cleared their targets."]
+      ["GAME_ADD_MESSAGE", "$PLAYER_N", " cleared their targets."]
     ],
     "increaseThreat": [
       ["GAME_INCREASE_VAL", "playerData", "$PLAYER_N", "threat", 1],
-      ["GAME_ADD_MESSAGE", "PLAYER_N", " increased their threat by 1."]
+      ["GAME_ADD_MESSAGE", "$PLAYER_N", " increased their threat by 1."]
     ],
     "increaseThreatAll": [
       ["FOR_EACH_KEY_VAL", "$PLAYER_I", "$PLAYER_I_DATA", "$GAME.playerData",
         ["GAME_INCREASE_VAL", "playerData", "$PLAYER_I", "threat", 1]
       ],
-      ["GAME_ADD_MESSAGE", "PLAYER_N", " increased each player's threat by 1."]
+      ["GAME_ADD_MESSAGE", "$PLAYER_N", " increased each player's threat by 1."]
     ],
     "decreaseThreat": [
       ["GAME_INCREASE_VAL", "playerData", "$PLAYER_N", "threat", -1],
-      ["GAME_ADD_MESSAGE", "PLAYER_N", " decreased their threat by 1."]
+      ["GAME_ADD_MESSAGE", "$PLAYER_N", " decreased their threat by 1."]
     ],
     "decreaseThreatAll": [
       ["FOR_EACH_KEY_VAL", "$PLAYER_I", "$PLAYER_I_DATA", "$GAME.playerData",
         ["GAME_INCREASE_VAL", "playerData", "$PLAYER_I", "threat", -1]
       ],
-      ["GAME_ADD_MESSAGE", "PLAYER_N", " increased each player's threat by 1."]
+      ["GAME_ADD_MESSAGE", "$PLAYER_N", " increased each player's threat by 1."]
     ],
     "drawNextSeat": [
       ["DRAW", 1, ["NEXT_PLAYER", "$PLAYER_N"]],
-      ["GAME_ADD_MESSAGE", "PLAYER_N", " drew 1 card."]
+      ["GAME_ADD_MESSAGE", "$PLAYER_N", " drew 1 card."]
     ],
     "zeroTokens": [
       ["GAME_SET_VAL", "$ACTIVE_TOKENS_PATH", {}],
-      ["GAME_ADD_MESSAGE", "PLAYER_N", " removed all tokens from ", "$ACTIVE_FACE.name", "."]
+      ["GAME_ADD_MESSAGE", "$PLAYER_N", " removed all tokens from ", "$ACTIVE_FACE.name", "."]
     ],
     "toggleExhaust": [
       ["COND",

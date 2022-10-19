@@ -3,7 +3,7 @@ import { TableLayout } from "./TableLayout";
 import { GiantCard } from "./GiantCard";
 import { TopBar } from "./TopBar";
 import { SpawnCardModal } from "./SpawnCardModal";
-import { SpawnCustomModal } from "../plugins/lotrlcg/components/SpawnCustomModal";
+import { SpawnCustomModal } from "./SpawnCustomModal";
 import { SpawnPrebuiltModal } from "./SpawnPrebuiltModal";
 import { SideBar } from "./SideBar";
 import { Hotkeys } from "./Hotkeys";
