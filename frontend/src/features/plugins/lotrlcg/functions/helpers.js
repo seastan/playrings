@@ -523,13 +523,6 @@ export const processLoadList = (loadList, playerN) => {
     } 
     for (var i=0; i<n; i++) {
       const item = newLoadList[i];
-      if (item.cardRow.sides.A.name === "The Nine are Abroad 3") {
-        newLoadList[i] = {...item, quantity: item.quantity - 1};
-        newLoadList.push({...item, quantity: 1, groupId: "sharedExtra3"})
-      }
-    } 
-    for (var i=0; i<n; i++) {
-      const item = newLoadList[i];
       if (item.cardRow.sides.A.name === "Enedwaith") {
         newLoadList[i] = {...item, quantity: item.quantity - 1};
         newLoadList.push({...item, quantity: 1, groupId: "sharedExtra3"})
@@ -538,6 +531,13 @@ export const processLoadList = (loadList, playerN) => {
     for (var i=0; i<n; i++) {
       const item = newLoadList[i];
       if (item.cardRow.sides.A.name === "Rohan") {
+        newLoadList[i] = {...item, quantity: item.quantity - 1};
+        newLoadList.push({...item, quantity: 1, groupId: "sharedExtra3"})
+      }
+    } 
+    for (var i=0; i<n; i++) {
+      const item = newLoadList[i];
+      if (item.cardRow.sides.A.name === "The Nine are Abroad 3") {
         newLoadList[i] = {...item, quantity: item.quantity - 1};
         newLoadList.push({...item, quantity: 1, groupId: "sharedExtra4"})
       }
