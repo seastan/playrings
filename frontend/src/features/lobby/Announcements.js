@@ -4,6 +4,7 @@ export const Announcements = () => {
     return(
         <div className="border text-white flex justify-center w-full my-2" style={{maxWidth: "600px"}}>
             <div className="w-full h-32 max-h-32 overflow-y-scroll text-lg" style={{textIndent: "-20px", paddingLeft: "30px"}}>
+                <div>{"2022-10-18 The Nine are Abroad is now available."}</div>
                 <div>{"2022-09-21 Angmar Awakened Campaign cards are now available (thanks provocatio)!"}</div>
                 <div>{"2022-04-19 Patch to address random game timeouts."}</div>
                 <div>{"2022-04-14 Added the Dark of Mirkwood Campaign cards! Select them in Menu->Load->Load Campaign Cards."}</div>
