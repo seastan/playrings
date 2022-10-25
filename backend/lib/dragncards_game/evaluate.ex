@@ -153,7 +153,7 @@ defmodule DragnCardsGame.Evaluate do
               end
             end)
             delta = evaluate(game, Enum.at(code, Enum.count(code)-1))
-            old_value = get_in(game, path)
+            old_value = get_in(game, path) || 0
             put_in(game, path, old_value + delta)
           "GAME_DECREASE_VAL" ->
             path = Enum.slice(code, 1, Enum.count(code)-2)

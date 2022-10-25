@@ -36,13 +36,13 @@ export const HandleTouchActions = React.memo(({}) => {
             doActionList(touchAction?.actionListId)
             dispatch(setTouchAction(null));
         } else if (touchAction?.actionType === "token" && activeCardObj?.card) {
-            const tokenType = touchAction?.actionType;
+            const tokenType = touchAction?.tokenType;
             const increment = touchAction?.doubleClicked ? -1 : 1;
             const hasToken = activeCardObj?.card?.tokens[tokenType] > 0;
             if (!hasToken && increment < 0 && gameDef["tokens"]?.[tokenType]?.modifier !== true) return; // Can't have negative non-modifier tokens
             const actionList = [
-                ["GAME_INCREAS_VAL", "$ACTIVE_TOKENS_PATH", tokenType, increment],
-                ["GAME_ADD_MESSAGE", "$PLAYER_N", increment > 0 ? " added " : "removed ", increment, " ", gameDef["tokens"]?.[tokenType]?.name," token to ", "$ACTIVE_FACE.name", "."]
+                ["GAME_INCREASE_VAL", "$ACTIVE_TOKENS_PATH", tokenType, increment],
+                ["GAME_ADD_MESSAGE", "$PLAYER_N", increment > 0 ? " added " : " removed ", Math.abs(increment), " ", gameDef["tokens"]?.[tokenType]?.name," token to ", "$ACTIVE_FACE.name", "."]
             ]
             doActionList(actionList);
             const tokensLeft = touchAction?.tokensLeft;
@@ -74,6 +74,8 @@ export const HandleTouchActions = React.memo(({}) => {
 
     // Tapping on an already active card makes it perform the default action
     useEffect(() => {
+        // If a touchAction is defined, we do not do the default action
+        if (touchAction) return;
         // If there is no active card, also make sure previous active card is blanked
         if (!activeCardObj && prevActive?.setIsActive) prevActive.setIsActive(false);
         // Make sure touch mode is on before doing default actions 
@@ -93,7 +95,7 @@ export const HandleTouchActions = React.memo(({}) => {
             if (activeCardObj?.setIsActive) activeCardObj.setIsActive(true);
             if (!sameAsPrev && prevActive?.setIsActive) prevActive.setIsActive(false);
         }
-    }, [activeCardObj, touchMode])
+    }, [touchAction, activeCardObj, touchMode])
 
     return null;
 })
