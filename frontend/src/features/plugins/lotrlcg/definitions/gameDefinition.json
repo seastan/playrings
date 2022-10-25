@@ -3232,7 +3232,7 @@
         true,
         [
           ["GAME_SET_VAL", "$ACTIVE_CARD_PATH", "currentSide", "A"],
-          ["GAME_ADD_MESSAGE", "PLAYER_N", " flipped ", "$ACTIVE_FACE.name", " faceup."]
+          ["GAME_ADD_MESSAGE", "$PLAYER_N", " flipped ", "$ACTIVE_FACE.name", " faceup."]
         ]
       ]
     ],
@@ -3253,14 +3253,14 @@
           ["GAME_SET_VAL", "$ACTIVE_CARD_PATH", "rotation", 90],
           ["GAME_SET_VAL", "$ACTIVE_CARD_PATH", "exhausted", true],
           ["GAME_INCREASE_VAL", "playerData", "$ACTIVE_CARD.controller", "willpower", "$ACTIVE_FACE.willpower"],
-          ["GAME_SET_VAL", "PLAYER_N", " committed ", "$ACTIVE_FACE.name", "to the quest."]
+          ["GAME_SET_VAL", "$PLAYER_N", " committed ", "$ACTIVE_FACE.name", "to the quest."]
         ],
         ["AND", ["EQUAL", "$ACTIVE_CARD.committed", true], "$CARD.inPlay"],
         [
           ["GAME_SET_VAL", "$ACTIVE_CARD_PATH", "rotation", 0],
           ["GAME_SET_VAL", "$ACTIVE_CARD_PATH", "exhausted", false],
           ["GAME_DECREASE_VAL", "playerData", "$ACTIVE_CARD.controller", "willpower", "$ACTIVE_FACE.willpower"],
-          ["GAME_SET_VAL", "PLAYER_N", " uncommitted ", "$ACTIVE_FACE.name", "to the quest."]
+          ["GAME_SET_VAL", "$PLAYER_N", " uncommitted ", "$ACTIVE_FACE.name", "to the quest."]
         ],
         true,
         "$GAME"
@@ -3281,15 +3281,13 @@
         ["AND", ["EQUAL", "$ACTIVE_CARD.rotation", 0], ["EQUAL", "$ACTIVE_CARD.committed", false], "$CARD.inPlay"],
         [
           ["GAME_INCREASE_VAL", "playerData", "$ACTIVE_CARD.controller", "willpower", "$ACTIVE_FACE.willpower"],
-          ["GAME_SET_VAL", "PLAYER_N", " committed ", "$ACTIVE_FACE.name", "to the quest without exhausting."]
+          ["GAME_SET_VAL", "$PLAYER_N", " committed ", "$ACTIVE_FACE.name", "to the quest without exhausting."]
         ],
         ["AND", ["EQUAL", "$ACTIVE_CARD.committed", true], "$CARD.inPlay"],
         [
           ["GAME_DECREASE_VAL", "playerData", "$ACTIVE_CARD.controller", "willpower", "$ACTIVE_FACE.willpower"],
-          ["GAME_SET_VAL", "PLAYER_N", " removed ", "$ACTIVE_FACE.name", "from the quest."]
-        ],
-        true,
-        "$GAME"
+          ["GAME_SET_VAL", "$PLAYER_N", " removed ", "$ACTIVE_FACE.name", "from the quest."]
+        ]
       ]
     ],
     "dealShadow": [
@@ -3306,9 +3304,7 @@
             ["GAME_SET_VAL", "cardById", "$SHADOW_CARD_ID", "currentSide", "B"],
             ["GAME_ADD_MESSAGE", "$PLAYER_N", " dealt a shadow card to ", "$ACTIVE_FACE.name", "."]
           ]
-        ],
-        true,
-        "$GAME"
+        ]
       ]
     ],
     "targetCard": [

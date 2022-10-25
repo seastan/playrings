@@ -169,7 +169,7 @@ defmodule DragnCardsGame.Evaluate do
                 {:halt, evaluate(game, Enum.at(ifthens, i+1))}
               else
                 IO.puts("false")
-                {:cont, nil}
+                {:cont, game}
               end
             end)
             #IO.puts("COND then")
@@ -241,9 +241,14 @@ defmodule DragnCardsGame.Evaluate do
             Logger.debug("here")
             GameUI.move_card(game, card_id, card["discardGroupId"], 0, 0)
           "ATTACH_CARD" ->
+            IO.inspect(code)
             card_id = evaluate(game, Enum.at(code, 1))
             dest_card_id = evaluate(game, Enum.at(code, 2))
             dest_card = game["cardById"][dest_card_id]
+            IO.puts("ATTACHING --------------------------------------")
+            IO.inspect(card_id)
+            IO.inspect(dest_card["groupId"])
+            IO.inspect(dest_card["stackIndex"])
             GameUI.move_card(game, card_id, dest_card["groupId"], dest_card["stackIndex"], -1, true, false)
           "DRAW_CARD" ->
             argc = Enum.count(code) - 1
@@ -319,6 +324,8 @@ defmodule DragnCardsGame.Evaluate do
           evaluate(game, "$ACTIVE_CARD_PATH") ++ ["tokens"]
         code == "$ACTIVE_CARD" ->
           get_in(game, evaluate(game, "$ACTIVE_CARD_PATH"))
+        code == "$ACTIVE_CARD_ID" ->
+          evaluate(game, "$ACTIVE_CARD.id")
         code == "$ACTIVE_FACE" ->
           get_in(game, evaluate(game, "$ACTIVE_FACE_PATH"))
         code == "$ACTIVE_TOKENS" ->
