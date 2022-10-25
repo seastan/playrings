@@ -116,9 +116,9 @@ export const TopBarUser = React.memo(({
             <div key={index} className="w-full" style={{height: `${100/gameDef?.topBarCounters?.player?.length}%`}}>
               <TopBarUserCounter 
                 playerI={playerI}
-                  playerProperty={menuItem.playerProperty} 
-                  imageUrl={menuItem.imageUrl} 
-                  name={menuItem.name}/>
+                playerProperty={menuItem.playerProperty} 
+                imageUrl={menuItem.imageUrl} 
+                name={menuItem.name}/>
             </div>
           )
         })}

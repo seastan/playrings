@@ -6,16 +6,20 @@ import { getDefault, getDisplayName, processTokenType, tokenPrintName } from "..
 import { setActiveCardObj, setDropdownMenuObj, setTouchAction } from "../../store/playerUiSlice";
 import store from "../../../store";
 import BroadcastContext from "../../../contexts/BroadcastContext";
+import { useDoActionList } from "./useDoActionList";
+import { useGameDefinition } from "./useGameDefinition";
 
 export const HandleTouchActions = React.memo(({}) => {
     const {gameBroadcast, chatBroadcast} = useContext(BroadcastContext);
     const dispatch = useDispatch();
-    const gameUi = useSelector(state => state?.gameUi);
+    const gameDef = useGameDefinition();
+//    const gameUi = useSelector(state => state?.gameUi);
     const playerN = useSelector(state => state?.playerUi?.playerN);
     const touchMode = useSelector(state => state?.playerUi?.touchMode);
     const touchAction = useSelector(state => state?.playerUi?.touchAction);
     const activeCardObj = useSelector(state => state?.playerUi?.activeCardObj);
     const dropdownMenuObj = useSelector(state => state?.playerUi?.dropdownMenuObj);
+    const doActionList = useDoActionList();
 /*     var activeCardGameUi = null;
     if (activeCardObj?.card) activeCardGameUi = gameUi.game.cardById[activeCardObj.card.id]; */
     const [currentDropdownMenuCardId, setCurrentDropdownMenuCardId] = useState(null);
@@ -26,35 +30,34 @@ export const HandleTouchActions = React.memo(({}) => {
 
     useEffect(() => {
         if (!playerN) return;
-        if (touchAction?.type === "game") {
+        //alert(touchAction?.actionListId)
+        if (touchAction?.actionType === "game") {
             const action = touchAction?.action;
-            gameAction(action, actionProps)
+            doActionList(touchAction?.actionListId)
             dispatch(setTouchAction(null));
-        } else if (touchAction?.type === "card" && activeCardObj?.card) {
-            const action = touchAction.action;
-            const activeCard = activeCardObj.card;
-            if (action === "increment_token") {
-                const options = touchAction.options;
-                const tokenType = processTokenType(options.tokenType, activeCard);
-                const increment = options.increment;
-                const hasToken = activeCard.tokens[tokenType] > 0;
-                gameBroadcast("game_action", {action:"increment_token", options: {card_id: activeCard.id, token_type: tokenType, increment: increment}});
-                if (increment > 0) chatBroadcast("game_update",{message: "added "+increment+" "+tokenPrintName(tokenType)+" token to "+getDisplayName(activeCard)+"."});
-                if (increment < 0 && hasToken) chatBroadcast("game_update",{message: "removed "+Math.abs(increment)+" "+tokenPrintName(tokenType)+" token from "+getDisplayName(activeCard)+"."});
-                const tokensLeft = touchAction.options?.tokensLeft;
-                if (tokensLeft >= 0) {
-                    if (tokensLeft === 0) dispatch(setTouchAction(null));
-                    else if (tokensLeft === 1 && hasToken)  dispatch(setTouchAction(null));
-                    else if (hasToken) {
-                        dispatch(setTouchAction({...touchAction, options: {...options, tokensLeft: tokensLeft - 1}}))
-                    }
+        } else if (touchAction?.actionType === "token" && activeCardObj?.card) {
+            const tokenType = touchAction?.actionType;
+            const increment = touchAction?.doubleClicked ? -1 : 1;
+            const hasToken = activeCardObj?.card?.tokens[tokenType] > 0;
+            if (!hasToken && increment < 0 && gameDef["tokens"]?.[tokenType]?.modifier !== true) return; // Can't have negative non-modifier tokens
+            const actionList = [
+                ["GAME_INCREAS_VAL", "$ACTIVE_TOKENS_PATH", tokenType, increment],
+                ["GAME_ADD_MESSAGE", "$PLAYER_N", increment > 0 ? " added " : "removed ", increment, " ", gameDef["tokens"]?.[tokenType]?.name," token to ", "$ACTIVE_FACE.name", "."]
+            ]
+            doActionList(actionList);
+            const tokensLeft = touchAction?.tokensLeft;
+            if (tokensLeft >= 0) {
+                if (tokensLeft === 0) dispatch(setTouchAction(null));
+                else if (tokensLeft === 1 && hasToken) dispatch(setTouchAction(null));
+                else if (hasToken) {
+                    dispatch(setTouchAction({...touchAction, tokensLeft: tokensLeft - 1}))
                 }
-            } else {
-                cardAction(action, activeCard?.id, touchAction.options, actionProps);
             }
+        } else if (touchAction?.actionType === "card" && activeCardObj?.card) {
+            doActionList(touchAction?.actionListId)
             dispatch(setActiveCardObj(null));
         }
-    }, [activeCardObj, touchAction, gameUi, playerN]);
+    }, [activeCardObj, touchAction, playerN]);
 
     useEffect(() => {
         if (dropdownMenuObj?.visible === false && dropdownMenuObj?.card?.id === currentDropdownMenuCardId) {
@@ -91,7 +94,6 @@ export const HandleTouchActions = React.memo(({}) => {
             if (!sameAsPrev && prevActive?.setIsActive) prevActive.setIsActive(false);
         }
     }, [activeCardObj, touchMode])
-
 
     return null;
 })

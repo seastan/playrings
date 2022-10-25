@@ -87,7 +87,7 @@ export const DragContainer = React.memo(({}) => {
       }
       dispatch(setStackIds(newOrigGroup));
       dispatch(setCardIds(newDestStack));
-      doActionList("evaluate", ["MOVE_STACK", origStackId, destGroupId, dest.index, true, false])
+      doActionList(["MOVE_STACK", origStackId, destGroupId, dest.index, true, false])
     }
 
     // Dropped nowhere
@@ -127,7 +127,7 @@ export const DragContainer = React.memo(({}) => {
       else {
         chatBroadcast("game_update",{message: "moved "+getDisplayName(topOfOrigStackCard)+" from "+origGroupTitle+" to "+destGroupTitle+"."});
       }
-      doActionList("evaluate", ["MOVE_STACK", origStackId, destGroupId, dest.index, false, destGroupId === origGroupId])
+      doActionList(["MOVE_STACK", origStackId, destGroupId, dest.index, false, destGroupId === origGroupId])
       dispatch(setGroupById(newGroupById));
       //gameBroadcast("game_action", {action:"move_stack", options:{stack_id: origStackId, dest_group_id: destGroupId, dest_stack_index: dest.index, combine: false, preserve_state: destGroupId === origGroupId}})
     }

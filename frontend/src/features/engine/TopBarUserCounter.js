@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from 'react-redux';
 import useFocus from "../../hooks/useFocus";
 import { useDoActionList } from "./functions/useDoActionList";
@@ -14,7 +14,8 @@ export const TopBarUserCounter = React.memo(({
 }) => {
   const dispatch = useDispatch();
   const doActionList = useDoActionList();
-  const [value, setValue] = useState(useSelector(state => state?.gameUi?.game?.playerData?.[playerI]?.[playerProperty]) || 0);
+  const backEndValue = useSelector(state => state?.gameUi?.game?.playerData?.[playerI]?.[playerProperty]);
+  const [value, setValue] = useState( backEndValue || 0);
   const [previousValue, setPreviousValue] = useState(value);
   const playerN = useSelector(state => state?.playerUi?.playerN);  
   const [inputRef, setInputFocus] = useFocus();
@@ -37,10 +38,15 @@ export const TopBarUserCounter = React.memo(({
           ["GAME_ADD_MESSAGE", "$PLAYER_N", " decreased their ", playerProperty," by ", -totalDelta, "."]
         ]
       ]
-      doActionList("_custom", listOfActions);
+      doActionList(listOfActions);
       setInputFocus();
     }, 400);
   }
+
+  useEffect(() => {
+    setValue(backEndValue);
+    setPreviousValue(backEndValue);
+  },[backEndValue]);
 
   return(
     <div className="h-full w-full flex justify-center">

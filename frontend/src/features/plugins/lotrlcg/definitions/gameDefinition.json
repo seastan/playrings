@@ -35,15 +35,15 @@
   },
   "firstPlayerImageUrl": "https://dragncards-lotrlcg.s3.amazonaws.com/tokens/firstplayer.png",
   "tokens": {
-    "resource": {"left": "10%", "top":  "0%", "height": "3vh", "width": "3vh", "imageUrl": "https://dragncards-lotrlcg.s3.amazonaws.com/tokens/resource.png"},
-    "progress": {"left": "10%", "top": "25%", "height": "3vh", "width": "3vh", "imageUrl": "https://dragncards-lotrlcg.s3.amazonaws.com/tokens/progress.png"},
-    "damage":   {"left": "10%", "top": "50%", "height": "3vh", "width": "3vh", "imageUrl": "https://dragncards-lotrlcg.s3.amazonaws.com/tokens/damage.png"},
-    "time":     {"left": "10%", "top": "75%", "height": "3vh", "width": "3vh", "imageUrl": "https://dragncards-lotrlcg.s3.amazonaws.com/tokens/time.png"},
-    "willpower":{"left": "55%", "top":  "0%", "height": "3vh", "width": "3vh", "modifier": true, "imageUrl": "https://dragncards-lotrlcg.s3.amazonaws.com/tokens/willpower.png"},
-    "threat":   {"left": "55%", "top":  "0%", "height": "3vh", "width": "3vh", "modifier": true, "imageUrl": "https://dragncards-lotrlcg.s3.amazonaws.com/tokens/threat.png"},
-    "attack":   {"left": "55%", "top": "25%", "height": "3vh", "width": "3vh", "modifier": true, "imageUrl": "https://dragncards-lotrlcg.s3.amazonaws.com/tokens/attack.png"},
-    "defense":  {"left": "55%", "top": "50%", "height": "3vh", "width": "3vh", "modifier": true, "imageUrl": "https://dragncards-lotrlcg.s3.amazonaws.com/tokens/defense.png"},
-    "hitPoints":{"left": "55%", "top": "75%", "height": "3vh", "width": "3vh", "modifier": true, "imageUrl": "https://dragncards-lotrlcg.s3.amazonaws.com/tokens/hitPoints.png"}
+    "resource": {"name": "resource", "left": "10%", "top":  "0%", "height": "3vh", "width": "3vh", "imageUrl": "https://dragncards-lotrlcg.s3.amazonaws.com/tokens/resource.png"},
+    "progress": {"name": "progress", "left": "10%", "top": "25%", "height": "3vh", "width": "3vh", "imageUrl": "https://dragncards-lotrlcg.s3.amazonaws.com/tokens/progress.png"},
+    "damage":   {"name": "damage", "left": "10%", "top": "50%", "height": "3vh", "width": "3vh", "imageUrl": "https://dragncards-lotrlcg.s3.amazonaws.com/tokens/damage.png"},
+    "time":     {"name": "time", "left": "10%", "top": "75%", "height": "3vh", "width": "3vh", "imageUrl": "https://dragncards-lotrlcg.s3.amazonaws.com/tokens/time.png"},
+    "willpower":{"name": "willpower", "left": "55%", "top":  "0%", "height": "3vh", "width": "3vh", "modifier": true, "imageUrl": "https://dragncards-lotrlcg.s3.amazonaws.com/tokens/willpower.png"},
+    "threat":   {"name": "threat", "left": "55%", "top":  "0%", "height": "3vh", "width": "3vh", "modifier": true, "imageUrl": "https://dragncards-lotrlcg.s3.amazonaws.com/tokens/threat.png"},
+    "attack":   {"name": "attack", "left": "55%", "top": "25%", "height": "3vh", "width": "3vh", "modifier": true, "imageUrl": "https://dragncards-lotrlcg.s3.amazonaws.com/tokens/attack.png"},
+    "defense":  {"name": "defense", "left": "55%", "top": "50%", "height": "3vh", "width": "3vh", "modifier": true, "imageUrl": "https://dragncards-lotrlcg.s3.amazonaws.com/tokens/defense.png"},
+    "hitPoints":{"name": "hit point", "left": "55%", "top": "75%", "height": "3vh", "width": "3vh", "modifier": true, "imageUrl": "https://dragncards-lotrlcg.s3.amazonaws.com/tokens/hitPoints.png"}
   },
   "topBarCounters": {
     "shared": [
@@ -2686,7 +2686,7 @@
       {"key": "C", "actionListId": "detach", "label": "Detach"},
       {"key": "F", "actionListId": "flipCard", "label": "Flip"},
       {"key": "C", "actionListId": "detach", "label": "Detach"},
-      {"key": "H", "actionListId": "shuffleintoDeck", "label": "Shuffle into owner's deck"},
+      {"key": "H", "actionListId": "shuffleIntoDeck", "label": "Shuffle into owner's deck"},
       {"key": "Q", "actionListId": "toggleCommit", "label": "Commit / uncommit from quest"},
       {"key": "Shift+Q", "actionListId": "toggleCommitWithoutExhausting", "label": "Commit / uncommit from quest without exhausting / readying"},
       {"key": "S", "actionListId": "dealShadow", "label": "Deal shadow card"},
@@ -2697,6 +2697,231 @@
       {"key": "Shift+C", "actionListId": "discardOtherCardsInStack", "label": "Discard all other cards in this card's stack"},
       {"key": "B", "actionListId": "sendToBack", "label": "Send attachment to back of stack"},
       {"key": "Shift+A", "actionListId": "triggerAbility", "label": "Trigger ability (only available for select cards)"}
+    ]
+  },
+  "touchBar": {
+    "row1": [
+      {
+        "id": "removeTokens",
+        "label": "Remove Tokens",
+        "actionType": "card",
+        "actionListId": "zeroTokens"
+      },
+      {
+        "id": "incrementResource",
+        "label": "",
+        "imageUrl": "https://dragncards-lotrlcg.s3.amazonaws.com/tokens/resource.png",
+        "actionType": "token",
+        "tokenType": "resource"
+      },
+      {
+        "id": "incrementProgress",
+        "label": "",
+        "imageUrl": "https://dragncards-lotrlcg.s3.amazonaws.com/tokens/progress.png",
+        "actionType": "token",
+        "tokenType": "progress"
+      },
+      {
+        "id": "incrementDamage",
+        "label": "",
+        "imageUrl": "https://dragncards-lotrlcg.s3.amazonaws.com/tokens/damage.png",
+        "actionType": "token",
+        "tokenType": "damage"
+      },
+      {
+        "id": "incrementTime",
+        "label": "",
+        "imageUrl": "https://dragncards-lotrlcg.s3.amazonaws.com/tokens/time.png",
+        "actionType": "token",
+        "tokenType": "time"
+      },
+      {
+        "id": "incrementWillpower",
+        "label": "",
+        "imageUrl": "https://dragncards-lotrlcg.s3.amazonaws.com/tokens/willpower.png",
+        "actionType": "token",
+        "tokenType": "willpower"
+      },
+      {
+        "id": "incrementThreat",
+        "label": "",
+        "imageUrl": "https://dragncards-lotrlcg.s3.amazonaws.com/tokens/threat.png",
+        "actionType": "token",
+        "tokenType": "threat"
+      },
+      {
+        "id": "incrementAttack",
+        "label": "",
+        "imageUrl": "https://dragncards-lotrlcg.s3.amazonaws.com/tokens/attack.png",
+        "actionType": "token",
+        "tokenType": "attack"
+      },
+      {
+        "id": "incrementDefense",
+        "label": "",
+        "imageUrl": "https://dragncards-lotrlcg.s3.amazonaws.com/tokens/defense.png",
+        "actionType": "token",
+        "tokenType": "defense"
+      },
+      {
+        "id": "incrementHitPoints",
+        "label": "",
+        "imageUrl": "https://dragncards-lotrlcg.s3.amazonaws.com/tokens/hitPoints.png",
+        "actionType": "token",
+        "tokenType": "hitPoints"
+      },
+      {
+        "id": "toggleExhaust",
+        "label": "Exhaust Ready",
+        "actionType": "card",
+        "actionListId": "toggleExhaust"
+      },
+      {
+        "id": "toggleCommit",
+        "label": "Commit",
+        "actionType": "card",
+        "actionListId": "toggleCommit"
+      },
+      {
+        "id": "shuffleIntoDeck",
+        "label": "Shuffle",
+        "actionType": "card",
+        "actionListId": "shuffleIntoDeck"
+      },
+      {
+        "id": "flip",
+        "label": "Flip",
+        "actionType": "card",
+        "actionListId": "flipCard"
+      },
+      {
+        "id": "dealShadow",
+        "label": "Shadow",
+        "actionType": "card",
+        "actionListId": "dealShadow"
+      },
+      {
+        "id": "discard",
+        "label": "Discard",
+        "actionType": "card",
+        "actionListId": "discardCard"
+      },
+      {
+        "id": "target",
+        "label": "Target",
+        "actionType": "card",
+        "actionListId": "targetCard"
+      },
+      {
+        "id": "victory",
+        "label": "Victory",
+        "actionType": "card",
+        "actionListId": "addToVictoryDisplay"
+      },
+      {
+        "id": "drawArrow",
+        "label": "Draw Arrow",
+        "actionType": "card",
+        "actionListId": "drawArrow"
+      }
+    ],
+    "row2": [
+      {
+        "id": "draw",
+        "label": "Draw",
+        "actionType": "game",
+        "actionListId": "draw"
+      },
+      {
+        "id": "reveal",
+        "label": "Reveal",
+        "actionType": "game",
+        "actionListId": "revealEncounterFacedown"
+      },
+      {
+        "id": "shadows",
+        "label": "Shadows",
+        "actionType": "game",
+        "actionListId": "dealShadows"
+      },
+      {
+        "id": "discardShadows",
+        "label": "Discard shadows",
+        "actionType": "game",
+        "actionListId": "discardShadows"
+      },
+      {
+        "id": "refresh",
+        "label": "Refresh",
+        "actionType": "game",
+        "actionListId": "refresh"
+      },
+      {
+        "id": "newRound",
+        "label": "New round",
+        "actionType": "game",
+        "actionListId": "newRound"
+      },
+      {
+        "id": "clearTargets",
+        "label": "Clear Targets",
+        "actionType": "game",
+        "actionListId": "clearTargets"
+      },
+      {
+        "id": "undo",
+        "label": "Undo",
+        "actionType": "engine",
+        "actionId": "undo"
+      },
+      {
+        "id": "undoMany",
+        "label": "Undo many",
+        "actionType": "engine",
+        "actionId": "undoMany"
+      },
+      {
+        "id": "nextStep",
+        "label": "Next step",
+        "actionType": "game",
+        "actionListId": "nextStep"
+      },
+      {
+        "id": "raiseThreat",
+        "label": "Raise threat",
+        "actionType": "game",
+        "actionListId": "increaseThreat"
+      },
+      {
+        "id": "reduceThreat",
+        "label": "Reduce threat",
+        "actionType": "game",
+        "actionListId": "decreaseThreat"
+      },
+      {
+        "id": "save",
+        "label": "Save",
+        "actionType": "engine",
+        "actionId": "save"
+      },
+      {
+        "id": "revealDeck2",
+        "label": "Reveal #2",
+        "actionType": "game",
+        "actionListId": "revealSecondaryFacedown"
+      },
+      {
+        "id": "mulligan",
+        "label": "Mulligan",
+        "actionType": "game",
+        "actionListId": "mulligan"
+      },
+      {
+        "id": "score",
+        "label": "Score",
+        "actionType": "game",
+        "actionListId": "calculateScore"
+      }
     ]
   },
   "actionLists": {
@@ -2997,7 +3222,7 @@
         "$GAME"
       ]
     ],
-    "flip": [
+    "flipCard": [
       ["COND",
         ["EQUAL", "$ACTIVE_CARD.currentSide", "A"],
         [
@@ -3069,7 +3294,7 @@
     ],
     "dealShadow": [
       ["COND",
-        "$CARD.inPlay",
+        "$ACTIVE_CARD.inPlay",
         ["COND",
           ["EQUAL", ["LENGTH", "$GAME.groupById.sharedEncounterDeck.stackIds"], 0],
           ["GAME_ADD_MESSAGE", "$PLAYER_N", " tried to deal a shadow card but the encounter deck is empty."],
