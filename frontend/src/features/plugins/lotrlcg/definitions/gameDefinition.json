@@ -2699,8 +2699,8 @@
       {"key": "Shift+A", "actionListId": "triggerAbility", "label": "Trigger ability (only available for select cards)"}
     ]
   },
-  "touchBar": {
-    "row1": [
+  "touchBar": [
+    [
       {
         "id": "removeTokens",
         "label": "Remove Tokens",
@@ -2825,7 +2825,7 @@
         "actionListId": "drawArrow"
       }
     ],
-    "row2": [
+    [
       {
         "id": "draw",
         "label": "Draw",
@@ -2923,7 +2923,7 @@
         "actionListId": "calculateScore"
       }
     ]
-  },
+  ],
   "actionLists": {
     "newRound": [
       ["COND",

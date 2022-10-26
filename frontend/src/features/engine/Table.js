@@ -9,7 +9,7 @@ import { SideBar } from "./SideBar";
 import { Hotkeys } from "./Hotkeys";
 import { PlayersInRoom } from "./PlayersInRoom";
 import { DropdownMenu } from "./DropdownMenu";
-import { TouchBarBottom } from "../plugins/lotrlcg/components/TouchBarBottom";
+import { TouchBarBottom } from "./TouchBarBottom";
 
 import "../../css/custom-dropdown.css";
 import { TooltipModal } from "./TooltipModal";

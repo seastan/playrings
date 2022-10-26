@@ -1,7 +1,7 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useGameDefinition } from "../../../engine/functions/useGameDefinition";
-import { setActiveCardObj, setDropdownMenuObj, setTouchAction } from "../../../store/playerUiSlice";
+import { useGameDefinition } from "./functions/useGameDefinition";
+import { setActiveCardObj, setDropdownMenuObj, setTouchAction } from "../store/playerUiSlice";
 
 export const TouchButton = React.memo(({buttonObj}) => {
   const gameDef = useGameDefinition();
@@ -62,24 +62,19 @@ export const TouchBarBottom = React.memo(({}) => {
   return (
     <table className="table-fixed w-full h-full text-white select-none" style={{width: "99.9%"}}>
       <tbody className="w-full h-full">
-      <tr className={"bg-gray-700"} style={{height: "50%", maxHeight: "50%"}}>
-        {gameDef.touchBar.row1.map((buttonObj, _index) => {
+        {gameDef.touchBar.map((row, rowIndex) => {
           return (
-            <td className={containerClass} style={containerStyle}>
-              <TouchButton buttonObj={buttonObj}/>
-            </td>
+            <tr className={"bg-gray-700"} style={{height: `${100/gameDef.touchBar.length}%`}}>
+              {row.map((buttonObj, _index) => {
+                return (
+                  <td className={containerClass} style={containerStyle}>
+                    <TouchButton buttonObj={buttonObj}/>
+                  </td>
+                )
+              })}
+            </tr> 
           )
         })}
-      </tr>
-      <tr className={"bg-gray-700"} style={{height: "50%", maxHeight: "50%"}}>
-        {gameDef.touchBar.row2.map((buttonObj, _index) => {
-          return (
-            <td className={containerClass} style={containerStyle}>
-              <TouchButton buttonObj={buttonObj}/>
-            </td>
-          )
-        })}
-      </tr>
       </tbody>
     </table>
   )
