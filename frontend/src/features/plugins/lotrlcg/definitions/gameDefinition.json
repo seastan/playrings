@@ -2924,6 +2924,33 @@
       }
     ]
   ],
+  "defaultActions": [
+    {
+      "actionListId": null,
+      "label": null,
+      "condition": ["EQUAL", "$ACTIVE_CARD.groupType", "horizontalFan"]
+    },
+    {
+      "actionListId": "flipCard",
+      "label": "flip",
+      "condition": ["AND", ["EQUAL", "$ACTIVE_CARD.rotation", -30], ["EQUAL", "$ACTIVE_CARD.currentSide", "B"]]
+    },
+    {
+      "actionListId": "discardCard",
+      "label": "discard",
+      "condition": ["AND", ["EQUAL", "$ACTIVE_CARD.rotation", -30], ["EQUAL", "$ACTIVE_CARD.currentSide", "A"]]
+    },
+    {
+      "actionListId": "shuffleIntoDeck",
+      "label": "shuffle",
+      "condition": ["EQUAL", "$ACTIVE_CARD.groupType", "pile"]
+    },
+    {
+      "actionListId": "flipCard",
+      "label": "flip",
+      "condition": ["AND", ["EQUAL", "$ACTIVE_FACE.type", "Quest"], ["EQUAL", "$ACTIVE_CARD.currentSide", "A"]]
+    }
+  ],
   "actionLists": {
     "newRound": [
       ["COND",
@@ -3314,7 +3341,7 @@
     "victory": [
       ["MOVE_CARD", "$ACTIVE_CARD_ID", "sharedVictory", 0, 0]
     ],
-    "discard": [
+    "discardCard": [
       ["LOGGER", "0"],
       ["COND",
         ["EQUAL", "$ACTIVE_CARD.cardIndex", 0],

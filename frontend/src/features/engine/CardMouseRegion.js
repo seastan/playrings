@@ -1,9 +1,10 @@
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { getDisplayName, getVisibleFace } from "../plugins/lotrlcg/functions/helpers";
 import useLongPress from "../../hooks/useLongPress";
 import { useDispatch, useSelector } from "react-redux";
 import { setActiveCardId, setActiveCardObj, setDropdownMenuObj } from "../store/playerUiSlice";
+import { useHandleTouchAction } from "./functions/useHandleTouchAction";
 
 
 export const CardMouseRegion = React.memo(({
@@ -20,27 +21,27 @@ export const CardMouseRegion = React.memo(({
     const dispatch = useDispatch();
     const card = useSelector(state => state?.gameUi?.game?.cardById[cardId]);
     const displayName = getDisplayName(card);    
-    const playerN = useSelector(state => state?.playerUi?.playerN)
-    const touchMode = useSelector(state => state?.playerUi?.touchMode)
-    const touchAction = useSelector(state => state?.playerUi?.touchAction)
+    const playerN = useSelector(state => state?.playerUi?.playerN);
+    const touchMode = useSelector(state => state?.playerUi?.touchMode);
+    const touchAction = useSelector(state => state?.playerUi?.touchAction);
+    const handleTouchAction = useHandleTouchAction();
 
     const makeActive = (event) => {
         const screenPosition = event.clientX > (window.innerWidth/2) ? "right" : "left";
         dispatch(setActiveCardId(card.id))
         dispatch(setActiveCardObj({
-            card: {
-                ...card,
-                groupId: groupId,
-                groupType: groupType,
-                cardIndex: cardIndex,
-            },
+            card: card, //{
+                // groupId: groupId,
+                // groupType: groupType,
+                // cardIndex: cardIndex,
+            //},
             mousePosition: position, 
             screenPosition: screenPosition,
             clicked: true,
             //setIsActive: setIsActive,
-            groupId: groupId,
-            groupType: groupType,
-            cardIndex: cardIndex,
+            // groupId: groupId,
+            // groupType: groupType,
+            // cardIndex: cardIndex,
         }));
     }
 
@@ -56,13 +57,11 @@ export const CardMouseRegion = React.memo(({
 
     const handleClick = (event) => {
         console.log("cardclick", card);
-        event.stopPropagation();
-        // Open the menu
-        if (!touchMode) handleSetDropDownMenu();
-        // Make the card active (since there was no mouseover)
-        // The listener in HandleTouchButton will see the active card change and perform the touch action
-        // if (event.touches && event.touches[0].touchType === "stylus") return; // Apple pencil fix attempt (didn't work)
+        event.stopPropagation();        
         makeActive(event,position);
+        // What to do depends on whether touch mode is active
+        if (touchMode) handleTouchAction(card);
+        else handleSetDropDownMenu();
     }
     
     const handleMouseOver = (event) => {

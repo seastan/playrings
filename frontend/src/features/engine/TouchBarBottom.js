@@ -2,11 +2,13 @@ import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useGameDefinition } from "./functions/useGameDefinition";
 import { setActiveCardObj, setDropdownMenuObj, setTouchAction } from "../store/playerUiSlice";
+import { useDoActionList } from "./functions/useDoActionList";
 
 export const TouchButton = React.memo(({buttonObj}) => {
   const gameDef = useGameDefinition();
   const dispatch = useDispatch();
   const touchAction = useSelector(state => state?.playerUi?.touchAction);
+  const doActionList = useDoActionList();
   // Check if action is selected
 
   const selected = touchAction?.id === buttonObj?.id;
@@ -16,9 +18,14 @@ export const TouchButton = React.memo(({buttonObj}) => {
 
   const handleClick = (event) => {
     event.stopPropagation();
+    // When a touch button is pressed, remove any active card to dropdown menu
     dispatch(setDropdownMenuObj(null));
     dispatch(setActiveCardObj(null));
-    if (selected) {
+    // If it's a game function, just do it
+    if (buttonObj?.actionType === "game") {
+      doActionList(buttonObj?.actionListId)
+    // If button is selected already, either change it from + to - or deselect it
+    } else if (selected) {
       if (touchAction?.actionType === "token" && !touchAction.doubleClicked) {
         dispatch(setTouchAction(
           {...touchAction, doubleClicked: true}
@@ -27,6 +34,7 @@ export const TouchButton = React.memo(({buttonObj}) => {
         dispatch(setTouchAction(null)); 
       }
     } 
+    // Otherwise, select the button
     else dispatch(setTouchAction(buttonObj));
   }
 

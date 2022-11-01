@@ -472,14 +472,10 @@ defmodule DragnCardsGame.GameUI do
       card_face = get_current_card_face(game, card_id)
       dest_group = get_group_by_card_id(game, card_id)
       orig_group = get_group(game, orig_group_id)
-      dest_group_id = dest_group["id"]
-      card_index = get_card_index_by_card_id(game, card_id)
-      card = put_in(card["inPlay"], dest_group["inPlay"])
-      IO.inspect("new inplay")
-      IO.inspect(dest_group)
-      IO.inspect(dest_group["inPlay"])
+      {dest_group_id, dest_stack_index, dest_card_index} = gsc(game, card_id)
       card = put_in(card["groupId"], dest_group_id)
-      card = put_in(card["cardIndex"], card_index)
+      card = put_in(card["stackIndex"], dest_stack_index)
+      card = put_in(card["cardIndex"], dest_card_index)
 
       committed_willpower = if card["committed"] do
         card_face["willpower"] + card["tokens"]["willpower"]
