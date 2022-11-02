@@ -12,7 +12,7 @@ import { AbilityToken } from "./AbilityToken";
 import { setActiveCardObj } from "../store/playerUiSlice";
 import { useCardSize } from "../../hooks/useCardSize";
 import { useGameDefinition } from "./functions/useGameDefinition";
-import { useDefaultAction } from "./functions/useDefaultAction";
+import { useGetDefaultAction } from "./functions/useGetDefaultAction";
 
 function useTraceUpdate(props) {
     const prev = useRef(props);
@@ -72,7 +72,8 @@ export const Card = React.memo(({
     console.log('Rendering Card ',cardVisibleFace.name);
     const isActive = useSelector(state => {return state?.playerUi?.activeCardObj?.card?.id === cardId});
     const touchModeSpacingFactor = touchMode ? 1.5 : 1;
-    const defaultAction = useDefaultAction(touchMode, isActive, cardId);
+    const getDefaultAction = useGetDefaultAction();
+    const defaultAction = touchMode && isActive ? getDefaultAction(cardId) : null;
 
     const handleMouseLeave = (_event) => {
         //setIsActive(false);
@@ -141,22 +142,14 @@ export const Card = React.memo(({
                     top={"0%"}
                     cardId={cardId}
                     isActive={isActive}
-                    //setIsActive={setIsActive}
                     zIndex={zIndex}
-                    cardIndex={cardIndex}
-                    groupId={groupId}
-                    groupType={groupType}
                 />
                 <CardMouseRegion 
                     position={"bottom"}
                     top={"50%"}
                     cardId={cardId}
                     isActive={isActive}
-                    //setIsActive={setIsActive}
                     zIndex={zIndex}
-                    cardIndex={cardIndex}
-                    groupId={groupId}
-                    groupType={groupType}
                 />
                 <Tokens
                     cardName={currentFace.name}

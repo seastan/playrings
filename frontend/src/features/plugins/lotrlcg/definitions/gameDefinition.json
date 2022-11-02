@@ -3112,6 +3112,14 @@
       ["GAME_SET_VAL", "playerData", "$PLAYER_N", "refreshed", true],
       ["GAME_ADD_MESSAGE", "player1 refeshed."]
     ],
+    "addDamage": [
+      ["GAME_INCREASE_VAL", "cardById", "$ACTIVE_CARD_ID", "tokens", "damage", 1],
+      ["GAME_ADD_MESSAGE", "$PLAYER_N", " added 1 damage token to ", "$ACTIVE_FACE.name", "."]
+    ],
+    "addProgress": [
+      ["GAME_INCREASE_VAL", "cardById", "$ACTIVE_CARD_ID", "tokens", "progress", 1],
+      ["GAME_ADD_MESSAGE", "$PLAYER_N", " added 1 progress token to ", "$ACTIVE_FACE.name", "."]
+    ],
     "revealEncounterFaceup": [
       ["DEFINE", "$REVEAL_FACEDOWN", false],
       ["ACTION_LIST", "revealEncounter"]

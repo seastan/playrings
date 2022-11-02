@@ -12,15 +12,10 @@ export const CardMouseRegion = React.memo(({
     top,
     cardId,
     isActive,
-    //setIsActive,
     zIndex,
-    cardIndex,
-    groupId,
-    groupType,
 }) => {
     const dispatch = useDispatch();
     const card = useSelector(state => state?.gameUi?.game?.cardById[cardId]);
-    const displayName = getDisplayName(card);    
     const playerN = useSelector(state => state?.playerUi?.playerN);
     const touchMode = useSelector(state => state?.playerUi?.touchMode);
     const touchAction = useSelector(state => state?.playerUi?.touchAction);
@@ -30,18 +25,10 @@ export const CardMouseRegion = React.memo(({
         const screenPosition = event.clientX > (window.innerWidth/2) ? "right" : "left";
         dispatch(setActiveCardId(card.id))
         dispatch(setActiveCardObj({
-            card: card, //{
-                // groupId: groupId,
-                // groupType: groupType,
-                // cardIndex: cardIndex,
-            //},
+            card: card,
             mousePosition: position, 
             screenPosition: screenPosition,
-            clicked: true,
-            //setIsActive: setIsActive,
-            // groupId: groupId,
-            // groupType: groupType,
-            // cardIndex: cardIndex,
+            clicked: true
         }));
     }
 
