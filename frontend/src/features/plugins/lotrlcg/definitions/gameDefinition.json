@@ -2933,12 +2933,14 @@
     {
       "actionListId": "flipCard",
       "label": "flip",
-      "condition": ["AND", ["EQUAL", "$ACTIVE_CARD.rotation", -30], ["EQUAL", "$ACTIVE_CARD.currentSide", "B"]]
+      "condition": ["AND", ["EQUAL", "$ACTIVE_CARD.rotation", -30], ["EQUAL", "$ACTIVE_CARD.currentSide", "B"]],
+      "position": "bottom"
     },
     {
       "actionListId": "discardCard",
       "label": "discard",
-      "condition": ["AND", ["EQUAL", "$ACTIVE_CARD.rotation", -30], ["EQUAL", "$ACTIVE_CARD.currentSide", "A"]]
+      "condition": ["AND", ["EQUAL", "$ACTIVE_CARD.rotation", -30], ["EQUAL", "$ACTIVE_CARD.currentSide", "A"]],
+      "position": "bottom"
     },
     {
       "actionListId": "shuffleIntoDeck",
@@ -2949,6 +2951,71 @@
       "actionListId": "flipCard",
       "label": "flip",
       "condition": ["AND", ["EQUAL", "$ACTIVE_FACE.type", "Quest"], ["EQUAL", "$ACTIVE_CARD.currentSide", "A"]]
+    },
+    {
+      "actionListId": "addProgress",
+      "label": "progress",
+      "condition": ["AND", ["EQUAL", "$ACTIVE_FACE.type", "Quest"], ["LESS_EQUAL", "$ACTIVE_CARD.tokens.progress", "$ACTIVE_FACE.questPoints"]]
+    },
+    {
+      "actionListId": "discardCard",
+      "label": "discard",
+      "condition": ["AND", ["EQUAL", "$ACTIVE_FACE.type", "Quest"], ["GREATER_EQUAL", "$ACTIVE_CARD.tokens.progress", "$ACTIVE_FACE.questPoints"]]
+    },
+    {
+      "actionListId": "flipCard",
+      "label": "flip",
+      "condition": ["AND", ["EQUAL", "$ACTIVE_CARD.currentSide", "B"], "$ACTIVE_CARD.inPlay"]
+    },
+    {
+      "actionListId": "addDamage",
+      "label": "damage",
+      "condition": ["AND", ["EQUAL", "$ACTIVE_FACE.type", "Enemy"], ["LESS_THAN", "$ACTIVE_CARD.tokens.damage", "$ACTIVE_FACE.hitPoints"]]
+    },
+    {
+      "actionListId": "addToVictoryDisplay",
+      "label": "add to VD",
+      "condition": ["AND", ["EQUAL", "$ACTIVE_FACE.type", "Enemy"], ["GREATER_EQUAL", "$ACTIVE_CARD.tokens.damage", "$ACTIVE_FACE.hitPoints"], "$ACTIVE_FACE.victoryPoints", ["GREATHER_THAN", "$ACTIVE_FACE.victoryPoints", 0]]
+    },
+    {
+      "actionListId": "discardCard",
+      "label": "discard",
+      "condition": ["AND", ["EQUAL", "$ACTIVE_FACE.type", "Enemy"], ["GREATER_EQUAL", "$ACTIVE_CARD.tokens.damage", "$ACTIVE_FACE.hitPoints"]]
+    },
+    {
+      "actionListId": "discardCard",
+      "label": "discard",
+      "condition": ["EQUAL", "$ACTIVE_FACE.type", "Treachery"]
+    },
+    {
+      "actionListId": "addProgress",
+      "label": "progress",
+      "condition": ["AND", ["EQUAL", "$ACTIVE_FACE.type", "Location"], ["LESS_THAN", "$ACTIVE_CARD.tokens.progress", "$ACTIVE_FACE.questPoints"]]
+    },
+    {
+      "actionListId": "addToVictoryDisplay",
+      "label": "add to VD",
+      "condition": ["AND", ["EQUAL", "$ACTIVE_FACE.type", "Location"], ["GREATER_EQUAL", "$ACTIVE_CARD.tokens.progress", "$ACTIVE_FACE.questPoints"], "$ACTIVE_FACE.victoryPoints", ["GREATHER_THAN", "$ACTIVE_FACE.victoryPoints", 0]]
+    },
+    {
+      "actionListId": "discardCard",
+      "label": "discard",
+      "condition": ["AND", ["EQUAL", "$ACTIVE_FACE.type", "Location"], ["GREATER_EQUAL", "$ACTIVE_CARD.tokens.progress", "$ACTIVE_FACE.questPoints"]]
+    },
+    {
+      "actionListId": "discardCard",
+      "label": "discard",
+      "condition": ["EQUAL", "$ACTIVE_FACE.type", "Event"]
+    },
+    {
+      "actionListId": "toggleExhaust",
+      "label": "exhaust",
+      "condition": ["EQUAL", "$ACTIVE_CARD.rotation", 0]
+    },
+    {
+      "actionListId": "toggleExhaust",
+      "label": "ready",
+      "condition": ["EQUAL", "$ACTIVE_CARD.rotation", 90]
     }
   ],
   "actionLists": {

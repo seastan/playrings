@@ -2,125 +2,102 @@ import { useContext } from 'react';
 import { useSelector } from 'react-redux';
 import BroadcastContext from '../../../contexts/BroadcastContext';
 import store from '../../../store';
+import { isString } from '../../store/updateValues';
 import { flipCard } from '../actionLists/flipCard';
 import { useDoActionList } from './useDoActionList';
 import { useGameDefinition } from './useGameDefinition';
 
-const evaluate = (state, code) => {
-    if (Array.isArray(code) && code.length > 0) {
-        console.log("code")
-        if (Array.isArray(code[0])) {
-            var result = state;
-            for (var block in code) {
-                result = evaluate(result, block)
-            }
-            return result;
-        } else {
-            switch (code[0]) {
-                case "AND":
-                  day = "Sunday";
-                  break;
-                case 1:
-                  day = "Monday";
-                  break;
-                case 2:
-                   day = "Tuesday";
-                  break;
-                case 3:
-                  day = "Wednesday";
-                  break;
-                case 4:
-                  day = "Thursday";
-                  break;
-                case 5:
-                  day = "Friday";
-                  break;
-                case 6:
-                  day = "Saturday";
-            }
+const evaluate = (state, card, code) => {
+  if (Array.isArray(code) && code.length > 0) {
+    console.log("code")
+    if (Array.isArray(code[0])) {
+        var result = state;
+        for (var block in code) {
+            result = evaluate(result, card, block)
         }
-    } else { // value
-        console.log("val")
+        return result;
+    } else {
+      var lhs, rhs;
+      switch (code[0]) {
+        case "LIST":
+          const result = [];
+          console.log("equal 4 list", code)
+          for (var item of code.slice(1)) {
+            result.push(evaluate(state, card, item))
+          }
+          console.log("equal 4 return", result)
+          return result;
+        case "AND":
+          console.log("equal AND", evaluate(state, card, code[1]), evaluate(state, card, code[2]))
+          for (var i=1; i< code.length; i++) {
+            if (!evaluate(state, card, code[i])) return false;
+          }
+          return true;
+        case "EQUAL":
+          console.log("equal equal",evaluate(state, card, code[1]),evaluate(state, card, code[2]))
+          return evaluate(state, card, code[1]) == evaluate(state, card, code[2])
+        case "LESS_THAN":
+          lhs = evaluate(state, card, code[1]) || 0;
+          rhs = evaluate(state, card, code[2]) || 0;
+          return lhs < rhs;
+        case "GREATER_THAN":
+          lhs = evaluate(state, card, code[1]) || 0;
+          rhs = evaluate(state, card, code[2]) || 0;
+          return lhs > rhs;
+        case "LESS_EQUAL":
+          lhs = evaluate(state, card, code[1]) || 0;
+          rhs = evaluate(state, card, code[2]) || 0;
+          return lhs <= rhs;
+        case "GREATER_EQUAL":
+          lhs = evaluate(state, card, code[1]) || 0;
+          rhs = evaluate(state, card, code[2]) || 0;
+          return lhs >= rhs;
+        case "OBJ_GET_BY_PATH":
+          const obj = evaluate(state, card, code[1])
+          const path = evaluate(state, card, code[2])
+          console.log("equal 3",code,obj,path)
+          if (!path || path.length === 0) {
+            return null;
+          } else if (path.length === 1) {
+            return obj[path[0]]
+          } else {
+            const newObj = obj[path[0]];
+            const newPath = path.slice(1);
+            newPath.unshift("LIST");
+            return evaluate(state, card, ["OBJ_GET_BY_PATH", newObj, newPath])
+          }
+      }
     }
- /*    if is_list(code) && Enum.count(code) > 0 do
-    if is_list(Enum.at(code, 0)) do
-      #actions = Enum.slice(code, 1, Enum.count(code))
-      Enum.reduce(code, game, fn(action, acc) ->
-        evaluate(acc, action)
-      end)
-    else
-      # code = Enum.reduce(code, [], fn(code_line, acc) ->
-      #   IO.puts("evaluating")
-      #   IO.inspect(code_line)
-      #   acc ++ [evaluate(game, code_line)]
-      # end)
-
-      case Enum.at(code,0) do
-        "LOGGER" ->
-          statements = Enum.slice(code, 1, Enum.count(code))
-          message = Enum.reduce(statements, "", fn(statement, acc) ->
-            str_statement = inspect(evaluate(game, statement))
-            acc <> String.replace(str_statement,"\"","")
-          end)
-          IO.inspect(message)
-          game
-        "DEFINE" ->
-          var_name = Enum.at(code, 1)
-          value = evaluate(game, Enum.at(code, 2))
-          put_in(game, ["variables", var_name], value)
-        "LIST" ->
-          list = Enum.slice(code, 1, Enum.count(code))
-          Enum.reduce(list, [], fn(item,acc)->
-            acc ++ [evaluate(game, item)]
-          end)
-        "NEXT_PLAYER" ->
-          current_player_i = evaluate(game, Enum.at(code, 1))
-          current_i = String.to_integer(String.slice(current_player_i, -1..-1))
-          next_i = current_i + 1
-          next_i = if next_i > game["numPlayers"] do 1 else next_i end
-          "player" <> Integer.to_string(next_i)
-        "GET_INDEX" ->
-          list = evaluate(game, Enum.at(code, 1))
-          value = evaluate(game, Enum.at(code, 2))
-          Enum.find_index(list, fn(x) -> x == value end)
-        "AT_INDEX" ->
-          #raise "stop"
-          list = evaluate(game, Enum.at(code, 1))
-          index = evaluate(game, Enum.at(code, 2))
-          if list do Enum.at(list, index) else nil end
-        "LENGTH" ->
-          Enum.count(evaluate(game, Enum.at(code,1)))
-        "AND" ->
-          statements = Enum.slice(code, 1, Enum.count(code))
-          Enum.reduce_while(statements, false, fn(statement, acc) ->
-            if evaluate(game, statement) == true do
-              {:cont, true}
-            else
-              {:halt, false}
-            end
-          end)
-        "EQUAL" ->
-          evaluate(game, Enum.at(code,1)) == evaluate(game, Enum.at(code,2))
-        "LESS_THAN" ->
-          evaluate(game, Enum.at(code,1)) < evaluate(game, Enum.at(code,2))
-        "GREATER_THAN" ->
-          evaluate(game, Enum.at(code,1)) > evaluate(game, Enum.at(code,2))
-        "LESS_EQUAL" ->
-          evaluate(game, Enum.at(code,1)) <= evaluate(game, Enum.at(code,2))
-        "GREATER_EQUAL" ->
-          evaluate(game, Enum.at(code,1)) >= evaluate(game, Enum.at(code,2))
-        "NOT" -> */
+  } else { // value
+    if (code === "$ACTIVE_CARD")
+      return card;
+    else if (code === "$ACTIVE_FACE")
+      return card.sides[card.currentSide];
+    else if (isString(code) && code.startsWith("$") && code.includes(".")) {
+      const list = code.split('.')
+      const obj = evaluate(state, card, list[0])
+      const newList = list.slice(1);//
+      newList.unshift("LIST")
+      console.log("equal 2", obj, newList)
+      return evaluate(state, card, ["OBJ_GET_BY_PATH", obj, newList])
+    } else {
+      return code;
+    }
+  }
 }
 
-export const useDefaultAction = () => {
-    const gameDef = useGameDefinition();
-    const doActionList = useDoActionList();
-    const defaultActions = gameDef?.defaultActions;
-    const {gameBroadcast, chatBroadcast} = useContext(BroadcastContext);
-    return () => {
-        const state = store.getState();
-        for (var defaultAction of defaultActions) {
-            if (evaluate(state, defaultAction.condition)) doActionList(defaultAction.actionListId); 
-        }
+export const useDefaultAction = (touchMode, isActive, cardId) => {
+  const gameDef = useGameDefinition();
+  const doActionList = useDoActionList();
+  const card = useSelector(state => state?.gameUi?.game?.cardById[cardId]);
+  const defaultActions = gameDef?.defaultActions;
+  if (touchMode && isActive) {
+    const state = store.getState();
+    for (var defaultAction of defaultActions) {
+      console.log("equal condition", defaultAction.condition, evaluate(state, card, defaultAction.condition))
+      if (evaluate(state, card, defaultAction.condition)) return defaultAction; 
     }
+    return null;
+  }
+  else return null;
 }

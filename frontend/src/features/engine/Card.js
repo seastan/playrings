@@ -12,6 +12,7 @@ import { AbilityToken } from "./AbilityToken";
 import { setActiveCardObj } from "../store/playerUiSlice";
 import { useCardSize } from "../../hooks/useCardSize";
 import { useGameDefinition } from "./functions/useGameDefinition";
+import { useDefaultAction } from "./functions/useDefaultAction";
 
 function useTraceUpdate(props) {
     const prev = useRef(props);
@@ -71,7 +72,7 @@ export const Card = React.memo(({
     console.log('Rendering Card ',cardVisibleFace.name);
     const isActive = useSelector(state => {return state?.playerUi?.activeCardObj?.card?.id === cardId});
     const touchModeSpacingFactor = touchMode ? 1.5 : 1;
-    const defaultAction = null; //FIXME getDefault(card, groupId, groupType, cardIndex)
+    const defaultAction = useDefaultAction(touchMode, isActive, cardId);
 
     const handleMouseLeave = (_event) => {
         //setIsActive(false);
@@ -124,12 +125,12 @@ export const Card = React.memo(({
                 onMouseLeave={event => handleMouseLeave(event)}>
                 <img className="absolute w-full h-full" style={{borderRadius: '0.6vh'}} src={visibleFaceSrc.src} onError={(e)=>{e.target.onerror = null; e.target.src=visibleFaceSrc.default}} />
 
-                {isActive && touchMode && defaultAction &&
+                {defaultAction &&
                     <div 
-                        className={"absolute w-full pointer-events-none bg-green-700 font-bold rounded text-white text-xs text-center" + (cardRotation === -30 ? " bottom-0" : "")}
+                        className={"absolute w-full pointer-events-none bg-green-700 font-bold rounded text-white text-xs text-center" + (defaultAction.position === "bottom" ? " bottom-0" : "")}
                         style={{height:"40px", opacity: "80%"}}>
                             <div>Tap to</div>
-                            {defaultAction.title}
+                            {defaultAction.label}
                     </div>}
                 {(cardPeeking[playerN] && groupType !== "hand" && (cardCurrentSide === "B")) ? <FontAwesomeIcon className="absolute top-0 right-0 text-2xl" icon={faEye}/>:null}
                 <Target

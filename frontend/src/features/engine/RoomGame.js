@@ -37,9 +37,7 @@ const RoomGame = React.memo(({}) => {
 
   return (
     <div className="h-full w-full">
-{/*       <HandleKeyDown/>   
-      {touchMode && <HandleTouchActions/>}
-  */}     <DragContainer/>
+      <DragContainer/>
     </div>
   )
 })
