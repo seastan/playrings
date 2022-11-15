@@ -82,6 +82,8 @@
   end
 
   def add_delta(game, prev_game) do
+    #IO.puts("deltas")
+    #IO.inspect(game)
     ds = game["deltas"]
     num_deltas = Enum.count(ds)
     new_step = prev_game["replayStep"]+1

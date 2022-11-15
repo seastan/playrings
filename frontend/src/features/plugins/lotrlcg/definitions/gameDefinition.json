@@ -2836,7 +2836,7 @@
         "id": "reveal",
         "label": "Reveal",
         "actionType": "game",
-        "actionListId": "revealEncounterFacedown"
+        "actionListId": "revealEncounterFaceup"
       },
       {
         "id": "shadows",
@@ -3180,7 +3180,7 @@
     "draw": [
       ["DRAW_CARD"]
     ],
-    "shadows": [
+    "dealShadows": [
       ["DEFINE", "$STEP_ID", "6.2"],
       ["COND",
         ["AND", ["EQUAL", "$GAME.playerUi.playerN", "player1"], ["NOT_EQUAL", "$STEP_ID", "$GAME.stepId"]],
@@ -3232,9 +3232,7 @@
         [
           ["COND",
             ["EQUAL", "$CARD.rotation", -30],
-            ["DISCARD_CARD", "$CARD_ID"],
-            true,
-            "$GAME"
+            ["ACTION_LIST", "discardCard", "$CARD_ID"]
           ]
         ]
       ]
@@ -3244,8 +3242,9 @@
         ["EQUAL", "$GAME.stepId", ["AT_INDEX", "$GAME.gameDef.stepOrder", -1]],
         ["GAME_SET_VAL", "stepId", ["AT_INDEX", "$GAME.gameDef.stepOrder", 0]],
         true,
-        [["LOGGER", "here"],
-        ["GAME_SET_VAL", "stepId", ["AT_INDEX", "$GAME.gameDef.stepOrder", ["ADD", ["GET_INDEX", "$GAME.gameDef.stepOrder", "$GAME.stepId"], 1]]]
+        [
+          ["LOGGER", "here"],
+          ["GAME_SET_VAL", "stepId", ["AT_INDEX", "$GAME.gameDef.stepOrder", ["ADD", ["GET_INDEX", "$GAME.gameDef.stepOrder", "$GAME.stepId"], 1]]]
         ]
       ],
       ["DEFINE", "$STEP_ID", "$GAME.stepId"],
@@ -3257,8 +3256,9 @@
         ["EQUAL", "$GAME.stepId", ["AT_INDEX", "$GAME.gameDef.stepOrder", 0]],
         ["GAME_SET_VAL", "stepId", ["AT_INDEX", "$GAME.gameDef.stepOrder", -1]],
         true,
-        [["LOGGER", "here"],
-        ["GAME_SET_VAL", "stepId", ["AT_INDEX", "$GAME.gameDef.stepOrder", ["SUBTRACT", ["GET_INDEX", "$GAME.gameDef.stepOrder", "$GAME.stepId"], 1]]]
+        [
+          ["LOGGER", "here"],
+          ["GAME_SET_VAL", "stepId", ["AT_INDEX", "$GAME.gameDef.stepOrder", ["SUBTRACT", ["GET_INDEX", "$GAME.gameDef.stepOrder", "$GAME.stepId"], 1]]]
         ]
       ],
       ["DEFINE", "$STEP_ID", "$GAME.stepId"],
@@ -3413,33 +3413,55 @@
       ["GAME_SET_VAL", "$ACTIVE_CARD_PATH", "targeting", "$PLAYER_N", true],
       ["GAME_ADD_MESSAGE", "$PLAYER_N", " targeted ", "$ACTIVE_FACE.name", "."]
     ],
-    "victory": [
-      ["MOVE_CARD", "$ACTIVE_CARD_ID", "sharedVictory", 0, 0]
+    "addToVictoryDisplay": [
+      ["MOVE_CARD", "$ACTIVE_CARD_ID", "sharedVictory", 0, 0],
+      ["GAME_ADD_MESSAGE", "$PLAYER_N", " added ", "$ACTIVE_FACE.name", " to the victory display."]
     ],
     "discardCard": [
-      ["LOGGER", "0"],
+      ["LOGGER", "HEREXYZ0"],
       ["COND",
         ["EQUAL", "$ACTIVE_CARD.cardIndex", 0],
         [
-          ["LOGGER", "A"],
+          ["LOGGER", "HERE1"],
+          ["LOGGER", "$ACTIVE_CARD"],
           ["DEFINE", "$STACK_ID", "$ACTIVE_CARD.stackId"],
+          ["LOGGER", "$STACK_ID"],
           ["DEFINE", "$CARD_IDS", "$GAME.stackById.$STACK_ID.cardIds"],
+          ["LOGGER", "$GAME.stackById"],
+          ["LOGGER", "$GAME.stackById.$STACK_ID"],
+          ["LOGGER", "$CARD_IDS"],
           ["FOR_EACH_VAL", "$CARD_ID", "$CARD_IDS",
             [
               ["DEFINE", "$CARD", "$GAME.cardById.$CARD_ID"],
               ["LOGGER", "$CARD"],
-              ["DEFINE", "$CURRENT_SIDE", "$CARD.currentSide"],
-              ["GAME_ADD_MESSAGE", "$PLAYER_N", " discarded ", "$CARD.sides.$CURRENT_SIDE.name", "."],
-              ["DISCARD_CARD", "$CARD_ID"]
+              ["COND",
+                ["EQUAL", "$CARD.discardGroupId", null],
+                ["GAME_ADD_MESSAGE", "$PLAYER_N", " failed to discard ", ["FACEUP_NAME_FROM_CARD_ID", "$CARD_ID"], " because it is not associated with a discard pile. Please drag the card instead."],
+                true,
+                [
+                  ["LOGGER", "HERE2"],
+                  ["LOGGER", "$CARD.discardGroupId"],
+                  ["DEFINE", "$CURRENT_SIDE", "$CARD.currentSide"],
+                  ["GAME_ADD_MESSAGE", "$PLAYER_N", " discarded ", "$CARD.sides.$CURRENT_SIDE.name", "."],
+                  ["DISCARD_CARD", "$CARD_ID"]
+                ]
+              ]
             ]
           ]
         ],
         true,
         [
-          ["LOGGER", "B"],
-          ["DEFINE", "$CURRENT_SIDE", "$ACTIVE_CARD.currentSide"],
-          ["GAME_ADD_MESSAGE", "$PLAYER_N", " discarded ", "$ACTIVE_CARD.sides.$CURRENT_SIDE.name", "."],
-          ["DISCARD_CARD", "$ACTIVE_CARD_ID"]
+        ["LOGGER", "HERE3"],
+        ["LOGGER", "$ACTIVE_CARD"],
+        ["COND",
+          ["EQUAL", "$ACTIVE_CARD.discardGroupId", null],
+          ["GAME_ADD_MESSAGE", "$PLAYER_N", " failed to discard ", "$ACTIVE_FACE.name", " because it is not associated with a discard pile. Please drag the card instead."],
+          true,
+          [
+            ["GAME_ADD_MESSAGE", "$PLAYER_N", " discarded ", "$ACTIVE_FACE.name", "."],
+            ["DISCARD_CARD", "$ACTIVE_CARD_ID"]
+          ]
+        ]
         ]
       ] 
     ],
@@ -3447,7 +3469,7 @@
       ["MOVE_CARD", "$ACTIVE_CARD_ID", "$ACTIVE_CARD.deckGroupId", 0, 0],
       ["DEFINE", "$GROUP_ID", "$ACTIVE_CARD.deckGroupId"],
       ["SHUFFLE_GROUP", "$GROUP_ID"],
-      ["GAME_ADD_MESSAGE", "$PLAYER_N", " shuffled ", "$GAME.groupById.$GROUP_ID.name", "."]
+      ["GAME_ADD_MESSAGE", "$PLAYER_N", " shuffled ", "$ACTIVE_FACE.name", " into ", "$GAME.groupById.$GROUP_ID.name", "."]
     ],
     "detach": [
       ["COND",

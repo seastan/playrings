@@ -5,8 +5,8 @@ import useProfile from "../../hooks/useProfile";
 import { getCardRowCategory } from "../plugins/lotrlcg/functions/helpers";
 import { setShowModal, setTyping } from "../store/playerUiSlice";
 import { useGameL10n } from "../../hooks/useGameL10n";
-import { cardDb } from "../plugins/lotrlcg/functions/cardDb";
 import BroadcastContext from "../../contexts/BroadcastContext";
+import { usePlugin } from "./functions/usePlugin";
 
 const RESULTS_LIMIT = 150;
 
@@ -15,9 +15,11 @@ export const SpawnCardModal = React.memo(({}) => {
     const dispatch = useDispatch();
     const l10n = useGameL10n();
     const myUser = useProfile();
-    const playerN = useSelector(state => state?.playerUi?.playerN);
+    const playerN = useSelector(state => state?.playerUi?.playerN);  
+    const cardDb = usePlugin()?.card_db || {};
 
     const [spawnFilteredIDs, setSpawnFilteredIDs] = useState(Object.keys(cardDb));
+    if (Object.keys(cardDb).length === 0) return;
 
     const handleSpawnClick = (cardID) => {
         const cardRow = cardDb[cardID];
@@ -29,9 +31,9 @@ export const SpawnCardModal = React.memo(({}) => {
         if (cardRowCategory === "Quest") cardRow['discardgroupid'] = "sharedQuestDiscard";
         else if (cardRowCategory === "Encounter") cardRow['discardgroupid'] = "sharedEncounterDiscard";
         else cardRow['discardgroupid'] = playerN+"Discard";
-        const loadList = [{'cardRow': cardRow, 'quantity': 1, 'groupId': loadGroupId}]
+        const loadList = [{'cardDetails': cardRow, 'quantity': 1, 'groupId': loadGroupId}]
         gameBroadcast("game_action", {action: "load_cards", options: {load_list: loadList}});
-        chatBroadcast("game_update", {message: "spawned "+cardRow["sides"]["A"]["printname"]+"."});
+        chatBroadcast("game_update", {message: "spawned "+cardRow["A"]["name"]+"."});
     }
 
     const handleSpawnTyping = (event) => {
@@ -40,7 +42,8 @@ export const SpawnCardModal = React.memo(({}) => {
         const filteredIDs = []; //Object.keys(cardDB);
         Object.keys(cardDb).map((cardID, index) => {
           const cardRow = cardDb[cardID]
-          const sideA = cardRow["sides"]["A"]
+          console.log("handleSpawnTyping",cardDb,cardID,cardRow)
+          const sideA = cardRow["A"]
           const cardName = sideA["name"];
           const cardPack = cardRow["cardpackname"]
           if (

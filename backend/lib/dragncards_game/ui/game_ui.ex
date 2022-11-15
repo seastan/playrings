@@ -501,14 +501,15 @@ defmodule DragnCardsGame.GameUI do
         |> Map.put("targeting", %{})
       else card end
       # Set deck/discard
-      card = Map.put(card, "deckGroupId", dest_group["deckGroupId"])
-      card = Map.put(card, "discardGroupId", dest_group["discardGroupId"])
+      card = if dest_group["deckGroupId"] do Map.put(card, "deckGroupId", dest_group["deckGroupId"]) else card end
+      card = if dest_group["discardGroupId"] do Map.put(card, "discardGroupId", dest_group["discardGroupId"]) else card end
       # Set correct side
       card = Map.put(card, "currentSide", dest_group["defaultSideUp"])
       # Set peeking players
       card = Enum.reduce(dest_group["defaultPeeking"], card, fn(player_i, acc) ->
         acc |> put_in(["peeking", player_i], true)
       end)
+      IO.inspect(card)
       game = update_card(game, card)
       # Update game based on card moving
       # Handle reminders
@@ -1724,6 +1725,9 @@ defmodule DragnCardsGame.GameUI do
   end
 
   def create_card_in_group(game, group_id, load_list_item, game_def) do
+    IO.puts("create_card_in_group")
+    IO.inspect(group_id)
+    IO.inspect(load_list_item)
     group_size = Enum.count(get_stack_ids(game, group_id))
     # Can't insert a card directly into a group need to make a stack first
     IO.inspect("cciig")
@@ -1745,6 +1749,8 @@ defmodule DragnCardsGame.GameUI do
   def load_card(game, load_list_item, game_def) do
     quantity = load_list_item["quantity"]
     group_id = load_list_item["loadGroupId"]
+    IO.puts("load_card")
+    IO.inspect(load_list_item)
     if quantity > 0 do
       Enum.reduce(1..quantity, game, fn(index, acc) ->
         stack_ids = get_stack_ids(game, group_id)

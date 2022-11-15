@@ -30,6 +30,8 @@ defmodule DragnCardsGame.Evaluate do
 
         case Enum.at(code,0) do
           "LOGGER" ->
+            IO.puts("LOGGER:")
+            IO.inspect(code)
             statements = Enum.slice(code, 1, Enum.count(code))
             message = Enum.reduce(statements, "", fn(statement, acc) ->
               str_statement = inspect(evaluate(game, statement))
@@ -292,8 +294,27 @@ defmodule DragnCardsGame.Evaluate do
             face = card["sides"][card["currentSide"]]
             face["name"]
           "ACTION_LIST" ->
-            action_list_id = evaluate(game, Enum.at(code, 1))
-            evaluate(game, game["actionLists"][action_list_id])
+            argc = Enum.count(code) - 1
+            IO.puts("---------doing action list ---------------")
+            IO.inspect(game["playerUi"])
+            case argc do
+              0 ->
+                # TODO add error message
+                game
+              1 ->
+                action_list_id = evaluate(game, Enum.at(code, 1))
+                evaluate(game, game["actionLists"][action_list_id])
+              2 ->
+                action_list_id = evaluate(game, Enum.at(code, 1))
+                active_card_id = evaluate(game, Enum.at(code, 2))
+                game = put_in(game, ["playerUi", "activeCardId"], active_card_id)
+                IO.puts("---------doing action list with modified active card---------------")
+                IO.inspect(active_card_id)
+                IO.inspect(game["playerUi"])
+                evaluate(game, game["actionLists"][action_list_id])
+              _ ->
+                game
+            end
           _ ->
             code
         end

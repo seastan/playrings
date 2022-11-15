@@ -72,6 +72,8 @@ defmodule DragnCardsGame.CardFace do
 
   @spec card_face_from_card_face_details(Map.t(), Map.t()) :: Map.t()
   def card_face_from_card_face_details(card_face_details, game_def) do
+    IO.puts("card_face_from_card_face_details")
+    IO.inspect(card_face_details)
     type = card_face_details["type"]
     card_face = card_face_details
     |> Map.put("width",game_def["cardTypes"][type]["width"])
