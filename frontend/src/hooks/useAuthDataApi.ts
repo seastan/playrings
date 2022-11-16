@@ -12,6 +12,12 @@ const useAuthDataApi = (
   const [hash, setHash] = useState<any>(null); // Mechanism to refetch same url, by changing hash
   const [isLoading, setIsLoading] = useState(false);
   const [isError, setIsError] = useState(false);
+  console.log("useAuthDataApi")
+  console.log("useAuthDataApi data", data)
+  console.log("useAuthDataApi url", url)
+  console.log("useAuthDataApi hash", hash)
+  console.log("useAuthDataApi isLoading", isLoading)
+  console.log("useAuthDataApi isError", isError)
 
   const { authToken, renewToken, setAuthAndRenewToken } = useAuth();
   const authOptions = useMemo(
@@ -96,13 +102,15 @@ const useAuthDataApi = (
       const an_axios = axios.create();
       an_axios.interceptors.response.use(id, intercept_error);
       try {
-        console.log("debug1 result", url, authOptions)
+        console.log("debug1 result 1", url, authOptions)
         const result = await an_axios(url, authOptions);
+        console.log("debug1 result 2", result)
         if (result != null) {
           console.log("debug1 fetchtry", result.data?.user_profile?.language)
           setData(result.data);
         }
       } catch (error) {
+        console.log("useAuthDataApi error", error)
         setIsError(true);
       }
       setIsLoading(false);

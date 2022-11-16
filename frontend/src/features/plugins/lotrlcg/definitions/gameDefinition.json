@@ -1610,6 +1610,11 @@
       "cards": [{"uuid": "75c3ac9e-b4e2-4c26-95a3-df99e6f22c6d", "quantity": 1, "loadGroupId": "sharedSetAside"}, {"uuiid": "5642b7b9-b194-46e3-bf69-7aa7ec9efc62", "quantity": 1, "loadGroupId": "sharedSetAside"}, {"uuid": "7aff02d0-0b2d-4927-b685-03ccc5c7cb15", "quantity": 1, "loadGroupId": "sharedSetAside"}, {"uuid": "2b724cca-d2f1-4012-8567-4223d3842aa5", "quantity": 1, "loadGroupId": "sharedSetAside"}, {"uuid": "a4b3de91-8df7-4cb6-81e9-8d0205f48e05", "quantity": 1, "loadGroupId": "sharedSetAside"}, {"uuid": "d25ffeeb-134f-42aa-8eba-665b68302c6b", "quantity": 1, "loadGroupId": "sharedSetAside"}, {"uuid": "6d78c2c3-7683-499f-baaa-f018d822178a", "quantity": 4, "loadGroupId": "sharedSetAside"}, {"uuid": "5f27b9a9-7cb4-47ca-8397-e86b18b6b0de", "quantity": 4, "loadGroupId": "sharedSetAside"}, {"uuid": "f3c1abe3-48dc-4f61-8a4e-830c94bde22e", "quantity": 1, "loadGroupId": "sharedSetAside"}, {"uuid": "a34422e3-4cac-448d-a23f-15ce17f852b5", "quantity": 1, "loadGroupId": "sharedSetAside"}, {"uuid": "10ce5d5e-27ad-4220-a2b9-8811c1b0fc53", "quantity": 1, "loadGroupId": "sharedSetAside"}]
     }
   },
+  "spawnExistingCardModal": {
+    "defaultGroupId": "sharedStaging",
+    "columnProperties": ["name","packName"],
+    "spawnGroupIds": ["sharedStaging","player1Play1","player2Play1","player3Play1","player4Play1"]
+  },
   "deckMenu": [
     {
       "name": "Core Set & Shadows of Mirkwood",
@@ -2651,7 +2656,7 @@
       {"key": "8", "action": "adjustToken8", "label": "icon(https://dragncards-lotrlcg.s3.amazonaws.com/tokens/hitPoints.png)"}
     ],
     "game": [
-      {"key": "D", "actionListId": "draw", "label": "Draw a card"},
+      {"key": "D", "actionListId": "drawCard", "label": "Draw a card"},
       {"key": "E", "actionListId": "revealEncounterFaceup", "label": "Reveal encounter card"},
       {"key": "Shift+E", "actionListId": "revealEncounterFacedown", "label": "Reveal facedown encounter card"},
       {"key": "K", "actionListId": "revealSecondaryFaceup", "label": "Reveal card from second encounter deck"},
@@ -2827,10 +2832,10 @@
     ],
     [
       {
-        "id": "draw",
+        "id": "drawCard",
         "label": "Draw",
         "actionType": "game",
-        "actionListId": "draw"
+        "actionListId": "drawCard"
       },
       {
         "id": "reveal",
@@ -3022,12 +3027,10 @@
     "newRound": [
       ["COND",
         ["EQUAL", "$GAME.playerData.$PLAYER_N.refreshed", false],
-        ["ACTION_LIST", "refresh"],
-        true,
-        "$GAME"
+        ["ACTION_LIST", "refresh"]
       ],
       ["COND",
-        ["EQUAL", "$GAME.playerUi.playerN", "player1"],
+        ["EQUAL", "$PLAYER_N", "player1"],
         [
           ["GAME_INCREASE_VAL", "roundNumber", 1],
           ["GAME_ADD_MESSAGE", "player1 increased the round."],
@@ -3035,42 +3038,35 @@
           ["GAME_ADD_MESSAGE", "player1 set the phase to Resource."],
           ["GAME_SET_VAL", "stepId", "1.R"],
           ["GAME_ADD_MESSAGE", "player1 set the round step to 1.R."]
-        ],
-        true,
-        "$GAME"
+        ]
       ],
       ["FOR_EACH_KEY_VAL", "$CARD_ID", "$CARD", "$CARD_BY_ID", [
         ["DEFINE", "$CURRENT_SIDE", "$CARD.currentSide"],
         ["COND",
           ["AND",
             ["EQUAL", "$CARD.sides.$CURRENT_SIDE.type", "Hero"],
-            ["EQUAL", "$CARD.controller", "playerN"],
+            ["EQUAL", "$CARD.controller", "$PLAYER_N"],
             ["EQUAL", "$CARD.inPlay", true]
           ],
           [
             ["GAME_INCREASE_VAL", "cardById", "$CARD_ID", "tokens", "resource", 1],
-            ["GAME_ADD_MESSAGE", "$PLAYER_N", " added 1 resource token to ", ["OBJ_GET_VAL", "$CARD", "sides", ["OBJ_GET_VAL", "$CARD", "currentSide"], "name"], "."]
-          ],
-          true,
-          "$GAME"
+            ["GAME_ADD_MESSAGE", "$PLAYER_N", " added 1 resource token to ", ["FACEUP_NAME_FROM_CARD_ID", "$CARD_ID"], "."]
+          ]
         ],
         ["COND",
-          ["EQUAL", "$CARD.controller", "playerN"],
-          ["GAME_SET_VAL", "cardById", "$CARD_ID", "committed", false],
-          true,
-          "$GAME"
+          ["EQUAL", "$CARD.controller", "$PLAYER_N"],
+          ["GAME_SET_VAL", "cardById", "$CARD_ID", "committed", false]
         ],
         ["COND",
           ["AND",
-            ["EQUAL", "$CARD.controller", "playerN"],
-            ["EQUAL", "$CARD.inPlay", true]
+            ["EQUAL", "$CARD.controller", "$PLAYER_N"],
+            ["EQUAL", "$CARD.inPlay", true],
+            ["$CARD.extraResources"]
           ],
           [
             ["GAME_INCREASE_VAL", "cardById", "$CARD_ID", "tokens", "resource", "$CARD.extraResources"],
-            ["GAME_ADD_MESSAGE", "$PLAYER_N", " added ", ["OBJ_GET_VAL", "$CARD", "extraResources"]," extra resource token(s) to ", ["OBJ_GET_VAL", "$CARD", "sides", ["OBJ_GET_VAL", "$CARD", "currentSide"], "type"]]
-          ],
-          true,
-          "$GAME"
+            ["GAME_ADD_MESSAGE", "$PLAYER_N", " added ", ["OBJ_GET_VAL", "$CARD", "extraResources"]," extra resource token(s) to ", ["FACEUP_NAME_FROM_CARD_ID", "$CARD_ID"]]
+          ]
         ]
       ]],
       ["FOR_EACH_START_STOP_STEP", "$i", 0, "$GAME.playerData.player1.cardsDrawn", 1,
@@ -3084,33 +3080,30 @@
     ],
     "refresh": [
       ["COND",
-        ["EQUAL", "$GAME.playerUi.playerN", "player1"],
+        ["EQUAL", "$PLAYER_N", "player1"],
         [
           ["GAME_SET_VAL", "phaseId", "Refresh"],
           ["GAME_SET_VAL", "stepId", "7.R"],
           ["GAME_SET_VAL", "firstPlayer", ["NEXT_PLAYER", "$GAME.firstPlayer"]],
           ["GAME_ADD_MESSAGE", "player1 set the phase to Refresh."],
           ["GAME_ADD_MESSAGE", "player1 set the round step to 7.R."]
-        ],
-        true,
-        "$GAME"
+        ]
       ],
       ["FOR_EACH_KEY_VAL", "$CARD_ID", "$CARD", "$CARD_BY_ID", [
         ["COND",
           ["AND",
-            ["EQUAL", "$CARD.controller", "playerN"],
+            ["EQUAL", "$CARD.controller", "$PLAYER_N"],
             ["EQUAL", "$CARD.inPlay", true]
           ],
           [
             ["GAME_SET_VAL", "cardById", "$CARD_ID", "rotation", 0],
             ["GAME_SET_VAL", "cardById", "$CARD_ID", "exhausted", false]
-          ],
-          true,
-          "$GAME"
+          ]
         ]
       ]],
+      ["ACTION_LIST", "increaseThreat"],
       ["GAME_SET_VAL", "playerData", "$PLAYER_N", "refreshed", true],
-      ["GAME_ADD_MESSAGE", "player1 refeshed."]
+      ["GAME_ADD_MESSAGE", "$PLAYER_N", " refeshed."]
     ],
     "addDamage": [
       ["GAME_INCREASE_VAL", "cardById", "$ACTIVE_CARD_ID", "tokens", "damage", 1],
@@ -3177,7 +3170,7 @@
         ]
       ]
     ],
-    "draw": [
+    "drawCard": [
       ["DRAW_CARD"]
     ],
     "dealShadows": [
@@ -3270,7 +3263,7 @@
       ["DEFINE", "$DECK_GROUP_ID", ["JOIN_STRING", "$PLAYER_N", "Deck"]],
       ["DEFINE", "$HAND_SIZE", ["LENGTH", "$GAME.groupById.$HAND_GROUP_ID.stackIds"]],
       ["MOVE_STACKS", "$HAND_GROUP_ID", "$DECK_GROUP_ID", "$HAND_SIZE", "shuffle"],
-      ["DRAW", "$HAND_SIZE"]
+      ["DRAW_CARD", "$HAND_SIZE"]
     ],
     "clearTargets": [
       ["FOR_EACH_KEY_VAL", "$CARD_ID", "$CARD", "$CARD_BY_ID",
@@ -3299,7 +3292,7 @@
       ["GAME_ADD_MESSAGE", "$PLAYER_N", " increased each player's threat by 1."]
     ],
     "drawNextSeat": [
-      ["DRAW", 1, ["NEXT_PLAYER", "$PLAYER_N"]],
+      ["ACTION_LIST", "drawCard", null, ["NEXT_PLAYER", "$PLAYER_N"]],
       ["GAME_ADD_MESSAGE", "$PLAYER_N", " drew 1 card."]
     ],
     "zeroTokens": [

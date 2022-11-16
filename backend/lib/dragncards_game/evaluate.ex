@@ -255,7 +255,7 @@ defmodule DragnCardsGame.Evaluate do
           "DRAW_CARD" ->
             argc = Enum.count(code) - 1
             num = if argc == 0 do 1 else evaluate(game, Enum.at(code, 1)) end
-            player_n = if argc == 2 do evaluate(game, Enum.at(code, 2)) else game["playerUi"]["playerN"] end
+            player_n = game["playerUi"]["playerN"]
             GameUI.move_stacks(game, player_n <> "Deck", player_n <> "Hand", num, "bottom")
           "MOVE_STACK" ->
             argc = Enum.count(code) - 1
@@ -308,9 +308,13 @@ defmodule DragnCardsGame.Evaluate do
                 action_list_id = evaluate(game, Enum.at(code, 1))
                 active_card_id = evaluate(game, Enum.at(code, 2))
                 game = put_in(game, ["playerUi", "activeCardId"], active_card_id)
-                IO.puts("---------doing action list with modified active card---------------")
-                IO.inspect(active_card_id)
-                IO.inspect(game["playerUi"])
+                evaluate(game, game["actionLists"][action_list_id])
+              3 ->
+                action_list_id = evaluate(game, Enum.at(code, 1))
+                active_card_id = evaluate(game, Enum.at(code, 2))
+                player_n = evaluate(game, Enum.at(code, 3))
+                game = put_in(game, ["playerUi", "activeCardId"], active_card_id)
+                game = put_in(game, ["playerUi", "playerN"], player_n)
                 evaluate(game, game["actionLists"][action_list_id])
               _ ->
                 game

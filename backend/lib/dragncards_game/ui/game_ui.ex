@@ -509,7 +509,6 @@ defmodule DragnCardsGame.GameUI do
       card = Enum.reduce(dest_group["defaultPeeking"], card, fn(player_i, acc) ->
         acc |> put_in(["peeking", player_i], true)
       end)
-      IO.inspect(card)
       game = update_card(game, card)
       # Update game based on card moving
       # Handle reminders

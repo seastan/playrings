@@ -2,7 +2,7 @@ import React, { useContext, useEffect } from "react";
 import { TableLayout } from "./TableLayout";
 import { GiantCard } from "./GiantCard";
 import { TopBar } from "./TopBar";
-import { SpawnCardModal } from "./SpawnCardModal";
+import { SpawnExistingCardModal } from "./SpawnExistingCardModal";
 import { SpawnCustomModal } from "./SpawnCustomModal";
 import { SpawnPrebuiltModal } from "./SpawnPrebuiltModal";
 import { SideBar } from "./SideBar";
@@ -82,7 +82,7 @@ export const Table = React.memo(({registerDivToArrowsContext}) => {
       </div>
       {/* Card hover view */}
       <GiantCard/>
-      {showModal === "card" ? <SpawnCardModal/> : null}
+      {showModal === "card" ? <SpawnExistingCardModal/> : null}
       {showModal === "prebuilt_deck" ? <SpawnPrebuiltModal/> : null}
       {showModal === "custom" ? <SpawnCustomModal/> : null}
       {tooltipIds.map((tooltipId, index) => {

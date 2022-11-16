@@ -39,6 +39,8 @@ export const fetchUser = (
   userId: number,
   authCtx: AuthContextType
 ): AppThunk => async (dispatch, getState) => {
+
+  console.log("getUser 1d",userId)
   try {
     const { users } = getState();
     if (isUserExist(users, userId)) {
