@@ -9,7 +9,7 @@ import BroadcastContext from "../../contexts/BroadcastContext";
 import { useGameDefinition } from "./functions/useGameDefinition";
 import { usePlugin } from "./functions/usePlugin";
 
-export const SpawnCustomModal = React.memo(({}) => {
+export const SpawnCustomCardModal = React.memo(({}) => {
   const dispatch = useDispatch();
   const {gameBroadcast, chatBroadcast} = useContext(BroadcastContext);
   const gameDef = useGameDefinition();    

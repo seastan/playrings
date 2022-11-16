@@ -3,7 +3,7 @@ import { TableLayout } from "./TableLayout";
 import { GiantCard } from "./GiantCard";
 import { TopBar } from "./TopBar";
 import { SpawnExistingCardModal } from "./SpawnExistingCardModal";
-import { SpawnCustomModal } from "./SpawnCustomModal";
+import { SpawnCustomCardModal } from "./SpawnCustomCardModal";
 import { SpawnPrebuiltModal } from "./SpawnPrebuiltModal";
 import { SideBar } from "./SideBar";
 import { Hotkeys } from "./Hotkeys";
@@ -84,7 +84,7 @@ export const Table = React.memo(({registerDivToArrowsContext}) => {
       <GiantCard/>
       {showModal === "card" ? <SpawnExistingCardModal/> : null}
       {showModal === "prebuilt_deck" ? <SpawnPrebuiltModal/> : null}
-      {showModal === "custom" ? <SpawnCustomModal/> : null}
+      {showModal === "custom" ? <SpawnCustomCardModal/> : null}
       {tooltipIds.map((tooltipId, index) => {
         return(
         <TooltipModal
