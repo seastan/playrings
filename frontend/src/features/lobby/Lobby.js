@@ -8,7 +8,7 @@ import useProfile from "../../hooks/useProfile";
 import useIsLoggedIn from "../../hooks/useIsLoggedIn";
 import { Announcements } from "./Announcements";
 import { PluginsTable } from "./PluginsTable";
-
+import { Audio, Circles, FidgetSpinner, InfinitySpin, RevolvingDot, RotatingLines, RotatingSquare } from "react-loader-spinner";
 
 const isNormalInteger = (str) => {
   var n = Math.floor(Number(str));
@@ -93,8 +93,7 @@ export const Lobby = () => {
         OBackgroundSize: 'cover',
         backgroundColor: `rgba(50,50,50,0.95)`,
         backgroundBlendMode: 'overlay'
-      }}
-        >
+      }}>
         <div className="mt-4 mx-auto w-full p-2" style={{maxWidth: "600px"}}>
           <div style={{height: "200px"}}>
             <div className="w-1/2 h-full float-left">
@@ -168,7 +167,10 @@ export const Lobby = () => {
               />
             </>
             :
-            <PluginsTable plugins={plugins} setSelectedPlugin={setSelectedPlugin} />
+            <div className="w-full">
+              <div className="text-center text-white text-2xl mb-2">Public Plugins</div>
+              <PluginsTable plugins={plugins} setSelectedPlugin={setSelectedPlugin} />
+            </div>
           }
         </div>
         {/* <div className="w-full mb-4 lg:w-1/4 xl:w-2/6">

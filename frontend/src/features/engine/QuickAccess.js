@@ -27,7 +27,7 @@ export const QuickAccess = React.memo(({}) => {
   const labels = ["SA", "SB", "VD", "E2"];
 
   return (        
-    <div className="absolute h-full cursor-default text-center text-gray-400 right-0 overflow-y-hidden" style={{width:"30px", background:"rgba(0, 0, 0, 0.3)", zIndex: 1e6+1}}>
+    <div className="absolute h-full cursor-default text-center text-gray-400 right-0 overflow-y-hidden" style={{width:"30px", background:"rgba(0, 0, 0, 0.3)", zIndex: 1e3+1}}>
       {groupIds.map((groupId, groupIndex) => (
         <div key={groupIndex} className={`h-1/5 w-full bg-gray-800 ${sideGroupId === groupId ? "bg-red-800" : "hover:bg-gray-600"}`} onClick={() => handleQuickViewClick(groupId)}>
           <div className="h-1/2 w-full flex items-center justify-center">{labels[groupIndex]}</div>

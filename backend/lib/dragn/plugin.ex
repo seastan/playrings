@@ -3,7 +3,7 @@ defmodule DragnCards.Plugin do
   import Ecto.Changeset
   import Ecto.Query
 
-  alias DragnCards.{Plugin, Repo}
+  alias DragnCards.{Plugin, Repo, Users.User}
 
   @derive {Jason.Encoder, only: [:game_def, :card_db]}
 
@@ -28,8 +28,26 @@ defmodule DragnCards.Plugin do
   end
 
   def list_plugins do
-    query = from Plugin, order_by: [desc: :version], where: [public: true], select: [:author_user_id, :author_alias, :plugin_uuid, :plugin_name, :version, :num_favorites, :public]
-    Repo.all(query)
+    IO.puts("WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW")
+    query = from p in Plugin,
+    join: u in User,
+    on: [id: p.author_user_id],
+    order_by: [desc: :version],
+    where: [public: true],
+    select: {
+      p.author_user_id,
+      u.alias,
+      p.plugin_uuid,
+      p.plugin_name,
+      p.version,
+      p.num_favorites,
+      p.public,
+      p.updated_at,
+    }
+    q = Repo.all(query)
+    IO.puts("QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ")
+    IO.inspect(q)
+    q
   end
 
   def get_by_uuid_and_version(plugin_uuid, version) do

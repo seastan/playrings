@@ -4,13 +4,27 @@ defmodule DragnCardsWeb.PluginsView do
 
   def render("index.json", %{plugins: plugins}) do
     %{data: Enum.map(plugins, fn plugin ->
+      IO.puts("YYYYYYYYYYYYYYYYYYYYYYY")
+      IO.inspect(plugin)
+      {
+        author_user_id,
+        author_alias,
+        plugin_uuid,
+        plugin_name,
+        version,
+        num_favorites,
+        public,
+        updated_at
+      } = plugin
       %{
-        plugin_uuid: plugin.plugin_uuid,
-        plugin_name: plugin.plugin_name,
-        num_favorites: plugin.num_favorites,
-        author_user_id: plugin.author_user_id,
-        author_alias: plugin.author_alias,
-        version: plugin.version,
+        plugin_uuid: plugin_uuid,
+        plugin_name: plugin_name,
+        num_favorites: num_favorites,
+        public: public,
+        updated_at: updated_at,
+        author_user_id: author_user_id,
+        author_alias: author_alias,
+        version: version,
       }
     end)}
     #%{data: render_many(plugins, PluginsView, "plugin.json")} # This wasn't working for some reason

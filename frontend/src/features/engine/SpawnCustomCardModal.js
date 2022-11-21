@@ -100,8 +100,7 @@ export const SpawnCustomCardModal = React.memo(({}) => {
             maxHeight: "85vh",
             overflowY: "scroll",
           }
-        }}
-      >
+        }}>
         {/* <h1 className="mb-2">Spawn a custom card</h1> */}
 
         <form className="w-full" onSubmit={handleSubmit(onSubmit)}> 

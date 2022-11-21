@@ -14,6 +14,8 @@ export const GiantCard = React.memo(({}) => {
   const visibleFace = getVisibleFace(activeCard, playerN);
   const visibleFaceSrc = getVisibleFaceSrc(visibleFace, user, gameDef);
   console.log("Rendering GiantCard", activeCard, visibleFace, visibleFaceSrc);
+
+
   if (activeCard && !touchAction) {
     var height = visibleFace.height >= visibleFace.width ? "70vh" : "50vh";
     if (user?.language === "English_HD") height = visibleFace.height >= visibleFace.width ? "90vh" : "70vh";

@@ -18,10 +18,10 @@ import { useDispatch, useSelector } from "react-redux";
 import useProfile from "../../hooks/useProfile";
 import { onLoad } from "../plugins/lotrlcg/functions/helpers";
 import BroadcastContext from "../../contexts/BroadcastContext";
+import { DeckbuilderModal } from "./DeckbuilderModal";
 
 export const Table = React.memo(({registerDivToArrowsContext}) => {
   const {gameBroadcast, chatBroadcast} = useContext(BroadcastContext);
-  console.log('Rendering Table');
   const dispatch = useDispatch();
   const tooltipIds = useSelector(state => state?.playerUi?.tooltipIds);
   const touchMode = useSelector(state => state?.playerUi?.touchMode);
@@ -32,6 +32,8 @@ export const Table = React.memo(({registerDivToArrowsContext}) => {
   const myUserId = useProfile()?.id;
   const createdBy = useSelector(state => state.gameUi?.createdBy);
   const isHost = myUserId === createdBy;
+  console.log('Rendering Table', showModal);
+
 
   const handleTableClick = (event) => {
     dispatch(setActiveCardObj(null));
@@ -85,6 +87,7 @@ export const Table = React.memo(({registerDivToArrowsContext}) => {
       {showModal === "card" ? <SpawnExistingCardModal/> : null}
       {showModal === "prebuilt_deck" ? <SpawnPrebuiltModal/> : null}
       {showModal === "custom" ? <SpawnCustomCardModal/> : null}
+      {showModal === "builder" ? <DeckbuilderModal/> : null}
       {tooltipIds.map((tooltipId, index) => {
         return(
         <TooltipModal

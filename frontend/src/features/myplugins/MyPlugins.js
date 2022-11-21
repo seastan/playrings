@@ -18,7 +18,7 @@ import useAuth from "../../hooks/useAuth";
 const lobbyButtonClass = "border cursor-pointer hover:bg-white hover:text-black h-full w-full flex items-center justify-center text-white no-underline select-none"
 const iconButtonClass = "cursor-pointer hover:bg-white hover:text-black h-full w-full flex items-center justify-center text-white no-underline select-none"
 
-const MyPluginEntry = ({plugin, setSelectedPlugin, forceUpdate}) => {
+const MyPluginEntry = ({plugin, setSelectedPlugin, forceUpdate, index}) => {
   const siteL10n = useSiteL10n();
   const { authToken, renewToken, setAuthAndRenewToken } = useAuth();
   const authOptions = useMemo(
@@ -42,7 +42,7 @@ const MyPluginEntry = ({plugin, setSelectedPlugin, forceUpdate}) => {
     }
   }
   return(
-    <div className="relative w-full p-2 border-t-2 text-white">
+    <div className={"relative w-full p-4 text-white "+((index % 2 === 0) ? "bg-gray-700" : "bg-gray-800")}>
       <h1>{plugin.plugin_name}</h1>
       {/* <div className="text-xs">{plugin.plugin_uuid}</div> */}
       <div className="text-xs">Last update: {moment.utc(plugin.updated_at).local().format("YYYY-MM-DD HH:mm:ss")}</div>
@@ -100,7 +100,14 @@ export const MyPlugins = () => {
         </a>
       </div>
       {data?.my_plugins.map((plugin, index) => {
-        return(<MyPluginEntry key={index} plugin={plugin} setSelectedPlugin={setSelectedPlugin} forceUpdate={doFetchUrl}/>)
+        return(
+          <MyPluginEntry 
+            key={index} 
+            plugin={plugin} 
+            setSelectedPlugin={setSelectedPlugin} 
+            forceUpdate={doFetchUrl}
+            index={index}
+            />)
       })}
       <NewPluginModal
         isOpen={showNewModal}

@@ -1,5 +1,8 @@
 {
   "pluginName": "LotR LCG",
+  "lobby": {
+    "tutorialUrl": "https://www.youtube.com/watch?v=mshb1EDsnB8&list=PLuyP-hlzlHjd-XADfU-kqJaGpSE9RWHRa&index=1"
+  },
   "minPlayers": 1,
   "maxPlayers": 4,
   "playerProperties": {
@@ -1611,9 +1614,44 @@
     }
   },
   "spawnExistingCardModal": {
-    "defaultGroupId": "sharedStaging",
     "columnProperties": ["name","packName"],
     "spawnGroupIds": ["sharedStaging","player1Play1","player2Play1","player3Play1","player4Play1"]
+  },
+  "deckbuilder": {
+    "addButtons": [1,2,3],
+    "removeButtons": [1,2,3],
+    "columns": [
+      {
+        "propName": "name",
+        "propLabel": "Name"
+      },
+      {
+        "propName": "packName",
+        "propLabel": "Pack"
+      },
+      {
+        "propName": "type",
+        "propLabel": "Type"
+      },
+      {
+        "propName": "sphere",
+        "propLabel": "Sphere"
+      },
+      {
+        "propName": "deckbuilderQuantity",
+        "propLabel": "Quantity"
+      }
+    ],
+    "spawnGroupIds": [
+      "playerNDeck",
+      "playerNPlay1",
+      "sharedQuestDeck",
+      "sharedStaging",
+      "sharedSetAside",
+      "sharedEncounterDeck",
+      "sharedSecondEncounterDeck",
+      "sharedSecondQuestDeck"
+    ]
   },
   "deckMenu": [
     {
