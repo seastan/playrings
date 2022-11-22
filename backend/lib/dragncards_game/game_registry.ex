@@ -57,6 +57,7 @@ defmodule DragnCardsGame.GameRegistry do
       last_update: gameui["lastUpdate"],
       room_title: gameui["game"]["roomTitle"] || "Unspecified",
       num_players: gameui["game"]["numPlayers"],
+      plugin_uuid: gameui["options"]["pluginUuid"]
     }
   end
 

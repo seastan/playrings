@@ -4,8 +4,6 @@ defmodule DragnCardsWeb.PluginsView do
 
   def render("index.json", %{plugins: plugins}) do
     %{data: Enum.map(plugins, fn plugin ->
-      IO.puts("YYYYYYYYYYYYYYYYYYYYYYY")
-      IO.inspect(plugin)
       {
         author_user_id,
         author_alias,

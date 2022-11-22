@@ -45,7 +45,6 @@ export const LobbyTable = ({ selectedPlugin }) => {
   useChannel("lobby:lobby", onChannelMessage, myUser?.id);
   const rooms = data != null && data.data != null ? data.data : [];
 
-
   var filteredRooms = [];
   var activePrivate = 0;
   var activeRooms = 0;
@@ -58,8 +57,10 @@ export const LobbyTable = ({ selectedPlugin }) => {
       const status = (elapsedSeconds < 60 ? "Active" : "Idle");
       if (status === "Active") activeRooms++;
       if (status === "Active" && room.privacy_type !== "public") activePrivate++;
+      if (room.plugin_uuid !== selectedPlugin.plugin_uuid) continue;
       // Currently there is no "admin" user field so I am usering supporter_level === 100 as a hack
       if (room.privacy_type === "public" || (room.privacy_type === "playtest" && myUser?.playtester) || myUser?.id === room.created_by || myUser?.supporter_level === 100) {
+        console.log("pluginuuid",room.plugin_uuid, selectedPlugin.plugin_uuid)
         filteredRooms.push({
           name: room.name,
           quest: <Link to={"/room/" + room.slug}>{room.encounter_name || "Unspecified"}</Link>,

@@ -28,7 +28,6 @@ defmodule DragnCards.Plugin do
   end
 
   def list_plugins do
-    IO.puts("WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW")
     query = from p in Plugin,
     join: u in User,
     on: [id: p.author_user_id],
@@ -42,12 +41,9 @@ defmodule DragnCards.Plugin do
       p.version,
       p.num_favorites,
       p.public,
-      p.updated_at,
+      p.updated_at
     }
-    q = Repo.all(query)
-    IO.puts("QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ")
-    IO.inspect(q)
-    q
+    Repo.all(query)
   end
 
   def get_by_uuid_and_version(plugin_uuid, version) do

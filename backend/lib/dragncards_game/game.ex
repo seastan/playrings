@@ -85,8 +85,6 @@
     #IO.puts("deltas")
     #IO.inspect(game)
     ds = game["deltas"]
-    IO.puts("++++++++++++++++++++++++++++")
-    IO.inspect(game)
     num_deltas = Enum.count(ds)
     new_step = prev_game["replayStep"]+1
     new_step = if new_step > num_deltas+1 do

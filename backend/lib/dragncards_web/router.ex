@@ -68,9 +68,11 @@ defmodule DragnCardsWeb.Router do
     # Admin Contact
     get("/admin_contact", AdminContactController, :index)
 
+    # Create a game room
+    post("/games", GameController, :create)
+
     # Testing Junk
     get("/authtest", JunkController, :authtest)
-    post("/games", GameController, :create)
 
     # Alerts
     get("/alerts", AlertController, :show)

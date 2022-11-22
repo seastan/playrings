@@ -127,6 +127,9 @@ export const Lobby = () => {
         <div className="mx-auto w-full p-2" style={{maxWidth: "600px"}}>
           {selectedPlugin ?
             <>
+              <div className="text-white text-xl">
+                {selectedPlugin.plugin_name}
+              </div>
               <div className="flex justify-center w-full" style={{maxWidth: "600px"}}>
                 <div className="w-full h-24 py-2 text-3xl">
                   <a className={lobbyButtonClass} target="_blank" href="https://www.youtube.com/watch?v=mshb1EDsnB8&list=PLuyP-hlzlHjd-XADfU-kqJaGpSE9RWHRa&index=1">
