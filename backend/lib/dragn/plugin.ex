@@ -10,7 +10,6 @@ defmodule DragnCards.Plugin do
   schema "plugins" do
 
     field :author_user_id, :integer
-    field :author_alias, :string
     field :plugin_uuid, :string
     field :plugin_name, :string
     field :version, :integer
@@ -22,9 +21,9 @@ defmodule DragnCards.Plugin do
     timestamps()
   end
 
-  def changeset(replay, params \\ %{}) do
-    replay
-    |> cast(params, [:author_user_id, :author_alias, :plugin_uuid, :plugin_name, :version, :game_def, :card_db, :num_favorites, :public])
+  def changeset(plugin, params \\ %{}) do
+    plugin
+    |> cast(params, [:author_user_id, :plugin_uuid, :plugin_name, :version, :game_def, :card_db, :num_favorites, :public])
   end
 
   def list_plugins do

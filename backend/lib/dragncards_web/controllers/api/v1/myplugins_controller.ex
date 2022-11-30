@@ -32,8 +32,7 @@ defmodule DragnCardsWeb.MyPluginsController do
     IO.inspect(user)
     plugin_uuid = plugin_params["plugin_uuid"]
     user_id = user.id
-    user_alias = user.alias
-    query = from Plugin, order_by: [desc: :version], where: [plugin_uuid: ^plugin_uuid], select: [:id, :author_user_id, :author_alias, :plugin_uuid, :plugin_name, :version, :num_favorites, :public]
+    query = from Plugin, order_by: [desc: :version], where: [plugin_uuid: ^plugin_uuid], select: [:id, :author_user_id, :plugin_uuid, :plugin_name, :version, :num_favorites, :public]
     prev_plugins = Repo.all(query)
     IO.puts("older")
     IO.inspect(prev_plugins)
@@ -51,7 +50,7 @@ defmodule DragnCardsWeb.MyPluginsController do
     IO.inspect(updates)
 
     result =
-      %Plugin{author_user_id: user_id, author_alias: user_alias, plugin_uuid: plugin_uuid}
+      %Plugin{author_user_id: user_id, plugin_uuid: plugin_uuid}
       |> Plugin.changeset(updates)
       |> Repo.insert_or_update
     conn
@@ -67,8 +66,7 @@ defmodule DragnCardsWeb.MyPluginsController do
     IO.inspect(user)
     plugin_uuid = plugin_params["plugin_uuid"]
     user_id = user.id
-    user_alias = user.alias
-    query = from Plugin, order_by: [desc: :version], where: [plugin_uuid: ^plugin_uuid], select: [:id, :author_user_id, :author_alias, :plugin_uuid, :plugin_name, :version, :num_favorites, :public]
+    query = from Plugin, order_by: [desc: :version], where: [plugin_uuid: ^plugin_uuid], select: [:id, :author_user_id, :plugin_uuid, :plugin_name, :version, :num_favorites, :public]
     prev_plugins = Repo.all(query)
     IO.puts("older")
     IO.inspect(prev_plugins)
