@@ -46,7 +46,7 @@ export const CreateRoomModal = ({
         privacy_type: privacyType.value,
       },
       game_options: {
-        plugin_uuid: plugin.plugin_uuid,
+        plugin_id: plugin.id,
         plugin_version: plugin.version,
 //        replay_id: replayId,
 //        ringsdb_info: ringsDbInfo,

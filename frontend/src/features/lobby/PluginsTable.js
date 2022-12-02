@@ -21,7 +21,7 @@ export const PluginsTable = ({ plugins, setSelectedPlugin}) => {
   for (var i=0; i<plugins.length; i++) {
     const pluginTemp = {...plugins[i]};
     plugins[i]["options"] =  <div>
-      <Button onClick={() => toggleFavorite(pluginTemp.plugin_uuid)} isPrimary className="mx-2 mt-2">Favorite</Button>
+      <Button onClick={() => toggleFavorite(pluginTemp.plugin_id)} isPrimary className="mx-2 mt-2">Favorite</Button>
       <Button onClick={() => setSelectedPlugin(pluginTemp)} isPrimary className="mx-2 mt-2">Play</Button>
     </div>
   }
@@ -37,7 +37,7 @@ export const PluginsTable = ({ plugins, setSelectedPlugin}) => {
             <tr className={trClass} onClick={() => setSelectedPlugin(plugin)}>
               <div className={"absolute w-full h-full opacity-50 " + ((pluginIndex % 2 === 0) ? " bg-gray-800" : " bg-gray-900")}></div>
               <div className="relative m-4">
-                <div className="text-xl inline">{plugin.plugin_name}</div>
+                <div className="text-xl inline">{plugin.name}</div>
                 <a 
                   className={"text-white text-lg pl-2"} 
                   target="_blank">
@@ -47,7 +47,7 @@ export const PluginsTable = ({ plugins, setSelectedPlugin}) => {
                     onMouseEnter={() => {setStarHoverIndex(pluginIndex)}}
                     onMouseLeave={() => {setStarHoverIndex(null)}}/>
                 </a>
-                <div className="inline">(123)</div>
+                <div className="inline">({plugin.num_favorites})</div>
                 <div className="text-xs">{siteL10n("Last update:") + " " + moment.utc(plugin.updated_at).local().format("YYYY-MM-DD HH:mm:ss")}</div>
                 <div className="text-xs">{siteL10n("Author:") + " " + plugin.author_alias}</div>
               </div>

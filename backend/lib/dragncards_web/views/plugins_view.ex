@@ -5,22 +5,22 @@ defmodule DragnCardsWeb.PluginsView do
   def render("index.json", %{plugins: plugins}) do
     %{data: Enum.map(plugins, fn plugin ->
       {
-        author_user_id,
+        author_id,
         author_alias,
-        plugin_uuid,
-        plugin_name,
+        plugin_id,
+        name,
         version,
         num_favorites,
         public,
         updated_at
       } = plugin
       %{
-        plugin_uuid: plugin_uuid,
-        plugin_name: plugin_name,
+        plugin_id: plugin_id,
+        name: name,
         num_favorites: num_favorites,
         public: public,
         updated_at: updated_at,
-        author_user_id: author_user_id,
+        author_id: author_id,
         author_alias: author_alias,
         version: version,
       }
@@ -38,7 +38,7 @@ defmodule DragnCardsWeb.PluginsView do
 
 #  def render("plugin.json", %{plugin: plugin}) do
 #    %{
-#      plugin_uuid: plugin.plugin_uuid,
+#      plugin_id: plugin.plugin_id,
 #      plugin_name: plugin.plugin_name,
 #      num_favorites: plugin.num_favorites,
 #      user_id: plugin.user_id,

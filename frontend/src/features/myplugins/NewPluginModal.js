@@ -1,18 +1,11 @@
 import React, { useMemo, useRef, useState } from "react";
-import { Redirect } from "react-router";
-import Select from 'react-select'
-import { v4 as uuidv4 } from 'uuid';
 import axios from "axios";
 import ReactModal from "react-modal";
 import Button from "../../components/basic/Button";
 import useProfile from "../../hooks/useProfile";
-import useIsLoggedIn from "../../hooks/useIsLoggedIn";
-import { Link } from "react-router-dom";
 import { useSiteL10n } from "../../hooks/useSiteL10n";
-import { isObject } from "../store/updateValues";
 import useForm from "../../hooks/useForm";
 import useAuth from "../../hooks/useAuth";
-import { setShowModal } from "../store/playerUiSlice";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheck } from "@fortawesome/free-solid-svg-icons";
 import { checkValidGameDef, mergeJSONs, readFileAsText } from "./PluginFileImport";
@@ -22,6 +15,7 @@ const converter = require('convert-csv-to-array');
 ReactModal.setAppElement("#root");
 
 export const NewPluginModal = ({ isOpen, closeModal }) => {
+  const user = useProfile();
   const { authToken, renewToken, setAuthAndRenewToken } = useAuth();
   const authOptions = useMemo(
     () => ({
@@ -64,7 +58,8 @@ export const NewPluginModal = ({ isOpen, closeModal }) => {
     } */
     const updateData = {
       plugin: {
-        plugin_uuid: uuidv4(),
+        name: inputs.gameDef.pluginName,
+        author_id: user?.id,
         game_def: inputs.gameDef,
         card_db: inputs.cardDb,
         public: inputs.public || false,

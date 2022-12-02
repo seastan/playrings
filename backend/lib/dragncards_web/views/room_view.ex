@@ -20,7 +20,7 @@ defmodule DragnCardsWeb.RoomView do
       last_update: room.last_update,
       room_title: room.room_title,
       num_players: room.num_players,
-      plugin_uuid: room.plugin_uuid,
+      plugin_id: room.plugin_id,
     }
   end
 end

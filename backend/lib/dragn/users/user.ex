@@ -15,12 +15,7 @@ defmodule DragnCards.Users.User do
     pow_user_fields()
     field(:alias, :string)
     field(:supporter_level, :integer)
-    field(:background_url, :string)
-    field(:player_back_url, :string)
-    field(:encounter_back_url, :string)
-    field(:playtester, :integer)
     field(:language, :string)
-    field(:hidden_tooltips, {:array, :string})
     timestamps()
   end
 

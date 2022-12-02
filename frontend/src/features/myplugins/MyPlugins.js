@@ -36,15 +36,14 @@ const MyPluginEntry = ({plugin, setSelectedPlugin, forceUpdate, index}) => {
     // setShowModal(true);
   }
   const handleDeleteClick = () => {
-    const conf = window.confirm(siteL10n("Are you sure you want to delete your plugin?")+" ("+plugin.plugin_name+")");
+    const conf = window.confirm(siteL10n("Are you sure you want to delete your plugin?")+" ("+plugin.name+")");
     if (conf) {
       const res = axios.delete("/be/api/myplugins/"+plugin.id, authOptions);
     }
   }
   return(
     <div className={"relative w-full p-4 text-white "+((index % 2 === 0) ? "bg-gray-700" : "bg-gray-800")}>
-      <h1>{plugin.plugin_name}</h1>
-      {/* <div className="text-xs">{plugin.plugin_uuid}</div> */}
+      <h1>{plugin.name}</h1>
       <div className="text-xs">Last update: {moment.utc(plugin.updated_at).local().format("YYYY-MM-DD HH:mm:ss")}</div>
       <div className={plugin.public ? "text-xs text-green-500" : "text-xs text-red-500" }>{plugin.public ? "Public" : "Private"}</div>
       <div className="absolute top-0" style={{height: "30px", width: "30px", right: "30px"}}>
