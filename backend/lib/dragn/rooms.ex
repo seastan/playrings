@@ -55,6 +55,8 @@ defmodule DragnCards.Rooms do
 
   """
   def create_room(attrs \\ %{}) do
+    IO.puts("Rooms.create_room")
+    IO.inspect(attrs)
     room =
     %Room{}
     |> Room.changeset(attrs)

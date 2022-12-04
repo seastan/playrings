@@ -43,6 +43,7 @@ defmodule DragnCardsWeb.Router do
 
     # All plugins
     get("/plugins", PluginsController, :index)
+    get("/plugins/:plugin_id", PluginsController, :get_plugin)
   end
 
   scope "/api/v1", DragnCardsWeb.API.V1, as: :api_v1 do

@@ -40,6 +40,19 @@ defmodule DragnCards.Plugins do
     Repo.all(Plugin)
   end
 
+  def get_game_def(id) do
+    IO.puts("get_game_def #{id}")
+    query = from p in Plugin,
+    where: [id: ^id],
+    select: {
+      p.game_def
+    }
+    result = case Repo.one(query) do
+      nil -> nil
+      query_result -> elem(query_result, 0)
+    end
+  end
+
   @doc """
   Gets a single plugin.
 

@@ -49,12 +49,7 @@ defmodule DragnCards.Users.User do
       inserted_at: user.inserted_at,
       email_confirmed_at: user.email_confirmed_at,
       supporter_level: user.supporter_level,
-      background_url: user.background_url,
-      player_back_url: user.player_back_url,
-      encounter_back_url: user.encounter_back_url,
-      playtester: user.playtester,
-      language: user.language,
-      hidden_tooltips: user.hidden_tooltips,
+      language: user.language
     }
   end
 

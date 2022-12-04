@@ -20,10 +20,10 @@ defmodule DragnCardsWeb.API.V1.GameController do
       "replayId" => _params["game_options"]["replay_id"],
       "ringsDbInfo" => _params["game_options"]["ringsdb_info"],
       "loadShuffle" => _params["game_options"]["load_shuffle"],
-      "pluginUuid" => _params["game_options"]["plugin_id"],
+      "pluginId" => _params["game_options"]["plugin_id"],
       "pluginVersion" => _params["game_options"]["plugin_version"],
     }
-    IO.puts("staring game info")
+    IO.puts("starting game info")
     IO.inspect(_params)
     IO.inspect(game_name)
     IO.inspect(user)

@@ -2,7 +2,7 @@ defmodule DragnCardsWeb.PluginsController do
   use DragnCardsWeb, :controller
   import Ecto.Query
 
-  alias DragnCards.{Plugins, Repo}
+  alias DragnCards.{Plugins, Plugins.Plugin, Repo}
 
   action_fallback DragnCardsWeb.FallbackController
 
@@ -21,4 +21,18 @@ defmodule DragnCardsWeb.PluginsController do
     IO.inspect(plugin_id)
     conn
   end
+
+  def get_plugin(conn, params) do
+    IO.puts("get plugin")
+    IO.inspect(params)
+    {plugin_id, ""} = Integer.parse(params["plugin_id"])
+    plugin = Repo.get_by(Plugin, id: plugin_id)
+    #plugin = Plugins.get_plugin!(plugin_id)
+    IO.puts("plugin id")
+    IO.inspect(plugin.id)
+    #plugin = Map.from_struct(plugin)
+    render(conn, "single.json", plugin: plugin)
+    #json(conn, %{plugins: nil})
+  end
+
 end

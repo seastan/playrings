@@ -8,7 +8,7 @@ defmodule DragnCardsGame.GameUI do
   alias DragnCardsGame.{Game, GameUI, GameUISeat, Groups, Group, Stack, Card, User, Tokens, CardFace, PlayerInfo, Evaluate}
   alias DragnCardsChat.{ChatMessage}
 
-  alias DragnCards.{Repo, Replay, Plugin}
+  alias DragnCards.{Repo, Replay, Plugins}
   alias DragnCards.Rooms.Room
 
   @type t :: Map.t()
@@ -16,7 +16,12 @@ defmodule DragnCardsGame.GameUI do
   @spec new(String.t(), User.t(), Map.t()) :: GameUI.t()
   def new(game_name, user, %{} = options) do
     Logger.debug("gameui new")
-    game_def = Plugin.get_game_def_by_uuid_and_version(options["pluginUuid"], options["pluginVersion"])
+    IO.puts("options")
+    IO.inspect(options)
+    IO.inspect(options["pluginId"])
+    game_def = Plugins.get_game_def(options["pluginId"])
+    IO.puts("Loaded game_def")
+    IO.inspect(game_def["pluginName"])
     gameui = %{
       "game" => Game.load(game_def, options),
       "roomName" => game_name,
@@ -34,6 +39,7 @@ defmodule DragnCardsGame.GameUI do
       "playersInRoom" => %{},
       "lastUpdate" => System.system_time(:second),
     }
+    IO.puts("gameui 1")
     gameui
   end
 

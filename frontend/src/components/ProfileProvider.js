@@ -12,7 +12,7 @@ export const ProfileProvider = ({ children }) => {
     // (remember the useAuthDataApi tries to renew automatically)
     // Forget them and log the user out
     console.log("can't load profile data")
-    //setAuthAndRenewToken(null, null);
+    setAuthAndRenewToken(null, null);
   }, [setAuthAndRenewToken]);
   const { data, doFetchHash, setData } = useAuthDataApi(
     "/be/api/v1/profile",

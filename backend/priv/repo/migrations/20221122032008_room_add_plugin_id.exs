@@ -3,7 +3,7 @@ defmodule DragnCards.Repo.Migrations.RoomAddPluginId do
 
   def change do
     alter table(:rooms) do
-      add(:plugin_id, :string)
+      add(:plugin_id, :integer)
     end
   end
 end

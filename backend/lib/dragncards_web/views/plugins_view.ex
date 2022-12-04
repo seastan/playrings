@@ -15,7 +15,7 @@ defmodule DragnCardsWeb.PluginsView do
         updated_at
       } = plugin
       %{
-        plugin_id: plugin_id,
+        id: plugin_id,
         name: name,
         num_favorites: num_favorites,
         public: public,

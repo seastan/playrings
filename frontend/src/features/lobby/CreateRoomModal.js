@@ -53,6 +53,7 @@ export const CreateRoomModal = ({
 //        load_shuffle: loadShuffle,
       }
     };
+    console.log("Creating Room",data)
     setIsLoading(true);
     setIsError(false);
     try {

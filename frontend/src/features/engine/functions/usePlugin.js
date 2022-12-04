@@ -5,16 +5,15 @@ import useDataApi from '../../../hooks/useDataApi';
 
 export const usePlugin = () => {    
     //const {gameBroadcast, chatBroadcast} = useContext(BroadcastContext);
-    const pluginUuid = useSelector(state => state?.gameUi?.game?.pluginUuid);
-    const pluginVersion = useSelector(state => state?.gameUi?.game?.pluginVersion);
+    const pluginId = useSelector(state => state?.gameUi?.game?.pluginId);
     const { data, isLoading, isError, doFetchUrl, doFetchHash, setData } = useDataApi(
-        "/be/api/plugins/"+pluginUuid+"/"+pluginVersion,
+        "/be/api/plugins/"+pluginId,
         null
     );
     useEffect(() => {
-        console.log("plugininfo 1",pluginUuid, pluginVersion)
-        doFetchUrl("/be/api/plugins/"+pluginUuid+"/"+pluginVersion);
-    }, [pluginUuid, pluginVersion]);
-    console.log("plugininfo 2", pluginUuid, data)
+        console.log("plugininfo 1",pluginId)
+        doFetchUrl("/be/api/plugins/"+pluginId);
+    }, [pluginId]);
+    console.log("plugininfo 2", pluginId, data)
     return data;
 }
