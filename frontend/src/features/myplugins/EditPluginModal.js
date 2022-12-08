@@ -65,7 +65,7 @@ export const EditPluginModal = ({ plugin, isOpen, closeModal }) => {
     } */
     const updateData = {
       plugin: {
-        plugin_id: plugin.plugin_id,
+        id: plugin.id,
         game_def: inputs.gameDef,
         card_db: inputs.cardDb,
         public: inputs.public || false,

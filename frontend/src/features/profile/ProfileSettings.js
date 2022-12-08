@@ -6,19 +6,12 @@ import useProfile from "../../hooks/useProfile";
 import useForm from "../../hooks/useForm";
 import axios from "axios";
 import useAuth from "../../hooks/useAuth";
+import { useAuthOptions } from "../../hooks/useAuthOptions";
 
 
 export const ProfileSettings = () => {
   const user = useProfile();
-  const { authToken, renewToken, setAuthAndRenewToken } = useAuth();
-  const authOptions = useMemo(
-    () => ({
-      headers: {
-        Authorization: authToken,
-      },
-    }),
-    [authToken]
-  );
+  const authOptions = useAuthOptions();
   const history = useHistory();
   const required_support_level = 5;
   const [errorMessage, setErrorMessage] = useState("");

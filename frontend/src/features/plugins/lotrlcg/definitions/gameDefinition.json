@@ -1621,36 +1621,21 @@
     "addButtons": [1,2,3],
     "removeButtons": [1,2,3],
     "columns": [
-      {
-        "propName": "name",
-        "propLabel": "Name"
-      },
-      {
-        "propName": "packName",
-        "propLabel": "Pack"
-      },
-      {
-        "propName": "type",
-        "propLabel": "Type"
-      },
-      {
-        "propName": "sphere",
-        "propLabel": "Sphere"
-      },
-      {
-        "propName": "deckbuilderQuantity",
-        "propLabel": "Quantity"
-      }
+      {"propName": "name", "propLabel": "Name"},
+      {"propName": "packName", "propLabel": "Pack"},
+      {"propName": "type", "propLabel": "Type"},
+      {"propName": "sphere", "propLabel": "Sphere"},
+      {"propName": "deckbuilderQuantity", "propLabel": "Quantity"}
     ],
-    "spawnGroupIds": [
-      "playerNDeck",
-      "playerNPlay1",
-      "sharedQuestDeck",
-      "sharedStaging",
-      "sharedSetAside",
-      "sharedEncounterDeck",
-      "sharedSecondEncounterDeck",
-      "sharedSecondQuestDeck"
+    "spawnGroups": [
+      {"id": "playerNDeck", "label": "Player Deck"},
+      {"id": "playerNPlay1", "label": "Play Area"},
+      {"id": "sharedQuestDeck", "label": "Quest Deck"},
+      {"id": "sharedStaging", "label": "Staging Area"},
+      {"id": "sharedSetAside", "label": "Set Aside"},
+      {"id": "sharedEncounterDeck", "label": "Encounter Deck"},
+      {"id": "sharedEncounterDeck2", "label": "Encounter Deck 2"},
+      {"id": "sharedQuestDeck2", "label": "Quest Deck 2"}
     ]
   },
   "deckMenu": [

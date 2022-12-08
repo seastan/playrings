@@ -70,6 +70,10 @@ defmodule DragnCardsWeb.Router do
     # Create a game room
     post("/games", GameController, :create)
 
+    # Decks
+    resources("/decks", DeckController)
+    get("/decks/:user_id/:plugin_id", DeckController, :get_decks)
+
     # Testing Junk
     get("/authtest", JunkController, :authtest)
 

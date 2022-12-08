@@ -4,11 +4,18 @@ import { useForm } from "react-hook-form";
 import Button from "../../components/basic/Button";
 import Select from 'react-select'
 import { setShowModal, setTyping } from "../store/playerUiSlice";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import BroadcastContext from "../../contexts/BroadcastContext";
 import { useGameDefinition } from "./functions/useGameDefinition";
 import { usePlugin } from "./functions/usePlugin";
 import { Divider } from "@material-ui/core";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faChevronDown, faChevronLeft, faChevronRight, faSave } from "@fortawesome/free-solid-svg-icons";
+import { faXmarkCircle } from "@fortawesome/free-regular-svg-icons";
+import useProfile from "../../hooks/useProfile";
+import { useAuthOptions } from "../../hooks/useAuthOptions";
+import axios from "axios";
+import useDataApi from "../../hooks/useDataApi";
 
 const RESULTS_LIMIT = 150;
 
@@ -32,21 +39,89 @@ const CardImage = ({url, top, height}) => {
   )
 }
 
-const keyClass = "m-auto border bg-gray-500 text-center bottom inline-block";
+const keyClass = "m-auto border bg-gray-500 hover:bg-gray-400 text-center bottom inline-block";
 const keyStyle = {width: "3vh", height: "3vh", borderRadius: "0.5vh"}
 
 export const DeckbuilderModal = React.memo(({}) => {
   const dispatch = useDispatch();
-  const {gameBroadcast, chatBroadcast} = useContext(BroadcastContext);
-  const gameDef = useGameDefinition();    
+  const user = useProfile();
+  const gameDef = useGameDefinition();
+  const authOptions = useAuthOptions();
+  const deckbuilder = gameDef.deckbuilder;
+  const spawnGroups = deckbuilder.spawnGroups;
   const cardDb = usePlugin()?.card_db || {};
+  const pluginId = useSelector(state => state?.gameUi?.game?.pluginId);
   const [spawnFilteredIDs, setSpawnFilteredIDs] = useState(Object.keys(cardDb));
   const [hoverCardDetails, setHoverCardDetails] = useState();
   const [filters, setFilters] = useState();
+  const [currentGroupId, setCurrentGroupId] = useState(spawnGroups?.[0]?.id);
+  const [currentDeck, setCurrentDeck] = useState({});
+  const [currentDeckName, setCurrentDeckName] = useState("");
+  dispatch(setTyping(true));
+  const myDecksUrl = `/be/api/v1/decks/${user?.id}/${pluginId}`;
+
+  const { data, isLoading, isError, doFetchUrl, doFetchHash, setData } = useDataApi(
+    myDecksUrl,
+    null
+  );  
+  useEffect(() => {
+    if (user?.id) doFetchUrl(myDecksUrl);
+  }, [user]);
+  console.log('Rendering Decks', data);
   
   if (!cardDb) return;
 
-  const handleSpawnTyping = (event, propName) => {
+  const modifyDeckList = (cardDetails, cardUuid, quantity, name, groupId) => {
+    var groupCopy = [];
+    if (currentDeck?.[groupId]) groupCopy = currentDeck[groupId]
+    var groupListIndex = -1;
+    // If it's already in the group, adjust the quantity
+    if (groupCopy) groupCopy.forEach((deckItem, i) => {
+      if (deckItem.cardUuid == cardUuid) {
+        groupCopy[i].quantity += quantity;
+        groupListIndex = i;
+      }
+    });
+    // See if item should be deleted
+    if (groupListIndex >= 0 && groupCopy[groupListIndex].quantity <= 0) {
+      groupCopy.splice(groupListIndex, 1);
+      setHoverCardDetails(null);
+    }
+    // If it was not in the group already, add it to the group
+    if (groupListIndex < 0) {
+      groupCopy.push({
+        cardDetails: cardDetails,
+        cardUuid: cardUuid,
+        quantity: quantity,
+        name: name
+      })
+    }
+    setCurrentDeck({...currentDeck, [groupId]: groupCopy});
+  }
+
+  const saveCurrentDeck = async() => {
+    const cardUuids = [];
+    const quantities = [];
+    const loadGroupIds = [];
+    Object.keys(currentDeck).forEach((groupId) => {
+      currentDeck[groupId].forEach((item) => {
+        cardUuids.push(item.cardUuid);
+        quantities.push(item.quantity);
+        loadGroupIds.push(groupId);
+      })
+    })
+    const updateData = {deck: {
+      name: currentDeckName,
+      author_id: user?.id,
+      plugin_id: pluginId,
+      card_uuids: cardUuids,
+      quantities: quantities,
+      load_group_ids: loadGroupIds
+    }}
+    const res = await axios.post("/be/api/v1/decks", updateData, authOptions);
+  }
+
+  const handleFilterTyping = (event, propName) => {
     //setSpawnCardName(event.target.value);
     const filteredVal = event.target.value;
     setFilters({...filters, [propName]: filteredVal})
@@ -74,13 +149,17 @@ export const DeckbuilderModal = React.memo(({}) => {
     <ReactModal
       closeTimeoutMS={200}
       isOpen={true}
-      onRequestClose={() => dispatch(setShowModal(null))}
-      contentLabel="Spawn a custom card"
+      onRequestClose={() => {
+        dispatch(setShowModal(null));
+        dispatch(setTyping(false));
+      }}
+      contentLabel="Build a deck"
       overlayClassName="fixed inset-0 bg-black-50 z-10000"
-      className="insert-auto overflow-auto p-5 bg-gray-700 border mx-auto my-12 rounded-lg outline-none"
+      className="flex insert-auto overflow-auto p-5 bg-gray-700 border mx-auto my-12 rounded-lg outline-none"
       style={{
         content: {
-          width: "50vw",
+          width: "92vw",
+          height: "85vh",
           maxHeight: "85vh",
           overflowY: "scroll",
         }
@@ -88,7 +167,78 @@ export const DeckbuilderModal = React.memo(({}) => {
       {hoverCardDetails?.A?.imageUrl && <CardImage url={hoverCardDetails.A.imageUrl} top={"0%"} height={hoverCardDetails?.B?.imageUrl ? "50%" : "70%"}/>}
       {hoverCardDetails?.B?.imageUrl && <CardImage url={hoverCardDetails.B.imageUrl} top={"50%"} height={"50%"}/>}
       {/* <h1 className="mb-2">Spawn a custom card</h1> */}
-      {
+      <div className="flex" style={{width:"40%", backgroundColor:"red"}}>
+        <div className="w-1/2" style={{backgroundColor:"green"}}>
+          <div className="flex justify-center p-2 m-2 text-white">
+            My Decks
+          </div>        </div>
+        <div className="w-1/2" style={{backgroundColor:"blue"}}>
+          <div className="justify-center p-2 m-2 text-white">
+            <div className="flex justify-center">Current Deck</div>
+            <div className="flex">
+              <input 
+                autoFocus 
+                type="text"
+                id="deckNameInput" 
+                name="deckNameInput" 
+                className="m-2 rounded w-3/4" 
+                placeholder={"Deck Name"}
+                onChange={(event) => setCurrentDeckName(event.target.value)}/>
+              <div 
+                className={keyClass} 
+                style={keyStyle}
+                onClick={()=>{saveCurrentDeck()}}>
+                  <FontAwesomeIcon icon={faSave}/>
+              </div>            
+            </div>
+          </div>
+          {spawnGroups?.map((groupInfo, _index) => {
+            const groupId = groupInfo.id;
+            return(
+              <>
+                <div 
+                  className={"text-white pl-3 py-1 mt-2 cursor-pointer " + (currentGroupId === groupId ? "bg-red-800" : "bg-gray-800")}
+                  onClick={() => setCurrentGroupId(groupId)}>
+                  {groupInfo.label}
+                </div>
+                {currentDeck?.[groupId]?.map((cardInfo, _index) => {
+                  return(
+                    <div className="relative p-1 bg-yellow-800 text-white cursor-pointer"
+                      onMouseMove={() => {setHoverCardDetails(cardInfo.cardDetails)}}
+                      onMouseLeave={() => setHoverCardDetails(null)}>
+                      <div 
+                        className={keyClass} 
+                        style={keyStyle}
+                        onClick={()=>modifyDeckList(cardInfo.cardDetails, cardInfo.cardUuid, -cardInfo.quantity, cardInfo.name, groupId)}>
+                          X
+                      </div>
+                      <div className="inline-block px-2 max-w-1/2">{cardInfo.name}</div>
+                      <div className="absolute p-1 right-0 top-0">
+                        <div 
+                          className={keyClass} 
+                          style={keyStyle}
+                          onClick={()=>modifyDeckList(cardInfo.cardDetails, cardInfo.cardUuid, -1, cardInfo.name, groupId)}>
+                            <FontAwesomeIcon icon={faChevronLeft}/>
+                        </div>
+                        <div className="inline-block px-2">{cardInfo.quantity}</div>
+                        <div 
+                          className={keyClass} 
+                          style={keyStyle}
+                          onClick={()=>modifyDeckList(cardInfo.cardDetails, cardInfo.cardUuid, 1, cardInfo.name, groupId)}>
+                            <FontAwesomeIcon icon={faChevronRight}/>
+                        </div>
+                      </div>
+                    </div>
+                  )
+                })}
+              </>
+            )
+          })}
+        </div>
+      </div>
+      
+      
+      <div className="" style={{width:"60%"}}>
           <table className="table-fixed rounded-lg w-full overflow-h-scroll">
             <thead>
               <tr className="bg-gray-800">
@@ -104,12 +254,10 @@ export const DeckbuilderModal = React.memo(({}) => {
                           type="text"
                           id="name" 
                           name="name" 
-                          className="mb-6 mt-5 rounded" 
+                          className="m-2 rounded" 
                           placeholder={"Filter "+colDetails.propLabel} 
-                          onChange={(event) => {handleSpawnTyping(event, colDetails.propName)}}
-                          onFocus={event => dispatch(setTyping(true))}
-                          onBlur={event => dispatch(setTyping(false))}/>
-                        </div>
+                          onChange={(event) => {handleFilterTyping(event, colDetails.propName)}}/>
+                      </div>
                     </th>
                   )
                 })}
@@ -126,7 +274,16 @@ export const DeckbuilderModal = React.memo(({}) => {
                   onMouseEnter={() => {setHoverCardDetails(null);setHoverCardDetails(cardDetails)}}
                   onMouseLeave={() => setHoverCardDetails(null)}>
                   <td key={-1} className="p-1">
-                    <div className={keyClass + " hover:bg-gray-400"} style={keyStyle}>+1</div>
+                    {deckbuilder.addButtons.map((addButtonVal, _index) => {
+                      return(
+                        <div 
+                          className={keyClass} 
+                          style={keyStyle}
+                          onClick={()=>modifyDeckList(cardDetails, cardId, addButtonVal, sideA.name, currentGroupId)}>
+                            +{addButtonVal}
+                        </div>
+                      )
+                    })}
                   </td>
                   {gameDef.deckbuilder?.columns?.map((colDetails, colindex) => {
                     return(
@@ -137,9 +294,9 @@ export const DeckbuilderModal = React.memo(({}) => {
               );
             })}
           </table>
-      }
+      
       {spawnFilteredIDs.length > RESULTS_LIMIT && <div className="p-1 text-white">Too many results</div>} 
-
+      </div>
 
       </ReactModal>
     )
