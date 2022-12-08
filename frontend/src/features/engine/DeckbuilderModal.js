@@ -16,6 +16,7 @@ import useProfile from "../../hooks/useProfile";
 import { useAuthOptions } from "../../hooks/useAuthOptions";
 import axios from "axios";
 import useDataApi from "../../hooks/useDataApi";
+import { format } from "date-fns";
 
 const RESULTS_LIMIT = 150;
 
@@ -56,6 +57,7 @@ export const DeckbuilderModal = React.memo(({}) => {
   const [filters, setFilters] = useState();
   const [currentGroupId, setCurrentGroupId] = useState(spawnGroups?.[0]?.id);
   const [currentDeck, setCurrentDeck] = useState({});
+  const [currentDeckId, setCurrentDeckId] = useState(null);
   const [currentDeckName, setCurrentDeckName] = useState("");
   dispatch(setTyping(true));
   const myDecksUrl = `/be/api/v1/decks/${user?.id}/${pluginId}`;
@@ -64,6 +66,8 @@ export const DeckbuilderModal = React.memo(({}) => {
     myDecksUrl,
     null
   );  
+  const myDecks = data;
+  console.log("myDecks",myDecks)
   useEffect(() => {
     if (user?.id) doFetchUrl(myDecksUrl);
   }, [user]);
@@ -118,7 +122,15 @@ export const DeckbuilderModal = React.memo(({}) => {
       quantities: quantities,
       load_group_ids: loadGroupIds
     }}
+    console.log("myDecks writing")
     const res = await axios.post("/be/api/v1/decks", updateData, authOptions);
+    if (res.status == 200) {
+      
+    }
+    console.log("myDecks fetching", res);
+    let ts = format(new Date(), "h:mm");
+    ts = ts.slice(0, -1);
+    doFetchHash(ts);
   }
 
   const handleFilterTyping = (event, propName) => {
@@ -169,9 +181,26 @@ export const DeckbuilderModal = React.memo(({}) => {
       {/* <h1 className="mb-2">Spawn a custom card</h1> */}
       <div className="flex" style={{width:"40%", backgroundColor:"red"}}>
         <div className="w-1/2" style={{backgroundColor:"green"}}>
-          <div className="flex justify-center p-2 m-2 text-white">
-            My Decks
-          </div>        </div>
+          <div className="justify-center p-2 m-2 text-white">
+            <div className="flex justify-center">My Decks</div>
+            <div className="flex">
+              <input 
+                autoFocus 
+                type="text"
+                id="deckNameInput" 
+                name="deckNameInput" 
+                className="m-2 rounded w-3/4 text-black" 
+                placeholder={"Deck Name"}
+                onChange={(event) => setCurrentDeckName(event.target.value)}/>
+              <div 
+                className={keyClass} 
+                style={keyStyle}
+                onClick={()=>{saveCurrentDeck()}}>
+                  <FontAwesomeIcon icon={faSave}/>
+              </div>            
+            </div>
+          </div>       
+        </div>
         <div className="w-1/2" style={{backgroundColor:"blue"}}>
           <div className="justify-center p-2 m-2 text-white">
             <div className="flex justify-center">Current Deck</div>
@@ -181,7 +210,7 @@ export const DeckbuilderModal = React.memo(({}) => {
                 type="text"
                 id="deckNameInput" 
                 name="deckNameInput" 
-                className="m-2 rounded w-3/4" 
+                className="m-2 rounded w-3/4 text-black" 
                 placeholder={"Deck Name"}
                 onChange={(event) => setCurrentDeckName(event.target.value)}/>
               <div 
