@@ -2,15 +2,13 @@ defmodule DragnCards.Decks.Deck do
   use Ecto.Schema
   import Ecto.Changeset
 
-  @derive {Jason.Encoder, only: [:id, :author_id, :plugin_id, :name, :card_uuids, :quantities, :load_group_ids]}
+  @derive {Jason.Encoder, only: [:id, :author_id, :plugin_id, :name, :load_list]}
 
   schema "decks" do
     field :name, :string
     field :author_id, :id
     field :plugin_id, :id
-    field :card_uuids, {:array, :string}
-    field :quantities, {:array, :integer}
-    field :load_group_ids, {:array, :string}
+    field :load_list, {:array, :map}
 
     timestamps()
   end
@@ -18,7 +16,7 @@ defmodule DragnCards.Decks.Deck do
   @doc false
   def changeset(deck, attrs) do
     deck
-    |> cast(attrs, [:name, :author_id, :plugin_id, :card_uuids, :quantities, :load_group_ids])
-    |> validate_required([:name, :author_id, :plugin_id, :card_uuids, :quantities, :load_group_ids])
+    |> cast(attrs, [:name, :author_id, :plugin_id, :load_list])
+    |> validate_required([:name, :author_id, :plugin_id, :load_list])
   end
 end

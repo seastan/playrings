@@ -16,20 +16,16 @@ export const DeckbuilderMyDecks = React.memo(({doFetchHash, myDecks, currentDeck
   const defaultName = "Untitled";
   const inputFile= useRef(null);
 
-  const createNewDeck = async(cardUuids, quantities, loadGroupIds) => {
+  const createNewDeck = async(loadList) => {
     const updateData = {deck: {
       name: defaultName,
       author_id: user?.id,
       plugin_id: pluginId,
-      card_uuids: cardUuids,
-      quantities: quantities,
-      load_group_ids: loadGroupIds
+      load_list: loadList,
     }}
     const res = await axios.post("/be/api/v1/decks", updateData, authOptions);
     console.log("myDecks 2", res)
     if (res.status == 200) {
-      console.log("myDecks 3", res?.data?.success?.deck)
-
       setCurrentDeck(res.data.success.deck);
     }
     doFetchHash((new Date()).toISOString());
@@ -38,19 +34,10 @@ export const DeckbuilderMyDecks = React.memo(({doFetchHash, myDecks, currentDeck
   const importNewDeck = async(event) => {
     event.preventDefault();
     const reader = new FileReader();
-    const cardUuids = [];
-    const quantities = [];
-    const loadGroupIds = [];
     reader.onload = async (event) => {
       console.log("target result", event.target.result);
       var loadList = JSON.parse(event.target.result);
-      loadList.forEach((loadListItem) => {
-        cardUuids.push(loadListItem.uuid);
-        quantities.push(loadListItem.quantity);
-        loadGroupIds.push(loadListItem.loadGroupId);
-      })
-      console.log("loadlist", loadList);
-      createNewDeck(cardUuids, quantities, loadGroupIds)
+      createNewDeck(loadList);
     }
     reader.readAsText(event.target.files[0]);
     inputFile.current.value = "";
@@ -71,7 +58,7 @@ export const DeckbuilderMyDecks = React.memo(({doFetchHash, myDecks, currentDeck
             <div 
               className={keyClass}
               style={keyStyle}
-              onClick={()=>{createNewDeck([],[],[])}}>
+              onClick={()=>{createNewDeck([])}}>
                 <FontAwesomeIcon icon={faPlus}/>
             </div> 
           </div>

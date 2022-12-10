@@ -51,7 +51,6 @@ defmodule DragnCardsGame.Card do
     end)
     #if group["id"] == "sharedStaging" do
       IO.puts("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
-      IO.inspect(game_def["groups"])
       IO.inspect(group_id)
       IO.inspect(game_def["groups"][group_id])
       IO.inspect(card_details["uuid"])

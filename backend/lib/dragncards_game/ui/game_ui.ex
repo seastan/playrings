@@ -833,6 +833,10 @@ defmodule DragnCardsGame.GameUI do
   end
 
   def insert_stack_in_group(game, group_id, stack_id, index) do
+    IO.puts("insert_stack_in_group 1")
+    IO.inspect(group_id)
+    IO.inspect(stack_id)
+    IO.inspect(index)
     old_stack_ids = get_stack_ids(game, group_id)
     new_stack_ids = List.insert_at(old_stack_ids, index, stack_id)
     update_stack_ids(game, group_id, new_stack_ids)
@@ -939,15 +943,19 @@ defmodule DragnCardsGame.GameUI do
     else
       game
     end
+    IO.puts("action_list 3")
     #game_new = save_replay(game_new, user_id)
     # Compare state before and after, and add a delta (unless we are undoing a move or loading a game with undo info)
     game_new = Map.delete(game_new, "playerUi")
     gameui = if options["preserve_undo"] != true do
       game_new = Game.add_delta(game_new, game)
+      IO.puts("action_list 4a")
       put_in(gameui["game"], game_new)
     else
+      IO.puts("action_list 4b")
       put_in(gameui["game"]["replayLength"], Enum.count(gameui["game"]["deltas"]))
     end
+    IO.puts("action_list 5")
     set_last_update(gameui)
   end
 
@@ -1744,11 +1752,15 @@ defmodule DragnCardsGame.GameUI do
     |> Map.put("stackId", new_stack["id"])
     |> Map.put("stackIndex", group_size)
     |> Map.put("cardIndex", 0)
-    game
+    IO.puts("create_card_in_group 2")
+    IO.inspect(new_card)
+    game = game
     |> insert_stack_in_group(group_id, new_stack["id"], group_size)
     |> update_stack(new_stack)
     |> update_card(new_card)
     |> update_card_state(new_card["id"], false, nil)
+    IO.inspect("create_card_in_group 3")
+    game
   end
 
   def load_card(game, load_list_item, game_def) do
@@ -1785,19 +1797,27 @@ defmodule DragnCardsGame.GameUI do
     player_n_deck_id = player_n<>"Deck"
     deck_size_before = Enum.count(get_stack_ids(game, player_n_deck_id))
     old_game = game
+    IO.puts("load_cards 1")
 
     game = Enum.reduce(load_list, game, fn load_list_item, acc ->
       load_card(acc, load_list_item, game_def)
     end)
+    IO.puts("load_cards 2")
 
     # Check if we should load the first quest card
     main_quest_stack_ids = get_stack_ids(game, "sharedMainQuest")
+    IO.puts("load_cards 2a")
     quest_deck_stack_ids = get_stack_ids(game, "sharedQuestDeck")
+    IO.puts("load_cards 2b")
     game = if Enum.count(quest_deck_stack_ids)>0 && Enum.count(main_quest_stack_ids)==0 do
+      IO.puts("load_cards 2c")
       # Dump nightmare/campaign cards into staging
       game = Enum.reduce_while(quest_deck_stack_ids, game, fn(stack_id, acc) ->
         card = get_top_card_of_stack(acc, stack_id)
+        IO.puts("load_cards 2d")
         card_type = card["sides"]["A"]["type"]
+        IO.puts("load_cards 2e")
+        IO.inspect(card_type)
         case card_type do
           "Nightmare" ->
             {:cont, move_stack(acc, stack_id, "sharedStaging", 0)}
@@ -1806,15 +1826,20 @@ defmodule DragnCardsGame.GameUI do
           "Quest" ->
             {:halt, move_stack(acc, stack_id, "sharedMainQuest", 0)}
           _ ->
-            acc
+            {:cont, acc}
         end
       end)
     else
       game
     end
+
+    IO.puts("load_cards 3")
+
     # Update encounter name
     game = put_in(game["roomTitle"], get_encounter_name(game))
 
+
+    IO.puts("load_cards 4")
     # Calculate threat cost
     threat = Enum.reduce(load_list, 0, fn(r, acc) ->
       sideA = r["cardRow"]["sides"]["A"]
@@ -1824,18 +1849,22 @@ defmodule DragnCardsGame.GameUI do
         acc
       end
     end)
+    IO.puts("load_cards 5")
     # Add to starting threat
     current_threat = game["playerData"][player_n]["threat"]
     game = put_in(game["playerData"][player_n]["threat"], current_threat + threat)
 
+    IO.puts("load_cards 6")
     # If deck size has increased from 0, assume it is at start of game and a draw of 6 is needed
     round_number = game["roundNumber"]
     round_step = game["stepId"]
     deck_size_after = Enum.count(get_stack_ids(game, player_n_deck_id))
 
+    IO.puts("load_cards 7")
     # Shuffle decks with new cards
     game = shuffle_changed_decks(old_game, game)
 
+    IO.puts("load_cards 8")
     # Check if a hand needs to be drawn
     game = if round_number == 0 && round_step == "0.0" && deck_size_before == 0 && deck_size_after > 6 do
       Enum.reduce(1..6, game, fn(i, acc) ->

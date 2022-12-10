@@ -74,20 +74,20 @@ export const DeckbuilderModal = React.memo(({}) => {
     const deckCopy = {...currentDeck}
     console.log("modifyDeckList deckCopy", deckCopy)
     if (existingIndex !== null) {
-      deckCopy.quantities[existingIndex] += quantity; 
+      deckCopy.load_list[existingIndex].quantity += quantity; 
     }
     // See if item should be deleted
-    if (existingIndex !== null && deckCopy.quantities[existingIndex] <= 0) {
-      deckCopy.card_uuids.splice(existingIndex, 1);
-      deckCopy.quantities.splice(existingIndex, 1);
-      deckCopy.load_group_ids.splice(existingIndex, 1);
+    if (existingIndex !== null && deckCopy?.load_list[existingIndex]?.quantity <= 0) {
+      deckCopy.load_list.splice(existingIndex, 1);
       setHoverCardDetails(null);
     }
     // If it was not in the group already, add it to the deck
     if (existingIndex === null) {
-      deckCopy.card_uuids.push(cardUuid);
-      deckCopy.quantities.push(quantity);
-      deckCopy.load_group_ids.push(groupId);
+      deckCopy.load_list.push({
+        uuid: cardUuid,
+        quantity: quantity,
+        load_group_id: groupId,
+      });
     }
     setCurrentDeck(deckCopy);
     setNumChanges(numChanges + 1);
