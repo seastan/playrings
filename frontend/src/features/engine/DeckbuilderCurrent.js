@@ -33,6 +33,8 @@ export const DeckbuilderCurrent = React.memo(({currentGroupId, setCurrentGroupId
   }
 
   const deleteCurrentDeck = async() => {
+    const result = window.confirm("Delete this deck?")
+    if (!result) return;
     const updateData = {deck: currentDeck}
     console.log("myDecks writing")
     const res = await axios.delete(`/be/api/v1/decks/${currentDeck.id}`, updateData, authOptions);
@@ -62,47 +64,46 @@ export const DeckbuilderCurrent = React.memo(({currentGroupId, setCurrentGroupId
   }
 
   return(
-      <div className="" style={{width:"20%", backgroundColor:"blue"}}>
+      <div className="bg-gray-800" style={{width:"20%"}}>
         <div className="justify-center p-2 m-2 text-white">
-          <div className="flex justify-center">Current Deck</div>
-            <div className="flex justify-center">
-              <div>
-              <div 
-                className={keyClass} 
-                style={keyStyle}
-                onClick={()=>{deleteCurrentDeck()}}>
-                  <FontAwesomeIcon icon={faTrash}/>
-              </div>
-              <div 
-                className={keyClass} 
-                style={keyStyle}
-                onClick={()=>{exportCurrentDeck()}}>
-                  <FontAwesomeIcon icon={faDownload}/>
-              </div>
-              <div 
-                className={keyClass} 
-                style={keyStyle}
-                onClick={()=>{saveCurrentDeck()}}>
-                  <FontAwesomeIcon icon={faPlay}/>
-              </div>
-              </div>
-            </div>
-          <div className="">
+          <div className="justify-center">
             <input 
               autoFocus 
               type="text"
               id="deckNameInput" 
               name="deckNameInput" 
-              className="m-2 rounded w-3/4 text-black" 
+              className="rounded w-full text-black" 
               placeholder={"Deck Name"}
               value={currentDeck.name}
-              onChange={(event) => setCurrentDeck({...currentDeck, name: event.target.value})}/>
-            <div 
-              className={keyClass} 
-              style={keyStyle}
-              onClick={()=>{saveCurrentDeck()}}>
-                <FontAwesomeIcon icon={faSave}/>
-            </div>            
+              onChange={(event) => setCurrentDeck({...currentDeck, name: event.target.value})}/>       
+          </div>
+          <div className="flex justify-center">
+            <div className="m-1">
+              <div 
+                className={keyClass + " m-2"} 
+                style={keyStyle}
+                onClick={()=>{saveCurrentDeck()}}>
+                  <FontAwesomeIcon icon={faSave}/>
+              </div>   
+              <div 
+                className={keyClass + " m-1"} 
+                style={keyStyle}
+                onClick={()=>{saveCurrentDeck()}}>
+                  <FontAwesomeIcon icon={faPlay}/>
+              </div>  
+              <div 
+                className={keyClass + " m-1"} 
+                style={keyStyle}
+                onClick={()=>{exportCurrentDeck()}}>
+                  <FontAwesomeIcon icon={faDownload}/>
+              </div>
+              <div 
+                className={keyClass + " m-1"} 
+                style={keyStyle}
+                onClick={()=>{deleteCurrentDeck()}}>
+                  <FontAwesomeIcon icon={faTrash}/>
+              </div>
+            </div>
           </div>
         </div>
         
@@ -111,14 +112,14 @@ export const DeckbuilderCurrent = React.memo(({currentGroupId, setCurrentGroupId
           return(
             <div>
               <div 
-                className={"text-white pl-3 py-1 mt-2 cursor-pointer " + (currentGroupId === groupId ? "bg-red-800" : "bg-gray-800")}
+                className={"text-white pl-3 py-1 mt-2 cursor-pointer " + (currentGroupId === groupId ? "bg-red-800" : "bg-gray-900")}
                 onClick={() => setCurrentGroupId(groupId)}>
                 {groupInfo.label}
               </div>
               {currentDeck?.card_uuids?.map((cardUuid, index) => {
                 if (currentDeck.load_group_ids[index] === groupId)
                 return(
-                  <div className="relative p-1 bg-yellow-800 text-white"
+                  <div className="relative p-1 bg-gray-700 text-white"
                     onMouseMove={() => {setHoverCardDetails(cardDb[cardUuid])}}
                     onMouseLeave={() => setHoverCardDetails(null)}>
                     <div 

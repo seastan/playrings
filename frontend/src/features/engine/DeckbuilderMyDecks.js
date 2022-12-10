@@ -57,10 +57,10 @@ export const DeckbuilderMyDecks = React.memo(({doFetchHash, myDecks, currentDeck
   }
 
   return(   
-      <div className="flex" style={{width:"20%", backgroundColor:"red"}}>
+      <div className="flex bg-gray-800" style={{width:"20%"}}>
         <div className="justify-center p-2 m-2 text-white w-full">
           <div className="relative justify-center mb-2">
-            <div className="float-left text-xl mr-2">My Decks</div>
+            <div className="float-left text-xl mr-2 mb-2">My Decks</div>
             <div 
               className={keyClass}
               style={keyStyle}
@@ -78,7 +78,7 @@ export const DeckbuilderMyDecks = React.memo(({doFetchHash, myDecks, currentDeck
           {myDecks?.map((deck, _index) => {
             return(
               <div 
-                className={"relative text-white px-2 py-1 mt-2 cursor-pointer " + (deck.id === currentDeck?.id ? "bg-red-800" : "bg-gray-800")}
+                className={"relative text-white px-2 py-1 mt-2 cursor-pointer " + (deck.id === currentDeck?.id ? "bg-red-800" : "bg-gray-900")}
                 onClick={() => {setCurrentDeck(deck);}}>
                 <div className="p-2 inline-block">{deck.name}</div>
               </div>

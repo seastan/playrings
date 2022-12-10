@@ -103,7 +103,7 @@ export const DeckbuilderModal = React.memo(({}) => {
       }}
       contentLabel="Build a deck"
       overlayClassName="fixed inset-0 bg-black-50 z-10000"
-      className="relative flex insert-auto overflow-auto p-5 bg-gray-700 border mx-auto my-12 rounded-lg outline-none"
+      className="relative flex insert-auto overflow-auto p-5 bg-gray-800 border mx-auto my-12 rounded-lg outline-none"
       style={{
         content: {
           width: "92vw",
@@ -116,7 +116,7 @@ export const DeckbuilderModal = React.memo(({}) => {
       {hoverCardDetails?.B?.imageUrl && <CardImage url={hoverCardDetails.B.imageUrl} top={"50%"} height={"50%"}/>}
       {/* <h1 className="mb-2">Spawn a custom card</h1> */}
       {isLoading &&
-        <div className="absolute flex h-full w-full items-center justify-center opacity-80 bg-gray-700">
+        <div className="absolute flex h-full w-full items-center justify-center opacity-80 bg-gray-800">
           <RotatingLines
             height={100}
             width={100}

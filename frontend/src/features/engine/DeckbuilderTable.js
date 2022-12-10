@@ -10,9 +10,16 @@ const keyStyle = {width: "3vh", height: "3vh", borderRadius: "0.5vh"}
 export const DeckbuilderTable = React.memo(({currentGroupId, modifyDeckList, setHoverCardDetails}) => {
   const gameDef = useGameDefinition();
   const deckbuilder = gameDef.deckbuilder;
+  console.log("deckbuilder", deckbuilder);
+  console.log("deckbuilder addButtons",deckbuilder.addButtons);
+  const addButtons = [...deckbuilder.addButtons];
+  const addButtonsReversed = addButtons.reverse();
+  console.log("deckbuilder addButtons r",addButtonsReversed);
+
   const cardDb = usePlugin()?.card_db || {};
   const [spawnFilteredIDs, setSpawnFilteredIDs] = useState(Object.keys(cardDb));
   const [filters, setFilters] = useState();
+  console.log("addbuttons", addButtons)
 
   if (!cardDb) return;
 
@@ -44,7 +51,7 @@ export const DeckbuilderTable = React.memo(({currentGroupId, modifyDeckList, set
           <table className="table-fixed rounded-lg w-full overflow-h-scroll">
             <thead>
               <tr className="bg-gray-800">
-                <th key={-1} className="text-white p-1">Add</th>
+                <th key={-1} className="text-white p-1"></th>
                 {gameDef.deckbuilder?.columns?.map((colDetails, colindex) => {
                   return(
                     <th key={colindex}>
@@ -71,15 +78,15 @@ export const DeckbuilderTable = React.memo(({currentGroupId, modifyDeckList, set
               return(
                 <tr 
                   key={rowindex} 
-                  className="bg-gray-600 text-white hover:bg-gray-500" 
+                  className="text-white hover:bg-gray-700" 
                   onClick={() => {}}
                   onMouseEnter={() => {setHoverCardDetails(null); setHoverCardDetails(cardDetails)}}
                   onMouseLeave={() => setHoverCardDetails(null)}>
                   <td key={-1} className="p-1">
-                    {deckbuilder.addButtons.map((addButtonVal, _index) => {
+                    {addButtonsReversed.map((addButtonVal, _index) => {
                       return(
                         <div 
-                          className={keyClass} 
+                          className={keyClass + " float-right"} 
                           style={keyStyle}
                           onClick={()=>modifyDeckList(cardId, addButtonVal, currentGroupId)}>
                             +{addButtonVal}
