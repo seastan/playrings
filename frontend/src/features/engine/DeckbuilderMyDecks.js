@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useRef, useState} from "react";
 import { useSelector } from "react-redux";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus, faUpload } from "@fortawesome/free-solid-svg-icons";
@@ -14,15 +14,16 @@ export const DeckbuilderMyDecks = React.memo(({doFetchHash, myDecks, currentDeck
   const authOptions = useAuthOptions();
   const pluginId = useSelector(state => state?.gameUi?.game?.pluginId);
   const defaultName = "Untitled";
+  const inputFile= useRef(null);
 
-  const createNewDeck = async() => {
+  const createNewDeck = async(cardUuids, quantities, loadGroupIds) => {
     const updateData = {deck: {
       name: defaultName,
       author_id: user?.id,
       plugin_id: pluginId,
-      card_uuids: [],
-      quantities: [],
-      load_group_ids: []
+      card_uuids: cardUuids,
+      quantities: quantities,
+      load_group_ids: loadGroupIds
     }}
     const res = await axios.post("/be/api/v1/decks", updateData, authOptions);
     console.log("myDecks 2", res)
@@ -34,6 +35,27 @@ export const DeckbuilderMyDecks = React.memo(({doFetchHash, myDecks, currentDeck
     doFetchHash((new Date()).toISOString());
   }
 
+  const importNewDeck = async(event) => {
+    event.preventDefault();
+    const reader = new FileReader();
+    const cardUuids = [];
+    const quantities = [];
+    const loadGroupIds = [];
+    reader.onload = async (event) => {
+      console.log("target result", event.target.result);
+      var loadList = JSON.parse(event.target.result);
+      loadList.forEach((loadListItem) => {
+        cardUuids.push(loadListItem.uuid);
+        quantities.push(loadListItem.quantity);
+        loadGroupIds.push(loadListItem.loadGroupId);
+      })
+      console.log("loadlist", loadList);
+      createNewDeck(cardUuids, quantities, loadGroupIds)
+    }
+    reader.readAsText(event.target.files[0]);
+    inputFile.current.value = "";
+  }
+
   return(   
       <div className="flex" style={{width:"20%", backgroundColor:"red"}}>
         <div className="justify-center p-2 m-2 text-white w-full">
@@ -42,13 +64,14 @@ export const DeckbuilderMyDecks = React.memo(({doFetchHash, myDecks, currentDeck
             <div 
               className={keyClass}
               style={keyStyle}
-              onClick={()=>{createNewDeck()}}>
+              onClick={()=>{inputFile.current.click()}}>
                 <FontAwesomeIcon icon={faUpload}/>
+                <input type='file' id='file' ref={inputFile} style={{display: 'none'}} onChange={importNewDeck} accept=".txt"/>
             </div> 
             <div 
               className={keyClass}
               style={keyStyle}
-              onClick={()=>{createNewDeck()}}>
+              onClick={()=>{createNewDeck([],[],[])}}>
                 <FontAwesomeIcon icon={faPlus}/>
             </div> 
           </div>

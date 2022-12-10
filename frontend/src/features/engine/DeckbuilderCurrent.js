@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useGameDefinition } from "./functions/useGameDefinition";
 import { usePlugin } from "./functions/usePlugin";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -9,14 +9,20 @@ import axios from "axios";
 const keyClass = "m-auto border cursor-pointer bg-gray-500 hover:bg-gray-400 text-center bottom inline-block";
 const keyStyle = {width: "3vh", height: "3vh", borderRadius: "0.5vh"}
 
-export const DeckbuilderCurrent = React.memo(({setNumChanges, doFetchHash, setHoverCardDetails, modifyDeckList, currentDeck, setCurrentDeck}) => {
+export const DeckbuilderCurrent = React.memo(({currentGroupId, setCurrentGroupId, numChanges, setNumChanges, doFetchHash, setHoverCardDetails, modifyDeckList, currentDeck, setCurrentDeck}) => {
   const gameDef = useGameDefinition();
   const authOptions = useAuthOptions();
   const deckbuilder = gameDef.deckbuilder;
   const spawnGroups = deckbuilder.spawnGroups;
   const cardDb = usePlugin()?.card_db || {};
-  const [currentGroupId, setCurrentGroupId] = useState(spawnGroups?.[0]?.id);
   if (!cardDb) return;
+
+  useEffect(() => {
+    if (numChanges > 10) {
+      saveCurrentDeck(false);
+      setNumChanges(0);
+    }
+  }, [numChanges]);
 
   const saveCurrentDeck = async() => {
     const updateData = {deck: currentDeck}
@@ -35,6 +41,26 @@ export const DeckbuilderCurrent = React.memo(({setNumChanges, doFetchHash, setHo
     setCurrentDeck({});
   }
 
+  const exportCurrentDeck = () => {
+    const exportList = [];
+    for (var i = 0; i < currentDeck.card_uuids.length; i++) {
+      exportList.push({
+        "uuid": currentDeck.card_uuids[i],
+        "name (not required)": cardDb[currentDeck.card_uuids[i]]?.A?.name,
+        "quantity": currentDeck.quantities[i],
+        "loadGroupId": currentDeck.load_group_ids[i],
+      })
+    }
+    const exportName = currentDeck.name;
+    var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(exportList, null, 2));
+    var downloadAnchorNode = document.createElement('a');
+    downloadAnchorNode.setAttribute("href",     dataStr);
+    downloadAnchorNode.setAttribute("download", exportName + ".txt");
+    document.body.appendChild(downloadAnchorNode); // required for firefox
+    downloadAnchorNode.click();
+    downloadAnchorNode.remove();
+  }
+
   return(
       <div className="" style={{width:"20%", backgroundColor:"blue"}}>
         <div className="justify-center p-2 m-2 text-white">
@@ -50,7 +76,7 @@ export const DeckbuilderCurrent = React.memo(({setNumChanges, doFetchHash, setHo
               <div 
                 className={keyClass} 
                 style={keyStyle}
-                onClick={()=>{saveCurrentDeck()}}>
+                onClick={()=>{exportCurrentDeck()}}>
                   <FontAwesomeIcon icon={faDownload}/>
               </div>
               <div 
@@ -101,7 +127,7 @@ export const DeckbuilderCurrent = React.memo(({setNumChanges, doFetchHash, setHo
                       onClick={()=>modifyDeckList(cardUuid, -currentDeck.quantities[index], groupId, index)}>
                         <FontAwesomeIcon icon={faTrash}/>
                     </div>
-                    <div className="inline-block px-2 max-w-1/2">{cardDb[cardUuid].A.name}</div>
+                    <div className="inline-block px-2 max-w-1/2">{cardDb[cardUuid]?.A?.name}</div>
                     <div className="absolute p-1 right-0 top-0">
                       <div 
                         className={keyClass} 
