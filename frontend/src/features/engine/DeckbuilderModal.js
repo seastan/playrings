@@ -18,6 +18,9 @@ import axios from "axios";
 import useDataApi from "../../hooks/useDataApi";
 import { format } from "date-fns";
 import { RotatingLines } from "react-loader-spinner";
+import { DeckbuilderTable } from "./DeckbuilderTable";
+import { DeckbuilderCurrent } from "./DeckbuilderCurrent";
+import { DeckbuilderMyDecks } from "./DeckbuilderMyDecks";
 
 const RESULTS_LIMIT = 150;
 
@@ -199,183 +202,27 @@ export const DeckbuilderModal = React.memo(({}) => {
       }
       <div className="w-full h-full flex">
       
-      <div className="flex" style={{width:"20%", backgroundColor:"red"}}>
-        <div className="justify-center p-2 m-2 text-white w-full">
-          <div className="relative justify-center mb-2">
-            <div className="float-left text-xl mr-2">My Decks</div>
-            <div 
-              className={keyClass}
-              style={keyStyle}
-              onClick={()=>{createNewDeck()}}>
-                <FontAwesomeIcon icon={faUpload}/>
-            </div> 
-            <div 
-              className={keyClass}
-              style={keyStyle}
-              onClick={()=>{createNewDeck()}}>
-                <FontAwesomeIcon icon={faPlus}/>
-            </div> 
-          </div>
-          {myDecks?.map((deck, _index) => {
-            return(
-              <div 
-                className={"relative text-white px-2 py-1 mt-2 cursor-pointer " + (deck.id === currentDeck?.id ? "bg-red-800" : "bg-gray-800")}
-                onClick={() => {setCurrentDeck(deck);}}>
-                <div className="p-2 inline-block">{deck.name}</div>
-              </div>
-            )
-          })}
-        </div>
-      </div>
+      <DeckbuilderMyDecks
+        doFetchHash={doFetchHash}
+        myDecks={myDecks}
+        currentDeck={currentDeck}
+        setCurrentDeck={setCurrentDeck}/>
       
-      {currentDeck?.id && <div className="" style={{width:"20%", backgroundColor:"blue"}}>
-          <div className="justify-center p-2 m-2 text-white">
-            <div className="flex justify-center">Current Deck</div>
-              <div className="flex justify-center">
-                <div>
-                <div 
-                  className={keyClass} 
-                  style={keyStyle}
-                  onClick={()=>{deleteCurrentDeck()}}>
-                    <FontAwesomeIcon icon={faTrash}/>
-                </div>
-                <div 
-                  className={keyClass} 
-                  style={keyStyle}
-                  onClick={()=>{saveCurrentDeck()}}>
-                    <FontAwesomeIcon icon={faDownload}/>
-                </div>
-                <div 
-                  className={keyClass} 
-                  style={keyStyle}
-                  onClick={()=>{saveCurrentDeck()}}>
-                    <FontAwesomeIcon icon={faPlay}/>
-                </div>
-                </div>
-              </div>
-            <div className="">
-              <input 
-                autoFocus 
-                type="text"
-                id="deckNameInput" 
-                name="deckNameInput" 
-                className="m-2 rounded w-3/4 text-black" 
-                placeholder={"Deck Name"}
-                value={currentDeck.name}
-                onChange={(event) => setCurrentDeck({...currentDeck, name: event.target.value})}/>
-              <div 
-                className={keyClass} 
-                style={keyStyle}
-                onClick={()=>{saveCurrentDeck()}}>
-                  <FontAwesomeIcon icon={faSave}/>
-              </div>            
-            </div>
-          </div>
-        
-        {spawnGroups?.map((groupInfo, _groupIndex) => {
-          const groupId = groupInfo.id;
-          return(
-            <div>
-              <div 
-                className={"text-white pl-3 py-1 mt-2 cursor-pointer " + (currentGroupId === groupId ? "bg-red-800" : "bg-gray-800")}
-                onClick={() => setCurrentGroupId(groupId)}>
-                {groupInfo.label}
-              </div>
-              {currentDeck?.card_uuids?.map((cardUuid, index) => {
-                if (currentDeck.load_group_ids[index] === groupId)
-                return(
-                  <div className="relative p-1 bg-yellow-800 text-white"
-                    onMouseMove={() => {setHoverCardDetails(cardDb[cardUuid])}}
-                    onMouseLeave={() => setHoverCardDetails(null)}>
-                    <div 
-                      className={keyClass} 
-                      style={keyStyle}
-                      onClick={()=>modifyDeckList(cardUuid, -currentDeck.quantities[index], groupId, index)}>
-                        <FontAwesomeIcon icon={faTrash}/>
-                    </div>
-                    <div className="inline-block px-2 max-w-1/2">{cardDb[cardUuid].A.name}</div>
-                    <div className="absolute p-1 right-0 top-0">
-                      <div 
-                        className={keyClass} 
-                        style={keyStyle}
-                        onClick={()=>modifyDeckList(cardUuid, -1, groupId, index)}>
-                          <FontAwesomeIcon icon={faChevronLeft}/>
-                      </div>
-                      <div className="inline-block px-2">{currentDeck.quantities[index]}</div>
-                      <div 
-                        className={keyClass} 
-                        style={keyStyle}
-                        onClick={()=>modifyDeckList(cardUuid, 1, groupId, index)}>
-                          <FontAwesomeIcon icon={faChevronRight}/>
-                      </div>
-                    </div>
-                  </div>
-                )
-              })}
-            </div>
-          )
-        })}
-      </div>}
+      {currentDeck?.id && 
+        <DeckbuilderCurrent
+          modifyDeckList={modifyDeckList}
+          setNumChanges={setNumChanges}
+          doFetchHash={doFetchHash}
+          setHoverCardDetails={setHoverCardDetails}
+          currentDeck={currentDeck}
+          setCurrentDeck={setCurrentDeck}/>
+      }
 
-      {currentDeck.id && <div className="" style={{width:"60%"}}>
-          <table className="table-fixed rounded-lg w-full overflow-h-scroll">
-            <thead>
-              <tr className="bg-gray-800">
-                <th key={-1} className="text-white p-1">Add</th>
-                {gameDef.deckbuilder?.columns?.map((colDetails, colindex) => {
-                  return(
-                    <th key={colindex}>
-                      <div className="text-white p-1">{colDetails.propLabel}</div>
-                      <div>
-                        <input 
-                          autoFocus
-                          style={{width:"95%"}} 
-                          type="text"
-                          id="name" 
-                          name="name" 
-                          className="m-2 rounded" 
-                          placeholder={"Filter "+colDetails.propLabel} 
-                          onChange={(event) => {handleFilterTyping(event, colDetails.propName)}}/>
-                      </div>
-                    </th>
-                  )
-                })}
-              </tr>
-            </thead>
-            {spawnFilteredIDs.length <= RESULTS_LIMIT && spawnFilteredIDs.map((cardId, rowindex) => {
-              const cardDetails = cardDb[cardId];
-              const sideA = cardDetails["A"];
-              return(
-                <tr 
-                  key={rowindex} 
-                  className="bg-gray-600 text-white hover:bg-gray-500" 
-                  onClick={() => {}}
-                  onMouseEnter={() => {setHoverCardDetails(null); setHoverCardDetails(cardDetails)}}
-                  onMouseLeave={() => setHoverCardDetails(null)}>
-                  <td key={-1} className="p-1">
-                    {deckbuilder.addButtons.map((addButtonVal, _index) => {
-                      return(
-                        <div 
-                          className={keyClass} 
-                          style={keyStyle}
-                          onClick={()=>modifyDeckList(cardId, addButtonVal, currentGroupId)}>
-                            +{addButtonVal}
-                        </div>
-                      )
-                    })}
-                  </td>
-                  {gameDef.deckbuilder?.columns?.map((colDetails, colindex) => {
-                    return(
-                      <td key={colindex} className="p-1">{sideA[colDetails.propName]}</td>
-                    )
-                  })}
-                </tr>
-              );
-            })}
-          </table>
-      
-      {spawnFilteredIDs.length > RESULTS_LIMIT && <div className="p-1 text-white">Too many results</div>} 
-      </div>
+      {currentDeck.id && 
+        <DeckbuilderTable
+          currentGroupId={currentGroupId}
+          modifyDeckList={modifyDeckList}
+          setHoverCardDetails={setHoverCardDetails}/>
       }
 
       </div>
