@@ -15,10 +15,14 @@ defmodule DragnCardsWeb.API.V1.DeckController do
   end
 
   def create(conn, %{"deck" => deck_params}) do
+    IO.puts("create 1")
+    IO.inspect(deck_params)
     case Decks.create_deck(deck_params) do
       {:ok, deck} ->
+        IO.puts("created deck !!!!!!!!!!!!!!!!!!!!!!!")
+        IO.inspect(deck)
         conn
-        |> json(%{success: %{message: "Deck saved successfully", deck_id: deck.id}})
+        |> json(%{success: %{message: "Deck saved successfully", deck: deck}})
 
       {:error, %Ecto.Changeset{} = changeset} ->
         render(conn, "new.html", changeset: changeset)
@@ -46,7 +50,7 @@ defmodule DragnCardsWeb.API.V1.DeckController do
       acc ++ [Map.from_struct(deck) |> Map.delete(:__meta__)]
     end)
     IO.puts("get_decks")
-    IO.inspect(my_decks)
+    IO.inspect(Enum.at(my_decks,0))
     json(conn, %{my_decks: my_decks})
   end
 
@@ -57,13 +61,14 @@ defmodule DragnCardsWeb.API.V1.DeckController do
   end
 
   def update(conn, %{"id" => id, "deck" => deck_params}) do
+    IO.puts("update 1")
+    IO.inspect(deck_params)
     deck = Decks.get_deck!(id)
 
     case Decks.update_deck(deck, deck_params) do
       {:ok, deck} ->
         conn
-        |> put_flash(:info, "Deck updated successfully.")
-        |> redirect(to: Routes.deck_path(conn, :show, deck))
+        |> json(%{success: %{message: "Deck saved successfully", deck: deck}})
 
       {:error, %Ecto.Changeset{} = changeset} ->
         render(conn, "edit.html", deck: deck, changeset: changeset)
@@ -72,10 +77,13 @@ defmodule DragnCardsWeb.API.V1.DeckController do
 
   def delete(conn, %{"id" => id}) do
     deck = Decks.get_deck!(id)
-    {:ok, _deck} = Decks.delete_deck(deck)
-
-    conn
-    |> put_flash(:info, "Deck deleted successfully.")
-    |> redirect(to: Routes.deck_path(conn, :index))
+    case Decks.delete_deck(deck) do
+      {:ok, _deck} ->
+        conn
+        |> json(%{success: %{message: "Deck saved successfully"}})
+      {:error, _} ->
+        conn
+        |> json(%{failed: %{message: "Failed to delete deck"}})
+      end
   end
 end

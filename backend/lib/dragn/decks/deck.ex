@@ -2,6 +2,8 @@ defmodule DragnCards.Decks.Deck do
   use Ecto.Schema
   import Ecto.Changeset
 
+  @derive {Jason.Encoder, only: [:id, :author_id, :plugin_id, :name, :card_uuids, :quantities, :load_group_ids]}
+
   schema "decks" do
     field :name, :string
     field :author_id, :id
