@@ -6,12 +6,10 @@ import { faChevronLeft, faChevronRight, faDownload, faPlay, faSave, faTrash } fr
 import { useAuthOptions } from "../../hooks/useAuthOptions";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
-import { setShowModal } from "../store/playerUiSlice";
 import BroadcastContext from "../../contexts/BroadcastContext";
 import { RotatingLines } from "react-loader-spinner";
-
-const keyClass = "m-auto border cursor-pointer bg-gray-500 hover:bg-gray-400 text-center bottom inline-block";
-const keyStyle = {width: "3vh", height: "3vh", borderRadius: "0.5vh"}
+import { keyClass } from "../definitions/common";
+import { keyStyle } from "../definitions/common";
 
 export const DeckbuilderCurrent = React.memo(({currentGroupId, setCurrentGroupId, numChanges, setNumChanges, doFetchHash, setHoverCardDetails, modifyDeckList, currentDeck, setCurrentDeck}) => {
   const gameDef = useGameDefinition();

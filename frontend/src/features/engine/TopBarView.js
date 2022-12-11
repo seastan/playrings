@@ -8,7 +8,6 @@ import { useGameL10n } from "../../hooks/useGameL10n";
 import { useGameDefinition } from "./functions/useGameDefinition";
 import { usePlayerIList } from "./functions/usePlayerIList";
 
-
 const keyClass = "m-auto border bg-gray-500 text-center bottom inline-block text-xs ml-2 mb-1";
 const keyStyleL = {width: "35px", height: "20px", borderRadius: "5px"}
 
@@ -16,7 +15,6 @@ export const TopBarView = React.memo(({}) => {
   const l10n = useGameL10n();
   const dispatch = useDispatch();
   const gameDef = useGameDefinition();  
-  const playerData = useSelector(state => state?.gameUi?.game?.playerData); 
   return(
     <li>
       <div className="h-full flex items-center justify-center select-none" href="#">{l10n("View")}</div>

@@ -5,9 +5,8 @@ import { faPlus, faUpload } from "@fortawesome/free-solid-svg-icons";
 import useProfile from "../../hooks/useProfile";
 import { useAuthOptions } from "../../hooks/useAuthOptions";
 import axios from "axios";
-
-const keyClass = "m-auto border cursor-pointer bg-gray-500 hover:bg-gray-400 text-center bottom inline-block";
-const keyStyle = {width: "3vh", height: "3vh", borderRadius: "0.5vh"}
+import { keyClass } from "../definitions/common";
+import { keyStyle } from "../definitions/common";
 
 export const DeckbuilderMyDecks = React.memo(({doFetchHash, myDecks, currentDeck, setCurrentDeck}) => {
   const user = useProfile();

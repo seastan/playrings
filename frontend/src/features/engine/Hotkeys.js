@@ -6,9 +6,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { setShowHotkeys } from "../store/playerUiSlice";
 import { useGameL10n } from "../../hooks/useGameL10n";
 import { useGameDefinition } from "./functions/useGameDefinition";
+import { keyClass } from "../definitions/common";
+import { keyStyle } from "../definitions/common";
 
-const keyClass = "m-auto border bg-gray-500 text-center bottom inline-block";
-const keyStyle = {width: "3vh", height: "3vh", borderRadius: "0.5vh"}
 const keyStyleL = {width: "7vh", height: "3vh", borderRadius: "0.5vh"}
 const keyStyleXL = {width: "12vh", height: "3vh", borderRadius: "0.5vh"}
 const windowClass = "insert-auto overflow-auto bg-gray-700 border max-w-lg rounded-lg outline-none text-white";

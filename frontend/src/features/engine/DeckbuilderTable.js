@@ -1,11 +1,10 @@
 import React, {useEffect, useState} from "react";
 import { useGameDefinition } from "./functions/useGameDefinition";
 import { usePlugin } from "./functions/usePlugin";
+import { keyClass } from "../definitions/common";
+import { keyStyle } from "../definitions/common";
 
 const RESULTS_LIMIT = 150;
-
-const keyClass = "m-auto border cursor-pointer bg-gray-500 hover:bg-gray-400 text-center bottom inline-block";
-const keyStyle = {width: "3vh", height: "3vh", borderRadius: "0.5vh"}
 
 export const DeckbuilderTable = React.memo(({currentGroupId, modifyDeckList, setHoverCardDetails}) => {
   const gameDef = useGameDefinition();
