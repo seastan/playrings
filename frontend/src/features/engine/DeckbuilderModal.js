@@ -86,7 +86,7 @@ export const DeckbuilderModal = React.memo(({}) => {
       deckCopy.load_list.push({
         uuid: cardUuid,
         quantity: quantity,
-        load_group_id: groupId,
+        loadGroupId: groupId,
       });
     }
     setCurrentDeck(deckCopy);

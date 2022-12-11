@@ -78,7 +78,8 @@ export const DeckbuilderTable = React.memo(({currentGroupId, modifyDeckList, set
               return(
                 <tr 
                   key={rowindex} 
-                  className="text-white hover:bg-gray-700" 
+                  className="text-white hover:bg-gray-600" 
+                  style={{color: deckbuilder.colorKey ? deckbuilder.colorValues[cardDetails.A[deckbuilder.colorKey]] : null}}
                   onClick={() => {}}
                   onMouseEnter={() => {setHoverCardDetails(null); setHoverCardDetails(cardDetails)}}
                   onMouseLeave={() => setHoverCardDetails(null)}>
@@ -86,7 +87,7 @@ export const DeckbuilderTable = React.memo(({currentGroupId, modifyDeckList, set
                     {addButtonsReversed.map((addButtonVal, _index) => {
                       return(
                         <div 
-                          className={keyClass + " float-right"} 
+                          className={keyClass + " float-right text-white"} 
                           style={keyStyle}
                           onClick={()=>modifyDeckList(cardId, addButtonVal, currentGroupId)}>
                             +{addButtonVal}

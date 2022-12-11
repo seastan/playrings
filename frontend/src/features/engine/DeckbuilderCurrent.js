@@ -43,7 +43,7 @@ export const DeckbuilderCurrent = React.memo(({currentGroupId, setCurrentGroupId
 
   const saveCurrentDeck = async() => {
     const updateData = {deck: currentDeck}
-    console.log("myDecks writing")
+    console.log("myDecks writing", updateData)
     const res = await axios.patch(`/be/api/v1/decks/${currentDeck.id}`, updateData, authOptions);
     setNumChanges(0);
     doFetchHash((new Date()).toISOString());

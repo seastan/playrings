@@ -1619,17 +1619,26 @@
   },
   "deckbuilder": {
     "addButtons": [1,2,3],
-    "removeButtons": [1,2,3],
+    "colorKey": "sphere",
+    "colorValues": {
+      "Tactics": "#CB0707",
+      "Lore": "#00950E",
+      "Spirit": "#007BBD",
+      "Leadership": "#7300BD",
+      "Fellowship": "#BD7000",
+      "Baggins": "#C7CD02"
+    },
     "columns": [
       {"propName": "name", "propLabel": "Name"},
       {"propName": "packName", "propLabel": "Pack"},
       {"propName": "type", "propLabel": "Type"},
       {"propName": "sphere", "propLabel": "Sphere"},
+      {"propName": "traits", "propLabel": "Traits"},
       {"propName": "deckbuilderQuantity", "propLabel": "Quantity"}
     ],
     "spawnGroups": [
       {"id": "playerNDeck", "label": "Player Deck"},
-      {"id": "playerNPlay1", "label": "Play Area"},
+      {"id": "playerNPlay1", "label": "Heroes / Play Area"},
       {"id": "sharedQuestDeck", "label": "Quest Deck"},
       {"id": "sharedStaging", "label": "Staging Area"},
       {"id": "sharedSetAside", "label": "Set Aside"},
