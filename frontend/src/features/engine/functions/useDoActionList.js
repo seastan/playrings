@@ -21,11 +21,19 @@ export const useDoActionList = () => {
             actionList = gameDef.actionLists[idOrList]
         }
         if (actionList != null) {
-            console.log("handletouch",  actionList)
+            const processedActionList = [...actionList];
+            for (var i=0; i<processedActionList.length; i++) {
+                const action = processedActionList[i];
+                if (action[0] === "INPUT") {
+                    if (action[1] === "integer") {
+                        processedActionList[i] = ["DEFINE", action[2], parseInt(prompt(action[3],action[4]))]
+                    }
+                }
+            }
             gameBroadcast("game_action", {
                 action: "evaluate", 
                 options: {
-                    action_list: actionList, 
+                    action_list: processedActionList, 
                     player_ui: state.playerUi,
                 }
             })

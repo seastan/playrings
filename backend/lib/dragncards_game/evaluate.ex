@@ -242,6 +242,11 @@ defmodule DragnCardsGame.Evaluate do
             IO.inspect(card)
             Logger.debug("here")
             GameUI.move_card(game, card_id, card["discardGroupId"], 0, 0)
+          "DELETE_CARD" ->
+            card_id = evaluate(game, Enum.at(code, 1))
+            IO.inspect(card_id)
+            Logger.debug("here")
+            GameUI.delete_card(game, card_id)
           "ATTACH_CARD" ->
             IO.inspect(code)
             card_id = evaluate(game, Enum.at(code, 1))

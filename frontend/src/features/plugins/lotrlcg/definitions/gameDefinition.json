@@ -11,6 +11,57 @@
     "cardsDrawn": {"type": "integer", "default": 1, "min": 0},
     "refreshed": {"type": "boolean", "default": false}
   },
+  "menuFunctions": [
+    { 
+      "id": "setCardsDrawn",
+      "label": "Cards Per Round",
+      "actionList": [
+        ["INPUT", "integer", "$VAL", "Set the number of cards drawn during resource phase:", 1],
+        ["GAME_SET_VAL", "playerData", "$PLAYER_N", "cardsDrawn", "$VAL"],
+        ["GAME_ADD_MESSAGE", "$PLAYER_N", " set number of cards drawn during the Resource Phase to ", "$VAL", "."]
+      ]
+    },
+    {
+      "id": "setQuestNormal",
+      "label": "Normal Quest",
+      "actionList": [
+        ["GAME_SET_VAL", "questingStat", "willpower"],
+        ["GAME_ADD_MESSAGE", "$PLAYER_N", " set the questing type to Normal."]
+      ]
+    },
+    { 
+      "id": "setQuestBattle",
+      "label": "Battle Quest",
+      "actionList": [
+        ["GAME_SET_VAL", "questingStat", "attack"],
+        ["GAME_ADD_MESSAGE", "$PLAYER_N", " set the questing type to Battle."]
+      ]
+    },
+    {
+      "id": "setQuestSiege",
+      "label": "Siege Quest",
+      "actionList": [
+        ["GAME_SET_VAL", "questingStat", "attack"],
+        ["GAME_ADD_MESSAGE", "$PLAYER_N", " set the questing type to Siege."]
+      ]
+    },
+    {
+      "id": "setupEscapeFromMountGram",
+      "label": "Setup Escape from Mount Gram"
+    },
+    {
+      "id": "setupToCatchAnOrc",
+      "label": "Setup To Catch an Orc"
+    },
+    {
+      "id": "setupGlitteringCaves",
+      "label": "Setup The Glittering Caves"
+    },
+    {
+      "id": "setupTheFortressOfNurn",
+      "label": "Setup The Fortress of Nurn"
+    }
+  ],
   "cardTypes": {
     "Ally":           {"width": 1.0, "height": 1.39, "tokens": ["resource","progress","damage","time","willpower","attack","defense","hitPoints"]},
     "Attachment":     {"width": 1.0, "height": 1.39, "tokens": ["resource","progress","damage","time","willpower","attack","defense","hitPoints"]},
@@ -81,7 +132,8 @@
   },
   "gameProperties": {
     "stagingThreat": {"type": "integer", "default": 0},
-    "questProgress": {"type": "integer", "default": 0}
+    "questProgress": {"type": "integer", "default": 0},
+    "questingStat": {"type": "string", "default": "willpower"}
   },
   "cardProperties": {
     "committed": {"type": "boolean", "default": false},
@@ -3344,9 +3396,7 @@
           ["GAME_SET_VAL", "$ACTIVE_CARD_PATH", "rotation", 90],
           ["GAME_SET_VAL", "$ACTIVE_CARD_PATH", "exhausted", true],
           ["GAME_ADD_MESSAGE", "$PLAYER_N", " exhausted ", "$ACTIVE_FACE.name", "."]
-        ],
-        true,
-        "$GAME"
+        ]
       ]
     ],
     "flipCard": [
@@ -3370,9 +3420,7 @@
         [
           ["GAME_SET_VAL", "stepId", "$STEP_ID"],
           ["GAME_ADD_MESSAGE", "$PLAYER_N", " set the round step to ", "$GAME.gameDef.steps.$STEP_ID.text", "."]
-        ],
-        true,
-        "$GAME"
+        ]
       ],
       ["COND",
         ["AND", ["EQUAL", "$ACTIVE_CARD.rotation", 0], ["EQUAL", "$ACTIVE_CARD.committed", false], "$CARD.inPlay"],
@@ -3388,9 +3436,7 @@
           ["GAME_SET_VAL", "$ACTIVE_CARD_PATH", "exhausted", false],
           ["GAME_DECREASE_VAL", "playerData", "$ACTIVE_CARD.controller", "willpower", "$ACTIVE_FACE.willpower"],
           ["GAME_SET_VAL", "$PLAYER_N", " uncommitted ", "$ACTIVE_FACE.name", "to the quest."]
-        ],
-        true,
-        "$GAME"
+        ]
       ]
     ],
     "toggleCommitWithoutExhausting": [
@@ -3400,9 +3446,7 @@
         [
           ["GAME_SET_VAL", "stepId", "$STEP_ID"],
           ["GAME_ADD_MESSAGE", "$PLAYER_N", " set the round step to ", "$GAME.gameDef.steps.$STEP_ID.text", "."]
-        ],
-        true,
-        "$GAME"
+        ]
       ],
       ["COND",
         ["AND", ["EQUAL", "$ACTIVE_CARD.rotation", 0], ["EQUAL", "$ACTIVE_CARD.committed", false], "$CARD.inPlay"],

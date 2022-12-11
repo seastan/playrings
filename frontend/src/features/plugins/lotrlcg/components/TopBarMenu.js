@@ -12,6 +12,7 @@ import { setCardSizeFactor, setLoaded, setRandomNumBetween, setShowModal, setTou
 import { useGameL10n } from "../../../../hooks/useGameL10n";
 import BroadcastContext from "../../../../contexts/BroadcastContext";
 import { useGameDefinition } from "../../../engine/functions/useGameDefinition";
+import { useDoActionList } from "../../../engine/functions/useDoActionList";
 
 export const TopBarMenu = React.memo(({}) => {
   const {gameBroadcast, chatBroadcast} = useContext(BroadcastContext);
@@ -20,6 +21,7 @@ export const TopBarMenu = React.memo(({}) => {
   const history = useHistory();
   const l10n = useGameL10n();
   const gameDef = useGameDefinition();
+  const doActionList = useDoActionList();
 
   const createdBy = useSelector(state => state.gameUi?.createdBy);
   const options = useSelector(state => state.gameUi?.game?.options);
@@ -68,13 +70,6 @@ export const TopBarMenu = React.memo(({}) => {
       history.push("/profile");
       chatBroadcast("game_update", {message: "closed the room."});
       gameBroadcast("close_room", {});
-    } else if (data.action === "reload_game") {
-      const newOptions = {...options, loaded: false};
-      const resetData = {action: "clear_table", state: data.state};
-      handleMenuClick(resetData);
-      dispatch(setLoaded(false));
-      gameBroadcast("game_action", {action: "update_values", options: {updates: [["options", newOptions]]}})
-      //if (options.questModeAndId) loadDeckFromModeAndId(options.questModeAndId, playerN, gameBroadcast, chatBroadcast, options["privacyType"]);
     } else if (data.action === "load_deck") {
       loadFileDeck();
     } else if (data.action === "load_ringsdb") {
@@ -112,39 +107,27 @@ export const TopBarMenu = React.memo(({}) => {
       const gameUi = store.getState()?.gameUi;
       loadRingsDb(gameUi, playerN, ringsDbDomain, ringsDbType, ringsDbId, gameBroadcast, chatBroadcast, dispatch);
     } else if (data.action === "unload_my_deck") {
-      // Delete all cards you own
-      chatBroadcast("game_update",{message: "unloaded their deck."});
-      gameBroadcast("game_action", {
-        action: "action_on_matching_cards", 
-        options: {
-            criteria:[["owner", playerN]], 
-            action: "delete_card", 
-        }
-      });
-      // Set threat to 00
-      chatBroadcast("game_update",{message: "reset their deck."});
-      gameBroadcast("game_action", {action: "update_values", options: {updates: [["playerData", playerN, "threat", 0]]}});
-      // Set RingsDb info for this player to null
-      const playerIndex = playerNToPlayerIndex(playerN);
-      var newRingsDbInfo;
-      if (ringsDbInfo) newRingsDbInfo = [...ringsDbInfo];
-      else newRingsDbInfo = [null, null, null, null];
-      newRingsDbInfo[playerIndex] = null;
-      const newOptions = {...options, ringsDbInfo: newRingsDbInfo}
-      gameBroadcast("game_action", {action: "update_values", options: {updates: [["options", newOptions]]}});
-    } else if (data.action === "unload_encounter_deck") {
-      // Delete all cards from encounter
-      chatBroadcast("game_update",{message: "unloaded the encounter deck."});
-      gameBroadcast("game_action", {
-        action: "action_on_matching_cards", 
-        options: {
-            criteria:[["owner", "shared"]], 
-            action: "delete_card", 
-        }
-      });
-      // Set quest id to null
-      const newOptions = {...options, questModeAndId: null};
-      gameBroadcast("game_action", {action: "update_values", options: {updates: [["options", newOptions]]}});
+      const actionList = [
+        ["FOR_EACH_KEY_VAL", "$CARD_ID", "$CARD", "$CARD_BY_ID", [
+          ["COND",
+            ["EQUAL", "$CARD.controller", "$PLAYER_N"],
+            ["DELETE_CARD", "$CARD_ID"]
+          ]
+        ]],
+        ["GAME_ADD_MESSAGE", "$PLAYER_N", " deleted all their cards."]
+      ]
+      doActionList(actionList);
+    } else if (data.action === "unload_shared_cards") {
+      const actionList = [
+        ["FOR_EACH_KEY_VAL", "$CARD_ID", "$CARD", "$CARD_BY_ID", [
+          ["COND",
+            ["EQUAL", "$CARD.controller", "shared"],
+            ["DELETE_CARD", "$CARD_ID"]
+          ]
+        ]],
+        ["GAME_ADD_MESSAGE", "$PLAYER_N", " deleted all shared cards."]
+      ]
+      doActionList(actionList);
     } else if (data.action === "random_coin") {
       const result = getRandomIntInclusive(0,1);
       if (result) chatBroadcast("game_update",{message: "flipped heads."});
@@ -175,8 +158,6 @@ export const TopBarMenu = React.memo(({}) => {
       dispatch(setShowModal("prebuilt_deck"));
     } else if (data.action === "download") {
       downloadGameAsJson();
-    } else if (data.action === "export_cards") {
-      exportCardsAsTxt();
     } else if (data.action === "load_game") {
       loadFileGame();
     } else if (data.action === "load_game_def") {
@@ -510,19 +491,11 @@ export const TopBarMenu = React.memo(({}) => {
     event.preventDefault();
     const reader = new FileReader();
     reader.onload = async (event) => {
-      //try {
-        console.log("target result", event.target.result);
-        var loadList = JSON.parse(event.target.result);
-        console.log("loadlist", loadList);
-        //if (loadList) {
-          loadList = processLoadList(loadList, playerN);
-          gameBroadcast("game_action", {action: "load_cards", options: {load_list: loadList}});
-          chatBroadcast("game_update",{message: "loaded a deck."});
-          processPostLoad(null, loadList, playerN, gameBroadcast, chatBroadcast);
-        //}
-    //  } catch(e) {
-      //    alert("Custom cards must be a valid text file. Check out the tutorial on YouTube.");
-      //}
+      var loadList = JSON.parse(event.target.result);
+      loadList = processLoadList(loadList, playerN);
+      gameBroadcast("game_action", {action: "load_cards", options: {load_list: loadList}});
+      chatBroadcast("game_update",{message: "loaded a deck."});
+      processPostLoad(null, loadList, playerN, gameBroadcast, chatBroadcast);
     }
     reader.readAsText(event.target.files[0]);
     inputFileCustom.current.value = "";
@@ -542,81 +515,6 @@ export const TopBarMenu = React.memo(({}) => {
     chatBroadcast("game_update", {message: "downloaded the game."});
   }
 
-  const exportCardsAsTxt = () => {
-    const state = store.getState();
-    const game = state.gameUi.game;
-    const cardList = flatListOfCards(game);
-    const exportList = [];
-    for (var card of cardList) {
-      const sideA = card.sides.A;
-      const sideB = card.sides.B;
-      const cardRow = {
-        "cardencounterset": card.cardEncounterSet,
-        "sides": {
-          "A": {
-            "printname": sideA.printName,
-            "sphere": sideA.sphere,
-            "text": sideA.text,
-            "willpower": sideA.willpower,
-            "hitpoints": sideA.hitPoints,
-            "shadow": sideA.shadow,
-            "engagementcost": sideA.engagementCost,
-            "traits": sideA.traits,
-            "keywords": sideA.keywords,
-            "type": sideA.type,
-            "victorypoints": sideA.victoryPoints,
-            "cost": sideA.cost,
-            "name": sideA.name,
-            "questpoints": sideA.questPoints,
-            "attack": sideA.attack,
-            "unique": sideA.unique,
-            "defense": sideA.defense,
-            "threat": sideA.threat,
-            "customimgurl": sideA.customImgUrl,
-          },
-          "B": {
-            "printname": sideB.printName,
-            "sphere": sideB.sphere,
-            "text": sideB.text,
-            "willpower": sideB.willpower,
-            "hitpoints": sideB.hitPoints,
-            "shadow": sideB.shadow,
-            "engagementcost": sideB.engagementCost,
-            "traits": sideB.traits,
-            "keywords": sideB.keywords,
-            "type": sideB.type,
-            "victorypoints": sideB.victoryPoints,
-            "cost": sideB.cost,
-            "name": sideB.name,
-            "questpoints": sideB.questPoints,
-            "attack": sideB.attack,
-            "unique": sideB.unique,
-            "defense": sideB.defense,
-            "threat": sideB.threat,
-            "customimgurl": sideB.customImgUrl,
-          }
-        },
-        "cardquantity": card.cardQuantity,
-        "cardsetid": card.cardSetId,
-        "cardpackname": card.cardPackName,
-        "cardid": card.cardDbId,
-        "cardnumber": card.cardNumber,
-        "deckgroupid": card.deckGroupId,
-        "discardgroupid": card.discardGroupId,
-      }
-      exportList.push({cardRow: cardRow, quantity: 1, groupId: card.groupId})
-    }
-    const exportName = state.gameUi.roomName+"-cards";
-    var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(exportList, null, 2));
-    var downloadAnchorNode = document.createElement('a');
-    downloadAnchorNode.setAttribute("href",     dataStr);
-    downloadAnchorNode.setAttribute("download", exportName + ".txt");
-    document.body.appendChild(downloadAnchorNode); // required for firefox
-    downloadAnchorNode.click();
-    downloadAnchorNode.remove();
-    chatBroadcast("game_update", {message: "exported all the cards."});
-  }
-
   return(
     <li key={"Menu"}><div className="h-full flex items-center justify-center select-none">{l10n("Menu")}</div>
       <ul className="second-level-menu">
@@ -629,10 +527,7 @@ export const TopBarMenu = React.memo(({}) => {
                 return(
                   <li key={info.layoutId} onClick={() => handleMenuClick({action:"layout", value: info})}>{l10n(info.name)}</li>
                 )
-              })}                
-{/*               <li key={"standard"} onClick={() => handleMenuClick({action:"layout", value: "standard"})}>{l10n("Standard")}</li>
-              <li key={"extra"} onClick={() => handleMenuClick({action:"layout", value: "extra"})}>{l10n("Extra staging areas / map")}</li>
- */}
+              })}
              </ul>
           </li>                
         }
@@ -675,7 +570,7 @@ export const TopBarMenu = React.memo(({}) => {
             <span className="float-right mr-1"><FontAwesomeIcon icon={faChevronRight}/></span>
           <ul className="third-level-menu">        
             <li key={"unload_my_deck"} onClick={() => handleMenuClick({action:"unload_my_deck"})}>{l10n("Unload my deck")}</li>
-            <li key={"unload_encounter_deck"} onClick={() => handleMenuClick({action:"unload_encounter_deck"})}>{l10n("Unload encounter")}</li>
+            <li key={"unload_shared_cards"} onClick={() => handleMenuClick({action:"unload_shared_cards"})}>{l10n("Unload shared cards")}</li>
           </ul>
         </li>
         <li key={"spawn"}>
@@ -699,6 +594,12 @@ export const TopBarMenu = React.memo(({}) => {
             <span className="float-right mr-1"><FontAwesomeIcon icon={faChevronRight}/></span>
           <ul className="third-level-menu">
             <li key={"adjust_card_size"} onClick={() => handleMenuClick({action:"adjust_card_size"})}>{l10n("Adjust card size")}</li>
+            {gameDef.menuFunctions?.map((menuFunction, _index) => {
+                return(
+                  <li key={menuFunction.id} onClick={() => doActionList(menuFunction.actionList)}>{l10n(menuFunction.label)}</li>
+                )
+              }
+            )}
             <li key={"cards_per_round"} onClick={() => handleMenuClick({action:"cards_per_round"})}>{l10n("Cards per round")}</li>
             <li key={"quest_mode_battle"} onClick={() => handleMenuClick({action:"quest_mode", mode: "Battle"})}>{l10n("Battle quest")}</li>
             <li key={"quest_mode_siege"} onClick={() => handleMenuClick({action:"quest_mode", mode: "Siege"})}>{l10n("Siege quest")}</li>
@@ -720,20 +621,8 @@ export const TopBarMenu = React.memo(({}) => {
             <span className="float-right mr-1"><FontAwesomeIcon icon={faChevronRight}/></span>
           <ul className="third-level-menu">        
             <li key={"download"} onClick={() => handleMenuClick({action:"download"})}>{l10n("Game state (.json)")}</li>
-            <li key={"export_cards"} onClick={() => handleMenuClick({action:"export_cards"})}>{l10n("Export cards (.txt)")}</li>
           </ul>
         </li>
-        {isHost &&
-          <li key={"reload"}>
-              {l10n("Reload decks")}
-              <span className="float-right mr-1"><FontAwesomeIcon icon={faChevronRight}/></span>
-            <ul className="third-level-menu">
-              <li key={"reload_victory"} onClick={() => handleMenuClick({action:"reload_game", state: "victory"})}>{l10n("Mark as victory")}</li>
-              <li key={"reload_defeat"} onClick={() => handleMenuClick({action:"reload_game", state: "defeat"})}>{l10n("Mark as defeat")}</li>
-              <li key={"reload_incomplete"} onClick={() => handleMenuClick({action:"reload_game", state: "incomplete"})}>{l10n("Mark as incomplete")}</li>
-            </ul>
-          </li> 
-        }    
         {isHost &&
           <li key={"reset"}>
             {l10n("Clear table")}

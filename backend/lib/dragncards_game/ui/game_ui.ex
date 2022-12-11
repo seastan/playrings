@@ -528,9 +528,11 @@ defmodule DragnCardsGame.GameUI do
 
   # Delete card from game
   def delete_card(game, card_id) do
+    card = get_card(game, card_id)
     game
     |> delete_card_from_card_by_id(card_id)
     |> remove_from_stack(card_id)
+    |> refresh_stack_indices_in_group(card["groupId"])
   end
 
   def delete_card_from_card_by_id(game, card_id) do
@@ -539,7 +541,7 @@ defmodule DragnCardsGame.GameUI do
     put_in(game["cardById"], new_card_by_id)
   end
 
-  # Removes a card from a stack, but is stays in cardById
+  # Removes a card from a stack, but it stays in cardById
   def remove_from_stack(game, card_id) do
     stack_id = get_stack_by_card_id(game, card_id)["id"]
     old_card_ids = get_card_ids(game, stack_id)
@@ -550,6 +552,21 @@ defmodule DragnCardsGame.GameUI do
     else
       update_card_ids(game, stack_id, new_card_ids)
     end
+  end
+
+  def refresh_stack_indices_in_group(game, group_id) do
+    stack_ids = get_stack_ids(game, group_id)
+    game = Enum.reduce(Enum.with_index(stack_ids), game, fn({stack_id, index}, acc) ->
+      refresh_stack_indices_in_stack(acc, stack_id, index)
+    end)
+  end
+
+  def refresh_stack_indices_in_stack(game, stack_id, index) do
+    card_ids = get_card_ids(game, stack_id)
+    Enum.reduce(card_ids, game, fn(card_id, acc) ->
+      card = get_card(acc, card_id) |> Map.put("stackIndex", index)
+      update_card(acc, card)
+    end)
   end
 
   def add_trigger(game, card_id, round_step) do
