@@ -60,7 +60,7 @@ export const Stack = React.memo(({
   const numStacksNonZero = numStacks > 0 ? numStacks : 1;
   var handSpacing = 45*aspectRatio/(numStacksNonZero);
   if (handSpacing > cardSize) handSpacing = cardSize;
-  var stackWidth = groupType === "hand" ? handSpacing : cardSize/0.72 + cardSize*spacingFactor/3*(cardIds.length-1);
+  var stackWidth = groupType === "horizontalFan" ? handSpacing : cardSize/0.72 + cardSize*spacingFactor/3*(cardIds.length-1);
   return (
     <Draggable 
       key={stackId} 

@@ -74,6 +74,7 @@ export const Card = React.memo(({
     const touchModeSpacingFactor = touchMode ? 1.5 : 1;
     const getDefaultAction = useGetDefaultAction();
     const defaultAction = touchMode && isActive ? getDefaultAction(cardId) : null;
+    const defaultPeeking = gameDef?.groups?.[groupId]?.defaultPeeking;
 
     const handleMouseLeave = (_event) => {
         //setIsActive(false);
@@ -133,7 +134,7 @@ export const Card = React.memo(({
                             <div>Tap to</div>
                             {defaultAction.label}
                     </div>}
-                {(cardPeeking[playerN] && groupType !== "hand" && (cardCurrentSide === "B")) ? <FontAwesomeIcon className="absolute top-0 right-0 text-2xl" icon={faEye}/>:null}
+                {(cardPeeking[playerN] && !defaultPeeking.includes(playerN) && (cardCurrentSide === "B")) ? <FontAwesomeIcon className="absolute top-0 right-0 text-2xl" icon={faEye}/>:null}
                 <Target
                     cardId={cardId}
                 />

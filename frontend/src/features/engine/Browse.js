@@ -144,7 +144,7 @@ export const Browse = React.memo(({}) => {
           gameBroadcast={gameBroadcast}
           chatBroadcast={chatBroadcast}
           groupId={groupId}
-          groupType={"hand"}
+          groupType={"horizontalFan"}
           selectedStackIndices={filteredStackIndices}
         />
       </div>

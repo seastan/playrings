@@ -47,11 +47,124 @@
     },
     {
       "id": "setupEscapeFromMountGram",
-      "label": "Setup Escape from Mount Gram"
+      "label": "Setup Escape from Mount Gram",
+      "actionList": [
+        ["CONFIRM", "This function will set up each player's capture deck, add 2 resources to each hero, draw new starting hands of 3 cards, and set new threat levels. Before running this function, each player should flip each hero they control that is not their starting hero facedown. Continue?"],
+        ["FOR_EACH_KEY_VAL", "$PLAYER_I", "$PLAYER_I_DATA", "$GAME.playerData",
+          [
+            ["MOVE_STACKS", ["JOIN_STRING", "$PLAYER_I", "Hand"], ["JOIN_STRING", "$PLAYER_I", "Deck"], "$HAND_SIZE", "shuffle"],
+            ["FOR_EACH_KEY_VAL", "$CARD_ID", "$CARD", "$CARD_BY_ID", [
+              ["COND",
+                ["AND",
+                  ["EQUAL", "$CARD.controller", "$PLAYER_I"],
+                  ["EQUAL", "$CARD.groupId", ["JOIN_STRING", "$PLAYER_I", "Deck"]],
+                  ["OR",
+                    ["EQUAL", "$CARD.sides.A.type", "Ally"],
+                    ["IN_STRING", "$CARD.sides.A.traits", "Item."],
+                    ["IN_STRING", "$CARD.sides.A.traits", "Mount."],
+                    ["IN_STRING", "$CARD.sides.A.traits", "Artifact."]
+                  ]
+                ],
+                ["MOVE_CARD", "$CARD_ID", ["JOIN_STRING", "$PLAYER_I", "Deck2"], 0, 0]
+              ]
+            ]]
+          ],
+          ["DEFINE", "$FACEDOWN_HEROES", ["LIST"]],
+          ["FOR_EACH_KEY_VAL", "$CARD_ID", "$CARD", "$CARD_BY_ID", [
+            ["COND",
+              ["AND",
+                ["EQUAL", "$CARD.controller", "$PLAYER_I"],
+                ["EQUAL", "$CARD.sides.A.type", "Hero"],
+                ["EQUAL", "$CARD.currentSide", "B"]
+              ],
+              ["APPEND", "$FACEDOWN_HEROES", "$CARD"]
+            ]
+          ]],
+          ["DEFINE", "$HERO_INDEX", ["RANDOM_INT", 0, ["SUBTRACT", ["LENGTH", "$FACEDOWN_HEROES"], 1]]],
+          ["DEFINE", "$SET_ASIDE_HERO", ["AT_INDEX", "$FACEDOWN_HEROES", "$HERO_INDEX"]],
+          ["FOR_EACH_START_STOP_STEP", "$i", 0, ["LENGTH", "$FACEDOWN_HEROES"], 1,
+            [
+              "COND",
+              ["NOT", ["EQUAL", "$i", "$HERO_INDEX"]],
+              [
+                ["DEFINE", "$CARD", ["AT_INDEX", "$FACEDOWN_HEROES", "$i"]],
+                ["MOVE_CARD", "$CARD.id", ["JOIN_STRING", "$PLAYER_I", "Deck2"], 0, 0]
+              ]
+            ]
+          ],
+          ["SHUFFLE_GROUP", ["JOIN_STRING", "$PLAYER_I", "Deck2"]],
+          ["DEFINE", "$CARD", ["AT_INDEX", "$FACEDOWN_HEROES", "$HERO_INDEX"]],
+          ["MOVE_CARD", "$CARD.id", ["JOIN_STRING", "$PLAYER_I", "Deck2"], 0, 0],
+          ["FOR_EACH_KEY_VAL", "$CARD_ID", "$CARD", "$CARD_BY_ID", [
+            ["COND",
+              ["AND",
+                ["EQUAL", "$CARD.controller", "$PLAYER_I"],
+                ["EQUAL", "$CARD.sides.A.type", "Hero"],
+                ["EQUAL", "$CARD.currentSide", "A"]
+              ],
+              ["GAME_INCREASE_VAL", "playerData", "$PLAYER_I", "threat", "$CARD.sides.A.cost"],
+            ]
+          ]],
+          ["ACTION_LIST", "drawCard", null, ["NEXT_PLAYER", "$PLAYER_I"]],
+          ["FOR_EACH_KEY_VAL", "$CARD_ID", "$CARD", "$CARD_BY_ID", [
+            ["COND",
+              ["AND",
+                ["EQUAL", "$CARD.sides.A.type", "Hero"],
+                ["EQUAL", "$CARD.controller", "$PLAYER_I"],
+                ["EQUAL", "$CARD.inPlay", true]
+              ],
+              ["GAME_INCREASE_VAL", "cardById", "$CARD_ID", "tokens", "resource", 2]
+            ]
+          ]]
+        ],
+        ["GAME_ADD_MESSAGE", "Complete! Players can find their capture decks under View > Player X > Player X Deck 2."]
+      ]
     },
     {
       "id": "setupToCatchAnOrc",
-      "label": "Setup To Catch an Orc"
+      "label": "Setup To Catch an Orc",
+      "actionList": [
+        ["CONFIRM", "This function will set up each player's capture deck, add 2 resources to each hero, draw new starting hands of 3 cards, and set new threat levels. Before running this function, each player should flip each hero they control that is not their starting hero facedown. Continue?"],
+      ]
+
+        const result = window.confirm("The function will set up each player's out-of-play deck which can be found under View > Player X > Player X Deck 2. Continue?")
+        if (!result) return;
+        const shuffledPlayersIds = shuffle(Array.from({length: game.numPlayers}, (_, i) => i + 1))
+        alert(shuffledPlayersIds)
+        const guards = listOfMatchingCards(gameUi, [["sides","A","name","Mugash's Guard"]]);
+        if (guards.length < game.numPlayers-1) {
+          alert("Setup failed, not enough Mugash's Guards found.");
+          return;
+        }
+        for (var i=0; i<game.numPlayers; i++) {
+          const playerI = "player"+shuffledPlayersIds[i];
+          const deck = game.groupById[playerI+"Deck"];
+          if (deck.stackIds.length < 20) {
+            alert("Setup failed, "+playerI+" does not have enough cards in their deck.");
+            return;
+          }
+          // Move 20 cards to out-of-play deck
+          gameBroadcast("game_action", {action: "move_stacks", options: {orig_group_id: playerI+"Deck", dest_group_id: playerI+"Deck2", top_n: 20, position: "top"}})
+          if (i === 0) {
+            // Move Mugash
+            gameBroadcast("game_action", {
+              action: "action_on_matching_cards", 
+              options: {
+                criteria:[["sides", "A", "name", "Mugash"]], 
+                action: "move_card", 
+                options: {dest_group_id: playerI+"Deck2", dest_stack_index: 0, dest_card_index: 0, combine: false, preserve_state: false}
+              }
+            })
+          } else {
+            const guard = guards[i-1];
+            gameBroadcast("game_action", {action: "move_card", options: {card_id: guard.id, dest_group_id: playerI+"Deck2", dest_stack_index: 0, dest_card_index: 0, combine: false, preserve_state: false}})
+          }
+          // Shuffle
+          gameBroadcast("game_action", {action: "shuffle_group", options: {group_id: playerI+"Deck2"}})
+        }
+      }
+
+
     },
     {
       "id": "setupGlitteringCaves",
@@ -3833,7 +3946,7 @@
       "name": "Player 1 Discard", 
       "tableName": "Discard",
       "controller": "player1",
-      "type": "row",
+      "type": "pile",
       "defaultSideUp": "A",
       "defaultPeeking": [],
       "inPlay": false,
@@ -3954,7 +4067,7 @@
       "name": "Player 2 Discard", 
       "tableName": "Discard",
       "controller": "player2",
-      "type": "row",
+      "type": "pile",
       "defaultSideUp": "A",
       "defaultPeeking": [],
       "inPlay": false,
@@ -4075,7 +4188,7 @@
       "name": "Player 3 Discard", 
       "tableName": "Discard",
       "controller": "player3",
-      "type": "row",
+      "type": "pile",
       "defaultSideUp": "A",
       "defaultPeeking": [],
       "inPlay": false,
@@ -4196,7 +4309,7 @@
       "name": "Player 4 Discard", 
       "tableName": "Discard",
       "controller": "player4",
-      "type": "row",
+      "type": "pile",
       "defaultSideUp": "A",
       "defaultPeeking": [],
       "inPlay": false,

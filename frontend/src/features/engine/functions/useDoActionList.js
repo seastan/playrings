@@ -21,13 +21,18 @@ export const useDoActionList = () => {
             actionList = gameDef.actionLists[idOrList]
         }
         if (actionList != null) {
-            const processedActionList = [...actionList];
+            var processedActionList = [...actionList];
             for (var i=0; i<processedActionList.length; i++) {
                 const action = processedActionList[i];
                 if (action[0] === "INPUT") {
                     if (action[1] === "integer") {
                         processedActionList[i] = ["DEFINE", action[2], parseInt(prompt(action[3],action[4]))]
+                    } else if (action[1] === "string") {
+                        processedActionList[i] = ["DEFINE", action[2], prompt(action[3],action[4])]
                     }
+                } else if (action[0] === "CONFIRM") {
+                    if (!window.confirm(action[1])) return;
+                    else processedActionList.splice(i,1);
                 }
             }
             gameBroadcast("game_action", {

@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 import styled from "@emotion/styled";
 import { Droppable } from "react-beautiful-dnd";
 import { Stack } from "./Stack";
-import CardBack from "./CardBack"
+import { PileImage } from "./PileImage"
 
 const Container = styled.div`
   background-color: ${props => props.isDraggingOver ? "rgba(1,1,1,0.3)" : ""};
@@ -45,6 +45,7 @@ const StacksList = React.memo(({
 }) => {
   const pile = groupType=="pile";
   // Truncate stacked piles
+  console.log("Rendering StacksList", {groupId, groupType, stackIds});
   var stackIdsToShow;
   if (pile && stackIds.length>1) stackIdsToShow = [stackIds[0]]
   else stackIdsToShow = stackIds;
@@ -92,13 +93,13 @@ export const Stacks = React.memo(({
           groupType={groupType}
         >
           <div className="h-full">
-            <CardBack 
+            <PileImage 
               groupType={groupType} 
               defaultSideUp={group.defaultSideUp} 
               stackIds={stackIds} 
               isDraggingOver={dropSnapshot.isDraggingOver} 
               isDraggingFrom={Boolean(dropSnapshot.draggingFromThisWith)}>
-            </CardBack>
+            </PileImage>
             <DropZone ref={dropProvided.innerRef} groupType={groupType}>
               <StacksList
                 isDraggingOver={dropSnapshot.isDraggingOver}

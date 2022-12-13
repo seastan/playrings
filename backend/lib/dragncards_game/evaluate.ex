@@ -48,6 +48,9 @@ defmodule DragnCardsGame.Evaluate do
             Enum.reduce(list, [], fn(item,acc)->
               acc ++ [evaluate(game, item)]
             end)
+          "APPEND" ->
+            list = evaluate(game, Enum.at(code, 1))
+            ["LIST"] ++ list ++ [evaluate(game, Enum.at(code, 2))]
           "NEXT_PLAYER" ->
             current_player_i = evaluate(game, Enum.at(code, 1))
             current_i = String.to_integer(String.slice(current_player_i, -1..-1))
@@ -74,6 +77,15 @@ defmodule DragnCardsGame.Evaluate do
                 {:halt, false}
               end
             end)
+          "OR" ->
+            statements = Enum.slice(code, 1, Enum.count(code))
+            Enum.reduce_while(statements, false, fn(statement, acc) ->
+              if evaluate(game, statement) == true do
+                {:cont, true}
+              else
+                {:cont, acc}
+              end
+            end)
           "EQUAL" ->
             evaluate(game, Enum.at(code,1)) == evaluate(game, Enum.at(code,2))
           "LESS_THAN" ->
@@ -88,6 +100,8 @@ defmodule DragnCardsGame.Evaluate do
             !evaluate(game, Enum.at(code,1))
           "JOIN_STRING" ->
             evaluate(game, Enum.at(code,1)) <> evaluate(game, Enum.at(code,2))
+          "IN_STRING" ->
+            String.contains?(evaluate(game, Enum.at(code,1)), evaluate(game, Enum.at(code,2)))
           "ADD" ->
             (evaluate(game, Enum.at(code,1)) || 0) + (evaluate(game, Enum.at(code,2)) || 0)
           "SUBTRACT" ->
@@ -97,6 +111,10 @@ defmodule DragnCardsGame.Evaluate do
           "DIVIDE" ->
             divisor = (evaluate(game, Enum.at(code,2)) || 0)
             if divisor do (evaluate(game, Enum.at(code,1)) || 0) / divisor else nil end
+          "RANDOM_INT" ->
+            mn = evaluate(game, Enum.at(code,1))
+            mx = evaluate(game, Enum.at(code,2))
+            Enum.random(mn, mx)
           "OBJ_GET_VAL" ->
             map = evaluate(game, Enum.at(code,1))
             key = evaluate(game, Enum.at(code,2))
@@ -174,9 +192,6 @@ defmodule DragnCardsGame.Evaluate do
                 {:cont, game}
               end
             end)
-            #IO.puts("COND then")
-            #IO.inspect("then")
-            #evaluate(game, then)
           "GAME_ADD_MESSAGE" ->
             statements = Enum.slice(code, 1, Enum.count(code))
             message = Enum.reduce(statements, "", fn(statement, acc) ->

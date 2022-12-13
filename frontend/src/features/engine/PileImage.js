@@ -1,4 +1,4 @@
-/* The image shown below the deck of cards*/
+/* The image shown for a pile of cards */
 
 import React from "react";
 import { useSelector } from 'react-redux';
@@ -7,7 +7,7 @@ import useProfile from "../../hooks/useProfile";
 import { useCardSize } from "../../hooks/useCardSize";
 import { useGameDefinition } from "./functions/useGameDefinition";
 
-const CardBack = React.memo(({
+export const PileImage = React.memo(({
   groupType,
   defaultSideUp,
   stackIds,
@@ -16,7 +16,7 @@ const CardBack = React.memo(({
 }) => {
   const user = useProfile();
   const gameDef = useGameDefinition();
-  const playerN = useSelector(state => state?.playerUi?.playerN)
+  const playerN = useSelector(state => state?.playerUi?.playerN); // TODO: Implement player-specific conditions
   const stack0 = useSelector(state => state?.gameUi?.game?.stackById[stackIds[0]]);
   const stack1 = useSelector(state => state?.gameUi?.game?.stackById[stackIds[1]]);
   const card0 = useSelector(state => state?.gameUi?.game?.cardById[stack0?.cardIds[0]]);
@@ -29,51 +29,34 @@ const CardBack = React.memo(({
   if (groupType === "pile") {
     if (defaultSideUp === "B" && groupSize>0 && isDraggingOver && !isDraggingFrom) {
       visibleFace = getCurrentFace(card0)
-      visibleFaceSrc = getVisibleFaceSrc(visibleFace, user, gameDef)
     } else if (defaultSideUp === "B" && groupSize>1 && isDraggingFrom) {
-
       visibleFace = getCurrentFace(card1)
-      visibleFaceSrc = getVisibleFaceSrc(visibleFace, user, gameDef)
-      console.log("Rendering CardBack ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~", visibleFaceSrc, visibleFace)
-      console.log("Rendering CardBack", groupType, defaultSideUp, visibleFaceSrc,cardSize*visibleFace?.width, cardSize*visibleFace?.height)
-
     } else if (defaultSideUp === "A" && groupSize>0 && isDraggingOver && !isDraggingFrom) {
       visibleFace = getCurrentFace(card0)
-      visibleFaceSrc = getVisibleFaceSrc(visibleFace, user, gameDef)
     } else if (defaultSideUp === "A" && groupSize>1 && isDraggingFrom) {
       visibleFace = getCurrentFace(card1)
-      visibleFaceSrc = getVisibleFaceSrc(visibleFace, user, gameDef)
-    }
+    }      
+    visibleFaceSrc = getVisibleFaceSrc(visibleFace, user, gameDef)
   }
   const cardWidthHeight = getVisibleFaceWidthHeight(visibleFace, gameDef);
   const cardWidth = cardWidthHeight.width;
   const cardHeight = cardWidthHeight.height;
-  console.log("rendering CardBack",groupType,defaultSideUp, cardWidth, cardHeight, getVisibleFaceWidthHeight(visibleFace, gameDef))
   if (visibleFaceSrc?.src) {
     return (
         <div 
             style={{
-                backgroundColor: "red",
                 background: `url(${visibleFaceSrc.src}) no-repeat scroll 0% 0% / contain`,
-                //borderWidth: '1px',
                 borderRadius: '0.6vh',
                 borderColor: 'transparent',
                 position: "absolute",
                 width: `${cardSize*cardWidth}vh`,
                 height: `${cardSize*cardHeight}vh`,
                 left: `${0.2 + (1.39-cardWidth)*cardSize/2}vh`,
-                top: "50%", //`${0.2 + (1.39-currentFace.height)*cardSize/2}vw`,
+                top: "50%",
                 transform: "translate(0%,-50%)",
             }}>   
-        {/* <img className="absolute w-full h-full" style={{borderRadius: '0.6vh'}} src={"https://dragncards-lotrlcg.s3.amazonaws.com/cardbacks/encounter.jpg"} onerror={`this.onerror=null; this.src=${visibleFaceSrc.default}`} />
- */}
         </div>)
   } else {
-    return (<div></div>);
+    return (<div/>);
   }
 })
-
-//left: `${0.2 + (1.39-currentFace.width)*CARDSCALE/2 + CARDSCALE/3*cardIndex}vw`,
-//top: `${0.2 + (1.39-currentFace.height)*CARDSCALE/2}vw`,
-
-export default CardBack;
