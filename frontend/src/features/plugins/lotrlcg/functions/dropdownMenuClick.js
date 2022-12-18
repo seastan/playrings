@@ -8,31 +8,36 @@ import {
   shuffle,
   getRandomIntInclusive,
 } from "./helpers";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import BroadcastContext from "../../../../contexts/BroadcastContext";
+import { useContext } from "react";
+import { useDoActionList } from "../../../engine/functions/useDoActionList";
 
 
 // dropdownMenu is an object that gets populated with infor about a card when a card is pressed, or about a group when a group is pressed.
 
-export const useDropdownClickCommon = (dropdownOptions, actionProps) => {
-  alert("here 1")
+export const useDropdownClickCommon = (dropdownOptions) => {
   const dropdownClickCard = useDropdownClickCard;
   const dropdownClickGroup = useDropdownClickGroup;
   const dropdownClickFirstPlayer = useDropdownClickFirstPlayer;
-  const type = actionProps?.state?.playerUi?.dropdownMenuObj?.type;
-  if (type === "card") dropdownClickCard(dropdownOptions, actionProps);
-  else if (type === "group") dropdownClickGroup(dropdownOptions, actionProps);
-  else if (type === "firstPlayer") dropdownClickFirstPlayer(dropdownOptions, actionProps);
+  const type = useSelector(state => state?.playerUi?.dropdownMenuObj?.type);
+  if (type === "card") dropdownClickCard(dropdownOptions);
+  else if (type === "group") dropdownClickGroup(dropdownOptions);
+  else if (type === "firstPlayer") dropdownClickFirstPlayer(dropdownOptions);
 }
 
-export const useDropdownClickCard = (dropdownOptions, actionProps) => {
-  const {state, dispatch, gameBroadcast, chatBroadcast} = actionProps;
-  const gameUi = state.gameUi;
-  const game = gameUi.game;
-  const dropdownMenuObj = state.playerUi.dropdownMenuObj;
-  const playerN = state.playerUi.playerN;
-  const menuCard = dropdownMenuObj.card;
-  const displayName = getDisplayName(menuCard);
-  console.log("dropdownClick")
+export const useDropdownClickCard = (dropdownOptions) => {
+  // const {gameBroadcast, chatBroadcast} = useContext(BroadcastContext);
+  // const gameUi = useSelector(state => state?.gameUi);
+  // const playerUi = useSelector(state => state?.playerUi);
+  // const game = gameUi?.game;
+  // const dropdownMenuObj = playerUi?.dropdownMenuObj;
+  // const playerN = playerUi?.playerN;
+  // const menuCard = dropdownMenuObj.card;
+  // const displayName = getDisplayName(menuCard);
+  const doActionList = useDoActionList();
+  doActionList(dropdownOptions.action);
+/*   console.log("dropdownClick")
   if (dropdownOptions.action === "toggle_rotate") {
     console.log("dropdownExhaust", menuCard)
     cardAction("toggle_rotate", menuCard?.id, null, actionProps);
@@ -150,7 +155,7 @@ export const useDropdownClickCard = (dropdownOptions, actionProps) => {
   } else if (dropdownOptions.action === "setRotation") {
     chatBroadcast("game_update", {message: "set rotation of "+displayName+" to "+dropdownOptions.rotation+"."})
     gameBroadcast("game_action", {action: "update_values", options: {updates: [["cardById", menuCard.id, "rotation", dropdownOptions.rotation]]}})
-  }
+  } */
 }
 
 export const useDropdownClickGroup = (dropdownOptions, actionProps) => {

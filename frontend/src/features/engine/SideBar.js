@@ -11,8 +11,8 @@ export const SideBar = React.memo(({}) => {
         <SideBarNewRound/>
       </div>
       <div style={{height:"calc(100% - 3vh)"}}>
-        {gameDef.phaseOrder.map((phaseId, phaseIndex) => {
-          return(<SideBarPhase key={phaseIndex} phaseId={phaseId}/>)
+        {gameDef?.phases?.map((phaseInfo, phaseIndex) => {
+          return(<SideBarPhase key={phaseIndex} phaseInfo={phaseInfo}/>)
       })}
       </div>
     </div>

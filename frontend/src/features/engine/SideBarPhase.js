@@ -1,18 +1,17 @@
 import React from "react";
-import { useSelector } from 'react-redux';
+import { useSelector } from "react-redux";
 import { useGameL10n } from "../../hooks/useGameL10n";
 import { useGameDefinition } from "./functions/useGameDefinition";
 import { SideBarRoundStep } from "./SideBarRoundStep";
 
 export const SideBarPhase = React.memo(({
-  phaseId,
+  phaseInfo,
 }) => {
   const l10n = useGameL10n();
   const gameDef = useGameDefinition();
-  const phaseInfo = gameDef?.phases?.[phaseId];
-  const currentStepId = useSelector(state => state?.gameUi?.game?.stepId);
-  const currentStep = gameDef?.steps?.[currentStepId];
-  const currentPhaseId = currentStep?.phaseId;
+  const currentStepIndex = useSelector(state => state?.gameUi?.game?.stepIndex);
+  const currentPhaseId = gameDef?.steps?.[currentStepIndex]?.phaseId;
+  const phaseId = phaseInfo.phaseId;
   console.log("Rendering SideBarPhase", phaseId);
   const isPhase = phaseId === currentPhaseId;
   return (
@@ -27,12 +26,12 @@ export const SideBarPhase = React.memo(({
         </div>
       </div>
       <div className="w-full h-full flex flex-col float-left">
-        {gameDef.stepOrder.map((stepId, _stepIndex) => {
-          if (gameDef?.steps?.[stepId]?.phaseId == phaseId)
+        {gameDef?.steps?.map((stepInfo, _stepIndex) => {
+          if (stepInfo?.phaseId == phaseId)
             return (
               <SideBarRoundStep
-                key={stepId}
-                stepId={stepId}/>
+                key={stepInfo.id}
+                stepInfo={stepInfo}/>
             )
         })}
       </div>

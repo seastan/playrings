@@ -11,170 +11,70 @@
     "cardsDrawn": {"type": "integer", "default": 1, "min": 0},
     "refreshed": {"type": "boolean", "default": false}
   },
-  "menuFunctions": [
-    { 
-      "id": "setCardsDrawn",
-      "label": "Cards Per Round",
-      "actionList": [
-        ["INPUT", "integer", "$VAL", "Set the number of cards drawn during resource phase:", 1],
-        ["GAME_SET_VAL", "playerData", "$PLAYER_N", "cardsDrawn", "$VAL"],
-        ["GAME_ADD_MESSAGE", "$PLAYER_N", " set number of cards drawn during the Resource Phase to ", "$VAL", "."]
-      ]
-    },
-    {
-      "id": "setQuestNormal",
-      "label": "Normal Quest",
-      "actionList": [
-        ["GAME_SET_VAL", "questingStat", "willpower"],
-        ["GAME_ADD_MESSAGE", "$PLAYER_N", " set the questing type to Normal."]
-      ]
-    },
-    { 
-      "id": "setQuestBattle",
-      "label": "Battle Quest",
-      "actionList": [
-        ["GAME_SET_VAL", "questingStat", "attack"],
-        ["GAME_ADD_MESSAGE", "$PLAYER_N", " set the questing type to Battle."]
-      ]
-    },
-    {
-      "id": "setQuestSiege",
-      "label": "Siege Quest",
-      "actionList": [
-        ["GAME_SET_VAL", "questingStat", "attack"],
-        ["GAME_ADD_MESSAGE", "$PLAYER_N", " set the questing type to Siege."]
-      ]
-    },
-    {
-      "id": "setupEscapeFromMountGram",
-      "label": "Setup Escape from Mount Gram",
-      "actionList": [
-        ["CONFIRM", "This function will set up each player's capture deck, add 2 resources to each hero, draw new starting hands of 3 cards, and set new threat levels. Before running this function, each player should flip each hero they control that is not their starting hero facedown. Continue?"],
-        ["FOR_EACH_KEY_VAL", "$PLAYER_I", "$PLAYER_I_DATA", "$GAME.playerData",
-          [
-            ["MOVE_STACKS", ["JOIN_STRING", "$PLAYER_I", "Hand"], ["JOIN_STRING", "$PLAYER_I", "Deck"], "$HAND_SIZE", "shuffle"],
-            ["FOR_EACH_KEY_VAL", "$CARD_ID", "$CARD", "$CARD_BY_ID", [
-              ["COND",
-                ["AND",
-                  ["EQUAL", "$CARD.controller", "$PLAYER_I"],
-                  ["EQUAL", "$CARD.groupId", ["JOIN_STRING", "$PLAYER_I", "Deck"]],
-                  ["OR",
-                    ["EQUAL", "$CARD.sides.A.type", "Ally"],
-                    ["IN_STRING", "$CARD.sides.A.traits", "Item."],
-                    ["IN_STRING", "$CARD.sides.A.traits", "Mount."],
-                    ["IN_STRING", "$CARD.sides.A.traits", "Artifact."]
-                  ]
-                ],
-                ["MOVE_CARD", "$CARD_ID", ["JOIN_STRING", "$PLAYER_I", "Deck2"], 0, 0]
-              ]
-            ]]
-          ],
-          ["DEFINE", "$FACEDOWN_HEROES", ["LIST"]],
-          ["FOR_EACH_KEY_VAL", "$CARD_ID", "$CARD", "$CARD_BY_ID", [
-            ["COND",
-              ["AND",
-                ["EQUAL", "$CARD.controller", "$PLAYER_I"],
-                ["EQUAL", "$CARD.sides.A.type", "Hero"],
-                ["EQUAL", "$CARD.currentSide", "B"]
-              ],
-              ["APPEND", "$FACEDOWN_HEROES", "$CARD"]
-            ]
-          ]],
-          ["DEFINE", "$HERO_INDEX", ["RANDOM_INT", 0, ["SUBTRACT", ["LENGTH", "$FACEDOWN_HEROES"], 1]]],
-          ["DEFINE", "$SET_ASIDE_HERO", ["AT_INDEX", "$FACEDOWN_HEROES", "$HERO_INDEX"]],
-          ["FOR_EACH_START_STOP_STEP", "$i", 0, ["LENGTH", "$FACEDOWN_HEROES"], 1,
-            [
-              "COND",
-              ["NOT", ["EQUAL", "$i", "$HERO_INDEX"]],
-              [
-                ["DEFINE", "$CARD", ["AT_INDEX", "$FACEDOWN_HEROES", "$i"]],
-                ["MOVE_CARD", "$CARD.id", ["JOIN_STRING", "$PLAYER_I", "Deck2"], 0, 0]
-              ]
-            ]
-          ],
-          ["SHUFFLE_GROUP", ["JOIN_STRING", "$PLAYER_I", "Deck2"]],
-          ["DEFINE", "$CARD", ["AT_INDEX", "$FACEDOWN_HEROES", "$HERO_INDEX"]],
-          ["MOVE_CARD", "$CARD.id", ["JOIN_STRING", "$PLAYER_I", "Deck2"], 0, 0],
-          ["FOR_EACH_KEY_VAL", "$CARD_ID", "$CARD", "$CARD_BY_ID", [
-            ["COND",
-              ["AND",
-                ["EQUAL", "$CARD.controller", "$PLAYER_I"],
-                ["EQUAL", "$CARD.sides.A.type", "Hero"],
-                ["EQUAL", "$CARD.currentSide", "A"]
-              ],
-              ["GAME_INCREASE_VAL", "playerData", "$PLAYER_I", "threat", "$CARD.sides.A.cost"],
-            ]
-          ]],
-          ["ACTION_LIST", "drawCard", null, ["NEXT_PLAYER", "$PLAYER_I"]],
-          ["FOR_EACH_KEY_VAL", "$CARD_ID", "$CARD", "$CARD_BY_ID", [
-            ["COND",
-              ["AND",
-                ["EQUAL", "$CARD.sides.A.type", "Hero"],
-                ["EQUAL", "$CARD.controller", "$PLAYER_I"],
-                ["EQUAL", "$CARD.inPlay", true]
-              ],
-              ["GAME_INCREASE_VAL", "cardById", "$CARD_ID", "tokens", "resource", 2]
-            ]
-          ]]
-        ],
-        ["GAME_ADD_MESSAGE", "Complete! Players can find their capture decks under View > Player X > Player X Deck 2."]
-      ]
-    },
-    {
-      "id": "setupToCatchAnOrc",
-      "label": "Setup To Catch an Orc",
-      "actionList": [
-        ["CONFIRM", "This function will set up each player's capture deck, add 2 resources to each hero, draw new starting hands of 3 cards, and set new threat levels. Before running this function, each player should flip each hero they control that is not their starting hero facedown. Continue?"],
-      ]
-
-        const result = window.confirm("The function will set up each player's out-of-play deck which can be found under View > Player X > Player X Deck 2. Continue?")
-        if (!result) return;
-        const shuffledPlayersIds = shuffle(Array.from({length: game.numPlayers}, (_, i) => i + 1))
-        alert(shuffledPlayersIds)
-        const guards = listOfMatchingCards(gameUi, [["sides","A","name","Mugash's Guard"]]);
-        if (guards.length < game.numPlayers-1) {
-          alert("Setup failed, not enough Mugash's Guards found.");
-          return;
-        }
-        for (var i=0; i<game.numPlayers; i++) {
-          const playerI = "player"+shuffledPlayersIds[i];
-          const deck = game.groupById[playerI+"Deck"];
-          if (deck.stackIds.length < 20) {
-            alert("Setup failed, "+playerI+" does not have enough cards in their deck.");
-            return;
-          }
-          // Move 20 cards to out-of-play deck
-          gameBroadcast("game_action", {action: "move_stacks", options: {orig_group_id: playerI+"Deck", dest_group_id: playerI+"Deck2", top_n: 20, position: "top"}})
-          if (i === 0) {
-            // Move Mugash
-            gameBroadcast("game_action", {
-              action: "action_on_matching_cards", 
-              options: {
-                criteria:[["sides", "A", "name", "Mugash"]], 
-                action: "move_card", 
-                options: {dest_group_id: playerI+"Deck2", dest_stack_index: 0, dest_card_index: 0, combine: false, preserve_state: false}
-              }
-            })
-          } else {
-            const guard = guards[i-1];
-            gameBroadcast("game_action", {action: "move_card", options: {card_id: guard.id, dest_group_id: playerI+"Deck2", dest_stack_index: 0, dest_card_index: 0, combine: false, preserve_state: false}})
-          }
-          // Shuffle
-          gameBroadcast("game_action", {action: "shuffle_group", options: {group_id: playerI+"Deck2"}})
-        }
+  "menu": {
+    "plugin":[
+      { 
+        "label": "Cards Per Round",
+        "actionListId": "setCardsDrawn"
+      },
+      {
+        "label": "Normal Quest",
+        "actionListId": "setQuestNormal"
+      },
+      { 
+        "label": "Battle Quest",
+        "actionListId": "setQuestBattle"
+      },
+      {
+        "label": "Siege Quest",
+        "actionListId": "setQuestSiege"
+      },
+      {
+        "label": "Setup Escape from Mount Gram",
+        "actionListId": "setupEscapeFromMountGram"
+      },
+      {
+        "label": "Setup To Catch an Orc",
+        "actionListId": "setupToCatchAnOrc"
+      },
+      {
+        "label": "Setup The Glittering Caves",
+        "actionListId": "setupGlitteringCaves"
+      },
+      {
+        "label": "Setup The Fortress of Nurn",
+        "actionListId": "setupTheFortressOfNurn"
+      }
+    ],
+    "card": [
+      {
+        "label": "Toggle rotate",
+        "actionListId": "toggleExhaust"
+      },
+      {
+        "label": "Detach",
+        "actionListId": "detach"
+      },
+      {
+        "label": "Swap side",
+        "actionListId": "swapSide"
+      },
+      {
+        "label": "Toggle peeking",
+        "actionListId": "togglePeeking"
+      },
+      {
+        "label": "Toggle locked",
+        "actionListId": "toggleLocked"
+      },
+      {
+        "label": "Delete",
+        "actionListId": "deleteCard"
       }
 
-
-    },
-    {
-      "id": "setupGlitteringCaves",
-      "label": "Setup The Glittering Caves"
-    },
-    {
-      "id": "setupTheFortressOfNurn",
-      "label": "Setup The Fortress of Nurn"
-    }
-  ],
+    ],
+    "group": []
+  },
   "cardTypes": {
     "Ally":           {"width": 1.0, "height": 1.39, "tokens": ["resource","progress","damage","time","willpower","attack","defense","hitPoints"]},
     "Attachment":     {"width": 1.0, "height": 1.39, "tokens": ["resource","progress","damage","time","willpower","attack","defense","hitPoints"]},
@@ -254,20 +154,6 @@
     "locked": {"type": "boolean", "default": false},
     "extraResources": {"type": "integer", "default": 0}
   },
-  "cardMenu": [
-    {
-      "title": "Disable refresh",
-      "type": "action",
-      "showIf": [[["_ACTIVE_CARD", "inPlay"], "==", true], "AND", [["_ACTIVE_CARD", "locked"], "==", false]],
-      "actionName": "lockCard"
-    },
-    {
-      "title": "Enable refresh",
-      "type": "action",
-      "showIf": [[["_ACTIVE_CARD", "inPlay"], "==", true], "AND", [["_ACTIVE_CARD", "locked"], "==", true]],
-      "actionName": "unlockCard"
-    }
-  ],
   "preBuiltDecks": {
     "Q00.01": {
       "name": "The Oath",
@@ -3233,7 +3119,7 @@
           ["GAME_ADD_MESSAGE", "player1 increased the round."],
           ["GAME_SET_VAL", "phaseId", "Resource"],
           ["GAME_ADD_MESSAGE", "player1 set the phase to Resource."],
-          ["GAME_SET_VAL", "stepId", "1.R"],
+          ["GAME_SET_VAL", "stepIndex", "2"],
           ["GAME_ADD_MESSAGE", "player1 set the round step to 1.R."]
         ]
       ],
@@ -3280,7 +3166,7 @@
         ["EQUAL", "$PLAYER_N", "player1"],
         [
           ["GAME_SET_VAL", "phaseId", "Refresh"],
-          ["GAME_SET_VAL", "stepId", "7.R"],
+          ["GAME_SET_VAL", "stepId", 25],
           ["GAME_SET_VAL", "firstPlayer", ["NEXT_PLAYER", "$GAME.firstPlayer"]],
           ["GAME_ADD_MESSAGE", "player1 set the phase to Refresh."],
           ["GAME_ADD_MESSAGE", "player1 set the round step to 7.R."]
@@ -3371,12 +3257,12 @@
       ["DRAW_CARD"]
     ],
     "dealShadows": [
-      ["DEFINE", "$STEP_ID", "6.2"],
+      ["DEFINE", "$STEP_INDEX", 20],
       ["COND",
-        ["AND", ["EQUAL", "$GAME.playerUi.playerN", "player1"], ["NOT_EQUAL", "$STEP_ID", "$GAME.stepId"]],
+        ["AND", ["EQUAL", "$GAME.playerUi.playerN", "player1"], ["NOT_EQUAL", "$STEP_INDEX", "$GAME.stepIndex"]],
         [
-          ["GAME_SET_VAL", "stepId", "$STEP_ID"],
-          ["GAME_ADD_MESSAGE", "$PLAYER_N", " set the round step to ", "$GAME.gameDef.steps.$STEP_ID.text", "."]
+          ["GAME_SET_VAL", "stepIndex", "$STEP_INDEX"],
+          ["GAME_ADD_MESSAGE", "$PLAYER_N", " set the round step to ", "$GAME.gameDef.steps[$STEP_INDEX].text", "."]
         ],
         true,
         "$GAME"
@@ -3428,31 +3314,24 @@
       ]
     ],
     "nextStep": [
+      ["GAME_INCREASE_VAL", "stepIndex", 1],
       ["COND",
-        ["EQUAL", "$GAME.stepId", ["AT_INDEX", "$GAME.gameDef.stepOrder", -1]],
-        ["GAME_SET_VAL", "stepId", ["AT_INDEX", "$GAME.gameDef.stepOrder", 0]],
-        true,
-        [
-          ["LOGGER", "here"],
-          ["GAME_SET_VAL", "stepId", ["AT_INDEX", "$GAME.gameDef.stepOrder", ["ADD", ["GET_INDEX", "$GAME.gameDef.stepOrder", "$GAME.stepId"], 1]]]
-        ]
+        ["EQUAL", "$GAME.stepIndex", ["LENGTH", "$GAME.gameDef.steps"],
+        ["GAME_SET_VAL", "stepIndex", 0]
+      ]
       ],
-      ["DEFINE", "$STEP_ID", "$GAME.stepId"],
-      ["DEFINE", "$STEP", "$GAME.gameDef.steps.$STEP_ID"],
+      ["DEFINE", "$STEP_INDEX", "$GAME.stepIndex"],
+      ["DEFINE", "$STEP", "$GAME.gameDef.steps.[$STEP_INDEX]"],
       ["GAME_ADD_MESSAGE", "$PLAYER_N", " set the round step to ", "$STEP.text", "."]
     ],
     "prevStep": [
+      ["GAME_DECREASE_VAL", "stepIndex", 1],
       ["COND",
-        ["EQUAL", "$GAME.stepId", ["AT_INDEX", "$GAME.gameDef.stepOrder", 0]],
-        ["GAME_SET_VAL", "stepId", ["AT_INDEX", "$GAME.gameDef.stepOrder", -1]],
-        true,
-        [
-          ["LOGGER", "here"],
-          ["GAME_SET_VAL", "stepId", ["AT_INDEX", "$GAME.gameDef.stepOrder", ["SUBTRACT", ["GET_INDEX", "$GAME.gameDef.stepOrder", "$GAME.stepId"], 1]]]
-        ]
+        ["LESS_THAN", "$GAME.stepIndex", 0],
+        ["GAME_SET_VAL", "stepIndex", ["MINUS", ["LENGTH", "$GAME.gameDef.steps"], 1]]
       ],
-      ["DEFINE", "$STEP_ID", "$GAME.stepId"],
-      ["DEFINE", "$STEP", "$GAME.gameDef.steps.$STEP_ID"],
+      ["DEFINE", "$STEP_INDEX", "$GAME.stepIndex"],
+      ["DEFINE", "$STEP", "$GAME.gameDef.steps.[$STEP_INDEX]"],
       ["GAME_ADD_MESSAGE", "$PLAYER_N", " set the round step to ", "$STEP.text", "."]
     ],
     "mulligan": [
@@ -3527,12 +3406,12 @@
       ]
     ],
     "toggleCommit": [
-      ["DEFINE", "$STEP_ID", "3.2"],
+      ["DEFINE", "$STEP_INDEX", 8],
       ["COND",
-        ["AND", ["EQUAL", "$GAME.playerUi.playerN", "player1"], ["NOT_EQUAL", "$STEP_ID", "$GAME.stepId"]],
+        ["AND", ["EQUAL", "$GAME.playerUi.playerN", "player1"], ["NOT_EQUAL", "$STEP_INDEX", "$GAME.stepIndex"]],
         [
-          ["GAME_SET_VAL", "stepId", "$STEP_ID"],
-          ["GAME_ADD_MESSAGE", "$PLAYER_N", " set the round step to ", "$GAME.gameDef.steps.$STEP_ID.text", "."]
+          ["GAME_SET_VAL", "stepIndex", "$STEP_INDEX"],
+          ["GAME_ADD_MESSAGE", "$PLAYER_N", " set the round step to ", "$GAME.gameDef.steps[$STEP_INDEX].text", "."]
         ]
       ],
       ["COND",
@@ -3553,12 +3432,12 @@
       ]
     ],
     "toggleCommitWithoutExhausting": [
-      ["DEFINE", "$STEP_ID", "3.2"],
+      ["DEFINE", "$STEP_INDEX", 8],
       ["COND",
-        ["AND", ["EQUAL", "$GAME.playerUi.playerN", "player1"], ["NOT_EQUAL", "$STEP_ID", "$GAME.stepId"]],
+        ["AND", ["EQUAL", "$GAME.playerUi.playerN", "player1"], ["NOT_EQUAL", "$STEP_INDEX", "$GAME.stepIndex"]],
         [
-          ["GAME_SET_VAL", "stepId", "$STEP_ID"],
-          ["GAME_ADD_MESSAGE", "$PLAYER_N", " set the round step to ", "$GAME.gameDef.steps.$STEP_ID.text", "."]
+          ["GAME_SET_VAL", "stepIndex", "$STEP_INDEX"],
+          ["GAME_ADD_MESSAGE", "$PLAYER_N", " set the round step to ", "$GAME.gameDef.steps[$STEP_INDEX].text", "."]
         ]
       ],
       ["COND",
@@ -3679,6 +3558,131 @@
     ],
     "moveToBack": [
       ["MOVE_CARD", "$ACTIVE_CARD_ID", "$ACTIVE_CARD.groupId", "$ACTIVE_CARD.stackIndex", -1, true]
+    ],
+    "setCardsDrawn": [
+      ["INPUT", "integer", "$VAL", "Set the number of cards drawn during resource phase:", 1],
+      ["GAME_SET_VAL", "playerData", "$PLAYER_N", "cardsDrawn", "$VAL"],
+      ["GAME_ADD_MESSAGE", "$PLAYER_N", " set number of cards drawn during the Resource Phase to ", "$VAL", "."]
+    ],
+    "setQuestNormal": [
+      ["GAME_SET_VAL", "questingStat", "willpower"],
+      ["GAME_ADD_MESSAGE", "$PLAYER_N", " set the questing type to Normal."]
+    ],
+    "setQuestBattle": [
+      ["GAME_SET_VAL", "questingStat", "attack"],
+      ["GAME_ADD_MESSAGE", "$PLAYER_N", " set the questing type to Battle."]
+    ],
+    "setQuestSiege": [
+      ["GAME_SET_VAL", "questingStat", "attack"],
+      ["GAME_ADD_MESSAGE", "$PLAYER_N", " set the questing type to Siege."]
+    ],
+    "setupEscapeFromMountGram": [
+      ["CONFIRM", "This function will set up each player's capture deck, add 2 resources to each hero, draw new starting hands of 3 cards, and set new threat levels. Before running this function, each player should flip each hero they control that is not their starting hero facedown. Continue?"],
+      ["FOR_EACH_KEY_VAL", "$PLAYER_I", "$PLAYER_I_DATA", "$GAME.playerData",
+        [
+          ["MOVE_STACKS", ["JOIN_STRING", "$PLAYER_I", "Hand"], ["JOIN_STRING", "$PLAYER_I", "Deck"], "$HAND_SIZE", "shuffle"],
+          ["FOR_EACH_KEY_VAL", "$CARD_ID", "$CARD", "$CARD_BY_ID", [
+            ["COND",
+              ["AND",
+                ["EQUAL", "$CARD.controller", "$PLAYER_I"],
+                ["EQUAL", "$CARD.groupId", ["JOIN_STRING", "$PLAYER_I", "Deck"]],
+                ["OR",
+                  ["EQUAL", "$CARD.sides.A.type", "Ally"],
+                  ["IN_STRING", "$CARD.sides.A.traits", "Item."],
+                  ["IN_STRING", "$CARD.sides.A.traits", "Mount."],
+                  ["IN_STRING", "$CARD.sides.A.traits", "Artifact."]
+                ]
+              ],
+              ["MOVE_CARD", "$CARD_ID", ["JOIN_STRING", "$PLAYER_I", "Deck2"], 0, 0]
+            ]
+          ]]
+        ],
+        ["DEFINE", "$FACEDOWN_HEROES", ["LIST"]],
+        ["FOR_EACH_KEY_VAL", "$CARD_ID", "$CARD", "$CARD_BY_ID", [
+          ["COND",
+            ["AND",
+              ["EQUAL", "$CARD.controller", "$PLAYER_I"],
+              ["EQUAL", "$CARD.sides.A.type", "Hero"],
+              ["EQUAL", "$CARD.currentSide", "B"]
+            ],
+            ["APPEND", "$FACEDOWN_HEROES", "$CARD"]
+          ]
+        ]],
+        ["DEFINE", "$HERO_INDEX", ["RANDOM_INT", 0, ["SUBTRACT", ["LENGTH", "$FACEDOWN_HEROES"], 1]]],
+        ["DEFINE", "$SET_ASIDE_HERO", ["AT_INDEX", "$FACEDOWN_HEROES", "$HERO_INDEX"]],
+        ["FOR_EACH_START_STOP_STEP", "$i", 0, ["LENGTH", "$FACEDOWN_HEROES"], 1,
+          [
+            "COND",
+            ["NOT", ["EQUAL", "$i", "$HERO_INDEX"]],
+            [
+              ["DEFINE", "$CARD", ["AT_INDEX", "$FACEDOWN_HEROES", "$i"]],
+              ["MOVE_CARD", "$CARD.id", ["JOIN_STRING", "$PLAYER_I", "Deck2"], 0, 0]
+            ]
+          ]
+        ],
+        ["SHUFFLE_GROUP", ["JOIN_STRING", "$PLAYER_I", "Deck2"]],
+        ["DEFINE", "$CARD", ["AT_INDEX", "$FACEDOWN_HEROES", "$HERO_INDEX"]],
+        ["MOVE_CARD", "$CARD.id", ["JOIN_STRING", "$PLAYER_I", "Deck2"], 0, 0],
+        ["FOR_EACH_KEY_VAL", "$CARD_ID", "$CARD", "$CARD_BY_ID", [
+          ["COND",
+            ["AND",
+              ["EQUAL", "$CARD.controller", "$PLAYER_I"],
+              ["EQUAL", "$CARD.sides.A.type", "Hero"],
+              ["EQUAL", "$CARD.currentSide", "A"]
+            ],
+            ["GAME_INCREASE_VAL", "playerData", "$PLAYER_I", "threat", "$CARD.sides.A.cost"]
+          ]
+        ]],
+        ["ACTION_LIST", "drawCard", null, ["NEXT_PLAYER", "$PLAYER_I"]],
+        ["FOR_EACH_KEY_VAL", "$CARD_ID", "$CARD", "$CARD_BY_ID", [
+          ["COND",
+            ["AND",
+              ["EQUAL", "$CARD.sides.A.type", "Hero"],
+              ["EQUAL", "$CARD.controller", "$PLAYER_I"],
+              ["EQUAL", "$CARD.inPlay", true]
+            ],
+            ["GAME_INCREASE_VAL", "cardById", "$CARD_ID", "tokens", "resource", 2]
+          ]
+        ]]
+      ],
+      ["GAME_ADD_MESSAGE", "Complete! Players can find their capture decks under View > Player X > Player X Deck 2."]
+    ],
+    "setupToCatchAnOrc": [
+      ["CONFIRM", "This function will set up each player's capture deck, add 2 resources to each hero, draw new starting hands of 3 cards, and set new threat levels. Before running this function, each player should flip each hero they control that is not their starting hero facedown. Continue?"]
+    ],
+    "togglePeeking": [
+      ["DEFINE", "$GROUP_ID", "$ACTIVE_CARD.groupId"],
+      ["DEFINE", "$GROUP_NAME", ["$GAME.groupById.$GROUP_ID.name"]],
+      ["COND",
+        ["EQUAL", "$ACTIVE_CARD.peeking.$PLAYER_N", true],
+        [
+          ["GAME_ADD_MESSAGE", "$PLAYER_N", " stopped peeking at a card in ", "$GROUP_NAME"],
+          ["GAME_SET_VAL", "$ACTIVE_CARD_PATH", "peeking", "$PLAYER_N", false]
+        ],
+        true,
+        [
+          ["GAME_ADD_MESSAGE", "$PLAYER_N", " started peeking at a card in ", "$GROUP_NAME"],
+          ["GAME_SET_VAL", "$ACTIVE_CARD_PATH", "peeking", "$PLAYER_N", true]
+        ]
+      ]
+    ],
+    "toggleLocked": [
+      ["COND",
+        ["EQUAL", "$ACTIVE_CARD.locked", true],
+        [
+          ["GAME_ADD_MESSAGE", "$PLAYER_N", " unlocked ", "$ACTIVE_FACE.name", "."],
+          ["GAME_SET_VAL", "$ACTIVE_CARD_PATH", "locked", false]
+        ],
+        true,
+        [
+          ["GAME_SET_VAL", "$ACTIVE_CARD_PATH", "locked", true],
+          ["GAME_ADD_MESSAGE", "$PLAYER_N", " locked ", "$ACTIVE_FACE.name", "."]
+        ]
+      ]
+    ],
+    "deleteCard": [
+      ["GAME_ADD_MESSAGE", "$PLAYER_N", " deleted ", "$ACTIVE_FACE.name", "."],
+      ["DELETE", "$ACTIVE_CARD_ID"]
     ]
   },
   "faceProperties": {
@@ -3715,7 +3719,17 @@
       "inPlay": false,
       "canHaveAttachments": false,
       "deckGroupId": "sharedEncounterDeck",
-      "discardGroupId": "sharedEncounterDiscard"
+      "discardGroupId": "sharedEncounterDiscard",
+      "menuActions": [
+        {
+          "label": "Discard Until Enemy",
+          "actionListId": "discardUntilEnemy"
+        },
+        {
+          "label": "Discard Until Location",
+          "actionListId": "discardUntilLocation"
+        }
+      ]
     },
     "sharedEncounterDiscard": {
       "name": "Encounter Discard", 
@@ -4418,76 +4432,83 @@
   "moveToGroupIds": [
     "sharedEncounterDeck", "sharedEncounterDeck2", "sharedEncounterDeck3"
   ],
-  "phaseOrder": ["Beginning", "Resource", "Planning", "Quest", "Travel", "Encounter", "Combat", "Refresh", "End"],
-  "stepOrder": ["0.0", "1.1", "1.R", "1.4", "2.1", "2.P", "2.4", "3.1", "3.2", "3.3", "3.4", "3.5", "4.1", "4.2", "4.3", "5.1", "5.2", "5.3", "5.4", "6.1", "6.2", "6.3", "6.E", "6.P", "6.11", "7.1", "7.R", "7.7", "0.1"],
-  "steps": {
-    "0.0": {"phaseId": "Beginning", "text": "0.0: Beginning of the round"},
-    "1.1": {"phaseId": "Resource", "text": "1.1: Beginning of the Resource phase"},
-    "1.R": {"phaseId": "Resource", "text": "1.2 & 1.3: Gain resources and draw cards - <u>then player actions</u>"},
-    "1.4": {"phaseId": "Resource", "text": "1.4: End of the Resource phase"},
-    "2.1": {"phaseId": "Planning", "text": "2.1: Beginning of the Planning phase"},
-    "2.P": {"phaseId": "Planning", "text": "2.2 & 2.3: Play cards in turn order - <u>player actions throughout</u>"},
-    "2.4": {"phaseId": "Planning", "text": "2.4: End of the Planning phase"},
-    "3.1": {"phaseId": "Quest", "text": "3.1: Beginning of the Quest phase - <u>then player actions</u>"},
-    "3.2": {"phaseId": "Quest", "text": "3.2: Commit characters to the quest - <u>then player actions</u>"},
-    "3.3": {"phaseId": "Quest", "text": "3.3: Staging - <u>then player actions</u>"},
-    "3.4": {"phaseId": "Quest", "text": "3.4: Quest resolution - <u>then player actions</u>"},
-    "3.5": {"phaseId": "Quest", "text": "3.5: End of the Quest phase"},
-    "4.1": {"phaseId": "Travel", "text": "4.1: Beginning of the Travel phase"},
-    "4.2": {"phaseId": "Travel", "text": "4.2: Travel opportunity - <u>then player actions</u>"},
-    "4.3": {"phaseId": "Travel", "text": "4.3: End of the Travel phase"},
-    "5.1": {"phaseId": "Encounter", "text": "5.1: Beginning of the Encounter phase"},
-    "5.2": {"phaseId": "Encounter", "text": "5.2: Optional engagement - <u>then player actions</u>"},
-    "5.3": {"phaseId": "Encounter", "text": "5.3: Engagement checks - <u>then player actions</u>"},
-    "5.4": {"phaseId": "Encounter", "text": "5.4: End of the Encounter phase"},
-    "6.1": {"phaseId": "Combat", "text": "6.1: Beginning of the Combat phase"},
-    "6.2": {"phaseId": "Combat", "text": "6.2: Deal shadow cards"},
-    "6.E": {"phaseId": "Combat", "text": "6.3-6.6: Enemy attacks - <u>player actions after each combat substep</u>"},
-    "6.P": {"phaseId": "Combat", "text": "6.7-6.10: Player attacks - <u>player actions after each combat substep</u>"},
-    "6.11": {"phaseId": "Combat", "text": "6.11: End of the Combat phase"},
-    "7.1": {"phaseId": "Refresh", "text": "7.1: Beginning of the Refresh phase"},
-    "7.R": {"phaseId": "Refresh", "text": "7.2-7.4: Ready cards, raise threat, pass P1 token - <u>then player actions</u>"},
-    "7.5": {"phaseId": "Refresh", "text": "7.5: End of the Refresh phase"},
-    "0.1": {"phaseId": "End", "text": "0.1: End of the round"}
-  },
-  "phases": {
-    "Beginning": {
+  "phases": [
+    {
+      "phaseId": "Beginning",
       "label" : "α",
       "height" : "4%"
     },
-    "Resource": {
+    {
+      "phaseId": "Resource",
       "label" : "Resource",
       "height" : "11%"
     },
-    "Planning": {
+    {
+      "phaseId": "Planning",
       "label" : "Planning",
       "height" : "11%"
     },
-    "Quest": {
+    {
+      "phaseId": "Quest",
       "label" : "Quest",
       "height" : "17%"
     },
-    "Travel": {
+    {
+      "phaseId": "Travel",
       "label" : "Travel",
       "height" : "11%"
     },
-    "Encounter": {
+    {
+      "phaseId": "Encounter",
       "label" : "Encounter",
       "height" : "14%"
     },
-    "Combat": {
+    {
+      "phaseId": "Combat",
       "label" : "Combat",
       "height" : "17%"
     },
-    "Refresh": {
+    {
+      "phaseId": "Refresh",
       "label" : "Refresh",
       "height" : "11%"
     },
-    "End": {
+    {
+      "phaseId": "End",
       "label" : "Ω",
       "height" : "4%"
     }
-  },
+  ],
+  "steps": [
+    {"stepId": "0.0", "phaseId": "Beginning", "text": "0.0: Beginning of the round"},
+    {"stepId": "1.1", "phaseId": "Resource", "text": "1.1: Beginning of the Resource phase"},
+    {"stepId": "1.R", "phaseId": "Resource", "text": "1.2 & 1.3: Gain resources and draw cards - <u>then player actions</u>"},
+    {"stepId": "1.4", "phaseId": "Resource", "text": "1.4: End of the Resource phase"},
+    {"stepId": "2.1", "phaseId": "Planning", "text": "2.1: Beginning of the Planning phase"},
+    {"stepId": "2.P", "phaseId": "Planning", "text": "2.2 & 2.3: Play cards in turn order - <u>player actions throughout</u>"},
+    {"stepId": "2.4", "phaseId": "Planning", "text": "2.4: End of the Planning phase"},
+    {"stepId": "3.1", "phaseId": "Quest", "text": "3.1: Beginning of the Quest phase - <u>then player actions</u>"},
+    {"stepId": "3.2", "phaseId": "Quest", "text": "3.2: Commit characters to the quest - <u>then player actions</u>"},
+    {"stepId": "3.3", "phaseId": "Quest", "text": "3.3: Staging - <u>then player actions</u>"},
+    {"stepId": "3.4", "phaseId": "Quest", "text": "3.4: Quest resolution - <u>then player actions</u>"},
+    {"stepId": "3.5", "phaseId": "Quest", "text": "3.5: End of the Quest phase"},
+    {"stepId": "4.1", "phaseId": "Travel", "text": "4.1: Beginning of the Travel phase"},
+    {"stepId": "4.2", "phaseId": "Travel", "text": "4.2: Travel opportunity - <u>then player actions</u>"},
+    {"stepId": "4.3", "phaseId": "Travel", "text": "4.3: End of the Travel phase"},
+    {"stepId": "5.1", "phaseId": "Encounter", "text": "5.1: Beginning of the Encounter phase"},
+    {"stepId": "5.2", "phaseId": "Encounter", "text": "5.2: Optional engagement - <u>then player actions</u>"},
+    {"stepId": "5.3", "phaseId": "Encounter", "text": "5.3: Engagement checks - <u>then player actions</u>"},
+    {"stepId": "5.4", "phaseId": "Encounter", "text": "5.4: End of the Encounter phase"},
+    {"stepId": "6.1", "phaseId": "Combat", "text": "6.1: Beginning of the Combat phase"},
+    {"stepId": "6.2", "phaseId": "Combat", "text": "6.2: Deal shadow cards"},
+    {"stepId": "6.E", "phaseId": "Combat", "text": "6.3-6.6: Enemy attacks - <u>player actions after each combat substep</u>"},
+    {"stepId": "6.P", "phaseId": "Combat", "text": "6.7-6.10: Player attacks - <u>player actions after each combat substep</u>"},
+    {"stepId": "6.11", "phaseId": "Combat", "text": "6.11: End of the Combat phase"},
+    {"stepId": "7.1", "phaseId": "Refresh", "text": "7.1: Beginning of the Refresh phase"},
+    {"stepId": "7.R", "phaseId": "Refresh", "text": "7.2-7.4: Ready cards, raise threat, pass P1 token - <u>then player actions</u>"},
+    {"stepId": "7.5", "phaseId": "Refresh", "text": "7.5: End of the Refresh phase"},
+    {"stepId": "0.1", "phaseId": "End", "text": "0.1: End of the round"}
+  ],
   "tooltips": {
     "tooltipMotK": "You will need to search your deck to locate your MotK hero.",
     "tooltipEncounter2": "This quest has cards in a second encounter deck located in the View > Shared menu.",

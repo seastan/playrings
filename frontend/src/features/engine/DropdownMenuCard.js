@@ -94,15 +94,16 @@ export const DropdownMenuCard = React.memo(({
           {(visibleSide === "B" && !menuCard?.peeking[playerN]) ? <DropdownItem action="peek" clickCallback={handleDropdownClick}>{l10n("Peek")}</DropdownItem> : null}
           {menuCard?.peeking[playerN] ? <DropdownItem action="unpeek" clickCallback={handleDropdownClick}>{l10n("Stop peeking")}</DropdownItem> : null}
           {menuCard?.groupId === playerN+"Hand" ? <DropdownItem action="swap_with_top" clickCallback={handleDropdownClick}>{l10n("Swap with top")}</DropdownItem> : null}
-          {gameDef.cardMenu.map((menuItem, _itemIndex) => (
-            evaluateCondition(menuItem.showIf) ? 
+          {gameDef?.menu?.card?.map((menuItem, _itemIndex) => {
+            if (menuItem?.showIf && !evaluateCondition(menuItem.showIf)) return;
+            return ( 
               <DropdownItem 
-                action={menuItem.actionName} 
+                action={menuItem.actionListId} 
                 clickCallback={handleDropdownClick}>
-                  {l10n(menuItem.title)}
+                  {l10n(menuItem.label)}
               </DropdownItem> 
-              : null
-          ))}
+            )
+          })}
           <DropdownItem action="delete" clickCallback={handleDropdownClick}>{l10n("Delete")}</DropdownItem>
           {menuCardIndex>0 ? <DropdownItem action="swap_side" clickCallback={handleDropdownClick}>{l10n("Swap Side")}</DropdownItem> : null}
 
@@ -227,7 +228,7 @@ export const DropdownMenuCard = React.memo(({
           ))}
         </div>}
 
-      {PHASEINFO.map((phase, _phaseIndex) => {
+      {gameDef.phases.map((phase, _phaseIndex) => {
         const visible = activeMenu === phase.name+"ToggleTrigger"
         if (visible) return(
         // <CSSTransition onEnter={calcHeight} timeout={500} classNames="menu-primary" unmountOnExit
@@ -253,7 +254,7 @@ export const DropdownMenuCard = React.memo(({
           {[0, 90, 180, 270].map((rot, _rotIndex) => (
             <DropdownItem
               rightIcon={menuCard.rotation===rot ? <FontAwesomeIcon icon={faCheck}/> : null}
-              action={"setRotation"}
+              action={"setRotation"} // TODO: put actionId here that links to common actionid file
               rotation={rot}
               clickCallback={handleDropdownClick}>
               {rot}

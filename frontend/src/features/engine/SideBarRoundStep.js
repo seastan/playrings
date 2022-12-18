@@ -5,6 +5,7 @@ import { getDisplayName } from "../plugins/lotrlcg/functions/helpers";
 import { useGameL10n } from "../../hooks/useGameL10n";
 import BroadcastContext from "../../contexts/BroadcastContext";
 import { useGameDefinition } from "./functions/useGameDefinition";
+import { useDoActionList } from "./functions/useDoActionList";
 
 
 export const ReminderButton = React.memo(({
@@ -64,26 +65,33 @@ export const ReminderButton = React.memo(({
 })
 
 export const SideBarRoundStep = React.memo(({
-  stepId
+  stepInfo
 }) => {
   const {gameBroadcast, chatBroadcast} = useContext(BroadcastContext);
   const l10n = useGameL10n();
   const gameDef = useGameDefinition();
-  const stepInfo = gameDef?.steps?.[stepId];
-  const currentStepId = useSelector(state => state?.gameUi?.game?.stepId);
+  const stepId = stepInfo?.stepId;
+  const currentStepIndex = useSelector(state => state?.gameUi?.game?.stepIndex);
+  const currentStepId = gameDef?.steps?.[currentStepIndex]?.stepId;
   const playerN = useSelector(state => state?.playerUi?.playerN)
   const triggerCardIds = useSelector(state => state?.gameUi?.game?.triggerMap?.[stepId]);
   const numTriggers = triggerCardIds ? triggerCardIds.length : 0;
   const [hovering, setHovering] = useState(null);
   const isRoundStep = (currentStepId === stepId);
+  const doActionList = useDoActionList();
 
   console.log("Rendering SideBarRoundStep", stepInfo);
   const handleButtonClick = (id) => {
     if (!playerN) return;
-    gameBroadcast("game_action", {action: "update_values", options:{updates: [["stepId", stepId]]}});     
-    chatBroadcast("game_update", {message: "set the round step to "+id+": "+l10n(id)+"."})
+    var stepIndex = 0;
+    gameDef.steps.forEach((stepInfoI, index) => {
+      if (stepInfoI.stepId == stepId) stepIndex = index;
+    });
+    doActionList([
+      ["GAME_SET_VAL", "stepIndex", stepIndex],
+      ["GAME_ADD_MESSAGE", "$PLAYER_N", " set the round step to ", stepInfo.text, "."]
+    ])
   }
-
 
   return (
     <div 
@@ -93,7 +101,7 @@ export const SideBarRoundStep = React.memo(({
         width: hovering ? "750px" : "100%",
         fontSize: "1.7vh",
       }}
-      onClick={() => handleButtonClick(stepId)}
+      onClick={() => handleButtonClick()}
       onMouseEnter={() => setHovering(stepId)}
       onMouseLeave={() => setHovering(null)}>
       <div className="flex justify-center" style={{width:"3vh"}}/>

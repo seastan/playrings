@@ -13,6 +13,19 @@ defmodule DragnCardsGame.Evaluate do
     end
   end
 
+  @spec convert_to_integer(String.t() | nil) :: number
+  def convert_to_integer(my_string) do
+    if my_string == nil do
+      nil
+    else
+      result = Integer.parse("#{my_string}")
+      case result do
+        {number, _} -> number
+        :error -> 0
+      end
+    end
+  end
+
   def evaluate(game, code) do
     #IO.inspect(code)
     if is_list(code) && Enum.count(code) > 0 do
@@ -122,7 +135,16 @@ defmodule DragnCardsGame.Evaluate do
           "OBJ_GET_BY_PATH" ->
             map = evaluate(game, Enum.at(code,1))
             path = evaluate(game, Enum.at(code,2))
-            get_in(map, path)
+            Enum.reduce(path, map, fn(pathi, acc) ->
+              if String.starts_with?(pathi, "[") and String.ends_with?(pathi, "]") do
+                int_str = evaluate(game, String.slice(pathi,[1..-2]))
+                int = convert_to_integer(int_str)
+                Enum.at(map, int)
+              else
+                Map.get(map, pathi)
+              end
+            end)
+            #get_in(map, path)
           "GAME_GET_VAL" ->
             path = evaluate(game, Enum.at(code,1))
             get_in(game, path)

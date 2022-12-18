@@ -53,7 +53,7 @@
       "layout" => game_def["layouts"][default_layout["layoutId"]],
       "firstPlayer" => "player1",
       "roundNumber" => 0,
-      "stepId" => Enum.at(game_def["stepOrder"],0),
+      "stepIndex" => 0,
       "groupById" => Groups.new(game_def["groups"]),
       "stackById" => %{},
       "cardById"  => %{},

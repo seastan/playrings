@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useState } from "react";
 import { useDropdownClickCommon } from "../plugins/lotrlcg/functions/dropdownMenuClick";
 import { DropdownMenuCard } from "./DropdownMenuCard";
 import { DropdownMenuGroup } from "./DropdownMenuGroup";
@@ -7,9 +7,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { calcHeightCommon } from "./DropdownMenuHelpers";
 import "../../css/custom-dropdown.css";
 import { setDropdownMenuObj } from "../store/playerUiSlice";
-import store from "../../store";
-import BroadcastContext from "../../contexts/BroadcastContext";
-import { useGameDefinition } from "./functions/useGameDefinition";
 import { useDoActionList } from "./functions/useDoActionList";
 
 export const DropdownMenuCommon = React.memo(({
@@ -17,9 +14,7 @@ export const DropdownMenuCommon = React.memo(({
   mouseY,
 }) => {
   
-  const {gameBroadcast, chatBroadcast} = useContext(BroadcastContext);
   const dispatch = useDispatch();
-  const gameDef = useGameDefinition();
   const dropdownMenuObj = useSelector(state => state?.playerUi?.dropdownMenuObj)
   const [activeMenu, setActiveMenu] = useState('main');
   const [menuHeight, setMenuHeight] = useState(null);
@@ -36,7 +31,11 @@ export const DropdownMenuCommon = React.memo(({
       setActiveMenu(dropdownOptions.goToMenu);
       return;
     }
-    doActionList(dropdownOptions.action);
+    if (Array.isArray(dropdownOptions.action)) { // If the action is a list, it's an actionList
+      doActionList(dropdownOptions.action);
+    } else { // Otherwise it's a built-in funciton
+      dropdownClickCommon(dropdownOptions, )
+    }
     setActiveMenu("main");
     dispatch(setDropdownMenuObj(null));
     setMenuHeight(null);
