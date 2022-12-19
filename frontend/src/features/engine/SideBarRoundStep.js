@@ -7,7 +7,6 @@ import BroadcastContext from "../../contexts/BroadcastContext";
 import { useGameDefinition } from "./functions/useGameDefinition";
 import { useDoActionList } from "./functions/useDoActionList";
 
-
 export const ReminderButton = React.memo(({
   triggerCardIds
 }) => {
@@ -65,22 +64,23 @@ export const ReminderButton = React.memo(({
 })
 
 export const SideBarRoundStep = React.memo(({
-  stepInfo
+  stepInfo,
+  triggerCardIds
 }) => {
-  const {gameBroadcast, chatBroadcast} = useContext(BroadcastContext);
   const l10n = useGameL10n();
   const gameDef = useGameDefinition();
   const stepId = stepInfo?.stepId;
+  //const getTriggerList2 = useGetTriggerList(stepId);
+  //const getTriggerList = () => [];
+  //const triggerCardIds = getTriggerList(stepId);
   const currentStepIndex = useSelector(state => state?.gameUi?.game?.stepIndex);
   const currentStepId = gameDef?.steps?.[currentStepIndex]?.stepId;
   const playerN = useSelector(state => state?.playerUi?.playerN)
-  const triggerCardIds = useSelector(state => state?.gameUi?.game?.triggerMap?.[stepId]);
-  const numTriggers = triggerCardIds ? triggerCardIds.length : 0;
   const [hovering, setHovering] = useState(null);
   const isRoundStep = (currentStepId === stepId);
   const doActionList = useDoActionList();
 
-  console.log("Rendering SideBarRoundStep", stepInfo);
+  console.log("Rendering SideBarRoundStep", stepInfo, triggerCardIds);
   const handleButtonClick = (id) => {
     if (!playerN) return;
     var stepIndex = 0;
@@ -108,7 +108,7 @@ export const SideBarRoundStep = React.memo(({
       <div className={`flex h-full items-center justify-center ${isRoundStep ? "bg-red-800" : "bg-gray-500"} ${stepInfo.actions ? "underline" : ""}`} style={{width:"3vh"}}>
         {stepId}
       </div>
-      {numTriggers > 0 &&
+      {triggerCardIds?.length > 0 &&
         <ReminderButton
           triggerCardIds={triggerCardIds}/>
       }

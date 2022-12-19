@@ -6,6 +6,7 @@ import { SideBarRoundStep } from "./SideBarRoundStep";
 
 export const SideBarPhase = React.memo(({
   phaseInfo,
+  triggerMap,
 }) => {
   const l10n = useGameL10n();
   const gameDef = useGameDefinition();
@@ -30,8 +31,9 @@ export const SideBarPhase = React.memo(({
           if (stepInfo?.phaseId == phaseId)
             return (
               <SideBarRoundStep
-                key={stepInfo.id}
-                stepInfo={stepInfo}/>
+                key={stepInfo.stepId}
+                stepInfo={stepInfo}
+                triggerCardIds={triggerMap?.[stepInfo.stepId]}/>
             )
         })}
       </div>

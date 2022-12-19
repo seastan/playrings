@@ -139,9 +139,12 @@ defmodule DragnCardsGame.Evaluate do
               if String.starts_with?(pathi, "[") and String.ends_with?(pathi, "]") do
                 int_str = evaluate(game, String.slice(pathi,[1..-2]))
                 int = convert_to_integer(int_str)
-                Enum.at(map, int)
+                Enum.at(acc, int)
               else
-                Map.get(map, pathi)
+                IO.puts("obj get by path")
+                IO.inspect(acc)
+                IO.inspect(evaluate(game, pathi))
+                Map.get(acc, evaluate(game, pathi))
               end
             end)
             #get_in(map, path)
@@ -206,6 +209,7 @@ defmodule DragnCardsGame.Evaluate do
             Enum.reduce_while(0..Enum.count(ifthens)-1//2, nil, fn(i, acc) ->
               IO.puts("checking if")
               IO.inspect(Enum.at(ifthens, i))
+              IO.inspect(evaluate(game, Enum.at(ifthens, i)))
               if evaluate(game, Enum.at(ifthens, i)) == true do
                 IO.puts("true")
                 {:halt, evaluate(game, Enum.at(ifthens, i+1))}

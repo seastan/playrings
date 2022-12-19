@@ -9,6 +9,7 @@ import { useSelector } from "react-redux";
 import { useGameL10n } from "../../hooks/useGameL10n";
 import { useGameDefinition } from "./functions/useGameDefinition";
 import { useEvaluateCondition } from "../../hooks/useEvaluateCondition";
+import { dragnActionLists } from "../definitions/common";
 
 export const DropdownMenuCard = React.memo(({
   mouseX,
@@ -218,32 +219,30 @@ export const DropdownMenuCard = React.memo(({
         {activeMenu === "toggleTrigger" &&
         <div className="menu">
           <GoBack goToMenu="main" clickCallback={handleDropdownClick}/>
-          {PHASEINFO.map((phase, _phaseIndex) => (
+          {gameDef?.phases?.map((phaseInfo, _phaseIndex) => (
             <DropdownItem
               rightIcon={<FontAwesomeIcon icon={faChevronRight}/>}
-              goToMenu={phase.name+"ToggleTrigger"}
+              goToMenu={phaseInfo.phaseId+"ToggleTrigger"}
               clickCallback={handleDropdownClick}>
-              {l10n(phase.name)}
+              {l10n(phaseInfo.phaseId)}
             </DropdownItem>
           ))}
         </div>}
 
-      {gameDef.phases.map((phase, _phaseIndex) => {
-        const visible = activeMenu === phase.name+"ToggleTrigger"
+      {gameDef?.phases?.map((phaseInfo, _phaseIndex) => {
+        const visible = activeMenu === phaseInfo.phaseId+"ToggleTrigger"
         if (visible) return(
-        // <CSSTransition onEnter={calcHeight} timeout={500} classNames="menu-primary" unmountOnExit
-        // in={activeMenu === phase.name+"ToggleTrigger"}>
           <div className="menu">
             <GoBack goToMenu="toggleTrigger" clickCallback={handleDropdownClick}/>
-            {phase.steps.map((step, _stepIndex) => (
-              <DropdownItem
-                rightIcon={visibleFace.triggers.includes(step.id) ? <FontAwesomeIcon icon={faCheck}/> : null}
-                action={"toggleTrigger"}
-                stepId={step.id}
-                clickCallback={handleDropdownClick}>
-                <div className="text-xs">{step.text}</div>
-              </DropdownItem>
-            ))}
+            {gameDef?.steps?.map((stepInfo, _stepIndex) => {
+              if (stepInfo.phaseId === phaseInfo.phaseId) return(
+                <DropdownItem
+                  rightIcon={visibleFace?.triggers?.[stepInfo.stepId] ? <FontAwesomeIcon icon={faCheck}/> : null}
+                  action={dragnActionLists.toggleTrigger(stepInfo.stepId)}
+                  clickCallback={handleDropdownClick}>
+                  <div className="text-xs">{stepInfo.text}</div>
+                </DropdownItem>
+              )})}
           </div>)
       })}
 
@@ -254,8 +253,7 @@ export const DropdownMenuCard = React.memo(({
           {[0, 90, 180, 270].map((rot, _rotIndex) => (
             <DropdownItem
               rightIcon={menuCard.rotation===rot ? <FontAwesomeIcon icon={faCheck}/> : null}
-              action={"setRotation"} // TODO: put actionId here that links to common actionid file
-              rotation={rot}
+              action={dragnActionLists.setRotation(rot)} // TODO: put actionId here that links to common actionid file
               clickCallback={handleDropdownClick}>
               {rot}
             </DropdownItem>

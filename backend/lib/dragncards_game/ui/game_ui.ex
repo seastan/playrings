@@ -251,10 +251,6 @@ defmodule DragnCardsGame.GameUI do
         flip_card(game, card_id)
       "discard_card" ->
         discard_card(game, card_id)
-      "add_trigger" ->
-        add_trigger(game, card_id, options["round_step"])
-      "remove_trigger" ->
-        remove_trigger(game, card_id, options["round_step"])
       "move_card" ->
         move_card(game, card_id, options["dest_group_id"], options["dest_stack_index"], options["dest_card_index"], options["combine"], options["preserve_state"])
       "exhaust" ->
@@ -410,12 +406,6 @@ defmodule DragnCardsGame.GameUI do
   def flip_card(game, card_id) do
     {group_id, stack_index, card_index} = gsc(game, card_id)
     group_type = get_group_type(game, group_id)
-    # If in play, remove triggers
-    game = if group_type === "play" do
-      remove_triggers(game, card_id)
-    else
-      game
-    end
     # Flip card
     old_card = get_card(game, card_id)
     current_side = old_card["currentSide"]
@@ -425,12 +415,6 @@ defmodule DragnCardsGame.GameUI do
       put_in(old_card["currentSide"],"A")
     end
     game = update_card(game, new_card)
-    # If in play, add triggers
-    if group_type === "play" do
-      add_triggers(game, card_id)
-    else
-      game
-    end
   end
 
   # Deal a shadow card
@@ -516,13 +500,6 @@ defmodule DragnCardsGame.GameUI do
         acc |> put_in(["peeking", player_i], true)
       end)
       game = update_card(game, card)
-      # Update game based on card moving
-      # Handle reminders
-      game = if dest_group["inPlay"] do
-        add_reminders_card_face(game, card_id, card_face)
-      else
-        remove_reminders_card_face(game, card_id, card_face)
-      end
     end
   end
 
@@ -567,61 +544,6 @@ defmodule DragnCardsGame.GameUI do
       card = get_card(acc, card_id) |> Map.put("stackIndex", index)
       update_card(acc, card)
     end)
-  end
-
-  def add_trigger(game, card_id, round_step) do
-    old_round_step_triggers = game["triggerMap"][round_step]
-    if old_round_step_triggers && Enum.member?(old_round_step_triggers, card_id) do
-      game
-    else
-      new_round_step_triggers = if old_round_step_triggers do
-        old_round_step_triggers ++ [card_id]
-      else
-        [card_id]
-      end
-      put_in(game["triggerMap"][round_step], new_round_step_triggers)
-    end
-  end
-
-  def add_triggers(game, card_id) do
-    card_face = get_current_card_face(game, card_id)
-    add_reminders_card_face(game, card_id, card_face)
-  end
-
-  def add_reminders_card_face(game, card_id, card_face) do
-    card_triggers = card_face["triggers"]
-    if card_triggers do
-      Enum.reduce(card_triggers, game, fn(round_step, acc) ->
-        acc = add_trigger(acc, card_id, round_step)
-      end)
-    else
-      game
-    end
-  end
-
-  def remove_trigger(game, card_id, round_step) do
-    old_round_step_triggers = game["triggerMap"][round_step]
-    if old_round_step_triggers && Enum.member?(old_round_step_triggers, card_id) do
-      put_in(game["triggerMap"][round_step], Enum.reject(old_round_step_triggers, &(&1 == card_id)))
-    else
-      game
-    end
-  end
-
-  def remove_triggers(game, card_id) do
-    card_face = get_current_card_face(game, card_id)
-    remove_reminders_card_face(game, card_id, card_face)
-  end
-
-  def remove_reminders_card_face(game, card_id, card_face) do
-    card_triggers = card_face["triggers"]
-    if card_triggers do
-      Enum.reduce(card_triggers, game, fn(round_step, acc) ->
-        acc = remove_trigger(acc, card_id, round_step)
-      end)
-    else
-      game
-    end
   end
 
   ### Card helper functions

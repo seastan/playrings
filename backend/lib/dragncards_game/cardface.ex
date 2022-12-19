@@ -19,55 +19,39 @@ defmodule DragnCardsGame.CardFace do
     end
   end
 
-  @spec trigger_steps_from_text(String.t() | nil, String.t() | nil) :: List.t()
-  def trigger_steps_from_text(keywords, text) do
-    search_string = "#{keywords} #{text}"
-    steps = []
-    steps = if text do
-      steps = if String.match?(search_string, ~r/at the beginning of (each|the) round/i) do steps ++ ["0.0"] else steps end
-      steps = if String.match?(search_string, ~r/at the beginning of (each|the) resource phase/i) do steps ++ ["1.1"] else steps end
-      steps = if String.match?(search_string, ~r/at the beginning of (each|the) planning phase/i) do steps ++ ["2.1"] else steps end
-      steps = if String.match?(search_string, ~r/at the beginning of (each|the) quest phase/i) do steps ++ ["3.1"] else steps end
-      steps = if String.match?(search_string, ~r/at the beginning of (each|the) staging step/i) do steps ++ ["3.3"] else steps end
-      steps = if String.match?(search_string, ~r/at the beginning of (each|the) travel phase/i) do steps ++ ["4.1"] else steps end
-      steps = if String.match?(search_string, ~r/at the beginning of (each|the) encounter phase/i) do steps ++ ["5.1"] else steps end
-      steps = if String.match?(search_string, ~r/at the beginning of (each|the) combat phase/i) do steps ++ ["6.1"] else steps end
-      steps = if String.match?(search_string, ~r/at the beginning of (each|the) refresh phase/i) do steps ++ ["7.1"] else steps end
-
-      steps = if String.match?(search_string, ~r/at the end of (each|the) round/i) do steps ++ ["0.1"] else steps end
-      steps = if String.match?(search_string, ~r/at the end of (each|the) resource phase/i) do steps ++ ["1.4"] else steps end
-      steps = if String.match?(search_string, ~r/at the end of (each|the) planning phase/i) do steps ++ ["2.4"] else steps end
-      steps = if String.match?(search_string, ~r/at the end of (each|the) quest phase/i) do steps ++ ["3.5"] else steps end
-      steps = if String.match?(search_string, ~r/at the end of (each|the) staging step/i) do steps ++ ["3.3"] else steps end
-      steps = if String.match?(search_string, ~r/at the end of (each|the) travel phase/i) do steps ++ ["4.3"] else steps end
-      steps = if String.match?(search_string, ~r/at the end of (each|the) encounter phase/i) do steps ++ ["5.4"] else steps end
-      steps = if String.match?(search_string, ~r/at the end of (each|the) combat phase/i) do steps ++ ["6.11"] else steps end
-      steps = if String.match?(search_string, ~r/at the end of (each|the) refresh phase/i) do steps ++ ["7.5"] else steps end
-
-      steps = if String.match?(search_string, ~r/during (each|the) resource phase/i) do steps ++ ["1.1"] else steps end
-      steps = if String.match?(search_string, ~r/during (each|the) planning phase/i) do steps ++ ["2.1"] else steps end
-      steps = if String.match?(search_string, ~r/during (each|the) quest phase/i) do steps ++ ["3.1"] else steps end
-      steps = if String.match?(search_string, ~r/during (each|the) staging step/i) do steps ++ ["3.3"] else steps end
-      steps = if String.match?(search_string, ~r/during (each|the) travel phase/i) do steps ++ ["4.1"] else steps end
-      steps = if String.match?(search_string, ~r/during (each|the) encounter phase/i) do steps ++ ["5.1"] else steps end
-      steps = if String.match?(search_string, ~r/during (each|the) combat phase/i) do steps ++ ["6.1"] else steps end
-      steps = if String.match?(search_string, ~r/during (each|the) refresh phase/i) do steps ++ ["7.1"] else steps end
-
-      steps = if String.match?(search_string, ~r/time x./i) do steps ++ ["7.5"] else steps end
-      steps = if String.match?(search_string, ~r/time 1./i) do steps ++ ["7.5"] else steps end
-      steps = if String.match?(search_string, ~r/time 2./i) do steps ++ ["7.5"] else steps end
-      steps = if String.match?(search_string, ~r/time 3./i) do steps ++ ["7.5"] else steps end
-      steps = if String.match?(search_string, ~r/time 4./i) do steps ++ ["7.5"] else steps end
-      steps = if String.match?(search_string, ~r/time 5./i) do steps ++ ["7.5"] else steps end
-      steps = if String.match?(search_string, ~r/time 6./i) do steps ++ ["7.5"] else steps end
-      steps = if String.match?(search_string, ~r/time 7./i) do steps ++ ["7.5"] else steps end
-      steps = if String.match?(search_string, ~r/time 8./i) do steps ++ ["7.5"] else steps end
-      steps = if String.match?(search_string, ~r/time 9./i) do steps ++ ["7.5"] else steps end
-      steps = if String.match?(search_string, ~r/time 10./i) do steps ++ ["7.5"] else steps end
-
-      steps
+  @spec trigger_steps_from_face_details(Map.t(), List.t()) :: Map.t()
+  def trigger_steps_from_face_details(face_details, step_triggers) do
+    if step_triggers do
+      Enum.reduce(step_triggers, %{}, fn(trigger_info, acc) ->
+        prop = trigger_info["faceProperty"]
+        regex_string = trigger_info["regex"]
+        step_id = trigger_info["stepId"]
+        IO.puts("checking for triggers 1")
+        IO.inspect(acc)
+        IO.puts("prop #{prop}")
+        IO.inspect(regex_string)
+        IO.inspect(step_id)
+        search_string = face_details[prop]
+        IO.puts("search_string #{search_string}")
+        if search_string do
+          case Regex.compile(regex_string, "i") do
+            {:ok, regex} ->
+              if String.match?(search_string |> String.downcase(), regex) do
+                IO.puts("match!")
+                Map.put(acc, step_id, true)
+              else
+                acc
+              end
+            _ ->
+              acc
+          end
+        else
+          acc
+        end
+      end)
+    else
+      %{}
     end
-    steps
   end
 
   @spec card_face_from_card_face_details(Map.t(), Map.t()) :: Map.t()
@@ -75,8 +59,10 @@ defmodule DragnCardsGame.CardFace do
     IO.puts("card_face_from_card_face_details")
     IO.inspect(card_face_details)
     type = card_face_details["type"]
+    triggers = trigger_steps_from_face_details(card_face_details, game_def["stepTriggers"])
     card_face = card_face_details
-    |> Map.put("width",game_def["cardTypes"][type]["width"])
-    |> Map.put("height",game_def["cardTypes"][type]["height"])
+    |> Map.put("triggers", triggers)
+    |> Map.put("width", game_def["cardTypes"][type]["width"])
+    |> Map.put("height", game_def["cardTypes"][type]["height"])
   end
 end

@@ -57,7 +57,6 @@
       "groupById" => Groups.new(game_def["groups"]),
       "stackById" => %{},
       "cardById"  => %{},
-      "triggerMap" => %{},
       "deltas" => [],
       "replayStep" => 0,
       "replayLength" => 0, # Length of deltas. We need this because the delta array is not broadcast.
