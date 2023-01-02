@@ -31,11 +31,7 @@ export const DropdownMenuCommon = React.memo(({
       setActiveMenu(dropdownOptions.goToMenu);
       return;
     }
-    if (Array.isArray(dropdownOptions.action)) { // If the action is a list, it's an actionList
-      doActionList(dropdownOptions.action);
-    } else { // Otherwise it's a built-in funciton
-      dropdownClickCommon(dropdownOptions, )
-    }
+    doActionList(dropdownOptions.action);
     setActiveMenu("main");
     dispatch(setDropdownMenuObj(null));
     setMenuHeight(null);

@@ -25,5 +25,63 @@ export const dragnActionLists = {
                 ]
             ]
         ]
-    )
+    ),
+    clearTargets: () => ([
+        ["FOR_EACH_KEY_VAL", "$CARD_ID", "$CARD", "$CARD_BY_ID",
+          ["GAME_SET_VAL", "cardById", "$CARD_ID", "targeting", "$PLAYER_N", false]
+        ],
+        ["GAME_ADD_MESSAGE", "$PLAYER_N", " cleared their targets."]
+    ]),
+    targetCard: (cardId) => ([
+        ["GAME_SET_VAL", "cardById", cardId, "targeting", "$PLAYER_N", true],
+        ["GAME_ADD_MESSAGE", "$PLAYER_N", " targeted ", ["FACEUP_NAME_FROM_CARD_ID", cardId], "."]
+    ]),
+    setStep: (stepInfo, stepIndex) => ([
+        ["GAME_SET_VAL", "stepIndex", stepIndex],
+        ["GAME_ADD_MESSAGE", "$PLAYER_N", " set the round step to ", stepInfo.text, "."]
+    ]),
+    moveCardToTop: (cardId, destGroupId) => ([
+        ["MOVE_CARD", cardId, destGroupId, 0, 0],
+        ["SHUFFLE_GROUP", destGroupId],
+        ["GAME_ADD_MESSAGE", "$PLAYER_N", " moved ", ["FACEUP_NAME_FROM_CARD_ID", cardId], " to top of ", "$GAME.groupById."+destGroupId+".name", "."]
+    ]),
+    moveCardToBottom: (cardId, destGroupId) => ([
+        ["MOVE_CARD", cardId, destGroupId, -1, 0],
+        ["GAME_ADD_MESSAGE", "$PLAYER_N", " moved ", ["FACEUP_NAME_FROM_CARD_ID", cardId], " to bottom of ", "$GAME.groupById."+destGroupId+".name", "."]
+    ]),
+    moveCardToTopX: (cardId, destGroupId) => ([
+        ["INPUT", "integer", "$VAL", "Shuffle into top:", 5],
+        ["MOVE_CARD", cardId, destGroupId, 0, 0],
+        ["SHUFFLE_TOP_X", destGroupId, "$VAL"],
+        ["GAME_ADD_MESSAGE", "$PLAYER_N", " shuffled ", ["FACEUP_NAME_FROM_CARD_ID", cardId], " into the top ", "$VAL", " cards of ", "$GAME.groupById."+destGroupId+".name", "."]
+    ]),
+    moveCardToBottomX: (cardId, destGroupId) => ([
+        ["INPUT", "integer", "$VAL", "Shuffle into bottom:", 5],
+        ["MOVE_CARD", cardId, destGroupId, -1, 0],
+        ["SHUFFLE_BOTTOM_X", destGroupId, "$VAL"],
+        ["GAME_ADD_MESSAGE", "$PLAYER_N", " shuffled ", ["FACEUP_NAME_FROM_CARD_ID", cardId], " into the bottom ", "$VAL", " cards of ", "$GAME.groupById."+destGroupId+".name", "."]
+    ]),
+    detach: (card) => ([
+        ["COND",
+            ["GREATER_THAN", card.cardIndex, 0],
+            [
+                ["MOVE_CARD", card.id, card.groupId, card.stackIndex + 1, 0],
+                ["GAME_ADD_MESSAGE", "$PLAYER_N", " detached ", ["FACEUP_NAME_FROM_CARD_ID", card.id], "."]
+            ]
+        ]
+    ]),
+    flipCard: (card) => ([
+        ["COND",
+            ["EQUAL", card.currentSide, "A"],
+            [
+                ["GAME_ADD_MESSAGE", "$PLAYER_N", " flipped ", ["FACEUP_NAME_FROM_CARD_ID", card.id], " facedown."],
+                ["GAME_SET_VAL", "cardById", card.id, "currentSide", "B"]
+            ],
+            true,
+            [
+                ["GAME_SET_VAL", "cardById", card.id, "currentSide", "A"],
+                ["GAME_ADD_MESSAGE", "$PLAYER_N", " flipped ", ["FACEUP_NAME_FROM_CARD_ID", card.id], " faceup."]
+            ]
+        ]
+    ])
 }

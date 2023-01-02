@@ -137,13 +137,10 @@ defmodule DragnCardsGame.Evaluate do
             path = evaluate(game, Enum.at(code,2))
             Enum.reduce(path, map, fn(pathi, acc) ->
               if String.starts_with?(pathi, "[") and String.ends_with?(pathi, "]") do
-                int_str = evaluate(game, String.slice(pathi,[1..-2]))
+                int_str = evaluate(game, String.slice(pathi,1..-2))
                 int = convert_to_integer(int_str)
                 Enum.at(acc, int)
               else
-                IO.puts("obj get by path")
-                IO.inspect(acc)
-                IO.inspect(evaluate(game, pathi))
                 Map.get(acc, evaluate(game, pathi))
               end
             end)
@@ -272,6 +269,8 @@ defmodule DragnCardsGame.Evaluate do
               dest_card_index = evaluate(game, Enum.at(code, 4))
               combine = if argc >= 5 do evaluate(game, Enum.at(code, 5)) else nil end
               preserve_state = if argc >= 6 do evaluate(game, Enum.at(code, 6)) else nil end
+              IO.puts("moving card 1")
+              IO.inspect({card_id, dest_group_id, dest_stack_index, combine, preserve_state})
               GameUI.move_card(game, card_id, dest_group_id, dest_stack_index, dest_card_index, combine, preserve_state)
             else
               game
@@ -330,6 +329,22 @@ defmodule DragnCardsGame.Evaluate do
             stack_ids = game["groupById"][group_id]["stackIds"]
             shuffled_stack_ids = stack_ids |> Enum.shuffle
             put_in(game, ["groupById", group_id, "stack_ids"], shuffled_stack_ids)
+          "SHUFFLE_TOP_X" ->
+            group_id = evaluate(game, Enum.at(code, 1))
+            x = evaluate(game, Enum.at(code, 2))
+            stack_ids = game["groupById"][group_id]["stackIds"]
+            stack_ids_l = Enum.slice(stack_ids, 0, x)
+            stack_ids_r = Enum.slice(stack_ids, x, Enum.count(stack_ids))
+            stack_ids_l = stack_ids_l |> Enum.shuffle
+            put_in(game, ["groupById", group_id, "stack_ids"], stack_ids_l ++ stack_ids_r)
+          "SHUFFLE_BOTTOM_X" ->
+            group_id = evaluate(game, Enum.at(code, 1))
+            x = evaluate(game, Enum.at(code, 2))
+            stack_ids = game["groupById"][group_id]["stackIds"]
+            stack_ids_r = Enum.slice(stack_ids, -x, x)
+            stack_ids_l = Enum.slice(stack_ids, 0, Enum.count(stack_ids) - x)
+            stack_ids_r = stack_ids_r |> Enum.shuffle
+            put_in(game, ["groupById", group_id, "stack_ids"], stack_ids_l ++ stack_ids_r)
           "FACEUP_NAME_FROM_STACK_ID" ->
             stack_id = evaluate(game, Enum.at(code, 1))
             card_id = Enum.at(game["stackById"][stack_id]["cardIds"],0)

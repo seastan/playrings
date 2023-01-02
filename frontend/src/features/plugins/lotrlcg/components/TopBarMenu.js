@@ -594,7 +594,7 @@ export const TopBarMenu = React.memo(({}) => {
             <span className="float-right mr-1"><FontAwesomeIcon icon={faChevronRight}/></span>
           <ul className="third-level-menu">
             <li key={"adjust_card_size"} onClick={() => handleMenuClick({action:"adjust_card_size"})}>{l10n("Adjust card size")}</li>
-            {gameDef.menu?.plugin?.map((menuFunction, _index) => {
+            {gameDef.menu?.plugin?.options?.map((menuFunction, _index) => {
                 return(
                   <li key={menuFunction.id} onClick={() => doActionList(menuFunction.actionList)}>{l10n(menuFunction.label)}</li>
                 )

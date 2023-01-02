@@ -12,68 +12,71 @@
     "refreshed": {"type": "boolean", "default": false}
   },
   "menu": {
-    "plugin":[
-      { 
-        "label": "Cards Per Round",
-        "actionListId": "setCardsDrawn"
-      },
-      {
-        "label": "Normal Quest",
-        "actionListId": "setQuestNormal"
-      },
-      { 
-        "label": "Battle Quest",
-        "actionListId": "setQuestBattle"
-      },
-      {
-        "label": "Siege Quest",
-        "actionListId": "setQuestSiege"
-      },
-      {
-        "label": "Setup Escape from Mount Gram",
-        "actionListId": "setupEscapeFromMountGram"
-      },
-      {
-        "label": "Setup To Catch an Orc",
-        "actionListId": "setupToCatchAnOrc"
-      },
-      {
-        "label": "Setup The Glittering Caves",
-        "actionListId": "setupGlitteringCaves"
-      },
-      {
-        "label": "Setup The Fortress of Nurn",
-        "actionListId": "setupTheFortressOfNurn"
-      }
-    ],
-    "card": [
-      {
-        "label": "Toggle rotate",
-        "actionListId": "toggleExhaust"
-      },
-      {
-        "label": "Detach",
-        "actionListId": "detach"
-      },
-      {
-        "label": "Swap side",
-        "actionListId": "swapSide"
-      },
-      {
-        "label": "Toggle peeking",
-        "actionListId": "togglePeeking"
-      },
-      {
-        "label": "Toggle locked",
-        "actionListId": "toggleLocked"
-      },
-      {
-        "label": "Delete",
-        "actionListId": "deleteCard"
-      }
-
-    ],
-    "group": []
+    "plugin": {
+      "options": [
+        { 
+          "label": "Cards Per Round",
+          "actionListId": "setCardsDrawn"
+        },
+        {
+          "label": "Normal Quest",
+          "actionListId": "setQuestNormal"
+        },
+        { 
+          "label": "Battle Quest",
+          "actionListId": "setQuestBattle"
+        },
+        {
+          "label": "Siege Quest",
+          "actionListId": "setQuestSiege"
+        },
+        {
+          "label": "Setup Escape from Mount Gram",
+          "actionListId": "setupEscapeFromMountGram"
+        },
+        {
+          "label": "Setup To Catch an Orc",
+          "actionListId": "setupToCatchAnOrc"
+        },
+        {
+          "label": "Setup The Glittering Caves",
+          "actionListId": "setupGlitteringCaves"
+        },
+        {
+          "label": "Setup The Fortress of Nurn",
+          "actionListId": "setupTheFortressOfNurn"
+        }
+      ]
+    },
+    "card": {
+      "moveToGroupIds": ["sharedEncounter", "sharedQuestDeck", "sharedVictory", "sharedSetAside"],
+      "options": [
+        {
+          "label": "Toggle rotate",
+          "actionListId": "toggleExhaust"
+        },
+        {
+          "label": "Swap side",
+          "actionListId": "swapSide"
+        },
+        {
+          "label": "Toggle locked",
+          "actionListId": "toggleLocked"
+        },
+        {
+          "label": "Delete",
+          "actionListId": "deleteCard"
+        },
+        {
+          "label": "Swap with top",
+          "actionListId": "swapWithTop"
+        }
+      ]
+    },
+    "group": {
+      "moveToGroupIds": ["sharedEncounterDeck", "sharedEncounterDeck2", "sharedEncounterDeck3"],
+      "options": []
+    }
   },
   "cardTypes": {
     "Ally":           {"width": 1.0, "height": 1.39, "tokens": ["resource","progress","damage","time","willpower","attack","defense","hitPoints"]},
@@ -3538,9 +3541,7 @@
         [
           ["MOVE_CARD", "$ACTIVE_CARD_ID", "$ACTIVE_CARD.groupId", ["ADD", "$ACTIVE_CARD.stackIndex", 1], 0],
           ["GAME_ADD_MESSAGE", "$PLAYER_N", " detached ", "$ACTIVE_FACE.name", "."]
-        ],
-        true,
-        "$GAME"
+        ]
       ]
     ],
     "swapSide": [
@@ -3551,10 +3552,22 @@
           ["GAME_SET_VAL", "cardById", "$ACTIVE_CARD_ID", "attachmentDirection", 1],
           true,
           ["GAME_SET_VAL", "cardById", "$ACTIVE_CARD_ID", "attachmentDirection", -1]
-        ],
-        true,
-        "$GAME"
+        ]
       ]
+    ],
+    "swapWithTop": [
+      ["DEFINE", "$ORIG_GROUP_ID", "$ACTIVE_CARD.groupId"],
+      ["DEFINE", "$DECK_GROUP_ID", "$ACTIVE_CARD.deckGroupId"],
+      ["LOGGER", "$ORIG_GROUP_ID"],
+      ["LOGGER", "$DECK_GROUP_ID"],
+      ["DEFINE", "$TOP_STACK_ID", "$GAME.groupById.$DECK_GROUP_ID.stackIds.[0]"],
+      ["DEFINE", "$TOP_CARD_ID", "$GAME.stackById.$TOP_STACK_ID.cardIds.[0]"],
+      ["DEFINE", "$TOP_CARD", "$GAME.cardById.$TOP_CARD_ID"],
+      ["DEFINE", "$ACTIVE_STACK_INDEX", "$ACTIVE_CARD.stackIndex"],
+      ["DEFINE", "$ACTIVE_CARD_INDEX", "$ACTIVE_CARD.cardIndex"],
+      ["MOVE_CARD", "$ACTIVE_CARD_ID", "$TOP_CARD.deckGroupId", "$TOP_CARD.stackIndex", "$TOP_CARD.cardIndex"],
+      ["MOVE_CARD", "$TOP_CARD_ID", "$ORIG_GROUP_ID", "$ACTIVE_STACK_INDEX", "$ACTIVE_CARD_INDEX", ["GREATER_THAN", "$ACTIVE_CARD_INDEX", 0]],
+      ["GAME_ADD_MESSAGE", "$PLAYER_N", " swapped ", ["FACEUP_NAME_FROM_CARD_ID", "$ACTIVE_CARD_ID"], " with the top card of ", "$GAME.groupById.$DECK_GROUP_ID.name", "."]
     ],
     "moveToBack": [
       ["MOVE_CARD", "$ACTIVE_CARD_ID", "$ACTIVE_CARD.groupId", "$ACTIVE_CARD.stackIndex", -1, true]
@@ -4428,9 +4441,6 @@
     "player4Hand",
     "player4Discard",
     "sharedOther"
-  ],
-  "moveToGroupIds": [
-    "sharedEncounterDeck", "sharedEncounterDeck2", "sharedEncounterDeck3"
   ],
   "phases": [
     {

@@ -1,39 +1,26 @@
-import React, { useContext, useState } from "react";
+import React, { useState } from "react";
 import { useDispatch, useSelector } from 'react-redux';
 import { setActiveCardObj } from "../store/playerUiSlice";
-import { getDisplayName } from "../plugins/lotrlcg/functions/helpers";
 import { useGameL10n } from "../../hooks/useGameL10n";
-import BroadcastContext from "../../contexts/BroadcastContext";
 import { useGameDefinition } from "./functions/useGameDefinition";
 import { useDoActionList } from "./functions/useDoActionList";
+import { dragnActionLists } from "../definitions/common";
 
 export const ReminderButton = React.memo(({
   triggerCardIds
 }) => {
-  const {gameBroadcast, chatBroadcast} = useContext(BroadcastContext);
   const dispatch = useDispatch();
   const numTriggers = triggerCardIds ? triggerCardIds.length : 0;
   const cardById = useSelector(state => state?.gameUi?.game?.cardById);
   const playerN = useSelector(state => state?.playerUi?.playerN)
   const triggerCard = triggerCardIds?.length === 1 ? cardById[triggerCardIds[0]] : null;
+  const doActionList = useDoActionList();
   const targetTriggers = (event) => {
     event.stopPropagation();
     if (!playerN) return;
-    // Remove targets from all cards you targeted
-    gameBroadcast("game_action", {
-        action: "action_on_matching_cards", 
-        options: {
-            criteria:[["targeting", playerN, true]], 
-            action: "update_card_values", 
-            options: {updates: [["targeting", playerN, false]]}
-        }
-    });
-    chatBroadcast("game_update", {message: "removes targets."})
-    gameBroadcast("game_action", {action: "target_card_ids", options:{card_ids: triggerCardIds}});
+    doActionList(dragnActionLists.clearTargets());
     for (var cardId of triggerCardIds) {
-      const card = cardById[cardId];
-      const displayName = getDisplayName(card);
-      chatBroadcast("game_update", {message: "targeted "+displayName+"."});
+      doActionList(dragnActionLists.targetCard(cardId));
     }
   }  
   const handleStartHover = () => {
@@ -70,9 +57,6 @@ export const SideBarRoundStep = React.memo(({
   const l10n = useGameL10n();
   const gameDef = useGameDefinition();
   const stepId = stepInfo?.stepId;
-  //const getTriggerList2 = useGetTriggerList(stepId);
-  //const getTriggerList = () => [];
-  //const triggerCardIds = getTriggerList(stepId);
   const currentStepIndex = useSelector(state => state?.gameUi?.game?.stepIndex);
   const currentStepId = gameDef?.steps?.[currentStepIndex]?.stepId;
   const playerN = useSelector(state => state?.playerUi?.playerN)
@@ -81,16 +65,13 @@ export const SideBarRoundStep = React.memo(({
   const doActionList = useDoActionList();
 
   console.log("Rendering SideBarRoundStep", stepInfo, triggerCardIds);
-  const handleButtonClick = (id) => {
+  const handleButtonClick = () => {
     if (!playerN) return;
     var stepIndex = 0;
     gameDef.steps.forEach((stepInfoI, index) => {
       if (stepInfoI.stepId == stepId) stepIndex = index;
     });
-    doActionList([
-      ["GAME_SET_VAL", "stepIndex", stepIndex],
-      ["GAME_ADD_MESSAGE", "$PLAYER_N", " set the round step to ", stepInfo.text, "."]
-    ])
+    doActionList(dragnActionLists.setStep(stepInfo, stepIndex));
   }
 
   return (
@@ -113,7 +94,7 @@ export const SideBarRoundStep = React.memo(({
           triggerCardIds={triggerCardIds}/>
       }
       <div className={`flex flex-1 h-full items-center justify-center ${isRoundStep ? "bg-red-800" : "bg-gray-500"} ${hovering ? "block" : "hidden"}`} >
-        <div dangerouslySetInnerHTML={{ __html: l10n(stepId) }} />
+        <div>{l10n(stepId)}</div>
       </div>
     </div>
   )
