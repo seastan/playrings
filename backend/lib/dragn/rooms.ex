@@ -19,8 +19,7 @@ defmodule DragnCards.Rooms do
 
   """
   def list_rooms do
-    []
-    #Repo.all(Room)
+    Repo.all(Room)
   end
 
   @doc """
