@@ -94,7 +94,7 @@ export const Lobby: React.FC = () => {
       <div 
         className="w-full overflow-y-scroll overflow-x-hidden" 
         style={{fontFamily:"Roboto", height: "97vh", 
-        background: `url(${process.env.PUBLIC_URL + '/images/other/background.jpg'}) no-repeat center center fixed`,
+        background: `url("https://i.imgur.com/V3ihd22.jpg") no-repeat center center fixed`,
         backgroundSize: 'cover',
         WebkitBackgroundSize: 'cover',
         MozBackgroundSize: 'cover',
