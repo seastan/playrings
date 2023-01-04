@@ -38,6 +38,8 @@ defmodule DragnCardsWeb.MyPluginsController do
   @spec create(Conn.t(), map()) :: Conn.t()
   #def create(conn, %{"user" => user}) do
   def create(conn, %{"plugin" => plugin_params}) do
+    IO.puts("plugin create 1")
+    IO.inspect(plugin_params)
     case Plugins.create_plugin(plugin_params) do
       {:ok, struct} ->
         conn

@@ -18,8 +18,13 @@ defmodule DragnCards.Plugins.Plugin do
 
   @doc false
   def changeset(plugin, attrs) do
-    plugin
+    IO.puts("plugin changeset 1")
+    plugin = plugin
     |> cast(attrs, [:name, :version, :game_def, :card_db, :num_favorites, :public, :author_id])
+    IO.puts("plugin changeset 2")
+    plugin = plugin
     |> validate_required([:name, :version, :game_def, :card_db, :num_favorites, :public, :author_id])
+    IO.puts("plugin changeset 3")
+    plugin
   end
 end
