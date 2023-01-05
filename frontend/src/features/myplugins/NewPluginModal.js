@@ -70,7 +70,10 @@ export const NewPluginModal = ({ isOpen, closeModal }) => {
     setSuccessMessage("");
     setErrorMessage("");
     setLoadingMessage("Please wait...");
+    console.log("auth 1", updateData, authOptions);
     const res = await axios.post("/be/api/myplugins", updateData, authOptions);
+    console.log("res 1", res);
+    setLoadingMessage("Finished.");
     if (
       res.status === 200
     ) {
