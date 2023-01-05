@@ -95,7 +95,6 @@ export const Stacks = React.memo(({
           <div className="h-full">
             <PileImage 
               groupType={groupType} 
-              defaultSideUp={group.defaultSideUp} 
               stackIds={stackIds} 
               isDraggingOver={dropSnapshot.isDraggingOver} 
               isDraggingFrom={Boolean(dropSnapshot.draggingFromThisWith)}>

@@ -1,6 +1,6 @@
 
-import React, { useEffect, useState } from "react";
-import { getDisplayName, getVisibleFace } from "../plugins/lotrlcg/functions/helpers";
+import React from "react";
+import { getVisibleFace } from "../plugins/lotrlcg/functions/helpers";
 import useLongPress from "../../hooks/useLongPress";
 import { useDispatch, useSelector } from "react-redux";
 import { setActiveCardId, setActiveCardObj, setDropdownMenuObj } from "../store/playerUiSlice";

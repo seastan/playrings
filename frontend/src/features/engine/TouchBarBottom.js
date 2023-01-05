@@ -5,7 +5,6 @@ import { setActiveCardObj, setDropdownMenuObj, setTouchAction } from "../store/p
 import { useDoActionList } from "./functions/useDoActionList";
 
 export const TouchButton = React.memo(({buttonObj}) => {
-  const gameDef = useGameDefinition();
   const dispatch = useDispatch();
   const touchAction = useSelector(state => state?.playerUi?.touchAction);
   const doActionList = useDoActionList();

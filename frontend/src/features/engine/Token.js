@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
 import { useSelector } from 'react-redux';
-import { tokenPrintName } from "../plugins/lotrlcg/functions/helpers";
 import { faChevronDown, faChevronUp } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import BroadcastContext from "../../contexts/BroadcastContext";
@@ -26,7 +25,6 @@ export const Token = React.memo(({
     const [buttonDownVisible, setButtonDownVisible] = useState(false);
     const [buttonUpVisible, setButtonUpVisible] = useState(false);
     const [amount, setAmount] = useState(tokenValue);
-    const printName = tokenPrintName(tokenType);
     const gameDef = useGameDefinition();
     const token = gameDef?.tokens?.[tokenType];
     if (!token) return;

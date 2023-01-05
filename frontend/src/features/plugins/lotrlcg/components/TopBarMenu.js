@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useHistory } from "react-router-dom";
 import useProfile from "../../../../hooks/useProfile";
 import store from "../../../../store";
-import { getCardByGroupIdStackIndexCardIndex, getSideAName, getPlayerCommitted, loadRingsDb, playerNToPlayerIndex, processLoadList, processPostLoad, shuffle } from "../functions/helpers";
+import { getCardByGroupIdStackIndexCardIndex, getSideAName, getPlayerCommitted, loadRingsDb, processLoadList, processPostLoad, shuffle } from "../functions/helpers";
 import { flatListOfCards, functionOnMatchingCards, listOfMatchingCards } from "../../../engine/functions/flatListOfCards";
 import { loadDeckFromXmlText, getRandomIntInclusive } from "../functions/helpers";
 import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
@@ -97,6 +97,13 @@ export const TopBarMenu = React.memo(({}) => {
         return;
       }
       const ringsDbId = splitUrl[typeIndex + 2];
+      const playerNToPlayerIndex = (playerN) => {
+        if (playerN === "player1") return 0;
+        if (playerN === "player2") return 1;
+        if (playerN === "player3") return 2;
+        if (playerN === "player4") return 3;
+        return null;
+      }
       const playerIndex = playerNToPlayerIndex(playerN);
       var newRingsDbInfo;
       if (ringsDbInfo) newRingsDbInfo = [...ringsDbInfo];

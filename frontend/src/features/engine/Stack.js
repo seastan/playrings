@@ -6,7 +6,7 @@ import { Draggable } from "react-beautiful-dnd";
 import useWindowDimensions from "../../hooks/useWindowDimensions";
 import store from "../../store";
 import NaturalDragAnimation from 'natural-drag-animation-rbdnd';
-import { useCardSize } from "../../hooks/useCardSize";
+import { useCardScaleFactor } from "../../hooks/useCardScaleFactor";
 
 
 const Container = styled.div`
@@ -31,7 +31,7 @@ export const Stack = React.memo(({
   console.log('Rendering Stack ',stackIndex);
   const stack = useSelector(state => state?.gameUi?.game?.stackById[stackId]);
   const touchMode = useSelector(state => state?.playerUi?.touchMode);
-  const cardSize = useCardSize();
+  const cardScaleFactor = useCardScaleFactor();
   const playerN = useSelector(state => state?.playerUi?.playerN);
   var spacingFactor = touchMode ? 1.5 : 1;
   if (groupId.includes("Extra")) spacingFactor = 0;
@@ -59,8 +59,8 @@ export const Stack = React.memo(({
   // Calculate size of stack for proper spacing. Changes base on group type and number of stack in group.
   const numStacksNonZero = numStacks > 0 ? numStacks : 1;
   var handSpacing = 45*aspectRatio/(numStacksNonZero);
-  if (handSpacing > cardSize) handSpacing = cardSize;
-  var stackWidth = groupType === "horizontalFan" ? handSpacing : cardSize/0.72 + cardSize*spacingFactor/3*(cardIds.length-1);
+  if (handSpacing > cardScaleFactor) handSpacing = cardScaleFactor;
+  var stackWidth = groupType === "horizontalFan" ? handSpacing : cardScaleFactor/0.72 + cardScaleFactor*spacingFactor/3*(cardIds.length-1);
   return (
     <Draggable 
       key={stackId} 
@@ -78,7 +78,7 @@ export const Stack = React.memo(({
             isGroupedOver={Boolean(dragSnapshot.combineTargetFor)}
             stackWidth={stackWidth}
             groupType={groupType}
-            cardSize={cardSize}
+            cardSize={cardScaleFactor}
             hidden={hidden}
             ref={dragProvided.innerRef}
             {...dragProvided.draggableProps}

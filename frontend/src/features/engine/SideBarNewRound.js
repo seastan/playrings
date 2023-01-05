@@ -1,19 +1,19 @@
 import React, { useContext } from "react";
-import { gameAction } from "../plugins/lotrlcg/functions/actions";
 import { faRedoAlt } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import store from "../../store";
 import { useDispatch } from "react-redux";
 import BroadcastContext from "../../contexts/BroadcastContext";
-
+import { useDoActionList } from "./functions/useDoActionList";
 
 export const SideBarNewRound = React.memo(() => {
     const {gameBroadcast, chatBroadcast} = useContext(BroadcastContext);
     const dispatch = useDispatch();
+    const doActionList = useDoActionList()
     const handleClick = () => {
         const state = store.getState();
         const actionProps = {state, dispatch, gameBroadcast, chatBroadcast};
-        gameAction("new_round", actionProps);
+        doActionList("newRound");
     }
     return (
         <div 

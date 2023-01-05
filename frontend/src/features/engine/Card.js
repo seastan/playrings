@@ -1,16 +1,15 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import { useDispatch, useSelector } from 'react-redux';
 import { Tokens } from './Tokens';
-import { CommittedToken } from './CommittedToken';
 import useProfile from "../../hooks/useProfile";
 import { CardMouseRegion } from "./CardMouseRegion";
 import { faEye } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { getCurrentFace, getVisibleFace, getVisibleFaceSrc, getDefault, usesThreatToken } from "../plugins/lotrlcg/functions/helpers";
+import { getVisibleFaceSrc, getFirstCardOffset } from "../plugins/lotrlcg/functions/helpers";
 import { Target } from "./Target";
 import { AbilityToken } from "./AbilityToken";
 import { setActiveCardObj } from "../store/playerUiSlice";
-import { useCardSize } from "../../hooks/useCardSize";
+import { useCardScaleFactor } from "../../hooks/useCardScaleFactor";
 import { useGameDefinition } from "./functions/useGameDefinition";
 import { useGetDefaultAction } from "./functions/useGetDefaultAction";
 
@@ -59,7 +58,7 @@ export const Card = React.memo(({
     const cardRotation = useSelector(state => state?.gameUi?.game?.cardById[cardId]?.rotation);
     const cardCommitted = useSelector(state => state?.gameUi?.game?.cardById[cardId]?.committed);
     const playerN = useSelector(state => state?.playerUi?.playerN);
-    const cardSize = useCardSize();
+    const cardScaleFactor = useCardScaleFactor();
     const touchMode = useSelector(state => state?.playerUi?.touchMode);
     if (!cardCurrentSide) return;
     var cardVisibleSide = cardCurrentSide;
@@ -88,7 +87,7 @@ export const Card = React.memo(({
     }
     // FIXME: display error if height and width still not defined?
 
-    const horizontalOffset = 0.2 + (1.39-width)*cardSize/2 + cardSize*touchModeSpacingFactor/3*offset;
+    const horizontalOffset = getFirstCardOffset(width, cardScaleFactor) + cardScaleFactor*touchModeSpacingFactor/3*offset;
     const destroyed = currentFace.hitPoints > 0 && cardTokens.damage >= currentFace.hitPoints + cardTokens.hitPoints;
     const explored = currentFace.questPoints > 0 && cardTokens.progress >= currentFace.questPoints + cardTokens.hitPoints;
 
@@ -104,8 +103,8 @@ export const Card = React.memo(({
                 key={cardId}
                 style={{
                     position: "absolute",
-                    height: `${cardSize*height}vh`,
-                    width: `${cardSize*width}vh`,
+                    height: `${cardScaleFactor*height}vh`,
+                    width: `${cardScaleFactor*width}vh`,
                     left: `${horizontalOffset}vh`,
                     top: "50%",
                     borderRadius: '0.6vh',
@@ -160,10 +159,6 @@ export const Card = React.memo(({
                     zIndex={zIndex}
                     aspectRatio={width/height}
                 />
-                {cardCommitted && <CommittedToken
-                    cardId={cardId}
-                    zIndex={zIndex}
-                />}
                 {isActive && <AbilityToken
                     cardId={cardId}
                     groupId={groupId}

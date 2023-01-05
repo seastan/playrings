@@ -59,10 +59,20 @@ defmodule DragnCardsGame.CardFace do
     IO.puts("card_face_from_card_face_details")
     IO.inspect(card_face_details)
     type = card_face_details["type"]
+    name = card_face_details["name"]
     triggers = trigger_steps_from_face_details(card_face_details, game_def["stepTriggers"])
+    IO.inspect("===================================================")
+    width = game_def["cardTypes"][type]["width"] || game_def["cardBacks"][name]["width"] || 1
+    height = game_def["cardTypes"][type]["height"] || game_def["cardBacks"][name]["height"] || 1
+    IO.inspect(type)
+    IO.inspect(name)
+    IO.inspect(game_def["cardTypes"])
+    IO.inspect(game_def["cardBacks"])
+    IO.inspect(game_def["cardTypes"][type]["height"])
+    IO.inspect(game_def["cardBacks"][name]["height"])
     card_face = card_face_details
     |> Map.put("triggers", triggers)
-    |> Map.put("width", game_def["cardTypes"][type]["width"])
-    |> Map.put("height", game_def["cardTypes"][type]["height"])
+    |> Map.put("width", width)
+    |> Map.put("height", height)
   end
 end

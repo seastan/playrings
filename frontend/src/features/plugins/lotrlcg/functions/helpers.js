@@ -2,27 +2,13 @@ import { sectionToLoadGroupId, sectionToDiscardGroupId, sectionToDeckGroupId } f
 import axios from "axios";
 import { setLoaded, setTooltipIds } from "../../../store/playerUiSlice";
 import store from "../../../../store";
-import { cardDb } from "./cardDb";
-import { useContext } from "react";
-import BroadcastContext from "../../../../contexts/BroadcastContext";
 import { listOfMatchingCards } from "../../../engine/functions/flatListOfCards";
-import { useSelector } from "react-redux";
+
+const cardDb = [];
 
 export const getCurrentFace = (card) => {
   if (!card?.currentSide) return null;
   return card.sides[card.currentSide];
-}
- 
-export const playerNToPlayerSpaceN = (playerN) => {
-  return "Player " + playerN.slice(6,7);
-}
- 
-export const playerNToPlayerIndex = (playerN) => {
-  if (playerN === "player1") return 0;
-  if (playerN === "player2") return 1;
-  if (playerN === "player3") return 2;
-  if (playerN === "player4") return 3;
-  return null;
 }
 
 export const getDisplayName = (card) => {
@@ -96,7 +82,7 @@ export const getVisibleFaceWidthHeight = (visibleFace, gameDef) => {
   if (!visibleFace) return {width: 0, height: 0};
   var width = visibleFace.width;
   var height = visibleFace.height;
-  // If there's no size listed, it's probably a card back
+  // If there's no size listed, so it's a card back
   if (!height || !width) {   
     const cardName = visibleFace.name;
     if (Object.keys(gameDef?.cardBacks).includes(cardName))
@@ -122,71 +108,6 @@ export const getVisibleFaceSrc = (visibleFace, user, gameDef) => {
     src: srcLanguage,
     default: src
   }
-/* 
-  if (visibleSide === "A") {
-    return {
-      //src: "https://dragncards-lotrlcg.s3.us-east-1.amazonaws.com/cards/English/" + card['cardDbId'] + '.jpg',
-      src: visibleFace.imageUrl || process.env.PUBLIC_URL + '/images/cards/' + language + '/' + card['cardDbId'] + '.jpg',
-      //default: visibleFace.customImgUrl ? "image not found" : process.env.PUBLIC_URL + '/images/cards/English/' + card['cardDbId'] + '.jpg',
-    }
-  } else { // Side B logic
-    const sideBName = card.sides.B.name;
-    if (sideBName === "player") {
-      return {
-        src: (user?.player_back_url ? user.player_back_url : process.env.PUBLIC_URL + '/images/cardbacks/player.jpg'),
-        default: process.env.PUBLIC_URL + '/images/cardbacks/player.jpg',
-      }
-    } else if (sideBName === "encounter") {
-      return {
-        src: (user?.encounter_back_url ? user.encounter_back_url : process.env.PUBLIC_URL + '/images/cardbacks/encounter.jpg'),
-        default: process.env.PUBLIC_URL + '/images/cardbacks/encounter.jpg',
-      }
-    } else if (sideBName) {
-      return {
-        src: visibleFace.customImgUrl || process.env.PUBLIC_URL + '/images/cards/' + language + '/' + card['cardDbId'] + '.B.jpg',
-        default: visibleFace.customImgUrl ? "image not found" : process.env.PUBLIC_URL + '/images/cards/English/' + card['cardDbId'] + '.B.jpg',
-      }
-    } else {
-      return {src: "image not found", default: "image not found"};
-    }
-  } */
-}
-
-export const usesThreatToken = (card) => {
-  const cardFace = getCurrentFace(card);
-  if (["Contract", "Hero", "Ally", "Attachment", "Event", "Objective Ally"].includes(cardFace.type)) return false;
-  if (card.controller != "shared") return false;
-  if (cardFace.willpower > 0) return false;
-  return true;
-} 
-
-export const processTokenType = (tokenType, card) => {
-  if (tokenType === "willpowerThreat") return usesThreatToken(card) ? "threat" : "willpower";
-  return tokenType;
-}
-
-export const tokenPrintName = (tokenType) => {
-  if (tokenType === "hitPoints") return "hit points";
-  return tokenType;
-}
-
-export const tokenTitleName = (tokenType) => {
-  if (tokenType === "hitPoints") return "hit points";
-  const printName = tokenPrintName(tokenType);
-  return printName.charAt(0).toUpperCase() + printName.slice(1)
-}
-
-export const getCardWillpower = (card) => {
-  const currentFace = getCurrentFace(card);
-  return currentFace.willpower + card.tokens.willpower;
-}
-
-export const getCardRowCategory = (cardRow) => {
-  if (cardRow.sides.A.type === "Quest") return "Quest";
-  if (cardRow.sides.B.name === "encounter") return "Encounter";
-  if (cardRow.sides.B.name === "player") return "Player";
-  if (cardRow.cardencounterset) return "Encounter";
-  return "Player";
 }
 
 export const GetPlayerN = (playerInfo, id) => {
@@ -208,58 +129,6 @@ export const getParentCardsInGroup = (game, groupId) => {
     parentCards.push(parentCard);
   }
   return parentCards;
-}
-
-// List of playerN strings of seats that are not eliminated
- export const nonEliminated = (gameUi) => {
-  const playerData = gameUi.game.playerData;
-  var playerNs = [];
-  for (var i = 1; i<= gameUi.game.numPlayers; i++) {
-    const playerI = "player"+i;
-    if (!playerData[playerI].eliminated) playerNs.push(playerI);
-  }
-  return playerNs;
-}
-
- // List of playerN strings of players that are seated and not eliminated
- export const seatedNonEliminated = (gameUi) => {
-  const playerInfo = gameUi.playerInfo;
-  const playerData = gameUi.game.playerData;
-  var seated = []
-  Object.keys(playerInfo).forEach((PlayerI) => {
-    if (playerInfo[PlayerI]?.id && !playerData[PlayerI].eliminated) {
-      seated.push(PlayerI);
-    }
-  })
-  return seated;
-}
-
-export const leftmostNonEliminatedPlayerN = (gameUi) => {
-  const nonEliminatedPlayerNs = nonEliminated(gameUi);
-  return nonEliminatedPlayerNs[0];
-}
-
-export const getNextPlayerN = (gameUi, playerN) => {
-  const nonEliminatedPlayerNs = nonEliminated(gameUi);
-  const nonEliminatedPlayerNs2 = nonEliminatedPlayerNs.concat(nonEliminatedPlayerNs);
-  var nextPlayerN = null;
-  for (var i=0; i<nonEliminatedPlayerNs2.length/2; i++) {
-    if (nonEliminatedPlayerNs2[i] === playerN) nextPlayerN = nonEliminatedPlayerNs2[i+1];
-  }
-  if (nextPlayerN === playerN) nextPlayerN = null;
-  return nextPlayerN;
-}
-
-export const getNextEmptyPlayerN = (gameUi, playerN) => {
-  const nonEliminatedPlayerNs = nonEliminated(gameUi);
-  const nonEliminatedPlayerNs2 = nonEliminatedPlayerNs.concat(nonEliminatedPlayerNs);
-  var foundPlayerN = null;
-  for (var i=0; i<nonEliminatedPlayerNs2.length; i++) {
-    const playerI = nonEliminatedPlayerNs2[i];
-    if (foundPlayerN && gameUi.playerInfo[playerI]?.id === null) return playerI; 
-    if (playerI === playerN) foundPlayerN = true;
-  }
-  return null;
 }
 
 export const getGroupByStackId = (groupById, stackId) => {
@@ -656,6 +525,11 @@ export const checkAlerts = async () => {
   if (res.data && res.data.message) {
       alert(res.data.message + " Time remaining: "+res.data.minutes_remaining + " minutes");
   }
+}
+
+// Returns the left offset of the first card in a group
+export const getFirstCardOffset = (width, cardSize) => {
+  return 0.2 + (1.39-width)*cardSize/2;
 }
 
 

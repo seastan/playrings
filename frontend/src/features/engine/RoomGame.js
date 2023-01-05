@@ -1,9 +1,7 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from 'react-redux';
-import { HandleKeyDown } from "../plugins/lotrlcg/components/HandleKeyDown";
 import { setKeypress } from "../store/playerUiSlice";
 import { DragContainer } from "./DragContainer";
-import { HandleTouchActions } from "./functions/HandleTouchActions";
 import { useKeyDown } from "./functions/useKeyDown";
 
 const RoomGame = React.memo(({}) => {

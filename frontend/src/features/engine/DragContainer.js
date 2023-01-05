@@ -1,24 +1,19 @@
 
-import React, { useContext } from "react";
+import React from "react";
 import { ArrowsBetweenDivsContextProvider, ArrowBetweenDivs, LineOrientation, ArrowAnchorPlacement } from 'react-simple-arrows';
 import { DragDropContext } from "react-beautiful-dnd";
 import { useSelector, useDispatch } from 'react-redux';
-import { setStackIds, setCardIds, setGroupById, setValues } from "../store/gameUiSlice";
+import { setStackIds, setCardIds, setGroupById } from "../store/gameUiSlice";
 import { reorderGroupStackIds } from "./Reorder";
 import store from "../../store";
 import { setTouchAction } from "../store/playerUiSlice";
-import { getDisplayName, getDisplayNameFlipped } from "../plugins/lotrlcg/functions/helpers";
 import { Table } from "./Table";
-import BroadcastContext from "../../contexts/BroadcastContext";
-import { useGameDefinition } from "./functions/useGameDefinition";
 import { useDoActionList } from "./functions/useDoActionList";
 
 export const DragContainer = React.memo(({}) => {
   console.log("Rendering DragContainer");
   const dispatch = useDispatch();
-  const gameDef = useGameDefinition();
   const doActionList = useDoActionList();
-  const {gameBroadcast, chatBroadcast} = useContext(BroadcastContext);
   const playerData = useSelector(state => state?.gameUi?.game?.playerData);
   const touchMode = useSelector(state => state?.playerUi?.touchMode);
   //const archerContainerRef = React.createRef();
@@ -61,8 +56,6 @@ export const DragContainer = React.memo(({}) => {
       const destStackId = destGroupStackIds[dest.index];
       const destStack = game.stackById[destStackId];
       const destStackCardIds = destStack.cardIds;
-      const topOfDestStackCardId = destStackCardIds[0];
-      const topOfDestStackCard = game.cardById[topOfDestStackCardId];
       const newDestStackCardIds = destStackCardIds.concat(origStackCardIds);
 
       const newDestStack = {
@@ -77,14 +70,10 @@ export const DragContainer = React.memo(({}) => {
         ...origGroup,
         stackIds: newOrigGroupStackIds
       }   
-      if ((origGroup.type === "hand" || origGroup.type === "deck" ) && (destGroup.type !== "hand" && destGroup.type !== "deck" )) {
-        chatBroadcast("game_update",{message: "attached "+getDisplayNameFlipped(topOfOrigStackCard)+" from "+gameDef.groups[origGroupId].name+" to "+getDisplayName(topOfDestStackCard)+" in "+gameDef.groups[destGroupId].name+"."})
-        // Flip card faceup
-        const updates = [["cardById",topOfOrigStackCardId,"currentSide", "A"]];
-        dispatch(setValues({updates: updates}));
-      } else {
-        chatBroadcast("game_update",{message: "attached "+getDisplayName(topOfOrigStackCard)+" from "+gameDef.groups[origGroupId].name+" to "+getDisplayName(topOfDestStackCard)+" in "+gameDef.groups[destGroupId].name+"."});
-      }
+      // We could add some logic here to flip the card locally instantly, but there would still be a delay to get load the image
+      // const updates = [["cardById",topOfOrigStackCardId,"currentSide", "A"]];
+      // dispatch(setValues({updates: updates}));
+
       dispatch(setStackIds(newOrigGroup));
       dispatch(setCardIds(newDestStack));
       doActionList(["MOVE_STACK", origStackId, destGroupId, dest.index, true, false])
@@ -108,28 +97,13 @@ export const DragContainer = React.memo(({}) => {
       ) {
         return;
       }
-      console.log("draginfo", origGroupId)
-      console.log("draginfo", gameDef.groups[origGroupId])
-      console.log("draginfo", destGroupId)
-      console.log("draginfo", gameDef.groups[destGroupId])
-      console.log("draginfo", gameDef.groups[destGroupId])
       // Moved to a different spot
       const newGroupById = reorderGroupStackIds(groupById, orig, dest);
-      const origGroupTitle = gameDef.groups[origGroupId].name;
-      const destGroupTitle = gameDef.groups[destGroupId].name;
-      if (!origGroup.inPlay && destGroup.inPlay) {
-        chatBroadcast("game_update",{message: "moved "+getDisplayNameFlipped(topOfOrigStackCard)+" from "+origGroupTitle+" to "+destGroupTitle+"."});
-        // Flip card faceup
-        const updates = [["game", "cardById",topOfOrigStackCardId,"currentSide", "A"]];
-        console.log("draginfo", updates)
-        dispatch(setValues({updates: updates}));
-      }
-      else {
-        chatBroadcast("game_update",{message: "moved "+getDisplayName(topOfOrigStackCard)+" from "+origGroupTitle+" to "+destGroupTitle+"."});
-      }
+      // We could add some logic here to flip the card locally instantly, but there would still be a delay to get load the image
+      // const updates = [["game", "cardById", topOfOrigStackCardId, "currentSide", "A"]];
+      // dispatch(setValues({updates: updates}));
       doActionList(["MOVE_STACK", origStackId, destGroupId, dest.index, false, destGroupId === origGroupId])
       dispatch(setGroupById(newGroupById));
-      //gameBroadcast("game_action", {action:"move_stack", options:{stack_id: origStackId, dest_group_id: destGroupId, dest_stack_index: dest.index, combine: false, preserve_state: destGroupId === origGroupId}})
     }
     if (touchMode && origGroup.type === "hand" && destGroup.type === "play") {
       const cost = topOfOrigStackCard.sides.A.cost;
