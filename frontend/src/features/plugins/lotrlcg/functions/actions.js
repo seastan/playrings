@@ -481,10 +481,10 @@ export const gameAction = (action, actionProps, forPlayerN = null) => {
         const nextPlayerN = getNextEmptyPlayerN(gameUi, playerN);
         const myUserId = gameUi.playerIds[playerN];
         if (nextPlayerN) {
-            gameBroadcast("game_action", {action: "set_seat", options: {"player_n": playerN, "user_id": null}});
+            gameBroadcast("set_seat", {"player_i": playerN, "new_user_id": null});
             chatBroadcast("game_update", {message: "got up from "+playerNToPlayerSpaceN(playerN)+"'s seat."});
             // Sit in seat
-            gameBroadcast("game_action", {action: "set_seat", options: {"player_n": nextPlayerN, "user_id": myUserId}});
+            gameBroadcast("set_seat", {"player_i": nextPlayerN, "new_user_id": myUserId});
             chatBroadcast("game_update",{message: "sat in "+playerNToPlayerSpaceN(nextPlayerN)+"'s seat."});
             dispatch(setObservingPlayerN(nextPlayerN));
         } else {

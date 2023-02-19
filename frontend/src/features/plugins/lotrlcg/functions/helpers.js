@@ -468,6 +468,95 @@ export const processLoadList = (loadList, playerN) => {
     }
   }
 
+  const theNineAreAbroad = isCardDbIdInLoadList(loadList, "5c8e7eab-3899-489e-a801-3ac34b77f62f");
+  if (theNineAreAbroad) {
+    flattenLoadList(newLoadList);
+    n = newLoadList.length;
+    for (var i=0; i<n; i++) {
+      const item = newLoadList[i];
+      if (item.cardRow.sides.A.name === "The Blue Mountains") {
+        newLoadList[i] = {...item, quantity: item.quantity - 1};
+        newLoadList.push({...item, quantity: 1, groupId: "sharedExtra1"})
+      }
+    } 
+    for (var i=0; i<n; i++) {
+      const item = newLoadList[i];
+      if (item.cardRow.sides.A.name === "Arnor") {
+        newLoadList[i] = {...item, quantity: item.quantity - 1};
+        newLoadList.push({...item, quantity: 1, groupId: "sharedExtra1"})
+      }
+    } 
+    for (var i=0; i<n; i++) {
+      const item = newLoadList[i];
+      if (item.cardRow.sides.A.name === "Rhovanion") {
+        newLoadList[i] = {...item, quantity: item.quantity - 1};
+        newLoadList.push({...item, quantity: 1, groupId: "sharedExtra1"})
+      }
+    } 
+    for (var i=0; i<n; i++) {
+      const item = newLoadList[i];
+      if (item.cardRow.sides.A.name === "Harlindon") {
+        newLoadList[i] = {...item, quantity: item.quantity - 1};
+        newLoadList.push({...item, quantity: 1, groupId: "sharedExtra2"})
+      }
+    } 
+    for (var i=0; i<n; i++) {
+      const item = newLoadList[i];
+      if (item.cardRow.sides.A.name === "Eriador") {
+        newLoadList[i] = {...item, quantity: item.quantity - 1};
+        newLoadList.push({...item, quantity: 1, groupId: "sharedExtra2"})
+      }
+    } 
+    for (var i=0; i<n; i++) {
+      const item = newLoadList[i];
+      if (item.cardRow.sides.A.name === "Mirkwood") {
+        newLoadList[i] = {...item, quantity: item.quantity - 1};
+        newLoadList.push({...item, quantity: 1, groupId: "sharedExtra2"})
+      }
+    } 
+    for (var i=0; i<n; i++) {
+      const item = newLoadList[i];
+      if (item.cardRow.sides.A.name === "The Nine are Abroad 2") {
+        newLoadList[i] = {...item, quantity: item.quantity - 1};
+        newLoadList.push({...item, quantity: 1, groupId: "sharedExtra3"})
+      }
+    } 
+    for (var i=0; i<n; i++) {
+      const item = newLoadList[i];
+      if (item.cardRow.sides.A.name === "Enedwaith") {
+        newLoadList[i] = {...item, quantity: item.quantity - 1};
+        newLoadList.push({...item, quantity: 1, groupId: "sharedExtra3"})
+      }
+    } 
+    for (var i=0; i<n; i++) {
+      const item = newLoadList[i];
+      if (item.cardRow.sides.A.name === "Rohan") {
+        newLoadList[i] = {...item, quantity: item.quantity - 1};
+        newLoadList.push({...item, quantity: 1, groupId: "sharedExtra3"})
+      }
+    } 
+    for (var i=0; i<n; i++) {
+      const item = newLoadList[i];
+      if (item.cardRow.sides.A.name === "The Nine are Abroad 3") {
+        newLoadList[i] = {...item, quantity: item.quantity - 1};
+        newLoadList.push({...item, quantity: 1, groupId: "sharedExtra4"})
+      }
+    } 
+    for (var i=0; i<n; i++) {
+      const item = newLoadList[i];
+      if (item.cardRow.sides.A.name === "The Outlands") {
+        newLoadList[i] = {...item, quantity: item.quantity - 1};
+        newLoadList.push({...item, quantity: 1, groupId: "sharedExtra4"})
+      }
+    } 
+    for (var i=0; i<n; i++) {
+      const item = newLoadList[i];
+      if (item.cardRow.sides.A.name === "Gondor") {
+        newLoadList[i] = {...item, quantity: item.quantity - 1};
+        newLoadList.push({...item, quantity: 1, groupId: "sharedExtra4"})
+      }
+    } 
+  }
   return newLoadList; 
 
 }
@@ -513,6 +602,11 @@ export const processPostLoad = (gameUi, loadList, playerN, gameBroadcast, chatBr
       options: {criteria:[["groupId", "sharedExtra3"], ["stackIndex", 0]], action: "flip_card", options: {}
     }});
   }
+  const theNineAreAbroad = isCardDbIdInLoadList(loadList, "5c8e7eab-3899-489e-a801-3ac34b77f62f");
+  if (theNineAreAbroad) {
+    gameBroadcast("game_action", {action: "update_values", options: {updates: [["game", "layout", "extra4"]]}});
+  }
+
 }
 
 export const loadDeckFromXmlText = (xmlText, playerN, gameBroadcast, chatBroadcast, privacyType) => {

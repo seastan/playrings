@@ -9,6 +9,7 @@ export const Tokens = React.memo(({
     isActive,
     zIndex,
     aspectRatio,
+    side,
  }) => {
     const spacePressed = useSelector(state => state?.playerUi?.keypress?.Space);
     const showButtons = isActive && spacePressed;

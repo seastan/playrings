@@ -30,6 +30,7 @@ defmodule DragnCardsGame.Groups do
       "sharedExtra1"=>            Group.new("sharedExtra1","play","shared"),
       "sharedExtra2"=>            Group.new("sharedExtra2","play","shared"),
       "sharedExtra3"=>            Group.new("sharedExtra3","play","shared"),
+      "sharedExtra4"=>            Group.new("sharedExtra4","play","shared"),
       "player1Hand"=>             Group.new("player1Hand","hand","player1"),
       "player1Deck"=>             Group.new("player1Deck","deck","player1"),
       "player1Discard"=>          Group.new("player1Discard","discard","player1"),

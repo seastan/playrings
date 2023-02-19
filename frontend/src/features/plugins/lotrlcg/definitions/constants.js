@@ -42,6 +42,7 @@ export const GROUPSINFO = {
     "sharedExtra1": {name: "Extra 1", tablename: "Extra 1"},
     "sharedExtra2": {name: "Extra 2", tablename: "Extra 2"},
     "sharedExtra3": {name: "Extra 3", tablename: "Extra 3"},
+    "sharedExtra4": {name: "Extra 4", tablename: "Extra 4"},
     "player1Hand": {name: "Player 1 Hand", tablename: "Hand"},
     "player1Deck": {name: "Player 1 Deck", tablename: "Deck"},
     "player1Discard": {name: "Player 1 Discard", tablename: "Discard"},
@@ -435,6 +436,49 @@ export const LAYOUTINFO = {
       ]
     },
   ],
+  "layout1extra4": [
+    {
+      regions: [
+        {id: "sharedMainQuest", width: "12%"},
+        {id: "sharedActive", width: "11%"},
+        {id: "sharedStaging", width: "58%", style: "shaded", boxShadow: "true"},
+        {id: "sharedEncounterDeck", width: "9.5%"},
+        {id: "sharedEncounterDiscard", width: "9.5%"},
+      ]
+    },
+    {
+      regions: [
+        {id: "player1Engaged", width: "65%"},
+        {id: "sharedExtra1", width: "35%"},
+      ]
+    },
+    {
+      regions: [
+        {id: "player1Play1", width: "65%"},
+        {id: "sharedExtra2", width: "35%"},
+      ]
+    },
+    {
+      regions: [
+        {id: "player1Play2", width: "65%"},
+        {id: "sharedExtra3", width: "35%"},
+      ]
+    },
+    {
+      regions: [
+        {id: "player1Play3", width: "55%"},
+        {id: "player1Event", width: "10%"},
+        {id: "sharedExtra4", width: "35%"},
+      ]
+    },
+    {
+      regions: [
+        {id: "Hand", width: "56%", style: "shaded"},
+        {id: "Deck", width: "9.5%", style: "shaded"},
+        {id: "Discard", width: "9.5%", style: "shaded"},
+      ]
+    },
+  ],
   "layout2standard": [
     {
       regions: [
@@ -516,6 +560,54 @@ export const LAYOUTINFO = {
         {id: "player2Play3", width: "28%"},
         {id: "player2Event", width: "8%"},
         {id: "sharedExtra3", width: "27%"},
+      ]
+    },
+    {
+      regions: [
+        {id: "Hand", width: "59%", style: "shaded"},
+        {id: "Deck", width: "8%", style: "shaded"},
+        {id: "Discard", width: "8%", style: "shaded"},
+      ]
+    },
+  ],
+  "layout2extra4": [
+    {
+      regions: [
+        {id: "sharedMainQuest", width: "9%"},
+        {id: "sharedActive", width: "8%"},
+        {id: "sharedStaging", width: "67%", style: "shaded", boxShadow: "true"},
+        {id: "sharedEncounterDeck", width: "8%"},
+        {id: "sharedEncounterDiscard", width: "8%"},
+      ]
+    },
+    {
+      regions: [
+        {id: "player1Engaged", width: "37%"},
+        {id: "player2Engaged", width: "36%", hideTitle: true},
+        {id: "sharedExtra1", width: "27%"},
+      ]
+    },
+    {
+      regions: [
+        {id: "player1Play1", width: "37%"},
+        {id: "player2Play1", width: "36%"},
+        {id: "sharedExtra2", width: "27%"},
+      ]
+    },
+    {
+      regions: [
+        {id: "player1Play2", width: "37%"},
+        {id: "player2Play2", width: "36%"},
+        {id: "sharedExtra3", width: "27%"},
+      ]
+    },
+    {
+      regions: [
+        {id: "player1Play3", width: "29%"},
+        {id: "player1Event", width: "8%"},
+        {id: "player2Play3", width: "28%"},
+        {id: "player2Event", width: "8%"},
+        {id: "sharedExtra4", width: "27%"},
       ]
     },
     {
@@ -611,6 +703,53 @@ export const LAYOUTINFO = {
         {id: "player3Play1", width: "65%"},
         {id: "player3Event", width: "8%"},
         {id: "sharedExtra3", width: "27%"},
+      ]
+    },
+    {
+      regions: [
+        {id: "Hand", width: "59%", style: "shaded"},
+        {id: "Deck", width: "8%", style: "shaded"},
+        {id: "Discard", width: "8%", style: "shaded"},
+      ]
+    },
+  ],
+  "layout3extra4": [
+    {
+      regions: [
+        {id: "sharedMainQuest", width: "9%"},
+        {id: "sharedActive", width: "8%"},
+        {id: "sharedStaging", width: "67%", style: "shaded", boxShadow: "true"},
+        {id: "sharedEncounterDeck", width: "8%"},
+        {id: "sharedEncounterDiscard", width: "8%"},
+      ]
+    },
+    {
+      regions: [
+        {id: "player1Engaged", width: "25%"},
+        {id: "player2Engaged", width: "24%"},
+        {id: "player3Engaged", width: "24%"},
+        {id: "sharedExtra1", width: "27%"},
+      ]
+    },
+    {
+      regions: [
+        {id: "player1Play1", width: "65%"},
+        {id: "player1Event", width: "8%"},
+        {id: "sharedExtra2", width: "27%"},
+      ]
+    },
+    {
+      regions: [
+        {id: "player2Play1", width: "65%"},
+        {id: "player2Event", width: "8%"},
+        {id: "sharedExtra3", width: "27%"},
+      ]
+    },
+    {
+      regions: [
+        {id: "player3Play1", width: "65%"},
+        {id: "player3Event", width: "8%"},
+        {id: "sharedExtra4", width: "27%"},
       ]
     },
     {
@@ -726,6 +865,56 @@ export const LAYOUTINFO = {
         {id: "player2Event", width: "7%", hideTitle: true},
         {id: "player3Event", width: "7%", hideTitle: true},
         {id: "player4Event", width: "7%", hideTitle: true},
+      ]
+    },
+    {
+      regions: [
+        {id: "Hand", width: "60%", style: "shaded"},
+        {id: "Deck", width: "7.5%", style: "shaded"},
+        {id: "Discard", width: "7.5%", style: "shaded"},
+      ]
+    },
+  ],
+  "layout4extra4": [
+    {
+      regions: [
+        {id: "sharedMainQuest", width: "8%"},
+        {id: "sharedActive", width: "9%"},
+        {id: "sharedStaging", width: "68%", style: "shaded", boxShadow: "true"},
+        {id: "sharedEncounterDeck", width: "7.5%"},
+        {id: "sharedEncounterDiscard", width: "7.5%"},
+      ]
+    },
+    {
+      regions: [
+        {id: "player1Engaged", width: "25%"},
+        {id: "player2Engaged", width: "25%"},
+        {id: "player3Engaged", width: "25%"},
+        {id: "player4Engaged", width: "25%"},
+      ]
+    },
+    {
+      regions: [
+        {id: "player1Play1", width: "75%"},
+        {id: "sharedExtra1", width: "25%"},
+      ]
+    },
+    {
+      regions: [
+        {id: "player2Play1", width: "75%"},
+        {id: "sharedExtra2", width: "25%"},
+      ]
+    },
+    {
+      regions: [
+        {id: "player3Play1", width: "75%"},
+        {id: "sharedExtra3", width: "25%"},
+      ]
+    },
+    {
+      regions: [
+        {id: "player4Play1", width: "75%"},
+        {id: "sharedExtra4", width: "25%"},
       ]
     },
     {

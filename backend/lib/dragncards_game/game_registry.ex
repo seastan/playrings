@@ -50,12 +50,18 @@ defmodule DragnCardsGame.GameRegistry do
   # Convert a GameUI{} into a %{} that is suitable for
   # inserting or updating a Room.
   defp to_room_param(%{} = gameui) do
+    encounter_name = gameui["game"]["encounterName"]
+    encounter_name = if encounter_name == nil || encounter_name == "" do
+      "Unspecified"
+    else
+      encounter_name
+    end
     %{
       name: gameui["gameName"],
       created_by: gameui["created_by"],
       privacy_type: gameui["privacyType"],
       last_update: gameui["lastUpdate"],
-      encounter_name: gameui["game"]["encounterName"] || "Unspecified",
+      encounter_name: encounter_name,
       num_players: gameui["game"]["numPlayers"],
     }
   end

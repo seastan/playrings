@@ -55,10 +55,14 @@ defmodule DragnCards.Rooms do
 
   """
   def create_room(attrs \\ %{}) do
-    %Room{}
+    room = %Room{}
     |> Room.changeset(attrs)
     |> Repo.insert()
     |> notify_lobby()
+    # Helps debug why saved games won't load
+    #IO.puts("create_room")
+    #IO.inspect(room)
+    room
   end
 
   @doc """

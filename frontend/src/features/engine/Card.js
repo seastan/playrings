@@ -152,6 +152,7 @@ export const Card = React.memo(({
                     isActive={isActive}
                     zIndex={zIndex}
                     aspectRatio={visibleFace.width/visibleFace.height}
+                    side={card["currentSide"]}
                 />
                 {card.committed && <CommittedToken
                     cardId={card.id}
