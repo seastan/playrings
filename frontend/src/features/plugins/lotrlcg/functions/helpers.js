@@ -3,13 +3,10 @@ import axios from "axios";
 import { setLoaded, setTooltipIds } from "../../../store/playerUiSlice";
 import store from "../../../../store";
 import { listOfMatchingCards } from "../../../engine/functions/flatListOfCards";
+import { getCurrentFace } from "../../../definitions/common";
 
 const cardDb = [];
 
-export const getCurrentFace = (card) => {
-  if (!card?.currentSide) return null;
-  return card.sides[card.currentSide];
-}
 
 export const getDisplayName = (card) => {
   if (!card) return;
@@ -65,52 +62,7 @@ export const getDisplayNameFlipped = (card) => {
   return getDisplayName(getFlippedCard(card));
 }
 
-export const getVisibleSide = (card, playerN) => {
-  if (!card) return null;
-  const currentSide = card.currentSide;
-  if (currentSide === "A" || card.peeking[playerN]) return "A";
-  else if (currentSide === "A" || (card.peeking["player1"] && card.peeking["player2"] && card.peeking["player3"] && card.peeking["player4"])) return "A";
-  else return "B";
-}
-
-export const getVisibleFace = (card, playerN) => {
-  const visibleSide = getVisibleSide(card, playerN);
-  if (visibleSide) return card.sides[visibleSide];
-  else return null;
-}
-export const getVisibleFaceWidthHeight = (visibleFace, gameDef) => {
-  if (!visibleFace) return {width: 0, height: 0};
-  var width = visibleFace.width;
-  var height = visibleFace.height;
-  // If there's no size listed, so it's a card back
-  if (!height || !width) {   
-    const cardName = visibleFace.name;
-    if (Object.keys(gameDef?.cardBacks).includes(cardName))
-      return {width: gameDef.cardBacks[cardName].width, height: gameDef.cardBacks[cardName].height};
-    else return {width: 0, height: 0};
-  }
-  return {width: width, height: height};
-}
-
-export const getVisibleFaceSrc = (visibleFace, user, gameDef) => {
-  if (!visibleFace) return {src: "image not found", default: "image not found"};
-  var src = visibleFace.imageUrl;
-  // If there's no src listed, it's probably a card back
-  if (!src || src ==="") {    
-    src = gameDef?.cardBacks?.[visibleFace.name]?.imageUrl;
-  }
-  // If there's still no src listed, there's a problem with the card or game definition #FIXME: visual idicator of missing image
-  if (!src || src ==="") src = ""
-  const language = user?.language || "English";
-  const srcLanguage = src.replace('/English/','/'+language+'/');
-  
-  return {
-    src: srcLanguage,
-    default: src
-  }
-}
-
-export const GetPlayerN = (playerInfo, id) => {
+export const getPlayerN = (playerInfo, id) => {
   if (!playerInfo) return null;
   var playerN = null;
   Object.keys(playerInfo).forEach(playerI => {
@@ -527,107 +479,7 @@ export const checkAlerts = async () => {
   }
 }
 
-// Returns the left offset of the first card in a group
-export const getFirstCardOffset = (width, cardSize) => {
-  return 0.2 + (1.39-width)*cardSize/2;
-}
 
-
-export const getDefault = (card, groupId, groupType, cardIndex) => {
-  if (!card) return;
-  const face = getCurrentFace(card);
-  const type = face.type;
-  if (groupType === "hand") {
-    return;
-  } else if (card.rotation === -30 && card.currentSide === "B") {
-    return {title: "flip", action: "flip"};
-  } else if (card.rotation === -30 && card.currentSide === "A") {
-    return {title: "discard", action: "discard"};
-  } else if (groupType === "deck") {
-    return {title: "shuffle", action: "shuffle_into_deck"};
-  } else if (type === "Quest" && card.currentSide === "A") {
-    return {title: "flip", action: "flip"};
-  } else if (type === "Quest" && card.tokens.progress < face.questPoints) {
-    return {title: "progress", action: "increment_token", options: {tokenType: "progress", increment: 1}};
-  } else if (type === "Quest" && card.tokens.progress >= face.questPoints) {
-    return {title: "discard", action: "discard"};
-  } else if (card.currentSide === "B" && groupType === "play") {
-    return {title: "flip", action: "flip"};
-  } else if (type === "Enemy" && card.tokens.damage < face.hitPoints) {
-    return {title: "damage", action: "increment_token", options: {tokenType: "damage", increment: 1}};
-  } else if (type === "Enemy" && card.tokens.damage >= face.hitPoints) {
-    if (face.victoryPoints && face.victoryPoints > 0) return {title: "add to VD", action: "victory"}
-    else return {title: "discard", action: "discard"};
-  } else if (type === "Treachery") {
-    return {title: "discard", action: "discard"};
-  } else if (type === "Location" && card.tokens.progress < face.questPoints) {
-    return {title: "progress", action: "increment_token", options: {tokenType: "progress", increment: 1}};
-  } else if (type === "Location" && card.tokens.progress >= face.questPoints) {
-    if (face.victoryPoints && face.victoryPoints > 0) return {title: "add to VD", action: "victory"}
-    else return {title: "discard", action: "discard"};
-  } else if (type === "Event") {
-    if (face.victoryPoints && face.victoryPoints > 0) return {title: "add to VD", action: "victory"}
-    else return {title: "discard", action: "discard"};
-  } else if (card.exhausted) {
-    return {title: "ready", action: "toggle_exhaust"};
-  } else if (!card.exhausted) {
-    return {title: "exhaust", action: "toggle_exhaust"};
-  } 
-}
-
-export const getScore = (gameUi, gameBroadcast, chatBroadcast) => {
-  // Fallen heroes
-  var heroCards = [];
-  heroCards = heroCards.concat(listOfMatchingCards(gameUi, [["sides","A","type","Hero"], ["groupId","player1Discard"]]))
-  heroCards = heroCards.concat(listOfMatchingCards(gameUi, [["sides","A","type","Hero"], ["groupId","player2Discard"]]))
-  heroCards = heroCards.concat(listOfMatchingCards(gameUi, [["sides","A","type","Hero"], ["groupId","player3Discard"]]))
-  heroCards = heroCards.concat(listOfMatchingCards(gameUi, [["sides","A","type","Hero"], ["groupId","player4Discard"]]))
-  var fallenHeroCost = 0;
-  for (var card of heroCards) {
-    fallenHeroCost += card.sides.A.cost;
-  }
-  chatBroadcast("game_update",{message: "calculated cost of fallen heroes: " + fallenHeroCost});
-  // Damage on heroes
-  heroCards = listOfMatchingCards(gameUi, [["sides","A","type","Hero"], ["groupType","play"]]);
-  var totalDamage = 0;
-  for (var card of heroCards) {
-    totalDamage += card.tokens.damage;
-  }
-  chatBroadcast("game_update",{message: "calculated total damage on heroes: " + totalDamage});
-  // Sum of threat
-  const playerData = gameUi.game.playerData;
-  const sumThreat = playerData.player1.threat + playerData.player2.threat + playerData.player3.threat + playerData.player4.threat;
-  chatBroadcast("game_update",{message: "calculated sum of threat: " + sumThreat});
-  // Number of rounds
-  const numRounds = Math.max(gameUi.game.roundNumber-1,0);
-  chatBroadcast("game_update",{message: "calculated number of completed rounds: " + numRounds});
-  var victoryPoints = 0;
-  const victoryCards = listOfMatchingCards(gameUi, [["groupId","sharedVictory"]])
-  for (var card of victoryCards) {
-    victoryPoints += card.sides.A.victoryPoints;
-  }
-  // Total
-  chatBroadcast("game_update",{message: "calculated total victory points: " + victoryPoints});
-  return fallenHeroCost + totalDamage + sumThreat + numRounds*10 - victoryPoints;
-}
-
-export const getCommittedStat = (questMode) => {
-  var tokenType = "willpower";
-  if (questMode === "Battle") tokenType = "attack";
-  if (questMode === "Siege") tokenType = "defense";
-  return tokenType;
-}
-
-export const getPlayerCommitted = (gameUi, questMode, playerN) => {
-  const committedCards = listOfMatchingCards(gameUi, [["committed",true], ["controller",playerN]]);
-  const committedStat = getCommittedStat(questMode);
-  var totalCommitted = 0;
-  for (var card of committedCards) {
-    const currentFace = getCurrentFace(card);
-    totalCommitted += currentFace[committedStat] + card.tokens[committedStat];
-  }
-  return totalCommitted;
-}
 
 export const onLoad = (
   options,
@@ -681,7 +533,6 @@ export const onLoad = (
     // })
   }
 }
-
 
 export const loadRingsDb = (gameUi, playerI, ringsDbDomain, ringsDbType, ringsDbId, gameBroadcast, chatBroadcast, dispatch) => {
   chatBroadcast("game_update",{message: "is loading a deck from RingsDb..."});
@@ -770,81 +621,4 @@ export const loadRingsDb = (gameUi, playerI, ringsDbDomain, ringsDbType, ringsDb
     // handle your errors here
     alert("Error loading deck. If you are attempting to load an unpublished deck, make sure you have link sharing turned on in your RingsDB profile settings.")
   })
-}
-
-export const getQuestCompanionCycleFromQuestId = (questId) => {
-  if (!questId) return null;
-  const cycleId = questId.slice(0,2);
-  const questNum = parseInt(questId.slice(3));
-
-  switch(cycleId) {
-    case "01":
-      if (questNum <= 3) return "Core Set";
-      else return "Shadows of Mirkwood";
-    case "02":
-      if (questNum <= 3) return "Khazad Dum";
-      else return "Dwarrowdelf";
-    case "03":
-      if (questNum <= 3) return "Heirs of Numenor";
-      else return "Against the Shadow";
-    case "04":
-      if (questNum <= 3) return "Voice of Isengard";
-      else return "The Ring-maker";
-    case "05":
-      if (questNum <= 3) return "The Lost Realm";
-      else return "Angmar Awakened";
-    case "06":
-      if (questNum <= 3) return "The Grey Havens";
-      else return "The Dream-chaser";
-    case "07":
-      if (questNum <= 3) return "Sands of Harad";
-      else return "Haradrim Cycle";
-    case "08":
-      if (questNum <= 3) return "The Wilds of Rhovanion Deluxe Expansion";
-      else return "Ered Mithrin";
-    case "09":
-      if (questNum <= 3) return "A Shadow in the East Deluxe Expansion";
-      else return "Vengeance of Mordor Cycle";
-    case "0A":
-      if (questNum <= 3) return "The Hobbit Over Hill and Under Hill";
-      else return "The Hobbit On the Doorstep";
-    case "0B":
-    case "0C":
-      if (questNum === 1.1 || questNum === 1.2 || questNum === 19) return "Standalone Quests"  
-      else if (questNum <= 3) return "LotR The Black Riders";
-      else if (questNum <= 6) return "LotR The Road Darkens";
-      else if (questNum <= 9) return "LotR The Treason of Saruman Saga Expansion";
-      else if (questNum <= 12) return "LotR The Land of Shadow Saga Expansion";
-      else if (questNum <= 15) return "LotR The Flame of the West Saga Expansion";
-      else if (questNum <= 18) return "The Lord of the Rings The Mountain of Fire Saga Expansion";
-    case "99":
-      return "Standalone Quests";
-    case "A1":
-      if (questNum <= 3) return "Children of Eorl";
-      else return "Oaths of the Rohirrim";
-    case "00":
-      return "Starter Set";
-  }
-  return null;
-
-//   export const CYCLEORDER = ["01", "02", "03", "04", "05", "06", "07", "08", "09", "0A", "0B", "0C", "00", "99", "A1", "PT"];
-
-// export const CYCLEINFO = {
-//   "0A": {name: "The Hobbit"},
-//   "0B": {name: "The Lord of the Rings Standalone"},
-//   "0C": {name: "The Lord of the Rings Campaign"},
-//   "00": {name: "Two-Player Limited-Edition Starter"},
-//   "01": {name: "Core Set & Shadows of Mirkwood"},
-//   "02": {name: "Khazad-dûm & Dwarrowdelf"},
-//   "03": {name: "Heirs of Númenor & Against the Shadow"},
-//   "04": {name: "The Voice of Isengard & The Ringmaker"},
-//   "05": {name: "The Lost Realm & Angmar Awakened"},
-//   "06": {name: "The Grey Havens & The Dreamchaser"},
-//   "07": {name: "The Sands of Harad & The Haradrim"},
-//   "08": {name: "The Wilds of Rhovanion & Ered Mithrin"},
-//   "09": {name: "A Shadow in the East & Vengenace of Mordor"},
-//   "99": {name: "Print on Demand"},
-//   "A1": {name: "ALeP - Children of Eorl & Oaths of the Rohirrim"},
-//   "PT": {name: "ALeP - Playtest"},
-// }
 }

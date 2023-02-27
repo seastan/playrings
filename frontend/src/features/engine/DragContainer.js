@@ -19,11 +19,11 @@ export const DragContainer = React.memo(({}) => {
   //const archerContainerRef = React.createRef();
   const arrowColors = ["rgba(255,0,0,0.6)", "rgba(0,200,0,0.6)", "rgba(0,128,255,0.6)", "rgba(128,0,255,0.6)"];
 
-  const arrows1 = playerData.player1.arrows;
-  const arrows2 = playerData.player2.arrows;
-  const arrows3 = playerData.player3.arrows;
-  const arrows4 = playerData.player4.arrows;
-  const usingArrows = (arrows1 && arrows1.length) || (arrows2 && arrows2.length) || (arrows3 && arrows3.length) || (arrows4 && arrows4.length);
+  //const arrows1 = playerData.player1.arrows;
+  //const arrows2 = playerData.player2.arrows;
+  //const arrows3 = playerData.player3.arrows;
+  //const arrows4 = playerData.player4.arrows;
+  const usingArrows = false; //(arrows1 && arrows1.length) || (arrows2 && arrows2.length) || (arrows3 && arrows3.length) || (arrows4 && arrows4.length);
 
   const onDragEnd = (result) => {
     const game = store.getState()?.gameUi.game;

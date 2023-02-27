@@ -1,5 +1,4 @@
 import React from "react";
-import { getVisibleSide, getVisibleFace } from "../plugins/lotrlcg/functions/helpers";
 import { faArrowUp, faArrowDown, faRandom, faChevronRight, faCheck } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { DropdownItem, GoBack } from "./DropdownMenuHelpers";
@@ -9,7 +8,7 @@ import { useSelector } from "react-redux";
 import { useGameL10n } from "../../hooks/useGameL10n";
 import { useGameDefinition } from "./functions/useGameDefinition";
 import { useEvaluateCondition } from "../../hooks/useEvaluateCondition";
-import { dragnActionLists } from "../definitions/common";
+import { dragnActionLists, getVisibleFace, getVisibleSide } from "../definitions/common";
 
 export const DropdownMenuCard = React.memo(({
   mouseX,

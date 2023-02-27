@@ -124,7 +124,7 @@ export const NewPluginModal = ({ isOpen, closeModal }) => {
   const processArrayOfRows = (arrayOfRows) => {
     const header0 = arrayOfRows[0][0];
     if (!header0.includes("uuid")) throw new Error("Missing uuid column.")
-    if (!header0.includes("deckbuilderQuantity")) throw new Error("Missing deckbuilderQuantity column.")
+    if (!header0.includes("name")) throw new Error("Missing name column.")
     if (!header0.includes("imageUrl")) throw new Error("Missing imageUrl column.")
     if (!header0.includes("cardBack")) throw new Error("Missing cardBack column.")
     const header0Str = JSON.stringify(header0);

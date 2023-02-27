@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import RoomGame from "./RoomGame";
 import useProfile from "../../hooks/useProfile";
 import { setPlayerN } from "../store/playerUiSlice";
-import { GetPlayerN } from "../plugins/lotrlcg/functions/helpers";
+import { getPlayerN } from "../plugins/lotrlcg/functions/helpers";
 import BroadcastContext from "../../contexts/BroadcastContext";
 import { usePlugin } from "./functions/usePlugin";
 
@@ -12,7 +12,7 @@ export const RoomProviders = ({ gameBroadcast, chatBroadcast }) => {
   const dispatch = useDispatch();
   const playerInfo = useSelector(state => state?.gameUi?.playerInfo);
   const myUser = useProfile();
-  const playerN = GetPlayerN(playerInfo, myUser?.id);
+  const playerN = getPlayerN(playerInfo, myUser?.id);
   useEffect(() => {
     dispatch(setPlayerN(playerN));
   }, [playerN])

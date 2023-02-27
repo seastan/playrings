@@ -1,4 +1,4 @@
-import { getCurrentFace } from "../../plugins/lotrlcg/functions/helpers";
+import { getCurrentFace } from "../../definitions/common";
 
 
 export const flatListOfCards = (game) => {

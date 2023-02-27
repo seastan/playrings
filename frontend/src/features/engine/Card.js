@@ -5,13 +5,13 @@ import useProfile from "../../hooks/useProfile";
 import { CardMouseRegion } from "./CardMouseRegion";
 import { faEye } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { getVisibleFaceSrc, getFirstCardOffset } from "../plugins/lotrlcg/functions/helpers";
 import { Target } from "./Target";
 import { AbilityToken } from "./AbilityToken";
 import { setActiveCardObj } from "../store/playerUiSlice";
 import { useCardScaleFactor } from "../../hooks/useCardScaleFactor";
 import { useGameDefinition } from "./functions/useGameDefinition";
 import { useGetDefaultAction } from "./functions/useGetDefaultAction";
+import { getFirstCardOffset, getVisibleFaceSrc } from "../definitions/common";
 
 function useTraceUpdate(props) {
     const prev = useRef(props);
@@ -179,10 +179,10 @@ const ArrowRegion = React.memo(({
     cardId,
     registerDivToArrowsContext
 }) => {  
-    const arrows1 = useSelector(state => state?.gameUi?.game?.playerData.player1.arrows);
-    const arrows2 = useSelector(state => state?.gameUi?.game?.playerData.player2.arrows);
-    const arrows3 = useSelector(state => state?.gameUi?.game?.playerData.player3.arrows);
-    const arrows4 = useSelector(state => state?.gameUi?.game?.playerData.player4.arrows);
+    const arrows1 = useSelector(state => state?.gameUi?.game?.playerData?.player1?.arrows);
+    const arrows2 = useSelector(state => state?.gameUi?.game?.playerData?.player2?.arrows);
+    const arrows3 = useSelector(state => state?.gameUi?.game?.playerData?.player3?.arrows);
+    const arrows4 = useSelector(state => state?.gameUi?.game?.playerData?.player4?.arrows);
     const allIds = [arrows1, arrows2, arrows3, arrows4].flat(3);
     if (!allIds.includes(cardId)) return null;
     return (

@@ -3,8 +3,8 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useHistory } from "react-router-dom";
 import useProfile from "../../../../hooks/useProfile";
 import store from "../../../../store";
-import { getCardByGroupIdStackIndexCardIndex, getSideAName, getPlayerCommitted, loadRingsDb, processLoadList, processPostLoad, shuffle } from "../functions/helpers";
-import { flatListOfCards, functionOnMatchingCards, listOfMatchingCards } from "../../../engine/functions/flatListOfCards";
+import { getCardByGroupIdStackIndexCardIndex, getSideAName, loadRingsDb, processLoadList, processPostLoad, shuffle } from "../functions/helpers";
+import { functionOnMatchingCards, listOfMatchingCards } from "../../../engine/functions/flatListOfCards";
 import { loadDeckFromXmlText, getRandomIntInclusive } from "../functions/helpers";
 import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -184,7 +184,7 @@ export const TopBarMenu = React.memo(({}) => {
       const gameUi = state.gameUi;
       for (var i=1; i<=gameUi.game.numPlayers; i++) {
         const playerI = "player"+i;      
-        const totalCommitted = getPlayerCommitted(gameUi, data.mode, playerI);
+        const totalCommitted = 0;
         gameBroadcast("game_action", {action: "update_values", options: {updates: [["playerData", playerI, "willpower", totalCommitted]]}});
       }
 

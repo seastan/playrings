@@ -1,8 +1,8 @@
 import React from "react";
 import { useSelector } from 'react-redux';
-import { getVisibleSide } from "../plugins/lotrlcg/functions/helpers";
 import { passesCriteria } from "./functions/flatListOfCards";
 import abilities from "../plugins/lotrlcg/definitions/abilities";
+import { getVisibleSide } from "../definitions/common";
 
 export const AbilityToken = React.memo(({ 
     cardId,

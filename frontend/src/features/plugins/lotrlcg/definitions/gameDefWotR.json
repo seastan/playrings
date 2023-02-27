@@ -1,0 +1,913 @@
+{
+    "pluginName": "WotR The Card Game",
+    "lobby": {
+      "tutorialUrl": "https://www.youtube.com/watch?v=mshb1EDsnB8&list=PLuyP-hlzlHjd-XADfU-kqJaGpSE9RWHRa&index=1"
+    },
+    "minPlayers": 2,
+    "maxPlayers": 4,
+    "playerProperties": {    
+        "ringTokens": {"type": "integer", "default": 0, "min": 0},
+        "team": {"type": "string", "default": ""}
+    },
+    "menu": {
+      "plugin": {},
+      "card": {
+        "moveToGroupIds": [],
+        "options": [
+          {
+            "label": "Toggle rotate",
+            "actionListId": "toggleRotate"
+          },
+          {
+            "label": "Delete",
+            "actionListId": "deleteCard"
+          }
+        ]
+      },
+      "group": {
+        "moveToGroupIds": [],
+        "options": []
+      }
+    },
+    "cardTypes": {
+      "Army":          {"width": 1.0, "height": 1.39, "tokens": ["blueAttack","blueDefense","redAttack","redDefense","redPath","bluePath","corruption"]},
+      "Character":     {"width": 1.0, "height": 1.39, "tokens": ["blueAttack","blueDefense","redAttack","redDefense","redPath","bluePath","corruption"]},
+      "Item":          {"width": 1.0, "height": 1.39, "tokens": ["blueAttack","blueDefense","redAttack","redDefense","redPath","bluePath","corruption"]},
+      "Event":         {"width": 1.0, "height": 1.39, "tokens": ["blueAttack","blueDefense","redAttack","redDefense","redPath","bluePath","corruption"]},
+      "Path":          {"width": 2.0, "height": 1.39, "tokens": ["blueAttack","blueDefense","redAttack","redDefense","redPath","bluePath","corruption"]},
+      "Battleground":  {"width": 2.0, "height": 1.39, "tokens": ["blueAttack","blueDefense","redAttack","redDefense","redPath","bluePath","corruption"]},
+      "Rules":         {"width": 2.0, "height": 1.39, "tokens": ["blueAttack","blueDefense","redAttack","redDefense","redPath","bluePath","corruption"]},
+      "_Other":        {"width": 1.0, "height": 1.39, "tokens": ["blueAttack","blueDefense","redAttack","redDefense","redPath","bluePath","corruption"]}
+    },
+    "cardBacks": {
+      "red":  {"width": 1.0, "height": 1.39, "imageUrl": "https://dragncards-lotrlcg.s3.amazonaws.com/cardbacks/RedCardBack.jpg"},
+      "blue": {"width": 1.0, "height": 1.39, "imageUrl": "https://dragncards-lotrlcg.s3.amazonaws.com/cardbacks/BlueCardBack.jpg"},
+      "path1":  {"width": 2.0, "height": 1.39, "imageUrl": "https://dragncards-lotrlcg.s3.amazonaws.com/cardbacks/PathBack1.jpg"},
+      "path2":  {"width": 2.0, "height": 1.39, "imageUrl": "https://dragncards-lotrlcg.s3.amazonaws.com/cardbacks/PathBack2.jpg"},
+      "path3":  {"width": 2.0, "height": 1.39, "imageUrl": "https://dragncards-lotrlcg.s3.amazonaws.com/cardbacks/PathBack3.jpg"},
+      "path4":  {"width": 2.0, "height": 1.39, "imageUrl": "https://dragncards-lotrlcg.s3.amazonaws.com/cardbacks/PathBack4.jpg"},
+      "path5":  {"width": 2.0, "height": 1.39, "imageUrl": "https://dragncards-lotrlcg.s3.amazonaws.com/cardbacks/PathBack5.jpg"},
+      "path6":  {"width": 2.0, "height": 1.39, "imageUrl": "https://dragncards-lotrlcg.s3.amazonaws.com/cardbacks/PathBack6.jpg"},
+      "path7":  {"width": 2.0, "height": 1.39, "imageUrl": "https://dragncards-lotrlcg.s3.amazonaws.com/cardbacks/PathBack7.jpg"},
+      "path8":  {"width": 2.0, "height": 1.39, "imageUrl": "https://dragncards-lotrlcg.s3.amazonaws.com/cardbacks/PathBack8.jpg"},
+      "path9":  {"width": 2.0, "height": 1.39, "imageUrl": "https://dragncards-lotrlcg.s3.amazonaws.com/cardbacks/PathBack9.jpg"},
+      "redBattleground": {"width": 2.0, "height": 1.39, "imageUrl": "https://dragncards-lotrlcg.s3.amazonaws.com/cardbacks/RedBattlegroundBack.jpg"},
+      "blueBattleground": {"width": 2.0, "height": 1.39, "imageUrl": "https://dragncards-lotrlcg.s3.amazonaws.com/cardbacks/BlueBattlegroundBack.jpg"}
+    },
+    "firstPlayerImageUrl": "https://dragncards-lotrlcg.s3.amazonaws.com/tokens/firstplayer.png",
+    "tokens": {
+      "blueAttack": {"name": "attack", "left": "10%", "top":  "0%", "height": "3vh", "width": "3vh", "imageUrl": "https://dragncards-lotrlcg.s3.amazonaws.com/tokens/resource.png"},
+      "blueDefense": {"name": "defense", "left": "10%", "top": "25%", "height": "3vh", "width": "3vh", "imageUrl": "https://dragncards-lotrlcg.s3.amazonaws.com/tokens/progress.png"},
+      "redAttack":   {"name": "attack", "left": "10%", "top": "50%", "height": "3vh", "width": "3vh", "imageUrl": "https://dragncards-lotrlcg.s3.amazonaws.com/tokens/damage.png"},
+      "redDefense":     {"name": "defense", "left": "10%", "top": "75%", "height": "3vh", "width": "3vh", "imageUrl": "https://dragncards-lotrlcg.s3.amazonaws.com/tokens/time.png"},
+      "bluePath":{"name": "path defenst", "left": "55%", "top":  "0%", "height": "3vh", "width": "3vh", "modifier": true, "imageUrl": "https://dragncards-lotrlcg.s3.amazonaws.com/tokens/willpower.png"},
+      "redPath":   {"name": "path attack", "left": "55%", "top":  "25%", "height": "3vh", "width": "3vh", "modifier": true, "imageUrl": "https://dragncards-lotrlcg.s3.amazonaws.com/tokens/threat.png"},
+      "corruption":   {"name": "corruption", "left": "55%", "top": "50%", "height": "3vh", "width": "3vh", "modifier": true, "imageUrl": "https://dragncards-lotrlcg.s3.amazonaws.com/tokens/attack.png"}
+    },
+    "topBarCounters": {
+      "shared": [
+        {
+          "name": "Round",
+          "imageUrl": "https://dragncards-lotrlcg.s3.amazonaws.com/tokens/time.png",
+          "gameProperty": "roundNumber"
+        },
+        {
+          "name": "Blue VP",
+          "imageUrl": "https://dragncards-lotrlcg.s3.amazonaws.com/tokens/threat.png",
+          "gameProperty": "blueVictoryPoints"
+        },
+        {
+          "name": "Red VP",
+          "imageUrl": "https://dragncards-lotrlcg.s3.amazonaws.com/tokens/progress.png",
+          "gameProperty": "redVictoryPoints"
+        }
+      ],
+      "player": [
+        {
+          "name": "Ring Tokens",
+          "imageUrl": "https://dragncards-lotrlcg.s3.amazonaws.com/tokens/willpower.png",
+          "playerProperty": "ringTokens"
+        }
+      ]
+    },
+    "gameProperties": {
+    },
+    "cardProperties": {
+    },
+    "preBuiltDecks": {
+    },
+    "spawnExistingCardModal": {
+      "columnProperties": ["name"],
+      "spawnGroupIds": ["sharedSetAside", "player1Hand", "player2Hand", "player3Hand", "player4Hand"]
+    },
+    "deckbuilder": {
+      "addButtons": [1,2,3],
+      "colorKey": "cardBack",
+      "colorValues": {
+        "red": "#CB0707",
+        "blue": "#007BBD",
+        "redBattleground": "#CB0707",
+        "blueBattleground": "#007BBD"
+      },
+      "columns": [
+        {"propName": "name", "propLabel": "Name"},
+        {"propName": "faction", "propLabel": "Faction"},
+        {"propName": "type", "propLabel": "Type"}
+      ],
+      "spawnGroups": [
+        {"id": "playerNDeck", "label": "Player Deck"},
+        {"id": "pathDeck", "label": "Path Deck"},
+        {"id": "redBattlegroundDeck", "label": "Red Battleground Deck"},
+        {"id": "blueBattlegroundDeck", "label": "Blue Battleground Deck"}
+      ]
+    },
+    "deckMenu": [
+    ],
+    "hotkeys": {
+      "token": [
+        {"key": "1", "action": "adjustToken1", "label": "icon(https://dragncards-lotrlcg.s3.amazonaws.com/tokens/resource.png)"},
+        {"key": "2", "action": "adjustToken2", "label": "icon(https://dragncards-lotrlcg.s3.amazonaws.com/tokens/progress.png)"},
+        {"key": "3", "action": "adjustToken3", "label": "icon(https://dragncards-lotrlcg.s3.amazonaws.com/tokens/damage.png)"},
+        {"key": "4", "action": "adjustToken4", "label": "icon(https://dragncards-lotrlcg.s3.amazonaws.com/tokens/time.png)"},
+        {"key": "5", "action": "adjustToken5", "label": "icon(https://dragncards-lotrlcg.s3.amazonaws.com/tokens/willpower.png) / icon(https://dragncards-lotrlcg.s3.amazonaws.com/tokens/threat.png)"},
+        {"key": "6", "action": "adjustToken6", "label": "icon(https://dragncards-lotrlcg.s3.amazonaws.com/tokens/attack.png)"},
+        {"key": "7", "action": "adjustToken7", "label": "icon(https://dragncards-lotrlcg.s3.amazonaws.com/tokens/defense.png)"}
+      ],
+      "game": [
+        {"key": "D", "actionListId": "drawCard", "label": "Draw a card"},
+        {"key": "Shift+P", "actionListId": "saveGame", "label": "Save game"},
+        {"key": "Escape", "actionListId": "clearTargets", "label": "Clear targets/arrows"},
+        {"key": "Ctrl+Z", "actionListId": "undo", "label": "Undo one action"},
+        {"key": "Ctrl+Y", "actionListId": "redo", "label": "Redo one action"},
+        {"key": "ArrowUp", "actionListId": "prevStep", "label": "Move to previous game step"},
+        {"key": "ArrowDown", "actionListId": "nextStep", "label": "Move to next game step"},
+        {"key": "ArrowUp", "actionListId": "prevPhase", "label": "Move to previous phase"},
+        {"key": "ArrowDown", "actionListId": "nextPhase", "label": "Move to next phase"}
+      ],
+      "card": [
+        {"key": "A", "actionListId": "toggleExhaust", "label": "Rotate 90 degrees"},
+        {"key": "C", "actionListId": "detach", "label": "Detach"},
+        {"key": "F", "actionListId": "flipCard", "label": "Flip"},
+        {"key": "T", "actionListId": "targetCard", "label": "Target card"},
+        {"key": "V", "actionListId": "addToScoringArea", "label": "Add to scoring area"},
+        {"key": "X", "actionListId": "discardCard", "label": "Discard"},
+        {"key": "B", "actionListId": "sendToBack", "label": "Send attachment to back of stack"}
+      ]
+    },
+    "touchBar": [
+      [
+        {
+          "id": "removeTokens",
+          "label": "Remove Tokens",
+          "actionType": "card",
+          "actionListId": "zeroTokens"
+        },
+        {
+          "id": "incrementBlueAttack",
+          "label": "",
+          "imageUrl": "https://dragncards-lotrlcg.s3.amazonaws.com/tokens/resource.png",
+          "actionType": "token",
+          "tokenType": "blueAttack"
+        },
+        {
+          "id": "incrementBlueDefense",
+          "label": "",
+          "imageUrl": "https://dragncards-lotrlcg.s3.amazonaws.com/tokens/progress.png",
+          "actionType": "token",
+          "tokenType": "blueDefense"
+        },
+        {
+          "id": "incrementRedAttack",
+          "label": "",
+          "imageUrl": "https://dragncards-lotrlcg.s3.amazonaws.com/tokens/damage.png",
+          "actionType": "token",
+          "tokenType": "redAttack"
+        },
+        {
+          "id": "incrementRedDefense",
+          "label": "",
+          "imageUrl": "https://dragncards-lotrlcg.s3.amazonaws.com/tokens/time.png",
+          "actionType": "token",
+          "tokenType": "redDefense"
+        },
+        {
+          "id": "incrementBluePath",
+          "label": "",
+          "imageUrl": "https://dragncards-lotrlcg.s3.amazonaws.com/tokens/willpower.png",
+          "actionType": "token",
+          "tokenType": "bluePath"
+        },
+        {
+          "id": "incrementRedPath",
+          "label": "",
+          "imageUrl": "https://dragncards-lotrlcg.s3.amazonaws.com/tokens/threat.png",
+          "actionType": "token",
+          "tokenType": "redPath"
+        },
+        {
+          "id": "incrementCorruption",
+          "label": "",
+          "imageUrl": "https://dragncards-lotrlcg.s3.amazonaws.com/tokens/attack.png",
+          "actionType": "token",
+          "tokenType": "corruption"
+        },
+        {
+          "id": "toggleRotate",
+          "label": "Rotate",
+          "actionType": "card",
+          "actionListId": "toggleRotate"
+        },
+        {
+          "id": "flip",
+          "label": "Flip",
+          "actionType": "card",
+          "actionListId": "flipCard"
+        },
+        {
+          "id": "discard",
+          "label": "Discard",
+          "actionType": "card",
+          "actionListId": "discardCard"
+        },
+        {
+          "id": "target",
+          "label": "Target",
+          "actionType": "card",
+          "actionListId": "targetCard"
+        },
+        {
+          "id": "claim",
+          "label": "Claim",
+          "actionType": "card",
+          "actionListId": "addToScoringArea"
+        },
+        {
+          "id": "drawArrow",
+          "label": "Draw Arrow",
+          "actionType": "card",
+          "actionListId": "drawArrow"
+        }
+      ],
+      [
+        {
+          "id": "drawCard",
+          "label": "Draw",
+          "actionType": "game",
+          "actionListId": "drawCard"
+        },
+        {
+          "id": "clearTargets",
+          "label": "Clear Targets",
+          "actionType": "game",
+          "actionListId": "clearTargets"
+        },
+        {
+          "id": "undo",
+          "label": "Undo",
+          "actionType": "engine",
+          "actionId": "undo"
+        },
+        {
+          "id": "undoMany",
+          "label": "Undo many",
+          "actionType": "engine",
+          "actionId": "undoMany"
+        },
+        {
+          "id": "nextStep",
+          "label": "Next step",
+          "actionType": "game",
+          "actionListId": "nextStep"
+        },
+        {
+          "id": "save",
+          "label": "Save",
+          "actionType": "engine",
+          "actionId": "save"
+        }
+      ]
+    ],
+    "defaultActions": [
+      {
+        "actionListId": "discardCard",
+        "label": "discard",
+        "condition": ["$ACTIVE_CARD.inPlay"]
+      }
+    ],
+    "actionLists": {
+      "drawCard": [
+        ["DRAW_CARD"]
+      ],
+      "nextStep": [
+        ["GAME_INCREASE_VAL", "stepIndex", 1],
+        ["COND",
+          ["EQUAL", "$GAME.stepIndex", ["LENGTH", "$GAME.gameDef.steps"],
+          ["GAME_SET_VAL", "stepIndex", 0]
+        ]
+        ],
+        ["DEFINE", "$STEP_INDEX", "$GAME.stepIndex"],
+        ["DEFINE", "$STEP", "$GAME.gameDef.steps.[$STEP_INDEX]"],
+        ["GAME_ADD_MESSAGE", "$PLAYER_N", " set the round step to ", "$STEP.text", "."]
+      ],
+      "prevStep": [
+        ["GAME_DECREASE_VAL", "stepIndex", 1],
+        ["COND",
+          ["LESS_THAN", "$GAME.stepIndex", 0],
+          ["GAME_SET_VAL", "stepIndex", ["MINUS", ["LENGTH", "$GAME.gameDef.steps"], 1]]
+        ],
+        ["DEFINE", "$STEP_INDEX", "$GAME.stepIndex"],
+        ["DEFINE", "$STEP", "$GAME.gameDef.steps.[$STEP_INDEX]"],
+        ["GAME_ADD_MESSAGE", "$PLAYER_N", " set the round step to ", "$STEP.text", "."]
+      ],
+      "clearTargets": [
+        ["FOR_EACH_KEY_VAL", "$CARD_ID", "$CARD", "$CARD_BY_ID",
+          ["GAME_SET_VAL", "cardById", "$CARD_ID", "targeting", "$PLAYER_N", false]
+        ],
+        ["GAME_ADD_MESSAGE", "$PLAYER_N", " cleared their targets."]
+      ],
+      "zeroTokens": [
+        ["GAME_SET_VAL", "$ACTIVE_TOKENS_PATH", {}],
+        ["GAME_ADD_MESSAGE", "$PLAYER_N", " removed all tokens from ", "$ACTIVE_FACE.name", "."]
+      ],
+      "toggleRotate": [
+        ["COND",
+          ["AND", ["EQUAL", "$ACTIVE_CARD.rotation", 90], "$ACTIVE_CARD.inPlay"],
+          [
+            ["GAME_SET_VAL", "$ACTIVE_CARD_PATH", "rotation", 0],
+            ["GAME_ADD_MESSAGE", "$PLAYER_N", " rotated ", "$ACTIVE_FACE.name", "."]
+          ],
+          ["AND", ["EQUAL", "$ACTIVE_CARD.rotation", 0], "$ACTIVE_CARD.inPlay"],
+          [
+            ["GAME_SET_VAL", "$ACTIVE_CARD_PATH", "rotation", 90],
+            ["GAME_ADD_MESSAGE", "$PLAYER_N", " rotated ", "$ACTIVE_FACE.name", "."]
+          ]
+        ]
+      ],
+      "flipCard": [
+        ["COND",
+          ["EQUAL", "$ACTIVE_CARD.currentSide", "A"],
+          [
+            ["GAME_ADD_MESSAGE", "$PLAYER_N", " flipped ", "$ACTIVE_FACE.name", " facedown."],
+            ["GAME_SET_VAL", "$ACTIVE_CARD_PATH", "currentSide", "B"]
+          ],
+          true,
+          [
+            ["GAME_SET_VAL", "ACTIVE_CARD_PATH", "currentSide", "A"],
+            ["GAME_ADD_MESSAGE", "$PLAYER_N", " flipped ", "$ACTIVE_FACE.name", " faceup."]
+          ]
+        ]
+      ],
+      "targetCard": [
+        ["GAME_SET_VAL", "$ACTIVE_CARD_PATH", "targeting", "$PLAYER_N", true],
+        ["GAME_ADD_MESSAGE", "$PLAYER_N", " targeted ", "$ACTIVE_FACE.name", "."]
+      ],
+      "addToScoringArea": [
+        ["COND",
+            ["EQUAL", "$PLAYER_DATA.team", "red"],
+            ["MOVE_CARD", "$ACTIVE_CARD_ID", "sharedScoringRed", 0, 0],
+            ["EQUAL", "$PLAYER_DATA.team", "blue"],
+            ["MOVE_CARD", "$ACTIVE_CARD_ID", "sharedScoringBlue", 0, 0]
+        ]
+      ],
+      "discardCard": [
+        ["COND",
+          ["EQUAL", "$ACTIVE_CARD.cardIndex", 0],
+          [
+            ["DEFINE", "$STACK_ID", "$ACTIVE_CARD.stackId"],
+            ["DEFINE", "$CARD_IDS", "$GAME.stackById.$STACK_ID.cardIds"],
+            ["FOR_EACH_VAL", "$CARD_ID", "$CARD_IDS",
+              [
+                ["DEFINE", "$CARD", "$GAME.cardById.$CARD_ID"],
+                ["COND",
+                  ["EQUAL", "$CARD.discardGroupId", null],
+                  ["GAME_ADD_MESSAGE", "$PLAYER_N", " failed to discard ", ["FACEUP_NAME_FROM_CARD_ID", "$CARD_ID"], " because it is not associated with a discard pile. Please drag the card instead."],
+                  true,
+                  [
+                    ["DEFINE", "$CURRENT_SIDE", "$CARD.currentSide"],
+                    ["GAME_ADD_MESSAGE", "$PLAYER_N", " discarded ", "$CARD.sides.$CURRENT_SIDE.name", "."],
+                    ["DISCARD_CARD", "$CARD_ID"]
+                  ]
+                ]
+              ]
+            ]
+          ],
+          true,
+          ["COND",
+            ["EQUAL", "$ACTIVE_CARD.discardGroupId", null],
+            ["GAME_ADD_MESSAGE", "$PLAYER_N", " failed to discard ", "$ACTIVE_FACE.name", " because it is not associated with a discard pile. Please drag the card instead."],
+            true,
+            [
+              ["GAME_ADD_MESSAGE", "$PLAYER_N", " discarded ", "$ACTIVE_FACE.name", "."],
+              ["DISCARD_CARD", "$ACTIVE_CARD_ID"]
+            ]
+          ]
+        ] 
+      ],
+      "detach": [
+        ["COND",
+          ["GREATER_THAN", "$ACTIVE_CARD.cardIndex", 0],
+          [
+            ["MOVE_CARD", "$ACTIVE_CARD_ID", "$ACTIVE_CARD.groupId", ["ADD", "$ACTIVE_CARD.stackIndex", 1], 0],
+            ["GAME_ADD_MESSAGE", "$PLAYER_N", " detached ", "$ACTIVE_FACE.name", "."]
+          ]
+        ]
+      ],
+      "togglePeeking": [
+        ["DEFINE", "$GROUP_ID", "$ACTIVE_CARD.groupId"],
+        ["DEFINE", "$GROUP_NAME", ["$GAME.groupById.$GROUP_ID.name"]],
+        ["COND",
+          ["EQUAL", "$ACTIVE_CARD.peeking.$PLAYER_N", true],
+          [
+            ["GAME_ADD_MESSAGE", "$PLAYER_N", " stopped peeking at a card in ", "$GROUP_NAME"],
+            ["GAME_SET_VAL", "$ACTIVE_CARD_PATH", "peeking", "$PLAYER_N", false]
+          ],
+          true,
+          [
+            ["GAME_ADD_MESSAGE", "$PLAYER_N", " started peeking at a card in ", "$GROUP_NAME"],
+            ["GAME_SET_VAL", "$ACTIVE_CARD_PATH", "peeking", "$PLAYER_N", true]
+          ]
+        ]
+      ],
+      "deleteCard": [
+        ["GAME_ADD_MESSAGE", "$PLAYER_N", " deleted ", "$ACTIVE_FACE.name", "."],
+        ["DELETE", "$ACTIVE_CARD_ID"]
+      ]
+    },
+    "faceProperties": {
+      "attack":            {"type": "integer", "default": 0},
+      "defense":           {"type": "integer", "default": 0},
+      "leadershipAttack":  {"type": "integer", "default": 0},
+      "leadershipDefense": {"type": "integer", "default": 0},
+      "pathCombat":        {"type": "integer", "default": 0},
+      "text":              {"type": "string", "default": ""},
+      "name":              {"type": "string", "default": ""},
+      "attackingFactions": {"type": "string", "default": ""},
+      "defendingFactions": {"type": "integer", "default": ""},
+      "victoryPoints":     {"type": "integer", "default": 0},
+      "pathNumber":        {"type": "integer", "default": 0},
+      "faction":           {"type": "string", "default": ""},
+      "type":              {"type": "string", "default": ""},
+      "allowedPaths":      {"type": "integer", "default": 0},
+      "weilders":          {"type": "string", "default": ""},
+      "cardNumber":        {"type": "integer", "default": 0}
+    },
+    "groups": {
+      "sharedBattlegroundBlue": {
+        "name": "Blue Battleground Deck", 
+        "tableName": "BattleGround Deck",
+        "controller": "shared",
+        "type": "pile",
+        "defaultSideUp": "B",
+        "defaultPeeking": [],
+        "inPlay": false,
+        "canHaveAttachments": false,
+        "deckGroupId": "sharedBattlegroundBlue"
+      },
+      "sharedBattlegroundRed": {
+        "name": "Red Battleground Deck", 
+        "tableName": "BattleGround Deck",
+        "controller": "shared",
+        "defaultSideUp": "B",
+        "defaultPeeking": [],
+        "inPlay": false,
+        "canHaveAttachments": false,
+        "deckGroupId": "sharedBattlegroundRed"
+      },
+      "sharedScoringBlue": {
+        "name": "Free Peoples Scoring Area", 
+        "tableName": "Scoring Area",
+        "controller": "shared",
+        "defaultSideUp": "A",
+        "defaultPeeking": [],
+        "inPlay": false,
+        "canHaveAttachments": false,
+        "deckGroupId": null
+      },
+      "sharedScoringRed": {
+        "name": "Shadow Scoring Area", 
+        "tableName": "Scoring Area",
+        "controller": "shared",
+        "defaultSideUp": "A",
+        "defaultPeeking": [],
+        "inPlay": false,
+        "canHaveAttachments": false
+      },
+      "sharedPathDeck": {
+        "name": "Path Deck",
+        "tableName": "Path Deck",
+        "controller": "shared",
+        "defaultSideUp": "B",
+        "defaultPeeking": [],
+        "inPlay": false,
+        "canHaveAttachments": false
+      },
+      "sharedSetAside": {
+        "name": "Set Aside", 
+        "tableName": "Set Aside",
+        "controller": "shared",
+        "defaultSideUp": "A",
+        "defaultPeeking": [],
+        "inPlay": false,
+        "canHaveAttachments": false
+      },
+      "sharedActiveLocation1": {
+        "name": "Active Location 1", 
+        "tableName": "Location 1",
+        "controller": "shared",
+        "defaultSideUp": "A",
+        "defaultPeeking": [],
+        "inPlay": true,
+        "canHaveAttachments": true
+      },
+      "sharedActiveLocation2": {
+        "name": "Active Location 2", 
+        "tableName": "Location 2",
+        "controller": "shared",
+        "defaultSideUp": "A",
+        "defaultPeeking": [],
+        "inPlay": true,
+        "canHaveAttachments": true
+      },
+      "sharedActiveLocation3": {
+        "name": "Active Location 3", 
+        "tableName": "Location 3",
+        "controller": "shared",
+        "defaultSideUp": "A",
+        "defaultPeeking": [],
+        "inPlay": true,
+        "canHaveAttachments": true
+      },
+      "sharedActiveLocation4": {
+        "name": "Active Location 4", 
+        "tableName": "Location 4",
+        "controller": "shared",
+        "defaultSideUp": "A",
+        "defaultPeeking": [],
+        "inPlay": true,
+        "canHaveAttachments": true
+      },
+      "sharedActiveRed1": {
+        "name": "Active Shadow 1", 
+        "tableName": "Shadow 1",
+        "controller": "shared",
+        "defaultSideUp": "A",
+        "defaultPeeking": [],
+        "inPlay": true,
+        "canHaveAttachments": true
+      },
+      "sharedActiveRed2": {
+        "name": "Active Shadow 2", 
+        "tableName": "Shadow 2",
+        "controller": "shared",
+        "defaultSideUp": "A",
+        "defaultPeeking": [],
+        "inPlay": true,
+        "canHaveAttachments": true
+      },
+      "sharedActiveRed3": {
+        "name": "Active Shadow 3", 
+        "tableName": "Shadow 3",
+        "controller": "shared",
+        "defaultSideUp": "A",
+        "defaultPeeking": [],
+        "inPlay": true,
+        "canHaveAttachments": true
+      },
+      "sharedActiveRed4": {
+        "name": "Active Shadow 4", 
+        "tableName": "Shadow 4",
+        "controller": "shared",
+        "defaultSideUp": "A",
+        "defaultPeeking": [],
+        "inPlay": true,
+        "canHaveAttachments": true
+      },
+      "sharedActiveBlue1": {
+        "name": "Active Free Peoples 1", 
+        "tableName": "Free Peoples 1",
+        "controller": "shared",
+        "defaultSideUp": "A",
+        "defaultPeeking": [],
+        "inPlay": true,
+        "canHaveAttachments": true
+      },
+      "sharedActiveBlue2": {
+        "name": "Active Free Peoples 2", 
+        "tableName": "Free Peoples 2",
+        "controller": "shared",
+        "defaultSideUp": "A",
+        "defaultPeeking": [],
+        "inPlay": true,
+        "canHaveAttachments": true
+      },
+      "sharedActiveBlue3": {
+        "name": "Active Free Peoples 3", 
+        "tableName": "Free Peoples 3",
+        "controller": "shared",
+        "defaultSideUp": "A",
+        "defaultPeeking": [],
+        "inPlay": true,
+        "canHaveAttachments": true
+      },
+      "sharedActiveBlue4": {
+        "name": "Active Free Peoples 4", 
+        "tableName": "Free Peoples 4",
+        "controller": "shared",
+        "defaultSideUp": "A",
+        "defaultPeeking": [],
+        "inPlay": true,
+        "canHaveAttachments": true
+      },
+      "player1Hand": {
+        "name": "Player 1 Hand", 
+        "tableName": "Hand",
+        "controller": "player1",
+        "defaultSideUp": "B",
+        "defaultPeeking": ["player1"],
+        "inPlay": false,
+        "canHaveAttachments": false,
+        "deckGroupId": "player1Deck",
+        "discardGroupId": "player1Discard"
+      },
+      "player1Deck": {
+        "name": "Player 1 Deck", 
+        "tableName": "Deck",
+        "controller": "player1",
+        "defaultSideUp": "B",
+        "defaultPeeking": [],
+        "inPlay": false,
+        "canHaveAttachments": false,
+        "deckGroupId": "player1Deck",
+        "discardGroupId": "player1Discard"
+      },
+      "player1Cycled": {
+        "name": "Player 1 Cycled", 
+        "tableName": "Cycled",
+        "controller": "player1",
+        "defaultSideUp": "A",
+        "defaultPeeking": [],
+        "inPlay": false,
+        "canHaveAttachments": false,
+        "deckGroupId": "player1Deck",
+        "discardGroupId": "player1Cycled"
+      },
+      "player1Eliminated": {
+        "name": "Player 1 Eliminated", 
+        "tableName": "Eliminated",
+        "controller": "player1",
+        "defaultSideUp": "A",
+        "defaultPeeking": [],
+        "inPlay": false,
+        "canHaveAttachments": false,
+        "deckGroupId": "player1Deck",
+        "discardGroupId": "player1Eliminated"
+      },
+      "player1Reserve": {
+        "name": "Player 1 Reserve", 
+        "tableName": "P1 Reserve",
+        "controller": "player1",
+        "defaultSideUp": "A",
+        "defaultPeeking": [],
+        "inPlay": true,
+        "canHaveAttachments": true
+      },
+      "player2Hand": {
+        "name": "Player 2 Hand", 
+        "tableName": "Hand",
+        "controller": "player2",
+        "defaultSideUp": "B",
+        "defaultPeeking": ["player2"],
+        "inPlay": false,
+        "canHaveAttachments": false,
+        "deckGroupId": "player2Deck",
+        "discardGroupId": "player2Discard"
+      },
+      "player2Deck": {
+        "name": "Player 2 Deck", 
+        "tableName": "Deck",
+        "controller": "player2",
+        "defaultSideUp": "B",
+        "defaultPeeking": [],
+        "inPlay": false,
+        "canHaveAttachments": false,
+        "deckGroupId": "player2Deck",
+        "discardGroupId": "player2Discard"
+      },
+      "player2Cycled": {
+        "name": "Player 2 Cycled", 
+        "tableName": "Cycled",
+        "controller": "player2",
+        "defaultSideUp": "A",
+        "defaultPeeking": [],
+        "inPlay": false,
+        "canHaveAttachments": false,
+        "deckGroupId": "player2Deck",
+        "discardGroupId": "player2Cycled"
+      },
+      "player2Eliminated": {
+        "name": "Player 2 Eliminated", 
+        "tableName": "Eliminated",
+        "controller": "player2",
+        "defaultSideUp": "A",
+        "defaultPeeking": [],
+        "inPlay": false,
+        "canHaveAttachments": false,
+        "deckGroupId": "player1Deck",
+        "discardGroupId": "player1Eliminated"
+      },
+      "player2Reserve": {
+        "name": "Player 2 Reserve", 
+        "tableName": "P2 Reserve",
+        "controller": "player2",
+        "defaultSideUp": "A",
+        "defaultPeeking": [],
+        "inPlay": true,
+        "canHaveAttachments": true
+      },
+      "player3Hand": {
+        "name": "Player 3 Hand", 
+        "tableName": "Hand",
+        "controller": "player3",
+        "defaultSideUp": "B",
+        "defaultPeeking": ["player3"],
+        "inPlay": false,
+        "canHaveAttachments": false,
+        "deckGroupId": "player3Deck",
+        "discardGroupId": "player3Discard"
+      },
+      "player3Deck": {
+        "name": "Player 3 Deck", 
+        "tableName": "Deck",
+        "controller": "player3",
+        "defaultSideUp": "B",
+        "defaultPeeking": [],
+        "inPlay": false,
+        "canHaveAttachments": false,
+        "deckGroupId": "player3Deck",
+        "discardGroupId": "player3Discard"
+      },
+      "player3Cycled": {
+        "name": "Player 3 Cycled", 
+        "tableName": "Cycled",
+        "controller": "player3",
+        "defaultSideUp": "A",
+        "defaultPeeking": [],
+        "inPlay": false,
+        "canHaveAttachments": false,
+        "deckGroupId": "player3Deck",
+        "discardGroupId": "player3Cycled"
+      },
+      "player3Eliminated": {
+        "name": "Player 3 Eliminated", 
+        "tableName": "Eliminated",
+        "controller": "player3",
+        "defaultSideUp": "A",
+        "defaultPeeking": [],
+        "inPlay": false,
+        "canHaveAttachments": false,
+        "deckGroupId": "player1Deck",
+        "discardGroupId": "player1Eliminated"
+      },
+      "player3Reserve": {
+        "name": "Player 3 Reserve", 
+        "tableName": "P3 Reserve",
+        "controller": "player3",
+        "defaultSideUp": "A",
+        "defaultPeeking": [],
+        "inPlay": true,
+        "canHaveAttachments": true
+      },
+      "player4Hand": {
+        "name": "Player 4 Hand", 
+        "tableName": "Hand",
+        "controller": "player4",
+        "defaultSideUp": "B",
+        "defaultPeeking": ["player4"],
+        "inPlay": false,
+        "canHaveAttachments": false,
+        "deckGroupId": "player4Deck",
+        "discardGroupId": "player4Discard"
+      },
+      "player4Deck": {
+        "name": "Player 4 Deck", 
+        "tableName": "Deck",
+        "controller": "player4",
+        "defaultSideUp": "B",
+        "defaultPeeking": [],
+        "inPlay": false,
+        "canHaveAttachments": false,
+        "deckGroupId": "player4Deck",
+        "discardGroupId": "player4Discard"
+      },
+      "player4Cycled": {
+        "name": "Player 4 Cycled", 
+        "tableName": "Cycled",
+        "controller": "player4",
+        "defaultSideUp": "A",
+        "defaultPeeking": [],
+        "inPlay": false,
+        "canHaveAttachments": false,
+        "deckGroupId": "player4Deck",
+        "discardGroupId": "player4Cycled"
+      },
+      "player4Eliminated": {
+        "name": "Player 4 Eliminated", 
+        "tableName": "Eliminated",
+        "controller": "player4",
+        "defaultSideUp": "A",
+        "defaultPeeking": [],
+        "inPlay": false,
+        "canHaveAttachments": false,
+        "deckGroupId": "player1Deck",
+        "discardGroupId": "player1Eliminated"
+      },
+      "player4Reserve": {
+        "name": "Player 4 Reserve", 
+        "tableName": "P4 Reserve",
+        "controller": "player4",
+        "defaultSideUp": "A",
+        "defaultPeeking": [],
+        "inPlay": true,
+        "canHaveAttachments": true
+      }
+    },
+    "favoriteGroupIds": [],
+    "phases": [
+      {
+        "phaseId": "Location",
+        "label" : "Location",
+        "height" : "10%"
+      },
+      {
+        "phaseId": "Action",
+        "label" : "Action",
+        "height" : "10%"
+      },
+      {
+        "phaseId": "Combat",
+        "label" : "Combat",
+        "height" : "60%"
+      },
+      {
+        "phaseId": "Victory",
+        "label" : "Victory",
+        "height" : "10%"
+      },
+      {
+        "phaseId": "Draw",
+        "label" : "Draw",
+        "height" : "10%"
+      }
+    ],
+    "steps": [
+      {"stepId": "1.1", "phaseId": "Location", "text": "1.1: First player activates 1 battleground"},
+      {"stepId": "1.2", "phaseId": "Location", "text": "1.2: First player activates 1 path"},
+      {"stepId": "2.1", "phaseId": "Action",   "text": "2.1: Players take turns taking actions or passing"},
+      {"stepId": "3.0", "phaseId": "Combat",   "text": "3.0: Starting player decides the order the battleground and path combats are resolved"},
+      {"stepId": "3.1", "phaseId": "Combat",   "text": "3.1: Count the number of attacking icons"},
+      {"stepId": "3.2", "phaseId": "Combat",   "text": "3.2: Subtract battleground or path icons"},
+      {"stepId": "3.3", "phaseId": "Combat",   "text": "3.3: Discard defending cards to subtract more icons"},
+      {"stepId": "3.4", "phaseId": "Combat",   "text": "3.4: Leftover defending cards are cycled"},
+      {"stepId": "3.5", "phaseId": "Combat",   "text": "3.5: All attacking cards are eliminated"},
+      {"stepId": "3.6", "phaseId": "Combat",   "text": "3.6: If path, Shadow team gains corruption tokens equal to excess attack"},
+      {"stepId": "3.7", "phaseId": "Combat",   "text": "3.7: Winning side takes control (Shadow team takes control of paths facedown)"},
+      {"stepId": "4.1", "phaseId": "Victory",  "text": "4.1: If the difference between scores is 10 or more, the team with the higher score wins"},
+      {"stepId": "4.2", "phaseId": "Victory",  "text": "4.2: If the last path combat has been resolved, the team with the higher score wins"},
+      {"stepId": "5.1", "phaseId": "Draw",     "text": "5.1: Draw cards"},
+      {"stepId": "5.2", "phaseId": "Draw",     "text": "5.2: Pass the starting player token to the next player"}
+    ],
+    "stepTriggers": [],
+    "tooltips": {},
+    "layoutMenu": [
+      {"name": "Trilogy Scenario", "numPlayers": 4, "layoutId": "layout4player"},
+      {"name": "Two-player Duel",  "numPlayers": 2, "layoutId": "layout3player"},
+      {"name": "Three-player Duel","numPlayers": 3, "layoutId": "layout2player"}
+    ],
+    "layouts": {
+        "layout4player": [
+          {"id": "player2Reserve", "type": "row", "left":  "0%", "top": "0%", "width": "46%", "height": "16%"},
+          {"id": "player4Reserve", "type": "row", "left": "46%", "top": "0%", "width": "46%", "height": "16%"},
+          {"id": "sharedActiveRed1", "type": "row", "left":  "0%", "top": "16%", "width": "23%", "height": "16%", "hideTitle": true},
+          {"id": "sharedActiveRed2", "type": "row", "left": "23%", "top": "16%", "width": "23%", "height": "16%", "hideTitle": true},
+          {"id": "sharedActiveRed3", "type": "row", "left": "46%", "top": "16%", "width": "23%", "height": "16%", "hideTitle": true},
+          {"id": "sharedActiveRed4", "type": "row", "left": "69%", "top": "16%", "width": "23%", "height": "16%", "hideTitle": true},
+          {"id": "sharedActiveLocation1", "type": "row", "left":  "0%", "top": "32%", "width": "20%", "height": "16%"},
+          {"id": "sharedActiveLocation2", "type": "row", "left": "20%", "top": "32%", "width": "20%", "height": "16%"},
+          {"id": "sharedActiveLocation3", "type": "row", "left": "40%", "top": "32%", "width": "20%", "height": "16%"},
+          {"id": "sharedActiveLocation4", "type": "row", "left": "60%", "top": "32%", "width": "20%", "height": "16%"},
+          {"id": "sharedActiveBlue1", "type": "row", "left":  "0%", "top": "48%", "width": "23%", "height": "16%", "hideTitle": true},
+          {"id": "sharedActiveBlue2", "type": "row", "left": "23%", "top": "48%", "width": "23%", "height": "16%", "hideTitle": true},
+          {"id": "sharedActiveBlue3", "type": "row", "left": "46%", "top": "48%", "width": "23%", "height": "16%", "hideTitle": true},
+          {"id": "sharedActiveBlue4", "type": "row", "left": "69%", "top": "48%", "width": "23%", "height": "16%", "hideTitle": true},
+          {"id": "player1Reserve", "type": "row", "left":  "0%", "top": "64%", "width": "46%", "height": "16%"},
+          {"id": "player3Reserve", "type": "row", "left": "46%", "top": "64%", "width": "46%", "height": "16%"},
+          {"id": "playerNHand", "type": "horizontalFan", "left": "0%", "top": "80%", "width": "51%", "height": "20%", "style": "shaded"},
+          {"id": "playerNDeck",  "type": "pile", "left": "51%", "top": "80%", "width": "8%", "height": "20%", "style": "shaded"},
+          {"id": "playerNCycled",  "type": "pile", "left": "59%", "top": "80%", "width": "8%", "height": "20%", "style": "shaded"},
+          {"id": "playerNEliminated",  "type": "pile", "left": "67%", "top": "80%", "width": "8%", "height": "20%", "style": "shaded"},
+          {"id": "sharedScoringRed",  "type": "veritcalFan", "left": "92%", "top": "0%", "width": "8%", "height": "40%"},
+          {"id": "sharedScoringBlue",  "type": "veritcalFan", "left": "92%", "top": "40%", "width": "8%", "height": "40%", "hideTitle": true},
+          {"id": "chat", "left": "75%", "top": "80%", "width": "25%", "height": "20%"}
+        ]
+    }
+  }

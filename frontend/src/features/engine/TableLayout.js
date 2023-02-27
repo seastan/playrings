@@ -14,25 +14,28 @@ export const TableRegion = React.memo(({
   region,
   registerDivToArrowsContext,
 }) => {
+  console.log("Rendering TableRegion", region);
   const observingPlayerN = useSelector(state => state?.playerUi?.observingPlayerN);
   const browseGroupId = useSelector(state => state?.playerUi?.browseGroup?.id);
-  const groupId = ["Hand", "Deck", "Discard"].includes(region.id) ? observingPlayerN + region.id : region.id;
+  const groupId = region.id.replace(/playerN/g, observingPlayerN);
   const beingBrowsed = groupId === browseGroupId;
   return (
     <div
-      className="h-full float-left"
+      className="absolute"
       style={{
+        top: region.top,
+        left: region.left,
         width: region.width,
-        padding: "0 0 0 0.5vw",
+        height: region.height,
         background: (region.style === "shaded") ? "rgba(0, 0, 0, 0.3)" : "",
         MozBoxShadow: (region.boxShadow) ? '0 10px 10px 5px rgba(0,0,0,0.3)' : "",
         WebkitBoxShadow: (region.boxShadow) ? '0 10px 10px 5px rgba(0,0,0,0.3)' : "",
         boxShadow: (region.boxShadow) ? '0 10px 10px 5px rgba(0,0,0,0.3)' : "",
-      }}
-    >
+      }}>
       {beingBrowsed ? null :
         <Group
           groupId={groupId}
+          groupType={region.type}
           hideTitle={region.hideTitle}
           registerDivToArrowsContext={registerDivToArrowsContext}
         />
@@ -74,7 +77,31 @@ export const TableLayout = React.memo(({
 
   return (
     <>
-      {/* Top row */}
+      {layout.map((region, regionIndex) => {
+        if (region.id === "chat") {
+          return(
+            <div className="absolute" style={{left: region.left, top: region.top, width: region.width, height: region.height}}>
+              <div 
+                className="absolute bottom-0 left-0" 
+                style={{height: chatHover ? "100vh" : "100%", width:'100%', paddingRight:"30px", opacity: 0.7, zIndex: chatHover ? 1e6 : 1e3}}
+                onMouseEnter={() => handleStartChatHover()}
+                onMouseLeave={() => handleStopChatHover()}>
+                <MessageBox hover={chatHover} chatBroadcast={chatBroadcast}/>
+              </div>
+              <QuickAccess/>
+            </div>
+          )
+        } else {
+          return(
+            <TableRegion
+              key={regionIndex}
+              region={region}
+              registerDivToArrowsContext={registerDivToArrowsContext}
+            />
+          )
+        }
+      })}
+      {/* Top row
       <div 
         className="relative w-full" 
         style={{height: rowHeight}}>
@@ -86,7 +113,7 @@ export const TableLayout = React.memo(({
           />
         ))}
       </div>
-      {/* Middle rows */}
+      {/* Middle rows
       <div 
         className="relative float-left"
         style={{height: `${100-2*(100/numRows)}%`, width:`${middleRowsWidth}%`}}>
@@ -120,7 +147,7 @@ export const TableLayout = React.memo(({
       </div>
       <SideGroup
         registerDivToArrowsContext={registerDivToArrowsContext}/>
-      {/* Bottom row */}
+      {/* Bottom row
       <div 
         className="relative float-left w-full" 
         style={{height: rowHeight}}>
@@ -131,18 +158,7 @@ export const TableLayout = React.memo(({
             registerDivToArrowsContext={registerDivToArrowsContext}
           />
         ))}
-      </div>
-      {/* Quickview and MessageBox */}
-      <div className="absolute right-0 bottom-0 h-full" style={{width:"25%", height: rowHeight}}>
-        <div 
-          className="absolute bottom-0 left-0" 
-          style={{height: chatHover ? `${numRows*100}%` : `100%`, width:'100%', paddingRight:"30px", opacity: 0.7, zIndex: chatHover ? 1e6 : 1e3}}
-          onMouseEnter={() => handleStartChatHover()}
-          onMouseLeave={() => handleStopChatHover()}>
-          <MessageBox hover={chatHover} chatBroadcast={chatBroadcast}/>
-        </div>
-        <QuickAccess/>
-      </div>
+      </div> */}
     </>
   )
 })

@@ -1,8 +1,8 @@
 import React from "react";
-import { getVisibleFace, getVisibleFaceSrc } from "../plugins/lotrlcg/functions/helpers";
 import useProfile from "../../hooks/useProfile";
 import { useSelector } from "react-redux";
 import { useGameDefinition } from "./functions/useGameDefinition";
+import { getVisibleFace, getVisibleFaceSrc } from "../definitions/common";
 
 export const GiantCard = React.memo(({}) => {
   const user = useProfile();
