@@ -59,21 +59,21 @@ export const Card = React.memo(({
     const cardCommitted = useSelector(state => state?.gameUi?.game?.cardById[cardId]?.committed);
     const playerN = useSelector(state => state?.playerUi?.playerN);
     const cardScaleFactor = useCardScaleFactor();
+
     const touchMode = useSelector(state => state?.playerUi?.touchMode);
     if (!cardCurrentSide) return;
     var cardVisibleSide = cardCurrentSide;
-    if (cardPeeking[playerN] && cardCurrentSide == "A") cardVisibleSide = "B";
-    else if (cardPeeking[playerN] && cardCurrentSide == "B") cardVisibleSide = "A";
+    if (cardPeeking[playerN] && cardCurrentSide == "B") cardVisibleSide = "A";
     const currentFace = cardSides[cardCurrentSide];
     const cardVisibleFace = cardSides[cardVisibleSide];
     const visibleFaceSrc = getVisibleFaceSrc(cardVisibleFace, playerN, gameDef);
     const zIndex = 1000 - cardIndex;
-    console.log('Rendering Card ',cardVisibleFace.name);
+    console.log('Rendering Card ',cardVisibleFace.name, gameDef?.groups?.[groupId]);
     const isActive = useSelector(state => {return state?.playerUi?.activeCardObj?.card?.id === cardId});
     const touchModeSpacingFactor = touchMode ? 1.5 : 1;
     const getDefaultAction = useGetDefaultAction();
     const defaultAction = touchMode && isActive ? getDefaultAction(cardId) : null;
-    const defaultPeeking = gameDef?.groups?.[groupId]?.defaultPeeking;
+    const defaultPeeking = gameDef?.groups?.[groupId]?.forceOnCards?.peeking?.[playerN];
 
     const handleMouseLeave = (_event) => {
         //setIsActive(false);
@@ -133,7 +133,7 @@ export const Card = React.memo(({
                             <div>Tap to</div>
                             {defaultAction.label}
                     </div>}
-                {(cardPeeking[playerN] && !defaultPeeking.includes(playerN) && (cardCurrentSide === "B")) ? <FontAwesomeIcon className="absolute top-0 right-0 text-2xl" icon={faEye}/>:null}
+                {(cardPeeking[playerN] && !defaultPeeking && (cardCurrentSide === "B")) ? <FontAwesomeIcon className="absolute top-0 right-0 text-2xl" icon={faEye}/>:null}
                 <Target
                     cardId={cardId}
                 />

@@ -35,7 +35,9 @@ defmodule DragnCardsWeb.API.V1.DeckController do
   end
 
   def get_decks(conn, %{"user_id" => user_id, "plugin_id" => plugin_id}) do
-
+    IO.puts("get_decks")
+    IO.inspect(user_id)
+    IO.inspect(plugin_id)
     my_decks = if user_id != nil and user_id != "undefined" do
       query = from d in Deck,
         order_by: [desc: :updated_at],
@@ -45,7 +47,8 @@ defmodule DragnCardsWeb.API.V1.DeckController do
     else
       []
     end
-    #IO.inspect(my_decks)
+    IO.puts("my_decks")
+    IO.inspect(my_decks)
     my_decks = Enum.reduce(my_decks, [], fn(deck, acc) ->
       acc ++ [Map.from_struct(deck) |> Map.delete(:__meta__)]
     end)

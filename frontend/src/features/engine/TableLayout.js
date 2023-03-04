@@ -77,30 +77,25 @@ export const TableLayout = React.memo(({
 
   return (
     <>
-      {layout.map((region, regionIndex) => {
-        if (region.id === "chat") {
-          return(
-            <div className="absolute" style={{left: region.left, top: region.top, width: region.width, height: region.height}}>
-              <div 
-                className="absolute bottom-0 left-0" 
-                style={{height: chatHover ? "100vh" : "100%", width:'100%', paddingRight:"30px", opacity: 0.7, zIndex: chatHover ? 1e6 : 1e3}}
-                onMouseEnter={() => handleStartChatHover()}
-                onMouseLeave={() => handleStopChatHover()}>
-                <MessageBox hover={chatHover} chatBroadcast={chatBroadcast}/>
-              </div>
-              <QuickAccess/>
-            </div>
-          )
-        } else {
-          return(
-            <TableRegion
-              key={regionIndex}
-              region={region}
-              registerDivToArrowsContext={registerDivToArrowsContext}
-            />
-          )
-        }
+      {layout.regions.map((region, regionIndex) => {
+        return(
+          <TableRegion
+            key={regionIndex}
+            region={region}
+            registerDivToArrowsContext={registerDivToArrowsContext}
+          />
+        )
       })}
+      <div className="absolute" style={{left: layout.chat.left, top: layout.chat.top, width: layout.chat.width, height: layout.chat.height}}>
+        <div 
+          className="absolute bottom-0 left-0" 
+          style={{height: chatHover ? "100vh" : "100%", width:'100%', opacity: 0.7, zIndex: chatHover ? 1e6 : 1e3}}
+          onMouseEnter={() => handleStartChatHover()}
+          onMouseLeave={() => handleStopChatHover()}>
+          <MessageBox hover={chatHover} chatBroadcast={chatBroadcast}/>
+        </div>
+        {/* <QuickAccess/> */}
+      </div>
       {/* Top row
       <div 
         className="relative w-full" 

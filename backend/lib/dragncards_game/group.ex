@@ -10,12 +10,10 @@ defmodule DragnCardsGame.Group do
   @doc """
   new/3: Create a new group.
   """
-  @spec new(String.t(), String.t(), String.t()) :: Map.t()
-  def new(id, type, controller) do
+  @spec new(String.t()) :: Map.t()
+  def new(id) do
     %{
       "id"=> id,
-      "type"=> type,
-      "controller"=> controller,
       "stackIds"=> []
     }
   end

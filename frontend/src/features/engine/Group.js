@@ -61,7 +61,7 @@ export const Group = React.memo(({
       }
       <Stacks
         groupId={group.id}
-        groupType={group.type}
+        groupType={groupType}
         selectedStackIndices={[...Array(numStacks).keys()]}
         registerDivToArrowsContext={registerDivToArrowsContext}
       />

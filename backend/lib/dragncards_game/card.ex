@@ -29,17 +29,9 @@ defmodule DragnCardsGame.Card do
       "currentSide" => group["defaultSideUp"],
       "rotation" => 0,
       "owner" => controller,
-      "controller" => controller,
       "peeking" => %{},
       "targeting" => %{},
       "tokens" => Tokens.new(),
-      "tokensPerRound" => %{},
-      "roundEnteredPlay" => nil,
-      "phaseEnteredPlay" => nil,
-      "inPlay" => group["inPlay"],
-
-      "deckGroupId" => group["deckGroupId"],
-      "discardGroupId" => group["discardGroupId"],
 
       "sides"=> %{
         "A"=>CardFace.card_face_from_card_face_details(card_details["A"], game_def),

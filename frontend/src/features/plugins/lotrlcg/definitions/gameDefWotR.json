@@ -30,31 +30,31 @@
       }
     },
     "cardTypes": {
-      "Army":          {"width": 1.0, "height": 1.39, "tokens": ["blueAttack","blueDefense","redAttack","redDefense","redPath","bluePath","corruption"]},
-      "Character":     {"width": 1.0, "height": 1.39, "tokens": ["blueAttack","blueDefense","redAttack","redDefense","redPath","bluePath","corruption"]},
-      "Item":          {"width": 1.0, "height": 1.39, "tokens": ["blueAttack","blueDefense","redAttack","redDefense","redPath","bluePath","corruption"]},
-      "Event":         {"width": 1.0, "height": 1.39, "tokens": ["blueAttack","blueDefense","redAttack","redDefense","redPath","bluePath","corruption"]},
-      "Path":          {"width": 2.0, "height": 1.39, "tokens": ["blueAttack","blueDefense","redAttack","redDefense","redPath","bluePath","corruption"]},
-      "Battleground":  {"width": 2.0, "height": 1.39, "tokens": ["blueAttack","blueDefense","redAttack","redDefense","redPath","bluePath","corruption"]},
-      "Rules":         {"width": 2.0, "height": 1.39, "tokens": ["blueAttack","blueDefense","redAttack","redDefense","redPath","bluePath","corruption"]},
-      "_Other":        {"width": 1.0, "height": 1.39, "tokens": ["blueAttack","blueDefense","redAttack","redDefense","redPath","bluePath","corruption"]}
+      "Army":          {"width": 0.72, "height": 1.0, "tokens": ["blueAttack","blueDefense","redAttack","redDefense","redPath","bluePath","corruption"]},
+      "Character":     {"width": 0.72, "height": 1.0, "tokens": ["blueAttack","blueDefense","redAttack","redDefense","redPath","bluePath","corruption"]},
+      "Item":          {"width": 0.72, "height": 1.0, "tokens": ["blueAttack","blueDefense","redAttack","redDefense","redPath","bluePath","corruption"]},
+      "Event":         {"width": 0.72, "height": 1.0, "tokens": ["blueAttack","blueDefense","redAttack","redDefense","redPath","bluePath","corruption"]},
+      "Path":          {"width": 1.44, "height": 1.0, "tokens": ["blueAttack","blueDefense","redAttack","redDefense","redPath","bluePath","corruption"]},
+      "Battleground":  {"width": 1.44, "height": 1.0, "tokens": ["blueAttack","blueDefense","redAttack","redDefense","redPath","bluePath","corruption"]},
+      "Rules":         {"width": 1.44, "height": 1.0, "tokens": ["blueAttack","blueDefense","redAttack","redDefense","redPath","bluePath","corruption"]},
+      "_Other":        {"width": 0.72, "height": 1.0, "tokens": ["blueAttack","blueDefense","redAttack","redDefense","redPath","bluePath","corruption"]}
     },
     "cardBacks": {
-      "red":  {"width": 1.0, "height": 1.39, "imageUrl": "https://dragncards-lotrlcg.s3.amazonaws.com/cardbacks/RedCardBack.jpg"},
-      "blue": {"width": 1.0, "height": 1.39, "imageUrl": "https://dragncards-lotrlcg.s3.amazonaws.com/cardbacks/BlueCardBack.jpg"},
-      "path1":  {"width": 2.0, "height": 1.39, "imageUrl": "https://dragncards-lotrlcg.s3.amazonaws.com/cardbacks/PathBack1.jpg"},
-      "path2":  {"width": 2.0, "height": 1.39, "imageUrl": "https://dragncards-lotrlcg.s3.amazonaws.com/cardbacks/PathBack2.jpg"},
-      "path3":  {"width": 2.0, "height": 1.39, "imageUrl": "https://dragncards-lotrlcg.s3.amazonaws.com/cardbacks/PathBack3.jpg"},
-      "path4":  {"width": 2.0, "height": 1.39, "imageUrl": "https://dragncards-lotrlcg.s3.amazonaws.com/cardbacks/PathBack4.jpg"},
-      "path5":  {"width": 2.0, "height": 1.39, "imageUrl": "https://dragncards-lotrlcg.s3.amazonaws.com/cardbacks/PathBack5.jpg"},
-      "path6":  {"width": 2.0, "height": 1.39, "imageUrl": "https://dragncards-lotrlcg.s3.amazonaws.com/cardbacks/PathBack6.jpg"},
-      "path7":  {"width": 2.0, "height": 1.39, "imageUrl": "https://dragncards-lotrlcg.s3.amazonaws.com/cardbacks/PathBack7.jpg"},
-      "path8":  {"width": 2.0, "height": 1.39, "imageUrl": "https://dragncards-lotrlcg.s3.amazonaws.com/cardbacks/PathBack8.jpg"},
-      "path9":  {"width": 2.0, "height": 1.39, "imageUrl": "https://dragncards-lotrlcg.s3.amazonaws.com/cardbacks/PathBack9.jpg"},
-      "redBattleground": {"width": 2.0, "height": 1.39, "imageUrl": "https://dragncards-lotrlcg.s3.amazonaws.com/cardbacks/RedBattlegroundBack.jpg"},
-      "blueBattleground": {"width": 2.0, "height": 1.39, "imageUrl": "https://dragncards-lotrlcg.s3.amazonaws.com/cardbacks/BlueBattlegroundBack.jpg"}
+      "red":    {"width": 0.72, "height": 1.0, "imageUrl": "https://dragncards-wotr.s3.amazonaws.com/RedCardBack.jpg"},
+      "blue":   {"width": 0.72, "height": 1.0, "imageUrl": "https://dragncards-wotr.s3.amazonaws.com/BlueCardBack.jpg"},
+      "path1":  {"width": 1.44, "height": 1.0, "imageUrl": "https://dragncards-wotr.s3.amazonaws.com/PathBack1.jpg"},
+      "path2":  {"width": 1.44, "height": 1.0, "imageUrl": "https://dragncards-wotr.s3.amazonaws.com/PathBack2.jpg"},
+      "path3":  {"width": 1.44, "height": 1.0, "imageUrl": "https://dragncards-wotr.s3.amazonaws.com/PathBack3.jpg"},
+      "path4":  {"width": 1.44, "height": 1.0, "imageUrl": "https://dragncards-wotr.s3.amazonaws.com/PathBack4.jpg"},
+      "path5":  {"width": 1.44, "height": 1.0, "imageUrl": "https://dragncards-wotr.s3.amazonaws.com/PathBack5.jpg"},
+      "path6":  {"width": 1.44, "height": 1.0, "imageUrl": "https://dragncards-wotr.s3.amazonaws.com/PathBack6.jpg"},
+      "path7":  {"width": 1.44, "height": 1.0, "imageUrl": "https://dragncards-wotr.s3.amazonaws.com/PathBack7.jpg"},
+      "path8":  {"width": 1.44, "height": 1.0, "imageUrl": "https://dragncards-wotr.s3.amazonaws.com/PathBack8.jpg"},
+      "path9":  {"width": 1.44, "height": 1.0, "imageUrl": "https://dragncards-wotr.s3.amazonaws.com/PathBack9.jpg"},
+      "redBattleground":  {"width": 1.44, "height": 1.0, "imageUrl": "https://dragncards-wotr.s3.amazonaws.com/RedBattlegroundBack.jpg"},
+      "blueBattleground": {"width": 1.44, "height": 1.0, "imageUrl": "https://dragncards-wotr.s3.amazonaws.com/BlueBattlegroundBack.jpg"}
     },
-    "firstPlayerImageUrl": "https://dragncards-lotrlcg.s3.amazonaws.com/tokens/firstplayer.png",
+    "firstPlayerImageUrl": "https://dragncards-wotr.s3.amazonaws.com/tokens/firstplayer.png",
     "tokens": {
       "blueAttack": {"name": "attack", "left": "10%", "top":  "0%", "height": "3vh", "width": "3vh", "imageUrl": "https://dragncards-lotrlcg.s3.amazonaws.com/tokens/resource.png"},
       "blueDefense": {"name": "defense", "left": "10%", "top": "25%", "height": "3vh", "width": "3vh", "imageUrl": "https://dragncards-lotrlcg.s3.amazonaws.com/tokens/progress.png"},
@@ -95,6 +95,644 @@
     "cardProperties": {
     },
     "preBuiltDecks": {
+      "Aragorn": {
+        "name": "Aragorn",
+        "cards": [
+          {
+            "loadGroupId": "playerNDeck",
+            "quantity": 1,
+            "uuid": "2e650769-f9f4-4cf0-b57f-8f019b538b02",
+            "name (not required)": "Dead Men of Dunharrow"
+          },
+          {
+            "loadGroupId": "playerNDeck",
+            "quantity": 1,
+            "uuid": "fe77aaef-a595-47a8-bb0d-4d5796234fec",
+            "name (not required)": "Knights of Dol Amroth"
+          },
+          {
+            "loadGroupId": "playerNDeck",
+            "quantity": 1,
+            "uuid": "d5f7bca9-0588-4bc3-afd3-eef62243c742",
+            "name (not required)": "Guards of the Citadel"
+          },
+          {
+            "loadGroupId": "playerNDeck",
+            "quantity": 1,
+            "uuid": "3a780fcd-d2cd-4cc0-ab31-c7bd4901ffed",
+            "name (not required)": "Soldiers of Gondor"
+          },
+          {
+            "loadGroupId": "playerNDeck",
+            "quantity": 1,
+            "uuid": "1e7b71c7-76b8-45d8-8814-db3f8236d7fa",
+            "name (not required)": "The Great Gate"
+          },
+          {
+            "loadGroupId": "playerNDeck",
+            "quantity": 1,
+            "uuid": "a6cdd8d3-cd6e-4d1a-908b-2f788fbb357e",
+            "name (not required)": "Aragorn"
+          },
+          {
+            "loadGroupId": "playerNDeck",
+            "quantity": 1,
+            "uuid": "9b749f60-8f41-45d6-9b60-ab1a2a553c62",
+            "name (not required)": "Boromir"
+          },
+          {
+            "loadGroupId": "playerNDeck",
+            "quantity": 1,
+            "uuid": "96526790-25e6-4910-91ce-077f9ae529d9",
+            "name (not required)": "Denethor"
+          },
+          {
+            "loadGroupId": "playerNDeck",
+            "quantity": 1,
+            "uuid": "06e92b40-20ec-43f9-9cc8-e229f09e4673",
+            "name (not required)": "Faramir"
+          },
+          {
+            "loadGroupId": "playerNDeck",
+            "quantity": 1,
+            "uuid": "0242c6e2-4694-4580-a014-7595968bdf21",
+            "name (not required)": "Halbarad"
+          }
+        ]
+      },
+      "Hobbit": {
+        "name": "Hobbit",
+        "cards": [
+          {
+            "loadGroupId": "playerNDeck",
+            "quantity": 1,
+            "uuid": "67d31a30-c1e2-4c7c-adf9-6049b22474a7",
+            "_name": "Gimli"
+          },
+          {
+            "loadGroupId": "playerNDeck",
+            "quantity": 1,
+            "uuid": "9b929c4c-eae9-4a3e-8ccc-ef9f467707be",
+            "_name": "Dwarven Axe"
+          },
+          {
+            "loadGroupId": "playerNDeck",
+            "quantity": 1,
+            "uuid": "651a0654-c02e-4ffb-89d6-ddbf03eedd77",
+            "_name": "Bilbo Baggins"
+          },
+          {
+            "loadGroupId": "playerNDeck",
+            "quantity": 1,
+            "uuid": "e7a47d22-ae42-479c-a4a9-0c6c4a9a1b0f",
+            "_name": "Fatty Bolger"
+          },
+          {
+            "loadGroupId": "playerNDeck",
+            "quantity": 1,
+            "uuid": "4c9b4a30-a515-4dce-a836-4c3246f60cdd",
+            "_name": "Frodo Baggins"
+          },
+          {
+            "loadGroupId": "playerNDeck",
+            "quantity": 1,
+            "uuid": "932c78f4-e295-4473-a972-51afc9a16e1d",
+            "_name": "Merry Brandybuck"
+          },
+          {
+            "loadGroupId": "playerNDeck",
+            "quantity": 1,
+            "uuid": "8d0fdb85-3388-41f7-a4e1-85d70d494333",
+            "_name": "Pippin Took"
+          },
+          {
+            "loadGroupId": "playerNDeck",
+            "quantity": 1,
+            "uuid": "2ff0ecca-e46d-4cbf-8876-28efe7f3a253",
+            "_name": "Sam Gamgee"
+          },
+          {
+            "loadGroupId": "playerNDeck",
+            "quantity": 1,
+            "uuid": "e229be1d-8580-48b8-894e-4485ef03cd61",
+            "_name": "Herbs and Stewed Rabbit"
+          },
+          {
+            "loadGroupId": "playerNDeck",
+            "quantity": 1,
+            "uuid": "a82626dd-dab0-4cdf-a57a-6d3b8f7afe53",
+            "_name": "Mithril Coat"
+          },
+          {
+            "loadGroupId": "playerNDeck",
+            "quantity": 1,
+            "uuid": "1cc677c5-db10-4cfe-9398-f532ec53bc4c",
+            "_name": "Sting"
+          },
+          {
+            "loadGroupId": "playerNDeck",
+            "quantity": 1,
+            "uuid": "c4c1a5f2-8eeb-4dd7-b186-5c13e7edea9f",
+            "_name": "There is Another Way"
+          },
+          {
+            "loadGroupId": "playerNDeck",
+            "quantity": 1,
+            "uuid": "141a62f9-2243-4708-982a-efe1a5871612",
+            "_name": "Riders of Rohan"
+          },
+          {
+            "loadGroupId": "playerNDeck",
+            "quantity": 1,
+            "uuid": "fd86f3d9-9638-4b0d-b824-ca4dbaa7da37",
+            "_name": "Riders of Rohan"
+          },
+          {
+            "loadGroupId": "playerNDeck",
+            "quantity": 1,
+            "uuid": "a3104464-2b89-417f-b385-c0d4c2461108",
+            "_name": "Village Militia"
+          },
+          {
+            "loadGroupId": "playerNDeck",
+            "quantity": 1,
+            "uuid": "204addeb-f37e-475b-82ca-fb67a853e594",
+            "_name": "Éomer"
+          },
+          {
+            "loadGroupId": "playerNDeck",
+            "quantity": 1,
+            "uuid": "eda0591d-d56a-45c7-b817-270eac2fd963",
+            "_name": "Éowyn"
+          },
+          {
+            "loadGroupId": "playerNDeck",
+            "quantity": 1,
+            "uuid": "211bad96-3abb-49e8-a925-aa4b255c59ed",
+            "_name": "Théoden"
+          },
+          {
+            "loadGroupId": "playerNDeck",
+            "quantity": 1,
+            "uuid": "fc9f8efc-c10b-4f82-9d71-b24623495186",
+            "_name": "Shadowfax"
+          },
+          {
+            "loadGroupId": "playerNDeck",
+            "quantity": 1,
+            "uuid": "25c1df91-b8d1-4727-b7a6-0ab26ef6cab9",
+            "_name": "Death! Ride, Ride to Ruin!"
+          },
+          {
+            "loadGroupId": "playerNDeck",
+            "quantity": 1,
+            "uuid": "a73e2226-d69e-4a25-b68d-f5f4352bd3c1",
+            "_name": "Gandalf the Grey"
+          },
+          {
+            "loadGroupId": "playerNDeck",
+            "quantity": 1,
+            "uuid": "ffa8235b-c293-44c0-b88e-7ebb5f909960",
+            "_name": "Gandalf the White"
+          },
+          {
+            "loadGroupId": "playerNDeck",
+            "quantity": 1,
+            "uuid": "32883b6b-9248-430c-b246-934cb4cf38d8",
+            "_name": "Gwaihir the Windlord"
+          },
+          {
+            "loadGroupId": "playerNDeck",
+            "quantity": 1,
+            "uuid": "679e5e5e-6a43-4a92-bbc1-f956c9de821b",
+            "_name": "Quickbeam"
+          },
+          {
+            "loadGroupId": "playerNDeck",
+            "quantity": 1,
+            "uuid": "e7206c06-f2c3-4d87-a366-8d137c9fdcff",
+            "_name": "Sméagol"
+          },
+          {
+            "loadGroupId": "playerNDeck",
+            "quantity": 1,
+            "uuid": "0d9d3d39-6599-4350-a475-f87272681130",
+            "_name": "Treebeard"
+          },
+          {
+            "loadGroupId": "playerNDeck",
+            "quantity": 1,
+            "uuid": "cd042b41-6ffa-445c-a073-c0d6b4af02d4",
+            "_name": "Ent-draught"
+          },
+          {
+            "loadGroupId": "playerNDeck",
+            "quantity": 1,
+            "uuid": "152c9e6d-0728-423c-8698-ae00f7da786f",
+            "_name": "Gandalf's Staff"
+          },
+          {
+            "loadGroupId": "playerNDeck",
+            "quantity": 1,
+            "uuid": "7d9a3921-10c7-44e7-9693-45046bdf0021",
+            "_name": "Glamdring"
+          },
+          {
+            "loadGroupId": "playerNDeck",
+            "quantity": 1,
+            "uuid": "a91b282a-c116-4ed8-be47-8abdbd97479f",
+            "_name": "Narya, the Ring of Fire"
+          },
+          {
+            "loadGroupId": "playerNDeck",
+            "quantity": 1,
+            "uuid": "43bd748d-d81c-4d98-8440-6c5dfcb75a54",
+            "_name": "Ghân-buri-Ghân"
+          }
+        ]
+      },
+      "Isengard": {
+        "name": "Isengard",
+        "cards": [
+          {
+            "loadGroupId": "playerNDeck",
+            "quantity": 1,
+            "uuid": "8e6ab561-2515-46b8-a28a-c5ce300a3032",
+            "_name": "Devilry of Saruman"
+          },
+          {
+            "loadGroupId": "playerNDeck",
+            "quantity": 1,
+            "uuid": "e2d34658-0774-420e-8756-7679bc5d72f3",
+            "_name": "Fighting Uruk-hai"
+          },
+          {
+            "loadGroupId": "playerNDeck",
+            "quantity": 1,
+            "uuid": "83847416-2502-4303-959b-a8fadc3103df",
+            "_name": "Wolf-riders"
+          },
+          {
+            "loadGroupId": "playerNDeck",
+            "quantity": 1,
+            "uuid": "3c7f409f-93c3-454e-b109-6b190543bc1f",
+            "_name": "White Hand Orcs"
+          },
+          {
+            "loadGroupId": "playerNDeck",
+            "quantity": 1,
+            "uuid": "7c469568-41a1-4941-8e9e-37761c4d3db1",
+            "_name": "White Hand Orcs"
+          },
+          {
+            "loadGroupId": "playerNDeck",
+            "quantity": 1,
+            "uuid": "bd04995f-d79b-4c1f-9e23-cca04d8aea94",
+            "_name": "Gríma Wormtongue"
+          },
+          {
+            "loadGroupId": "playerNDeck",
+            "quantity": 1,
+            "uuid": "f4d439dd-723d-44f7-b023-67c72a8c5fc2",
+            "_name": "Saruman"
+          },
+          {
+            "loadGroupId": "playerNDeck",
+            "quantity": 1,
+            "uuid": "19e4aee4-9637-4d2a-a9ca-cc115faae90f",
+            "_name": "Uglúk"
+          },
+          {
+            "loadGroupId": "playerNDeck",
+            "quantity": 1,
+            "uuid": "07627630-80c1-489a-bb74-f84039104388",
+            "_name": "Palantír of Orthanc"
+          },
+          {
+            "loadGroupId": "playerNDeck",
+            "quantity": 1,
+            "uuid": "b8e173e1-0ea4-48fc-80eb-67fe43aaef8d",
+            "_name": "Saruman's Staff"
+          },
+          {
+            "loadGroupId": "playerNDeck",
+            "quantity": 1,
+            "uuid": "9eac5c07-501a-48f4-9007-df9a8a652fc2",
+            "_name": "Woven of all Colours"
+          },
+          {
+            "loadGroupId": "playerNDeck",
+            "quantity": 1,
+            "uuid": "3502d6a2-3cbc-482a-8c81-8a2bbfa8b8ef",
+            "_name": "Threats and Promises"
+          },
+          {
+            "loadGroupId": "playerNDeck",
+            "quantity": 1,
+            "uuid": "cfb4d6b6-fbf7-4597-8bce-74d27410f85e",
+            "_name": "Goblins of the Misty Mountains"
+          },
+          {
+            "loadGroupId": "playerNDeck",
+            "quantity": 1,
+            "uuid": "465eb31f-2810-4412-9a7a-2d7a6de0f0c0",
+            "_name": "Goblins of the Misty Mountains"
+          },
+          {
+            "loadGroupId": "playerNDeck",
+            "quantity": 1,
+            "uuid": "86dac933-9f67-486e-bae5-9dad9c9cc2dd",
+            "_name": "Balrog of Moria"
+          },
+          {
+            "loadGroupId": "playerNDeck",
+            "quantity": 1,
+            "uuid": "ce1bdfb6-faf8-43ea-b29e-13fd2f2d852c",
+            "_name": "Barrow-wights"
+          },
+          {
+            "loadGroupId": "playerNDeck",
+            "quantity": 1,
+            "uuid": "4f98a38b-4355-41a2-b2db-d80258015c9b",
+            "_name": "Candles of Corpses"
+          },
+          {
+            "loadGroupId": "playerNDeck",
+            "quantity": 1,
+            "uuid": "f5497e6d-64d4-434a-bb86-1ae7bf584cc6",
+            "_name": "Caradhras the Cruel"
+          },
+          {
+            "loadGroupId": "playerNDeck",
+            "quantity": 1,
+            "uuid": "91145474-4c4e-4c22-a694-4c5e40c299f6",
+            "_name": "Cave-troll"
+          },
+          {
+            "loadGroupId": "playerNDeck",
+            "quantity": 1,
+            "uuid": "7cc1eb96-eac8-4615-a751-bd04f7abc285",
+            "_name": "Flocks of Crebain"
+          },
+          {
+            "loadGroupId": "playerNDeck",
+            "quantity": 1,
+            "uuid": "e5b9ec8b-4416-4070-ae4b-4a5c344992f2",
+            "_name": "Gollum"
+          },
+          {
+            "loadGroupId": "playerNDeck",
+            "quantity": 1,
+            "uuid": "4c9b3479-d918-44b4-b6c8-86b927c8d021",
+            "_name": "Hill-troll"
+          },
+          {
+            "loadGroupId": "playerNDeck",
+            "quantity": 1,
+            "uuid": "beb5251b-babc-4584-840c-f597e7ab8a81",
+            "_name": "Shelob"
+          },
+          {
+            "loadGroupId": "playerNDeck",
+            "quantity": 1,
+            "uuid": "6a892685-32b3-4f54-816c-2bab330d080b",
+            "_name": "Coastal Raiders"
+          },
+          {
+            "loadGroupId": "playerNDeck",
+            "quantity": 1,
+            "uuid": "8d6b716b-a1e9-4f39-b0dc-ff727a1fea2e",
+            "_name": "Corsairs of Umbar"
+          },
+          {
+            "loadGroupId": "playerNDeck",
+            "quantity": 1,
+            "uuid": "ec4e5ee7-8d71-4ae8-9797-1cd85980b908",
+            "_name": "Haradrim Mûmakil"
+          },
+          {
+            "loadGroupId": "playerNDeck",
+            "quantity": 1,
+            "uuid": "2db048b2-a06f-4734-b627-8f313edec396",
+            "_name": "Haradrim Regulars"
+          },
+          {
+            "loadGroupId": "playerNDeck",
+            "quantity": 1,
+            "uuid": "c3776b35-5d90-4071-8307-dd8430aab723",
+            "_name": "Haradrim Cavalry"
+          },
+          {
+            "loadGroupId": "playerNDeck",
+            "quantity": 1,
+            "uuid": "6a0b6260-ea8d-4977-907f-8593cdfac4eb",
+            "_name": "The Black Fleet"
+          },
+          {
+            "loadGroupId": "playerNDeck",
+            "quantity": 1,
+            "uuid": "3c3c999b-f515-4dd6-9344-bfdde7341726",
+            "_name": "The Black Serpent"
+          },
+          {
+            "loadGroupId": "playerNDeck",
+            "quantity": 1,
+            "uuid": "584da922-12a5-44a8-b47f-bd280374d3ba",
+            "_name": "Whip of Many Thongs"
+          }
+        ]
+      },
+      "Sauron": {
+        "name": "Sauron",
+        "cards": [
+          {
+            "loadGroupId": "playerNDeck",
+            "quantity": 1,
+            "uuid": "d536e8ac-eb70-4802-8392-5c1061c317c1",
+            "_name": "Black Uruks"
+          },
+          {
+            "loadGroupId": "playerNDeck",
+            "quantity": 1,
+            "uuid": "927dd003-fb87-49be-9d5c-386a287997a7",
+            "_name": "Grond, Hammer of the Underworld"
+          },
+          {
+            "loadGroupId": "playerNDeck",
+            "quantity": 1,
+            "uuid": "2ba28b75-852e-4659-85ba-bde4931b5229",
+            "_name": "Mordor Orcs"
+          },
+          {
+            "loadGroupId": "playerNDeck",
+            "quantity": 1,
+            "uuid": "aec28db5-1873-40de-a9e4-34a1b3e543a9",
+            "_name": "Mordor Orcs"
+          },
+          {
+            "loadGroupId": "playerNDeck",
+            "quantity": 1,
+            "uuid": "1972c4ad-2a7a-4f03-b183-d7dbb544de3e",
+            "_name": "Mordor Orcs"
+          },
+          {
+            "loadGroupId": "playerNDeck",
+            "quantity": 1,
+            "uuid": "056d7d36-8d0e-48d7-8677-d111ce34fae4",
+            "_name": "Mordor Orcs"
+          },
+          {
+            "loadGroupId": "playerNDeck",
+            "quantity": 1,
+            "uuid": "6045fbb5-a28f-442e-b064-ef222277b76c",
+            "_name": "Mordor Orcs"
+          },
+          {
+            "loadGroupId": "playerNDeck",
+            "quantity": 1,
+            "uuid": "15c5255d-314a-4bed-bd00-35b89d1db51d",
+            "_name": "Olog-hai"
+          },
+          {
+            "loadGroupId": "playerNDeck",
+            "quantity": 1,
+            "uuid": "2eeb6646-9162-4504-ae8d-3702c9962815",
+            "_name": "Trolls of Udûn"
+          },
+          {
+            "loadGroupId": "playerNDeck",
+            "quantity": 1,
+            "uuid": "6e45f0b8-9f92-47d0-a203-04c200da397f",
+            "_name": "Gorbag & Shagrat"
+          },
+          {
+            "loadGroupId": "playerNDeck",
+            "quantity": 1,
+            "uuid": "5ccf46ba-2091-4734-9077-185f0b82726d",
+            "_name": "Grishnákh"
+          },
+          {
+            "loadGroupId": "playerNDeck",
+            "quantity": 1,
+            "uuid": "ff453cb1-f997-4a2c-b513-3d93e59c0b27",
+            "_name": "Mouth of Sauron"
+          },
+          {
+            "loadGroupId": "playerNDeck",
+            "quantity": 1,
+            "uuid": "0dbce6e3-7250-4252-9c56-d20a65df30bf",
+            "_name": "The Beguiler"
+          },
+          {
+            "loadGroupId": "playerNDeck",
+            "quantity": 1,
+            "uuid": "e466c7c6-334b-4f40-b194-c58af80e53af",
+            "_name": "The Black Easterling"
+          },
+          {
+            "loadGroupId": "playerNDeck",
+            "quantity": 1,
+            "uuid": "f24888f1-4d31-4dca-9819-e8e7a9f3c94f",
+            "_name": "The Commander"
+          },
+          {
+            "loadGroupId": "playerNDeck",
+            "quantity": 1,
+            "uuid": "d2f25d00-22db-4142-b416-dfef388a57d7",
+            "_name": "The Destroyer"
+          },
+          {
+            "loadGroupId": "playerNDeck",
+            "quantity": 1,
+            "uuid": "9ee5ba49-48e0-4079-8b48-1c2868789d84",
+            "_name": "The Hunter"
+          },
+          {
+            "loadGroupId": "playerNDeck",
+            "quantity": 1,
+            "uuid": "eb0148d1-ccec-42ee-9347-00c501e4fe0e",
+            "_name": "The Lidless Eye"
+          },
+          {
+            "loadGroupId": "playerNDeck",
+            "quantity": 1,
+            "uuid": "f05579f0-6042-4381-ba18-fc1a5f841118",
+            "_name": "The Messenger"
+          },
+          {
+            "loadGroupId": "playerNDeck",
+            "quantity": 1,
+            "uuid": "a104207f-3859-400f-b1ec-b03d53b96adc",
+            "_name": "The Reaver"
+          },
+          {
+            "loadGroupId": "playerNDeck",
+            "quantity": 1,
+            "uuid": "96ff6edf-4fbb-4186-8844-d3b03cae81b5",
+            "_name": "The Warrior"
+          },
+          {
+            "loadGroupId": "playerNDeck",
+            "quantity": 1,
+            "uuid": "c7cab42b-69a2-415d-8989-f6216a3508b3",
+            "_name": "The Witch-king"
+          },
+          {
+            "loadGroupId": "playerNDeck",
+            "quantity": 1,
+            "uuid": "09b3a304-c6d5-4a92-9d00-874e2c935b38",
+            "_name": "Black Breath"
+          },
+          {
+            "loadGroupId": "playerNDeck",
+            "quantity": 1,
+            "uuid": "52266e42-b51b-4ec1-9ddf-520a4fa921fa",
+            "_name": "Black Rider's Mount"
+          },
+          {
+            "loadGroupId": "playerNDeck",
+            "quantity": 1,
+            "uuid": "ba7b4c50-1bd3-4341-b3ae-f040ceef9ddc",
+            "_name": "Fell Beast"
+          },
+          {
+            "loadGroupId": "playerNDeck",
+            "quantity": 1,
+            "uuid": "52ffdf71-e3d4-4e99-98e7-d08415d6ebc4",
+            "_name": "Morgul Blade"
+          },
+          {
+            "loadGroupId": "playerNDeck",
+            "quantity": 1,
+            "uuid": "c087946f-3825-40de-b623-82f527aa8512",
+            "_name": "Nazgûl's Mantle"
+          },
+          {
+            "loadGroupId": "playerNDeck",
+            "quantity": 1,
+            "uuid": "6cdcfcee-e17e-4d73-8de3-f8e1ca90fc27",
+            "_name": "The Black Captain"
+          },
+          {
+            "loadGroupId": "playerNDeck",
+            "quantity": 1,
+            "uuid": "d9929f8e-788d-4ec2-9493-ede4d725fab6",
+            "_name": "The Day Without Dawn"
+          },
+          {
+            "loadGroupId": "playerNDeck",
+            "quantity": 1,
+            "uuid": "3e989bf2-8d61-4b41-af05-aebdddbf9b6c",
+            "_name": "The Ringwraiths are Abroad"
+          },
+          {
+            "loadGroupId": "playerNDeck",
+            "quantity": 1,
+            "uuid": "b9539977-4ed1-44c6-aa09-5431a4a11967",
+            "_name": "Gothmog"
+          }
+        ]
+      }
     },
     "spawnExistingCardModal": {
       "columnProperties": ["name"],
@@ -112,17 +750,29 @@
       "columns": [
         {"propName": "name", "propLabel": "Name"},
         {"propName": "faction", "propLabel": "Faction"},
-        {"propName": "type", "propLabel": "Type"}
+        {"propName": "type", "propLabel": "Type"},
+        {"propName": "playerName", "propLabel": "Player Name"},
+        {"propName": "cardNumber", "propLabel": "Number"}
       ],
       "spawnGroups": [
-        {"id": "playerNDeck", "label": "Player Deck"},
+        {"id": "playerNDeck", "label": "My Deck"},
+        {"id": "player1Deck", "label": "Player 1 Deck"},
+        {"id": "player2Deck", "label": "Player 2 Deck"},
+        {"id": "player3Deck", "label": "Player 3 Deck"},
+        {"id": "player3Deck", "label": "Player 4 Deck"},
         {"id": "pathDeck", "label": "Path Deck"},
         {"id": "redBattlegroundDeck", "label": "Red Battleground Deck"},
         {"id": "blueBattlegroundDeck", "label": "Blue Battleground Deck"}
       ]
     },
-    "deckMenu": [
-    ],
+    "deckMenu": {
+      "deckLists": [
+        {"deckListId": "Aragorn"},
+        {"deckListId": "Hobbit"},
+        {"deckListId": "Isengard"},
+        {"deckListId": "Sauron"}
+      ]
+    },
     "hotkeys": {
       "token": [
         {"key": "1", "action": "adjustToken1", "label": "icon(https://dragncards-lotrlcg.s3.amazonaws.com/tokens/resource.png)"},
@@ -150,8 +800,8 @@
         {"key": "F", "actionListId": "flipCard", "label": "Flip"},
         {"key": "T", "actionListId": "targetCard", "label": "Target card"},
         {"key": "V", "actionListId": "addToScoringArea", "label": "Add to scoring area"},
-        {"key": "X", "actionListId": "discardCard", "label": "Discard"},
-        {"key": "B", "actionListId": "sendToBack", "label": "Send attachment to back of stack"}
+        {"key": "C", "actionListId": "cycleCard", "label": "Cycle card"},
+        {"key": "E", "actionListId": "eliminateCard", "label": "Eliminate card"}
       ]
     },
     "touchBar": [
@@ -224,10 +874,16 @@
           "actionListId": "flipCard"
         },
         {
-          "id": "discard",
-          "label": "Discard",
+          "id": "cycle",
+          "label": "Cycle",
           "actionType": "card",
-          "actionListId": "discardCard"
+          "actionListId": "cycleCard"
+        },
+        {
+          "id": "eliminate",
+          "label": "Eliminate",
+          "actionType": "card",
+          "actionListId": "eliminateCard"
         },
         {
           "id": "target",
@@ -289,8 +945,8 @@
     ],
     "defaultActions": [
       {
-        "actionListId": "discardCard",
-        "label": "discard",
+        "actionListId": "cycleCard",
+        "label": "cycle",
         "condition": ["$ACTIVE_CARD.inPlay"]
       }
     ],
@@ -369,39 +1025,27 @@
             ["MOVE_CARD", "$ACTIVE_CARD_ID", "sharedScoringBlue", 0, 0]
         ]
       ],
-      "discardCard": [
+      "cycleCard": [
         ["COND",
-          ["EQUAL", "$ACTIVE_CARD.cardIndex", 0],
-          [
-            ["DEFINE", "$STACK_ID", "$ACTIVE_CARD.stackId"],
-            ["DEFINE", "$CARD_IDS", "$GAME.stackById.$STACK_ID.cardIds"],
-            ["FOR_EACH_VAL", "$CARD_ID", "$CARD_IDS",
-              [
-                ["DEFINE", "$CARD", "$GAME.cardById.$CARD_ID"],
-                ["COND",
-                  ["EQUAL", "$CARD.discardGroupId", null],
-                  ["GAME_ADD_MESSAGE", "$PLAYER_N", " failed to discard ", ["FACEUP_NAME_FROM_CARD_ID", "$CARD_ID"], " because it is not associated with a discard pile. Please drag the card instead."],
-                  true,
-                  [
-                    ["DEFINE", "$CURRENT_SIDE", "$CARD.currentSide"],
-                    ["GAME_ADD_MESSAGE", "$PLAYER_N", " discarded ", "$CARD.sides.$CURRENT_SIDE.name", "."],
-                    ["DISCARD_CARD", "$CARD_ID"]
-                  ]
-                ]
-              ]
-            ]
-          ],
+          ["EQUAL", "$ACTIVE_CARD.cycleGroupId", null],
+          ["GAME_ADD_MESSAGE", "$PLAYER_N", " failed to cycle ", "$ACTIVE_FACE.name", " because it is not associated with a cycle pile. Please drag the card instead."],
           true,
-          ["COND",
-            ["EQUAL", "$ACTIVE_CARD.discardGroupId", null],
-            ["GAME_ADD_MESSAGE", "$PLAYER_N", " failed to discard ", "$ACTIVE_FACE.name", " because it is not associated with a discard pile. Please drag the card instead."],
-            true,
-            [
-              ["GAME_ADD_MESSAGE", "$PLAYER_N", " discarded ", "$ACTIVE_FACE.name", "."],
-              ["DISCARD_CARD", "$ACTIVE_CARD_ID"]
-            ]
+          [
+            ["GAME_ADD_MESSAGE", "$PLAYER_N", " cycled ", "$ACTIVE_FACE.name", "."],
+            ["MOVE_CARD", "$ACTIVE_CARD_ID", "$ACTIVE_CARD.cycleGroupId", 0, 0]
           ]
-        ] 
+        ]
+      ],
+      "eliminateCard": [
+        ["COND",
+          ["EQUAL", "$ACTIVE_CARD.eliminateGroupId", null],
+          ["GAME_ADD_MESSAGE", "$PLAYER_N", " failed to eliminate ", "$ACTIVE_FACE.name", " because it is not associated with an eliminated pile. Please drag the card instead."],
+          true,
+          [
+            ["GAME_ADD_MESSAGE", "$PLAYER_N", " eliminated ", "$ACTIVE_FACE.name", "."],
+            ["MOVE_CARD", "$ACTIVE_CARD_ID", "$ACTIVE_CARD.eliminateGroupId", 0, 0]
+          ]
+        ]
       ],
       "detach": [
         ["COND",
@@ -449,386 +1093,382 @@
       "type":              {"type": "string", "default": ""},
       "allowedPaths":      {"type": "integer", "default": 0},
       "weilders":          {"type": "string", "default": ""},
-      "cardNumber":        {"type": "integer", "default": 0}
+      "cardNumber":        {"type": "integer", "default": 0},
+      "playerName":        {"type": "string", "default": ""}
     },
     "groups": {
       "sharedBattlegroundBlue": {
         "name": "Blue Battleground Deck", 
         "tableName": "BattleGround Deck",
-        "controller": "shared",
-        "type": "pile",
-        "defaultSideUp": "B",
-        "defaultPeeking": [],
-        "inPlay": false,
         "canHaveAttachments": false,
-        "deckGroupId": "sharedBattlegroundBlue"
+        "shuffleOnLoad": true,
+        "forceOnCards": {
+          "currentSide": "B",
+          "controller": "shared",
+          "inPlay": false,
+          "deckGroupId": "sharedBattlegroundRed"
+        }
       },
       "sharedBattlegroundRed": {
         "name": "Red Battleground Deck", 
         "tableName": "BattleGround Deck",
-        "controller": "shared",
-        "defaultSideUp": "B",
-        "defaultPeeking": [],
-        "inPlay": false,
         "canHaveAttachments": false,
-        "deckGroupId": "sharedBattlegroundRed"
+        "shuffleOnLoad": true,
+        "forceOnCards": {
+          "currentSide": "B",
+          "controller": "shared",
+          "inPlay": false,
+          "deckGroupId": "sharedBattlegroundRed"
+        }
       },
       "sharedScoringBlue": {
         "name": "Free Peoples Scoring Area", 
         "tableName": "Scoring Area",
-        "controller": "shared",
-        "defaultSideUp": "A",
-        "defaultPeeking": [],
-        "inPlay": false,
-        "canHaveAttachments": false,
-        "deckGroupId": null
+        "canHaveAttachments": true,
+        "forceOnCards": {
+          "currentSide": "A",
+          "inPlay": false
+        }
       },
       "sharedScoringRed": {
         "name": "Shadow Scoring Area", 
         "tableName": "Scoring Area",
-        "controller": "shared",
-        "defaultSideUp": "A",
-        "defaultPeeking": [],
-        "inPlay": false,
-        "canHaveAttachments": false
+        "canHaveAttachments": true,
+        "forceOnCards": {
+          "currentSide": "B",
+          "inPlay": false
+        }
       },
       "sharedPathDeck": {
         "name": "Path Deck",
         "tableName": "Path Deck",
-        "controller": "shared",
-        "defaultSideUp": "B",
-        "defaultPeeking": [],
-        "inPlay": false,
-        "canHaveAttachments": false
+        "canHaveAttachments": false,
+        "forceOnCards": {
+          "currentSide": "B",
+          "inPlay": false,
+          "deckGroupId": "sharedPathDeck"
+        }
       },
       "sharedSetAside": {
         "name": "Set Aside", 
         "tableName": "Set Aside",
-        "controller": "shared",
-        "defaultSideUp": "A",
-        "defaultPeeking": [],
-        "inPlay": false,
-        "canHaveAttachments": false
+        "canHaveAttachments": true,
+        "forceOnCards": {
+          "currentSide": "A",
+          "inPlay": false
+        }
       },
       "sharedActiveLocation1": {
         "name": "Active Location 1", 
         "tableName": "Location 1",
-        "controller": "shared",
-        "defaultSideUp": "A",
-        "defaultPeeking": [],
-        "inPlay": true,
-        "canHaveAttachments": true
+        "canHaveAttachments": true,
+        "forceOnCards": {
+          "currentSide": "A",
+          "inPlay": true
+        }
       },
       "sharedActiveLocation2": {
         "name": "Active Location 2", 
         "tableName": "Location 2",
-        "controller": "shared",
-        "defaultSideUp": "A",
-        "defaultPeeking": [],
-        "inPlay": true,
-        "canHaveAttachments": true
+        "canHaveAttachments": true,
+        "forceOnCards": {
+          "currentSide": "A",
+          "inPlay": true
+        }
       },
       "sharedActiveLocation3": {
         "name": "Active Location 3", 
         "tableName": "Location 3",
-        "controller": "shared",
-        "defaultSideUp": "A",
-        "defaultPeeking": [],
-        "inPlay": true,
-        "canHaveAttachments": true
+        "canHaveAttachments": true,
+        "forceOnCards": {
+          "currentSide": "A",
+          "inPlay": true
+        }
       },
       "sharedActiveLocation4": {
         "name": "Active Location 4", 
         "tableName": "Location 4",
-        "controller": "shared",
-        "defaultSideUp": "A",
-        "defaultPeeking": [],
-        "inPlay": true,
-        "canHaveAttachments": true
+        "canHaveAttachments": true,
+        "forceOnCards": {
+          "currentSide": "A",
+          "inPlay": true
+        }
       },
       "sharedActiveRed1": {
         "name": "Active Shadow 1", 
         "tableName": "Shadow 1",
-        "controller": "shared",
-        "defaultSideUp": "A",
-        "defaultPeeking": [],
-        "inPlay": true,
-        "canHaveAttachments": true
+        "canHaveAttachments": true,
+        "forceOnCards": {
+          "currentSide": "A",
+          "inPlay": true
+        }
       },
       "sharedActiveRed2": {
         "name": "Active Shadow 2", 
         "tableName": "Shadow 2",
-        "controller": "shared",
-        "defaultSideUp": "A",
-        "defaultPeeking": [],
-        "inPlay": true,
-        "canHaveAttachments": true
+        "canHaveAttachments": true,
+        "forceOnCards": {
+          "currentSide": "A",
+          "inPlay": true
+        }
       },
       "sharedActiveRed3": {
         "name": "Active Shadow 3", 
         "tableName": "Shadow 3",
-        "controller": "shared",
-        "defaultSideUp": "A",
-        "defaultPeeking": [],
-        "inPlay": true,
-        "canHaveAttachments": true
+        "canHaveAttachments": true,
+        "forceOnCards": {
+          "currentSide": "A",
+          "inPlay": true
+        }
       },
       "sharedActiveRed4": {
         "name": "Active Shadow 4", 
         "tableName": "Shadow 4",
-        "controller": "shared",
-        "defaultSideUp": "A",
-        "defaultPeeking": [],
-        "inPlay": true,
-        "canHaveAttachments": true
+        "canHaveAttachments": true,
+        "forceOnCards": {
+          "currentSide": "A",
+          "inPlay": true
+        }
       },
       "sharedActiveBlue1": {
         "name": "Active Free Peoples 1", 
         "tableName": "Free Peoples 1",
-        "controller": "shared",
-        "defaultSideUp": "A",
-        "defaultPeeking": [],
-        "inPlay": true,
-        "canHaveAttachments": true
+        "canHaveAttachments": true,
+        "forceOnCards": {
+          "currentSide": "A",
+          "inPlay": true
+        }
       },
       "sharedActiveBlue2": {
         "name": "Active Free Peoples 2", 
         "tableName": "Free Peoples 2",
-        "controller": "shared",
-        "defaultSideUp": "A",
-        "defaultPeeking": [],
-        "inPlay": true,
-        "canHaveAttachments": true
+        "canHaveAttachments": true,
+        "forceOnCards": {
+          "currentSide": "A",
+          "inPlay": true
+        }
       },
       "sharedActiveBlue3": {
         "name": "Active Free Peoples 3", 
         "tableName": "Free Peoples 3",
-        "controller": "shared",
-        "defaultSideUp": "A",
-        "defaultPeeking": [],
-        "inPlay": true,
-        "canHaveAttachments": true
+        "canHaveAttachments": true,
+        "forceOnCards": {
+          "currentSide": "A",
+          "inPlay": true
+        }
       },
       "sharedActiveBlue4": {
         "name": "Active Free Peoples 4", 
         "tableName": "Free Peoples 4",
-        "controller": "shared",
-        "defaultSideUp": "A",
-        "defaultPeeking": [],
-        "inPlay": true,
-        "canHaveAttachments": true
+        "canHaveAttachments": true,
+        "forceOnCards": {
+          "currentSide": "A",
+          "inPlay": true
+        }
       },
       "player1Hand": {
         "name": "Player 1 Hand", 
         "tableName": "Hand",
-        "controller": "player1",
-        "defaultSideUp": "B",
-        "defaultPeeking": ["player1"],
-        "inPlay": false,
         "canHaveAttachments": false,
-        "deckGroupId": "player1Deck",
-        "discardGroupId": "player1Discard"
+        "forceOnCards": {
+          "currentSide": "B",
+          "inPlay": false,
+          "peeking": {"player1": true}
+        }
       },
       "player1Deck": {
         "name": "Player 1 Deck", 
         "tableName": "Deck",
-        "controller": "player1",
-        "defaultSideUp": "B",
-        "defaultPeeking": [],
-        "inPlay": false,
         "canHaveAttachments": false,
-        "deckGroupId": "player1Deck",
-        "discardGroupId": "player1Discard"
+        "shuffleOnLoad": true,
+        "forceOnCards": {
+          "currentSide": "B",
+          "inPlay": false,
+          "controller": "player1",
+          "deckGroupId": "player1Deck",
+          "cycleGroupId": "player1Cycled",
+          "eliminatedGroupId": "player1Eliminated"
+        }
       },
       "player1Cycled": {
         "name": "Player 1 Cycled", 
         "tableName": "Cycled",
-        "controller": "player1",
-        "defaultSideUp": "A",
-        "defaultPeeking": [],
-        "inPlay": false,
         "canHaveAttachments": false,
-        "deckGroupId": "player1Deck",
-        "discardGroupId": "player1Cycled"
+        "forceOnCards": {
+          "currentSide": "B",
+          "inPlay": false
+        }
       },
       "player1Eliminated": {
         "name": "Player 1 Eliminated", 
         "tableName": "Eliminated",
-        "controller": "player1",
-        "defaultSideUp": "A",
-        "defaultPeeking": [],
-        "inPlay": false,
         "canHaveAttachments": false,
-        "deckGroupId": "player1Deck",
-        "discardGroupId": "player1Eliminated"
+        "forceOnCards": {
+          "currentSide": "B",
+          "inPlay": false
+        }
       },
       "player1Reserve": {
         "name": "Player 1 Reserve", 
         "tableName": "P1 Reserve",
-        "controller": "player1",
-        "defaultSideUp": "A",
-        "defaultPeeking": [],
-        "inPlay": true,
-        "canHaveAttachments": true
+        "canHaveAttachments": true,
+        "forceOnCards": {
+          "currentSide": "A",
+          "inPlay": true
+        }
       },
       "player2Hand": {
         "name": "Player 2 Hand", 
         "tableName": "Hand",
-        "controller": "player2",
-        "defaultSideUp": "B",
-        "defaultPeeking": ["player2"],
-        "inPlay": false,
         "canHaveAttachments": false,
-        "deckGroupId": "player2Deck",
-        "discardGroupId": "player2Discard"
+        "forceOnCards": {
+          "currentSide": "B",
+          "inPlay": false,
+          "peeking": {"player2": true}
+        }
       },
       "player2Deck": {
         "name": "Player 2 Deck", 
         "tableName": "Deck",
-        "controller": "player2",
-        "defaultSideUp": "B",
-        "defaultPeeking": [],
-        "inPlay": false,
         "canHaveAttachments": false,
-        "deckGroupId": "player2Deck",
-        "discardGroupId": "player2Discard"
+        "shuffleOnLoad": true,
+        "forceOnCards": {
+          "currentSide": "B",
+          "inPlay": false,
+          "controller": "player2",
+          "deckGroupId": "player2Deck",
+          "cycleGroupId": "player2Cycled",
+          "eliminatedGroupId": "player2Eliminated"
+        }
       },
       "player2Cycled": {
         "name": "Player 2 Cycled", 
         "tableName": "Cycled",
-        "controller": "player2",
-        "defaultSideUp": "A",
-        "defaultPeeking": [],
-        "inPlay": false,
         "canHaveAttachments": false,
-        "deckGroupId": "player2Deck",
-        "discardGroupId": "player2Cycled"
+        "forceOnCards": {
+          "currentSide": "B",
+          "inPlay": false
+        }
       },
       "player2Eliminated": {
         "name": "Player 2 Eliminated", 
         "tableName": "Eliminated",
-        "controller": "player2",
-        "defaultSideUp": "A",
-        "defaultPeeking": [],
-        "inPlay": false,
         "canHaveAttachments": false,
-        "deckGroupId": "player1Deck",
-        "discardGroupId": "player1Eliminated"
+        "forceOnCards": {
+          "currentSide": "B",
+          "inPlay": false
+        }
       },
       "player2Reserve": {
         "name": "Player 2 Reserve", 
         "tableName": "P2 Reserve",
-        "controller": "player2",
-        "defaultSideUp": "A",
-        "defaultPeeking": [],
-        "inPlay": true,
-        "canHaveAttachments": true
+        "canHaveAttachments": true,
+        "forceOnCards": {
+          "currentSide": "A",
+          "inPlay": true
+        }
       },
       "player3Hand": {
         "name": "Player 3 Hand", 
         "tableName": "Hand",
-        "controller": "player3",
-        "defaultSideUp": "B",
-        "defaultPeeking": ["player3"],
-        "inPlay": false,
         "canHaveAttachments": false,
-        "deckGroupId": "player3Deck",
-        "discardGroupId": "player3Discard"
+        "forceOnCards": {
+          "currentSide": "B",
+          "inPlay": false,
+          "peeking": {"player3": true}
+        }
       },
       "player3Deck": {
         "name": "Player 3 Deck", 
         "tableName": "Deck",
-        "controller": "player3",
-        "defaultSideUp": "B",
-        "defaultPeeking": [],
-        "inPlay": false,
         "canHaveAttachments": false,
-        "deckGroupId": "player3Deck",
-        "discardGroupId": "player3Discard"
+        "shuffleOnLoad": true,
+        "forceOnCards": {
+          "currentSide": "B",
+          "inPlay": false,
+          "controller": "player3",
+          "deckGroupId": "player3Deck",
+          "cycleGroupId": "player3Cycled",
+          "eliminatedGroupId": "player3Eliminated"
+        }
       },
       "player3Cycled": {
         "name": "Player 3 Cycled", 
         "tableName": "Cycled",
-        "controller": "player3",
-        "defaultSideUp": "A",
-        "defaultPeeking": [],
-        "inPlay": false,
         "canHaveAttachments": false,
-        "deckGroupId": "player3Deck",
-        "discardGroupId": "player3Cycled"
+        "forceOnCards": {
+          "currentSide": "B",
+          "inPlay": false
+        }
       },
       "player3Eliminated": {
         "name": "Player 3 Eliminated", 
         "tableName": "Eliminated",
-        "controller": "player3",
-        "defaultSideUp": "A",
-        "defaultPeeking": [],
-        "inPlay": false,
         "canHaveAttachments": false,
-        "deckGroupId": "player1Deck",
-        "discardGroupId": "player1Eliminated"
+        "forceOnCards": {
+          "currentSide": "B",
+          "inPlay": false
+        }
       },
       "player3Reserve": {
         "name": "Player 3 Reserve", 
         "tableName": "P3 Reserve",
-        "controller": "player3",
-        "defaultSideUp": "A",
-        "defaultPeeking": [],
-        "inPlay": true,
-        "canHaveAttachments": true
+        "canHaveAttachments": true,
+        "forceOnCards": {
+          "currentSide": "A",
+          "inPlay": true
+        }
       },
       "player4Hand": {
         "name": "Player 4 Hand", 
         "tableName": "Hand",
-        "controller": "player4",
-        "defaultSideUp": "B",
-        "defaultPeeking": ["player4"],
-        "inPlay": false,
         "canHaveAttachments": false,
-        "deckGroupId": "player4Deck",
-        "discardGroupId": "player4Discard"
+        "forceOnCards": {
+          "currentSide": "B",
+          "inPlay": false,
+          "peeking": {"player4": true}
+        }
       },
       "player4Deck": {
         "name": "Player 4 Deck", 
         "tableName": "Deck",
-        "controller": "player4",
-        "defaultSideUp": "B",
-        "defaultPeeking": [],
-        "inPlay": false,
         "canHaveAttachments": false,
-        "deckGroupId": "player4Deck",
-        "discardGroupId": "player4Discard"
+        "shuffleOnLoad": true,
+        "forceOnCards": {
+          "currentSide": "B",
+          "inPlay": false,
+          "controller": "player4",
+          "deckGroupId": "player4Deck",
+          "cycleGroupId": "player4Cycled",
+          "eliminatedGroupId": "player4Eliminated"
+        }
       },
       "player4Cycled": {
         "name": "Player 4 Cycled", 
         "tableName": "Cycled",
-        "controller": "player4",
-        "defaultSideUp": "A",
-        "defaultPeeking": [],
-        "inPlay": false,
         "canHaveAttachments": false,
-        "deckGroupId": "player4Deck",
-        "discardGroupId": "player4Cycled"
+        "forceOnCards": {
+          "currentSide": "B",
+          "inPlay": false
+        }
       },
       "player4Eliminated": {
         "name": "Player 4 Eliminated", 
         "tableName": "Eliminated",
-        "controller": "player4",
-        "defaultSideUp": "A",
-        "defaultPeeking": [],
-        "inPlay": false,
         "canHaveAttachments": false,
-        "deckGroupId": "player1Deck",
-        "discardGroupId": "player1Eliminated"
+        "forceOnCards": {
+          "currentSide": "B",
+          "inPlay": false
+        }
       },
       "player4Reserve": {
         "name": "Player 4 Reserve", 
         "tableName": "P4 Reserve",
-        "controller": "player4",
-        "defaultSideUp": "A",
-        "defaultPeeking": [],
-        "inPlay": true,
-        "canHaveAttachments": true
+        "canHaveAttachments": true,
+        "forceOnCards": {
+          "currentSide": "A",
+          "inPlay": true
+        }
       }
     },
     "favoriteGroupIds": [],
@@ -884,30 +1524,33 @@
       {"name": "Three-player Duel","numPlayers": 3, "layoutId": "layout2player"}
     ],
     "layouts": {
-        "layout4player": [
-          {"id": "player2Reserve", "type": "row", "left":  "0%", "top": "0%", "width": "46%", "height": "16%"},
-          {"id": "player4Reserve", "type": "row", "left": "46%", "top": "0%", "width": "46%", "height": "16%"},
-          {"id": "sharedActiveRed1", "type": "row", "left":  "0%", "top": "16%", "width": "23%", "height": "16%", "hideTitle": true},
-          {"id": "sharedActiveRed2", "type": "row", "left": "23%", "top": "16%", "width": "23%", "height": "16%", "hideTitle": true},
-          {"id": "sharedActiveRed3", "type": "row", "left": "46%", "top": "16%", "width": "23%", "height": "16%", "hideTitle": true},
-          {"id": "sharedActiveRed4", "type": "row", "left": "69%", "top": "16%", "width": "23%", "height": "16%", "hideTitle": true},
-          {"id": "sharedActiveLocation1", "type": "row", "left":  "0%", "top": "32%", "width": "20%", "height": "16%"},
-          {"id": "sharedActiveLocation2", "type": "row", "left": "20%", "top": "32%", "width": "20%", "height": "16%"},
-          {"id": "sharedActiveLocation3", "type": "row", "left": "40%", "top": "32%", "width": "20%", "height": "16%"},
-          {"id": "sharedActiveLocation4", "type": "row", "left": "60%", "top": "32%", "width": "20%", "height": "16%"},
-          {"id": "sharedActiveBlue1", "type": "row", "left":  "0%", "top": "48%", "width": "23%", "height": "16%", "hideTitle": true},
-          {"id": "sharedActiveBlue2", "type": "row", "left": "23%", "top": "48%", "width": "23%", "height": "16%", "hideTitle": true},
-          {"id": "sharedActiveBlue3", "type": "row", "left": "46%", "top": "48%", "width": "23%", "height": "16%", "hideTitle": true},
-          {"id": "sharedActiveBlue4", "type": "row", "left": "69%", "top": "48%", "width": "23%", "height": "16%", "hideTitle": true},
-          {"id": "player1Reserve", "type": "row", "left":  "0%", "top": "64%", "width": "46%", "height": "16%"},
-          {"id": "player3Reserve", "type": "row", "left": "46%", "top": "64%", "width": "46%", "height": "16%"},
-          {"id": "playerNHand", "type": "horizontalFan", "left": "0%", "top": "80%", "width": "51%", "height": "20%", "style": "shaded"},
-          {"id": "playerNDeck",  "type": "pile", "left": "51%", "top": "80%", "width": "8%", "height": "20%", "style": "shaded"},
-          {"id": "playerNCycled",  "type": "pile", "left": "59%", "top": "80%", "width": "8%", "height": "20%", "style": "shaded"},
-          {"id": "playerNEliminated",  "type": "pile", "left": "67%", "top": "80%", "width": "8%", "height": "20%", "style": "shaded"},
-          {"id": "sharedScoringRed",  "type": "veritcalFan", "left": "92%", "top": "0%", "width": "8%", "height": "40%"},
-          {"id": "sharedScoringBlue",  "type": "veritcalFan", "left": "92%", "top": "40%", "width": "8%", "height": "40%", "hideTitle": true},
-          {"id": "chat", "left": "75%", "top": "80%", "width": "25%", "height": "20%"}
-        ]
+        "layout4player": {
+            "cardSize": 14,
+            "chat": {"left": "75%", "top": "80%", "width": "25%", "height": "20%"},
+            "regions": [
+                {"id": "player2Reserve", "type": "row", "left":  "0%", "top": "0%", "width": "46%", "height": "16%"},
+                {"id": "player4Reserve", "type": "row", "left": "46%", "top": "0%", "width": "46%", "height": "16%"},
+                {"id": "sharedActiveRed1", "type": "row", "left":  "0%", "top": "16%", "width": "23%", "height": "16%", "hideTitle": true},
+                {"id": "sharedActiveRed2", "type": "row", "left": "23%", "top": "16%", "width": "23%", "height": "16%", "hideTitle": true},
+                {"id": "sharedActiveRed3", "type": "row", "left": "46%", "top": "16%", "width": "23%", "height": "16%", "hideTitle": true},
+                {"id": "sharedActiveRed4", "type": "row", "left": "69%", "top": "16%", "width": "23%", "height": "16%", "hideTitle": true},
+                {"id": "sharedActiveLocation1", "type": "row", "left":  "0%", "top": "32%", "width": "20%", "height": "16%"},
+                {"id": "sharedActiveLocation2", "type": "row", "left": "23%", "top": "32%", "width": "20%", "height": "16%"},
+                {"id": "sharedActiveLocation3", "type": "row", "left": "46%", "top": "32%", "width": "20%", "height": "16%"},
+                {"id": "sharedActiveLocation4", "type": "row", "left": "69%", "top": "32%", "width": "20%", "height": "16%"},
+                {"id": "sharedActiveBlue1", "type": "row", "left":  "0%", "top": "48%", "width": "23%", "height": "16%", "hideTitle": true},
+                {"id": "sharedActiveBlue2", "type": "row", "left": "23%", "top": "48%", "width": "23%", "height": "16%", "hideTitle": true},
+                {"id": "sharedActiveBlue3", "type": "row", "left": "46%", "top": "48%", "width": "23%", "height": "16%", "hideTitle": true},
+                {"id": "sharedActiveBlue4", "type": "row", "left": "69%", "top": "48%", "width": "23%", "height": "16%", "hideTitle": true},
+                {"id": "player1Reserve", "type": "row", "left":  "0%", "top": "64%", "width": "46%", "height": "16%"},
+                {"id": "player3Reserve", "type": "row", "left": "46%", "top": "64%", "width": "46%", "height": "16%"},
+                {"id": "playerNHand", "type": "horizontalFan", "left": "0%", "top": "80%", "width": "51%", "height": "20%", "style": "shaded"},
+                {"id": "playerNDeck",  "type": "pile", "left": "51%", "top": "80%", "width": "8%", "height": "20%", "style": "shaded"},
+                {"id": "playerNCycled",  "type": "pile", "left": "59%", "top": "80%", "width": "8%", "height": "20%", "style": "shaded"},
+                {"id": "playerNEliminated",  "type": "pile", "left": "67%", "top": "80%", "width": "8%", "height": "20%", "style": "shaded"},
+                {"id": "sharedScoringRed",  "type": "veritcalFan", "left": "92%", "top": "0%", "width": "8%", "height": "40%"},
+                {"id": "sharedScoringBlue",  "type": "veritcalFan", "left": "92%", "top": "40%", "width": "8%", "height": "40%", "hideTitle": true}
+            ]
+        }
     }
   }

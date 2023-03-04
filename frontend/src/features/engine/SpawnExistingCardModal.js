@@ -2,7 +2,6 @@ import React, {useContext, useEffect, useState} from "react";
 import ReactModal from "react-modal";
 import { useDispatch, useSelector } from "react-redux";
 import useProfile from "../../hooks/useProfile";
-import { getCardRowCategory } from "../plugins/lotrlcg/functions/helpers";
 import { setShowModal, setTyping } from "../store/playerUiSlice";
 import { useGameL10n } from "../../hooks/useGameL10n";
 import BroadcastContext from "../../contexts/BroadcastContext";
@@ -22,6 +21,8 @@ export const SpawnExistingCardModal = React.memo(({}) => {
     console.log("pluginspawn", plugin)
     const cardDb = plugin?.card_db || {};
     const [loadGroupId, setLoadGroupId] = useState(gameDef?.spawnExistingCardModal?.spawnGroupIds[0])
+
+    console.log("spawn cardDb", cardDb)
 
     const [spawnFilteredIDs, setSpawnFilteredIDs] = useState(Object.keys(cardDb));
     if (Object.keys(cardDb).length === 0) return;

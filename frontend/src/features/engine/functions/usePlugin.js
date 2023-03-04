@@ -1,6 +1,5 @@
-import { useContext, useEffect } from 'react';
+import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import BroadcastContext from '../../../contexts/BroadcastContext';
 import useDataApi from '../../../hooks/useDataApi';
 
 export const usePlugin = () => {    

@@ -219,119 +219,8 @@ defmodule DragnCardsGame.GameUI do
     put_in(game["cardById"][new_card["id"]], new_card)
   end
 
-  def update_targeting(game, card_id, new_targeting) do
-    put_in(game["cardById"][card_id]["targeting"], new_targeting)
-  end
-
-  def update_tokens(game, card_id, new_tokens) do
-    put_in(game["cardById"][card_id]["tokens"], new_tokens)
-  end
-
-  def update_token(game, card_id, token_type, new_value) do
-    put_in(game["cardById"][card_id]["tokens"][token_type], new_value)
-  end
-
-
-  ############################################################
-  # Card actions                                             #
-  ############################################################
-  def card_action(game, card_id, action, options) do
-    Logger.debug("card_action #{action}")
-    card = get_card(game, card_id)
-    game = case action do
-      "update_card_values" ->
-        update_card_values(game, card_id, options["updates"])
-      "increment_token" ->
-        increment_token(game, card_id, options["token_type"], options["increment"])
-      "apply_tokens_per_round" ->
-        apply_tokens_per_round(game, card_id)
-      "delete_card" ->
-        delete_card(game, card_id)
-      "flip_card" ->
-        flip_card(game, card_id)
-      "discard_card" ->
-        discard_card(game, card_id)
-      "move_card" ->
-        move_card(game, card_id, options["dest_group_id"], options["dest_stack_index"], options["dest_card_index"], options["combine"], options["preserve_state"])
-      "exhaust" ->
-        exhaust(game, card_id)
-      "ready" ->
-        ready(game, card_id)
-        _ ->
-        game
-    end
-  end
-
-  # Discard a card
-  def discard_card(game, card_id) do
-    card = get_card(game, card_id)
-    move_card(game, card_id, card["discardGroupId"], 0, 0, false, false)
-  end
-
-  # Update a single card parameter
-  def update_card_value(game, card_id, update) do
-    update_value(game, ["cardById", card_id] ++ update)
-  end
-
-  # Update multiple parameters of a card
-  def update_card_values(game, card_id, updates) do
-    Enum.reduce(updates, game, fn(update, acc) ->
-      acc = update_card_value(acc, card_id, update)
-    end)
-  end
-
-  # Add tokens per round to card
-  def apply_tokens_per_round(game, card_id) do
-    tokens_per_round = get_tokens_per_round(game, card_id)
-    Enum.reduce(tokens_per_round, game, fn({token_type, increment}, acc) ->
-      acc = increment_token(acc, card_id, token_type, increment)
-    end)
-  end
-
-  # Exhaust
-  def exhaust(game, card_id) do
-    card = get_card(game, card_id)
-    if card["exhausted"] do
-      game
-    else
-      toggle_exhaust(game, card_id)
-    end
-  end
-
-  # Ready
-  def ready(game, card_id) do
-    card = get_card(game, card_id)
-    if !card["exhausted"] do
-      game
-    else
-      toggle_exhaust(game, card_id)
-    end
-  end
-
   # Move a card
-  def move_card_gameui(gameui, card_id, dest_group_id, dest_stack_index, dest_card_index, combine \\ false, preserve_state \\ false) do
-    # Get position of card
-    {orig_group_id, orig_stack_index, orig_card_index} = gsc(gameui, card_id)
-    # Get origin stack
-    orig_stack = get_stack_by_index(gameui, orig_group_id, orig_stack_index)
-    # Perpare destination stack
-    gameui = if combine do
-      gameui
-    else
-      new_stack = Stack.empty_stack()
-      insert_new_stack(gameui, dest_group_id, dest_stack_index, new_stack)
-    end
-    # Get destination stack
-    dest_stack = get_stack_by_index(gameui, dest_group_id, dest_stack_index)
-    # Update gameui
-    gameui
-    |> remove_from_stack(card_id)
-    |> add_to_stack(dest_stack["id"], card_id, dest_card_index)
-    |> update_card_state(card_id, preserve_state, orig_group_id)
-  end
-
-  # Move a card
-  def move_card(game, card_id, dest_group_id, dest_stack_index, dest_card_index, combine \\ false, preserve_state \\ false) do
+  def move_card(game, card_id, dest_group_id, dest_stack_index, dest_card_index, combine \\ false) do
     # Get position of card
     {orig_group_id, orig_stack_index, orig_card_index} = gsc(game, card_id)
     # Get origin stack
@@ -349,158 +238,29 @@ defmodule DragnCardsGame.GameUI do
     game
     |> remove_from_stack(card_id)
     |> add_to_stack(dest_stack["id"], card_id, dest_card_index)
-    |> update_card_state(card_id, preserve_state, orig_group_id)
-  end
-
-  # Increment a token
-  def increment_token(game, card_id, token_type, increment) do
-    old_value = get_token(game, card_id, token_type)
-    new_value = if old_value + increment < 0 && Enum.member?(["resource", "progress", "damage", "time"], token_type) do
-      0
-    else
-      old_value + increment
-    end
-    update_token(game, card_id, token_type, new_value)
-  end
-
-  # Increment multiple tokens
-  def increment_token(game, card_id, token_increments) do
-    Enum.reduce(token_increments, game, fn({k,v}, acc) ->
-      acc = increment_token(acc, card_id, k, v)
-    end)
-  end
-
-  # Increment tokens for a list of card ids
-  def increment_tokens_object(game, increment_object) do
-    Enum.reduce(increment_object, game, fn({k,v}, acc) ->
-      acc = increment_token(acc, k, v)
-    end)
-  end
-
-  def target_card_ids(game, card_ids, player_n) do
-    Enum.reduce(card_ids, game, fn(card_id, acc) ->
-      old_targeting = get_targeting(acc, card_id)
-        acc = if old_targeting do
-          new_targeting = put_in(old_targeting[player_n], true)
-          update_targeting(acc, card_id, new_targeting)
-        else
-          acc
-        end
-    end)
-  end
-
-  # Exhaust/ready a card
-  def toggle_exhaust(game, card_id) do
-    card = get_card(game, card_id)
-    new_card = if card["exhausted"] do
-      card = put_in(card["exhausted"], false)
-      put_in(card["rotation"], 0)
-    else
-      card = put_in(card["exhausted"], true)
-      put_in(card["rotation"], 90)
-    end
-    update_card(game, new_card)
-  end
-
-  # Flip a card
-  def flip_card(game, card_id) do
-    {group_id, stack_index, card_index} = gsc(game, card_id)
-    group_type = get_group_type(game, group_id)
-    # Flip card
-    old_card = get_card(game, card_id)
-    current_side = old_card["currentSide"]
-    new_card = if current_side == "A" do
-      put_in(old_card["currentSide"],"B")
-    else
-      put_in(old_card["currentSide"],"A")
-    end
-    game = update_card(game, new_card)
-  end
-
-  # Deal a shadow card
-  def deal_shadow(game, card_id) do
-    {group_id, stack_index, card_index} = gsc(game, card_id)
-    stack = get_stack_by_card_id(game, card_id)
-    shadow_card = get_card_by_gsc(game, ["sharedEncounterDeck", 0, 0])
-    if shadow_card do
-      cards_size = Enum.count(stack["cardIds"])
-      game = move_card(game, shadow_card["id"], group_id, stack_index, cards_size, true, true)
-      rotated_shadow_card = put_in(shadow_card["rotation"], -30)
-      update_card(game, rotated_shadow_card)
-    else
-      game
-    end
-  end
-
-  # Detach a card
-  def detach(game, card_id) do
-    card = get_card(game, card_id)
-    # If it's rotated and not exhausted, it's a shadow card, so when we detach it we want to set its rotation to 0.
-    card = if card["exhausted"] == false && card["rotation"] != 0 do
-      put_in(card["rotation"], 0)
-    else
-      card
-    end
-    game = update_card(game, card)
-    # Get position of card and move it next to the initial stack
-    {group_id, stack_index, card_index} = gsc(game, card_id)
-    move_card(game, card_id, group_id, stack_index + 1, 0, false, true)
+    |> update_card_state(card_id, orig_group_id)
   end
 
   # Update a card state
   # Modify the card orientation/tokens based on where it is now
-  def update_card_state(game, card_id, preserve_state, orig_group_id \\ nil) do
-    if preserve_state do
-      # We still remove arrows
-      #card = put_in(card["arrowIds"], [])
-      #update_card(game, card)
-      game
-    else
-      card = get_card(game, card_id)
-      card_old = card
-      card_name = card["sides"]["A"]["name"]
-      card_face = get_current_card_face(game, card_id)
-      dest_group = get_group_by_card_id(game, card_id)
-      orig_group = get_group(game, orig_group_id)
-      {dest_group_id, dest_stack_index, dest_card_index} = gsc(game, card_id)
-      card = put_in(card["groupId"], dest_group_id)
-      card = put_in(card["stackIndex"], dest_stack_index)
-      card = put_in(card["cardIndex"], dest_card_index)
+  def update_card_state(game, card_id, orig_group_id \\ nil) do
+    {dest_group_id, dest_stack_index, dest_card_index} = gsc(game, card_id)
+    dest_group = get_group(game, dest_group_id)
 
-      committed_willpower = if card["committed"] do
-        card_face["willpower"] + card["tokens"]["willpower"]
-      else
-        0
-      end
-      old_controller = card["controller"]
-      new_controller = dest_group["controller"]
-      # Remove arrows
-      #card = put_in(card["arrowIds"], [])
-      # Set new controller
-      card = put_in(card["controller"], new_controller)
-      # Entering play
-      card = Map.put(card, "inPlay", dest_group["inPlay"])
-      # Leaving play
-      card = if not dest_group["inPlay"] do
-        card
-        |> Map.put("tokens", %{})
-        |> Map.put("tokensPerRound", %{})
-        |> Map.put("exhausted", false)
-        |> Map.put("rotation", 0)
-        |> Map.put("inPlay", false)
-        |> Map.put("targeting", %{})
-      else card end
-      # Set deck/discard
-      card = if dest_group["deckGroupId"] do Map.put(card, "deckGroupId", dest_group["deckGroupId"]) else card end
-      card = if dest_group["discardGroupId"] do Map.put(card, "discardGroupId", dest_group["discardGroupId"]) else card end
-      # Set correct side
-      card = Map.put(card, "currentSide", dest_group["defaultSideUp"])
-      # Set peeking players
-      card = Enum.reduce(dest_group["defaultPeeking"], card, fn(player_i, acc) ->
-        acc |> put_in(["peeking", player_i], true)
+    card =
+      get_card(game, card_id)
+      |> put_in(["groupId"], dest_group_id)
+      |> put_in(["stackIndex"], dest_stack_index)
+      |> put_in(["cardIndex"], dest_card_index)
+    IO.inspect("&&&&&&&&&&&&&&&&&&&&&&&&& 1")
+    IO.inspect(card)
+    card = Enum.reduce(dest_group["forceOnCards"], card, fn({key, val}, acc) ->
+        put_in(acc, [key], val)
       end)
-      game = update_card(game, card)
-    end
+      IO.inspect("&&&&&&&&&&&&&&&&&&&&&&&&& 2")
+      IO.inspect(card)
+
+    update_card(game, card)
   end
 
   # Delete card from game
@@ -546,76 +306,6 @@ defmodule DragnCardsGame.GameUI do
     end)
   end
 
-  ### Card helper functions
-
-  # Obtain a value from card based on cardpath
-  def get_value_from_cardpath(card, cardpath) do
-    Enum.reduce(cardpath, card, fn(entry, acc) ->
-      entry = if entry == "sideUp" do
-        card["currentSide"]
-      else
-        entry
-      end
-      entry = if entry == "sideDown" do
-        if card["currentSide"] == "A" do
-          "B"
-        else
-          "A"
-        end
-      else
-        entry
-      end
-      acc = acc[entry]
-    end)
-  end
-
-  def opposite_side(side) do
-    if side == "A" do
-      "B"
-    else
-      "A"
-    end
-  end
-
-  def passes_criterion(card, obj, criterion, exact_match \\ true) do
-    case Enum.count(criterion) do
-      0 ->
-        false
-      1 ->
-        value = Enum.at(criterion, 0)
-        if exact_match do
-          obj == value
-        else
-          String.contains?(obj, value)
-        end
-      _ ->
-        property = Enum.at(criterion,0)
-        property = case property do
-          "sideUp" ->
-            card["currentSide"]
-          "sideDown" ->
-            opposite_side(card["currentSide"])
-          _ ->
-            property
-        end
-        if property == "traits" do
-          passes_criterion(card, obj[property], List.delete_at(criterion, 0), false)
-        else
-          passes_criterion(card, obj[property], List.delete_at(criterion, 0))
-        end
-    end
-  end
-
-  def passes_criteria(card, criteria) do
-    Enum.reduce_while(criteria, true, fn(criterion, acc) ->
-      if passes_criterion(card, card, criterion) do
-        {:cont, true}
-      else
-        {:halt, false}
-      end
-    end)
-  end
-
   #################################################################
   # Stack actions                                                 #
   #################################################################
@@ -625,15 +315,6 @@ defmodule DragnCardsGame.GameUI do
     stack = get_stack(game, stack_id)
     card_id = Enum.at(stack["cardIds"],0)
     get_card(game, card_id)
-  end
-
-
-  def target_stack(game, player_n, stack_id) do
-    card_ids = get_card_ids(game, stack_id)
-    card_id = Enum.at(card_ids, 0)
-    old_targeting = get_targeting(game, card_id)
-    new_targeting = put_in(old_targeting[player_n], true)
-    update_targeting(game, card_id, new_targeting)
   end
 
   def delete_stack(game, stack_id) do
@@ -662,36 +343,37 @@ defmodule DragnCardsGame.GameUI do
     update_card_ids(game, stack_id, new_card_ids)
   end
 
-  def update_stack_state(game, stack_id, options) do
-    preserve_state = Enum.at(options, 0)
-    orig_group_id = Enum.at(options, 1)
-    if preserve_state do
-      game
-    else
-      # Update cards in stack one at a time in reverse order
-      # This is so that when the stack is removed from play,
-      # order is preserved as cards are detached
-      stack = get_stack(game, stack_id)
-      dest_group = get_group_by_stack_id(game, stack_id)
-      dest_group_id = dest_group["id"]
-      card_ids = get_card_ids(game, stack_id)
-      game = Enum.reduce(card_ids, game, fn(card_id, acc) ->
-        acc = update_card_state(acc, card_id, preserve_state, orig_group_id)
+  def update_stack_state(game, stack_id, orig_group_id) do
+    # Update cards in stack one at a time in reverse order
+    # This is so that when the stack is removed from play,
+    # order is preserved as cards are detached
+    stack = get_stack(game, stack_id)
+    dest_group = get_group_by_stack_id(game, stack_id)
+    dest_group_id = dest_group["id"]
+    card_ids = get_card_ids(game, stack_id)
+    game = Enum.reduce(card_ids, game, fn(card_id, acc) ->
+      acc = update_card_state(acc, card_id, orig_group_id)
+    end)
+    # If a stack is out of play, we need to split it up
+    if Enum.count(card_ids)>1 && not dest_group["inPlay"] do
+      reverse_card_ids = Enum.reverse(card_ids)
+      Enum.reduce(reverse_card_ids, game, fn(card_id, acc) ->
+        acc = detach(acc, card_id)
       end)
-      # If a stack is out of play, we need to split it up
-      if Enum.count(card_ids)>1 && not dest_group["inPlay"] do
-        reverse_card_ids = Enum.reverse(card_ids)
-        Enum.reduce(reverse_card_ids, game, fn(card_id, acc) ->
-          acc = detach(acc, card_id)
-        end)
-      else
-        game
-      end
+    else
+      game
     end
   end
 
-  def move_stack(game, stack_id, dest_group_id, dest_stack_index, combine \\ false, preserve_state \\ false) do
-    IO.puts("move_stack #{stack_id} #{dest_group_id} #{dest_stack_index} #{combine} #{preserve_state}")
+  # Detach a card
+  def detach(gameui, card_id) do
+    # Get position of card and move it next to the initial stack
+    {group_id, stack_index, card_index} = gsc(gameui, card_id)
+    move_card(gameui, card_id, group_id, stack_index + 1, 0, false)
+  end
+
+  def move_stack(game, stack_id, dest_group_id, dest_stack_index, combine \\ false) do
+    IO.puts("move_stack #{stack_id} #{dest_group_id} #{dest_stack_index} #{combine}")
     if stack_id == nil do
       game
     else
@@ -726,13 +408,13 @@ defmodule DragnCardsGame.GameUI do
         game = update_card_ids(game, dest_stack_id, new_dest_card_ids)
         # Delete original stack
         game = delete_stack_from_stack_by_id(game, stack_id)
-        game = update_stack_state(game, dest_stack_id, [preserve_state, orig_group_id])
+        game = update_stack_state(game, dest_stack_id, orig_group_id)
       else
         # Update destination group stack ids
         old_dest_stack_ids = get_stack_ids(game, dest_group_id)
         new_dest_stack_ids = List.insert_at(old_dest_stack_ids, dest_stack_index, stack_id)
         game = update_stack_ids(game, dest_group_id, new_dest_stack_ids)
-        |> update_stack_state(stack_id, [preserve_state, orig_group_id])
+        |> update_stack_state(stack_id, orig_group_id)
       end
     end
   end
@@ -781,24 +463,6 @@ defmodule DragnCardsGame.GameUI do
     update_stack_ids(game, group_id, new_stack_ids)
   end
 
-  def deal_x(game, group_id, dest_group_id, top_x) do
-    stack_ids = get_stack_ids(game, group_id)
-    top_x = if Enum.count(stack_ids) < top_x do Enum.count(stack_ids) else top_x end
-    top_x_stack_ids = Enum.slice(stack_ids, 0, top_x)
-    game = if top_x > 0 do
-      move_stack(game, Enum.at(top_x_stack_ids,0), dest_group_id, -1, false, true)
-    else
-      game
-    end
-    game = if top_x > 1 do
-      Enum.reduce(1..(top_x-1), game, fn(index, acc) ->
-        move_stack(acc, Enum.at(top_x_stack_ids,index), dest_group_id, -1, true, true)
-      end)
-    else
-      game
-    end
-  end
-
   ################################################################
   # Game actions                                                 #
   ################################################################
@@ -817,65 +481,16 @@ defmodule DragnCardsGame.GameUI do
       case action do
         "evaluate" ->
           Evaluate.evaluate(game, options["action_list"])
-        "game_action_list" ->
-          evaluate(game, options["action_list"])
-          #multiple_map_changes(game, game, options["action_list"], user_alias)
-        "draw_card" ->
-          draw_card(game, player_n)
-        "new_round" ->
-          new_round(game, player_n, user_id)
-        "refresh" ->
-          refresh(game, player_n)
-        "refresh_and_new_round" ->
-          refresh_and_new_round(game, player_n, user_id)
-        "flip_card" ->
-          flip_card(game, options["card_id"])
-        "move_card" ->
-          move_card(game, options["card_id"], options["dest_group_id"], options["dest_stack_index"], options["dest_card_index"], options["combine"], options["preserve_state"])
-        "target_stack" ->
-          target_stack(game, player_n, options["stack_id"])
-        "move_stack" ->
-          move_stack(game, options["stack_id"], options["dest_group_id"], options["dest_stack_index"], options["combine"], options["preserve_state"])
-        "move_stacks" ->
-          move_stacks(game, options["orig_group_id"], options["dest_group_id"], options["top_n"], options["position"])
-        "shuffle_group" ->
-          shuffle_group(game, options["group_id"])
-        "detach" ->
-          detach(game, options["card_id"])
         "set_game" ->
           options["game"]
-        "update_values" ->
-          update_values(game, options["updates"])
-        "action_on_matching_cards" ->
-          action_on_matching_cards(game, options["criteria"], options["action"], options["options"])
-        "deal_shadow" ->
-          deal_shadow(game, options["card_id"])
-        "deal_all_shadows" ->
-          deal_all_shadows(game)
-        "increment_threat" ->
-          increment_threat(game, player_n, options["increment"])
-        "increment_willpower" ->
-          increment_willpower(game, player_n, options["increment"])
-        "increment_token" ->
-          increment_token(game, options["card_id"], options["token_type"], options["increment"])
-        "increment_tokens" ->
-          increment_token(game, options["card_id"], options["token_increments"])
-        "increment_tokens_object" ->
-          increment_tokens_object(game, options["increment_object"])
         "reset_game" ->
           reset_game(game)
         "load_cards" ->
           load_cards(game, player_n, options["load_list"], gameui["gameDef"])
-        "target_card_ids" ->
-          target_card_ids(game, options["card_ids"], player_n)
         "step_through" ->
           step_through(game, options["size"], options["direction"])
         "save_replay" ->
           save_replay(game, user_id)
-        "card_action" ->
-          card_action(game, options["card_id"], options["action"], options["options"])
-        "deal_x" ->
-          deal_x(game, options["group_id"], options["dest_group_id"], options["top_x"])
         _ ->
           game
       end
@@ -898,524 +513,36 @@ defmodule DragnCardsGame.GameUI do
     set_last_update(gameui)
   end
 
+  def get_player_n(gameui, user_id) do
+    info = gameui["playerInfo"]
+    if user_id == nil do
+      nil
+    else
+      Enum.reduce_while(info, nil, fn {key, player_info}, acc ->
+        if player_info != nil and player_info["id"] == user_id do
+          {:halt, key}
+        else
+          {:cont, acc}
+        end
+      end)
+    end
+  end
+
   def get_alias_by_user_id(game, user_id) do
-    user_alias = Enum.reduce_while(game["playerInfo"], nil, fn({playerI, playerInfo}, acc) ->
-      if user_id == playerInfo["id"] do
-        {:halt, playerInfo["alias"]}
-      else
-        {:cont, acc}
-      end
-    end)
-  end
-
-  def evaluate(game, code) do
-    if is_list(code) && Enum.count(code) > 0 do
-      code = Enum.reduce(code, [], fn(code_line, acc) ->
-        acc ++ evaluate(game, code_line)
-      end)
-      item0 = Enum.at(code,0)
-      case item0 do
-        "EQUAL" ->
-          Enum.at(code,1) == Enum.at(code,2)
-        "GET" ->
-          get_in(Enum.at(code,1), Enum.at(code,2))
-        "SET" ->
-          put_in(game, Enum.at(code,1), Enum.at(code,1))
-      end
-    else # value
-      case code do
-        "$GAME" ->
-          game
-        "$CARD_BY_ID" ->
-          game["cardById"]
-        "$ACTIVE_CARD" ->
-          game["cardById"][game["playerUi"]["activeCardId"]]
-        "$ACTIVE_FACE" ->
-          active_card = game["cardById"][game["playerUi"]["activeCardId"]]
-          active_card["sides"][active_card["currentSide"]]
-        _ ->
-          code
-      end
-    end
-  end
-
-
-  def multiple_map_changes(game, map, map_changes, user_alias) do
-    IO.puts("a1")
-    Enum.reduce(map_changes, map, fn(options, acc) ->
-      change_map(game, acc, options, user_alias)
-    end)
-  end
-
-  def is_path(path) do
-    is_list(path) and Enum.member?(["_GAME", "_ACTIVE_CARD", "_ACTIVE_FACE", "_ITEM"], Enum.at(path, 0))
-  end
-
-
-  def interpret_value(game, map, value) do
-    cond do
-      !is_list(value) ->
-        value
-      is_path(value) ->
-        get_in(map, get_keylist_from_path(game, map, value))
-      Enum.at(value, 0) == "+" && Enum.count(value) == 3 ->
-        interpret_value(game, map, Enum.at(value,1)) + interpret_value(game, map, Enum.at(value,2))
-      Enum.at(value, 0) == "-" && Enum.count(value) == 3 ->
-        interpret_value(game, map, Enum.at(value,1)) - interpret_value(game, map, Enum.at(value,2))
-      Enum.at(value, 0) == "*" && Enum.count(value) == 3 ->
-        interpret_value(game, map, Enum.at(value,1)) * interpret_value(game, map, Enum.at(value,2))
-      Enum.at(value, 0) == "/" && Enum.count(value) == 3 ->
-        interpret_value(game, map, Enum.at(value,1)) / interpret_value(game, map, Enum.at(value,2))
-      true ->
-        value
-    end
-  end
-
-  def get_nested_value(game, map, path) do
-#    IO.puts("getting nested value from ")
-#    IO.inspect(map)
-#    IO.puts("path")
-#    IO.inspect(path)
-#    IO.puts("path b")
-    if is_path(path) do
-      get_in(map, get_keylist_from_path(game, map, path))
-    else
-      path
-    end
-  end
-
-  def flatten_path(game, map, path) do
-    flattened = Enum.reduce(path, [], fn(key, acc) ->
-      acc ++ if is_list(key) do
-        IO.puts("path a")
-        IO.inspect(path)
-        [get_nested_value(game, map, key)]
-      else
-        case key do
-          "_ACTIVE_CARD" ->
-            flatten_path(game, map, ["_GAME", "cardById", ["_GAME", "playerUi", "activeCardId"]])
-          "_ACTIVE_FACE" ->
-            flatten_path(game, map, ["_ACTIVE_CARD", "sides", ["_ACTIVE_CARD", "currentSide"]])
-          _ ->
-            [key]
-        end
-      end
-    end)
-    IO.puts("flattened")
-    IO.inspect(flattened)
-    flattened
-  end
-
-  def get_keylist_from_path(game, map, path) do
-    flat_path = flatten_path(game, map, path)
-    List.delete_at(flat_path, 0) # remove "keyList"
-  end
-
-  def evaluate_condition(game, map, condition) do
-    # A condition is a list of 3 things. Value A, an operator, and value B
-    if Enum.count(condition) == 3 do
-      lhs = Enum.at(condition, 0)
-      operator = Enum.at(condition, 1)
-      rhs = Enum.at(condition, 2)
-      lhs = if Enum.member?(["AND","OR"], operator) do lhs else get_nested_value(game, map, lhs) end
-      rhs = if Enum.member?(["AND","OR"], operator) do rhs else get_nested_value(game, map, rhs) end
-      res = case operator do
-        "==" ->
-          lhs == rhs
-        "!=" ->
-          lhs != rhs
-        ">" ->
-          is_number(lhs) and is_number(rhs) and lhs > rhs
-        "<" ->
-          is_number(lhs) and is_number(rhs) and lhs < rhs
-        ">=" ->
-          is_number(lhs) and is_number(rhs) and lhs >= rhs
-        "<=" ->
-          is_number(lhs) and is_number(rhs) and lhs <= rhs
-        "IN_STRING" ->
-          is_binary(lhs) and is_binary(rhs) and String.contains?(rhs, lhs)
-        "CONTAINS_IN_STRING" ->
-          is_binary(lhs) and is_binary(rhs) and String.contains?(lhs, rhs)
-        "IN_LIST" ->
-          is_list(rhs) and Enum.member?(rhs, lhs)
-        "CONTAINS_IN_LIST" ->
-          is_list(lhs) and Enum.member?(lhs, rhs)
-        "AND" ->
-          evaluate_condition(game, map, lhs) and evaluate_condition(game, map, rhs)
-        "OR" ->
-          evaluate_condition(game, map, lhs) or evaluate_condition(game, map, rhs)
-        _ ->
-          False
-      end
-      IO.inspect(res)
-      res
-    else
-      false
-    end
-  end
-
-  def change_map(game, map, options, user_alias) do
-    action = options["_ACTION"]
-    IO.puts("action")
-    IO.inspect(options)
-    new_map = case action do
-      "SET_VALUE" ->
-        if Map.has_key?(options, "_PATH") and Map.has_key?(options, "_VALUE") do
-          keylist = get_keylist_from_path(game, map, options["_PATH"])
-          value = interpret_value(game, map, options["_VALUE"])
-          put_in(map, keylist, value)
-        else map end
-      "INCREASE_BY" ->
-        if Map.has_key?(options, "_PATH") and Map.has_key?(options, "_VALUE") do
-          path = options["_PATH"]
-          keylist = get_keylist_from_path(game, map, path)
-          old_value = get_nested_value(game, map, path)
-          amount = interpret_value(game, map, options["_VALUE"])
-          new_value = if is_number(old_value) and is_number(amount) do
-            temp_value = old_value + amount
-            if Map.has_key?(options, "_MAX") and is_number(options["_MAX"]) and temp_value > options["_MAX"] do
-              options["_MAX"]
-            else
-              temp_value
-            end
-          else
-            old_value
-          end
-          put_in(map, keylist, new_value)
-        else map end
-      "DECREASE_BY" ->
-        if Map.has_key?(options, "_PATH") and Map.has_key?(options, "_VALUE") do
-          path = options["_PATH"]
-          keylist = get_keylist_from_path(game, map, path)
-          old_value = get_nested_value(game, map, path)
-          amount = interpret_value(game, map, options["_VALUE"])
-          new_value = if is_number(old_value) and is_number(amount) do
-            temp_value = old_value - amount
-            if Map.has_key?(options, "_MIN") and is_number(options["_MIN"]) and temp_value < options["_MIN"] do
-              options["_MIN"]
-            else
-              temp_value
-            end
-          else
-            old_value
-          end
-          put_in(map, keylist, new_value)
-        else map end
-      "CASES" ->
-        IO.puts("a2")
-        if Map.has_key?(options, "_CASES") do
-          IO.puts("a")
-          Enum.reduce_while(options["_CASES"], map, fn(casei, acc) ->
-            if Map.has_key?(casei, "_IF") and Map.has_key?(casei, "_THEN") do
-              if evaluate_condition(game, acc, casei["_IF"]) do
-                IO.puts("doing multiple_map_changes")
-                {:halt, multiple_map_changes(game, acc, casei["_THEN"], user_alias)}
-              else
-                {:cont, acc}
-              end
-            else
-              {:cont, acc}
-            end
-          end)
-        else map end
-      "FOR_EACH" ->
-        if Map.has_key?(options, "_PATH") and Map.has_key?(options, "_DO") do
-          IO.puts("path c")
-          IO.inspect(options["_PATH"])
-          maps = get_nested_value(game, map, options["_PATH"])
-          keylist = get_keylist_from_path(game, map, options["_PATH"])
-          for_each_actions = options["_DO"]
-          new_maps = Enum.reduce(Map.keys(maps), maps, fn(k, acc) ->
-            put_in(acc[k], multiple_map_changes(game, acc[k], for_each_actions, user_alias))
-          end)
-          put_in(map, keylist, new_maps)
-        end
-      "MOVE_CARD" ->
-        if Map.has_key?(options, "_CARD_ID") and
-            Map.has_key?(options, "_DEST_GROUP_ID") and
-            Map.has_key?(options, "_DEST_STACK_INDEX") and
-            Map.has_key?(options, "_DEST_CARD_INDEX") and
-            Map.has_key?(options, "_COMBINE") do
-              move_card(game, options["_CARD_ID"], options["_DEST_GROUP_ID"], options["_DEST_STACK_INDEX"], options["_DEST_STACK_INDEX"], options["_COMBINE"], options["_PRESERVE_STATE"])
-        else map end
-      _ ->
-        map
-    end
-    new_map = if Map.has_key?(options, "_MESSAGES") do
-      latest_chat_messages = Enum.reduce(options["_MESSAGES"], [], fn(message_segments, acc) ->
-        message_text = resolve_message(game, message_segments, user_alias)
-        chat_message = ChatMessage.new(message_text, 1, 1)
-        IO.puts("adding message")
-        IO.inspect(chat_message)
-        acc ++ [chat_message]
-      end)
-      IO.puts("total messages")
-      IO.inspect(latest_chat_messages)
-      put_in(new_map["latestMessages"], latest_chat_messages)
-    else new_map end
-  end
-
-  def resolve_message(game, message, user_alias) do
-    resolved_message = Enum.reduce(message, "", fn(segment, acc) ->
-      acc <> resolve_message_segment(game, segment)
-    end)
-    processed_message = String.replace(resolved_message, "{playerN}", user_alias)
-  end
-
-  def resolve_message_segment(game, segment) do
-    segment = if is_path(segment) do
-      get_nested_value(game, game, segment)
-    else
-      "#{segment}"
-    end #|> Kernel.inspect()
-  end
-  # def process_game_action(gameui, action) do
-  #   # An action is a map with an "action" key the dictates how we handle it
-  #   if is_map(action) and Map.has_key?(action, "action") do
-  #     case action["action"] do
-  #       "conditions" ->
-  #         if Map.has_key?(action,"conditions") and is_list(action["conditions"]) do
-  #           Enum.reduce_while(action["conditions"], gameui, fn(ifthen, acc) ->
-  #             if passes_conditions(acc, ifthen["if"]) do
-  #               IO.puts("passes condtions")
-  #               {:halt, game_action_list(acc, ifthen["then"])}
-  #             else
-  #               {:cont, acc}
-  #             end
-  #           end)
-  #         else gameui end
-  #       "setValue" ->
-  #         if Map.has_key?(action, "key_list") and Map.has_key?(action, "value") do
-  #           IO.puts("setValue")
-  #           IO.inspect(action)
-  #           put_in(gameui["game"], process_change(gameui["game"], gameui, gameui, action["key_list"], "setValue", %{"value" => action["value"]}))
-  #         end
-  #       "increaseBy" ->
-  #         if Map.has_key?(action, "key_list") and Map.has_key?(action, "value") do
-  #           put_in(gameui["game"], process_change(gameui["game"], gameui, gameui, action["key_list"], "increaseBy", %{"value" => action["value"], "limit" => action["limit"]}))
-  #         end
-  #       "moveCard" ->
-  #         card_id = process_key(nil, nil, gameui, action["card_id"])
-  #         move_card(gameui, card_id, action["dest_group_id"], action["dest_stack_index"], action["dest_card_index"], action["combine"], false)
-  #       "moveStack" ->
-  #         stack_id = process_key(nil, nil, gameui, action["stack_id"])
-  #         dest_group_id = process_key(nil, nil, gameui, action["dest_group_id"])
-  #         dest_stack_index = process_key(nil, nil, gameui, action["dest_stack_index"])
-  #         move_stack(gameui, stack_id, dest_group_id, dest_stack_index, action["combine"], false)
-  #       # "forEach" ->
-  #       #   key = process_key(nil, nil, gameui, action["key_list"])
-  #       #   objs_old = get_value_from_key_list
-  #       end
-  #   else
-  #     gameui
-  #   end
-  # end
-
-  # def passes_conditions(gameui, conditions) do
-  #   Enum.reduce_while(conditions, true, fn(condition, acc) ->
-  #     if passes_condition(gameui, condition) do
-  #       {:cont, true}
-  #     else
-  #       {:halt, false}
-  #     end
-  #   end)
-  # end
-
-  # def passes_condition(gameui, condition) do
-  #   if Enum.count(condition) == 3 do
-  #     key_list = Enum.at(condition, 0)
-  #     operator = Enum.at(condition, 1)
-  #     rhs = Enum.at(condition, 2)
-  #     lhs = process_key(gameui["game"], gameui, gameui, key_list)
-  #     case operator do
-  #       "equalTo" ->
-  #         IO.puts("is #{lhs} equalto #{rhs}")
-  #         lhs == rhs
-  #       "stringContains" ->
-  #         String.contains?(lhs, rhs)
-  #       "inString" ->
-  #         String.contains?(rhs, lhs)
-  #       "isList" ->
-  #         Enum.member?(rhs, lhs)
-  #       "listContains" ->
-  #         Enum.member?(lhs, rhs)
-  #       "greaterThan" ->
-  #         lhs > rhs
-  #       "lessThan" ->
-  #         lhs < rhs
-  #       "notEqualTo" ->
-  #         lhs != rhs
-  #     end
-  #   else
-  #     false
-  #   end
-  # end
-
-  # # def resolve_key_list(obj, parent, gameui, key_list) do
-  # #   resolved_key_list = Enum.reduce(key_list, [], fn(key, acc) ->
-  # #     if is_list(key) do
-  # #       acc ++ get_value_from_key_list(gameui["game"], gameui, gameui, key)
-  # #     else
-  # #       acc ++ key
-  # #     end
-  # #   end)
-  # # end
-
-  # def get_value_from_key_list(obj, parent, gameui, key_list) do
-  #   case Enum.count(key_list) do
-  #     0 ->
-  #       # If there are no more keys in the nested map to parse, we just return the object, which is normally now a base type
-  #       obj
-  #     _ ->
-  #       IO.puts("key 1")
-  #       IO.inspect(Enum.at(key_list, 0))
-  #       key = process_key(obj, parent, gameui, Enum.at(key_list, 0))
-  #       new_key_list = List.delete_at(key_list, 0)
-  #       if is_integer(key) and is_list(obj) do
-  #         length = Enum.count(obj)
-  #         key = if key < 0 do length - key else key end
-  #         if key < 0 or key >= length do
-  #           nil
-  #         else
-  #           get_value_from_key_list(Enum.at(obj,key), obj, gameui, new_key_list)
-  #         end
-  #       else
-  #         get_value_from_key_list(obj[key], obj, gameui, new_key_list)
-  #       end
-  #   end
-  # end
-
-  # def process_key(obj, parent, gameui, key) do
-  #   key = if is_list(key) do
-  #     # If a key is a list, it is a key_list and we need to obtain the key
-  #     key_list = key
-  #     get_value_from_key_list(gameui["game"], gameui, gameui, key_list)
-  #   else key end
-  #   # Handle special cases
-  #   IO.puts("process_key 1")
-  #   IO.inspect(key)
-  #   key = if is_binary(key) do
-  #     IO.puts("replacing")
-  #     String.replace(key, "playerI", gameui["game"]["playerUi"]["playerN"])
-  #   else key end
-  #   IO.puts("process_key 2")
-  #   IO.inspect(key)
-
-  #   case key do
-  #     "sideUp" ->
-  #       IO.puts("sideUp translate")
-  #       IO.inspect(parent)
-  #       parent["currentSide"]
-  #     "sideDown" ->
-  #       opposite_side(parent["currentSide"])
-  #     _ ->
-  #       key
-  #   end
-  # end
-
-  # def process_change(obj, parent, gameui, key_list, operation, options) do
-  #   IO.puts("process_change")
-  #   IO.inspect(operation)
-  #   IO.inspect(key_list)
-  #   IO.inspect(options)
-  #   # A change is [key_list (list), operation (string), options (map)]
-  #   case Enum.count(key_list) do
-  #     0 ->
-  #       process_operation(obj, operation, options)
-  #     _ ->
-  #       key = process_key(obj, parent, gameui, Enum.at(key_list,0))
-  #       new_key_list = List.delete_at(key_list, 0)
-  #       IO.puts("put in")
-  #       IO.inspect(key)
-  #       put_in(obj[key], process_change(obj[key], obj, gameui, new_key_list, operation, options))
-  #   end
-  # end
-
-  # def process_operation(obj, operation, options) do
-  #   IO.puts("process operation")
-  #   IO.inspect(obj)
-  #   IO.inspect(operation)
-  #   IO.inspect(options)
-  #   case operation do
-  #     "setValue" ->
-  #       if Map.has_key?(options, "value") do
-  #         IO.puts("settingto")
-  #         IO.inspect(options["value"])
-  #         options["value"]
-  #       else obj end
-  #     "shuffle" ->
-  #       if is_list(obj) do
-  #         obj |> Enum.shuffle
-  #       else obj end
-  #     "increaseBy" ->
-  #       if is_number(obj) and Map.has_key?(options, "value") do
-  #         new_val = obj + options["value"]
-  #         if Map.has_key?(options, "limit") do
-  #           min(new_val, options["limit"])
-  #         else new_val end
-  #       else obj end
-  #     "decreaseBy" ->
-  #       if is_number(obj) and Map.has_key?(options, "value") do
-  #         new_val = obj - options["value"]
-  #         if Map.has_key?(options, "limit") do
-  #           max(new_val, options["limit"])
-  #         else new_val end
-  #       else obj end
-  #   end
-  # end
-
-  def get_hero_list(game, player_n) do
-    criteria = [["sides","A","type","Hero"], ["owner",player_n], ["groupType","play"]]
-    heroes_in_play = get_cards_matching_criteria(game, criteria)
-    criteria = [["sides","A","type","Hero"], ["owner",player_n], ["groupId", player_n<>"Discard"]]
-    heroes_in_discard = get_cards_matching_criteria(game, criteria)
-    heroes_in_play ++ heroes_in_discard
-  end
-
-  def get_hero_names(game, player_n) do
-    hero_list = get_hero_list(game, player_n)
-    Enum.reduce(hero_list, [], fn(hero, acc) ->
-      acc ++ [hero["sides"]["A"]["name"]]
-    end)
-  end
-
-  def get_encounter_name(game) do
-    criteria = [["sides","A","cost",1], ["sides","A","type","Quest"]]
-    card_1As = get_cards_matching_criteria(game, criteria)
-    if Enum.count(card_1As) > 0 do
-      # Pick the first quest 1A found
-      card_1A = Enum.at(card_1As, 0)
-      encounter_name = card_1A["cardEncounterSet"]
-      criteria = [["sides","A","type","Nightmare"]]
-      card_nightmare = get_cards_matching_criteria(game, criteria)
-      encounter_name = if Enum.count(card_nightmare) > 0 do
-        encounter_name <> " - Nightmare"
-      else
-        encounter_name
-      end
-    else
-      ""
+    game["playerInfo"]
+    |> Enum.find(fn {_, player_info} -> player_info["id"] == user_id end)
+    |> case do
+      nil -> nil
+      {_, player_info} -> player_info["alias"]
     end
   end
 
   def save_replay(game, user_id) do
     game_uuid = game["id"]
-    num_players = game["numPlayers"]
-    hero_1_names = get_hero_names(game, "player1")
-    hero_2_names = get_hero_names(game, "player2")
-    hero_3_names = get_hero_names(game, "player3")
-    hero_4_names = get_hero_names(game, "player4")
-    encounter_name = get_encounter_name(game)
     updates = %{
-      encounter: encounter_name,
       rounds: game["roundNumber"],
       num_players: game["numPlayers"],
-      player1_heroes: hero_1_names,
-      player2_heroes: hero_2_names,
-      player3_heroes: hero_3_names,
-      player4_heroes: hero_4_names,
       game_json: game,
-      outcome: game["victoryState"],
     }
     result =
       case Repo.get_by(Replay, [user: user_id, uuid: game_uuid]) do
@@ -1454,226 +581,8 @@ defmodule DragnCardsGame.GameUI do
     end
   end
 
-  def refresh(game, player_n) do
-    is_host = player_n == leftmost_non_eliminated_player_n(game)
-    # Set phase
-    game = if is_host do
-      update_values(game,[
-        ["phaseId", "Refresh"],
-        ["stepId", "7.R"]
-      ])
-    else
-      game
-    end
-    # Pass token
-    game = if is_host do
-      pass_first_player_token(game)
-    else
-      game
-    end
-    # Refresh all cards you control
-    game = action_on_matching_cards(game, [
-        ["locked", false],
-        ["controller",player_n],
-      ],
-      "update_card_values",
-      %{"updates" => [["exhausted", false], ["rotation", 0]]}
-    )
-    game = increment_threat(game, player_n, 1)
-    # Set refreshed status
-    game = update_values(game, [["playerData", player_n, "refreshed", true]]);
-  end
-
-  def new_round(game, player_n, user_id) do
-    # Change phase and round
-    is_host = player_n == leftmost_non_eliminated_player_n(game)
-    game = if is_host do
-      update_values(game,[
-        ["phaseId", "Resource"],
-        ["stepId", "1.R"],
-        ["roundNumber", game["roundNumber"]+1]
-      ])
-    else
-      game
-    end
-    # Draw card(s)
-    cards_per_round = game["playerData"][player_n]["cardsDrawn"]
-    game = if cards_per_round > 0 do Enum.reduce(1..cards_per_round, game, fn(n, acc) ->
-        acc = draw_card(acc, player_n)
-      end)
-    else
-      game
-    end
-    # Add a resource to each hero
-    game = action_on_matching_cards(game, [
-        ["sides","sideUp","type","Hero"],
-        ["controller",player_n],
-        ["groupType","play"]
-      ],
-      "increment_token",
-      %{"token_type" => "resource", "increment" => 1}
-    )
-    # Reset willpower count and refresh status
-    game = update_values(game,[
-      ["playerData", player_n, "willpower", 0],
-      ["playerData", player_n, "refreshed", false]
-    ])
-    # Add custom set tokens per round
-    game = action_on_matching_cards(game, [
-        ["controller",player_n],
-        ["groupType","play"]
-      ],
-      "apply_tokens_per_round",
-      %{}
-    );
-    if is_host do game = action_on_matching_cards(game, [
-          ["controller","shared"],
-          ["groupType","play"]
-        ],
-        "apply_tokens_per_round",
-        %{}
-      );
-    else
-      game
-    end
-    # Uncommit all characters to the quest
-    game = action_on_matching_cards(game, [
-        ["controller",player_n]
-      ],
-      "update_card_values",
-      %{"updates" => [["committed", false]]}
-    );
-    # Save replay
-    game = save_replay(game, user_id);
-  end
-
-  def refresh_and_new_round(game, player_n, user_id) do
-    game
-    |> refresh(player_n)
-    |> new_round(player_n, user_id)
-  end
-
-  def draw_card(game, player_n) do
-    stack_ids = get_stack_ids(game, player_n<>"Deck")
-    if Enum.count(stack_ids) > 0 do
-      move_stack(game, Enum.at(stack_ids, 0), player_n<>"Hand", -1)
-    else
-      game
-    end
-  end
-
-  def increment_threat(game, player_n, increment) do
-    current_threat = game["playerData"][player_n]["threat"]
-    new_threat = current_threat + increment
-    new_threat = if new_threat < 0 do 0 else new_threat end
-    put_in(game["playerData"][player_n]["threat"], new_threat)
-  end
-
   def reset_game(game) do
     Game.new(game["gameDef"], game["options"])
-  end
-
-  def reveal_encounter(game, player_n, options) do
-    stack_ids = get_stack_ids(game, "sharedEncounter")
-    if Enum.count(stack_ids) > 0 do
-      move_stack(game, Enum.at(stack_ids, 0), "sharedStaging", -1)
-    else
-      game
-    end
-  end
-
-  def rotate_list_left(list) do
-    nl = if Enum.count(list) > 0 do
-      Enum.slice(list, 1, Enum.count(list)) ++ [Enum.at(list,0)]
-    else
-      []
-    end
-  end
-
-  def get_non_eliminated_players(game) do
-    Enum.reduce(1..game["numPlayers"], [], fn(n, acc) ->
-      player_n = "player"<>Integer.to_string(n)
-      acc = if game["playerData"][player_n]["eliminated"] do
-        acc
-      else
-        acc ++ [player_n]
-      end
-    end)
-  end
-
-  def get_player_order(game) do
-    # Get list of non-eliminated players
-    players = get_non_eliminated_players(game)
-    # Rotate list until first player is first
-    Enum.reduce_while(players, players, fn(player_n, acc) ->
-      if game["firstPlayer"] == Enum.at(acc, 0) do
-        {:halt, acc}
-      else
-        {:cont, rotate_list_left(acc)}
-      end
-    end)
-  end
-
-  def deal_player_n_shadows(game, player_n) do
-    # Get engaged enemy cards
-    criteria = [["groupId", player_n<>"Engaged"], ["cardIndex", 0], ["sides", "sideUp", "type", "Enemy"]]
-    engaged_enemy_cards = get_cards_matching_criteria(game, criteria)
-    # Get list of engagements costs
-    engagement_cost_list = Enum.reduce(engaged_enemy_cards, [], fn(card, acc)->
-      engagement_cost = get_value_from_cardpath(card, ["sides", "sideUp", "engagementCost"])
-      acc = acc ++ [%{"engagement_cost" => engagement_cost, "id" => card["id"]}]
-    end)
-    # Sort by engagement cost
-    sorted_enemy_list = Enum.reverse(Enum.sort_by(engagement_cost_list, &Map.fetch(&1, "engagement_cost")))
-    # Deal shadows
-    Enum.reduce(sorted_enemy_list, game, fn(item, acc) ->
-      acc = deal_shadow(acc, item["id"])
-    end)
-  end
-
-  def deal_all_shadows(game) do
-    player_order = get_player_order(game)
-    Enum.reduce(player_order, game, fn(player_n, acc) ->
-      deal_player_n_shadows(acc, player_n)
-    end)
-  end
-
-  def update_value(obj, update) do
-    case Enum.count(update) do
-      0 ->
-        obj
-      1 ->
-        Enum.at(update, 0)
-      _ ->
-        put_in(obj[Enum.at(update,0)], update_value(obj[Enum.at(update,0)], List.delete_at(update, 0)))
-    end
-  end
-
-  def update_values(game, updates) do
-    Enum.reduce(updates, game, fn(update, acc) ->
-      acc = update_value(acc, update)
-    end)
-  end
-
-
-  def shuffle_group(game, group_id) do
-    shuffled_stack_ids = get_stack_ids(game, group_id) |> Enum.shuffle
-    update_stack_ids(game, group_id, shuffled_stack_ids)
-  end
-
-  def get_player_n(game, user_id) do
-    info = game["playerInfo"]
-    if user_id == nil do
-      nil
-    else
-      cond do
-        info["player1"]["id"] == user_id -> "player1"
-        info["player2"]["id"] == user_id -> "player2"
-        info["player3"]["id"] == user_id -> "player3"
-        info["player4"]["id"] == user_id -> "player4"
-        true -> nil
-      end
-    end
   end
 
   def create_card_in_group(game, group_id, load_list_item, game_def) do
@@ -1697,38 +606,45 @@ defmodule DragnCardsGame.GameUI do
     |> insert_stack_in_group(group_id, new_stack["id"], group_size)
     |> update_stack(new_stack)
     |> update_card(new_card)
-    |> update_card_state(new_card["id"], false, nil)
+    |> update_card_state(new_card["id"], nil)
     IO.inspect("create_card_in_group 3")
     game
   end
 
   def load_card(game, load_list_item, game_def) do
     quantity = load_list_item["quantity"]
-    group_id = load_list_item["loadGroupId"]
-    IO.puts("load_card")
-    IO.inspect(load_list_item)
-    if quantity > 0 do
-      Enum.reduce(1..quantity, game, fn(index, acc) ->
-        stack_ids = get_stack_ids(game, group_id)
-        acc = create_card_in_group(acc, group_id, load_list_item, game_def)
-      end)
-    else
+
+    if quantity <= 0 do
       game
+    else
+      group_id = load_list_item["loadGroupId"]
+      IO.puts("load_card")
+      IO.inspect(load_list_item)
+
+      1..quantity
+      |> Enum.reduce(game, fn(_index, acc) ->
+        create_card_in_group(acc, group_id, load_list_item, game_def)
+      end)
     end
   end
 
   def shuffle_changed_decks(old_game, new_game) do
-    group_by_id = new_game["groupById"]
-    Enum.reduce(group_by_id, new_game, fn({group_id, group}, acc) ->
-      # Check if the number of stacks in the deck has changed, and if so, we shuffle
+    new_game["groupById"]
+    |> Enum.reduce(new_game, fn({group_id, group}, acc) ->
       old_stack_ids = get_stack_ids(old_game, group_id)
       new_stack_ids = get_stack_ids(new_game, group_id)
-      acc = if group["type"] == "deck" and Enum.count(old_stack_ids) != Enum.count(new_stack_ids) do
+      # Check if the number of stacks in the deck has changed, and if so, we shuffle
+      if group.shuffleOnLoad && length(old_stack_ids) != length(new_stack_ids) do
         shuffle_group(acc, group_id)
       else
         acc
       end
     end)
+  end
+
+  def shuffle_group(gameui, group_id) do
+    shuffled_stack_ids = get_stack_ids(gameui, group_id) |> Enum.shuffle
+    update_stack_ids(gameui, group_id, shuffled_stack_ids)
   end
 
   def load_cards(game, player_n, load_list, game_def) do
@@ -1813,106 +729,6 @@ defmodule DragnCardsGame.GameUI do
     # else
     #   game
     # end
-  end
-
-  # Obtain a flattened list of all cards in the game, where each card has the additional keys group_id, stack_index, and card_index
-  def flat_list_of_cards(game) do
-    card_by_id = game["cardById"]
-    all_cards = Enum.reduce(card_by_id, [], fn({card_id, card}, acc) ->
-      my_gsc = gsc(game, card_id)
-      {group_id, stack_index, card_index} = my_gsc
-      group_type = get_group_type(game, group_id)
-      stack = get_stack_by_card_id(game, card_id)
-      card = Map.merge(card, %{"groupId" => group_id, "stackIndex" => stack_index, "stackId" => stack["id"], "cardIndex" => card_index, "groupType" => group_type})
-      acc ++ [card]
-    end)
-  end
-
-  # Criteria is a list like: [["sides","sideUp","type","Hero"], ["controller",playerN], ["groupType","play"]],
-  def get_cards_matching_criteria(game, criteria) do
-    flat_list = flat_list_of_cards(game)
-    Enum.reduce(flat_list, [], fn(card, acc) ->
-      acc = if passes_criteria(card, criteria) do
-        acc ++ [card]
-      else
-        acc
-      end
-    end)
-  end
-
-  def action_on_matching_cards(game, criteria, action, options \\ nil) do
-    flat_list = flat_list_of_cards(game)
-    Enum.reduce(flat_list, game, fn(card, acc) ->
-      acc = if passes_criteria(card, criteria) do
-        card_action(acc, card["id"], action, options)
-      else
-        acc
-      end
-    end)
-  end
-
-  def next_player(game, player_n) do
-    seated_player_ns = get_non_eliminated_players(game)
-    seated_player_ns2 = seated_player_ns ++ seated_player_ns
-    next = Enum.reduce(Enum.with_index(seated_player_ns2), nil, fn({player_i, index}, acc) ->
-      if !acc && player_i == player_n do
-        acc = Enum.at(seated_player_ns2, index+1)
-      else
-        acc
-      end
-    end)
-    if next == player_n do
-      nil
-    else
-      next
-    end
-    next
-  end
-
-  def pass_first_player_token(game) do
-    current_first_player = game["firstPlayer"]
-    next_first_player = next_player(game, current_first_player)
-    if !next_first_player do
-      game
-    else
-      put_in(game["firstPlayer"], next_first_player)
-    end
-  end
-
-  # List of PlayerN strings of players that are seated and not eliminated
-  def seated_non_eliminated(game) do
-    player_info = game["playerInfo"]
-    player_data = game["playerData"]
-    Enum.reduce(1..game["numPlayers"], [], fn(player_n, acc) ->
-      acc = if player_info[player_n] && !player_data[player_n]["eliminated"] do
-        acc ++ [player_n]
-      else
-        acc
-      end
-    end)
-  end
-
-  # Get leftmost player that is not elimiated. Useful for once per round actions like passing 1st player token so
-  # that it doesn't get passed twice
-  def leftmost_non_eliminated_player_n(game) do
-    seated_player_ns = seated_non_eliminated(game)
-    Enum.at(seated_player_ns,0) || "player1"
-  end
-
-  # Increment a player's threat
-  def increment_threat(game, player_n, increment) do
-    current_threat = game["playerData"][player_n]["threat"];
-    put_in(game["playerData"][player_n]["threat"], current_threat + increment)
-  end
-
-  # Increment a player's willpower
-  def increment_willpower(game, player_n, increment) do
-    current_willpower = game["playerData"][player_n]["willpower"];
-    if increment do
-      put_in(game["playerData"][player_n]["willpower"], current_willpower + increment)
-    else
-      game
-    end
   end
 
 end

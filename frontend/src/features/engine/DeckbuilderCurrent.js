@@ -28,6 +28,7 @@ export const DeckbuilderCurrent = React.memo(({currentGroupId, setCurrentGroupId
     }
   }, [numChanges]);
 
+  console.log("Rendering DeckbuilderCurrent", cardDb);
   if (Object.keys(cardDb).length === 0) return(
     <div className="bg-gray-800" style={{width:"20%"}}>
       <div className="flex h-full w-full items-center justify-center">
@@ -75,7 +76,7 @@ export const DeckbuilderCurrent = React.memo(({currentGroupId, setCurrentGroupId
     for (var loadListItem of currentDeck.load_list) {
       exportList.push({
         ...loadListItem,
-        "name (not required)": cardDb[loadListItem.uuid]?.A?.name,
+        "_name": cardDb[loadListItem.uuid]?.A?.name,
       })
     }
     const exportName = currentDeck.name;
@@ -139,14 +140,15 @@ export const DeckbuilderCurrent = React.memo(({currentGroupId, setCurrentGroupId
               <div 
                 className={"text-white pl-3 py-1 mt-2 cursor-pointer " + (currentGroupId === groupId ? "bg-red-800" : "bg-gray-900")}
                 onClick={() => setCurrentGroupId(groupId)}>
-                {groupInfo.label}
+                {groupInfo.label} ({currentDeck?.load_list?.length})
               </div>
               {currentDeck?.load_list?.map((loadListItem, index) => {
                 const cardUuid = loadListItem.uuid;
+                console.log("DeckbuilderCurrent 2", loadListItem, cardUuid, cardDb[cardUuid])
                 if (loadListItem.loadGroupId === groupId)
                 return(
                   <div className="relative p-1 bg-gray-700 text-white"
-                    onMouseMove={() => {setHoverCardDetails(cardDb[cardUuid])}}
+                    onMouseMove={() => {setHoverCardDetails({...cardDb[cardUuid], leftSide: false})}}
                     onMouseLeave={() => setHoverCardDetails(null)}>
                     <div 
                       className={keyClass} 

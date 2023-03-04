@@ -8,37 +8,38 @@ import { useDispatch, useSelector } from "react-redux";
 import BroadcastContext from "../../contexts/BroadcastContext";
 import { useGameDefinition } from "./functions/useGameDefinition";
 import { usePlugin } from "./functions/usePlugin";
-import { Divider } from "@material-ui/core";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faChevronDown, faChevronLeft, faChevronRight, faCross, faDownload, faPlay, faPlus, faSave, faTrash, faUpload } from "@fortawesome/free-solid-svg-icons";
-import { faXmarkCircle } from "@fortawesome/free-regular-svg-icons";
 import useProfile from "../../hooks/useProfile";
-import { useAuthOptions } from "../../hooks/useAuthOptions";
-import axios from "axios";
-import useDataApi from "../../hooks/useDataApi";
 import { RotatingLines } from "react-loader-spinner";
 import { DeckbuilderTable } from "./DeckbuilderTable";
 import { DeckbuilderCurrent } from "./DeckbuilderCurrent";
 import { DeckbuilderMyDecks } from "./DeckbuilderMyDecks";
+import useDataApi from "../../hooks/useDataApi";
 
-const CardImage = ({url, top, height}) => {
-  return(
+const CardImage = ({url, top, height, leftSide}) => {
+  const style = {
+    top,
+    height,
+    borderRadius: '5%',
+    MozBoxShadow: '0 0 50px 20px black',
+    WebkitBoxShadow: '0 0 50px 20px black',
+    boxShadow: '0 0 50px 20px black',
+    zIndex: 1e6,
+    position: 'fixed'
+  };
+  if (leftSide) {
+    style.left = '0%';
+  } else {
+    style.right = '0%';
+  }
+  
+  return (
     <img 
-      className="absolute"
+      className="fixed"
       src={url} 
       onError={(_e)=>{}}
-      style={{
-        right: "0%",
-        top: top,
-        borderRadius: '5%',
-        MozBoxShadow: '0 0 50px 20px black',
-        WebkitBoxShadow: '0 0 50px 20px black',
-        boxShadow: '0 0 50px 20px black',
-        zIndex: 1e6,
-        height: height,
-      }}
+      style={style}
     />
-  )
+  );
 }
 
 export const DeckbuilderModal = React.memo(({}) => {
@@ -64,9 +65,9 @@ export const DeckbuilderModal = React.memo(({}) => {
   useEffect(() => {
     if (user?.id) doFetchUrl(myDecksUrl);
   }, [user]);
-  console.log('Rendering Decks', data);
 
   if (!cardDb) return;
+  console.log("builder cardDb", cardDb)
 
   const modifyDeckList = (cardUuid, quantity, groupId, existingIndex = null) => {
     console.log("modifyDeckList", cardUuid, quantity, groupId, existingIndex)
@@ -112,8 +113,8 @@ export const DeckbuilderModal = React.memo(({}) => {
           overflowY: "scroll",
         }
       }}>
-      {hoverCardDetails?.A?.imageUrl && <CardImage url={hoverCardDetails.A.imageUrl} top={"0%"} height={hoverCardDetails?.B?.imageUrl ? "50%" : "70%"}/>}
-      {hoverCardDetails?.B?.imageUrl && <CardImage url={hoverCardDetails.B.imageUrl} top={"50%"} height={"50%"}/>}
+      {hoverCardDetails?.A?.imageUrl && <CardImage url={hoverCardDetails.A.imageUrl} leftSide={hoverCardDetails?.leftSide} top={hoverCardDetails?.B?.imageUrl ? "0%" : "50%"} height={"50%"}/>}
+      {hoverCardDetails?.B?.imageUrl && <CardImage url={hoverCardDetails.B.imageUrl} leftSide={hoverCardDetails?.leftSide} top={"50%"} height={"50%"}/>}
       {/* <h1 className="mb-2">Spawn a custom card</h1> */}
       {isLoading &&
         <div className="absolute flex h-full w-full items-center justify-center opacity-80 bg-gray-800">

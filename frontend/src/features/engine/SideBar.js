@@ -30,7 +30,7 @@ export const SideBar = React.memo(({}) => {
   }, [cardById])
 
   return(
-    <div className="bg-gray-500" style={{width:"6vh", zIndex: 1e6}}>
+    <div className="bg-gray-500" style={{width:"6vh", zIndex: 1e4}}>
       <div className="bg-red-300" style={{height:"3vh"}}>
         <SideBarNewRound/>
       </div>

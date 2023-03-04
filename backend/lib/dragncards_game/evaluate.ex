@@ -268,20 +268,12 @@ defmodule DragnCardsGame.Evaluate do
               dest_stack_index = evaluate(game, Enum.at(code, 3))
               dest_card_index = evaluate(game, Enum.at(code, 4))
               combine = if argc >= 5 do evaluate(game, Enum.at(code, 5)) else nil end
-              preserve_state = if argc >= 6 do evaluate(game, Enum.at(code, 6)) else nil end
               IO.puts("moving card 1")
-              IO.inspect({card_id, dest_group_id, dest_stack_index, combine, preserve_state})
-              GameUI.move_card(game, card_id, dest_group_id, dest_stack_index, dest_card_index, combine, preserve_state)
+              IO.inspect({card_id, dest_group_id, dest_stack_index, combine})
+              GameUI.move_card(game, card_id, dest_group_id, dest_stack_index, dest_card_index, combine)
             else
               game
             end
-          "DISCARD_CARD" ->
-            card_id = evaluate(game, Enum.at(code, 1))
-            card = game["cardById"][card_id]
-            IO.inspect(card_id)
-            IO.inspect(card)
-            Logger.debug("here")
-            GameUI.move_card(game, card_id, card["discardGroupId"], 0, 0)
           "DELETE_CARD" ->
             card_id = evaluate(game, Enum.at(code, 1))
             IO.inspect(card_id)
@@ -296,7 +288,7 @@ defmodule DragnCardsGame.Evaluate do
             IO.inspect(card_id)
             IO.inspect(dest_card["groupId"])
             IO.inspect(dest_card["stackIndex"])
-            GameUI.move_card(game, card_id, dest_card["groupId"], dest_card["stackIndex"], -1, true, false)
+            GameUI.move_card(game, card_id, dest_card["groupId"], dest_card["stackIndex"], -1, true)
           "DRAW_CARD" ->
             argc = Enum.count(code) - 1
             num = if argc == 0 do 1 else evaluate(game, Enum.at(code, 1)) end
@@ -308,8 +300,7 @@ defmodule DragnCardsGame.Evaluate do
             dest_group_id = evaluate(game, Enum.at(code, 2))
             dest_stack_index = evaluate(game, Enum.at(code, 3))
             combine = if argc >= 4 do evaluate(game, Enum.at(code, 4)) else nil end
-            preserve_state = if argc >= 5 do evaluate(game, Enum.at(code, 5)) else nil end
-            GameUI.move_stack(game, stack_id, dest_group_id, dest_stack_index, combine, preserve_state)
+            GameUI.move_stack(game, stack_id, dest_group_id, dest_stack_index, combine)
           "DISCARD_STACK" ->
             stack_id = evaluate(game, Enum.at(code, 1))
             stack = game["stackById"][stack_id]

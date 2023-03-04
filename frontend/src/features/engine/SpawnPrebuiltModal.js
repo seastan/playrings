@@ -1,14 +1,11 @@
-import React, {useContext, useEffect, useState} from "react";
-import { useDispatch, useSelector } from 'react-redux';
+import React, {useContext, useState} from "react";
+import { useDispatch } from 'react-redux';
 import ReactModal from "react-modal";
 import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { CYCLEORDER, CYCLEINFO } from "../plugins/lotrlcg/definitions/constants";
-import { calcHeightCommon, DropdownItem, GoBack } from "./DropdownMenuHelpers";
+import { DropdownItem, GoBack } from "./DropdownMenuHelpers";
 import useProfile from "../../hooks/useProfile";
-import { setShowModal, setTooltipIds, setTyping } from "../store/playerUiSlice";
-import store from "../../store";
-import { loadDeckFromXmlText, refinedLoadList } from "../plugins/lotrlcg/functions/helpers";
+import { setShowModal, setTyping } from "../store/playerUiSlice";
 import { useGameL10n } from "../../hooks/useGameL10n";
 import BroadcastContext from "../../contexts/BroadcastContext";
 import { useGameDefinition } from "./functions/useGameDefinition";
@@ -27,12 +24,9 @@ export const SpawnPrebuiltModal = React.memo(({}) => {
     const dispatch = useDispatch();
     const l10n = useGameL10n();
     const gameDef = useGameDefinition();
-    const privacyType = useSelector(state => state?.gameUi?.privacyType);
-    const options = useSelector(state => state.gameUi?.game?.options);
     const myUser = useProfile();
     const [filteredIds, setFilteredIds] = useState([]);
-    const [activeMenu, setActiveMenu] = useState({"name": "Load a deck", "subMenus": gameDef.deckMenu});
-    const [returnToMenu, setReturnToMenu] = useState(null);
+    const [activeMenu, setActiveMenu] = useState({"name": "Load a deck", ...gameDef.deckMenu});
     const [menuHeight, setMenuHeight] = useState(null);
     const [searchString, setSearchString] = useState("");
     const loadList = useLoadList();
@@ -67,10 +61,6 @@ export const SpawnPrebuiltModal = React.memo(({}) => {
       loadList(gameDef.preBuiltDecks[props.deckListId].cards);
       chatBroadcast("game_update",{message: "loaded a deck."});
       dispatch(setShowModal(null))
-    }
-
-    const calcHeight = (el) => {
-      calcHeightCommon(el, setMenuHeight);
     }
 
     return(
@@ -130,9 +120,7 @@ export const SpawnPrebuiltModal = React.memo(({}) => {
         {searchString === "" &&
         <div 
           className="modalmenu bg-gray-800" 
-          style={{ height: menuHeight}}
-          >
-          {/* Cycle Menu */}
+          style={{ height: menuHeight}}>
           <div className="menu">
             {activeMenu.goBackMenu ?
               <GoBack clickCallback={handleGoBackClick}/> 

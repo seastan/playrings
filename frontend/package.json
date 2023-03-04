@@ -114,6 +114,7 @@
     ]
   },
   "devDependencies": {
-    "find-unused-exports": "^5.0.0"
+    "find-unused-exports": "^5.0.0",
+    "jest": "^24.9.0"
   }
 }

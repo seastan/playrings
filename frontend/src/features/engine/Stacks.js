@@ -90,8 +90,7 @@ export const Stacks = React.memo(({
           isDropDisabled={false}
           isDraggingFrom={Boolean(dropSnapshot.draggingFromThisWith)}
           {...dropProvided.droppableProps}
-          groupType={groupType}
-        >
+          groupType={groupType}>
           <div className="h-full">
             <PileImage 
               groupType={groupType} 

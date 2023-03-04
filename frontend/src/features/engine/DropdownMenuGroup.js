@@ -133,7 +133,7 @@ export const DropdownMenuGroup = React.memo(({
             {playerIList.map((playerI, _index) => {
               return(
                 <DropdownItem
-                  rightIcon={<FontAwesomeIcon icon={group.defaultPeeking.includes(playerI) ? faCheck : null}/>}
+                  rightIcon={<FontAwesomeIcon icon={group?.defaultPeeking?.includes(playerI) ? faCheck : null}/>}
                   action={"setVisibility"}
                   value={playerI}
                   clickCallback={handleDropdownClick}>
