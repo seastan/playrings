@@ -3021,7 +3021,7 @@
     {
       "actionListId": null,
       "label": null,
-      "condition": ["EQUAL", "$ACTIVE_CARD.groupType", "horizontalFan"]
+      "condition": ["EQUAL", "$ACTIVE_CARD.layoutType", "horizontalFan"]
     },
     {
       "actionListId": "flipCard",
@@ -3038,7 +3038,7 @@
     {
       "actionListId": "shuffleIntoDeck",
       "label": "shuffle",
-      "condition": ["EQUAL", "$ACTIVE_CARD.groupType", "pile"]
+      "condition": ["EQUAL", "$ACTIVE_CARD.layoutType", "pile"]
     },
     {
       "actionListId": "flipCard",

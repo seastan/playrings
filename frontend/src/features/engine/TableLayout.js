@@ -35,8 +35,7 @@ export const TableRegion = React.memo(({
       {beingBrowsed ? null :
         <Group
           groupId={groupId}
-          groupType={region.type}
-          hideTitle={region.hideTitle}
+          region={region}
           registerDivToArrowsContext={registerDivToArrowsContext}
         />
       }

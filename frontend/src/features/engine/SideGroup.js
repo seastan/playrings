@@ -61,7 +61,7 @@ export const SideGroup = React.memo(({
           <div className="w-full h-full mt-12">
             <Stacks
               groupId={sideGroupId}
-              groupType={"vertical"}
+              layoutType={"vertical"}
               registerDivToArrowsContext={registerDivToArrowsContext}
             />
           </div>

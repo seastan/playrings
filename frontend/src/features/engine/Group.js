@@ -10,11 +10,10 @@ import { useGameDefinition } from "./functions/useGameDefinition";
 
 export const Group = React.memo(({
   groupId,
-  groupType,
-  hideTitle,
+  region,
   registerDivToArrowsContext
 }) => {
-  console.log("Rendering Group ",groupId, hideTitle);
+  console.log("Rendering Group ",groupId);
   const dispatch = useDispatch();
   const l10n = useGameL10n();
   const gameDef = useGameDefinition();
@@ -44,24 +43,26 @@ export const Group = React.memo(({
   const tablename = gameDef.groups[group.id].tableName;
   return(
     <div className="h-full w-full">
-      {hideTitle ? null :
+      
         <div
           className="relative h-full float-left select-none text-gray-500"
           style={{width:"17px"}}>
             <div className="relative w-full h-full">
+            {region.hideTitle ? null :
               <span 
-                className="absolute mt-1" 
-                style={{fontSize: "1.7vh", top: tablename === "Encounter" ? "55%" : "50%", left: "50%", transform: `translate(-50%, -40%) rotate(90deg)`, whiteSpace: "nowrap"}}>
+                className="absolute mt-1 overflow-hidden" 
+                style={{fontSize: "1.5vh", top: "50%", left: "50%", transform: `translate(-50%, -70%) rotate(90deg)`, whiteSpace: "nowrap"}}>
                 {playerN && <FontAwesomeIcon onClick={(event) => handleEyeClick(event)}  className="hover:text-white mr-2" style={{transform: `rotate(-90deg)`}} icon={faEye}/>}
                 {playerN && <FontAwesomeIcon onClick={(event) => handleBarsClick(event)}  className="hover:text-white mr-2" style={{transform: `rotate(-90deg)`}} icon={faBars}/>}
-                  {l10n(tablename) + (groupType === "pile" ? " ("+numStacks+")" : "")}
+                  {l10n(tablename) + (region.type === "pile" ? " ("+numStacks+")" : "")}
               </span>
+            }
             </div>
         </div>
-      }
+      
       <Stacks
         groupId={group.id}
-        groupType={groupType}
+        region={region}
         selectedStackIndices={[...Array(numStacks).keys()]}
         registerDivToArrowsContext={registerDivToArrowsContext}
       />

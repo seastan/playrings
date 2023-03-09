@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useSelector } from 'react-redux';
 import styled from "@emotion/styled";
 import { Droppable } from "react-beautiful-dnd";
@@ -18,37 +18,46 @@ const Container = styled.div`
   height: 100%;
   width: calc(100% - 17px);
   user-select: none;
-  overflow-x: ${props => ["deck", "discard", "vertical"].includes(props.groupType) ? "hidden" : "auto"};
-  overflow-y: ${props => props.groupType === "vertical" ? "auto" : "hidden"};
+  overflow-x: ${props => props.direction === "vertical" ? "hidden" : "auto"};
+  overflow-y: ${props => props.direction === "vertical" ? "auto" : "hidden"};
   max-height: 100%;
   position: relative;
 `;
 
-const DropZone = styled.div`
+export const DropZone = styled.div`
   /* stop the list collapsing when empty */
-  display: ${props => ["deck", "discard", "vertical"].includes(props.groupType) ? "" : "flex"};
+  position: absolute;
+  display: ${props => props.direction === "vertical" ? "" : "flex"};
   overflow-x: none;
   width: 100%;
   height: 100%;
   min-height: 100%;
-  padding: 0 0 0 0;
+  padding: 0.5vh;
+  background: purple;
+  /* center child element vertically */
+  display: flex;
 `;
 
 const StacksList = React.memo(({
   isDraggingOver,
   isDraggingFrom,
   groupId,
-  groupType,
+  region,
   stackIds,
+  mouseHere,
   selectedStackIndices,
   registerDivToArrowsContext
 }) => {
-  const pile = groupType=="pile";
+  const draggingFromGroupId = useSelector(state => state?.playerUi?.draggingFromGroupId);
+  const isPile = region.type == "pile";
   // Truncate stacked piles
-  console.log("Rendering StacksList", {groupId, groupType, stackIds});
-  var stackIdsToShow;
-  if (pile && stackIds.length>1) stackIdsToShow = [stackIds[0]]
-  else stackIdsToShow = stackIds;
+  console.log("Rendering StacksList", {groupId, region, draggingFromGroupId});
+  var stackIdsToShow = stackIds;
+  if (isPile) {
+    stackIdsToShow = [];
+    if (stackIds.length > 0 && ((mouseHere && draggingFromGroupId === null) || draggingFromGroupId === groupId)) stackIdsToShow = [stackIds[0]];
+  }
+
   if (!stackIdsToShow) return null;
   return (
     stackIdsToShow?.map((stackId, stackIndex) => (
@@ -56,13 +65,12 @@ const StacksList = React.memo(({
         <Stack
           key={stackId}
           groupId={groupId}
-          groupType={groupType}
+          region={region}
           stackIndex={stackIndex}
           stackId={stackId}
           numStacks={selectedStackIndices.length}
           registerDivToArrowsContext={registerDivToArrowsContext}
-          hidden={pile && isDraggingOver && !isDraggingFrom}
-        /> 
+          hidden={isPile && isDraggingOver && !isDraggingFrom}/> 
       ) : null 
     ))
   ) 
@@ -70,11 +78,12 @@ const StacksList = React.memo(({
 
 export const Stacks = React.memo(({
   groupId,
-  groupType,
+  region,
   selectedStackIndices,
   registerDivToArrowsContext
 }) => {
-  console.log("Rendering Stacks for ",groupId, groupType);
+  console.log("Rendering Stacks for ",groupId, region);
+  const [mouseHere, setMouseHere] = useState(false);
   const group = useSelector(state => state?.gameUi?.game?.groupById?.[groupId]);
   const stackIds = group.stackIds;
   return(
@@ -82,35 +91,35 @@ export const Stacks = React.memo(({
       droppableId={groupId}
       key={groupId}
       isDropDisabled={false}
-      isCombineEnabled={group.inPlay}
-      direction={["pile", "vertical"].includes(groupType) ? "vertical" : "horizontal"}>
+      isCombineEnabled={group.canHaveAttachments}
+      direction={region.direction}>
       {(dropProvided, dropSnapshot) => (
         <Container
           isDraggingOver={dropSnapshot.isDraggingOver}
           isDropDisabled={false}
           isDraggingFrom={Boolean(dropSnapshot.draggingFromThisWith)}
           {...dropProvided.droppableProps}
-          groupType={groupType}>
-          <div className="h-full">
+          direction={region.direction}
+          onMouseEnter={() => setMouseHere(region.type === "pile" && true)} 
+          onMouseLeave={() => setMouseHere(region.type === "pile" && false)}>
             <PileImage 
-              groupType={groupType} 
+              region={region} 
               stackIds={stackIds} 
               isDraggingOver={dropSnapshot.isDraggingOver} 
               isDraggingFrom={Boolean(dropSnapshot.draggingFromThisWith)}>
             </PileImage>
-            <DropZone ref={dropProvided.innerRef} groupType={groupType}>
+            <DropZone ref={dropProvided.innerRef} direction={region.direction}>
               <StacksList
                 isDraggingOver={dropSnapshot.isDraggingOver}
                 isDraggingFrom={Boolean(dropSnapshot.draggingFromThisWith)}
                 groupId={groupId}
-                groupType={(groupType ? groupType : group.type)} 
+                region={region} 
                 stackIds={stackIds}
+                mouseHere={mouseHere}
                 selectedStackIndices={(selectedStackIndices ? selectedStackIndices : [...Array(stackIds.length).keys()])}
-                registerDivToArrowsContext={registerDivToArrowsContext}
-              />
+                registerDivToArrowsContext={registerDivToArrowsContext}/>
               {dropProvided.placeholder}
             </DropZone>
-          </div>
         </Container>
       )}
     </Droppable>

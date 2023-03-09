@@ -31,7 +31,7 @@ export const ReminderButton = React.memo(({
       clicked: false,
       setIsActive: null,
       groupId: null,
-      groupType: null,
+      layoutType: null,
       cardIndex: null,
   }));
   }

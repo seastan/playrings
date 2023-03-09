@@ -257,8 +257,14 @@ defmodule DragnCardsGame.GameUI do
     card = Enum.reduce(dest_group["forceOnCards"], card, fn({key, val}, acc) ->
         put_in(acc, [key], val)
       end)
-      IO.inspect("&&&&&&&&&&&&&&&&&&&&&&&&& 2")
-      IO.inspect(card)
+
+    card = case card["currentSide"] do
+      "A" -> put_in(card["peeking"], %{})
+      _ -> card
+    end
+
+    IO.inspect("&&&&&&&&&&&&&&&&&&&&&&&&& 2")
+    IO.inspect(card)
 
     update_card(game, card)
   end

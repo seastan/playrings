@@ -8,7 +8,7 @@ import { functionOnMatchingCards, listOfMatchingCards } from "../../../engine/fu
 import { loadDeckFromXmlText, getRandomIntInclusive } from "../functions/helpers";
 import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { setCardSizeFactor, setLoaded, setRandomNumBetween, setShowModal, setTouchAction, setTouchMode } from "../../../store/playerUiSlice";
+import { setZoomFactor, setLoaded, setRandomNumBetween, setShowModal, setTouchAction, setTouchMode } from "../../../store/playerUiSlice";
 import { useGameL10n } from "../../../../hooks/useGameL10n";
 import BroadcastContext from "../../../../contexts/BroadcastContext";
 import { useGameDefinition } from "../../../engine/functions/useGameDefinition";
@@ -30,7 +30,7 @@ export const TopBarMenu = React.memo(({}) => {
   const isHost = myUserID === createdBy;  
   const playerN = useSelector(state => state?.playerUi?.playerN);
   const cardsPerRound = useSelector(state => state.gameUi?.game.playerData[playerN]?.cardsDrawn);
-  const cardSizeFactor = useSelector(state => state?.playerUi?.cardSizeFactor);
+  const zoomFactor = useSelector(state => state?.playerUi?.zoomFactor);
   const randomNumBetween = useSelector(state => state?.playerUi?.randomNumBetween);
   
   const dispatch = useDispatch();
@@ -153,9 +153,9 @@ export const TopBarMenu = React.memo(({}) => {
         chatBroadcast("game_update",{message: "set the number of cards they draw during the resource phase to "+num+"."});
       }
     } else if (data.action === "adjust_card_size") {
-      const num = parseInt(prompt("Adjust the apparent card size for yourself only (10-1000):",Math.round(cardSizeFactor*100)));
+      const num = parseInt(prompt("Adjust the apparent card size for yourself only (10-1000):",Math.round(zoomFactor*100)));
       if (num>=10 && num<=1000) {
-        dispatch(setCardSizeFactor(num/100));
+        dispatch(setZoomFactor(num/100));
       }
     } else if (data.action === "spawn_existing") {
       dispatch(setShowModal("card"));
@@ -206,7 +206,7 @@ export const TopBarMenu = React.memo(({}) => {
         // Shuffle hand into deck
         gameBroadcast("game_action", {action: "move_stacks", options: {orig_group_id: playerI+"Hand", dest_group_id: playerI+"Deck", top_n: handSize, position: "shuffle"}})
         // Move allies to capture deck
-        gameBroadcast("game_action", {
+        gameBroadcast("game_action", { 
           action: "action_on_matching_cards", 
           options: {
             criteria:[["controller", playerI], ["sides", "A", "type", "Ally"]], 
@@ -269,7 +269,7 @@ export const TopBarMenu = React.memo(({}) => {
       gameBroadcast("game_action", {
         action: "action_on_matching_cards", 
         options: {
-            criteria:[["sides","sideUp","type","Hero"], ["groupType","play"]], 
+            criteria:[["sides","sideUp","type","Hero"], ["layoutType","play"]], 
             action: "increment_token", 
             options: {token_type: "resource", increment: 2}
         }

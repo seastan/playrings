@@ -15,7 +15,7 @@ const windowStyle = {
   width:"300px", 
   opacity: "50%",
 }
-const col1Class = "w-1/3";
+const col1Class = "w-1/ 3";
 const col2Class = "w-2/3";
 
 export const PlayersInRoom = React.memo(({}) => {

@@ -3,7 +3,7 @@
         "label": "Steward of Gondor",
         "A" : [
             {
-                "trigger": [["groupType","play"],["exhausted",false]],
+                "trigger": [["layoutType","play"],["exhausted",false]],
                 "results": [
                     {
                         "type": "card_action",
@@ -25,7 +25,7 @@
         "label": "Henamarth Riversong",
         "A" : [
             {
-                "trigger": [["groupType","play"],["exhausted",false]],
+                "trigger": [["layoutType","play"],["exhausted",false]],
                 "results": [
                     {
                         "type": "card_action",
@@ -47,7 +47,7 @@
         "label": "Unexpected Courage",
         "A" : [
             {
-                "trigger": [["groupType","play"],["exhausted",false]],
+                "trigger": [["layoutType","play"],["exhausted",false]],
                 "results": [
                     {
                         "type": "card_action",
@@ -69,7 +69,7 @@
         "label": "Fast Hitch",
         "A" : [
             {
-                "trigger": [["groupType","play"],["exhausted",false]],
+                "trigger": [["layoutType","play"],["exhausted",false]],
                 "results": [
                     {
                         "type": "card_action",
@@ -91,7 +91,7 @@
         "label": "Vilya",
         "A" : [
             {
-                "trigger": [["groupType","play"],["exhausted",false]],
+                "trigger": [["layoutType","play"],["exhausted",false]],
                 "results": [
                     {
                         "type": "card_action",
@@ -125,7 +125,7 @@
         "label": "Daeron's Runes",
         "A" : [
             {
-                "trigger": [["groupType","hand"]],
+                "trigger": [["layoutType","hand"]],
                 "results": [
                     {
                         "type": "card_action",
@@ -157,7 +157,7 @@
         "label": "Northern Tracker",
         "A" : [
             {
-                "trigger": [["groupType","play"],["committed",true]],
+                "trigger": [["layoutType","play"],["committed",true]],
                 "results": [
                     {
                         "type": "card_action",
@@ -173,7 +173,7 @@
         "label": "Elven-light",
         "A" : [
             {
-                "trigger": [["groupType","discard"]],
+                "trigger": [["layoutType","discard"]],
                 "results": [
                     {
                         "type": "card_action",
@@ -200,7 +200,7 @@
         "label": "Self Preservation",
         "A" : [
             {
-                "trigger": [["groupType","play"],["exhausted",false]],
+                "trigger": [["layoutType","play"],["exhausted",false]],
                 "results": [
                     {
                         "type": "card_action",
@@ -222,7 +222,7 @@
         "label": "Imladris Stargazer",
         "A" : [
             {
-                "trigger": [["groupType","play"],["exhausted",false]],
+                "trigger": [["layoutType","play"],["exhausted",false]],
                 "results": [
                     {
                         "type": "card_action",
@@ -247,7 +247,7 @@
         "label": "Master of the Forge",
         "A" : [
             {
-                "trigger": [["groupType","play"],["exhausted",false]],
+                "trigger": [["layoutType","play"],["exhausted",false]],
                 "results": [
                     {
                         "type": "card_action",

@@ -6,47 +6,21 @@ import { CardMouseRegion } from "./CardMouseRegion";
 import { faEye } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Target } from "./Target";
-import { AbilityToken } from "./AbilityToken";
 import { setActiveCardObj } from "../store/playerUiSlice";
 import { useCardScaleFactor } from "../../hooks/useCardScaleFactor";
 import { useGameDefinition } from "./functions/useGameDefinition";
 import { useGetDefaultAction } from "./functions/useGetDefaultAction";
 import { getFirstCardOffset, getVisibleFaceSrc } from "../definitions/common";
 
-function useTraceUpdate(props) {
-    const prev = useRef(props);
-    useEffect(() => {
-        const changedProps = Object.entries(props).reduce((ps, [k, v]) => {
-        if (prev.current[k] !== v) {
-            ps[k] = [prev.current[k], v];
-        }
-        return ps;
-        }, {});
-        if (Object.keys(changedProps).length > 0) {
-        console.log('Changed props:', changedProps);
-        }
-        prev.current = props;
-    });
-}
-
 export const Card = React.memo(({
     cardId,
     groupId,
-    groupType,
+    region,
     offset,
     cardIndex,
     registerDivToArrowsContext,
     isDragging,
-}) => {    
-    // useTraceUpdate({
-    //     cardId,
-    //     groupId,
-    //     groupType,
-    //     offset,
-    //     chatBroadcast,
-    //     cardIndex,
-    //     registerDivToArrowsContext
-    // });
+}) => { 
     const dispatch = useDispatch();
     const user = useProfile();
     const gameDef = useGameDefinition();
@@ -68,7 +42,7 @@ export const Card = React.memo(({
     const cardVisibleFace = cardSides[cardVisibleSide];
     const visibleFaceSrc = getVisibleFaceSrc(cardVisibleFace, playerN, gameDef);
     const zIndex = 1000 - cardIndex;
-    console.log('Rendering Card ',cardVisibleFace.name, gameDef?.groups?.[groupId]);
+    console.log('Rendering Card ',cardVisibleFace.name);
     const isActive = useSelector(state => {return state?.playerUi?.activeCardObj?.card?.id === cardId});
     const touchModeSpacingFactor = touchMode ? 1.5 : 1;
     const getDefaultAction = useGetDefaultAction();
@@ -87,14 +61,15 @@ export const Card = React.memo(({
     }
     // FIXME: display error if height and width still not defined?
 
-    const horizontalOffset = getFirstCardOffset(width, cardScaleFactor) + cardScaleFactor*touchModeSpacingFactor/3*offset;
+//    const horizontalOffset = getFirstCardOffset(width, cardScaleFactor) + cardScaleFactor*touchModeSpacingFactor/3*offset;
+    console.log("Offset", height, width, Math.max(height, width) - Math.min(height, width), cardScaleFactor, touchModeSpacingFactor, offset)
+    const horizontalOffset = (Math.max(height, width) - Math.min(height, width))*cardScaleFactor;//*touchModeSpacingFactor/3*(offset+1);
     const destroyed = currentFace.hitPoints > 0 && cardTokens.damage >= currentFace.hitPoints + cardTokens.hitPoints;
     const explored = currentFace.questPoints > 0 && cardTokens.progress >= currentFace.questPoints + cardTokens.hitPoints;
 
-
     var className = "";
-    if (isActive) className = "shadow-yellow"
-    if (destroyed) className = "shadow-red";
+    if (isActive) className = "shadow-yellow";
+    if (true || destroyed) className = "shadow-red";
     if (explored) className = "shadow-green";
     return (
         <div id={cardId}>
@@ -105,10 +80,10 @@ export const Card = React.memo(({
                     position: "absolute",
                     height: `${cardScaleFactor*height}vh`,
                     width: `${cardScaleFactor*width}vh`,
-                    left: `${horizontalOffset}vh`,
+                    left: region.type === "fan" ? '0%' : "50%",
                     top: "50%",
                     borderRadius: '0.6vh',
-                    transform: `translate(0%, ${groupType === "vertical" ? "0%" : "-50%"}) rotate(${cardRotation}deg)`,
+                    transform: `translate(${region.type === "fan" ? '0%' : "-50%"}, -50%) rotate(${cardRotation}deg)`,
                     zIndex: zIndex,
                     cursor: "default",
                     WebkitTransitionDuration: "0.1s",
@@ -159,13 +134,6 @@ export const Card = React.memo(({
                     zIndex={zIndex}
                     aspectRatio={width/height}
                 />
-                {isActive && <AbilityToken
-                    cardId={cardId}
-                    groupId={groupId}
-                    groupType={groupType}
-                    cardIndex={cardIndex}
-                    zIndex={zIndex}
-                />}
                 <ArrowRegion
                     cardId={cardId}
                     registerDivToArrowsContext={registerDivToArrowsContext}

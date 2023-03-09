@@ -6,7 +6,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { setStackIds, setCardIds, setGroupById } from "../store/gameUiSlice";
 import { reorderGroupStackIds } from "./Reorder";
 import store from "../../store";
-import { setTouchAction } from "../store/playerUiSlice";
+import { setDraggingFromGroupId, setTouchAction } from "../store/playerUiSlice";
 import { Table } from "./Table";
 import { useDoActionList } from "./functions/useDoActionList";
 
@@ -25,6 +25,12 @@ export const DragContainer = React.memo(({}) => {
   //const arrows4 = playerData.player4.arrows;
   const usingArrows = false; //(arrows1 && arrows1.length) || (arrows2 && arrows2.length) || (arrows3 && arrows3.length) || (arrows4 && arrows4.length);
 
+  const onBeforeDragStart = (result) => {
+    console.log("onBeforeDragStart", result)
+    dispatch(setDraggingFromGroupId(result.source.droppableId));
+  }
+
+
   const onDragEnd = (result) => {
     const game = store.getState()?.gameUi.game;
     const groupById = game.groupById;
@@ -38,6 +44,7 @@ export const DragContainer = React.memo(({}) => {
     const topOfOrigStackCardId = origStackCardIds[0];
     const topOfOrigStackCard = game.cardById[topOfOrigStackCardId];
     var destGroup = null;
+    dispatch(setDraggingFromGroupId(null));
 
     // Combine
     if (result.combine) {
@@ -105,14 +112,11 @@ export const DragContainer = React.memo(({}) => {
       doActionList(["MOVE_STACK", origStackId, destGroupId, dest.index, false, destGroupId === origGroupId])
       dispatch(setGroupById(newGroupById));
     }
-    if (touchMode && origGroup.type === "hand" && destGroup.type === "play") {
-      const cost = topOfOrigStackCard.sides.A.cost;
-      if (cost) dispatch(setTouchAction({action: "increment_token", options:{tokenType: "resource", "increment": -1, tokensLeft: cost}, type: "card"}));
-    }
+
   }
 
   return(
-    <DragDropContext onDragEnd={onDragEnd}>
+    <DragDropContext onDragEnd={onDragEnd} onBeforeDragStart={onBeforeDragStart}>
       <ArrowsBetweenDivsContextProvider>
         {({ registerDivToArrowsContext }) => (
           <>

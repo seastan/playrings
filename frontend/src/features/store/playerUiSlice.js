@@ -14,7 +14,7 @@ const initialState = {
   showHotkeys: false,
   touchMode: false,
   typing: false,
-  cardSizeFactor: 1.0,
+  zoomFactor: 1.0,
   activeCardId: null,
   activeCardObj: null,
   observingPlayerN: "player1",
@@ -32,6 +32,7 @@ const initialState = {
   sideGroupId: "sharedSetAside",
   favoriteGroupId: null,
   randomNumBetween: "3",
+  draggingFromGroupId: null,
 };
 
 const playerUiSlice = createSlice({
@@ -75,8 +76,8 @@ const playerUiSlice = createSlice({
     setTyping: (state, { payload }) => {
       state.typing = payload;
     },
-    setCardSizeFactor: (state, { payload }) => {
-      state.cardSizeFactor = payload;
+    setZoomFactor: (state, { payload }) => {
+      state.zoomFactor = payload;
     },
     setActiveCardId: (state, { payload }) => {
       state.activeCardId = payload;
@@ -123,6 +124,9 @@ const playerUiSlice = createSlice({
     setRandomNumBetween: (state, { payload }) => {
       state.randomNumBetween = payload;
     },
+    setDraggingFromGroupId: (state, { payload }) => {
+      state.draggingFromGroupId = payload;
+    },
   }
 });
 
@@ -140,7 +144,7 @@ export const {
   setShowHotkeys, 
   setTouchMode, 
   setTyping,
-  setCardSizeFactor,
+  setZoomFactor,
   setActiveCardId,
   setActiveCardObj,
   setObservingPlayerN,
@@ -156,5 +160,6 @@ export const {
   setSideGroupId,
   setFavoriteGroupId,
   setRandomNumBetween,
+  setDraggingFromGroupId,
  } = playerUiSlice.actions;
 export default playerUiSlice.reducer;

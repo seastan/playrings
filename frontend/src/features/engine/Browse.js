@@ -25,7 +25,7 @@ export const Browse = React.memo(({}) => {
   const groupId = useSelector(state => state?.playerUi?.browseGroup?.id);
   const browseGroupTopN = useSelector(state => state?.playerUi?.browseGroup?.topN);
   const group = useSelector(state => state?.gameUi?.game?.groupById?.[groupId]);
-  const groupType = group["type"];
+  const layoutType = "horizontalFan";
   const game = useSelector(state => state?.gameUi?.game);
   const parentCards = getParentCardsInGroup(game, groupId);
   const [selectedCardType, setSelectedCardType] = useState('All');
@@ -69,12 +69,12 @@ export const Browse = React.memo(({}) => {
     gameBroadcast("game_action", {action: "peek_at", options: {stack_ids: stackIds, value: false}})
     gameBroadcast("game_action", {action: "shuffle_group", options: {group_id: groupId}})
     chatBroadcast("game_update",{message: "shuffled "+gameDef.groups[groupId].name+"."})
-    if (groupType === "pile") stopPeekingTopCard();
+    if (layoutType === "pile") stopPeekingTopCard();
   }
 
   const closeAndOrder = () => {
     gameBroadcast("game_action", {action: "peek_at", options: {stack_ids: stackIds, value: false}})
-    if (groupType === "pile") stopPeekingTopCard();
+    if (layoutType === "pile") stopPeekingTopCard();
   }
 
   const closeAndPeeking = () => {
@@ -144,7 +144,7 @@ export const Browse = React.memo(({}) => {
           gameBroadcast={gameBroadcast}
           chatBroadcast={chatBroadcast}
           groupId={groupId}
-          groupType={"horizontalFan"}
+          layoutType={"horizontalFan"}
           selectedStackIndices={filteredStackIndices}
         />
       </div>

@@ -20,7 +20,7 @@ export const flatListOfCards = (game) => {
           ["stackId"]: stackId,
           ["stackIndex"]: s,
           ["cardIndex"]: c,
-          ["groupType"]: group.type,
+          ["layoutType"]: group.type,
         };
         allCards.push(indexedCard);
       }
