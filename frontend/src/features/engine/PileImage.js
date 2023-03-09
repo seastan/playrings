@@ -77,7 +77,7 @@ export const PileImage = React.memo(({
 
   // Calculate properties of the ImageElement
   const stackHeight = visibleFace?.height * cardScaleFactor;
-  const stackWidth = rowSpacing * zoomFactor;
+  const stackWidth = visibleFace?.width * cardScaleFactor;
 
   return(
     <DropZone direction={"vertical"}>

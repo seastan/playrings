@@ -135,12 +135,13 @@ export const DeckbuilderCurrent = React.memo(({currentGroupId, setCurrentGroupId
         
         {spawnGroups?.map((groupInfo, _groupIndex) => {
           const groupId = groupInfo.id;
+          const groupLength = currentDeck?.load_list?.filter(obj => obj.loadGroupId === groupId).length;
           return(
             <div>
               <div 
                 className={"text-white pl-3 py-1 mt-2 cursor-pointer " + (currentGroupId === groupId ? "bg-red-800" : "bg-gray-900")}
                 onClick={() => setCurrentGroupId(groupId)}>
-                {groupInfo.label} ({currentDeck?.load_list?.length})
+                {groupInfo.label} ({groupLength})
               </div>
               {currentDeck?.load_list?.map((loadListItem, index) => {
                 const cardUuid = loadListItem.uuid;

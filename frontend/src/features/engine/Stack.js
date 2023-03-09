@@ -69,7 +69,7 @@ export const Stack = React.memo(({
   const cardWidth = card0?.sides[card0?.currentSide]?.width;
   const cardHeight = card0?.sides[card0?.currentSide]?.height;
   const stackHeight = cardHeight*cardSize*zoomFactor;
-  const stackWidth = rowSpacing*zoomFactor;
+  const stackWidth = cardWidth*cardSize*zoomFactor;
   const stackWidthFan = Math.min(handSpacing, cardWidth*cardSize*zoomFactor);
   
   return (

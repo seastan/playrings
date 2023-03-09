@@ -40,7 +40,7 @@ export const DeckbuilderTable = React.memo(({currentGroupId, modifyDeckList, set
         );
         return matchSideA || matchSideB;
       });
-    }).sort((a, b) => a.A.cardNumber > b.A.cardNumber );
+    }).sort((a, b) => a.A.cardNumber === null || a.A.cardNumber > b.A.cardNumber );
   }, [cardDb, filters]);
 
   //return;
