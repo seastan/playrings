@@ -34,8 +34,6 @@ export const DropZone = styled.div`
   min-height: 100%;
   padding: 0.5vh;
   background: purple;
-  /* center child element vertically */
-  display: flex;
 `;
 
 const StacksList = React.memo(({
