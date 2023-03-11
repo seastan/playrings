@@ -31,12 +31,7 @@ export const TopBarUserCounter = React.memo(({
       setPreviousValue(newValue);
       const listOfActions = [
         ["GAME_INCREASE_VAL", "playerData", "$PLAYER_N", playerProperty, totalDelta],
-        ["COND",
-          ["GREATER_THAN", totalDelta, 0],
-          ["GAME_ADD_MESSAGE", "$PLAYER_N", " increased their ", playerProperty," by ", totalDelta, "."],
-          true,
-          ["GAME_ADD_MESSAGE", "$PLAYER_N", " decreased their ", playerProperty," by ", -totalDelta, "."]
-        ]
+        ["GAME_ADD_MESSAGE", "$PLAYER_N", totalDelta >= 0 ? " increased " : " decreased ", name, " by ", Math.abs(totalDelta), "."]
       ]
       doActionList(listOfActions);
       setInputFocus();

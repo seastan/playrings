@@ -27,31 +27,29 @@ export const TopBarSharedCounter = React.memo(({
       const totalDelta = newValue - previousValue;
       setPreviousValue(newValue);
       const listOfActions = [
-          {
-              "_ACTION": "SET_VALUE",
-              "_PATH": ["_GAME", gameProperty],
-              "_VALUE": newValue,
-              "_MESSAGES": [["{playerN} set ", name, " to ", newValue, " (change: ",totalDelta,")."]]
-          }
-      ]
-      doActionList("_custom", listOfActions);
+        ["GAME_SET_VAL", gameProperty, newValue],
+        ["GAME_ADD_MESSAGE", "$PLAYER_N", totalDelta >= 0 ? " increased " : " decreased ", name, " by ", Math.abs(totalDelta), "."]
+      ];
+      doActionList(listOfActions);
       setInputFocus();
     }, 400);
   }
 
-  return(
-    <div className="h-1/2 w-full flex justify-center">
-      <img className="h-full ml-1" src={imageUrl}></img>
-      <input 
-        className="h-full w-1/2 float-left text-center bg-transparent" 
-        value={value}
-        onChange={handleValueChange}
-        type="number" min="0" step="1"
-        disabled={playerN ? false : true}
-        onFocus={event => dispatch(setTyping(true))}
-        onBlur={event => dispatch(setTyping(false))}
-        ref={inputRef}>
-      </input>
-    </div>
+  return(<>
+      <div className="h-1/2 w-full flex justify-center">{name}</div>
+      <div className="h-1/2 w-full flex justify-center">
+        <img className="h-full ml-1" src={imageUrl}></img>
+        <input 
+          className="h-full w-1/2 float-left text-center bg-transparent" 
+          value={value}
+          onChange={handleValueChange}
+          type="number" min="0" step="1"
+          disabled={playerN ? false : true}
+          onFocus={event => dispatch(setTyping(true))}
+          onBlur={event => dispatch(setTyping(false))}
+          ref={inputRef}>
+        </input>
+      </div>
+    </>
   )
 })

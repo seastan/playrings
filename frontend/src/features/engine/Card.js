@@ -69,7 +69,7 @@ export const Card = React.memo(({
 
     var className = "";
     if (isActive) className = "shadow-yellow";
-    if (true || destroyed) className = "shadow-red";
+    if (destroyed) className = "shadow-red";
     if (explored) className = "shadow-green";
     return (
         <div id={cardId}>

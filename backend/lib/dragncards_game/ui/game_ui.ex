@@ -25,7 +25,6 @@ defmodule DragnCardsGame.GameUI do
     gameui = %{
       "game" => Game.load(game_def, options),
       "roomName" => game_name,
-      "gameDef" => game_def,
       "options" => options,
       "createdAt" => DateTime.utc_now(),
       "createdBy" => user.id,
@@ -481,7 +480,6 @@ defmodule DragnCardsGame.GameUI do
     Logger.debug("game_action #{user_id} #{player_n} #{action}")
     game = gameui["game"]
     game = put_in(game["playerUi"], options["player_ui"])
-    game = put_in(game["gameDef"], gameui["gameDef"])
     game = put_in(game["messages"], [])
     game_new = if player_n do
       case action do
@@ -492,7 +490,7 @@ defmodule DragnCardsGame.GameUI do
         "reset_game" ->
           reset_game(game)
         "load_cards" ->
-          load_cards(game, player_n, options["load_list"], gameui["gameDef"])
+          load_cards(game, player_n, options["load_list"])
         "step_through" ->
           step_through(game, options["size"], options["direction"])
         "save_replay" ->
@@ -591,7 +589,7 @@ defmodule DragnCardsGame.GameUI do
     Game.new(game["gameDef"], game["options"])
   end
 
-  def create_card_in_group(game, group_id, load_list_item, game_def) do
+  def create_card_in_group(game, group_id, load_list_item) do
     IO.puts("create_card_in_group")
     IO.inspect(group_id)
     IO.inspect(load_list_item)
@@ -599,7 +597,7 @@ defmodule DragnCardsGame.GameUI do
     # Can't insert a card directly into a group need to make a stack first
     IO.inspect("cciig")
     IO.inspect(group_id)
-    new_card = Card.card_from_card_details(load_list_item["cardDetails"], game_def, load_list_item["uuid"], group_id)
+    new_card = Card.card_from_card_details(load_list_item["cardDetails"], game["gameDef"], load_list_item["uuid"], group_id)
     new_stack = Stack.stack_from_card(new_card)
     new_card = new_card
     |> Map.put("groupId", group_id)
@@ -617,7 +615,7 @@ defmodule DragnCardsGame.GameUI do
     game
   end
 
-  def load_card(game, load_list_item, game_def) do
+  def load_card(game, load_list_item) do
     quantity = load_list_item["quantity"]
 
     if quantity <= 0 do
@@ -629,7 +627,7 @@ defmodule DragnCardsGame.GameUI do
 
       1..quantity
       |> Enum.reduce(game, fn(_index, acc) ->
-        create_card_in_group(acc, group_id, load_list_item, game_def)
+        create_card_in_group(acc, group_id, load_list_item)
       end)
     end
   end
@@ -653,7 +651,7 @@ defmodule DragnCardsGame.GameUI do
     update_stack_ids(gameui, group_id, shuffled_stack_ids)
   end
 
-  def load_cards(game, player_n, load_list, game_def) do
+  def load_cards(game, player_n, load_list) do
     # Get deck size before load
     player_n_deck_id = player_n<>"Deck"
     deck_size_before = Enum.count(get_stack_ids(game, player_n_deck_id))
@@ -661,7 +659,7 @@ defmodule DragnCardsGame.GameUI do
     IO.puts("load_cards 1")
 
     game = Enum.reduce(load_list, game, fn load_list_item, acc ->
-      load_card(acc, load_list_item, game_def)
+      load_card(acc, load_list_item)
     end)
     # IO.puts("load_cards 2")
 

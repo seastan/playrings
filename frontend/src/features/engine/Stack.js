@@ -15,7 +15,6 @@ export const StackContainer = styled.div`
   padding: 0;
   width: ${props => props.stackWidth}vh;
   height: ${props => props.stackHeight}vh;
-  background: blue;
 `;
 //left: ${props => props.left || 0}vh;
 // background: ${props => (props.hidden) ? "red" : "blue"};

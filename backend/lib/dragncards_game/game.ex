@@ -42,17 +42,17 @@
   """
   @spec new(Map.t(), Map.t()) :: Game.t()
   def new(game_def, options) do
-    default_layout = Enum.at(game_def["layoutMenu"],0)
+    default_layout_info = Enum.at(game_def["layoutMenu"],0)
     base = %{
       "id" => Ecto.UUID.generate,
+      "gameDef" => game_def,
       "pluginId" => options["pluginId"],
       "pluginVersion" => options["pluginVersion"],
-      "numPlayers" => 1,
+      "numPlayers" => default_layout_info["numPlayers"],
       #"questModeAndId" => nil,
       "roomTitle" => "Unspecified",
-      "layout" => game_def["layouts"][default_layout["layoutId"]],
+      "layout" => game_def["layouts"][default_layout_info["layoutId"]],
       "firstPlayer" => "player1",
-      "roundNumber" => 0,
       "stepIndex" => 0,
       "groupById" => Groups.new(game_def["groups"]),
       "stackById" => %{},
@@ -64,13 +64,12 @@
       "victoryState" => nil,
       "questMode" => "Normal",
       "options" => options,
-      "actionLists" => game_def["actionLists"],
       "variables" => %{},
       "messages" => []
     }
     # Add player data
     player_data = %{}
-    player_data = Enum.reduce(game_def["minPlayers"]..game_def["maxPlayers"], player_data, fn(n, acc) ->
+    player_data = Enum.reduce(1..game_def["maxPlayers"], player_data, fn(n, acc) ->
       put_in(acc["player"<>Integer.to_string(n)], PlayerData.new(game_def))
     end)
     base = put_in(base["playerData"], player_data)

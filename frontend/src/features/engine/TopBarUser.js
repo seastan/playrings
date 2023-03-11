@@ -14,19 +14,21 @@ export const TopBarUser = React.memo(({
   playerI
 }) => {
   const {gameBroadcast, chatBroadcast} = useContext(BroadcastContext);
-  console.log("Rendering TopBarUser ", playerI);
   const dispatch = useDispatch();
   const l10n = useGameL10n();
   const gameDef = useGameDefinition();
   const playerN = useSelector(state => state?.playerUi?.playerN);
   const observingPlayerN = useSelector(state => state?.playerUi?.observingPlayerN);
   const playerInfo = useSelector(state => state?.gameUi?.playerInfo);
+  const playerData = useSelector(state => state?.gameUi?.game?.playerData); 
   const playerDataPlayerN = useSelector(state => state?.gameUi?.game?.playerData?.[playerI]);  
   const firstPlayer = useSelector(state => state?.gameUi?.game?.firstPlayer);  
   const isLoggedIn = useIsLoggedIn();
   const myUser = useProfile();
-  const myUserID = myUser?.id;  
+  const myUserID = myUser?.id;
 
+
+  console.log("Rendering TopBarUser ", playerI, playerInfo, playerData, playerDataPlayerN);
   if (!playerInfo) return null;
   if (!playerDataPlayerN) return null;
 
@@ -113,7 +115,7 @@ export const TopBarUser = React.memo(({
       <div className="float-left h-full w-1/3">
         {gameDef?.topBarCounters?.player.map((menuItem, index) => {
           return(
-            <div key={index} className="w-full" style={{height: `${100/gameDef?.topBarCounters?.player?.length}%`}}>
+            <div key={index} className="h-1/2 w-full">
               <TopBarUserCounter 
                 playerI={playerI}
                 playerProperty={menuItem.playerProperty} 
