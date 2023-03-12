@@ -40,29 +40,29 @@
       "_Other":        {"width": 0.72, "height": 1.0, "tokens": ["attackBlue","defenseBlue","attackRed","defenseRed","pathRed","pathBlue","corruption"]}
     },
     "cardBacks": {
-      "red":    {"width": 0.72, "height": 1.0, "imageUrl": "https://dragncards-wotr.s3.amazonaws.com/cards/RedCardBack.jpg"},
-      "blue":   {"width": 0.72, "height": 1.0, "imageUrl": "https://dragncards-wotr.s3.amazonaws.com/cards/BlueCardBack.jpg"},
-      "path1":  {"width": 1.44, "height": 1.0, "imageUrl": "https://dragncards-wotr.s3.amazonaws.com/cards/PathBack1.jpg"},
-      "path2":  {"width": 1.44, "height": 1.0, "imageUrl": "https://dragncards-wotr.s3.amazonaws.com/cards/PathBack2.jpg"},
-      "path3":  {"width": 1.44, "height": 1.0, "imageUrl": "https://dragncards-wotr.s3.amazonaws.com/cards/PathBack3.jpg"},
-      "path4":  {"width": 1.44, "height": 1.0, "imageUrl": "https://dragncards-wotr.s3.amazonaws.com/cards/PathBack4.jpg"},
-      "path5":  {"width": 1.44, "height": 1.0, "imageUrl": "https://dragncards-wotr.s3.amazonaws.com/cards/PathBack5.jpg"},
-      "path6":  {"width": 1.44, "height": 1.0, "imageUrl": "https://dragncards-wotr.s3.amazonaws.com/cards/PathBack6.jpg"},
-      "path7":  {"width": 1.44, "height": 1.0, "imageUrl": "https://dragncards-wotr.s3.amazonaws.com/cards/PathBack7.jpg"},
-      "path8":  {"width": 1.44, "height": 1.0, "imageUrl": "https://dragncards-wotr.s3.amazonaws.com/cards/PathBack8.jpg"},
-      "path9":  {"width": 1.44, "height": 1.0, "imageUrl": "https://dragncards-wotr.s3.amazonaws.com/cards/PathBack9.jpg"},
-      "redBattleground":  {"width": 1.44, "height": 1.0, "imageUrl": "https://dragncards-wotr.s3.amazonaws.com/cards/RedBattlegroundBack.jpg"},
-      "blueBattleground": {"width": 1.44, "height": 1.0, "imageUrl": "https://dragncards-wotr.s3.amazonaws.com/cards/BlueBattlegroundBack.jpg"}
+      "Shadow Card":    {"width": 0.72, "height": 1.0, "imageUrl": "https://dragncards-wotr.s3.amazonaws.com/cards/RedCardBack.jpg"},
+      "Free Peoples Card":   {"width": 0.72, "height": 1.0, "imageUrl": "https://dragncards-wotr.s3.amazonaws.com/cards/BlueCardBack.jpg"},
+      "Path 1":  {"width": 1.44, "height": 1.0, "imageUrl": "https://dragncards-wotr.s3.amazonaws.com/cards/PathBack1.jpg"},
+      "Path 2":  {"width": 1.44, "height": 1.0, "imageUrl": "https://dragncards-wotr.s3.amazonaws.com/cards/PathBack2.jpg"},
+      "Path 3":  {"width": 1.44, "height": 1.0, "imageUrl": "https://dragncards-wotr.s3.amazonaws.com/cards/PathBack3.jpg"},
+      "Path 4":  {"width": 1.44, "height": 1.0, "imageUrl": "https://dragncards-wotr.s3.amazonaws.com/cards/PathBack4.jpg"},
+      "Path 5":  {"width": 1.44, "height": 1.0, "imageUrl": "https://dragncards-wotr.s3.amazonaws.com/cards/PathBack5.jpg"},
+      "Path 6":  {"width": 1.44, "height": 1.0, "imageUrl": "https://dragncards-wotr.s3.amazonaws.com/cards/PathBack6.jpg"},
+      "Path 7":  {"width": 1.44, "height": 1.0, "imageUrl": "https://dragncards-wotr.s3.amazonaws.com/cards/PathBack7.jpg"},
+      "Path 8":  {"width": 1.44, "height": 1.0, "imageUrl": "https://dragncards-wotr.s3.amazonaws.com/cards/PathBack8.jpg"},
+      "Path 9":  {"width": 1.44, "height": 1.0, "imageUrl": "https://dragncards-wotr.s3.amazonaws.com/cards/PathBack9.jpg"},
+      "Shadow Battleground":  {"width": 1.44, "height": 1.0, "imageUrl": "https://dragncards-wotr.s3.amazonaws.com/cards/RedBattlegroundBack.jpg"},
+      "Free Peoples Battleground": {"width": 1.44, "height": 1.0, "imageUrl": "https://dragncards-wotr.s3.amazonaws.com/cards/BlueBattlegroundBack.jpg"}
     },
     "firstPlayerImageUrl": "https://dragncards-wotr.s3.amazonaws.com/tokens/RectangleBlue.png",
     "tokens": {
-      "attackBlue": {"name": "attack", "left": "10%", "top":  "0%", "height": "3vh", "width": "3vh", "imageUrl": "https://dragncards-wotr.s3.amazonaws.com/tokens/AttackBlue.png"},
-      "defenseBlue": {"name": "defense", "left": "10%", "top": "25%", "height": "3vh", "width": "3vh", "imageUrl": "https://dragncards-wotr.s3.amazonaws.com/tokens/DefenseBlue.png"},
-      "attackRed":   {"name": "attack", "left": "10%", "top": "50%", "height": "3vh", "width": "3vh", "imageUrl": "https://dragncards-wotr.s3.amazonaws.com/tokens/AttackRed.png"},
-      "defenseRed":     {"name": "defense", "left": "10%", "top": "75%", "height": "3vh", "width": "3vh", "imageUrl": "https://dragncards-wotr.s3.amazonaws.com/tokens/DefenseRed.png"},
-      "pathBlue":{"name": "path defenst", "left": "55%", "top":  "0%", "height": "3vh", "width": "3vh", "modifier": true, "imageUrl": "https://dragncards-wotr.s3.amazonaws.com/tokens/PathBlue.png"},
-      "pathRed":   {"name": "path attack", "left": "55%", "top":  "25%", "height": "3vh", "width": "3vh", "modifier": true, "imageUrl": "https://dragncards-wotr.s3.amazonaws.com/tokens/PathRed.png"},
-      "corruption":   {"name": "corruption", "left": "55%", "top": "50%", "height": "3vh", "width": "3vh", "modifier": true, "imageUrl": "https://dragncards-wotr.s3.amazonaws.com/tokens/Corruption.png"}
+      "attackBlue": {"name": "attack",      "left": "10%", "top":  "0%", "height": "3vh", "width": "3vh", "imageUrl": "https://dragncards-wotr.s3.amazonaws.com/tokens/AttackBlue.png"},
+      "defenseBlue":{"name": "defense",     "left": "10%", "top": "25%", "height": "3vh", "width": "3vh", "imageUrl": "https://dragncards-wotr.s3.amazonaws.com/tokens/DefenseBlue.png"},
+      "pathBlue":   {"name": "path defense","left": "10%", "top": "50%", "height": "3vh", "width": "3vh", "imageUrl": "https://dragncards-wotr.s3.amazonaws.com/tokens/PathBlue.png"},
+      "attackRed":  {"name": "attack",      "left": "55%", "top":  "0%", "height": "3vh", "width": "3vh", "imageUrl": "https://dragncards-wotr.s3.amazonaws.com/tokens/AttackRed.png"},
+      "defenseRed": {"name": "defense",     "left": "55%", "top": "25%", "height": "3vh", "width": "3vh", "imageUrl": "https://dragncards-wotr.s3.amazonaws.com/tokens/DefenseRed.png"},
+      "pathRed":    {"name": "path attack", "left": "55%", "top": "50%", "height": "3vh", "width": "3vh", "imageUrl": "https://dragncards-wotr.s3.amazonaws.com/tokens/PathRed.png"},
+      "corruption": {"name": "corruption",  "left": "55%", "top": "75%", "height": "3vh", "width": "3vh", "imageUrl": "https://dragncards-wotr.s3.amazonaws.com/tokens/Corruption.png"}
     },
     "topBarCounters": {
       "shared": [
@@ -2166,13 +2166,13 @@
     },
     "hotkeys": {
       "token": [
-        {"key": "1", "action": "adjustToken1", "label": "icon(https://dragncards-lotrlcg.s3.amazonaws.com/tokens/resource.png)"},
-        {"key": "2", "action": "adjustToken2", "label": "icon(https://dragncards-lotrlcg.s3.amazonaws.com/tokens/progress.png)"},
-        {"key": "3", "action": "adjustToken3", "label": "icon(https://dragncards-lotrlcg.s3.amazonaws.com/tokens/damage.png)"},
-        {"key": "4", "action": "adjustToken4", "label": "icon(https://dragncards-lotrlcg.s3.amazonaws.com/tokens/time.png)"},
-        {"key": "5", "action": "adjustToken5", "label": "icon(https://dragncards-lotrlcg.s3.amazonaws.com/tokens/willpower.png) / icon(https://dragncards-lotrlcg.s3.amazonaws.com/tokens/threat.png)"},
-        {"key": "6", "action": "adjustToken6", "label": "icon(https://dragncards-lotrlcg.s3.amazonaws.com/tokens/attack.png)"},
-        {"key": "7", "action": "adjustToken7", "label": "icon(https://dragncards-lotrlcg.s3.amazonaws.com/tokens/defense.png)"}
+        {"key": "1", "action": "adjustToken1", "label": "icon(https://dragncards-wotr.s3.amazonaws.com/tokens/AttackBlue.png)"},
+        {"key": "2", "action": "adjustToken2", "label": "icon(https://dragncards-wotr.s3.amazonaws.com/tokens/DefenseBlue.png)"},
+        {"key": "3", "action": "adjustToken3", "label": "icon(https://dragncards-wotr.s3.amazonaws.com/tokens/PathBlue.png)"},
+        {"key": "4", "action": "adjustToken4", "label": "icon(https://dragncards-wotr.s3.amazonaws.com/tokens/AttackRed.png)"},
+        {"key": "5", "action": "adjustToken5", "label": "icon(https://dragncards-wotr.s3.amazonaws.com/tokens/DefenseRed.png)"},
+        {"key": "6", "action": "adjustToken6", "label": "icon(https://dragncards-wotr.s3.amazonaws.com/tokens/PathRed.png)"},
+        {"key": "7", "action": "adjustToken7", "label": "icon(https://dragncards-wotr.s3.amazonaws.com/tokens/Corruption.png)"}
       ],
       "game": [
         {"key": "D", "actionListId": "drawCard", "label": "Draw a card"},
@@ -2188,7 +2188,7 @@
       "card": [
         {"key": "F", "actionListId": "flipCard", "label": "Flip"},
         {"key": "T", "actionListId": "targetCard", "label": "Target card"},
-        {"key": "V", "actionListId": "addToScoringArea", "label": "Add to scoring area"},
+        {"key": "S", "actionListId": "addToScoringArea", "label": "Add to scoring area"},
         {"key": "C", "actionListId": "cycleCard", "label": "Cycle card"},
         {"key": "E", "actionListId": "eliminateCard", "label": "Eliminate card"},
         {"key": "R", "actionListId": "toggleRotate", "label": "Rotate card"}
