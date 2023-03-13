@@ -2,7 +2,7 @@
 import React from "react";
 import useLongPress from "../../hooks/useLongPress";
 import { useDispatch, useSelector } from "react-redux";
-import { setActiveCardId, setActiveCardObj, setDropdownMenuObj } from "../store/playerUiSlice";
+import { setActiveCardObj, setDropdownMenuObj } from "../store/playerUiSlice";
 import { useHandleTouchAction } from "./functions/useHandleTouchAction";
 import { getVisibleFaceSrc } from "../definitions/common";
 
@@ -23,7 +23,6 @@ export const CardMouseRegion = React.memo(({
 
     const makeActive = (event) => {
         const screenPosition = event.clientX > (window.innerWidth/2) ? "right" : "left";
-        dispatch(setActiveCardId(card.id))
         dispatch(setActiveCardObj({
             card: card,
             mousePosition: position, 

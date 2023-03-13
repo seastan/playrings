@@ -2166,13 +2166,13 @@
     },
     "hotkeys": {
       "token": [
-        {"key": "1", "action": "adjustToken1", "label": "icon(https://dragncards-wotr.s3.amazonaws.com/tokens/AttackBlue.png)"},
-        {"key": "2", "action": "adjustToken2", "label": "icon(https://dragncards-wotr.s3.amazonaws.com/tokens/DefenseBlue.png)"},
-        {"key": "3", "action": "adjustToken3", "label": "icon(https://dragncards-wotr.s3.amazonaws.com/tokens/PathBlue.png)"},
-        {"key": "4", "action": "adjustToken4", "label": "icon(https://dragncards-wotr.s3.amazonaws.com/tokens/AttackRed.png)"},
-        {"key": "5", "action": "adjustToken5", "label": "icon(https://dragncards-wotr.s3.amazonaws.com/tokens/DefenseRed.png)"},
-        {"key": "6", "action": "adjustToken6", "label": "icon(https://dragncards-wotr.s3.amazonaws.com/tokens/PathRed.png)"},
-        {"key": "7", "action": "adjustToken7", "label": "icon(https://dragncards-wotr.s3.amazonaws.com/tokens/Corruption.png)"}
+        {"key": "1", "tokenType": "attackBlue", "label": "icon(https://dragncards-wotr.s3.amazonaws.com/tokens/AttackBlue.png)"},
+        {"key": "2", "tokenType": "defenseBlue", "label": "icon(https://dragncards-wotr.s3.amazonaws.com/tokens/DefenseBlue.png)"},
+        {"key": "3", "tokenType": "pathBlue", "label": "icon(https://dragncards-wotr.s3.amazonaws.com/tokens/PathBlue.png)"},
+        {"key": "4", "tokenType": "attackRed", "label": "icon(https://dragncards-wotr.s3.amazonaws.com/tokens/AttackRed.png)"},
+        {"key": "5", "tokenType": "defenseRed", "label": "icon(https://dragncards-wotr.s3.amazonaws.com/tokens/DefenseRed.png)"},
+        {"key": "6", "tokenType": "pathRed", "label": "icon(https://dragncards-wotr.s3.amazonaws.com/tokens/PathRed.png)"},
+        {"key": "7", "tokenType": "corruption", "label": "icon(https://dragncards-wotr.s3.amazonaws.com/tokens/Corruption.png)"}
       ],
       "game": [
         {"key": "D", "actionListId": "drawCard", "label": "Draw a card"},
@@ -2535,6 +2535,7 @@
         "name": "Path Deck 1",
         "tableName": "Path Deck 1",
         "canHaveAttachments": false,
+        "shuffleOnLoad": true,
         "forceOnCards": {
           "currentSide": "B",
           "inPlay": false,
@@ -2546,6 +2547,7 @@
         "name": "Path Deck 2",
         "tableName": "Path Deck 2",
         "canHaveAttachments": false,
+        "shuffleOnLoad": true,
         "forceOnCards": {
           "currentSide": "B",
           "inPlay": false,
@@ -2557,6 +2559,7 @@
         "name": "Path Deck 3",
         "tableName": "Path Deck 3",
         "canHaveAttachments": false,
+        "shuffleOnLoad": true,
         "forceOnCards": {
           "currentSide": "B",
           "inPlay": false,
@@ -2568,6 +2571,7 @@
         "name": "Path Deck 4",
         "tableName": "Path Deck 4",
         "canHaveAttachments": false,
+        "shuffleOnLoad": true,
         "forceOnCards": {
           "currentSide": "B",
           "inPlay": false,
@@ -2579,6 +2583,7 @@
         "name": "Path Deck 5",
         "tableName": "Path Deck 5",
         "canHaveAttachments": false,
+        "shuffleOnLoad": true,
         "forceOnCards": {
           "currentSide": "B",
           "inPlay": false,
@@ -2590,6 +2595,7 @@
         "name": "Path Deck 6",
         "tableName": "Path Deck 6",
         "canHaveAttachments": false,
+        "shuffleOnLoad": true,
         "forceOnCards": {
           "currentSide": "B",
           "inPlay": false,
@@ -2601,6 +2607,7 @@
         "name": "Path Deck 7",
         "tableName": "Path Deck 7",
         "canHaveAttachments": false,
+        "shuffleOnLoad": true,
         "forceOnCards": {
           "currentSide": "B",
           "inPlay": false,
@@ -2612,6 +2619,7 @@
         "name": "Path Deck 8",
         "tableName": "Path Deck 8",
         "canHaveAttachments": false,
+        "shuffleOnLoad": true,
         "forceOnCards": {
           "currentSide": "B",
           "inPlay": false,
@@ -2623,6 +2631,7 @@
         "name": "Path Deck 9",
         "tableName": "Path Deck 9",
         "canHaveAttachments": false,
+        "shuffleOnLoad": true,
         "forceOnCards": {
           "currentSide": "B",
           "inPlay": false,
@@ -3022,30 +3031,30 @@
         "rowSpacing": 11,
         "chat": {"left": "75%", "top": "80%", "width": "25%", "height": "20%"},
         "regions": [
-          {"id": "player2Reserve",        "type": "row", "direction": "horizontal", "left":  "0%", "top":  "0%", "width": "40%", "height": "16%"},
-          {"id": "sharedBattlegroundRed", "type": "pile","direction": "horizontal", "left": "40%", "top":  "0%", "width": "12%", "height": "16%"},
-          {"id": "player4Reserve",        "type": "row", "direction": "horizontal", "left": "52%", "top":  "0%", "width": "40%", "height": "16%"},
-          {"id": "sharedActiveRed1",      "type": "row", "direction": "horizontal", "left":  "0%", "top": "16%", "width": "23%", "height": "16%", "hideTitle": true},
-          {"id": "sharedActiveRed2",      "type": "row", "direction": "horizontal", "left": "23%", "top": "16%", "width": "23%", "height": "16%", "hideTitle": true},
-          {"id": "sharedActiveRed3",      "type": "row", "direction": "horizontal", "left": "46%", "top": "16%", "width": "23%", "height": "16%", "hideTitle": true},
-          {"id": "sharedActiveRed4",      "type": "row", "direction": "horizontal", "left": "69%", "top": "16%", "width": "23%", "height": "16%", "hideTitle": true},
-          {"id": "sharedActiveLocation1", "type": "row", "direction": "horizontal", "left":  "0%", "top": "32%", "width": "23%", "height": "16%"},
-          {"id": "sharedActiveLocation2", "type": "row", "direction": "horizontal", "left": "23%", "top": "32%", "width": "23%", "height": "16%"},
-          {"id": "sharedActiveLocation3", "type": "row", "direction": "horizontal", "left": "46%", "top": "32%", "width": "23%", "height": "16%"},
-          {"id": "sharedActiveLocation4", "type": "row", "direction": "horizontal", "left": "69%", "top": "32%", "width": "23%", "height": "16%"},
-          {"id": "sharedActiveBlue1",     "type": "row", "direction": "horizontal", "left":  "0%", "top": "48%", "width": "23%", "height": "16%", "hideTitle": true},
-          {"id": "sharedActiveBlue2",     "type": "row", "direction": "horizontal", "left": "23%", "top": "48%", "width": "23%", "height": "16%", "hideTitle": true},
-          {"id": "sharedActiveBlue3",     "type": "row", "direction": "horizontal", "left": "46%", "top": "48%", "width": "23%", "height": "16%", "hideTitle": true},
-          {"id": "sharedActiveBlue4",     "type": "row", "direction": "horizontal", "left": "69%", "top": "48%", "width": "23%", "height": "16%", "hideTitle": true},
-          {"id": "player1Reserve",        "type": "row", "direction": "horizontal", "left":  "0%", "top": "64%", "width": "40%", "height": "16%"},
-          {"id": "sharedBattlegroundBlue","type": "pile","direction": "horizontal", "left": "40%", "top": "64%", "width": "12%", "height": "16%"},
-          {"id": "player3Reserve",        "type": "row", "direction": "horizontal", "left": "52%", "top": "64%", "width": "40%", "height": "16%"},
+          {"id": "player2Reserve",        "type": "row", "direction": "horizontal", "left":  "0%", "top":  "0%", "width": "38%", "height": "16%"},
+          {"id": "sharedBattlegroundRed", "type": "pile","direction": "horizontal", "left": "38%", "top":  "0%", "width": "12%", "height": "16%"},
+          {"id": "player4Reserve",        "type": "row", "direction": "horizontal", "left": "50%", "top":  "0%", "width": "38%", "height": "16%"},
+          {"id": "sharedActiveRed1",      "type": "row", "direction": "horizontal", "left":  "0%", "top": "16%", "width": "22%", "height": "16%", "hideTitle": true},
+          {"id": "sharedActiveRed2",      "type": "row", "direction": "horizontal", "left": "22%", "top": "16%", "width": "22%", "height": "16%", "hideTitle": true},
+          {"id": "sharedActiveRed3",      "type": "row", "direction": "horizontal", "left": "44%", "top": "16%", "width": "22%", "height": "16%", "hideTitle": true},
+          {"id": "sharedActiveRed4",      "type": "row", "direction": "horizontal", "left": "66%", "top": "16%", "width": "22%", "height": "16%", "hideTitle": true},
+          {"id": "sharedActiveLocation1", "type": "row", "direction": "horizontal", "left":  "0%", "top": "32%", "width": "22%", "height": "16%"},
+          {"id": "sharedActiveLocation2", "type": "row", "direction": "horizontal", "left": "22%", "top": "32%", "width": "22%", "height": "16%"},
+          {"id": "sharedActiveLocation3", "type": "row", "direction": "horizontal", "left": "44%", "top": "32%", "width": "22%", "height": "16%"},
+          {"id": "sharedActiveLocation4", "type": "row", "direction": "horizontal", "left": "66%", "top": "32%", "width": "22%", "height": "16%"},
+          {"id": "sharedActiveBlue1",     "type": "row", "direction": "horizontal", "left":  "0%", "top": "48%", "width": "22%", "height": "16%", "hideTitle": true},
+          {"id": "sharedActiveBlue2",     "type": "row", "direction": "horizontal", "left": "22%", "top": "48%", "width": "22%", "height": "16%", "hideTitle": true},
+          {"id": "sharedActiveBlue3",     "type": "row", "direction": "horizontal", "left": "44%", "top": "48%", "width": "22%", "height": "16%", "hideTitle": true},
+          {"id": "sharedActiveBlue4",     "type": "row", "direction": "horizontal", "left": "66%", "top": "48%", "width": "22%", "height": "16%", "hideTitle": true},
+          {"id": "player1Reserve",        "type": "row", "direction": "horizontal", "left":  "0%", "top": "64%", "width": "38%", "height": "16%"},
+          {"id": "sharedBattlegroundBlue","type": "pile","direction": "horizontal", "left": "38%", "top": "64%", "width": "12%", "height": "16%"},
+          {"id": "player3Reserve",        "type": "row", "direction": "horizontal", "left": "50%", "top": "64%", "width": "38%", "height": "16%"},
           {"id": "playerNHand",           "type": "fan", "direction": "horizontal", "left":  "0%", "top": "84%", "width": "51%", "height": "16%", "style": "shaded"},
           {"id": "playerNDeck",           "type": "pile","direction": "horizontal", "left": "51%", "top": "84%", "width":  "8%", "height": "16%", "style": "shaded"},
           {"id": "playerNCycled",         "type": "pile","direction": "horizontal", "left": "59%", "top": "84%", "width":  "8%", "height": "16%", "style": "shaded"},
           {"id": "playerNEliminated",     "type": "pile","direction": "horizontal", "left": "67%", "top": "84%", "width":  "8%", "height": "16%", "style": "shaded"},
-          {"id": "sharedScoringRed",      "type": "fan", "direction": "vertical",   "left": "92%", "top": "0%",  "width":  "8%", "height": "40%"},
-          {"id": "sharedScoringBlue",     "type": "fan", "direction": "vertical",   "left": "92%", "top": "40%", "width":  "8%", "height": "40%"}
+          {"id": "sharedScoringRed",      "type": "fan", "direction": "vertical",   "left": "92%", "top": "0%",  "width":  "12%", "height": "40%"},
+          {"id": "sharedScoringBlue",     "type": "fan", "direction": "vertical",   "left": "92%", "top": "40%", "width":  "12%", "height": "40%"}
         ]
       }
     }

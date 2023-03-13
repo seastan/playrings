@@ -1,7 +1,8 @@
-import { useContext, useEffect, useState } from 'react';
+import { useContext } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import BroadcastContext from '../../../contexts/BroadcastContext';
 import { setKeypress } from '../../store/playerUiSlice';
+import { useAddToken } from './useAddToken';
 import { useDoActionList } from './useDoActionList';
 import { useGameDefinition } from './useGameDefinition';
 
@@ -11,8 +12,10 @@ export const useKeyDown = () => {
     const keypressControl = useSelector(state => state?.playerUi?.keypress?.Control);
     const keypressShift = useSelector(state => state?.playerUi?.keypress?.Shift);
     const keypressAlt = useSelector(state => state?.playerUi?.keypress?.Alt);
+    const mousePosition = useSelector(state => state?.playerUi?.activeCardObj?.mousePosition);
     const {gameBroadcast, chatBroadcast} = useContext(BroadcastContext);
     const doActionList = useDoActionList();
+    const addToken = useAddToken();
     console.log("gameb render keydown 1", gameBroadcast)
 
     return (event) => {
@@ -32,14 +35,9 @@ export const useKeyDown = () => {
         if (keypressControl) dictKey = "Ctrl" + dictKey;
         if (keypressAlt) dictKey = "Alt" + dictKey;
 
-        console.log("keypress",k)
-        console.log("keypress",dictKey)
-        console.log("keypress",gameDef.hotkeys[dictKey])
-        console.log("keypress",k)
         for (var keyObj of gameDef?.hotkeys.token) {
             if (keyObj.key === dictKey) {
-                doActionList(keyObj.actionListId)
-                console.log("keydown action ",keyObj.actionListId, gameDef.actionLists[keyObj.actionListId])
+                addToken(keyObj.tokenType, mousePosition === "top" ? 1 : -1);
                 return;
             }
         }

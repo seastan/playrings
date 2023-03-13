@@ -2,6 +2,12 @@
 export const keyClass = "m-auto border cursor-pointer bg-gray-500 hover:bg-gray-400 text-center bottom inline-block";
 export const keyStyle = {width: "3vh", height: "3vh", borderRadius: "0.5vh"}
 
+export const defaultdict = (defaultObj, defaultVal) => {
+  return new Proxy(defaultObj, {
+    get: (target, name) => name in target ? target[name] : defaultVal
+  });
+}
+
 export const getCurrentFace = (card) => {
   if (!card?.currentSide) return null;
   return card.sides[card.currentSide];

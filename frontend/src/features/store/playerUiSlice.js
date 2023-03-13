@@ -84,6 +84,7 @@ const playerUiSlice = createSlice({
     },
     setActiveCardObj: (state, { payload }) => {
       state.activeCardObj = payload;
+      state.activeCardId = state.activeCardObj?.card?.id;
     },
     setObservingPlayerN: (state, { payload }) => {
       state.observingPlayerN = payload;

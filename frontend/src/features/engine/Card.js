@@ -50,7 +50,7 @@ export const Card = React.memo(({
     const defaultPeeking = gameDef?.groups?.[groupId]?.forceOnCards?.peeking?.[playerN];
 
     const handleMouseLeave = (_event) => {
-        //setIsActive(false);
+        console.log("Card mouseleave")
         dispatch(setActiveCardObj(null));
     }
 
