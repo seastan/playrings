@@ -3025,6 +3025,11 @@
       {"name": "Two-player Duel",  "numPlayers": 2, "layoutId": "layout3player"},
       {"name": "Three-player Duel","numPlayers": 3, "layoutId": "layout2player"}
     ],
+    "browse": {
+      "filterPropertySideA": "type",
+      "filterValuesSideA": ["Army", "Character", "Item", "Event"],
+      "textPropertiesSideA": ["name", "faction", "text"] 
+    },
     "layouts": {
       "layout4player": {
         "cardSize": 13,
@@ -3054,8 +3059,8 @@
           {"groupId": "playerNDeck",           "type": "pile","direction": "horizontal", "left": "51%", "top": "84%", "width":  "8%", "height": "16%", "style": "shaded"},
           {"groupId": "playerNCycled",         "type": "pile","direction": "horizontal", "left": "59%", "top": "84%", "width":  "8%", "height": "16%", "style": "shaded"},
           {"groupId": "playerNEliminated",     "type": "pile","direction": "horizontal", "left": "67%", "top": "84%", "width":  "8%", "height": "16%", "style": "shaded"},
-          {"groupId": "sharedScoringRed",      "type": "fan", "direction": "vertical",   "left": "92%", "top": "0%",  "width":  "12%", "height": "40%"},
-          {"groupId": "sharedScoringBlue",     "type": "fan", "direction": "vertical",   "left": "92%", "top": "40%", "width":  "12%", "height": "40%"}
+          {"groupId": "sharedScoringRed",      "type": "fan", "direction": "vertical",   "left": "88%", "top": "0%",  "width":  "12%", "height": "40%"},
+          {"groupId": "sharedScoringBlue",     "type": "fan", "direction": "vertical",   "left": "88%", "top": "40%", "width":  "12%", "height": "40%"}
         ]
       }
     }
