@@ -10,6 +10,7 @@ import { setBrowseGroupId, setDropdownMenuObj, setTyping } from "../store/player
 import { useGameL10n } from "../../hooks/useGameL10n";
 import BroadcastContext from "../../contexts/BroadcastContext";
 import { useGameDefinition } from "./functions/useGameDefinition";
+import { useDoActionList } from "./functions/useDoActionList";
 
 const isNormalInteger = (str) => {
   var n = Math.floor(Number(str));
@@ -37,6 +38,7 @@ export const Browse = React.memo(({}) => {
   const stackIds = group?.["stackIds"] || [];
   const numStacks = stackIds.length;
   const browseTopN = useBrowseTopN();
+  const doActionList = useDoActionList();
   var filterButtons = gameDef?.browse?.filterValuesSideA;
   filterButtons = ["All", ...filterButtons, "Other"];
   var pairedFilterButtons = filterButtons?.reduce((acc, curr, i) => {
@@ -66,12 +68,11 @@ export const Browse = React.memo(({}) => {
     const stackId0 = stackIds[0];
     const cardIds = game["stackById"][stackId0]["cardIds"];
     const cardId0 = cardIds[0];
-    const updates = [["cardById",cardId0,"peeking",playerN,false]]
+    const updates = [["game", "cardById", cardId0, "peeking", playerN, false]];
     dispatch(setValues({updates: updates})) 
   }
 
   const handleCloseClick = (option) => {
-    chatBroadcast("game_update",{message: "closed "+gameDef.groups[groupId].name+"."})
     if (playerN) {
       if (option === "shuffle") closeAndShuffle();
       else if (option === "order") closeAndOrder();
@@ -81,19 +82,41 @@ export const Browse = React.memo(({}) => {
   }
 
   const closeAndShuffle = () => {
-    gameBroadcast("game_action", {action: "peek_at", options: {stack_ids: stackIds, value: false}})
-    gameBroadcast("game_action", {action: "shuffle_group", options: {group_id: groupId}})
-    chatBroadcast("game_update",{message: "shuffled "+gameDef.groups[groupId].name+"."})
-    if (regionType === "pile") stopPeekingTopCard();
+    const actionList = [
+      ["FOR_EACH_VAL", "$STACK_ID", `$GROUP_BY_ID.${groupId}.stackIds`,
+        [
+          ["DEFINE", "$CARD_ID", "$STACK_BY_ID.$STACK_ID.cardIds.[0]"],
+          ["GAME_SET_VAL", "cardById", "$CARD_ID", "peeking", playerN, false]
+        ]
+      ],
+      ["SHUFFLE_GROUP", groupId],
+      ["GAME_ADD_MESSAGE", "$PLAYER_N", " closed ", group.name+"."],
+      ["GAME_ADD_MESSAGE", "$PLAYER_N", " shuffled ", group.name+"."],
+    ];
+    doActionList(actionList);
+    if (group?.forceOnCards?.currentSide === "B") stopPeekingTopCard();
   }
 
   const closeAndOrder = () => {
-    gameBroadcast("game_action", {action: "peek_at", options: {stack_ids: stackIds, value: false}})
-    if (regionType === "pile") stopPeekingTopCard();
+    const actionList = [
+      ["FOR_EACH_VAL", "$STACK_ID", `$GROUP_BY_ID.${groupId}.stackIds`,
+        [
+          ["DEFINE", "$CARD_ID", "$STACK_BY_ID.$STACK_ID.cardIds.[0]"],
+          ["GAME_SET_VAL", "cardById", "$CARD_ID", "peeking", playerN, false]
+        ]
+      ],
+      ["SHUFFLE_GROUP", groupId],
+      ["GAME_ADD_MESSAGE", "$PLAYER_N", " closed ", group.name+"."],
+    ];
+    doActionList(actionList);
+    if (group?.forceOnCards?.currentSide === "B") stopPeekingTopCard();
   }
 
   const closeAndPeeking = () => {
-    chatBroadcast("game_update",{message: "is still peeking at "+gameDef.groups[groupId].name+"."})
+    const actionList = [
+      ["GAME_ADD_MESSAGE", "$PLAYER_N", " is still peeking at ", group.name+"."],
+    ];
+    doActionList(actionList);
   }
 
   const handleSelectClick = (event) => {
