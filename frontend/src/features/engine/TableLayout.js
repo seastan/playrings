@@ -1,47 +1,12 @@
 import React, { useContext, useState } from "react";
 import { useSelector } from 'react-redux';
-import { Group } from "./Group";
 import { Browse } from "./Browse";
 import MessageBox from "../messages/MessageBox";
 import "../../css/custom-misc.css"; 
-import { QuickAccess } from "./QuickAccess";
-import { SideGroup } from "./SideGroup";
 import BroadcastContext from "../../contexts/BroadcastContext";
+import { TableRegion } from "./TableRegion";
 
 var delayBroadcast;
-
-export const TableRegion = React.memo(({
-  region,
-  registerDivToArrowsContext,
-}) => {
-  console.log("Rendering TableRegion", region);
-  const observingPlayerN = useSelector(state => state?.playerUi?.observingPlayerN);
-  const browseGroupId = useSelector(state => state?.playerUi?.browseGroup?.id);
-  const groupId = region.id.replace(/playerN/g, observingPlayerN);
-  const beingBrowsed = groupId === browseGroupId;
-  return (
-    <div
-      className="absolute"
-      style={{
-        top: region.top,
-        left: region.left,
-        width: region.width,
-        height: region.height,
-        background: (region.style === "shaded") ? "rgba(0, 0, 0, 0.3)" : "",
-        MozBoxShadow: (region.boxShadow) ? '0 10px 10px 5px rgba(0,0,0,0.3)' : "",
-        WebkitBoxShadow: (region.boxShadow) ? '0 10px 10px 5px rgba(0,0,0,0.3)' : "",
-        boxShadow: (region.boxShadow) ? '0 10px 10px 5px rgba(0,0,0,0.3)' : "",
-      }}>
-      {beingBrowsed ? null :
-        <Group
-          groupId={groupId}
-          region={region}
-          registerDivToArrowsContext={registerDivToArrowsContext}
-        />
-      }
-    </div>
-  )
-})
 
 export const TableLayout = React.memo(({
   registerDivToArrowsContext,
@@ -54,6 +19,7 @@ export const TableLayout = React.memo(({
   const layout = useSelector(state => state?.gameUi?.game?.layout);
   const numRows = layout.length;
   const rowHeight = `${100/numRows}%`; 
+  
 
   if (!layout) return;
 
@@ -76,6 +42,7 @@ export const TableLayout = React.memo(({
 
   return (
     <>
+      <Browse/>
       {layout.regions.map((region, regionIndex) => {
         return(
           <TableRegion

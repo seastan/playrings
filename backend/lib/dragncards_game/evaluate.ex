@@ -384,6 +384,10 @@ defmodule DragnCardsGame.Evaluate do
           game
         code == "$GAME_PATH" ->
           []
+        code == "$GROUP_BY_ID" ->
+          game["groupById"]
+        code == "$STACK_BY_ID" ->
+          game["stackById"]
         code == "$CARD_BY_ID" ->
           game["cardById"]
         code == "$CARD_BY_ID_PATH" ->

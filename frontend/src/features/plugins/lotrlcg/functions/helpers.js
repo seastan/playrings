@@ -72,7 +72,7 @@ export const getPlayerN = (playerInfo, id) => {
 }
 
 export const getParentCardsInGroup = (game, groupId) => {
-  const stackIds = game.groupById[groupId].stackIds;
+  const stackIds = game.groupById?.[groupId]?.stackIds || [];
   const parentCards = [];
   for (var stackId of stackIds) {
     const cardIds = game.stackById[stackId].cardIds;

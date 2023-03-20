@@ -25,14 +25,22 @@ export const Browse = React.memo(({}) => {
   const groupId = useSelector(state => state?.playerUi?.browseGroup?.id);
   const browseGroupTopN = useSelector(state => state?.playerUi?.browseGroup?.topN);
   const group = useSelector(state => state?.gameUi?.game?.groupById?.[groupId]);
-  const layoutType = "horizontalFan";
+  var region = useSelector(state => state?.gameUi?.game?.layout?.browse);
+  const browseWidth = region.width;
+  const regionWidthInt = parseInt(browseWidth.substring(0, browseWidth.length - 1))
+  region = {...region, groupId: groupId, width: `${regionWidthInt*0.7}%`}
+  
+  const regionType = region.type;
   const game = useSelector(state => state?.gameUi?.game);
   const parentCards = getParentCardsInGroup(game, groupId);
   const [selectedCardType, setSelectedCardType] = useState('All');
   const [selectedCardName, setSelectedCardName] = useState('');
-  const stackIds = group["stackIds"];
+  const stackIds = group?.["stackIds"] || [];
   const numStacks = stackIds.length;
   const browseTopN = useBrowseTopN();
+
+  if (!group) return;
+  console.log("Rendering Browse", groupId, region)
 
   const handleBarsClick = (event) => {
     event.stopPropagation();
@@ -69,12 +77,12 @@ export const Browse = React.memo(({}) => {
     gameBroadcast("game_action", {action: "peek_at", options: {stack_ids: stackIds, value: false}})
     gameBroadcast("game_action", {action: "shuffle_group", options: {group_id: groupId}})
     chatBroadcast("game_update",{message: "shuffled "+gameDef.groups[groupId].name+"."})
-    if (layoutType === "pile") stopPeekingTopCard();
+    if (regionType === "pile") stopPeekingTopCard();
   }
 
   const closeAndOrder = () => {
     gameBroadcast("game_action", {action: "peek_at", options: {stack_ids: stackIds, value: false}})
-    if (layoutType === "pile") stopPeekingTopCard();
+    if (regionType === "pile") stopPeekingTopCard();
   }
 
   const closeAndPeeking = () => {
@@ -125,9 +133,13 @@ export const Browse = React.memo(({}) => {
     ));
 
   return(
-    <div className="relative h-full w-full">
-      <div
-        className="relative text-center h-full text-gray-500 float-left select-none"
+    <div className="absolute bg-gray-700 w-full" style={{left: region.left, width: browseWidth, top: region.top, height: region.height, zIndex: 1e6}}>
+      <strong className="absolute bg-gray-600 w-full text-gray-300 flex justify-center items-center" style={{top:"-20px", height: "20px"}}>
+        <FontAwesomeIcon onClick={(event) => handleBarsClick(event)}  className="cursor-pointer hover:text-white" icon={faBars}/>
+        <span className="px-2">{l10n(gameDef.groups[group.id].name)}</span>
+      </strong>
+      {/* <div
+        className="absolute text-center h-full text-gray-500 float-left select-none"
         style={{width:"5vh"}}>
         <div>
           {group.type !== "play" && <FontAwesomeIcon onClick={(event) => handleBarsClick(event)}  className="hover:text-white" icon={faBars}/>}
@@ -137,19 +149,19 @@ export const Browse = React.memo(({}) => {
               {l10n(gameDef.groups[group.id].tablename)}
           </span>
         </div>
-      </div> 
+      </div>  */}
 
-      <div className="relative h-full float-left " style={{width: "calc(100% - 60vh)"}}>
+      <div className="h-full float-left " style={{width: "75%"}}>
         <Stacks
           gameBroadcast={gameBroadcast}
           chatBroadcast={chatBroadcast}
           groupId={groupId}
-          layoutType={"horizontalFan"}
+          region={region}
           selectedStackIndices={filteredStackIndices}
         />
       </div>
-
-      <div className="relative h-full float-left p-2 select-none" style={{width:"35vh"}}>
+ 
+      <div className="absolute h-full p-2 select-none" style={{left:"70%", width:"20%"}}>
             
         <div className="h-1/5 w-full">
           <div className="h-full float-left w-1/2 px-0.5">
@@ -201,7 +213,7 @@ export const Browse = React.memo(({}) => {
         }
       </div>
 
-      <div className="relative h-full float-left p-3 select-none" style={{width:"20vh"}}>
+      <div className="absolute h-full float-left p-3 select-none" style={{left: "90%", width: "10%"}}>
         <div className="h-1/4 w-full text-white text-center">
           <div className="h-full float-left w-full p-0.5">
             <div className="h-full w-full">   
