@@ -59,6 +59,11 @@ export const DropdownMenuGroup = React.memo(({
   const left = mouseX < (window.innerWidth/2)  ? mouseX : mouseX -300;
   const top = mouseY < (window.innerHeight/2) ? mouseY : mouseY -300;
 
+  const actionListShuffle = [
+    ["SHUFFLE_GROUP", menuGroup.id],
+    ["GAME_ADD_MESSAGE", "$PLAYER_N", " shuffled ", group.name]
+  ]
+
   return (
     <div 
       className="dropdown" 
@@ -66,11 +71,15 @@ export const DropdownMenuGroup = React.memo(({
         <div className="menu-title">{dropdownMenuObj.title}</div>
         {activeMenu === "main" &&
         <div className="menu">
-          <DropdownItem action="shuffle" clickCallback={handleDropdownClick}>{l10n("Shuffle")}</DropdownItem>
-          {group?.deckGroupId !== group?.id ? <DropdownItem action="moveStacks" destGroupId={group.deckGroupId} position="shuffle" clickCallback={handleDropdownClick}>{l10n("Shuffle into deck")}</DropdownItem> : null}
-          {group?.menuFunctions?.map((funcDetails, _index) => {
+          <DropdownItem action={actionListShuffle} clickCallback={handleDropdownClick}>{l10n("Shuffle")}</DropdownItem>
+          {group?.menuOptions?.map((option, _index) => {
             return(
-              <DropdownItem action={funcDetails.actionList} clickCallback={handleDropdownClick}>{l10n(funcDetails.label)}</DropdownItem>
+              <DropdownItem action={option.actionList} clickCallback={handleDropdownClick}>{l10n(option.label)}</DropdownItem>
+            )
+          })}
+          {gameDef?.dropdownMenus?.group?.options?.map((option, _index) => {
+            return(
+              <DropdownItem action={option.actionListId} clickCallback={handleDropdownClick}>{l10n(option.label)}</DropdownItem>
             )
           })}
           {menuGroup.id === playerN+"Hand" ? <DropdownItem action="makeVisible" clickCallback={handleDropdownClick}>{l10n("Make visible/hidden")}</DropdownItem> : null}
@@ -152,7 +161,7 @@ export const DropdownMenuGroup = React.memo(({
         }
         {activeMenu === "moveToMy" &&
         <DropdownMoveTo destGroupId={playerN+"Deck"}/>}
-        {gameDef.moveToGroupIds.map((moveToGroupId, _moveToGroupIndex) => (
+        {gameDef?.dropdownMenus?.group?.moveToGroupIds.map((moveToGroupId, _moveToGroupIndex) => (
           (activeMenu === "moveTo" + moveToGroupId) && <DropdownMoveTo destGroupId={moveToGroupId}/>
         ))}
     </div>

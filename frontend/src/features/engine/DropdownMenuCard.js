@@ -92,7 +92,7 @@ export const DropdownMenuCard = React.memo(({
               {l10n("Flip")}
           </DropdownItem>
           {(visibleSide === "B" && !menuCard?.peeking[playerN]) ? <DropdownItem action="peek" clickCallback={handleDropdownClick}>{l10n("Peek")}</DropdownItem> : null}
-          {gameDef?.menu?.card?.options?.map((menuItem, _itemIndex) => {
+          {gameDef?.dropdownMenus?.card?.options?.map((menuItem, _itemIndex) => {
             if (menuItem?.showIf && !evaluateCondition(menuItem.showIf)) return;
             return ( 
               <DropdownItem 
@@ -140,7 +140,7 @@ export const DropdownMenuCard = React.memo(({
             clickCallback={handleDropdownClick}>
             {l10n("Deck of origin")}
           </DropdownItem>
-          {gameDef?.menu?.card?.moveToGroupIds.map((groupId, index) => {
+          {gameDef?.dropdownMenus?.card?.moveToGroupIds.map((groupId, index) => {
             return (
               <DropdownItem
                 key={index}
@@ -156,7 +156,7 @@ export const DropdownMenuCard = React.memo(({
         {activeMenu === "moveTo"+menuCard?.deckGroupId &&
         <DropdownMoveTo destGroupId={menuCard?.deckGroupId}/>}
 
-        {gameDef?.menu?.card?.moveToGroupIds?.map((groupId, index) => {
+        {gameDef?.dropdownMenus?.card?.moveToGroupIds?.map((groupId, index) => {
           if (activeMenu === "moveTo"+groupId) return(
             <DropdownMoveTo key={index} destGroupId={groupId}/>
           )

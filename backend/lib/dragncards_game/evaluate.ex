@@ -101,6 +101,8 @@ defmodule DragnCardsGame.Evaluate do
             end)
           "EQUAL" ->
             evaluate(game, Enum.at(code,1)) == evaluate(game, Enum.at(code,2))
+          "NOT_EQUAL" ->
+            evaluate(game, Enum.at(code,1)) != evaluate(game, Enum.at(code,2))
           "LESS_THAN" ->
             evaluate(game, Enum.at(code,1)) < evaluate(game, Enum.at(code,2))
           "GREATER_THAN" ->
@@ -141,10 +143,17 @@ defmodule DragnCardsGame.Evaluate do
                 int = convert_to_integer(int_str)
                 Enum.at(acc, int)
               else
-                Map.get(acc, evaluate(game, pathi))
+                IO.puts("getting key from map")
+                key = evaluate(game, pathi)
+                #IO.inspect(key)
+                #IO.inspect(Map.keys(acc))
+                if Map.has_key?(acc, key) do
+                  Map.get(acc, evaluate(game, key))
+                else
+                  {:error, nil}
+                end
               end
             end)
-            #get_in(map, path)
           "GAME_GET_VAL" ->
             path = evaluate(game, Enum.at(code,1))
             get_in(game, path)
@@ -319,7 +328,7 @@ defmodule DragnCardsGame.Evaluate do
             group_id = evaluate(game, Enum.at(code, 1))
             stack_ids = game["groupById"][group_id]["stackIds"]
             shuffled_stack_ids = stack_ids |> Enum.shuffle
-            put_in(game, ["groupById", group_id, "stack_ids"], shuffled_stack_ids)
+            put_in(game, ["groupById", group_id, "stackIds"], shuffled_stack_ids)
           "SHUFFLE_TOP_X" ->
             group_id = evaluate(game, Enum.at(code, 1))
             x = evaluate(game, Enum.at(code, 2))
@@ -327,7 +336,7 @@ defmodule DragnCardsGame.Evaluate do
             stack_ids_l = Enum.slice(stack_ids, 0, x)
             stack_ids_r = Enum.slice(stack_ids, x, Enum.count(stack_ids))
             stack_ids_l = stack_ids_l |> Enum.shuffle
-            put_in(game, ["groupById", group_id, "stack_ids"], stack_ids_l ++ stack_ids_r)
+            put_in(game, ["groupById", group_id, "stackIds"], stack_ids_l ++ stack_ids_r)
           "SHUFFLE_BOTTOM_X" ->
             group_id = evaluate(game, Enum.at(code, 1))
             x = evaluate(game, Enum.at(code, 2))
@@ -335,7 +344,7 @@ defmodule DragnCardsGame.Evaluate do
             stack_ids_r = Enum.slice(stack_ids, -x, x)
             stack_ids_l = Enum.slice(stack_ids, 0, Enum.count(stack_ids) - x)
             stack_ids_r = stack_ids_r |> Enum.shuffle
-            put_in(game, ["groupById", group_id, "stack_ids"], stack_ids_l ++ stack_ids_r)
+            put_in(game, ["groupById", group_id, "stackIds"], stack_ids_l ++ stack_ids_r)
           "FACEUP_NAME_FROM_STACK_ID" ->
             stack_id = evaluate(game, Enum.at(code, 1))
             card_id = Enum.at(game["stackById"][stack_id]["cardIds"],0)

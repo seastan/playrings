@@ -251,8 +251,6 @@ defmodule DragnCardsGame.GameUI do
       |> put_in(["groupId"], dest_group_id)
       |> put_in(["stackIndex"], dest_stack_index)
       |> put_in(["cardIndex"], dest_card_index)
-    IO.inspect("&&&&&&&&&&&&&&&&&&&&&&&&& 1")
-    IO.inspect(card)
     card = Enum.reduce(dest_group["forceOnCards"], card, fn({key, val}, acc) ->
         put_in(acc, [key], val)
       end)
@@ -261,9 +259,6 @@ defmodule DragnCardsGame.GameUI do
       "A" -> put_in(card["peeking"], %{})
       _ -> card
     end
-
-    IO.inspect("&&&&&&&&&&&&&&&&&&&&&&&&& 2")
-    IO.inspect(card)
 
     update_card(game, card)
   end
@@ -427,6 +422,7 @@ defmodule DragnCardsGame.GameUI do
   def move_stacks(game, orig_group_id, dest_group_id, top_n, position) do
     orig_stack_ids = get_stack_ids(game, orig_group_id)
     # Moving stacks to the top or the bottom of the new group?
+    top_n = if top_n == -1 do Enum.count(orig_stack_ids) else top_n end
     dest_stack_index = if position == "bottom" do -1 else 0 end
     # Move stacks 1 at a time
     game = Enum.reduce(Enum.with_index(orig_stack_ids), game, fn({stack_id, index}, acc) ->

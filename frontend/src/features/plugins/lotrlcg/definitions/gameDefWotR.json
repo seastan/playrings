@@ -9,7 +9,7 @@
         "ringTokens": {"type": "integer", "default": 1, "min": 0},
         "team": {"type": "string", "default": ""}
     },
-    "menu": {
+    "dropdownMenus": {
       "plugin": {},
       "card": {
         "moveToGroupIds": [],
@@ -26,7 +26,12 @@
       },
       "group": {
         "moveToGroupIds": [],
-        "options": []
+        "options": [
+          {
+            "label": "Shuffle into deck",
+            "actionListId": "shuffleGroupIntoDeck"
+          }
+        ]
       }
     },
     "cardTypes": {
@@ -1121,6 +1126,18 @@
       "Trilogy": {
         "name": "Trilogy Scenario",
         "cards": [
+          {
+            "uuid": "569fea9d-4b7a-4ff2-bff5-176d3aeec0a4",
+            "quantity": 1,
+            "loadGroupId": "player1Reserve",
+            "_name": "Blue Rules 1"
+          },
+          {
+            "uuid": "f6648372-e3fd-4d5a-b474-e19c5972ceb1",
+            "quantity": 1,
+            "loadGroupId": "player2Reserve",
+            "_name": "Red Rules 1"
+          },
           {
             "loadGroupId": "player1Deck",
             "quantity": 1,
@@ -2462,36 +2479,61 @@
           ]
         ]
       ],
+      "shuffleGroupIntoDeck": [
+        ["DEFINE", "$ORIG_GROUP", "$GAME.playerUi.dropdownMenuObj.group"],
+        ["FOR_EACH_KEY_VAL", "$CARD_ID", "$CARD", "$CARD_BY_ID",
+          ["COND", 
+            ["AND",
+              ["EQUAL", "$CARD.groupId", "$GAME.playerUi.dropdownMenuObj.group.id"],
+              ["NOT_EQUAL", "$CARD.deckGroupId", null]
+            ],
+            [
+              ["MOVE_CARD", "$CARD_ID", "$CARD.deckGroupId", 0, 0],
+              ["SHUFFLE_GROUP", "$CARD.deckGroupId"]
+            ]
+          ]
+        ],
+        ["GAME_ADD_MESSAGE", "$PLAYER_N", " shuffled the cards in ", "$ORIG_GROUP.name", " into their corresponding decks."]
+      ],
       "deleteCard": [
         ["GAME_ADD_MESSAGE", "$PLAYER_N", " deleted ", "$ACTIVE_FACE.name", "."],
         ["DELETE", "$ACTIVE_CARD_ID"]
       ],
-      "layoutVariant1": [
+      "layoutPath1": [
         ["GAME_SET_VAL", "layoutVariants", "path", 1]
       ],
-      "layoutVariant2": [
+      "layoutPath2": [
         ["GAME_SET_VAL", "layoutVariants", "path", 2]
       ],
-      "layoutVariant3": [
+      "layoutPath3": [
         ["GAME_SET_VAL", "layoutVariants", "path", 3]
       ],
-      "layoutVariant4": [
+      "layoutPath4": [
         ["GAME_SET_VAL", "layoutVariants", "path", 4]
       ],
-      "layoutVariant5": [
+      "layoutPath5": [
         ["GAME_SET_VAL", "layoutVariants", "path", 5]
       ],
-      "layoutVariant6": [
+      "layoutPath6": [
         ["GAME_SET_VAL", "layoutVariants", "path", 6]
       ],
-      "layoutVariant7": [
+      "layoutPath7": [
         ["GAME_SET_VAL", "layoutVariants", "path", 7]
       ],
-      "layoutVariant8": [
+      "layoutPath8": [
         ["GAME_SET_VAL", "layoutVariants", "path", 8]
       ],
-      "layoutVariant9": [
+      "layoutPath9": [
         ["GAME_SET_VAL", "layoutVariants", "path", 9]
+      ],
+      "layoutLocation2": [
+        ["GAME_SET_VAL", "layoutVariants", "location", 2]
+      ],
+      "layoutLocation3": [
+        ["GAME_SET_VAL", "layoutVariants", "location", 3]
+      ],
+      "layoutLocation4": [
+        ["GAME_SET_VAL", "layoutVariants", "location", 4]
       ]
     },
     "faceProperties": {
@@ -3067,18 +3109,37 @@
           {"groupId": "player2Reserve",        "type": "row", "direction": "horizontal", "left":  "0%", "top":  "0%", "width": "38%", "height": "16%"},
           {"groupId": "sharedBattlegroundRed", "type": "pile","direction": "horizontal", "left": "38%", "top":  "0%", "width": "12%", "height": "16%"},
           {"groupId": "player4Reserve",        "type": "row", "direction": "horizontal", "left": "50%", "top":  "0%", "width": "38%", "height": "16%"},
-          {"groupId": "sharedActiveRed1",      "type": "row", "direction": "horizontal", "left":  "0%", "top": "16%", "width": "22%", "height": "16%", "hideTitle": true},
-          {"groupId": "sharedActiveRed2",      "type": "row", "direction": "horizontal", "left": "22%", "top": "16%", "width": "22%", "height": "16%", "hideTitle": true},
-          {"groupId": "sharedActiveRed3",      "type": "row", "direction": "horizontal", "left": "44%", "top": "16%", "width": "22%", "height": "16%", "hideTitle": true},
-          {"groupId": "sharedActiveRed4",      "type": "row", "direction": "horizontal", "left": "66%", "top": "16%", "width": "22%", "height": "16%", "hideTitle": true},
-          {"groupId": "sharedActiveLocation1", "type": "row", "direction": "horizontal", "left":  "0%", "top": "32%", "width": "22%", "height": "16%"},
-          {"groupId": "sharedActiveLocation2", "type": "row", "direction": "horizontal", "left": "22%", "top": "32%", "width": "22%", "height": "16%"},
-          {"groupId": "sharedActiveLocation3", "type": "row", "direction": "horizontal", "left": "44%", "top": "32%", "width": "22%", "height": "16%"},
-          {"groupId": "sharedActiveLocation4", "type": "row", "direction": "horizontal", "left": "66%", "top": "32%", "width": "22%", "height": "16%"},
-          {"groupId": "sharedActiveBlue1",     "type": "row", "direction": "horizontal", "left":  "0%", "top": "48%", "width": "22%", "height": "16%", "hideWhileBrowsing": true, "hideTitle": true},
-          {"groupId": "sharedActiveBlue2",     "type": "row", "direction": "horizontal", "left": "22%", "top": "48%", "width": "22%", "height": "16%", "hideWhileBrowsing": true, "hideTitle": true},
-          {"groupId": "sharedActiveBlue3",     "type": "row", "direction": "horizontal", "left": "44%", "top": "48%", "width": "22%", "height": "16%", "hideWhileBrowsing": true, "hideTitle": true},
-          {"groupId": "sharedActiveBlue4",     "type": "row", "direction": "horizontal", "left": "66%", "top": "48%", "width": "22%", "height": "16%", "hideWhileBrowsing": true, "hideTitle": true},
+
+          {"groupId": "sharedActiveRed1",      "type": "row", "direction": "horizontal", "left":  "0%", "top": "16%", "width": "22%", "height": "16%", "layoutVariants": {"location": 4}, "hideTitle": true},
+          {"groupId": "sharedActiveRed2",      "type": "row", "direction": "horizontal", "left": "22%", "top": "16%", "width": "22%", "height": "16%", "layoutVariants": {"location": 4}, "hideTitle": true},
+          {"groupId": "sharedActiveRed3",      "type": "row", "direction": "horizontal", "left": "44%", "top": "16%", "width": "22%", "height": "16%", "layoutVariants": {"location": 4}, "hideTitle": true},
+          {"groupId": "sharedActiveRed4",      "type": "row", "direction": "horizontal", "left": "66%", "top": "16%", "width": "22%", "height": "16%", "layoutVariants": {"location": 4}, "hideTitle": true},
+          {"groupId": "sharedActiveLocation1", "type": "row", "direction": "horizontal", "left":  "0%", "top": "32%", "width": "22%", "height": "16%", "layoutVariants": {"location": 4}},
+          {"groupId": "sharedActiveLocation2", "type": "row", "direction": "horizontal", "left": "22%", "top": "32%", "width": "22%", "height": "16%", "layoutVariants": {"location": 4}},
+          {"groupId": "sharedActiveLocation3", "type": "row", "direction": "horizontal", "left": "44%", "top": "32%", "width": "22%", "height": "16%", "layoutVariants": {"location": 4}},
+          {"groupId": "sharedActiveLocation4", "type": "row", "direction": "horizontal", "left": "66%", "top": "32%", "width": "22%", "height": "16%", "layoutVariants": {"location": 4}},
+          {"groupId": "sharedActiveBlue1",     "type": "row", "direction": "horizontal", "left":  "0%", "top": "48%", "width": "22%", "height": "16%", "layoutVariants": {"location": 4}, "hideWhileBrowsing": true, "hideTitle": true},
+          {"groupId": "sharedActiveBlue2",     "type": "row", "direction": "horizontal", "left": "22%", "top": "48%", "width": "22%", "height": "16%", "layoutVariants": {"location": 4}, "hideWhileBrowsing": true, "hideTitle": true},
+          {"groupId": "sharedActiveBlue3",     "type": "row", "direction": "horizontal", "left": "44%", "top": "48%", "width": "22%", "height": "16%", "layoutVariants": {"location": 4}, "hideWhileBrowsing": true, "hideTitle": true},
+          {"groupId": "sharedActiveBlue4",     "type": "row", "direction": "horizontal", "left": "66%", "top": "48%", "width": "22%", "height": "16%", "layoutVariants": {"location": 4}, "hideWhileBrowsing": true, "hideTitle": true},
+
+          {"groupId": "sharedActiveRed1",      "type": "row", "direction": "horizontal", "left":  "0%", "top": "16%", "width": "29%", "height": "16%", "layoutVariants": {"location": 3}, "hideTitle": true},
+          {"groupId": "sharedActiveRed2",      "type": "row", "direction": "horizontal", "left": "29%", "top": "16%", "width": "29%", "height": "16%", "layoutVariants": {"location": 3}, "hideTitle": true},
+          {"groupId": "sharedActiveRed3",      "type": "row", "direction": "horizontal", "left": "58%", "top": "16%", "width": "29%", "height": "16%", "layoutVariants": {"location": 3}, "hideTitle": true},
+          {"groupId": "sharedActiveLocation1", "type": "row", "direction": "horizontal", "left":  "0%", "top": "32%", "width": "29%", "height": "16%", "layoutVariants": {"location": 3}},
+          {"groupId": "sharedActiveLocation2", "type": "row", "direction": "horizontal", "left": "29%", "top": "32%", "width": "29%", "height": "16%", "layoutVariants": {"location": 3}},
+          {"groupId": "sharedActiveLocation3", "type": "row", "direction": "horizontal", "left": "58%", "top": "32%", "width": "29%", "height": "16%", "layoutVariants": {"location": 3}},
+          {"groupId": "sharedActiveBlue1",     "type": "row", "direction": "horizontal", "left":  "0%", "top": "48%", "width": "29%", "height": "16%", "layoutVariants": {"location": 3}, "hideWhileBrowsing": true, "hideTitle": true},
+          {"groupId": "sharedActiveBlue2",     "type": "row", "direction": "horizontal", "left": "29%", "top": "48%", "width": "29%", "height": "16%", "layoutVariants": {"location": 3}, "hideWhileBrowsing": true, "hideTitle": true},
+          {"groupId": "sharedActiveBlue3",     "type": "row", "direction": "horizontal", "left": "58%", "top": "48%", "width": "29%", "height": "16%", "layoutVariants": {"location": 3}, "hideWhileBrowsing": true, "hideTitle": true},
+
+          {"groupId": "sharedActiveRed1",      "type": "row", "direction": "horizontal", "left":  "0%", "top": "16%", "width": "44%", "height": "16%", "layoutVariants": {"location": 2}, "hideTitle": true},
+          {"groupId": "sharedActiveRed2",      "type": "row", "direction": "horizontal", "left": "44%", "top": "16%", "width": "44%", "height": "16%", "layoutVariants": {"location": 2}, "hideTitle": true},
+          {"groupId": "sharedActiveLocation1", "type": "row", "direction": "horizontal", "left":  "0%", "top": "32%", "width": "44%", "height": "16%", "layoutVariants": {"location": 2}},
+          {"groupId": "sharedActiveLocation2", "type": "row", "direction": "horizontal", "left": "44%", "top": "32%", "width": "44%", "height": "16%", "layoutVariants": {"location": 2}},
+          {"groupId": "sharedActiveBlue1",     "type": "row", "direction": "horizontal", "left":  "0%", "top": "48%", "width": "44%", "height": "16%", "layoutVariants": {"location": 2}, "hideWhileBrowsing": true, "hideTitle": true},
+          {"groupId": "sharedActiveBlue2",     "type": "row", "direction": "horizontal", "left": "44%", "top": "48%", "width": "44%", "height": "16%", "layoutVariants": {"location": 2}, "hideWhileBrowsing": true, "hideTitle": true},
+
           {"groupId": "player1Reserve",        "type": "row", "direction": "horizontal", "left":  "0%", "top": "64%", "width": "32%", "height": "16%"},
           {"groupId": "sharedBattlegroundBlue","type": "pile","direction": "horizontal", "left": "32%", "top": "64%", "width": "12%", "height": "16%"},
           {"groupId": "sharedPathDeck1",       "type": "pile","direction": "horizontal", "left": "44%", "top": "64%", "width": "12%", "height": "16%", "layoutVariants": {"path": 1}},
@@ -3099,18 +3160,22 @@
           {"groupId": "sharedScoringBlue",     "type": "fan", "direction": "vertical",   "left": "88%", "top": "40%", "width":  "12%", "height": "40%"}
         ],
         "defaultVariants": {
-          "path": 1
+          "path": 1,
+          "location": 2
         },
         "tableButtons": [
-          {"actionListId": "layoutVariant1", "text": "1", "left": "43%",   "top": "80.5%", "width": "1.5%", "height": "3.5%"},
-          {"actionListId": "layoutVariant2", "text": "2", "left": "44.5%", "top": "80.5%", "width": "1.5%", "height": "3.5%"},
-          {"actionListId": "layoutVariant3", "text": "3", "left": "46%",   "top": "80.5%", "width": "1.5%", "height": "3.5%"},
-          {"actionListId": "layoutVariant4", "text": "4", "left": "47.5%", "top": "80.5%", "width": "1.5%", "height": "3.5%"},
-          {"actionListId": "layoutVariant5", "text": "5", "left": "49%",   "top": "80.5%", "width": "1.5%", "height": "3.5%"},
-          {"actionListId": "layoutVariant6", "text": "6", "left": "50.5%", "top": "80.5%", "width": "1.5%", "height": "3.5%"},
-          {"actionListId": "layoutVariant7", "text": "7", "left": "52%",   "top": "80.5%", "width": "1.5%", "height": "3.5%"},
-          {"actionListId": "layoutVariant8", "text": "8", "left": "53.5%", "top": "80.5%", "width": "1.5%", "height": "3.5%"},
-          {"actionListId": "layoutVariant9", "text": "9", "left": "55%",   "top": "80.5%", "width": "1.5%", "height": "3.5%"}
+          {"actionListId": "layoutPath1", "text": "1", "left": "43%",   "top": "80.5%", "width": "1.5%", "height": "3.5%"},
+          {"actionListId": "layoutPath2", "text": "2", "left": "44.5%", "top": "80.5%", "width": "1.5%", "height": "3.5%"},
+          {"actionListId": "layoutPath3", "text": "3", "left": "46%",   "top": "80.5%", "width": "1.5%", "height": "3.5%"},
+          {"actionListId": "layoutPath4", "text": "4", "left": "47.5%", "top": "80.5%", "width": "1.5%", "height": "3.5%"},
+          {"actionListId": "layoutPath5", "text": "5", "left": "49%",   "top": "80.5%", "width": "1.5%", "height": "3.5%"},
+          {"actionListId": "layoutPath6", "text": "6", "left": "50.5%", "top": "80.5%", "width": "1.5%", "height": "3.5%"},
+          {"actionListId": "layoutPath7", "text": "7", "left": "52%",   "top": "80.5%", "width": "1.5%", "height": "3.5%"},
+          {"actionListId": "layoutPath8", "text": "8", "left": "53.5%", "top": "80.5%", "width": "1.5%", "height": "3.5%"},
+          {"actionListId": "layoutPath9", "text": "9", "left": "55%",   "top": "80.5%", "width": "1.5%", "height": "3.5%"},
+          {"actionListId": "layoutLocation2", "text": "2", "left": "86.5%", "top": "32%", "width": "1.5%", "height": "5%"},
+          {"actionListId": "layoutLocation3", "text": "3", "left": "86.5%", "top": "37%", "width": "1.5%", "height": "5%"},
+          {"actionListId": "layoutLocation4", "text": "4", "left": "86.5%", "top": "42%", "width": "1.5%", "height": "5%"}
         ]
       }
     }

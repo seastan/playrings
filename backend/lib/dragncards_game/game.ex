@@ -194,10 +194,10 @@
         end
       end)
     else
-      IO.puts("undo error")
-      IO.inspect(map)
-      IO.puts("delta")
-      IO.inspect(delta)
+      # IO.puts("undo error")
+      # IO.inspect(map)
+      # IO.puts("delta")
+      # IO.inspect(delta)
       map
     end
   end
