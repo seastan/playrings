@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React from "react";
 import { useDispatch, useSelector } from 'react-redux';
 import { Stacks } from "./Stacks";
 import { faBars, faEye } from "@fortawesome/free-solid-svg-icons";
@@ -6,8 +6,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useBrowseTopN } from "./functions/useBrowseTopN"; 
 import { setDropdownMenuObj } from "../store/playerUiSlice";
 import { useGameL10n } from "../../hooks/useGameL10n";
-import BroadcastContext from "../../contexts/BroadcastContext";
 import { useGameDefinition } from "./functions/useGameDefinition";
+import { useLayout } from "./functions/useLayout";
 
 export const SideGroup = React.memo(({
   registerDivToArrowsContext,
@@ -16,11 +16,10 @@ export const SideGroup = React.memo(({
   const dispatch = useDispatch();
   const l10n = useGameL10n();
   const gameDef = useGameDefinition();
-  const {gameBroadcast, chatBroadcast} = useContext(BroadcastContext);
   const sideGroupId = useSelector(state => state?.playerUi?.sideGroupId);
   const browseGroupId = useSelector(state => state?.playerUi?.browseGroup?.id);
   const group = useSelector(state => state?.gameUi?.game?.groupById?.[sideGroupId]);
-  const layout = useSelector(state => state.gameUi?.game?.layout);    
+  const layout = useLayout();
   const playerN = useSelector(state => state?.playerUi?.playerN);
   const browseTopN = useBrowseTopN();
 
@@ -49,23 +48,22 @@ export const SideGroup = React.memo(({
   }
 
   return (
-      Object.keys(gameDef.groups).includes(sideGroupId) && browseGroupId !== sideGroupId &&
-        <div className="relative float-left" style={{height: `${100-2*(100/numRows)}%`, width:`${100-middleRowsWidth}%`}}>
-          <div className="absolute text-center w-full select-none text-gray-500">
-            <div className="mt-1">
-              {l10n(gameDef.groups[sideGroupId].tableName)}
-            </div>
-            {(playerN || group.type === "discard") && <FontAwesomeIcon onClick={(event) => handleEyeClick(event)}  className="hover:text-white mr-2" icon={faEye}/>}
-            {playerN && <FontAwesomeIcon onClick={(event) => handleBarsClick(event)}  className="hover:text-white mr-2" icon={faBars}/>}
+    Object.keys(gameDef.groups).includes(sideGroupId) && browseGroupId !== sideGroupId &&
+      <div className="relative float-left" style={{height: `${100-2*(100/numRows)}%`, width:`${100-middleRowsWidth}%`}}>
+        <div className="absolute text-center w-full select-none text-gray-500">
+          <div className="mt-1">
+            {l10n(gameDef.groups[sideGroupId].tableName)}
           </div>
-          <div className="w-full h-full mt-12">
-            <Stacks
-              groupId={sideGroupId}
-              layoutType={"vertical"}
-              registerDivToArrowsContext={registerDivToArrowsContext}
-            />
-          </div>
+          {(playerN || group.type === "discard") && <FontAwesomeIcon onClick={(event) => handleEyeClick(event)}  className="hover:text-white mr-2" icon={faEye}/>}
+          {playerN && <FontAwesomeIcon onClick={(event) => handleBarsClick(event)}  className="hover:text-white mr-2" icon={faBars}/>}
         </div>
-      
+        <div className="w-full h-full mt-12">
+          <Stacks
+            groupId={sideGroupId}
+            layoutType={"vertical"}
+            registerDivToArrowsContext={registerDivToArrowsContext}
+          />
+        </div>
+      </div>
   )
 })

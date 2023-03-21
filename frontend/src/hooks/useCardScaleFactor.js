@@ -1,7 +1,9 @@
 import { useSelector } from "react-redux";
+import { useLayout } from "../features/engine/functions/useLayout";
 
 export const useCardScaleFactor = () => {
-  const cardSize = useSelector(state => state?.gameUi?.game?.layout?.cardSize);
+  const layout = useLayout();
+  const cardSize = layout?.cardSize;
   const zoomFactor = useSelector(state => state?.playerUi?.zoomFactor);
   return cardSize*zoomFactor;
 }

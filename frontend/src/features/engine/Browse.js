@@ -11,6 +11,7 @@ import { useGameL10n } from "../../hooks/useGameL10n";
 import BroadcastContext from "../../contexts/BroadcastContext";
 import { useGameDefinition } from "./functions/useGameDefinition";
 import { useDoActionList } from "./functions/useDoActionList";
+import { useLayout } from "./functions/useLayout";
 
 const isNormalInteger = (str) => {
   var n = Math.floor(Number(str));
@@ -26,11 +27,11 @@ export const Browse = React.memo(({}) => {
   const groupId = useSelector(state => state?.playerUi?.browseGroup?.id);
   const browseGroupTopN = useSelector(state => state?.playerUi?.browseGroup?.topN);
   const group = useSelector(state => state?.gameUi?.game?.groupById?.[groupId]);
-  var region = useSelector(state => state?.gameUi?.game?.layout?.browse);
+  const layout = useLayout();
+  var region = layout?.browse;
   const browseWidth = region.width;
   const regionWidthInt = parseInt(browseWidth.substring(0, browseWidth.length - 1))
   region = {...region, groupId: groupId, width: `${regionWidthInt*0.7}%`}
-  const regionType = region.type;
   const game = useSelector(state => state?.gameUi?.game);
   const parentCards = getParentCardsInGroup(game, groupId);
   const [searchForProperty, setSearchForProperty] = useState('All');

@@ -172,11 +172,9 @@ export const TopBarMenu = React.memo(({}) => {
     } else if (data.action === "load_custom") {
       loadFileCustom();
     }  else if (data.action === "layout") {
-      const num = data.value.numPlayers;
-      const layout = gameDef.layouts[data.value.layoutId];
-      gameBroadcast("game_action", {action: "update_values", options: {updates: [["numPlayers", num]]}});
-      chatBroadcast("game_update", {message: "set the number of players to: " + num});
-      gameBroadcast("game_action", {action: "update_values", options: {updates: [["layout", layout]]}});
+      doActionList([
+        ["GAME_SET_VAL", "layoutId", data.value.layoutId]
+      ]);
     } else if (data.action === "quest_mode") {
       gameBroadcast("game_action", {action: "update_values", options: {updates: [["questMode", data.mode]]}});
       chatBroadcast("game_update", {message: "set the quest mode to " + data.mode + "."});

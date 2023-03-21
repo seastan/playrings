@@ -5,6 +5,8 @@ import MessageBox from "../messages/MessageBox";
 import "../../css/custom-misc.css"; 
 import BroadcastContext from "../../contexts/BroadcastContext";
 import { TableRegion } from "./TableRegion";
+import { useLayout } from "./functions/useLayout";
+import { useDoActionList } from "./functions/useDoActionList";
 
 var delayBroadcast;
 
@@ -15,10 +17,12 @@ export const TableLayout = React.memo(({
   console.log("Rendering TableLayout");
   const sideGroupId = useSelector(state => state?.playerUi?.sideGroupId);
   const browseGroupId = useSelector(state => state?.playerUi?.browseGroup?.id);
+  const layoutVariants = useSelector(state => state?.gameUi?.game?.layoutVariants);
   const [chatHover, setChatHover] = useState(false);
-  const layout = useSelector(state => state?.gameUi?.game?.layout);
+  const layout = useLayout();
   const numRows = layout.length;
   const rowHeight = `${100/numRows}%`; 
+  const doActionList = useDoActionList();
   
 
   if (!layout) return;
@@ -44,12 +48,34 @@ export const TableLayout = React.memo(({
     <>
       <Browse/>
       {layout.regions.map((region, regionIndex) => {
+        console.log("layoutId", region.groupId, layout?.layoutVariant )
+        if (region?.layoutVariants) {
+          const variantVisible = () => {
+            for (const [key, value] of Object.entries(region?.layoutVariants)) {
+              console.log("layoutId", layoutVariants, key, value)
+              if (layoutVariants?.[key] == value) {
+                return true;
+              }
+            }
+            return false;
+          }
+          if (!variantVisible()) return;
+        }
         return(
           <TableRegion
             key={regionIndex}
             region={region}
             registerDivToArrowsContext={registerDivToArrowsContext}
           />
+        )
+      })}
+      {layout.tableButtons.map((tableButton, buttonIndex) => {
+        return(
+          <div 
+            className="absolute flex cursor-pointer border border-gray-500 justify-center items-center text-gray-400 bg-gray-700 hover:bg-gray-500" style={{left: tableButton.left, top: tableButton.top, width: tableButton.width, height: tableButton.height}}
+            onClick={() => {doActionList(tableButton?.actionListId)}}>
+            {tableButton.text}
+          </div>
         )
       })}
       <div className="absolute" style={{left: layout.chat.left, top: layout.chat.top, width: layout.chat.width, height: layout.chat.height}}>

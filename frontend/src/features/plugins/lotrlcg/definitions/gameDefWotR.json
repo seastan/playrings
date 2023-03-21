@@ -2465,6 +2465,33 @@
       "deleteCard": [
         ["GAME_ADD_MESSAGE", "$PLAYER_N", " deleted ", "$ACTIVE_FACE.name", "."],
         ["DELETE", "$ACTIVE_CARD_ID"]
+      ],
+      "layoutVariant1": [
+        ["GAME_SET_VAL", "layoutVariants", "path", 1]
+      ],
+      "layoutVariant2": [
+        ["GAME_SET_VAL", "layoutVariants", "path", 2]
+      ],
+      "layoutVariant3": [
+        ["GAME_SET_VAL", "layoutVariants", "path", 3]
+      ],
+      "layoutVariant4": [
+        ["GAME_SET_VAL", "layoutVariants", "path", 4]
+      ],
+      "layoutVariant5": [
+        ["GAME_SET_VAL", "layoutVariants", "path", 5]
+      ],
+      "layoutVariant6": [
+        ["GAME_SET_VAL", "layoutVariants", "path", 6]
+      ],
+      "layoutVariant7": [
+        ["GAME_SET_VAL", "layoutVariants", "path", 7]
+      ],
+      "layoutVariant8": [
+        ["GAME_SET_VAL", "layoutVariants", "path", 8]
+      ],
+      "layoutVariant9": [
+        ["GAME_SET_VAL", "layoutVariants", "path", 9]
       ]
     },
     "faceProperties": {
@@ -2527,7 +2554,7 @@
         "tableName": "Shadow Scoring Area",
         "canHaveAttachments": false,
         "forceOnCards": {
-          "currentSide": "B",
+          "currentSide": "A",
           "inPlay": false
         }
       },
@@ -3052,15 +3079,38 @@
           {"groupId": "sharedActiveBlue2",     "type": "row", "direction": "horizontal", "left": "22%", "top": "48%", "width": "22%", "height": "16%", "hideWhileBrowsing": true, "hideTitle": true},
           {"groupId": "sharedActiveBlue3",     "type": "row", "direction": "horizontal", "left": "44%", "top": "48%", "width": "22%", "height": "16%", "hideWhileBrowsing": true, "hideTitle": true},
           {"groupId": "sharedActiveBlue4",     "type": "row", "direction": "horizontal", "left": "66%", "top": "48%", "width": "22%", "height": "16%", "hideWhileBrowsing": true, "hideTitle": true},
-          {"groupId": "player1Reserve",        "type": "row", "direction": "horizontal", "left":  "0%", "top": "64%", "width": "38%", "height": "16%"},
-          {"groupId": "sharedBattlegroundBlue","type": "pile","direction": "horizontal", "left": "38%", "top": "64%", "width": "12%", "height": "16%"},
-          {"groupId": "player3Reserve",        "type": "row", "direction": "horizontal", "left": "50%", "top": "64%", "width": "38%", "height": "16%"},
+          {"groupId": "player1Reserve",        "type": "row", "direction": "horizontal", "left":  "0%", "top": "64%", "width": "32%", "height": "16%"},
+          {"groupId": "sharedBattlegroundBlue","type": "pile","direction": "horizontal", "left": "32%", "top": "64%", "width": "12%", "height": "16%"},
+          {"groupId": "sharedPathDeck1",       "type": "pile","direction": "horizontal", "left": "44%", "top": "64%", "width": "12%", "height": "16%", "layoutVariants": {"path": 1}},
+          {"groupId": "sharedPathDeck2",       "type": "pile","direction": "horizontal", "left": "44%", "top": "64%", "width": "12%", "height": "16%", "layoutVariants": {"path": 2}},
+          {"groupId": "sharedPathDeck3",       "type": "pile","direction": "horizontal", "left": "44%", "top": "64%", "width": "12%", "height": "16%", "layoutVariants": {"path": 3}},
+          {"groupId": "sharedPathDeck4",       "type": "pile","direction": "horizontal", "left": "44%", "top": "64%", "width": "12%", "height": "16%", "layoutVariants": {"path": 4}},
+          {"groupId": "sharedPathDeck5",       "type": "pile","direction": "horizontal", "left": "44%", "top": "64%", "width": "12%", "height": "16%", "layoutVariants": {"path": 5}},
+          {"groupId": "sharedPathDeck6",       "type": "pile","direction": "horizontal", "left": "44%", "top": "64%", "width": "12%", "height": "16%", "layoutVariants": {"path": 6}},
+          {"groupId": "sharedPathDeck7",       "type": "pile","direction": "horizontal", "left": "44%", "top": "64%", "width": "12%", "height": "16%", "layoutVariants": {"path": 7}},
+          {"groupId": "sharedPathDeck8",       "type": "pile","direction": "horizontal", "left": "44%", "top": "64%", "width": "12%", "height": "16%", "layoutVariants": {"path": 8}},
+          {"groupId": "sharedPathDeck9",       "type": "pile","direction": "horizontal", "left": "44%", "top": "64%", "width": "12%", "height": "16%", "layoutVariants": {"path": 9}},
+          {"groupId": "player3Reserve",        "type": "row", "direction": "horizontal", "left": "56%", "top": "64%", "width": "32%", "height": "16%"},
           {"groupId": "playerNHand",           "type": "fan", "direction": "horizontal", "left":  "0%", "top": "84%", "width": "51%", "height": "16%", "style": "shaded"},
           {"groupId": "playerNDeck",           "type": "pile","direction": "horizontal", "left": "51%", "top": "84%", "width":  "8%", "height": "16%", "style": "shaded"},
           {"groupId": "playerNCycled",         "type": "pile","direction": "horizontal", "left": "59%", "top": "84%", "width":  "8%", "height": "16%", "style": "shaded"},
           {"groupId": "playerNEliminated",     "type": "pile","direction": "horizontal", "left": "67%", "top": "84%", "width":  "8%", "height": "16%", "style": "shaded"},
           {"groupId": "sharedScoringRed",      "type": "fan", "direction": "vertical",   "left": "88%", "top": "0%",  "width":  "12%", "height": "40%"},
           {"groupId": "sharedScoringBlue",     "type": "fan", "direction": "vertical",   "left": "88%", "top": "40%", "width":  "12%", "height": "40%"}
+        ],
+        "defaultVariants": {
+          "path": 1
+        },
+        "tableButtons": [
+          {"actionListId": "layoutVariant1", "text": "1", "left": "43%",   "top": "80.5%", "width": "1.5%", "height": "3.5%"},
+          {"actionListId": "layoutVariant2", "text": "2", "left": "44.5%", "top": "80.5%", "width": "1.5%", "height": "3.5%"},
+          {"actionListId": "layoutVariant3", "text": "3", "left": "46%",   "top": "80.5%", "width": "1.5%", "height": "3.5%"},
+          {"actionListId": "layoutVariant4", "text": "4", "left": "47.5%", "top": "80.5%", "width": "1.5%", "height": "3.5%"},
+          {"actionListId": "layoutVariant5", "text": "5", "left": "49%",   "top": "80.5%", "width": "1.5%", "height": "3.5%"},
+          {"actionListId": "layoutVariant6", "text": "6", "left": "50.5%", "top": "80.5%", "width": "1.5%", "height": "3.5%"},
+          {"actionListId": "layoutVariant7", "text": "7", "left": "52%",   "top": "80.5%", "width": "1.5%", "height": "3.5%"},
+          {"actionListId": "layoutVariant8", "text": "8", "left": "53.5%", "top": "80.5%", "width": "1.5%", "height": "3.5%"},
+          {"actionListId": "layoutVariant9", "text": "9", "left": "55%",   "top": "80.5%", "width": "1.5%", "height": "3.5%"}
         ]
       }
     }

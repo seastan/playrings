@@ -43,6 +43,7 @@
   @spec new(Map.t(), Map.t()) :: Game.t()
   def new(game_def, options) do
     default_layout_info = Enum.at(game_def["layoutMenu"],0)
+    layout_id = default_layout_info["layoutId"]
     base = %{
       "id" => Ecto.UUID.generate,
       "gameDef" => game_def,
@@ -51,7 +52,8 @@
       "numPlayers" => default_layout_info["numPlayers"],
       #"questModeAndId" => nil,
       "roomTitle" => "Unspecified",
-      "layout" => game_def["layouts"][default_layout_info["layoutId"]],
+      "layoutId" => layout_id,
+      "layoutVariants" => game_def["layouts"][layout_id]["defaultVariants"] || %{},
       "firstPlayer" => "player1",
       "stepIndex" => 0,
       "groupById" => Groups.new(game_def["groups"]),
