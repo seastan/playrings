@@ -3,7 +3,7 @@
 import { useState, useContext } from "react";
 import { useDispatch } from 'react-redux';
 import { useSelector } from 'react-redux';
-import { setActiveCardObj, setDropdownMenuObj, setTouchAction } from "../../store/playerUiSlice";
+import { setMousePosition, setDropdownMenuObj, setTouchAction } from "../../store/playerUiSlice";
 import store from "../../../store";
 import BroadcastContext from "../../../contexts/BroadcastContext";
 import { useDoActionList } from "./useDoActionList";
@@ -17,7 +17,7 @@ export const useHandleTouchAction = () => {
     const playerN = useSelector(state => state?.playerUi?.playerN);
     const touchMode = useSelector(state => state?.playerUi?.touchMode);
     const touchAction = useSelector(state => state?.playerUi?.touchAction);
-    const activeCardObj = useSelector(state => state?.playerUi?.activeCardObj);
+    const activeCardId = useSelector(state => state?.playerUi?.activeCardId);
     const doActionList = useDoActionList();
     const [prevActive, setPrevActive] = useState(null);
     const getDefaultAction = useGetDefaultAction();
@@ -51,13 +51,12 @@ export const useHandleTouchAction = () => {
                 }
             } else if (touchAction?.actionType === "card" && touchedCard) {
                 doActionList(touchAction?.actionListId)
-                dispatch(setActiveCardObj(null));
+                dispatch(setMousePosition(null));
             }
-            dispatch(setActiveCardObj(null));
+            dispatch(setMousePosition(null));
             dispatch(setDropdownMenuObj(null));
-        } else if (touchedCard.id === activeCardObj?.card?.id) {
+        } else if (touchedCard.id === activeCardId) {
             // If a touched card is the active card, we do the default action
-            //alert(activeCardObj?.defaultAction?.actionListId)
             const defaultAction = getDefaultAction(touchedCard.id);
             console.log("active card xyz", defaultAction)
 

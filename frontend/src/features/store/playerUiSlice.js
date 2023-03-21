@@ -16,7 +16,6 @@ const initialState = {
   typing: false,
   zoomFactor: 1.0,
   activeCardId: null,
-  activeCardObj: null,
   observingPlayerN: "player1",
   dropdownMenuObj: null,
   showModal: null,
@@ -28,6 +27,7 @@ const initialState = {
   },
   tooltipIds: [],
   mousePosition: null,
+  cardClicked: false,
   touchAction: null,
   sideGroupId: "sharedSetAside",
   favoriteGroupId: null,
@@ -82,9 +82,8 @@ const playerUiSlice = createSlice({
     setActiveCardId: (state, { payload }) => {
       state.activeCardId = payload;
     },
-    setActiveCardObj: (state, { payload }) => {
-      state.activeCardObj = payload;
-      state.activeCardId = state.activeCardObj?.card?.id;
+    setScreenPosition: (state, { payload }) => {
+      state.screenPosition = payload;
     },
     setObservingPlayerN: (state, { payload }) => {
       state.observingPlayerN = payload;
@@ -112,6 +111,9 @@ const playerUiSlice = createSlice({
     },
     setMousePosition: (state, { payload }) => {
       state.mousePosition = payload;
+    },
+    setCardClicked: (state, { payload }) => {
+      state.cardClicked = payload;
     },
     setTouchAction: (state, { payload }) => {
       state.touchAction = payload;
@@ -147,7 +149,7 @@ export const {
   setTyping,
   setZoomFactor,
   setActiveCardId,
-  setActiveCardObj,
+  setScreenPosition,
   setObservingPlayerN,
   setDropdownMenuObj,
   setShowModal,
@@ -157,6 +159,7 @@ export const {
   setBrowseGroupTopN,
   setTooltipIds,
   setMousePosition,
+  setCardClicked,
   setTouchAction,
   setSideGroupId,
   setFavoriteGroupId,

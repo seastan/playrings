@@ -6,7 +6,7 @@ import { CardMouseRegion } from "./CardMouseRegion";
 import { faEye } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Target } from "./Target";
-import { setActiveCardObj } from "../store/playerUiSlice";
+import { setActiveCardId, setMousePosition } from "../store/playerUiSlice";
 import { useCardScaleFactor } from "../../hooks/useCardScaleFactor";
 import { useGameDefinition } from "./functions/useGameDefinition";
 import { useGetDefaultAction } from "./functions/useGetDefaultAction";
@@ -43,7 +43,7 @@ export const Card = React.memo(({
     const visibleFaceSrc = getVisibleFaceSrc(cardVisibleFace, playerN, gameDef);
     const zIndex = 1000 - cardIndex;
     console.log('Rendering Card ',cardVisibleFace.name);
-    const isActive = useSelector(state => {return state?.playerUi?.activeCardObj?.card?.id === cardId});
+    const isActive = useSelector(state => {return state?.playerUi?.activeCardId === cardId});
     const touchModeSpacingFactor = touchMode ? 1.5 : 1;
     const getDefaultAction = useGetDefaultAction();
     const defaultAction = touchMode && isActive ? getDefaultAction(cardId) : null;
@@ -51,7 +51,7 @@ export const Card = React.memo(({
 
     const handleMouseLeave = (_event) => {
         console.log("Card mouseleave")
-        dispatch(setActiveCardObj(null));
+        dispatch(setActiveCardId(null))
     }
 
     var [height, width] = [cardVisibleFace.height, cardVisibleFace.width];
@@ -113,14 +113,14 @@ export const Card = React.memo(({
                     cardId={cardId}
                 />
                 <CardMouseRegion 
-                    position={"top"}
+                    topOrBottom={"top"}
                     top={"0%"}
                     cardId={cardId}
                     isActive={isActive}
                     zIndex={zIndex}
                 />
                 <CardMouseRegion 
-                    position={"bottom"}
+                    topOrBottom={"bottom"}
                     top={"50%"}
                     cardId={cardId}
                     isActive={isActive}

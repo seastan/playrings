@@ -1,7 +1,7 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useGameDefinition } from "./functions/useGameDefinition";
-import { setActiveCardObj, setDropdownMenuObj, setTouchAction } from "../store/playerUiSlice";
+import { setMousePosition, setDropdownMenuObj, setTouchAction } from "../store/playerUiSlice";
 import { useDoActionList } from "./functions/useDoActionList";
 
 export const TouchButton = React.memo(({buttonObj}) => {
@@ -19,7 +19,7 @@ export const TouchButton = React.memo(({buttonObj}) => {
     event.stopPropagation();
     // When a touch button is pressed, remove any active card to dropdown menu
     dispatch(setDropdownMenuObj(null));
-    dispatch(setActiveCardObj(null));
+    dispatch(setMousePosition(null));
     // If it's a game function, just do it
     if (buttonObj?.actionType === "game") {
       doActionList(buttonObj?.actionListId)

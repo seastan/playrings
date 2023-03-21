@@ -1129,13 +1129,13 @@
           {
             "uuid": "569fea9d-4b7a-4ff2-bff5-176d3aeec0a4",
             "quantity": 1,
-            "loadGroupId": "player1Reserve",
+            "loadGroupId": "sharedScoringBlue",
             "_name": "Blue Rules 1"
           },
           {
             "uuid": "f6648372-e3fd-4d5a-b474-e19c5972ceb1",
             "quantity": 1,
-            "loadGroupId": "player2Reserve",
+            "loadGroupId": "sharedScoringRed",
             "_name": "Red Rules 1"
           },
           {

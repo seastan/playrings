@@ -1,20 +1,20 @@
-import React from "react";
+import React, { useEffect } from "react";
 import useProfile from "../../hooks/useProfile";
 import { useSelector } from "react-redux";
 import { useGameDefinition } from "./functions/useGameDefinition";
 import { getVisibleFace, getVisibleFaceSrc } from "../definitions/common";
+import { useActiveCard } from "./functions/useActiveCard";
 
 export const GiantCard = React.memo(({}) => {
   const user = useProfile();
   const gameDef = useGameDefinition();
   const playerN = useSelector(state => state?.playerUi?.playerN);
   const touchAction = useSelector(state => state?.playerUi?.touchAction);
-  const activeCardObj = useSelector(state => state?.playerUi?.activeCardObj);
-  const activeCard = activeCardObj?.card;
+  const activeCard = useActiveCard();
   const visibleFace = getVisibleFace(activeCard, playerN);
+  const screenPosition = useSelector(state => state?.playerUi?.screenPosition);
   const visibleFaceSrc = getVisibleFaceSrc(visibleFace, user, gameDef);
   console.log("Rendering GiantCard", activeCard, visibleFace, visibleFaceSrc);
-
 
   if (activeCard && !touchAction) {
     var height = visibleFace.height >= visibleFace.width ? "70vh" : "50vh";
@@ -25,8 +25,8 @@ export const GiantCard = React.memo(({}) => {
         src={visibleFaceSrc.src} 
         onError={(e)=>{e.target.onerror = null; e.target.src=visibleFaceSrc.default}}
         style={{
-          right: activeCardObj?.screenPosition === "left" ? "3%" : "",
-          left: activeCardObj?.screenPosition === "right" ? "3%" : "",
+          right: screenPosition === "left" ? "3%" : "",
+          left: screenPosition === "right" ? "3%" : "",
           top: "5%",
           borderRadius: '5%',
           MozBoxShadow: '0 0 50px 20px black',

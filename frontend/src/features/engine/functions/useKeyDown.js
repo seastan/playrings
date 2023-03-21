@@ -12,7 +12,7 @@ export const useKeyDown = () => {
     const keypressControl = useSelector(state => state?.playerUi?.keypress?.Control);
     const keypressShift = useSelector(state => state?.playerUi?.keypress?.Shift);
     const keypressAlt = useSelector(state => state?.playerUi?.keypress?.Alt);
-    const mousePosition = useSelector(state => state?.playerUi?.activeCardObj?.mousePosition);
+    const mousePosition = useSelector(state => state?.playerUi?.mousePosition);
     const {gameBroadcast, chatBroadcast} = useContext(BroadcastContext);
     const doActionList = useDoActionList();
     const addToken = useAddToken();

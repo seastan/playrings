@@ -13,7 +13,7 @@ import { TouchBarBottom } from "./TouchBarBottom";
 
 import "../../css/custom-dropdown.css";
 import { TooltipModal } from "./TooltipModal";
-import { setActiveCardObj, setDropdownMenuObj, setMousePosition, setTouchAction } from "../store/playerUiSlice";
+import { setMousePosition, setDropdownMenuObj, setScreenPosition, setTouchAction } from "../store/playerUiSlice";
 import { useDispatch, useSelector } from "react-redux";
 import useProfile from "../../hooks/useProfile";
 import { onLoad } from "../plugins/lotrlcg/functions/helpers";
@@ -36,7 +36,7 @@ export const Table = React.memo(({registerDivToArrowsContext}) => {
 
 
   const handleTableClick = (event) => {
-    dispatch(setActiveCardObj(null));
+    dispatch(setMousePosition(null));
     dispatch(setDropdownMenuObj(null));
     dispatch(setTouchAction(null));
   }

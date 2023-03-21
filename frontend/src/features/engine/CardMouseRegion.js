@@ -2,13 +2,13 @@
 import React from "react";
 import useLongPress from "../../hooks/useLongPress";
 import { useDispatch, useSelector } from "react-redux";
-import { setActiveCardObj, setDropdownMenuObj } from "../store/playerUiSlice";
+import { setMousePosition, setDropdownMenuObj, setActiveCardId, setScreenPosition, setCardClicked } from "../store/playerUiSlice";
 import { useHandleTouchAction } from "./functions/useHandleTouchAction";
 import { getVisibleFaceSrc } from "../definitions/common";
 
 
 export const CardMouseRegion = React.memo(({
-    position,
+    topOrBottom,
     top,
     cardId,
     isActive,
@@ -23,12 +23,9 @@ export const CardMouseRegion = React.memo(({
 
     const makeActive = (event) => {
         const screenPosition = event.clientX > (window.innerWidth/2) ? "right" : "left";
-        dispatch(setActiveCardObj({
-            card: card,
-            mousePosition: position, 
-            screenPosition: screenPosition,
-            clicked: true
-        }));
+        dispatch(setActiveCardId(cardId));
+        dispatch(setScreenPosition(screenPosition));
+        dispatch(setCardClicked(true));
     }
 
     const handleSetDropDownMenu = () => {
@@ -44,7 +41,7 @@ export const CardMouseRegion = React.memo(({
     const handleClick = (event) => {
         console.log("cardclick", card);
         event.stopPropagation();        
-        makeActive(event,position);
+        makeActive(event);
         // What to do depends on whether touch mode is active
         if (touchMode) handleTouchAction(card);
         else handleSetDropDownMenu();
@@ -52,7 +49,7 @@ export const CardMouseRegion = React.memo(({
     
     const handleMouseOver = (event) => {
         event.stopPropagation();
-        makeActive(event,position);
+        makeActive(event);
         //setIsActive(true);
     }
 

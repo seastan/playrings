@@ -8,8 +8,7 @@ import { useGameDefinition } from './useGameDefinition';
 export const useDoActionList = () => {
     const gameDef = useGameDefinition();  
     const {gameBroadcast, chatBroadcast} = useContext(BroadcastContext);
-    const playerUi = useSelector(state => state?.playerUi)
-    console.log("Rendeing Card mouse doAction", playerUi.activeCardObj)
+    //const playerUi = null; //useSelector(state => state?.playerUi)
     return (idOrList) => {
         // This fuction can take either an id for an action list, in which case it
         // executes the corresponding action list in the game definition, or it can
@@ -38,12 +37,11 @@ export const useDoActionList = () => {
                 }
             }
 
-            console.log("Rendeing Card mouse gameBroad", playerUi.activeCardObj)
             gameBroadcast("game_action", {
                 action: "evaluate", 
                 options: {
                     action_list: processedActionList, 
-                    player_ui: playerUi,
+                    player_ui: store.getState().playerUi,
                 }
             })
         }

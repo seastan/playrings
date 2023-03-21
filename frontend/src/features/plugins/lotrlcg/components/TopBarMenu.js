@@ -536,14 +536,6 @@ export const TopBarMenu = React.memo(({}) => {
              </ul>
           </li>                
         }
-        <li key={"touch_mode"}>
-            {l10n("Touch/mouse mode")}
-            <span className="float-right mr-1"><FontAwesomeIcon icon={faChevronRight}/></span>
-          <ul className="third-level-menu">
-              <li key={"touch_enabled"} onClick={() => dispatch(setTouchMode(true))}>{l10n("Enable")}</li>
-              <li key={"touch_disabled"} onClick={() => {dispatch(setTouchMode(false)) && dispatch(setTouchAction(null))}}>{l10n("Disable")}</li>
-          </ul>
-        </li> 
         <li key={"load"}>
             {l10n("Load")}
             <span className="float-right mr-1"><FontAwesomeIcon icon={faChevronRight}/></span>
@@ -568,6 +560,14 @@ export const TopBarMenu = React.memo(({}) => {
               {l10n("Load custom cards (.txt)")}
               <input type='file' id='file' ref={inputFileCustom} style={{display: 'none'}} onChange={uploadCustomCards} accept=".txt"/>
             </li>
+          </ul>
+        </li> 
+        <li key={"touch_mode"}>
+            {l10n("Touch mode")}
+            <span className="float-right mr-1"><FontAwesomeIcon icon={faChevronRight}/></span>
+          <ul className="third-level-menu">
+              <li key={"touch_enabled"} onClick={() => dispatch(setTouchMode(true))}>{l10n("Enable")}</li>
+              <li key={"touch_disabled"} onClick={() => {dispatch(setTouchMode(false)) && dispatch(setTouchAction(null))}}>{l10n("Disable")}</li>
           </ul>
         </li> 
         <li key={"unload"}>

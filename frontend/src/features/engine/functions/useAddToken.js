@@ -10,11 +10,10 @@ var delayBroadcast;
 
 export const useAddToken = () => {
     const gameDef = useGameDefinition();  
-    //const activeCardObj = useSelector(state => state?.playerUi?.activeCardObj);
     const [tokenDict, setTokenDict] = useState(defaultdict({}, 0));
     const doActionList = useDoActionList();
     const dispatch = useDispatch();
-    const activeCardId = useSelector(state => state?.playerUi?.activeCardObj?.card?.id);
+    const activeCardId = useSelector(state => state?.playerUi?.activeCardId);
     const currentTokens = useSelector(state => state?.gameUi?.game?.cardById?.[activeCardId]?.tokens);
     console.log("currentTokens", activeCardId, currentTokens)
 
