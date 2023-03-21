@@ -2139,10 +2139,10 @@
       "addButtons": [1,2,3],
       "colorKey": "cardBack",
       "colorValues": {
-        "red": "#CB0707",
-        "blue": "#007BBD",
-        "redBattleground": "#CB0707",
-        "blueBattleground": "#007BBD"
+        "Shadow Card": "#CB0707",
+        "Free Peoples Card": "#007BBD",
+        "Shadow Battleground": "#CB0707",
+        "Free Peoples Battleground": "#007BBD"
       },
       "columns": [
         {"propName": "name", "propLabel": "Name"},

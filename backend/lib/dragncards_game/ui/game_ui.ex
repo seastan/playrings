@@ -628,13 +628,13 @@ defmodule DragnCardsGame.GameUI do
     end
   end
 
-  def shuffle_changed_decks(old_game, new_game) do
+  def shuffle_changed_decks(new_game, old_game) do
     new_game["groupById"]
     |> Enum.reduce(new_game, fn({group_id, group}, acc) ->
       old_stack_ids = get_stack_ids(old_game, group_id)
       new_stack_ids = get_stack_ids(new_game, group_id)
       # Check if the number of stacks in the deck has changed, and if so, we shuffle
-      if group.shuffleOnLoad && length(old_stack_ids) != length(new_stack_ids) do
+      if group["shuffleOnLoad"] && length(old_stack_ids) != length(new_stack_ids) do
         shuffle_group(acc, group_id)
       else
         acc
@@ -657,6 +657,8 @@ defmodule DragnCardsGame.GameUI do
     game = Enum.reduce(load_list, game, fn load_list_item, acc ->
       load_card(acc, load_list_item)
     end)
+
+    game = shuffle_changed_decks(game, old_game)
     # IO.puts("load_cards 2")
 
     # # Check if we should load the first quest card
