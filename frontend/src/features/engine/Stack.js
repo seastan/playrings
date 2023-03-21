@@ -6,8 +6,7 @@ import { Draggable } from "react-beautiful-dnd";
 import useWindowDimensions from "../../hooks/useWindowDimensions";
 import store from "../../store";
 import NaturalDragAnimation from 'natural-drag-animation-rbdnd';
-import { useCardScaleFactor } from "../../hooks/useCardScaleFactor";
-
+import { useLayout } from "./functions/useLayout";
 
 export const StackContainer = styled.div`
   position: relative;
@@ -33,8 +32,9 @@ export const Stack = React.memo(({
   const stack = useSelector(state => state?.gameUi?.game?.stackById[stackId]);
   const touchMode = useSelector(state => state?.playerUi?.touchMode);
   const zoomFactor = useSelector(state => state?.playerUi?.zoomFactor);
-  const rowSpacing = useSelector(state => state.gameUi?.game?.layout?.rowSpacing);
-  const cardSize = useSelector(state => state.gameUi?.game?.layout?.cardSize);
+  const layout = useLayout();
+  const rowSpacing = layout?.rowSpacing;
+  const cardSize = layout?.cardSize;
   const playerN = useSelector(state => state?.playerUi?.playerN);
   const [isMousedOver, setIsMousedOver] = useState(false);
   var spacingFactor = touchMode ? 1.5 : 1;
