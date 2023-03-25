@@ -110,34 +110,29 @@ export const Card = React.memo(({
                     </div>}
                 {(cardPeeking[playerN] && !defaultPeeking && (cardCurrentSide === "B")) ? <FontAwesomeIcon className="absolute top-0 right-0 text-2xl" icon={faEye}/>:null}
                 <Target
-                    cardId={cardId}
-                />
+                    cardId={cardId}/>
                 <CardMouseRegion 
                     topOrBottom={"top"}
                     top={"0%"}
                     cardId={cardId}
                     isActive={isActive}
-                    zIndex={zIndex}
-                />
+                    zIndex={zIndex}/>
                 <CardMouseRegion 
                     topOrBottom={"bottom"}
                     top={"50%"}
                     cardId={cardId}
                     isActive={isActive}
-                    zIndex={zIndex}
-                />
+                    zIndex={zIndex}/>
                 <Tokens
                     cardName={currentFace.name}
                     cardId={cardId}
                     cardType={cardVisibleFace.type}
                     isActive={isActive}
                     zIndex={zIndex}
-                    aspectRatio={width/height}
-                />
+                    aspectRatio={width/height}/>
                 <ArrowRegion
                     cardId={cardId}
-                    registerDivToArrowsContext={registerDivToArrowsContext}
-                />
+                    registerDivToArrowsContext={registerDivToArrowsContext}/>
             </div>
         </div>
     )

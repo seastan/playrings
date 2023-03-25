@@ -2876,7 +2876,8 @@
         "canHaveAttachments": true,
         "forceOnCards": {
           "currentSide": "A",
-          "inPlay": true
+          "inPlay": true,
+          "rotation": 90
         }
       },
       "player2Hand": {
@@ -2930,7 +2931,8 @@
         "canHaveAttachments": true,
         "forceOnCards": {
           "currentSide": "A",
-          "inPlay": true
+          "inPlay": true,
+          "rotation": 90
         }
       },
       "player3Hand": {
@@ -2984,7 +2986,8 @@
         "canHaveAttachments": true,
         "forceOnCards": {
           "currentSide": "A",
-          "inPlay": true
+          "inPlay": true,
+          "rotation": 90
         }
       },
       "player4Hand": {
@@ -3038,7 +3041,8 @@
         "canHaveAttachments": true,
         "forceOnCards": {
           "currentSide": "A",
-          "inPlay": true
+          "inPlay": true,
+          "rotation": 90
         }
       }
     },
@@ -3089,16 +3093,16 @@
     ],
     "stepTriggers": [],
     "tooltips": {},
-    "layoutMenu": [
-      {"name": "Trilogy Scenario", "numPlayers": 4, "layoutId": "layout4player"},
-      {"name": "Two-player Duel",  "numPlayers": 2, "layoutId": "layout3player"},
-      {"name": "Three-player Duel","numPlayers": 3, "layoutId": "layout2player"}
-    ],
     "browse": {
       "filterPropertySideA": "type",
       "filterValuesSideA": ["Army", "Character", "Item", "Event"],
       "textPropertiesSideA": ["name", "faction", "text"] 
     },
+    "layoutMenu": [
+      {"name": "Trilogy Scenario", "numPlayers": 4, "layoutId": "layout4player"},
+      {"name": "Two-player Duel",  "numPlayers": 2, "layoutId": "layout3player"},
+      {"name": "Three-player Duel","numPlayers": 3, "layoutId": "layout2player"}
+    ],
     "layouts": {
       "layout4player": {
         "cardSize": 13,
@@ -3178,5 +3182,7 @@
           {"actionListId": "layoutLocation4", "text": "4", "left": "86.5%", "top": "42%", "width": "1.5%", "height": "5%"}
         ]
       }
-    }
+    },
+    "postLoadActionList": [
+    ]
   }

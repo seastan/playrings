@@ -94,7 +94,7 @@ export const SideBarRoundStep = React.memo(({
           triggerCardIds={triggerCardIds}/>
       }
       <div className={`flex flex-1 h-full items-center justify-center ${isRoundStep ? "bg-red-800" : "bg-gray-500"} ${hovering ? "block" : "hidden"}`} >
-        <div>{l10n(stepId)}</div>
+        <div>{l10n(stepInfo.text)}</div>
       </div>
     </div>
   )
