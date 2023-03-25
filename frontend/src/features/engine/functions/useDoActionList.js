@@ -2,7 +2,6 @@ import { useContext } from 'react';
 import { useSelector } from 'react-redux';
 import BroadcastContext from '../../../contexts/BroadcastContext';
 import store from '../../../store';
-import { flipCard } from '../actionLists/flipCard';
 import { useGameDefinition } from './useGameDefinition';
 
 export const useDoActionList = () => {

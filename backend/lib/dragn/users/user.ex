@@ -60,6 +60,8 @@ defmodule DragnCards.Users.User do
   This is called a "User" in the JS backend (public info about seomeone else.)
   """
   def to_public_profile(%User{} = user) do
+    IO.puts("to_public_profile 1")
+    IO.inspect(user.alias)
     %{
       id: user.id,
       alias: user.alias

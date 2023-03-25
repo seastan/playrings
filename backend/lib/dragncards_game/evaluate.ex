@@ -192,6 +192,9 @@ defmodule DragnCardsGame.Evaluate do
               end
             end)
             value = evaluate(game, Enum.at(code, Enum.count(code)-1))
+            IO.puts("game_set_val")
+            IO.inspect(path)
+            IO.inspect(value)
             put_in(game, path, value)
           "GAME_INCREASE_VAL" ->
             path = Enum.slice(code, 1, Enum.count(code)-2)

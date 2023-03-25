@@ -347,17 +347,25 @@ defmodule DragnCardsGame.GameUI do
     # Update cards in stack one at a time in reverse order
     # This is so that when the stack is removed from play,
     # order is preserved as cards are detached
+    IO.puts("update_stack_state 1")
     stack = get_stack(game, stack_id)
+    IO.puts("update_stack_state 2")
     dest_group = get_group_by_stack_id(game, stack_id)
+    IO.puts("update_stack_state 3")
     dest_group_id = dest_group["id"]
+    IO.puts("update_stack_state 4")
     card_ids = get_card_ids(game, stack_id)
+    IO.puts("update_stack_state 5")
     game = Enum.reduce(card_ids, game, fn(card_id, acc) ->
       acc = update_card_state(acc, card_id, orig_group_id)
     end)
+    IO.puts("update_stack_state 6")
     # If a stack is out of play, we need to split it up
-    if Enum.count(card_ids)>1 && not dest_group["inPlay"] do
+    if Enum.count(card_ids)>1 && not dest_group["canHaveAttachments"] do
+      IO.puts("update_stack_state 7")
       reverse_card_ids = Enum.reverse(card_ids)
       Enum.reduce(reverse_card_ids, game, fn(card_id, acc) ->
+        IO.puts("update_stack_state 8")
         acc = detach(acc, card_id)
       end)
     else

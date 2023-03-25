@@ -7,11 +7,12 @@ import useWindowDimensions from "../../hooks/useWindowDimensions";
 import store from "../../store";
 import NaturalDragAnimation from 'natural-drag-animation-rbdnd';
 import { useLayout } from "./functions/useLayout";
+import { attachmentOffset } from "../definitions/common";
 
 export const StackContainer = styled.div`
   position: relative;
   userSelect: none;
-  padding: 0;
+  margin: 0vh ${props => props.margin}vh 0vh 0vh;
   width: ${props => props.stackWidth}vh;
   height: ${props => props.stackHeight}vh;
 `;
@@ -28,7 +29,6 @@ export const Stack = React.memo(({
   registerDivToArrowsContext,
   hidden,
 }) => {
-  console.log('Rendering Stack ',stackIndex, region, hidden);
   const stack = useSelector(state => state?.gameUi?.game?.stackById[stackId]);
   const touchMode = useSelector(state => state?.playerUi?.touchMode);
   const zoomFactor = useSelector(state => state?.playerUi?.zoomFactor);
@@ -37,12 +37,14 @@ export const Stack = React.memo(({
   const cardSize = layout?.cardSize;
   const playerN = useSelector(state => state?.playerUi?.playerN);
   const [isMousedOver, setIsMousedOver] = useState(false);
+  console.log('Rendering Stack ', {stackIndex, region, hidden, layout});
   var spacingFactor = touchMode ? 1.5 : 1;
   if (groupId.includes("Extra")) spacingFactor = 0;
   const { height, width } = useWindowDimensions();
   const aspectRatio = width/height;
   if (!stack) return null;
   const cardIds = stack.cardIds;
+  const numCards = cardIds.length;
   const card0 = store.getState().gameUi.game.cardById[cardIds[0]];
   var leftOffsets = 0;
   var rightOffsets = 0;
@@ -68,7 +70,7 @@ export const Stack = React.memo(({
   const cardWidth = card0?.sides[card0?.currentSide]?.width;
   const cardHeight = card0?.sides[card0?.currentSide]?.height;
   const stackHeight = cardHeight*cardSize*zoomFactor;
-  const stackWidth = cardWidth*cardSize*zoomFactor;
+  const stackWidth = cardWidth*cardSize + attachmentOffset * (numCards - 1);
   const stackWidthFan = Math.min(handSpacing, cardWidth*cardSize*zoomFactor);
   
   return (
@@ -88,8 +90,7 @@ export const Stack = React.memo(({
             isGroupedOver={Boolean(dragSnapshot.combineTargetFor)}
             stackWidth={region.type === "fan" ? stackWidthFan : stackWidth}
             stackHeight={stackHeight}
-            left={stackIndex*rowSpacing}
-            hidden={hidden}
+            margin={region.type === "row" ? rowSpacing : 0}
             ref={dragProvided.innerRef}
             {...dragProvided.draggableProps}
             {...dragProvided.dragHandleProps}
@@ -112,8 +113,7 @@ export const Stack = React.memo(({
                   cardId={cardId} 
                   cardIndex={cardIndex}
                   registerDivToArrowsContext={registerDivToArrowsContext}
-                  isDragging={(cardIndex === cardIds.length - 1) ? dragSnapshot.isDragging : false}
-                />
+                  isDragging={(cardIndex === cardIds.length - 1) ? dragSnapshot.isDragging : false}/>
               )
           })}
           </StackContainer>)}

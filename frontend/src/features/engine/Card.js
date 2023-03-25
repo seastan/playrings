@@ -10,7 +10,7 @@ import { setActiveCardId, setMousePosition } from "../store/playerUiSlice";
 import { useCardScaleFactor } from "../../hooks/useCardScaleFactor";
 import { useGameDefinition } from "./functions/useGameDefinition";
 import { useGetDefaultAction } from "./functions/useGetDefaultAction";
-import { getFirstCardOffset, getVisibleFaceSrc } from "../definitions/common";
+import { attachmentOffset, getFirstCardOffset, getVisibleFaceSrc } from "../definitions/common";
 
 export const Card = React.memo(({
     cardId,
@@ -80,10 +80,10 @@ export const Card = React.memo(({
                     position: "absolute",
                     height: `${cardScaleFactor*height}vh`,
                     width: `${cardScaleFactor*width}vh`,
-                    left: region.type === "fan" ? '0%' : "50%",
+                    left: `${attachmentOffset*cardIndex}vh`,
                     top: "50%",
                     borderRadius: '0.6vh',
-                    transform: `translate(${region.type === "fan" ? '0%' : "-50%"}, -50%) rotate(${cardRotation}deg)`,
+                    transform: `translate(0%, -50%) rotate(${cardRotation}deg)`,
                     zIndex: zIndex,
                     cursor: "default",
                     WebkitTransitionDuration: "0.1s",

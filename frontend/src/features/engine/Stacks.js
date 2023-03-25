@@ -4,6 +4,7 @@ import styled from "@emotion/styled";
 import { Droppable } from "react-beautiful-dnd";
 import { Stack } from "./Stack";
 import { PileImage } from "./PileImage"
+import { useLayout } from "./functions/useLayout";
 
 const Container = styled.div`
   background-color: ${props => props.isDraggingOver ? "rgba(1,1,1,0.3)" : ""};
@@ -29,10 +30,11 @@ export const DropZone = styled.div`
   position: absolute;
   display: ${props => props.direction === "vertical" ? "" : "flex"};
   overflow-x: none;
-  width: 100%;
+  width: calc(100% - ${props => props.margin}vh);
   height: 100%;
   min-height: 100%;
   padding: 0.5vh;
+  margin: 0 0 0 ${props => props.margin}vh;
 `;
 
 const StacksList = React.memo(({
@@ -81,6 +83,8 @@ export const Stacks = React.memo(({
 }) => {
   console.log("Rendering Stacks for ",groupId, region);
   const [mouseHere, setMouseHere] = useState(false);
+  const layout = useLayout();
+  const rowSpacing = layout?.rowSpacing;
   const group = useSelector(state => state?.gameUi?.game?.groupById?.[groupId]);
   const stackIds = group.stackIds;
   return(
@@ -105,7 +109,10 @@ export const Stacks = React.memo(({
               isDraggingOver={dropSnapshot.isDraggingOver} 
               isDraggingFrom={Boolean(dropSnapshot.draggingFromThisWith)}>
             </PileImage>
-            <DropZone ref={dropProvided.innerRef} direction={region.direction}>
+            <DropZone 
+              ref={dropProvided.innerRef} 
+              direction={region.direction}
+              margin={region.type === "row" ? rowSpacing/2 : 0}>
               <StacksList
                 isDraggingOver={dropSnapshot.isDraggingOver}
                 isDraggingFrom={Boolean(dropSnapshot.draggingFromThisWith)}

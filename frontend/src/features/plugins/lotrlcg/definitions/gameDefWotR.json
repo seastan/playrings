@@ -2415,7 +2415,7 @@
           ],
           true,
           [
-            ["GAME_SET_VAL", "ACTIVE_CARD_PATH", "currentSide", "A"],
+            ["GAME_SET_VAL", "$ACTIVE_CARD_PATH", "currentSide", "A"],
             ["GAME_ADD_MESSAGE", "$PLAYER_N", " flipped ", "$ACTIVE_FACE.name", " faceup."]
           ]
         ]
@@ -3102,7 +3102,7 @@
     "layouts": {
       "layout4player": {
         "cardSize": 13,
-        "rowSpacing": 11,
+        "rowSpacing": 3,
         "chat": {"left": "75%", "top": "80%", "width": "25%", "height": "20%"},
         "browse": {"type": "fan", "direction": "horizontal", "left": "0%", "top": "48%", "width": "88%", "height": "16%"},
         "regions": [
