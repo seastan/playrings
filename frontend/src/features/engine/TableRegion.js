@@ -17,11 +17,11 @@ export const TableRegion = React.memo(({
     <div
       className="absolute"
       style={{
+        ...region?.style,
         top: region.top,
         left: region.left,
         width: region.width,
         height: region.height,
-        background: (region.style === "shaded") ? "rgba(0, 0, 0, 0.3)" : "",
         MozBoxShadow: (region.boxShadow) ? '0 10px 10px 5px rgba(0,0,0,0.3)' : "",
         WebkitBoxShadow: (region.boxShadow) ? '0 10px 10px 5px rgba(0,0,0,0.3)' : "",
         boxShadow: (region.boxShadow) ? '0 10px 10px 5px rgba(0,0,0,0.3)' : ""

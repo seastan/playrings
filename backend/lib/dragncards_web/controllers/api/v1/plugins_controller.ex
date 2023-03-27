@@ -30,9 +30,7 @@ defmodule DragnCardsWeb.PluginsController do
     #plugin = Plugins.get_plugin!(plugin_id)
     IO.puts("plugin id")
     IO.inspect(plugin.id)
-    #plugin = Map.from_struct(plugin)
     render(conn, "single.json", plugin: plugin)
-    #json(conn, %{plugins: nil})
   end
 
 end

@@ -10,6 +10,7 @@ import { useGameL10n } from "../../hooks/useGameL10n";
 import BroadcastContext from "../../contexts/BroadcastContext";
 import { useGameDefinition } from "./functions/useGameDefinition";
 import { useLoadList } from "./functions/useLoadList";
+import { useDoActionList } from "./functions/useDoActionList";
 
 const isStringInDeckName = (str, deckName) => {
   const lowerCaseString = str.toLowerCase().normalize("NFD").replace(/\p{Diacritic}/gu, "");
@@ -30,6 +31,7 @@ export const SpawnPrebuiltModal = React.memo(({}) => {
     const [menuHeight, setMenuHeight] = useState(null);
     const [searchString, setSearchString] = useState("");
     const loadList = useLoadList();
+    const doActionList = useDoActionList();
 
     const handleSpawnClick = (id) => {
       loadList(gameDef.preBuiltDecks[id].cards);
@@ -58,7 +60,8 @@ export const SpawnPrebuiltModal = React.memo(({}) => {
       setActiveMenu(activeMenu.goBackMenu);
     }
     const handleDeckListClick = (props) => {
-      loadList(gameDef.preBuiltDecks[props.deckListId].cards);
+      loadList(gameDef.preBuiltDecks[props.deckListOption.deckListId].cards);
+      if (props.deckListOption.actionList) doActionList(props.deckListOption.actionList);
       chatBroadcast("game_update",{message: "loaded a deck."});
       dispatch(setShowModal(null))
     }
@@ -106,10 +109,10 @@ export const SpawnPrebuiltModal = React.memo(({}) => {
                   </tr>
                 </thead>
                 {filteredIds.map((filteredId, index) => {
-                  const questName = gameDef.preBuiltDecks?.[filteredId]?.name;
+                  const deckName = gameDef.preBuiltDecks?.[filteredId]?.name;
                   return(
                     <tr className="bg-gray-600 text-white cursor-pointer hover:bg-gray-500 hover:text-black" onClick={() => handleSpawnClick(filteredId)}>
-                      <td className="p-1">{questName}</td>
+                      <td className="p-1">{deckName}</td>
                     </tr>
                   );
                 })}
@@ -140,7 +143,7 @@ export const SpawnPrebuiltModal = React.memo(({}) => {
               return(
                 <DropdownItem
                   returnToMenu={activeMenu}
-                  deckListId={deckListOption.deckListId}
+                  deckListOption={deckListOption}
                   clickCallback={handleDeckListClick}>
                   {l10n(deckListOption.nameOverride || gameDef.preBuiltDecks?.[deckListOption.deckListId]?.name)}
                 </DropdownItem>

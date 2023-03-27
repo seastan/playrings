@@ -9,7 +9,6 @@ import { getVisibleFaceSrc } from "../definitions/common";
 
 export const CardMouseRegion = React.memo(({
     topOrBottom,
-    top,
     cardId,
     isActive,
     zIndex,
@@ -25,6 +24,7 @@ export const CardMouseRegion = React.memo(({
         const screenPosition = event.clientX > (window.innerWidth/2) ? "right" : "left";
         dispatch(setActiveCardId(cardId));
         dispatch(setScreenPosition(screenPosition));
+        dispatch(setMousePosition(topOrBottom))
         dispatch(setCardClicked(true));
     }
 
@@ -66,7 +66,7 @@ export const CardMouseRegion = React.memo(({
     const longPress = useLongPress(onLongPress, handleClick, defaultOptions);
     const regionStyle = {
         position: 'absolute',
-        top: top,
+        top: topOrBottom === "top" ? "0%" : "50%",
         width: '100%',
         height: '50%',
         zIndex: zIndex,

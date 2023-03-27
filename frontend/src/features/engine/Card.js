@@ -113,13 +113,11 @@ export const Card = React.memo(({
                     cardId={cardId}/>
                 <CardMouseRegion 
                     topOrBottom={"top"}
-                    top={"0%"}
                     cardId={cardId}
                     isActive={isActive}
                     zIndex={zIndex}/>
                 <CardMouseRegion 
                     topOrBottom={"bottom"}
-                    top={"50%"}
                     cardId={cardId}
                     isActive={isActive}
                     zIndex={zIndex}/>

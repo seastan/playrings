@@ -48,11 +48,11 @@ export const TableLayout = React.memo(({
         if (region?.layoutVariants) {
           const variantVisible = () => {
             for (const [key, value] of Object.entries(region?.layoutVariants)) {
-              if (layoutVariants?.[key] == value) {
-                return true;
+              if (layoutVariants?.[key] !== value) {
+                return false;
               }
             }
-            return false;
+            return true;
           }
           if (!variantVisible()) return;
         }
@@ -64,7 +64,18 @@ export const TableLayout = React.memo(({
           />
         )
       })}
-      {layout.tableButtons.map((tableButton, buttonIndex) => {
+      {layout.tableButtons.map((tableButton, buttonIndex) => {        
+        if (tableButton?.layoutVariants) {
+          const variantVisible = () => {
+            for (const [key, value] of Object.entries(tableButton?.layoutVariants)) {
+              if (layoutVariants?.[key] !== value) {
+                return false;
+              }
+            }
+            return true;
+          }
+          if (!variantVisible()) return;
+        }
         return(
           <div 
             className="absolute flex cursor-pointer border border-gray-500 justify-center items-center text-gray-400 bg-gray-700 hover:bg-gray-500" style={{left: tableButton.left, top: tableButton.top, width: tableButton.width, height: tableButton.height}}

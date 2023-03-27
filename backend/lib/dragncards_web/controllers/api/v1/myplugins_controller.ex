@@ -45,7 +45,7 @@ defmodule DragnCardsWeb.MyPluginsController do
         conn
         |> json(%{success: %{message: "Plugin created successfully"}})
       {:error, changeset} ->
-        IO.puts("ERRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRROR")
+        IO.puts("Error creating plugin")
         IO.inspect(changeset)
         conn
         |> json(%{error: %{message: "Plugin creation failed"}})
