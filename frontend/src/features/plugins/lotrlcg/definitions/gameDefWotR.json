@@ -1052,10 +1052,10 @@
             "_name": "Lothlórien"
           },
           {
-            "uuid": "a17fbee8-bd40-44c4-8d1f-ac10a071e229",
+            "uuid": "274ef8ad-d81a-4601-b9bc-cac7d8d8e318",
             "quantity": 1,
             "loadGroupId": "sharedPathDeck5",
-            "_name": "Amon Hen"
+            "_name": "Dimrill Dale"
           },
           {
             "uuid": "a17fbee8-bd40-44c4-8d1f-ac10a071e229",
@@ -1969,10 +1969,10 @@
             "_name": "Lothlórien"
           },
           {
-            "uuid": "a17fbee8-bd40-44c4-8d1f-ac10a071e229",
+            "uuid": "274ef8ad-d81a-4601-b9bc-cac7d8d8e318",
             "quantity": 1,
             "loadGroupId": "sharedPathDeck5",
-            "_name": "Amon Hen"
+            "_name": "Dimrill Dale"
           },
           {
             "uuid": "a17fbee8-bd40-44c4-8d1f-ac10a071e229",
@@ -2970,10 +2970,10 @@
             "_name": "Lothlórien"
           },
           {
-            "uuid": "a17fbee8-bd40-44c4-8d1f-ac10a071e229",
+            "uuid": "274ef8ad-d81a-4601-b9bc-cac7d8d8e318",
             "quantity": 1,
             "loadGroupId": "sharedPathDeck5",
-            "_name": "Amon Hen"
+            "_name": "Dimrill Dale"
           },
           {
             "uuid": "a17fbee8-bd40-44c4-8d1f-ac10a071e229",
@@ -3971,10 +3971,10 @@
             "_name": "Lothlórien"
           },
           {
-            "uuid": "a17fbee8-bd40-44c4-8d1f-ac10a071e229",
+            "uuid": "274ef8ad-d81a-4601-b9bc-cac7d8d8e318",
             "quantity": 1,
             "loadGroupId": "sharedPathDeck5",
-            "_name": "Amon Hen"
+            "_name": "Dimrill Dale"
           },
           {
             "uuid": "a17fbee8-bd40-44c4-8d1f-ac10a071e229",
@@ -4502,6 +4502,126 @@
             "quantity": 1,
             "loadGroupId": "player2Deck",
             "_name": "Uglúk"
+          },
+          {
+            "uuid": "1dde4cd2-d7b7-4427-ab55-a1e2c2ab4568",
+            "quantity": 1,
+            "loadGroupId": "sharedPathDeck1",
+            "_name": "Buckleberry Ferry"
+          },
+          {
+            "uuid": "1ebbe5f8-0901-48bf-8802-c58d2eff7c84",
+            "quantity": 1,
+            "loadGroupId": "sharedPathDeck1",
+            "_name": "Gildor's Encampment"
+          },
+          {
+            "uuid": "e592eccb-7ed6-4850-b103-6ed8712f3c6d",
+            "quantity": 1,
+            "loadGroupId": "sharedPathDeck2",
+            "_name": "Inn of the Prancing Pony"
+          },
+          {
+            "uuid": "1f563c26-db58-44d3-8aeb-67ce356aad74",
+            "quantity": 1,
+            "loadGroupId": "sharedPathDeck2",
+            "_name": "The Old Forest"
+          },
+          {
+            "uuid": "7d170948-624c-4bd8-bbfb-f48c788cbc98",
+            "quantity": 1,
+            "loadGroupId": "sharedPathDeck4",
+            "_name": "Caradhras"
+          },
+          {
+            "uuid": "cd105c3b-e86b-4d1c-b194-e75819df3958",
+            "quantity": 1,
+            "loadGroupId": "sharedPathDeck4",
+            "_name": "Khazad-dûm"
+          },
+          {
+            "uuid": "692a6b6f-6801-4f2b-9476-4c813616666f",
+            "quantity": 1,
+            "loadGroupId": "sharedPathDeck4",
+            "_name": "The Doors of Durin"
+          },
+          {
+            "uuid": "0c0cbcc6-7f44-49a9-a99f-c8281da0f601",
+            "quantity": 1,
+            "loadGroupId": "sharedPathDeck3",
+            "_name": "Fords of Bruinen"
+          },
+          {
+            "uuid": "2ffefc8b-431c-4177-a010-25605ed66a34",
+            "quantity": 1,
+            "loadGroupId": "sharedPathDeck3",
+            "_name": "Imladris"
+          },
+          {
+            "uuid": "018c57b0-538c-498a-a9c0-6fd308d4f8b7",
+            "quantity": 1,
+            "loadGroupId": "sharedPathDeck5",
+            "_name": "Egladil"
+          },
+          {
+            "uuid": "143dc9f5-28bd-4681-b793-731a21544c90",
+            "quantity": 1,
+            "loadGroupId": "sharedPathDeck5",
+            "_name": "Lothlórien"
+          },
+          {
+            "uuid": "274ef8ad-d81a-4601-b9bc-cac7d8d8e318",
+            "quantity": 1,
+            "loadGroupId": "sharedPathDeck5",
+            "_name": "Dimrill Dale"
+          },
+          {
+            "uuid": "a17fbee8-bd40-44c4-8d1f-ac10a071e229",
+            "quantity": 1,
+            "loadGroupId": "sharedPathDeck6",
+            "_name": "Amon Hen"
+          },
+          {
+            "loadGroupId": "sharedBattlegroundRed",
+            "quantity": 1,
+            "uuid": "178edd70-878d-4c1c-a64c-9eb913611450",
+            "_name": "Minas Morgul"
+          },
+          {
+            "loadGroupId": "sharedBattlegroundBlue",
+            "quantity": 1,
+            "uuid": "57bf5374-082f-4a2b-8e48-39b2cbf7197e",
+            "_name": "Rivendell"
+          },
+          {
+            "loadGroupId": "sharedBattlegroundRed",
+            "quantity": 1,
+            "uuid": "85854c43-e1cb-4fa2-84bd-ae35b7398223",
+            "_name": "Moria"
+          },
+          {
+            "loadGroupId": "sharedBattlegroundBlue",
+            "quantity": 1,
+            "uuid": "6397535b-b8cf-451c-b119-7d2b4866eff7",
+            "_name": "Lórien"
+          },
+          {
+            "loadGroupId": "sharedBattlegroundRed",
+            "quantity": 1,
+            "uuid": "56861e3e-9a1d-4f8e-913a-9f86ec5c4709",
+            "_name": "Dol Guldur"
+          },
+          {
+            "loadGroupId": "sharedBattlegroundRed",
+            "quantity": 1,
+            "uuid": "6c9327c7-5438-4ab7-8a81-d2572eea6ae9",
+            "_name": "Orthanc"
+          },
+          {
+            "loadGroupId": "sharedBattlegroundRed",
+            "quantity": 1,
+            "uuid": "f11d82c4-39c7-4203-bf84-ea0cc6669f3e",
+            "_name": "Morannon"
           }
         ]
       }
@@ -5492,7 +5612,7 @@
           {"groupId": "player2Reserve",        "type": "row", "direction": "horizontal", "left":  "0%", "top":  "0%", "width": "76%", "height": "16%", "layoutVariants": {"redPlayers": 1}},
           {"groupId": "sharedBattlegroundRed", "type": "pile","direction": "horizontal", "left": "38%", "top":  "0%", "width": "12%", "height": "16%", "layoutVariants": {"redPlayers": 2}},
           {"groupId": "sharedBattlegroundRed", "type": "pile","direction": "horizontal", "left": "76%", "top":  "0%", "width": "12%", "height": "16%", "layoutVariants": {"redPlayers": 1}},
-          {"groupId": "player4Reserve",        "type": "row", "direction": "horizontal", "left": "50%", "top":  "0%", "width": "38%", "height": "16%"},
+          {"groupId": "player4Reserve",        "type": "row", "direction": "horizontal", "left": "50%", "top":  "0%", "width": "38%", "height": "16%", "layoutVariants": {"redPlayers": 2}},
           {"groupId": "sharedActiveRed1",      "type": "row", "direction": "horizontal", "left":  "0%", "top": "16%", "width": "22%", "height": "16%", "layoutVariants": {"location": 4}, "hideTitle": true},
           {"groupId": "sharedActiveRed2",      "type": "row", "direction": "horizontal", "left": "22%", "top": "16%", "width": "22%", "height": "16%", "layoutVariants": {"location": 4}, "hideTitle": true},
           {"groupId": "sharedActiveRed3",      "type": "row", "direction": "horizontal", "left": "44%", "top": "16%", "width": "22%", "height": "16%", "layoutVariants": {"location": 4}, "hideTitle": true},
