@@ -541,13 +541,6 @@ export const TopBarMenu = React.memo(({}) => {
             <span className="float-right mr-1"><FontAwesomeIcon icon={faChevronRight}/></span>
           <ul className="third-level-menu">
             <li key={"load_prebuilt_deck"} onClick={() => handleMenuClick({action:"spawn_deck"})}>{l10n("Load prebuilt deck")}</li>
-            <li key={"load_deck"} onClick={() => handleMenuClick({action:"load_deck"})}>
-              {l10n("Load deck (OCTGN file)")}
-              <input type='file' id='file' ref={inputFileDeck} style={{display: 'none'}} onChange={loadDeck} accept=".o8d"/>
-            </li>
-            <li key={"load_ringsdb"} onClick={() => handleMenuClick({action:"load_ringsdb"})}>
-              {l10n("Load deck (RingsDB URL)")}
-            </li>
             <li key={"load_game"} onClick={() => handleMenuClick({action:"load_game"})}>
               {l10n("Load game (.json)")}
               <input type='file' id='file' ref={inputFileGame} style={{display: 'none'}} onChange={uploadGameAsJson} accept=".json"/>
@@ -606,19 +599,12 @@ export const TopBarMenu = React.memo(({}) => {
               }
             )}
             <li key={"cards_per_round"} onClick={() => handleMenuClick({action:"cards_per_round"})}>{l10n("Cards per round")}</li>
-            <li key={"quest_mode_battle"} onClick={() => handleMenuClick({action:"quest_mode", mode: "Battle"})}>{l10n("Battle quest")}</li>
-            <li key={"quest_mode_siege"} onClick={() => handleMenuClick({action:"quest_mode", mode: "Siege"})}>{l10n("Siege quest")}</li>
-            <li key={"quest_mode_normal"} onClick={() => handleMenuClick({action:"quest_mode", mode: "Normal"})}>{l10n("Normal quest")}</li>
           </ul>
         </li> 
         <li key={"advanced_functions"}>
             {l10n("Special Functions")}
             <span className="float-right mr-1"><FontAwesomeIcon icon={faChevronRight}/></span>
           <ul className="third-level-menu">
-            <li key={"to_catch_an_orc"} onClick={() => handleMenuClick({action:"to_catch_an_orc"})}>{l10n("To Catch an Orc Setup")}</li>
-            <li key={"escape_from_mount_gram"} onClick={() => handleMenuClick({action:"escape_from_mount_gram"})}>{l10n("Escape from Mount Gram Setup")}</li>
-            <li key={"fortress_of_nurn"} onClick={() => handleMenuClick({action:"fortress_of_nurn"})}>{l10n("The Fortress of Nurn Setup")}</li>
-            <li key={"glittering_caves"} onClick={() => handleMenuClick({action:"glittering_caves"})}>{l10n("Glittering Caves Clues")}</li>
           </ul>
         </li> 
         <li key={"download"}>

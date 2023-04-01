@@ -1,3 +1,24 @@
+[
+    {
+        "type": "onChange", 
+        "path": "$THIS_CARD_PATH",
+        "before": ["NOT", "$THIS_CARD.inPlay"], 
+        "after": ["$THIS_CARD.inPlay"], 
+        "then": [
+            ["FOR_EACH_KEY_VAL", "$CARD_ID", "$CARD", "$CARD_BY_ID", 
+                ["COND", 
+                    ["EQUAL", "$CARD.sides.A.name", "Strider"], 
+                    [
+                        ["MOVE_CARD", "$CARD_ID", 
+                        ["JOIN_STRING", "$CARD.controller", "Eliminated"]],
+                        ["GAME_ADD_MESSAGE", "Aragorn was removed from the game."]
+                    ]
+                ]
+            ]
+        ]
+    }
+]
+
 {
     "51223bd0-ffd1-11df-a976-0801200c9026": {
         "label": "Steward of Gondor",

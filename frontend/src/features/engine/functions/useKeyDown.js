@@ -31,9 +31,9 @@ export const useKeyDown = () => {
         //if ((unix_sec - keypressShift) < 30) dictKey = "Shift+"+dictKey;
         //if ((unix_sec - keypressControl) < 30) dictKey = "Ctrl+"+dictKey;
         //if ((unix_sec - keypressAlt) < 30) dictKey = "Alt+"+dictKey;
-        if (keypressShift) dictKey = "Shift" + dictKey;
-        if (keypressControl) dictKey = "Ctrl" + dictKey;
-        if (keypressAlt) dictKey = "Alt" + dictKey;
+        if (keypressShift) dictKey = "Shift+" + dictKey;
+        if (keypressControl) dictKey = "Ctrl+" + dictKey;
+        if (keypressAlt) dictKey = "Alt+" + dictKey;
 
         for (var keyObj of gameDef?.hotkeys.token) {
             if (keyObj.key === dictKey) {

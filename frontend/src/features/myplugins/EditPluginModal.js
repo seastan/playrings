@@ -21,6 +21,45 @@ const converter = require('convert-csv-to-array');
 
 ReactModal.setAppElement("#root");
 
+const stringTo2DArray = (inputString) => {
+  // Split the input string into tokens using the tab character
+  const tokens = inputString.split('\t');
+
+  // Determine the number of columns based on the number of tabs in the header row
+  const numColumns = inputString.split('\n')[0].split('\t').length;
+
+  // Initialize an empty 2D array and the current row array
+  const array2D = [];
+  let currentRow = [];
+
+  // Iterate through each token
+  for (let token of tokens) {
+    // Split the token into values based on newline characters
+    const values = token.split('\n');
+
+    // Add the first value to the current row
+    currentRow.push(values[0]);
+
+    // If there are more values, it means there's a new row
+    for (let i = 1; i < values.length; i++) {
+      // Add the current row to the 2D array if it has the correct number of columns
+      if (currentRow.length === numColumns) {
+        array2D.push(currentRow);
+      }
+
+      // Start a new row with the current value
+      currentRow = [values[i]];
+    }
+  }
+
+  // Add the last row to the 2D array if it has the correct number of columns
+  if (currentRow.length === numColumns) {
+    array2D.push(currentRow);
+  }
+
+  return array2D;
+}
+
 export const EditPluginModal = ({ plugin, isOpen, closeModal }) => {
   console.log("Rendering EditPluginModal", plugin)
   const { authToken, renewToken, setAuthAndRenewToken } = useAuth();
@@ -112,18 +151,24 @@ export const EditPluginModal = ({ plugin, isOpen, closeModal }) => {
     // Trigger Promises
     Promise.all(readers).then((jsonList) => {
       console.log("unmerged",jsonList);
-      const mergedJSONs = mergeJSONs(jsonList);
-      console.log("mergedJSONs", mergedJSONs)
-      const isValid = checkValidGameDef(mergedJSONs);
-      if (isValid === true) {
-        setSuccessMessageGameDef(`Game definition uploaded successfully: ${mergedJSONs.pluginName}`);
-        setErrorMessageGameDef("");
-        setValidGameDef(true);
-        setInputs({...inputs, gameDef: mergedJSONs});
-      } else {
-        setErrorMessageGameDef(`Error: ${isValid}`)
+      var mergedJSONs;
+      try {
+        mergedJSONs = mergeJSONs(jsonList);
+        console.log("mergedJSONs", mergedJSONs)
+        const isValid = checkValidGameDef(mergedJSONs);
+        if (isValid === true) {
+          setSuccessMessageGameDef(`Game definition uploaded successfully: ${mergedJSONs.pluginName}`);
+          setErrorMessageGameDef("");
+          setValidGameDef(true);
+          setInputs({...inputs, gameDef: mergedJSONs});
+        } else {
+          setErrorMessageGameDef(`Error: ${isValid}`)
+        }
+      } catch (error) {
+        setErrorMessageGameDef("Invalid JSON file(s)");
       }
     });
+
     inputFileGameDef.current.value = "";
   }
 
@@ -140,13 +185,20 @@ export const EditPluginModal = ({ plugin, isOpen, closeModal }) => {
     const cardDb = {};
     for (var rows of arrayOfRows) {
       const headerStr = JSON.stringify(rows[0]);
-      if (header0Str !== header0Str) throw new Error("File headers do not match.")
+      if (headerStr !== header0Str) throw new Error("File headers do not match.")
       for (var i=1; i<rows.length; i++) {
         const row = rows[i];
-        const faceA = row;
+        const faceA = {};
+        for (var j=0; j<header0.length; j++) {
+          const colName = header0[j];
+          faceA[colName] = colName === "automation" && row[j] ? JSON.parse(row[j]) : row[j];
+        }
+        console.log("dbrow 1", row)
         var faceB = {};
         if (faceA.cardBack === "double_sided") {
-          faceB = rows[i+1];
+          for (var j=0; j<header0.length; j++) {
+            faceB[header0[j]] = rows[i+1][j];
+          }
           i += 1;
         } else {
           for (var key of header0) {
@@ -182,11 +234,11 @@ export const EditPluginModal = ({ plugin, isOpen, closeModal }) => {
     Promise.all(readers).then((tsvList) => {
       console.log("unmerged",tsvList);
       const arrayOfRows = []; // Each element is a 2D array representing a tsv file
-      for (var tsvString of tsvList) {
+      for (var tsvString of tsvList) { 
+        console.log("tsvString", tsvString)
         try {
-          const rows = convertCSVToArray(tsvString, {
-            separator: '\t',
-          });
+          const rows = stringTo2DArray(tsvString);
+          console.log("tsvString rows", rows)
           arrayOfRows.push(rows)
         } catch(err) {
           console.log("err",err)

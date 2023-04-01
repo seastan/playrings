@@ -104,10 +104,10 @@
     },
     "deckMenu": {
       "deckLists": [
-        {"deckListId": "Trilogy", "actionList": [["GAME_SET_VAL", "numPlayers", 4],["GAME_SET_VAL", "layoutVariants", "bluePlayers", 2],["GAME_SET_VAL", "layoutVariants", "redPlayers", 2]]},
-        {"deckListId": "Two-Player Duel", "actionList": [["GAME_SET_VAL", "numPlayers", 2],["GAME_SET_VAL", "layoutVariants", "bluePlayers", 1],["GAME_SET_VAL", "layoutVariants", "redPlayers", 1]]},
-        {"deckListId": "Three-Player Duel", "actionList": [["GAME_SET_VAL", "numPlayers", 3],["GAME_SET_VAL", "layoutVariants", "bluePlayers", 1],["GAME_SET_VAL", "layoutVariants", "redPlayers", 2]]},
-        {"deckListId": "The Fellowship of the Ring", "actionList": [["GAME_SET_VAL", "numPlayers", 2],["GAME_SET_VAL", "layoutVariants", "bluePlayers", 1],["GAME_SET_VAL", "layoutVariants", "redPlayers", 1]]}
+        {"deckListId": "Trilogy", "postLoadActionList": "trilogySetup"},
+        {"deckListId": "Two-Player Duel", "postLoadActionList": "twoPlayerSetup"},
+        {"deckListId": "Three-Player Duel", "postLoadActionList": "threePlayerSetup"},
+        {"deckListId": "The Fellowship of the Ring", "postLoadActionList": "fellowshipSetup"}
       ]
     },
     "preBuiltDecks": {
@@ -4677,6 +4677,7 @@
       ],
       "game": [
         {"key": "D", "actionListId": "drawCard", "label": "Draw a card"},
+        {"key": "P", "actionListId": "pass", "label": "Pass"},
         {"key": "Shift+P", "actionListId": "saveGame", "label": "Save game"},
         {"key": "Escape", "actionListId": "clearTargets", "label": "Clear targets/arrows"},
         {"key": "Ctrl+Z", "actionListId": "undo", "label": "Undo one action"},
@@ -4687,6 +4688,7 @@
         {"key": "ArrowDown", "actionListId": "nextPhase", "label": "Move to next phase"}
       ],
       "card": [
+        {"key": "Shift+N", "actionListId": "newRound", "label": "Draw cards and start new round"},
         {"key": "F", "actionListId": "flipCard", "label": "Flip"},
         {"key": "T", "actionListId": "targetCard", "label": "Target card"},
         {"key": "S", "actionListId": "addToScoringArea", "label": "Add to scoring area"},
@@ -4842,6 +4844,66 @@
       }
     ],
     "actionLists": {
+      "trilogySetup": [
+        ["GAME_SET_VAL", "numPlayers", 4],
+        ["GAME_SET_VAL", "layoutVariants", "bluePlayers", 2],
+        ["GAME_SET_VAL", "layoutVariants", "redPlayers", 2],
+        ["GAME_SET_VAL", "cardsPerRound", {"player1": 3, "player2": 3, "player3": 3, "player4": 3}],
+        ["MOVE_STACKS", "player1Deck", "player1Hand", 7, "bottom"],
+        ["MOVE_STACKS", "player2Deck", "player2Hand", 7, "bottom"],
+        ["MOVE_STACKS", "player3Deck", "player3Hand", 7, "bottom"],
+        ["MOVE_STACKS", "player4Deck", "player4Hand", 7, "bottom"]
+      ],
+      "twoPlayerSetup": [
+        ["GAME_SET_VAL", "numPlayers", 2],
+        ["GAME_SET_VAL", "layoutVariants", "bluePlayers", 1],
+        ["GAME_SET_VAL", "layoutVariants", "redPlayers", 1],
+        ["GAME_SET_VAL", "cardsPerRound", {"player1": 4, "player2": 6}],
+        ["GAME_SET_VAL", "player1CardsPerRound", 4],
+        ["GAME_SET_VAL", "player2CardsPerRound", 6],
+        ["MOVE_STACKS", "player1Deck", "player1Hand", 4, "bottom"],
+        ["MOVE_STACKS", "player2Deck", "player2Hand", 6, "bottom"]
+      ],
+      "threePlayerSetup": [
+        ["GAME_SET_VAL", "numPlayers", 3],
+        ["GAME_SET_VAL", "layoutVariants", "bluePlayers", 1],
+        ["GAME_SET_VAL", "layoutVariants", "redPlayers", 2],
+        ["GAME_SET_VAL", "cardsPerRound", {"player1": 6, "player2": 4, "player3": 4}],
+        ["MOVE_STACKS", "player1Deck", "player1Hand", 6, "bottom"],
+        ["MOVE_STACKS", "player2Deck", "player2Hand", 7, "bottom"],
+        ["MOVE_STACKS", "player3Deck", "player3Hand", 7, "bottom"]
+      ],
+      "fellowshipSetup": [
+        ["GAME_SET_VAL", "numPlayers", 3],
+        ["GAME_SET_VAL", "layoutVariants", "bluePlayers", 1],
+        ["GAME_SET_VAL", "layoutVariants", "redPlayers", 2],
+        ["GAME_SET_VAL", "cardsPerRound", {"player1": 3, "player2": 4}],
+        ["MOVE_STACKS", "player1Deck", "player1Hand", 7, "bottom"],
+        ["MOVE_STACKS", "player2Deck", "player2Hand", 7, "bottom"]
+      ],
+      "newRound": [
+        ["FOR_EACH_KEY_VAL", "$CARD_ID", "$CARD", "$CARD_BY_ID", 
+          [
+            ["COND",
+              ["EQUAL", "$CARD.groupId", ["JOIN_STRING", "$PLAYER_N", "Reserve"]],
+              ["GAME_SET_VAL", "cardById", "$CARD_ID", "rotation", 0]
+            ]
+          ]
+        ],
+        ["DRAW_CARD", "$GAME.cardsPerRound.$PLAYER_N"],
+        ["GAME_ADD_MESSAGE", "$PLAYER_N", " performed their draw step."],
+        ["COND",
+          ["EQUAL", "$PLAYER_N", "player1"],
+          [
+            ["GAME_SET_VAL", "firstPlayer", ["NEXT_PLAYER", "$GAME.firstPlayer"]],
+            ["GAME_INCREASE_VAL", "roundNumber", 1],
+            ["GAME_ADD_MESSAGE", "$PLAYER_N", " moved the first player token and increased the round number."]
+          ],
+        ]
+      ],
+      "pass": [
+        ["GAME_ADD_MESSAGE", "$PLAYER_N", " passes."]
+      ],
       "drawCard": [
         ["DRAW_CARD"]
       ],

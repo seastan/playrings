@@ -145,8 +145,8 @@ defmodule DragnCardsGame.Evaluate do
               else
                 IO.puts("getting key from map")
                 key = evaluate(game, pathi)
-                #IO.inspect(key)
-                #IO.inspect(Map.keys(acc))
+                IO.inspect(key)
+                IO.inspect(Map.keys(acc))
                 if Map.has_key?(acc, key) do
                   Map.get(acc, evaluate(game, key))
                 else

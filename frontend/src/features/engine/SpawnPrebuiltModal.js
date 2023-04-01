@@ -60,8 +60,9 @@ export const SpawnPrebuiltModal = React.memo(({}) => {
       setActiveMenu(activeMenu.goBackMenu);
     }
     const handleDeckListClick = (props) => {
+      if (props.deckListOption.preLoadActionList) doActionList(props.deckListOption.actionList);
       loadList(gameDef.preBuiltDecks[props.deckListOption.deckListId].cards);
-      if (props.deckListOption.actionList) doActionList(props.deckListOption.actionList);
+      if (props.deckListOption.postLoadActionList) doActionList(props.deckListOption.postLoadActionList);
       chatBroadcast("game_update",{message: "loaded a deck."});
       dispatch(setShowModal(null))
     }
