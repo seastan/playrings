@@ -4898,7 +4898,7 @@
             ["GAME_SET_VAL", "firstPlayer", ["NEXT_PLAYER", "$GAME.firstPlayer"]],
             ["GAME_INCREASE_VAL", "roundNumber", 1],
             ["GAME_ADD_MESSAGE", "$PLAYER_N", " moved the first player token and increased the round number."]
-          ],
+          ]
         ]
       ],
       "pass": [

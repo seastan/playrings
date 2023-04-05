@@ -13,6 +13,36 @@ defmodule DragnCardsGame.Evaluate do
     end
   end
 
+  def put_by_path(game_old, path, val_new) do
+    path_minus_key = Enum.slice(path, 0, Enum.count(path)-1)
+    game_new =
+      case get_in(game_old, path_minus_key) do
+        nil ->
+          evaluate(game_old, ["LOGGER", "Error: Tried to set a value at a nonexistent path: "] ++ path_minus_key)
+
+        val_old ->
+          put_in(game_old, path, val_new)
+      end
+
+    IO.inspect("put by path 1 ------------------------------------")
+    IO.inspect(path_minus_key ++ ["_automate_"])
+    IO.inspect(get_in(game_new, path_minus_key ++ ["_automate_"]))
+    case get_in(game_new, path_minus_key ++ ["_automate_"]) do
+      nil ->
+        game_new
+
+      automations ->
+        Enum.reduce(automations, game_new, fn {card_id, automation}, acc ->
+          if evaluate(game_old, automation["before"]) and evaluate(game_old, automation["after"]) do
+            IO.puts("performing automation")
+            evaluate(acc, automation["then"])
+          else
+            acc
+          end
+        end)
+    end
+  end
+
   @spec convert_to_integer(String.t() | nil) :: number
   def convert_to_integer(my_string) do
     if my_string == nil do
@@ -56,6 +86,8 @@ defmodule DragnCardsGame.Evaluate do
             var_name = Enum.at(code, 1)
             value = evaluate(game, Enum.at(code, 2))
             put_in(game, ["variables", var_name], value)
+          "POINTER" ->
+            Enum.at(code, 1)
           "LIST" ->
             list = Enum.slice(code, 1, Enum.count(code))
             Enum.reduce(list, [], fn(item,acc)->
@@ -143,10 +175,10 @@ defmodule DragnCardsGame.Evaluate do
                 int = convert_to_integer(int_str)
                 Enum.at(acc, int)
               else
-                IO.puts("getting key from map")
+                # IO.puts("getting key from map")
                 key = evaluate(game, pathi)
-                IO.inspect(key)
-                IO.inspect(Map.keys(acc))
+                # IO.inspect(key)
+                # IO.inspect(Map.keys(acc))
                 if Map.has_key?(acc, key) do
                   Map.get(acc, evaluate(game, key))
                 else
@@ -192,10 +224,10 @@ defmodule DragnCardsGame.Evaluate do
               end
             end)
             value = evaluate(game, Enum.at(code, Enum.count(code)-1))
-            IO.puts("game_set_val")
-            IO.inspect(path)
-            IO.inspect(value)
-            put_in(game, path, value)
+            IO.puts("game_set_val #{path}")
+            #IO.inspect(path)
+            #IO.inspect(value)
+            put_by_path(game, path, value)
           "GAME_INCREASE_VAL" ->
             path = Enum.slice(code, 1, Enum.count(code)-2)
             path = Enum.reduce(path, [], fn(path_item, acc)->
@@ -216,14 +248,14 @@ defmodule DragnCardsGame.Evaluate do
           "COND" ->
             ifthens = Enum.slice(code, 1, Enum.count(code))
             Enum.reduce_while(0..Enum.count(ifthens)-1//2, nil, fn(i, acc) ->
-              IO.puts("checking if")
-              IO.inspect(Enum.at(ifthens, i))
-              IO.inspect(evaluate(game, Enum.at(ifthens, i)))
+              # IO.puts("checking if")
+              # IO.inspect(Enum.at(ifthens, i))
+              # IO.inspect(evaluate(game, Enum.at(ifthens, i)))
               if evaluate(game, Enum.at(ifthens, i)) == true do
-                IO.puts("true")
+                #IO.puts("true")
                 {:halt, evaluate(game, Enum.at(ifthens, i+1))}
               else
-                IO.puts("false")
+                #IO.puts("false")
                 {:cont, game}
               end
             end)

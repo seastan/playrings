@@ -11,7 +11,7 @@ config :dragncards, DragnCardsWeb.PowMailer, adapter: Swoosh.Adapters.Test
 config :dragncards, DragnCards.Repo,
   username: "postgres",
   password: "postgres",
-  database: "dragncards_test",
+  database: "dragncards_dev_copy",
   hostname: "localhost",
   pool: Ecto.Adapters.SQL.Sandbox
 

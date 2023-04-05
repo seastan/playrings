@@ -20,9 +20,6 @@ defmodule DragnCardsGame.Card do
 
     group = game_def["groups"][group_id]
     controller = group["controller"]
-    IO.inspect("loadcard")
-    IO.inspect(group["id"])
-    IO.inspect(group["inPlay"])
     base = %{
       "id" => Ecto.UUID.generate,
       "cardDbId" => card_db_id,
@@ -42,13 +39,13 @@ defmodule DragnCardsGame.Card do
       put_in(acc[key], val["default"])
     end)
     #if group["id"] == "sharedStaging" do
-      IO.puts("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
-      IO.inspect(group_id)
-      IO.inspect(game_def["groups"][group_id])
-      IO.inspect(card_details["uuid"])
-      IO.inspect(card["cardDbId"])
-      IO.inspect(card["deckGroupId"])
-      card
+      # IO.puts("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
+      # IO.inspect(group_id)
+      # IO.inspect(game_def["groups"][group_id])
+      # IO.inspect(card_details["uuid"])
+      # IO.inspect(card["cardDbId"])
+      # IO.inspect(card["deckGroupId"])
+      # card
     #end
     card
   end

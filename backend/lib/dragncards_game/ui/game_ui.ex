@@ -463,10 +463,6 @@ defmodule DragnCardsGame.GameUI do
   end
 
   def insert_stack_in_group(game, group_id, stack_id, index) do
-    IO.puts("insert_stack_in_group 1")
-    IO.inspect(group_id)
-    IO.inspect(stack_id)
-    IO.inspect(index)
     old_stack_ids = get_stack_ids(game, group_id)
     new_stack_ids = List.insert_at(old_stack_ids, index, stack_id)
     update_stack_ids(game, group_id, new_stack_ids)
@@ -594,13 +590,8 @@ defmodule DragnCardsGame.GameUI do
   end
 
   def create_card_in_group(game, group_id, load_list_item) do
-    IO.puts("create_card_in_group")
-    IO.inspect(group_id)
-    IO.inspect(load_list_item)
     group_size = Enum.count(get_stack_ids(game, group_id))
     # Can't insert a card directly into a group need to make a stack first
-    IO.inspect("cciig")
-    IO.inspect(group_id)
     new_card = Card.card_from_card_details(load_list_item["cardDetails"], game["gameDef"], load_list_item["uuid"], group_id)
     new_stack = Stack.stack_from_card(new_card)
     new_card = new_card
@@ -608,26 +599,58 @@ defmodule DragnCardsGame.GameUI do
     |> Map.put("stackId", new_stack["id"])
     |> Map.put("stackIndex", group_size)
     |> Map.put("cardIndex", 0)
-    IO.puts("create_card_in_group 2")
-    IO.inspect(new_card)
     game = game
     |> insert_stack_in_group(group_id, new_stack["id"], group_size)
     |> update_stack(new_stack)
     |> update_card(new_card)
+    |> implement_card_automations(new_card)
     |> update_card_state(new_card["id"], nil)
-    IO.inspect("create_card_in_group 3")
     game
+  end
+
+  def implement_card_automations(game, card) do
+    side_a_automation = card["sides"]["A"]["automation"]
+    side_b_automation = card["sides"]["A"]["automation"]
+    side_a_automation = if side_a_automation == "" or side_a_automation == nil do [] else side_a_automation end
+    side_b_automation = if side_b_automation == "" or side_b_automation == nil do [] else side_b_automation end
+    automation_list = side_a_automation ++ side_b_automation
+    |> Enum.reduce(game, fn(automation, acc) ->
+      implement_single_card_automation(acc, card["id"], automation)
+    end)
+  end
+
+  def define_this_card(card_id) do
+    [
+      ["DEFINE", "$THIS_CARD", ["POINTER", "$GAME.cardById."<>card_id]],
+      ["DEFINE", "$THIS_CARD_PATH", ["LIST", "cardById", card_id]]
+    ]
+  end
+
+  def implement_single_card_automation(game, card_id, automation) do
+    if automation["type"] == "onChange" do
+      dtc = define_this_card(card_id)
+      val = %{
+        "before" => dtc ++ [automation["before"]],
+        "after" => dtc ++ [automation["after"]],
+        "then" => dtc ++ [automation["then"]],
+      }
+      game = Evaluate.evaluate(game, define_this_card(card_id))
+      path = Evaluate.evaluate(game, automation["path"])
+      if Evaluate.evaluate(game, ["GAME_GET_VAL", path ++ ["_automate_"]]) do
+        Evaluate.evaluate(game, ["GAME_SET_VAL"] ++ path ++ ["_automate_", card_id, val])
+      else
+        Evaluate.evaluate(game, ["GAME_SET_VAL"] ++ path ++ ["_automate_", %{card_id => val}])
+      end
+    end
   end
 
   def load_card(game, load_list_item) do
     quantity = load_list_item["quantity"]
 
-    if quantity <= 0 do
+    game = if quantity <= 0 do
       game
     else
       group_id = load_list_item["loadGroupId"]
-      IO.puts("load_card")
-      IO.inspect(load_list_item)
 
       1..quantity
       |> Enum.reduce(game, fn(_index, acc) ->

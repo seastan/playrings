@@ -41,7 +41,6 @@ defmodule DragnCards.Plugins do
   end
 
   def get_game_def(id) do
-    IO.puts("get_game_def #{id}")
     query = from p in Plugin,
     where: [id: ^id],
     select: {
