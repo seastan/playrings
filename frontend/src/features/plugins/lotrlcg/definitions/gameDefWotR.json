@@ -5760,5 +5760,29 @@
     },
     "postLoadActionList": [
       
-    ]
+    ],
+    "automation": {
+      "a6cdd8d3-cd6e-4d1a-908b-2f788fbb357e": {
+        "_label": "Aragorn",
+        "rules": [
+            {
+              "type": "onChange", 
+              "path": "$THIS_CARD_PATH",
+              "before": ["NOT", "$THIS_CARD.inPlay"], 
+              "after": ["$THIS_CARD.inPlay"], 
+              "then": [
+                ["FOR_EACH_KEY_VAL", "$CARD_ID", "$CARD", "$CARD_BY_ID", 
+                  ["COND", 
+                    ["EQUAL", "$CARD.sides.A.name", "Strider"], 
+                    [
+                      ["MOVE_CARD", "$CARD_ID", ["JOIN_STRING", "$CARD.controller", "Eliminated"], 0, 0],
+                      ["GAME_ADD_MESSAGE", "Strider was removed from the game."]
+                    ]
+                  ]
+                ]
+              ]
+            }
+        ]
+      }
+    }
   }

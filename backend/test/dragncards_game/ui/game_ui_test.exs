@@ -4,13 +4,13 @@ defmodule DragnCardsGame.GameUiTest do
   alias DragnCards.{Plugins, Plugins.Plugin, Repo}
   alias DragnCards.Users.User
   import Ecto.Query
+  alias Jason
 
   alias DragnCardsGame.{GameUI, Game, Evaluate}
 
   import ExUnit.Callbacks
 
   setup do
-    # Fetch the first user from the database
     user = Repo.one(from u in DragnCards.Users.User, limit: 1)
     plugin_id = 3
 
@@ -20,6 +20,17 @@ defmodule DragnCardsGame.GameUiTest do
     options = %{"pluginId" => plugin_id}
 
     gameui = GameUI.new("game_name", user, options)
+
+    {:ok, file_content} = File.read("../frontend/src/features/plugins/lotrlcg/definitions/gameDefWotR.json")
+
+    game_def = case Jason.decode(file_content) do
+      {:ok, json_map} ->
+        IO.inspect(json_map)
+      {:error, reason} ->
+        IO.puts("Error decoding JSON: #{reason}")
+    end
+
+    gameui = put_in(gameui["game"]["gameDef"], game_def)
 
     # Load a deck
     cards = plugin.game_def["preBuiltDecks"]["Trilogy"]["cards"]
@@ -38,6 +49,8 @@ defmodule DragnCardsGame.GameUiTest do
     {:ok, %{gameui: gameui, user: user, plugin: plugin}}
   end
 
+
+
   # test "GameUI initializes with the correct name", %{gameui: gameui, user: user} do
   #   # Get the game name from the GameUI instance in the setup block
   #   assert gameui["roomName"] == "game_name"
@@ -49,17 +62,22 @@ defmodule DragnCardsGame.GameUiTest do
   # end
 
   test "Check Aragorn", %{gameui: gameui, user: user, plugin: plugin} do
-
     game = gameui["game"]
     card_by_id = game["cardById"]
-    card_db_id = "a6cdd8d3-cd6e-4d1a-908b-2f788fbb357e"
+    aragorn_card_db_id = "a6cdd8d3-cd6e-4d1a-908b-2f788fbb357e"
+    strider_card_db_id = "f88cd1e7-0e1e-40d9-91bc-990ba64c5bc3"
 
-    {chosen_card_id, chosen_card} = Enum.find(Map.to_list(card_by_id), fn {key, card} ->
-      card["cardDbId"] == card_db_id
-    end)
-    IO.puts("8888888888888888888888888_________")
-    Evaluate.evaluate(game, ["GAME_SET_VAL", "cardById", chosen_card_id, "inPlay", true])
-    IO.puts("8888888888888888888888888")
-    assert chosen_card["_automate_"]
+    aragorn_card = Evaluate.evaluate(game, ["FIRST_CARD", ["EQUAL", "$CARD.cardDbId", aragorn_card_db_id]])
+    strider_card = Evaluate.evaluate(game, ["FIRST_CARD", ["EQUAL", "$CARD.cardDbId", strider_card_db_id]])
+
+    assert strider_card["groupId"] != "player3Eliminated"
+
+    game = Evaluate.evaluate(game, ["MOVE_CARD", aragorn_card["id"], "player3Reserve", 0, 0])
+
+    strider_card = Evaluate.evaluate(game, ["FIRST_CARD", ["EQUAL", "$CARD.cardDbId", strider_card_db_id]])
+
+    assert strider_card["groupId"] == "player3Eliminated"
   end
+
+
 end

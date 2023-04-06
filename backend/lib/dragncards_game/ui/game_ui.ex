@@ -245,22 +245,21 @@ defmodule DragnCardsGame.GameUI do
   def update_card_state(game, card_id, orig_group_id \\ nil) do
     {dest_group_id, dest_stack_index, dest_card_index} = gsc(game, card_id)
     dest_group = get_group(game, dest_group_id)
+    card = get_card(game, card_id)
 
-    card =
-      get_card(game, card_id)
-      |> put_in(["groupId"], dest_group_id)
-      |> put_in(["stackIndex"], dest_stack_index)
-      |> put_in(["cardIndex"], dest_card_index)
-    card = Enum.reduce(dest_group["forceOnCards"], card, fn({key, val}, acc) ->
-        put_in(acc, [key], val)
+    game = Evaluate.evaluate(game, ["GAME_SET_VAL", "cardById", card_id, "groupId", dest_group_id])
+    game = Evaluate.evaluate(game, ["GAME_SET_VAL", "cardById", card_id, "stackIndex", dest_stack_index])
+    game = Evaluate.evaluate(game, ["GAME_SET_VAL", "cardById", card_id, "cardIndex", dest_card_index])
+
+    game = Enum.reduce(dest_group["forceOnCards"], game, fn({key, val}, acc) ->
+        Evaluate.evaluate(acc, ["GAME_SET_VAL", "cardById", card_id] ++ [key] ++ [val])
       end)
 
-    card = case card["currentSide"] do
-      "A" -> put_in(card["peeking"], %{})
-      _ -> card
+    game = case card["currentSide"] do
+      "A" -> Evaluate.evaluate(game, ["GAME_SET_VAL", "cardById", card_id, "peeking", %{}])
+      _ -> game
     end
 
-    update_card(game, card)
   end
 
   # Delete card from game
@@ -609,14 +608,14 @@ defmodule DragnCardsGame.GameUI do
   end
 
   def implement_card_automations(game, card) do
-    side_a_automation = card["sides"]["A"]["automation"]
-    side_b_automation = card["sides"]["A"]["automation"]
-    side_a_automation = if side_a_automation == "" or side_a_automation == nil do [] else side_a_automation end
-    side_b_automation = if side_b_automation == "" or side_b_automation == nil do [] else side_b_automation end
-    automation_list = side_a_automation ++ side_b_automation
-    |> Enum.reduce(game, fn(automation, acc) ->
-      implement_single_card_automation(acc, card["id"], automation)
-    end)
+    card_automation = game["gameDef"]["automation"][card["cardDbId"]]
+    if card_automation == nil do
+      game
+    else
+      card_automation["rules"] |> Enum.reduce(game, fn(automation, acc) ->
+        implement_single_card_automation(acc, card["id"], automation)
+      end)
+    end
   end
 
   def define_this_card(card_id) do

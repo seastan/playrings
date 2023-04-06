@@ -14,26 +14,33 @@ defmodule DragnCardsGame.Evaluate do
   end
 
   def put_by_path(game_old, path, val_new) do
+    # IO.puts("val_new 1")
+    # IO.inspect(val_new)
     path_minus_key = Enum.slice(path, 0, Enum.count(path)-1)
+    # IO.puts("path_minus_key 1")
+    # IO.inspect(path_minus_key)
+    # IO.puts("put_by_keys 1")
+    # IO.inspect(Map.keys(game_old))
     game_new =
-      case get_in(game_old, path_minus_key) do
-        nil ->
-          evaluate(game_old, ["LOGGER", "Error: Tried to set a value at a nonexistent path: "] ++ path_minus_key)
+      if path_minus_key == [] do
+        put_in(game_old, path, val_new)
+      else
+        case get_in(game_old, path_minus_key) do
+          nil ->
+            evaluate(game_old, ["LOGGER", "Error: Tried to set a value at a nonexistent path: "] ++ path_minus_key)
 
-        val_old ->
-          put_in(game_old, path, val_new)
+          val_old ->
+            put_in(game_old, path, val_new)
+        end
       end
 
-    IO.inspect("put by path 1 ------------------------------------")
-    IO.inspect(path_minus_key ++ ["_automate_"])
-    IO.inspect(get_in(game_new, path_minus_key ++ ["_automate_"]))
     case get_in(game_new, path_minus_key ++ ["_automate_"]) do
       nil ->
         game_new
 
       automations ->
         Enum.reduce(automations, game_new, fn {card_id, automation}, acc ->
-          if evaluate(game_old, automation["before"]) and evaluate(game_old, automation["after"]) do
+          if evaluate(game_old, automation["before"]) and evaluate(game_new, automation["after"]) do
             IO.puts("performing automation")
             evaluate(acc, automation["then"])
           else
@@ -41,6 +48,13 @@ defmodule DragnCardsGame.Evaluate do
           end
         end)
     end
+  end
+
+  def message_list_to_string(game, statements) do
+    Enum.reduce(statements, "", fn(statement, acc) ->
+      str_statement = inspect(evaluate(game, statement))
+      acc <> String.replace(str_statement,"\"","")
+    end)
   end
 
   @spec convert_to_integer(String.t() | nil) :: number
@@ -76,10 +90,7 @@ defmodule DragnCardsGame.Evaluate do
             IO.puts("LOGGER:")
             IO.inspect(code)
             statements = Enum.slice(code, 1, Enum.count(code))
-            message = Enum.reduce(statements, "", fn(statement, acc) ->
-              str_statement = inspect(evaluate(game, statement))
-              acc <> String.replace(str_statement,"\"","")
-            end)
+            message = message_list_to_string(game, statements)
             IO.inspect(message)
             game
           "DEFINE" ->
@@ -132,6 +143,11 @@ defmodule DragnCardsGame.Evaluate do
               end
             end)
           "EQUAL" ->
+            # IO.puts("equal 1")
+            # IO.inspect(Enum.at(code,1))
+            # IO.inspect(evaluate(game, Enum.at(code,1)))
+            # IO.inspect(Enum.at(code,2))
+            # IO.inspect(evaluate(game, Enum.at(code,2)))
             evaluate(game, Enum.at(code,1)) == evaluate(game, Enum.at(code,2))
           "NOT_EQUAL" ->
             evaluate(game, Enum.at(code,1)) != evaluate(game, Enum.at(code,2))
@@ -261,10 +277,7 @@ defmodule DragnCardsGame.Evaluate do
             end)
           "GAME_ADD_MESSAGE" ->
             statements = Enum.slice(code, 1, Enum.count(code))
-            message = Enum.reduce(statements, "", fn(statement, acc) ->
-              str_statement = inspect(evaluate(game, statement))
-              acc <> String.replace(str_statement,"\"","")
-            end)
+            message = message_list_to_string(game, statements)
             put_in(game["messages"], game["messages"] ++ [message])
           "FOR_EACH_START_STOP_STEP" ->
             var_name = Enum.at(code, 1)
@@ -311,9 +324,9 @@ defmodule DragnCardsGame.Evaluate do
               dest_group_id = evaluate(game, Enum.at(code, 2))
               dest_stack_index = evaluate(game, Enum.at(code, 3))
               dest_card_index = evaluate(game, Enum.at(code, 4))
-              combine = if argc >= 5 do evaluate(game, Enum.at(code, 5)) else nil end
+              combine = if argc >= 5 do evaluate(game, Enum.at(code, 5)) else false end
               IO.puts("moving card 1")
-              IO.inspect({card_id, dest_group_id, dest_stack_index, combine})
+              IO.inspect({card_id, dest_group_id, dest_stack_index, dest_card_index, combine})
               GameUI.move_card(game, card_id, dest_group_id, dest_stack_index, dest_card_index, combine)
             else
               game
@@ -389,6 +402,13 @@ defmodule DragnCardsGame.Evaluate do
             card = game["cardById"][card_id]
             face = card["sides"][card["currentSide"]]
             face["name"]
+          "FIRST_CARD" ->
+            {first_card_id, first_card} = Enum.find(game["cardById"], fn {_, card} ->
+              game = evaluate(game, ["DEFINE", "$CARD_ID", card["id"]])
+              game = evaluate(game, ["DEFINE", "$CARD", card])
+              evaluate(game, Enum.at(code, 1))
+            end)
+            first_card
           "ACTION_LIST" ->
             argc = Enum.count(code) - 1
             IO.puts("---------doing action list ---------------")
