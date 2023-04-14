@@ -67,14 +67,14 @@ defmodule DragnCardsGame.GameUiTest do
     aragorn_card_db_id = "a6cdd8d3-cd6e-4d1a-908b-2f788fbb357e"
     strider_card_db_id = "f88cd1e7-0e1e-40d9-91bc-990ba64c5bc3"
 
-    aragorn_card = Evaluate.evaluate(game, ["FIRST_CARD", ["EQUAL", "$CARD.cardDbId", aragorn_card_db_id]])
-    strider_card = Evaluate.evaluate(game, ["FIRST_CARD", ["EQUAL", "$CARD.cardDbId", strider_card_db_id]])
+    aragorn_card = Evaluate.evaluate(game, ["ONE_CARD", ["EQUAL", "$CARD.cardDbId", aragorn_card_db_id]])
+    strider_card = Evaluate.evaluate(game, ["ONE_CARD", ["EQUAL", "$CARD.cardDbId", strider_card_db_id]])
 
     assert strider_card["groupId"] != "player3Eliminated"
 
     game = Evaluate.evaluate(game, ["MOVE_CARD", aragorn_card["id"], "player3Reserve", 0, 0])
 
-    strider_card = Evaluate.evaluate(game, ["FIRST_CARD", ["EQUAL", "$CARD.cardDbId", strider_card_db_id]])
+    strider_card = Evaluate.evaluate(game, ["ONE_CARD", ["EQUAL", "$CARD.cardDbId", strider_card_db_id]])
 
     assert strider_card["groupId"] == "player3Eliminated"
   end

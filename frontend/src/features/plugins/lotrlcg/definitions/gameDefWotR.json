@@ -5765,23 +5765,67 @@
       "a6cdd8d3-cd6e-4d1a-908b-2f788fbb357e": {
         "_label": "Aragorn",
         "rules": [
-            {
+            { 
               "type": "onChange", 
-              "path": "$THIS_CARD_PATH",
-              "before": ["NOT", "$THIS_CARD.inPlay"], 
-              "after": ["$THIS_CARD.inPlay"], 
+              "path": "$THIS_PATH",
+              "before": ["NOT", "$THIS.inPlay"], 
+              "after": ["$THIS.inPlay"], 
               "then": [
-                ["FOR_EACH_KEY_VAL", "$CARD_ID", "$CARD", "$CARD_BY_ID", 
-                  ["COND", 
-                    ["EQUAL", "$CARD.sides.A.name", "Strider"], 
-                    [
-                      ["MOVE_CARD", "$CARD_ID", ["JOIN_STRING", "$CARD.controller", "Eliminated"], 0, 0],
-                      ["GAME_ADD_MESSAGE", "Strider was removed from the game."]
-                    ]
-                  ]
-                ]
+                ["DEFINE", "$TARGET", ["ONE_CARD", ["EQUAL", "$CARD.sides.A.name", "Strider"]]],
+                ["MOVE_CARD", "$TARGET.id", ["JOIN_STRING", "$TARGET.controller", "Eliminated"], 0, 0],
+                ["GAME_ADD_MESSAGE", "Strider was removed from the game."]
               ]
             }
+        ]
+      },
+      "celeborn-cd6e-4d1a-908b-2f788fbb357e": {
+        "_label": "Celeborn",
+        "rules": [
+          { 
+            "type": "onChange", 
+            "path": ["cardById", "*"],
+            "before": ["NOT", "$THIS.inPlay"], 
+            "after": ["$THIS.inPlay"], 
+            "then": [
+              ["COND", 
+                ["IN_STRING", "$THIS.traits", "Silvan"],
+                ["GAME_INCREASE_VAL", "cardById", "$THIS.id", "tokens", "willpower", 1]
+              ]
+            ]
+          }
+        ]
+      },
+      "visionary-leadership-908b-2f788fbb357e": {
+        "_label": "Visionary Leadership",
+        "rules": [
+          { 
+            "type": "passive",
+            "listenTo": ["$THIS.inPlay", "$THIS.parentCard.tokens.resource"],
+            "onCondition": ["AND", "$THIS.inPlay", ["GREATER_THAN", "$THIS.parentCard.tokens.resource"], 0],
+            "onDo": [
+              ["FOR_EACH_KEY_VAL", "$CARD", "$CARD_ID", "$CARD_BY_ID", [
+                ["COND",
+                  ["AND", "$CARD.inPlay", ["IN_STRING", "$CARD.sides.sideUp.traits", "Gondor"]],
+                  ["GAME_INCREASE_VAL", "cardById", "$CARD.id", "tokens", "willpower", 1]
+                ]
+              ]]
+            ],
+            "offDo": [
+              ["FOR_EACH_KEY_VAL", "$CARD", "$CARD_ID", "$CARD_BY_ID", [
+                ["COND",
+                  ["AND", "$CARD.inPlay", ["IN_STRING", "$CARD.sides.sideUp.traits", "Gondor"]],
+                  ["GAME_DECREASE_VAL", "cardById", "$CARD.id", "tokens", "willpower", 1]
+                ]
+              ]]
+            ]
+          },
+          {
+            "type": "trigger",
+            "listenTo": ["$GAME.cardById.*.inPlay"],
+            "before": ["OR", ["NOT", "$P1"], ["GREATER_THAN", "$THIS.parentCard.tokens.resource"], 0],
+            "after": ["AND", "$P1", ["GREATER_THAN", "$THIS.parentCard.tokens.resource"], 0],
+            "then": ["GAME_INCREASE_VAL", "cardById", "$P1.parent.id", "tokens", "willpower", 1]
+          }
         ]
       }
     }

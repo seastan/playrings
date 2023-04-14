@@ -17,6 +17,7 @@ defmodule DragnCardsGame.Evaluate do
     # IO.puts("val_new 1")
     # IO.inspect(val_new)
     path_minus_key = Enum.slice(path, 0, Enum.count(path)-1)
+    key = Enum.at(path, -1)
     # IO.puts("path_minus_key 1")
     # IO.inspect(path_minus_key)
     # IO.puts("put_by_keys 1")
@@ -34,13 +35,17 @@ defmodule DragnCardsGame.Evaluate do
         end
       end
 
+    IO.puts("checking automate ")
+    IO.inspect(path_minus_key)
+    IO.inspect(key)
+    get_in(game_new, path_minus_key ++ ["_automate_"])
     case get_in(game_new, path_minus_key ++ ["_automate_"]) do
       nil ->
         game_new
 
       automations ->
         Enum.reduce(automations, game_new, fn {card_id, automation}, acc ->
-          if evaluate(game_old, automation["before"]) and evaluate(game_new, automation["after"]) do
+          if key == evaluate(game_old, automation["key"]) and evaluate(game_old, automation["before"]) and evaluate(game_new, automation["after"]) do
             IO.puts("performing automation")
             evaluate(acc, automation["then"])
           else
@@ -165,6 +170,8 @@ defmodule DragnCardsGame.Evaluate do
             evaluate(game, Enum.at(code,1)) <> evaluate(game, Enum.at(code,2))
           "IN_STRING" ->
             String.contains?(evaluate(game, Enum.at(code,1)), evaluate(game, Enum.at(code,2)))
+          "IN_LIST" ->
+            Enum.member?(evaluate(game, Enum.at(code,1)), evaluate(game, Enum.at(code,2)))
           "ADD" ->
             (evaluate(game, Enum.at(code,1)) || 0) + (evaluate(game, Enum.at(code,2)) || 0)
           "SUBTRACT" ->
@@ -186,20 +193,19 @@ defmodule DragnCardsGame.Evaluate do
             map = evaluate(game, Enum.at(code,1))
             path = evaluate(game, Enum.at(code,2))
             Enum.reduce(path, map, fn(pathi, acc) ->
-              if String.starts_with?(pathi, "[") and String.ends_with?(pathi, "]") do
-                int_str = evaluate(game, String.slice(pathi,1..-2))
-                int = convert_to_integer(int_str)
-                Enum.at(acc, int)
-              else
-                # IO.puts("getting key from map")
-                key = evaluate(game, pathi)
-                # IO.inspect(key)
-                # IO.inspect(Map.keys(acc))
-                if Map.has_key?(acc, key) do
+              cond do
+                String.starts_with?(pathi, "[") and String.ends_with?(pathi, "]") ->
+                  int_str = evaluate(game, String.slice(pathi,1..-2))
+                  int = convert_to_integer(int_str)
+                  Enum.at(acc, int)
+                pathi == "sideUp" ->
+                  acc["sides"][acc["currentSide"]]
+                pathi == "parentCard" ->
+                  game["cardById"][acc["parentCardId"]]
+                Map.has_key?(acc, key) ->
                   Map.get(acc, evaluate(game, key))
-                else
+                _ ->
                   {:error, nil}
-                end
               end
             end)
           "GAME_GET_VAL" ->
@@ -241,6 +247,7 @@ defmodule DragnCardsGame.Evaluate do
             end)
             value = evaluate(game, Enum.at(code, Enum.count(code)-1))
             IO.puts("game_set_val #{path}")
+            IO.inspect(value)
             #IO.inspect(path)
             #IO.inspect(value)
             put_by_path(game, path, value)
@@ -256,7 +263,7 @@ defmodule DragnCardsGame.Evaluate do
             end)
             delta = evaluate(game, Enum.at(code, Enum.count(code)-1))
             old_value = get_in(game, path) || 0
-            put_in(game, path, old_value + delta)
+            put_by_path(game, path, old_value + delta)
           "GAME_DECREASE_VAL" ->
             path = Enum.slice(code, 1, Enum.count(code)-2)
             delta = evaluate(game, Enum.at(code, Enum.count(code)-1))
@@ -323,7 +330,7 @@ defmodule DragnCardsGame.Evaluate do
             if card_id do
               dest_group_id = evaluate(game, Enum.at(code, 2))
               dest_stack_index = evaluate(game, Enum.at(code, 3))
-              dest_card_index = evaluate(game, Enum.at(code, 4))
+              dest_card_index = if argc >= 4 do evaluate(game, Enum.at(code, 4)) else 0 end
               combine = if argc >= 5 do evaluate(game, Enum.at(code, 5)) else false end
               IO.puts("moving card 1")
               IO.inspect({card_id, dest_group_id, dest_stack_index, dest_card_index, combine})
@@ -402,13 +409,13 @@ defmodule DragnCardsGame.Evaluate do
             card = game["cardById"][card_id]
             face = card["sides"][card["currentSide"]]
             face["name"]
-          "FIRST_CARD" ->
-            {first_card_id, first_card} = Enum.find(game["cardById"], fn {_, card} ->
+          "ONE_CARD" ->
+            {one_card_id, one_card} = Enum.find(game["cardById"], fn {_, card} ->
               game = evaluate(game, ["DEFINE", "$CARD_ID", card["id"]])
               game = evaluate(game, ["DEFINE", "$CARD", card])
               evaluate(game, Enum.at(code, 1))
             end)
-            first_card
+            one_card
           "ACTION_LIST" ->
             argc = Enum.count(code) - 1
             IO.puts("---------doing action list ---------------")

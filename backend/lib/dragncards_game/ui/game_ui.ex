@@ -246,10 +246,12 @@ defmodule DragnCardsGame.GameUI do
     {dest_group_id, dest_stack_index, dest_card_index} = gsc(game, card_id)
     dest_group = get_group(game, dest_group_id)
     card = get_card(game, card_id)
+    parent_card = get_card_by_gsc(game, [dest_group_id, dest_stack_index, 0])
 
     game = Evaluate.evaluate(game, ["GAME_SET_VAL", "cardById", card_id, "groupId", dest_group_id])
     game = Evaluate.evaluate(game, ["GAME_SET_VAL", "cardById", card_id, "stackIndex", dest_stack_index])
     game = Evaluate.evaluate(game, ["GAME_SET_VAL", "cardById", card_id, "cardIndex", dest_card_index])
+    game = Evaluate.evaluate(game, ["GAME_SET_VAL", "cardById", card_id, "parentCardId", parent_card["id"]])
 
     game = Enum.reduce(dest_group["forceOnCards"], game, fn({key, val}, acc) ->
         Evaluate.evaluate(acc, ["GAME_SET_VAL", "cardById", card_id] ++ [key] ++ [val])
@@ -620,8 +622,8 @@ defmodule DragnCardsGame.GameUI do
 
   def define_this_card(card_id) do
     [
-      ["DEFINE", "$THIS_CARD", ["POINTER", "$GAME.cardById."<>card_id]],
-      ["DEFINE", "$THIS_CARD_PATH", ["LIST", "cardById", card_id]]
+      ["DEFINE", "$THIS", ["POINTER", "$GAME.cardById."<>card_id]],
+      ["DEFINE", "$THIS_PATH", ["LIST", "cardById", card_id]]
     ]
   end
 
@@ -629,6 +631,7 @@ defmodule DragnCardsGame.GameUI do
     if automation["type"] == "onChange" do
       dtc = define_this_card(card_id)
       val = %{
+        "key" => dtc ++ [automation["key"]],
         "before" => dtc ++ [automation["before"]],
         "after" => dtc ++ [automation["after"]],
         "then" => dtc ++ [automation["then"]],
