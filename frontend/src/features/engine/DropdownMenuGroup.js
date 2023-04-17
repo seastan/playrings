@@ -17,10 +17,10 @@ export const DropdownMenuGroup = React.memo(({
   activeMenu,
 }) => {
   const l10n = useGameL10n();
-  const dropdownMenuObj = useSelector(state => state?.playerUi?.dropdownMenuObj);
+  const dropdownMenu = useSelector(state => state?.playerUi?.dropdownMenu);
   const playerN = useSelector(state => state?.playerUi?.playerN);
   const playerIList = usePlayerIList();
-  const menuGroup = dropdownMenuObj.group;
+  const menuGroup = dropdownMenu.group;
   const gameDef = useGameDefinition();
   const group = useSelector(state => state?.gameUi?.game?.groupById?.[menuGroup.id]);
   console.log("Rendering DMGroup", group)
@@ -68,7 +68,7 @@ export const DropdownMenuGroup = React.memo(({
     <div 
       className="dropdown" 
       style={{ height: menuHeight, zIndex: 1e7, top: top, left: left }}>
-        <div className="menu-title">{dropdownMenuObj.title}</div>
+        <div className="menu-title">{dropdownMenu.title}</div>
         {activeMenu === "main" &&
         <div className="menu">
           <DropdownItem action={actionListShuffle} clickCallback={handleDropdownClick}>{l10n("Shuffle")}</DropdownItem>
@@ -79,7 +79,7 @@ export const DropdownMenuGroup = React.memo(({
           })}
           {gameDef?.dropdownMenus?.group?.options?.map((option, _index) => {
             return(
-              <DropdownItem action={option.actionListId} clickCallback={handleDropdownClick}>{l10n(option.label)}</DropdownItem>
+              <DropdownItem action={option.actionList} clickCallback={handleDropdownClick}>{l10n(option.label)}</DropdownItem>
             )
           })}
           {menuGroup.id === playerN+"Hand" ? <DropdownItem action="makeVisible" clickCallback={handleDropdownClick}>{l10n("Make visible/hidden")}</DropdownItem> : null}

@@ -12,7 +12,7 @@ export const GiantCard = React.memo(({}) => {
   const touchAction = useSelector(state => state?.playerUi?.touchAction);
   const activeCard = useActiveCard();
   const visibleFace = getVisibleFace(activeCard, playerN);
-  const screenPosition = useSelector(state => state?.playerUi?.screenPosition);
+  const screenLeftRight = useSelector(state => state?.playerUi?.screenLeftRight);
   const visibleFaceSrc = getVisibleFaceSrc(visibleFace, user, gameDef);
   console.log("Rendering GiantCard", activeCard, visibleFace, visibleFaceSrc);
 
@@ -25,8 +25,8 @@ export const GiantCard = React.memo(({}) => {
         src={visibleFaceSrc.src} 
         onError={(e)=>{e.target.onerror = null; e.target.src=visibleFaceSrc.default}}
         style={{
-          right: screenPosition === "left" ? "3%" : "",
-          left: screenPosition === "right" ? "3%" : "",
+          right: screenLeftRight === "left" ? "3%" : "",
+          left: screenLeftRight === "right" ? "3%" : "",
           top: "5%",
           borderRadius: '5%',
           MozBoxShadow: '0 0 50px 20px black',

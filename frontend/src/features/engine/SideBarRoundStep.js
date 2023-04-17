@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from 'react-redux';
-import { setMousePosition } from "../store/playerUiSlice";
+import { setActiveCardId } from "../store/playerUiSlice";
 import { useGameL10n } from "../../hooks/useGameL10n";
 import { useGameDefinition } from "./functions/useGameDefinition";
 import { useDoActionList } from "./functions/useDoActionList";
@@ -24,19 +24,10 @@ export const ReminderButton = React.memo(({
     }
   }  
   const handleStartHover = () => {
-    dispatch(setMousePosition({
-      card: triggerCard,
-      mousePosition: "top", 
-      screenPosition: "left",
-      clicked: false,
-      setIsActive: null,
-      groupId: null,
-      layoutType: null,
-      cardIndex: null,
-  }));
+    dispatch(setActiveCardId(triggerCard?.id));
   }
   const handleStopHover = () => {
-    dispatch(setMousePosition(null));
+    dispatch(setActiveCardId(null));
   };
   return(
     <div 

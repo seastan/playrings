@@ -42,7 +42,7 @@ export const useBrowseTopN = () => {
           [
             ["DEFINE", "$STACK_ID", `$GROUP_BY_ID.${group.id}.stackIds.[$i]`],
             ["DEFINE", "$CARD_ID", "$STACK_BY_ID.$STACK_ID.cardIds.[0]"],
-            ["GAME_SET_VAL", "cardById", "$CARD_ID", "peeking", playerN, true]
+            ["GAME_SET_VAL", "/cardById/$CARD_ID/peeking/" + playerN, true]
           ]
         ],
         message

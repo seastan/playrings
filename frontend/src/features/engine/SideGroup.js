@@ -4,7 +4,7 @@ import { Stacks } from "./Stacks";
 import { faBars, faEye } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useBrowseTopN } from "./functions/useBrowseTopN"; 
-import { setDropdownMenuObj } from "../store/playerUiSlice";
+import { setDropdownMenu } from "../store/playerUiSlice";
 import { useGameL10n } from "../../hooks/useGameL10n";
 import { useGameDefinition } from "./functions/useGameDefinition";
 import { useLayout } from "./functions/useLayout";
@@ -39,12 +39,12 @@ export const SideGroup = React.memo(({
   const handleBarsClick = (event) => {
     event.stopPropagation();
     if (!playerN) return;
-    const dropdownMenuObj = {
+    const dropdownMenu = {
         type: "group",
         group: group,
         title: gameDef.groups[sideGroupId].name,
     }
-    if (playerN) dispatch(setDropdownMenuObj(dropdownMenuObj));
+    if (playerN) dispatch(setDropdownMenu(dropdownMenu));
   }
 
   return (

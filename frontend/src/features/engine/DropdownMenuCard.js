@@ -21,10 +21,10 @@ export const DropdownMenuCard = React.memo(({
   const l10n = useGameL10n();
   const gameDef = useGameDefinition();
   const playerN = useSelector(state => state?.playerUi?.playerN);
-  const dropdownMenuObj = useSelector(state => state?.playerUi?.dropdownMenuObj);
-  const menuCardId = dropdownMenuObj.cardId;
+  const dropdownMenu = useSelector(state => state?.playerUi?.dropdownMenu);
+  const menuCardId = dropdownMenu.cardId;
   const menuCard = useSelector(state => state?.gameUi?.game?.cardById?.[menuCardId]);
-  const menuCardIndex = dropdownMenuObj.cardIndex;
+  const menuCardIndex = dropdownMenu.cardIndex;
   const visibleSide = getVisibleSide(menuCard);
   const visibleFace = getVisibleFace(menuCard);
   const evaluateCondition = useEvaluateCondition();
@@ -76,7 +76,7 @@ export const DropdownMenuCard = React.memo(({
     <div 
       className="dropdown" 
       style={{ height: menuHeight, zIndex: 1e7, top: top, left: left }}>
-        <div className="menu-title">{dropdownMenuObj.title}</div>
+        <div className="menu-title">{dropdownMenu.title}</div>
 
         {activeMenu === "main" &&
         <div className="menu">
@@ -96,7 +96,7 @@ export const DropdownMenuCard = React.memo(({
             if (menuItem?.showIf && !evaluateCondition(menuItem.showIf)) return;
             return ( 
               <DropdownItem 
-                action={["ACTION_LIST", menuItem.actionListId, menuCardId]} 
+                action={menuItem.actionList} 
                 clickCallback={handleDropdownClick}>
                   {l10n(menuItem.label)}
               </DropdownItem> 

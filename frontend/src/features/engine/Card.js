@@ -6,7 +6,7 @@ import { CardMouseRegion } from "./CardMouseRegion";
 import { faEye } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Target } from "./Target";
-import { setActiveCardId, setMousePosition } from "../store/playerUiSlice";
+import { setActiveCardId } from "../store/playerUiSlice";
 import { useCardScaleFactor } from "../../hooks/useCardScaleFactor";
 import { useGameDefinition } from "./functions/useGameDefinition";
 import { useGetDefaultAction } from "./functions/useGetDefaultAction";
@@ -32,6 +32,7 @@ export const Card = React.memo(({
     const cardRotation = useSelector(state => state?.gameUi?.game?.cardById[cardId]?.rotation);
     const cardCommitted = useSelector(state => state?.gameUi?.game?.cardById[cardId]?.committed);
     const playerN = useSelector(state => state?.playerUi?.playerN);
+    const dropdownMenuVisible = useSelector(state => state?.playerUi?.dropdownMenu?.visible);
     const cardScaleFactor = useCardScaleFactor();
 
     const touchMode = useSelector(state => state?.playerUi?.touchMode);
@@ -47,11 +48,11 @@ export const Card = React.memo(({
     const touchModeSpacingFactor = touchMode ? 1.5 : 1;
     const getDefaultAction = useGetDefaultAction();
     const defaultAction = touchMode && isActive ? getDefaultAction(cardId) : null;
-    const defaultPeeking = gameDef?.groups?.[groupId]?.forceOnCards?.peeking?.[playerN];
+    const defaultPeeking = gameDef?.groups?.[groupId]?.onCardEnter?.peeking?.[playerN];
 
     const handleMouseLeave = (_event) => {
         console.log("Card mouseleave")
-        dispatch(setActiveCardId(null))
+        if (!dropdownMenuVisible) dispatch(setActiveCardId(null))
     }
 
     var [height, width] = [cardVisibleFace.height, cardVisibleFace.width];

@@ -27,7 +27,7 @@ export const TopBarSharedCounter = React.memo(({
       const totalDelta = newValue - previousValue;
       setPreviousValue(newValue);
       const listOfActions = [
-        ["GAME_SET_VAL", gameProperty, newValue],
+        ["GAME_SET_VAL", "/" + gameProperty, newValue],
         ["GAME_ADD_MESSAGE", "$PLAYER_N", totalDelta >= 0 ? " increased " : " decreased ", name, " by ", Math.abs(totalDelta), "."]
       ];
       doActionList(listOfActions);

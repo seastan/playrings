@@ -67,6 +67,7 @@
       "questMode" => "Normal",
       "options" => options,
       "variables" => %{},
+      "automation" => %{},
       "messages" => []
     }
     # Add player data

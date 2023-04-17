@@ -3122,9 +3122,9 @@
         [
           ["GAME_INCREASE_VAL", "roundNumber", 1],
           ["GAME_ADD_MESSAGE", "player1 increased the round."],
-          ["GAME_SET_VAL", "phaseId", "Resource"],
+          ["GAME_SET_VAL", "/phaseId", "Resource"],
           ["GAME_ADD_MESSAGE", "player1 set the phase to Resource."],
-          ["GAME_SET_VAL", "stepIndex", "2"],
+          ["GAME_SET_VAL", "/stepIndex", "2"],
           ["GAME_ADD_MESSAGE", "player1 set the round step to 1.R."]
         ]
       ],

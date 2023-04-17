@@ -4,7 +4,7 @@ import UserName from "../user/UserName";
 import useProfile from "../../hooks/useProfile";
 import useIsLoggedIn from "../../hooks/useIsLoggedIn";
 import { Link } from "react-router-dom";
-import { setDropdownMenuObj, setObservingPlayerN, setTyping } from "../store/playerUiSlice";
+import { setDropdownMenu, setObservingPlayerN, setTyping } from "../store/playerUiSlice";
 import { useGameL10n } from "../../hooks/useGameL10n";
 import BroadcastContext from "../../contexts/BroadcastContext";
 import { TopBarUserCounter } from "./TopBarUserCounter";
@@ -37,11 +37,11 @@ export const TopBarUser = React.memo(({
   const handleFirstPlayerClick = (event) => {
     event.stopPropagation();
     if (!playerN) return;
-    const dropdownMenuObj = {
+    const dropdownMenu = {
         type: "firstPlayer",
         title: "Set first player",
     }
-    dispatch(setDropdownMenuObj(dropdownMenuObj));
+    dispatch(setDropdownMenu(dropdownMenu));
   }
   
   // If not observing anyone, observe yourself

@@ -55,7 +55,8 @@ defmodule DragnCards.MixProject do
       {:map_diff, "~> 1.3"},
       {:erlport, "~> 0.10.1"},
       {:hackney, "~> 1.9"},
-      {:poison, "~> 5.0"}
+      {:poison, "~> 5.0"},
+      {:luerl, github: "rvirding/luerl"}
     ]
   end
 

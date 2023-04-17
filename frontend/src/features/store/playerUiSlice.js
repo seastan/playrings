@@ -17,7 +17,7 @@ const initialState = {
   zoomFactor: 1.0,
   activeCardId: null,
   observingPlayerN: "player1",
-  dropdownMenuObj: null,
+  dropdownMenu: null,
   showModal: null,
   loaded: null,
   showPlayersInRoom: false,
@@ -26,7 +26,7 @@ const initialState = {
     topN: 0
   },
   tooltipIds: [],
-  mousePosition: null,
+  mouseXY: null,
   cardClicked: false,
   touchAction: null,
   sideGroupId: "sharedSetAside",
@@ -82,14 +82,14 @@ const playerUiSlice = createSlice({
     setActiveCardId: (state, { payload }) => {
       state.activeCardId = payload;
     },
-    setScreenPosition: (state, { payload }) => {
-      state.screenPosition = payload;
+    setScreenLeftRight: (state, { payload }) => {
+      state.screenLeftRight = payload;
     },
     setObservingPlayerN: (state, { payload }) => {
       state.observingPlayerN = payload;
     },
-    setDropdownMenuObj: (state, { payload }) => {
-      state.dropdownMenuObj = payload;
+    setDropdownMenu: (state, { payload }) => {
+      state.dropdownMenu = payload;
     },
     setShowModal: (state, { payload }) => {
       state.showModal = payload;
@@ -109,8 +109,11 @@ const playerUiSlice = createSlice({
     setTooltipIds: (state, { payload }) => {
       state.tooltipIds = payload;
     },
-    setMousePosition: (state, { payload }) => {
-      state.mousePosition = payload;
+    setMouseXY: (state, { payload }) => {
+      state.mouseXY = payload;
+    },
+    setMouseTopBottom: (state, { payload }) => {
+      state.mouseTopBottom = payload;
     },
     setCardClicked: (state, { payload }) => {
       state.cardClicked = payload;
@@ -149,16 +152,17 @@ export const {
   setTyping,
   setZoomFactor,
   setActiveCardId,
-  setScreenPosition,
+  setScreenLeftRight,
   setObservingPlayerN,
-  setDropdownMenuObj,
+  setDropdownMenu,
   setShowModal,
   setLoaded,
   setShowPlayersInRoom,
   setBrowseGroupId,
   setBrowseGroupTopN,
   setTooltipIds,
-  setMousePosition,
+  setMouseXY,
+  setMouseTopBottom,
   setCardClicked,
   setTouchAction,
   setSideGroupId,

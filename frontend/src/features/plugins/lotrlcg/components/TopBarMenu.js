@@ -173,7 +173,7 @@ export const TopBarMenu = React.memo(({}) => {
       loadFileCustom();
     }  else if (data.action === "layout") {
       doActionList([
-        ["GAME_SET_VAL", "layoutId", data.value.layoutId]
+        ["GAME_SET_VAL", "/layoutId", data.value.layoutId]
       ]);
     } else if (data.action === "quest_mode") {
       gameBroadcast("game_action", {action: "update_values", options: {updates: [["questMode", data.mode]]}});

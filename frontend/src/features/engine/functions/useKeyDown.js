@@ -12,7 +12,7 @@ export const useKeyDown = () => {
     const keypressControl = useSelector(state => state?.playerUi?.keypress?.Control);
     const keypressShift = useSelector(state => state?.playerUi?.keypress?.Shift);
     const keypressAlt = useSelector(state => state?.playerUi?.keypress?.Alt);
-    const mousePosition = useSelector(state => state?.playerUi?.mousePosition);
+    const mouseTopBottom = useSelector(state => state?.playerUi?.mouseTopBottom);
     const {gameBroadcast, chatBroadcast} = useContext(BroadcastContext);
     const doActionList = useDoActionList();
     const addToken = useAddToken();
@@ -37,7 +37,7 @@ export const useKeyDown = () => {
 
         for (var keyObj of gameDef?.hotkeys.token) {
             if (keyObj.key === dictKey) {
-                addToken(keyObj.tokenType, mousePosition === "top" ? 1 : -1);
+                addToken(keyObj.tokenType, mouseTopBottom === "top" ? 1 : -1);
                 return;
             }
         }

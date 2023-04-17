@@ -13,7 +13,7 @@ export const DropdownMenuFirstPlayer = React.memo(({
   activeMenu,
 }) => {
   const numPlayers = useSelector(state => state.gameUi.game.numPlayers);  
-  const dropdownMenuObj = useSelector(state => state?.playerUi?.dropdownMenuObj)
+  const dropdownMenu = useSelector(state => state?.playerUi?.dropdownMenu)
 
   const left = mouseX < (window.innerWidth/2) ? mouseX : mouseX -300;
   const top = mouseY < (window.innerHeight/2) ? mouseY : mouseY -250;
@@ -23,7 +23,7 @@ export const DropdownMenuFirstPlayer = React.memo(({
       className="dropdown" 
       style={{ height: menuHeight, zIndex: 1e7, top: top, left: left }}
       >
-      <div className="menu-title">{dropdownMenuObj.title}</div>
+      <div className="menu-title">{dropdownMenu.title}</div>
 
       <CSSTransition onEnter={calcHeight} timeout={500} classNames="menu-primary" unmountOnExit
         in={activeMenu === "main"}>

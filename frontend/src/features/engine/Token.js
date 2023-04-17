@@ -52,7 +52,7 @@ export const Token = React.memo(({
             if (totalDelta === 0) return;
             //const state = store.getState();
             const listOfActions = [
-                ["GAME_SET_VAL", "$ACTIVE_CARD_PATH", "tokens", tokenType, newAmount],
+                ["GAME_SET_VAL", "/$ACTIVE_CARD_PATH/tokens/" + tokenType, newAmount],
                 ["GAME_ADD_MESSAGE", "$PLAYER_N", totalDelta >= 0 ? " added " : " removed ", Math.abs(totalDelta), " ", token.name, " token",
                        Math.abs(totalDelta) > 1 ? "s" : "", totalDelta >= 0 ? " to " : " from ", "$ACTIVE_FACE.name", "."]
             ]

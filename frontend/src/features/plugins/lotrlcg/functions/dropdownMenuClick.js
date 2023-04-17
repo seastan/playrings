@@ -10,7 +10,7 @@ export const useDropdownClickCommon = (dropdownOptions) => {
   const dropdownClickCard = useDropdownClickCard;
   const dropdownClickGroup = useDropdownClickGroup;
   const dropdownClickFirstPlayer = useDropdownClickFirstPlayer;
-  const type = useSelector(state => state?.playerUi?.dropdownMenuObj?.type);
+  const type = useSelector(state => state?.playerUi?.dropdownMenu?.type);
   if (type === "card") dropdownClickCard(dropdownOptions);
   else if (type === "group") dropdownClickGroup(dropdownOptions);
   else if (type === "firstPlayer") dropdownClickFirstPlayer(dropdownOptions);
@@ -21,9 +21,9 @@ export const useDropdownClickCard = (dropdownOptions) => {
   // const gameUi = useSelector(state => state?.gameUi);
   // const playerUi = useSelector(state => state?.playerUi);
   // const game = gameUi?.game;
-  // const dropdownMenuObj = playerUi?.dropdownMenuObj;
+  // const dropdownMenu = playerUi?.dropdownMenu;
   // const playerN = playerUi?.playerN;
-  // const menuCard = dropdownMenuObj.card;
+  // const menuCard = dropdownMenu.card;
   // const displayName = getDisplayName(menuCard);
   const doActionList = useDoActionList();
   doActionList(dropdownOptions.action);
@@ -152,9 +152,9 @@ export const useDropdownClickGroup = (dropdownOptions, actionProps) => {
   const {state, dispatch, gameBroadcast, chatBroadcast} = actionProps;
   const gameUi = state.gameUi;
   const game = gameUi.game;
-  const dropdownMenuObj = state.playerUi.dropdownMenuObj;
+  const dropdownMenu = state.playerUi.dropdownMenu;
   const playerN = state.playerUi.playerN;
-  const group = dropdownMenuObj.group;
+  const group = dropdownMenu.group;
   const browseTopN = useBrowseTopN;
   if (dropdownOptions.action === "shuffle") {
     gameBroadcast("game_action", {action: "shuffle_group", options: {group_id: group.id}})

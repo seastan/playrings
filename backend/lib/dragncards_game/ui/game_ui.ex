@@ -16,12 +16,7 @@ defmodule DragnCardsGame.GameUI do
   @spec new(String.t(), User.t(), Map.t()) :: GameUI.t()
   def new(game_name, user, %{} = options) do
     Logger.debug("gameui new")
-    IO.puts("options")
-    IO.inspect(options)
-    IO.inspect(options["pluginId"])
     game_def = Plugins.get_game_def(options["pluginId"])
-    IO.puts("Loaded game_def")
-    IO.inspect(game_def["pluginName"])
     gameui = %{
       "game" => Game.load(game_def, options),
       "roomName" => game_name,
@@ -38,8 +33,6 @@ defmodule DragnCardsGame.GameUI do
       "playersInRoom" => %{},
       "lastUpdate" => System.system_time(:second),
     }
-    IO.puts("gameui 1")
-    gameui
   end
 
   def pretty_print(game, header \\ nil) do
@@ -248,17 +241,17 @@ defmodule DragnCardsGame.GameUI do
     card = get_card(game, card_id)
     parent_card = get_card_by_gsc(game, [dest_group_id, dest_stack_index, 0])
 
-    game = Evaluate.evaluate(game, ["GAME_SET_VAL", "cardById", card_id, "groupId", dest_group_id])
-    game = Evaluate.evaluate(game, ["GAME_SET_VAL", "cardById", card_id, "stackIndex", dest_stack_index])
-    game = Evaluate.evaluate(game, ["GAME_SET_VAL", "cardById", card_id, "cardIndex", dest_card_index])
-    game = Evaluate.evaluate(game, ["GAME_SET_VAL", "cardById", card_id, "parentCardId", parent_card["id"]])
+    game = Evaluate.evaluate(game, ["GAME_SET_VAL", "/cardById/" <> card_id <> "/groupId", dest_group_id])
+    game = Evaluate.evaluate(game, ["GAME_SET_VAL", "/cardById/" <> card_id <> "/stackIndex", dest_stack_index])
+    game = Evaluate.evaluate(game, ["GAME_SET_VAL", "/cardById/" <> card_id <> "/cardIndex", dest_card_index])
+    game = Evaluate.evaluate(game, ["GAME_SET_VAL", "/cardById/" <> card_id <> "/stackParentCardId", parent_card["id"]])
 
-    game = Enum.reduce(dest_group["forceOnCards"], game, fn({key, val}, acc) ->
-        Evaluate.evaluate(acc, ["GAME_SET_VAL", "cardById", card_id] ++ [key] ++ [val])
+    game = Enum.reduce(dest_group["onCardEnter"], game, fn({key, val}, acc) ->
+        Evaluate.evaluate(acc, ["GAME_SET_VAL", "/cardById/" <> card_id <> "/" <> key, val])
       end)
 
     game = case card["currentSide"] do
-      "A" -> Evaluate.evaluate(game, ["GAME_SET_VAL", "cardById", card_id, "peeking", %{}])
+      "A" -> Evaluate.evaluate(game, ["GAME_SET_VAL", "/cardById/" <> card_id <> "/peeking", %{}])
       _ -> game
     end
 
@@ -473,8 +466,6 @@ defmodule DragnCardsGame.GameUI do
   # Game actions                                                 #
   ################################################################
   def game_action(gameui, user_id, action, options) do
-    IO.inspect("action")
-    IO.inspect(action)
     user_alias = get_alias_by_user_id(gameui, user_id)
     player_n = get_player_n(gameui, user_id)
     player_n = if options["for_player_n"] do options["for_player_n"] else player_n end
@@ -485,7 +476,7 @@ defmodule DragnCardsGame.GameUI do
     game_new = if player_n do
       case action do
         "evaluate" ->
-          Evaluate.evaluate(game, options["action_list"])
+          Evaluate.evaluate_with_timeout(game, options["action_list"])
         "set_game" ->
           options["game"]
         "reset_game" ->
@@ -502,19 +493,15 @@ defmodule DragnCardsGame.GameUI do
     else
       game
     end
-    IO.puts("action_list 3")
     #game_new = save_replay(game_new, user_id)
     # Compare state before and after, and add a delta (unless we are undoing a move or loading a game with undo info)
     game_new = Map.delete(game_new, "playerUi")
     gameui = if options["preserve_undo"] != true do
       game_new = Game.add_delta(game_new, game)
-      IO.puts("action_list 4a")
       put_in(gameui["game"], game_new)
     else
-      IO.puts("action_list 4b")
       put_in(gameui["game"]["replayLength"], Enum.count(gameui["game"]["deltas"]))
     end
-    IO.puts("action_list 5")
     set_last_update(gameui)
   end
 
@@ -614,37 +601,30 @@ defmodule DragnCardsGame.GameUI do
     if card_automation == nil do
       game
     else
-      card_automation["rules"] |> Enum.reduce(game, fn(automation, acc) ->
-        implement_single_card_automation(acc, card["id"], automation)
-      end)
+      game
+      |> put_in(["automation", card["id"]], card_automation)
+      |> put_in(["automation", card["id"], "this_id"], card["id"])
     end
   end
 
-  def define_this_card(card_id) do
-    [
-      ["DEFINE", "$THIS", ["POINTER", "$GAME.cardById."<>card_id]],
-      ["DEFINE", "$THIS_PATH", ["LIST", "cardById", card_id]]
-    ]
-  end
-
-  def implement_single_card_automation(game, card_id, automation) do
-    if automation["type"] == "onChange" do
-      dtc = define_this_card(card_id)
-      val = %{
-        "key" => dtc ++ [automation["key"]],
-        "before" => dtc ++ [automation["before"]],
-        "after" => dtc ++ [automation["after"]],
-        "then" => dtc ++ [automation["then"]],
-      }
-      game = Evaluate.evaluate(game, define_this_card(card_id))
-      path = Evaluate.evaluate(game, automation["path"])
-      if Evaluate.evaluate(game, ["GAME_GET_VAL", path ++ ["_automate_"]]) do
-        Evaluate.evaluate(game, ["GAME_SET_VAL"] ++ path ++ ["_automate_", card_id, val])
-      else
-        Evaluate.evaluate(game, ["GAME_SET_VAL"] ++ path ++ ["_automate_", %{card_id => val}])
-      end
-    end
-  end
+  # def tba() do
+  #   if rule["type"] == "onChange" do
+  #     dtc = define_this_card(card_id)
+  #     val = %{
+  #       "key" => dtc ++ [rule["key"]],
+  #       "before" => dtc ++ [rule["before"]],
+  #       "after" => dtc ++ [rule["after"]],
+  #       "then" => dtc ++ [rule["then"]],
+  #     }
+  #     game = Evaluate.evaluate(game, define_this_card(card_id))
+  #     path = Evaluate.evaluate(game, rule["path"])
+  #     if Evaluate.evaluate(game, ["GAME_GET_VAL", path ++ ["_automate_"]]) do
+  #       Evaluate.evaluate(game, ["GAME_SET_VAL"] ++ path ++ ["_automate_", card_id, val])
+  #     else
+  #       Evaluate.evaluate(game, ["GAME_SET_VAL"] ++ path ++ ["_automate_", %{card_id => val}])
+  #     end
+  #   end
+  # end
 
   def load_card(game, load_list_item) do
     quantity = load_list_item["quantity"]
@@ -685,7 +665,6 @@ defmodule DragnCardsGame.GameUI do
     player_n_deck_id = player_n<>"Deck"
     deck_size_before = Enum.count(get_stack_ids(game, player_n_deck_id))
     old_game = game
-    IO.puts("load_cards 1")
 
     game = Enum.reduce(load_list, game, fn load_list_item, acc ->
       load_card(acc, load_list_item)

@@ -15,12 +15,8 @@ defmodule DragnCardsWeb.API.V1.DeckController do
   end
 
   def create(conn, %{"deck" => deck_params}) do
-    IO.puts("create 1")
-    IO.inspect(deck_params)
     case Decks.create_deck(deck_params) do
       {:ok, deck} ->
-        IO.puts("created deck !!!!!!!!!!!!!!!!!!!!!!!")
-        IO.inspect(deck)
         conn
         |> json(%{success: %{message: "Deck saved successfully", deck: deck}})
 
@@ -35,9 +31,6 @@ defmodule DragnCardsWeb.API.V1.DeckController do
   end
 
   def get_decks(conn, %{"user_id" => user_id, "plugin_id" => plugin_id}) do
-    IO.puts("get_decks")
-    IO.inspect(user_id)
-    IO.inspect(plugin_id)
     my_decks = if user_id != nil and user_id != "undefined" do
       query = from d in Deck,
         order_by: [desc: :updated_at],
@@ -47,13 +40,9 @@ defmodule DragnCardsWeb.API.V1.DeckController do
     else
       []
     end
-    IO.puts("my_decks")
-    IO.inspect(my_decks)
     my_decks = Enum.reduce(my_decks, [], fn(deck, acc) ->
       acc ++ [Map.from_struct(deck) |> Map.delete(:__meta__)]
     end)
-    IO.puts("get_decks")
-    IO.inspect(Enum.at(my_decks,0))
     json(conn, %{my_decks: my_decks})
   end
 
@@ -64,8 +53,6 @@ defmodule DragnCardsWeb.API.V1.DeckController do
   end
 
   def update(conn, %{"id" => id, "deck" => deck_params}) do
-    IO.puts("update 1")
-    IO.inspect(deck_params)
     deck = Decks.get_deck!(id)
 
     case Decks.update_deck(deck, deck_params) do

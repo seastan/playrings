@@ -5,16 +5,9 @@ defmodule DragnCardsGame.Evaluate do
   require Logger
   alias DragnCardsGame.{GameUI}
 
-  def assert(test_num, evaluated, result) do
-    if evaluated != result do
-      raise "Failed test #{test_num}. Expected #{result} got #{evaluated}"
-    else
-      IO.puts("passed test #{test_num}")
-    end
-  end
-
   def put_by_path(game_old, path, val_new) do
     # IO.puts("val_new 1")
+    # IO.inspect(path)
     # IO.inspect(val_new)
     path_minus_key = Enum.slice(path, 0, Enum.count(path)-1)
     key = Enum.at(path, -1)
@@ -35,24 +28,100 @@ defmodule DragnCardsGame.Evaluate do
         end
       end
 
-    IO.puts("checking automate ")
-    IO.inspect(path_minus_key)
-    IO.inspect(key)
-    get_in(game_new, path_minus_key ++ ["_automate_"])
-    case get_in(game_new, path_minus_key ++ ["_automate_"]) do
-      nil ->
-        game_new
-
-      automations ->
-        Enum.reduce(automations, game_new, fn {card_id, automation}, acc ->
-          if key == evaluate(game_old, automation["key"]) and evaluate(game_old, automation["before"]) and evaluate(game_new, automation["after"]) do
-            IO.puts("performing automation")
-            evaluate(acc, automation["then"])
-          else
-            acc
-          end
-        end)
+    if game_new["automation"] do
+      Enum.reduce(game_new["automation"], game_new, fn({id, automation}, acc) ->
+        apply_automation_rules(automation, path, game_old, game_new)
+      end)
+    else
+      game_new
     end
+  end
+
+  def apply_automation_rules(automation, path, game_old, game_new) do
+    game_new =
+      game_new |>
+      evaluate(["DEFINE", "$THIS_ID", automation["this_id"]]) |>
+      evaluate(["DEFINE", "$THIS", "$GAME.cardById.$THIS_ID"])
+    game_old =
+      game_old |>
+      evaluate(["DEFINE", "$THIS_ID", automation["this_id"]]) |>
+      evaluate(["DEFINE", "$THIS", "$GAME.cardById.$THIS_ID"])
+    game_new =
+      if Enum.count(path) > 2 do
+        game_new |>
+        evaluate(["DEFINE", "$OBJECT_ID", Enum.at(path,1)]) |>
+        evaluate(["DEFINE", "$OBJECT", "$GAME."<>Enum.at(path,0)<>".$OBJECT_ID"])
+      else
+        game_new
+      end
+    game_old =
+      if Enum.count(path) > 2 do
+        game_old |>
+        evaluate(["DEFINE", "$OBJECT_ID", Enum.at(path,1)]) |>
+        evaluate(["DEFINE", "$OBJECT", "$GAME."<>Enum.at(path,0)<>".$OBJECT_ID"])
+      else
+        game_old
+      end
+    Enum.reduce(automation["rules"], game_new, fn(rule, acc)->
+      apply_automation_rule(rule, path, game_old, acc)
+    end)
+  end
+
+  def apply_automation_rule(rule, path, game_old, game_new) do
+    if path_matches_listenpaths?(path, rule["listenTo"], game_new) do
+      case rule["type"] do
+        "trigger" ->
+          apply_trigger_rule(rule, path, game_old, game_new)
+        "passive" ->
+          apply_passive_rule(rule, path, game_old, game_new)
+        _ ->
+          game_new
+      end
+    else
+      game_new
+    end
+  end
+
+  def apply_trigger_rule(rule, path, game_old, game_new) do
+    game_new = put_in(game_new["prev_game"], game_old)
+    game_new = if evaluate(game_new, rule["condition"]) do
+      evaluate(game_new, rule["then"])
+    else
+      game_new
+    end
+    put_in(game_new["prev_game"], nil)
+  end
+
+  def apply_passive_rule(rule, path, game_old, game_new) do
+    onBefore = evaluate(game_old, rule["condition"])
+    onAfter = evaluate(game_new, rule["condition"])
+    # IO.inspect("apply_passive_rule 1")
+    # IO.inspect(path)
+    # IO.inspect(onBefore)
+    # IO.inspect(onAfter)
+
+    cond do
+      !onBefore && onAfter ->
+        evaluate(game_new, rule["onDo"])
+      onBefore && !onAfter ->
+        evaluate(game_new, rule["offDo"])
+      true ->
+        game_new
+    end
+  end
+
+  def path_matches_listenpaths?(path, listenpaths, game_new) do
+    if Enum.any?(listenpaths, fn(listenpath) -> path_matches_listenpath?(path, listenpath, game_new) end) do
+      true
+    else
+      false
+    end
+  end
+
+  def path_matches_listenpath?(path, listenpath, game_new) do
+    Enum.count(path) == Enum.count(listenpath)
+    && Enum.zip(path, listenpath)
+    |> Enum.all?(fn {x, y} -> evaluate(game_new, x) == evaluate(game_new, y) || y == "*" end)
   end
 
   def message_list_to_string(game, statements) do
@@ -75,7 +144,40 @@ defmodule DragnCardsGame.Evaluate do
     end
   end
 
+
+  def evaluate_with_timeout(game, code) do
+    ref = make_ref()
+
+    task = Task.async(fn ->
+      evaluate(game, code)
+    end)
+
+    case Task.yield(task, 500) do
+      nil ->
+        Task.shutdown(task, :brutal_kill)
+        evaluate(game, ["GAME_ADD_MESSAGE", "Action timed out."])
+      {:ok, result} ->
+        result
+    end
+  end
+
+  # def evaluate_with_timeout(game, code) do
+  #   ref = make_ref()
+
+  #   Process.send_after(self(), {:timeout, ref}, 500)
+
+  #   result = evaluate(game, code)
+
+  #   receive do
+  #     {:response, result} -> result
+  #     {:timeout, ^ref} ->
+  #       raise "my_function timed out"
+  #       #evaluate(game, ["GAME_ADD_MESSAGE", "Action timed out."])
+  #   end
+  # end
+
   def evaluate(game, code) do
+    game = put_in(game["evaluate_depth"], (game["evaluate_depth"] || 0) + 1)
     #IO.inspect(code)
     if is_list(code) && Enum.count(code) > 0 do
       if is_list(Enum.at(code, 0)) do
@@ -91,6 +193,8 @@ defmodule DragnCardsGame.Evaluate do
         # end)
 
         case Enum.at(code,0) do
+          "PREV" ->
+            evaluate(game["prev_game"], Enum.at(code, 1))
           "LOGGER" ->
             IO.puts("LOGGER:")
             IO.inspect(code)
@@ -200,12 +304,12 @@ defmodule DragnCardsGame.Evaluate do
                   Enum.at(acc, int)
                 pathi == "sideUp" ->
                   acc["sides"][acc["currentSide"]]
-                pathi == "parentCard" ->
-                  game["cardById"][acc["parentCardId"]]
-                Map.has_key?(acc, key) ->
-                  Map.get(acc, evaluate(game, key))
-                _ ->
-                  {:error, nil}
+                pathi == "stackParentCard" ->
+                  game["cardById"][acc["stackParentCardId"]]
+                Map.has_key?(acc, pathi) ->
+                  Map.get(acc, evaluate(game, pathi))
+                true ->
+                  nil
               end
             end)
           "GAME_GET_VAL" ->
@@ -236,20 +340,8 @@ defmodule DragnCardsGame.Evaluate do
                 put_in(obj, path ++ [key], value)
             end
           "GAME_SET_VAL" ->
-            path = Enum.slice(code, 1, Enum.count(code)-2)
-            path = Enum.reduce(path, [], fn(path_item, acc)->
-              eval_path_item = evaluate(game, path_item)
-              if is_binary(eval_path_item) do
-                acc ++ [eval_path_item]
-              else
-                acc ++ eval_path_item
-              end
-            end)
-            value = evaluate(game, Enum.at(code, Enum.count(code)-1))
-            IO.puts("game_set_val #{path}")
-            IO.inspect(value)
-            #IO.inspect(path)
-            #IO.inspect(value)
+            path = evaluate(game, Enum.at(code, 1))
+            value = evaluate(game, Enum.at(code, 2))
             put_by_path(game, path, value)
           "GAME_INCREASE_VAL" ->
             path = Enum.slice(code, 1, Enum.count(code)-2)
@@ -340,18 +432,12 @@ defmodule DragnCardsGame.Evaluate do
             end
           "DELETE_CARD" ->
             card_id = evaluate(game, Enum.at(code, 1))
-            IO.inspect(card_id)
             Logger.debug("here")
             GameUI.delete_card(game, card_id)
           "ATTACH_CARD" ->
-            IO.inspect(code)
             card_id = evaluate(game, Enum.at(code, 1))
             dest_card_id = evaluate(game, Enum.at(code, 2))
             dest_card = game["cardById"][dest_card_id]
-            IO.puts("ATTACHING --------------------------------------")
-            IO.inspect(card_id)
-            IO.inspect(dest_card["groupId"])
-            IO.inspect(dest_card["stackIndex"])
             GameUI.move_card(game, card_id, dest_card["groupId"], dest_card["stackIndex"], -1, true)
           "DRAW_CARD" ->
             argc = Enum.count(code) - 1
@@ -410,7 +496,7 @@ defmodule DragnCardsGame.Evaluate do
             face = card["sides"][card["currentSide"]]
             face["name"]
           "ONE_CARD" ->
-            {one_card_id, one_card} = Enum.find(game["cardById"], fn {_, card} ->
+            one_card = Enum.find(Map.values(game["cardById"]), fn(card) ->
               game = evaluate(game, ["DEFINE", "$CARD_ID", card["id"]])
               game = evaluate(game, ["DEFINE", "$CARD", card])
               evaluate(game, Enum.at(code, 1))
@@ -418,8 +504,6 @@ defmodule DragnCardsGame.Evaluate do
             one_card
           "ACTION_LIST" ->
             argc = Enum.count(code) - 1
-            IO.puts("---------doing action list ---------------")
-            IO.inspect(game["playerUi"])
             case argc do
               0 ->
                 # TODO add error message
@@ -489,6 +573,10 @@ defmodule DragnCardsGame.Evaluate do
           obj = evaluate(game, Enum.at(split, 0))
           path = ["LIST"] ++ Enum.slice(split, 1, Enum.count(split))
           evaluate(game, ["OBJ_GET_BY_PATH", obj, path])
+        is_binary(code) and String.starts_with?(code, "/") ->
+          split = String.split(code, "/")
+          path = ["LIST"] ++ Enum.slice(split, 1, Enum.count(split))
+          List.flatten(evaluate(game, path))
         true ->
           code
       end

@@ -16,11 +16,11 @@
         "options": [
           {
             "label": "Toggle rotate",
-            "actionListId": "toggleRotate"
+            "actionList": "toggleRotate"
           },
           {
             "label": "Delete",
-            "actionListId": "deleteCard"
+            "actionList": "deleteCard"
           }
         ]
       },
@@ -29,7 +29,7 @@
         "options": [
           {
             "label": "Shuffle into deck",
-            "actionListId": "shuffleGroupIntoDeck"
+            "actionList": "shuffleGroupIntoDeck"
           }
         ]
       }
@@ -4845,39 +4845,39 @@
     ],
     "actionLists": {
       "trilogySetup": [
-        ["GAME_SET_VAL", "numPlayers", 4],
-        ["GAME_SET_VAL", "layoutVariants", "bluePlayers", 2],
-        ["GAME_SET_VAL", "layoutVariants", "redPlayers", 2],
-        ["GAME_SET_VAL", "cardsPerRound", {"player1": 3, "player2": 3, "player3": 3, "player4": 3}],
+        ["GAME_SET_VAL", "/numPlayers", 4],
+        ["GAME_SET_VAL", "/layoutVariants/bluePlayers", 2],
+        ["GAME_SET_VAL", "/layoutVariants/redPlayers", 2],
+        ["GAME_SET_VAL", "/cardsPerRound", {"player1": 3, "player2": 3, "player3": 3, "player4": 3}],
         ["MOVE_STACKS", "player1Deck", "player1Hand", 7, "bottom"],
         ["MOVE_STACKS", "player2Deck", "player2Hand", 7, "bottom"],
         ["MOVE_STACKS", "player3Deck", "player3Hand", 7, "bottom"],
         ["MOVE_STACKS", "player4Deck", "player4Hand", 7, "bottom"]
       ],
       "twoPlayerSetup": [
-        ["GAME_SET_VAL", "numPlayers", 2],
-        ["GAME_SET_VAL", "layoutVariants", "bluePlayers", 1],
-        ["GAME_SET_VAL", "layoutVariants", "redPlayers", 1],
-        ["GAME_SET_VAL", "cardsPerRound", {"player1": 4, "player2": 6}],
-        ["GAME_SET_VAL", "player1CardsPerRound", 4],
-        ["GAME_SET_VAL", "player2CardsPerRound", 6],
+        ["GAME_SET_VAL", "/numPlayers", 2],
+        ["GAME_SET_VAL", "/layoutVariants/bluePlayers", 1],
+        ["GAME_SET_VAL", "/layoutVariants/redPlayers", 1],
+        ["GAME_SET_VAL", "/cardsPerRound", {"player1": 4, "player2": 6}],
+        ["GAME_SET_VAL", "/player1CardsPerRound", 4],
+        ["GAME_SET_VAL", "/player2CardsPerRound", 6],
         ["MOVE_STACKS", "player1Deck", "player1Hand", 4, "bottom"],
         ["MOVE_STACKS", "player2Deck", "player2Hand", 6, "bottom"]
       ],
       "threePlayerSetup": [
-        ["GAME_SET_VAL", "numPlayers", 3],
-        ["GAME_SET_VAL", "layoutVariants", "bluePlayers", 1],
-        ["GAME_SET_VAL", "layoutVariants", "redPlayers", 2],
-        ["GAME_SET_VAL", "cardsPerRound", {"player1": 6, "player2": 4, "player3": 4}],
+        ["GAME_SET_VAL", "/numPlayers", 3],
+        ["GAME_SET_VAL", "/layoutVariants/bluePlayers", 1],
+        ["GAME_SET_VAL", "/layoutVariants/redPlayers", 2],
+        ["GAME_SET_VAL", "/cardsPerRound", {"player1": 6, "player2": 4, "player3": 4}],
         ["MOVE_STACKS", "player1Deck", "player1Hand", 6, "bottom"],
         ["MOVE_STACKS", "player2Deck", "player2Hand", 7, "bottom"],
         ["MOVE_STACKS", "player3Deck", "player3Hand", 7, "bottom"]
       ],
       "fellowshipSetup": [
-        ["GAME_SET_VAL", "numPlayers", 3],
-        ["GAME_SET_VAL", "layoutVariants", "bluePlayers", 1],
-        ["GAME_SET_VAL", "layoutVariants", "redPlayers", 2],
-        ["GAME_SET_VAL", "cardsPerRound", {"player1": 3, "player2": 4}],
+        ["GAME_SET_VAL", "/numPlayers", 3],
+        ["GAME_SET_VAL", "/layoutVariants/bluePlayers", 1],
+        ["GAME_SET_VAL", "/layoutVariants/redPlayers", 2],
+        ["GAME_SET_VAL", "/cardsPerRound", {"player1": 3, "player2": 4}],
         ["MOVE_STACKS", "player1Deck", "player1Hand", 7, "bottom"],
         ["MOVE_STACKS", "player2Deck", "player2Hand", 7, "bottom"]
       ],
@@ -4886,7 +4886,7 @@
           [
             ["COND",
               ["EQUAL", "$CARD.groupId", ["JOIN_STRING", "$PLAYER_N", "Reserve"]],
-              ["GAME_SET_VAL", "cardById", "$CARD_ID", "rotation", 0]
+              ["GAME_SET_VAL", "/cardById/$CARD_ID/rotation", 0]
             ]
           ]
         ],
@@ -4895,7 +4895,7 @@
         ["COND",
           ["EQUAL", "$PLAYER_N", "player1"],
           [
-            ["GAME_SET_VAL", "firstPlayer", ["NEXT_PLAYER", "$GAME.firstPlayer"]],
+            ["GAME_SET_VAL", "/firstPlayer", ["NEXT_PLAYER", "$GAME.firstPlayer"]],
             ["GAME_INCREASE_VAL", "roundNumber", 1],
             ["GAME_ADD_MESSAGE", "$PLAYER_N", " moved the first player token and increased the round number."]
           ]
@@ -4911,7 +4911,7 @@
         ["GAME_INCREASE_VAL", "stepIndex", 1],
         ["COND",
           ["EQUAL", "$GAME.stepIndex", ["LENGTH", "$GAME.gameDef.steps"],
-          ["GAME_SET_VAL", "stepIndex", 0]
+          ["GAME_SET_VAL", "/stepIndex", 0]
         ]
         ],
         ["DEFINE", "$STEP_INDEX", "$GAME.stepIndex"],
@@ -4922,7 +4922,7 @@
         ["GAME_DECREASE_VAL", "stepIndex", 1],
         ["COND",
           ["LESS_THAN", "$GAME.stepIndex", 0],
-          ["GAME_SET_VAL", "stepIndex", ["MINUS", ["LENGTH", "$GAME.gameDef.steps"], 1]]
+          ["GAME_SET_VAL", "/stepIndex", ["MINUS", ["LENGTH", "$GAME.gameDef.steps"], 1]]
         ],
         ["DEFINE", "$STEP_INDEX", "$GAME.stepIndex"],
         ["DEFINE", "$STEP", "$GAME.gameDef.steps.[$STEP_INDEX]"],
@@ -4930,7 +4930,7 @@
       ],
       "clearTargets": [
         ["FOR_EACH_KEY_VAL", "$CARD_ID", "$CARD", "$CARD_BY_ID",
-          ["GAME_SET_VAL", "cardById", "$CARD_ID", "targeting", "$PLAYER_N", false]
+          ["GAME_SET_VAL", "/cardById/$CARD_ID/targeting/$PLAYER_N", false]
         ],
         ["GAME_ADD_MESSAGE", "$PLAYER_N", " cleared their targets."]
       ],
@@ -4942,12 +4942,12 @@
         ["COND",
           ["AND", ["EQUAL", "$ACTIVE_CARD.rotation", 90], "$ACTIVE_CARD.inPlay"],
           [
-            ["GAME_SET_VAL", "$ACTIVE_CARD_PATH", "rotation", 0],
+            ["GAME_SET_VAL", "/cardById/$ACTIVE_CARD_ID/rotation", 0],
             ["GAME_ADD_MESSAGE", "$PLAYER_N", " rotated ", "$ACTIVE_FACE.name", "."]
           ],
           ["AND", ["EQUAL", "$ACTIVE_CARD.rotation", 0], "$ACTIVE_CARD.inPlay"],
           [
-            ["GAME_SET_VAL", "$ACTIVE_CARD_PATH", "rotation", 90],
+            ["GAME_SET_VAL", "/cardById/$ACTIVE_CARD_ID/rotation", 90],
             ["GAME_ADD_MESSAGE", "$PLAYER_N", " rotated ", "$ACTIVE_FACE.name", "."]
           ]
         ]
@@ -4957,17 +4957,17 @@
           ["EQUAL", "$ACTIVE_CARD.currentSide", "A"],
           [
             ["GAME_ADD_MESSAGE", "$PLAYER_N", " flipped ", "$ACTIVE_FACE.name", " facedown."],
-            ["GAME_SET_VAL", "$ACTIVE_CARD_PATH", "currentSide", "B"]
+            ["GAME_SET_VAL", "/$ACTIVE_CARD_PATH/currentSide", "B"]
           ],
           true,
           [
-            ["GAME_SET_VAL", "$ACTIVE_CARD_PATH", "currentSide", "A"],
+            ["GAME_SET_VAL", "/cardById/$ACTIVE_CARD_ID/currentSide", "A"],
             ["GAME_ADD_MESSAGE", "$PLAYER_N", " flipped ", "$ACTIVE_FACE.name", " faceup."]
           ]
         ]
       ],
       "targetCard": [
-        ["GAME_SET_VAL", "$ACTIVE_CARD_PATH", "targeting", "$PLAYER_N", true],
+        ["GAME_SET_VAL", "/cardById/$ACTIVE_CARD_ID/targeting/$PLAYER_N", true],
         ["GAME_ADD_MESSAGE", "$PLAYER_N", " targeted ", "$ACTIVE_FACE.name", "."]
       ],
       "addToScoringArea": [
@@ -5016,21 +5016,21 @@
           ["EQUAL", "$ACTIVE_CARD.peeking.$PLAYER_N", true],
           [
             ["GAME_ADD_MESSAGE", "$PLAYER_N", " stopped peeking at a card in ", "$GROUP_NAME"],
-            ["GAME_SET_VAL", "$ACTIVE_CARD_PATH", "peeking", "$PLAYER_N", false]
+            ["GAME_SET_VAL", "/cardById/$ACTIVE_CARD_ID/peeking/$PLAYER_N", false]
           ],
           true,
           [
             ["GAME_ADD_MESSAGE", "$PLAYER_N", " started peeking at a card in ", "$GROUP_NAME"],
-            ["GAME_SET_VAL", "$ACTIVE_CARD_PATH", "peeking", "$PLAYER_N", true]
+            ["GAME_SET_VAL", "/cardById/$ACTIVE_CARD_ID/peeking/$PLAYER_N", true]
           ]
         ]
       ],
       "shuffleGroupIntoDeck": [
-        ["DEFINE", "$ORIG_GROUP", "$GAME.playerUi.dropdownMenuObj.group"],
+        ["DEFINE", "$ORIG_GROUP", "$GAME.playerUi.dropdownMenu.group"],
         ["FOR_EACH_KEY_VAL", "$CARD_ID", "$CARD", "$CARD_BY_ID",
           ["COND", 
             ["AND",
-              ["EQUAL", "$CARD.groupId", "$GAME.playerUi.dropdownMenuObj.group.id"],
+              ["EQUAL", "$CARD.groupId", "$GAME.playerUi.dropdownMenu.group.id"],
               ["NOT_EQUAL", "$CARD.deckGroupId", null]
             ],
             [
@@ -5046,40 +5046,40 @@
         ["DELETE", "$ACTIVE_CARD_ID"]
       ],
       "layoutPath1": [
-        ["GAME_SET_VAL", "layoutVariants", "path", 1]
+        ["GAME_SET_VAL", "/layoutVariants/path", 1]
       ],
       "layoutPath2": [
-        ["GAME_SET_VAL", "layoutVariants", "path", 2]
+        ["GAME_SET_VAL", "/layoutVariants/path", 2]
       ],
       "layoutPath3": [
-        ["GAME_SET_VAL", "layoutVariants", "path", 3]
+        ["GAME_SET_VAL", "/layoutVariants/path", 3]
       ],
       "layoutPath4": [
-        ["GAME_SET_VAL", "layoutVariants", "path", 4]
+        ["GAME_SET_VAL", "/layoutVariants/path", 4]
       ],
       "layoutPath5": [
-        ["GAME_SET_VAL", "layoutVariants", "path", 5]
+        ["GAME_SET_VAL", "/layoutVariants/path", 5]
       ],
       "layoutPath6": [
-        ["GAME_SET_VAL", "layoutVariants", "path", 6]
+        ["GAME_SET_VAL", "/layoutVariants/path", 6]
       ],
       "layoutPath7": [
-        ["GAME_SET_VAL", "layoutVariants", "path", 7]
+        ["GAME_SET_VAL", "/layoutVariants/path", 7]
       ],
       "layoutPath8": [
-        ["GAME_SET_VAL", "layoutVariants", "path", 8]
+        ["GAME_SET_VAL", "/layoutVariants/path", 8]
       ],
       "layoutPath9": [
-        ["GAME_SET_VAL", "layoutVariants", "path", 9]
+        ["GAME_SET_VAL", "/layoutVariants/path", 9]
       ],
       "layoutLocation2": [
-        ["GAME_SET_VAL", "layoutVariants", "location", 2]
+        ["GAME_SET_VAL", "/layoutVariants/location", 2]
       ],
       "layoutLocation3": [
-        ["GAME_SET_VAL", "layoutVariants", "location", 3]
+        ["GAME_SET_VAL", "/layoutVariants/location", 3]
       ],
       "layoutLocation4": [
-        ["GAME_SET_VAL", "layoutVariants", "location", 4]
+        ["GAME_SET_VAL", "/layoutVariants/location", 4]
       ]
     },
     "faceProperties": {
@@ -5107,7 +5107,7 @@
         "tableName": "",
         "canHaveAttachments": false,
         "shuffleOnLoad": true,
-        "forceOnCards": {
+        "onCardEnter": {
           "currentSide": "B",
           "controller": "shared",
           "inPlay": false,
@@ -5120,7 +5120,7 @@
         "tableName": "",
         "canHaveAttachments": false,
         "shuffleOnLoad": true,
-        "forceOnCards": {
+        "onCardEnter": {
           "currentSide": "B",
           "controller": "shared",
           "inPlay": false,
@@ -5132,7 +5132,7 @@
         "name": "Free Peoples Scoring Area", 
         "tableName": "Free Peoples Scoring Area",
         "canHaveAttachments": false,
-        "forceOnCards": {
+        "onCardEnter": {
           "currentSide": "A",
           "inPlay": false
         }
@@ -5141,7 +5141,7 @@
         "name": "Shadow Scoring Area", 
         "tableName": "Shadow Scoring Area",
         "canHaveAttachments": false,
-        "forceOnCards": {
+        "onCardEnter": {
           "currentSide": "A",
           "inPlay": false
         }
@@ -5151,7 +5151,7 @@
         "tableName": "Path Deck 1",
         "canHaveAttachments": false,
         "shuffleOnLoad": true,
-        "forceOnCards": {
+        "onCardEnter": {
           "currentSide": "B",
           "inPlay": false,
           "deckGroupId": "sharedPathDeck1",
@@ -5163,7 +5163,7 @@
         "tableName": "Path Deck 2",
         "canHaveAttachments": false,
         "shuffleOnLoad": true,
-        "forceOnCards": {
+        "onCardEnter": {
           "currentSide": "B",
           "inPlay": false,
           "deckGroupId": "sharedPathDeck2",
@@ -5175,7 +5175,7 @@
         "tableName": "Path Deck 3",
         "canHaveAttachments": false,
         "shuffleOnLoad": true,
-        "forceOnCards": {
+        "onCardEnter": {
           "currentSide": "B",
           "inPlay": false,
           "deckGroupId": "sharedPathDeck3",
@@ -5187,7 +5187,7 @@
         "tableName": "Path Deck 4",
         "canHaveAttachments": false,
         "shuffleOnLoad": true,
-        "forceOnCards": {
+        "onCardEnter": {
           "currentSide": "B",
           "inPlay": false,
           "deckGroupId": "sharedPathDeck4",
@@ -5199,7 +5199,7 @@
         "tableName": "Path Deck 5",
         "canHaveAttachments": false,
         "shuffleOnLoad": true,
-        "forceOnCards": {
+        "onCardEnter": {
           "currentSide": "B",
           "inPlay": false,
           "deckGroupId": "sharedPathDeck5",
@@ -5211,7 +5211,7 @@
         "tableName": "Path Deck 6",
         "canHaveAttachments": false,
         "shuffleOnLoad": true,
-        "forceOnCards": {
+        "onCardEnter": {
           "currentSide": "B",
           "inPlay": false,
           "deckGroupId": "sharedPathDeck6",
@@ -5223,7 +5223,7 @@
         "tableName": "Path Deck 7",
         "canHaveAttachments": false,
         "shuffleOnLoad": true,
-        "forceOnCards": {
+        "onCardEnter": {
           "currentSide": "B",
           "inPlay": false,
           "deckGroupId": "sharedPathDeck7",
@@ -5235,7 +5235,7 @@
         "tableName": "Path Deck 8",
         "canHaveAttachments": false,
         "shuffleOnLoad": true,
-        "forceOnCards": {
+        "onCardEnter": {
           "currentSide": "B",
           "inPlay": false,
           "deckGroupId": "sharedPathDeck8",
@@ -5247,7 +5247,7 @@
         "tableName": "Path Deck 9",
         "canHaveAttachments": false,
         "shuffleOnLoad": true,
-        "forceOnCards": {
+        "onCardEnter": {
           "currentSide": "B",
           "inPlay": false,
           "deckGroupId": "sharedPathDeck9",
@@ -5258,7 +5258,7 @@
         "name": "Set Aside", 
         "tableName": "Set Aside",
         "canHaveAttachments": true,
-        "forceOnCards": {
+        "onCardEnter": {
           "currentSide": "A",
           "inPlay": false
         }
@@ -5267,7 +5267,7 @@
         "name": "Active Location 1", 
         "tableName": "Location 1",
         "canHaveAttachments": true,
-        "forceOnCards": {
+        "onCardEnter": {
           "currentSide": "A",
           "inPlay": true
         }
@@ -5276,7 +5276,7 @@
         "name": "Active Location 2", 
         "tableName": "Location 2",
         "canHaveAttachments": true,
-        "forceOnCards": {
+        "onCardEnter": {
           "currentSide": "A",
           "inPlay": true
         }
@@ -5285,7 +5285,7 @@
         "name": "Active Location 3", 
         "tableName": "Location 3",
         "canHaveAttachments": true,
-        "forceOnCards": {
+        "onCardEnter": {
           "currentSide": "A",
           "inPlay": true
         }
@@ -5294,7 +5294,7 @@
         "name": "Active Location 4", 
         "tableName": "Location 4",
         "canHaveAttachments": true,
-        "forceOnCards": {
+        "onCardEnter": {
           "currentSide": "A",
           "inPlay": true
         }
@@ -5303,7 +5303,7 @@
         "name": "Active Shadow 1", 
         "tableName": "Shadow 1",
         "canHaveAttachments": true,
-        "forceOnCards": {
+        "onCardEnter": {
           "currentSide": "A",
           "inPlay": true
         }
@@ -5312,7 +5312,7 @@
         "name": "Active Shadow 2", 
         "tableName": "Shadow 2",
         "canHaveAttachments": true,
-        "forceOnCards": {
+        "onCardEnter": {
           "currentSide": "A",
           "inPlay": true
         }
@@ -5321,7 +5321,7 @@
         "name": "Active Shadow 3", 
         "tableName": "Shadow 3",
         "canHaveAttachments": true,
-        "forceOnCards": {
+        "onCardEnter": {
           "currentSide": "A",
           "inPlay": true
         }
@@ -5330,7 +5330,7 @@
         "name": "Active Shadow 4", 
         "tableName": "Shadow 4",
         "canHaveAttachments": true,
-        "forceOnCards": {
+        "onCardEnter": {
           "currentSide": "A",
           "inPlay": true
         }
@@ -5339,7 +5339,7 @@
         "name": "Active Free Peoples 1", 
         "tableName": "Free Peoples 1",
         "canHaveAttachments": true,
-        "forceOnCards": {
+        "onCardEnter": {
           "currentSide": "A",
           "inPlay": true
         }
@@ -5348,7 +5348,7 @@
         "name": "Active Free Peoples 2", 
         "tableName": "Free Peoples 2",
         "canHaveAttachments": true,
-        "forceOnCards": {
+        "onCardEnter": {
           "currentSide": "A",
           "inPlay": true
         }
@@ -5357,7 +5357,7 @@
         "name": "Active Free Peoples 3", 
         "tableName": "Free Peoples 3",
         "canHaveAttachments": true,
-        "forceOnCards": {
+        "onCardEnter": {
           "currentSide": "A",
           "inPlay": true
         }
@@ -5366,7 +5366,7 @@
         "name": "Active Free Peoples 4", 
         "tableName": "Free Peoples 4",
         "canHaveAttachments": true,
-        "forceOnCards": {
+        "onCardEnter": {
           "currentSide": "A",
           "inPlay": true
         }
@@ -5375,7 +5375,7 @@
         "name": "Player 1 Hand", 
         "tableName": "Hand",
         "canHaveAttachments": false,
-        "forceOnCards": {
+        "onCardEnter": {
           "currentSide": "B",
           "inPlay": false,
           "peeking": {"player1": true}
@@ -5386,7 +5386,7 @@
         "tableName": "Deck",
         "canHaveAttachments": false,
         "shuffleOnLoad": true,
-        "forceOnCards": {
+        "onCardEnter": {
           "currentSide": "B",
           "inPlay": false,
           "controller": "player1",
@@ -5400,7 +5400,7 @@
         "name": "Player 1 Cycled", 
         "tableName": "Cycled",
         "canHaveAttachments": false,
-        "forceOnCards": {
+        "onCardEnter": {
           "currentSide": "B",
           "inPlay": false,
           "peeking": {}
@@ -5410,7 +5410,7 @@
         "name": "Player 1 Eliminated", 
         "tableName": "Eliminated",
         "canHaveAttachments": false,
-        "forceOnCards": {
+        "onCardEnter": {
           "currentSide": "B",
           "inPlay": false,
           "peeking": {}
@@ -5420,17 +5420,18 @@
         "name": "Player 1 Reserve", 
         "tableName": "P1 Reserve",
         "canHaveAttachments": true,
-        "forceOnCards": {
+        "onCardEnter": {
           "currentSide": "A",
           "inPlay": true,
-          "rotation": 90
+          "rotation": 90,
+          "peeking": {}
         }
       },
       "player2Hand": {
         "name": "Player 2 Hand", 
         "tableName": "Hand",
         "canHaveAttachments": false,
-        "forceOnCards": {
+        "onCardEnter": {
           "currentSide": "B",
           "inPlay": false,
           "peeking": {"player2": true}
@@ -5441,7 +5442,7 @@
         "tableName": "Deck",
         "canHaveAttachments": false,
         "shuffleOnLoad": true,
-        "forceOnCards": {
+        "onCardEnter": {
           "currentSide": "B",
           "inPlay": false,
           "controller": "player2",
@@ -5455,7 +5456,7 @@
         "name": "Player 2 Cycled", 
         "tableName": "Cycled",
         "canHaveAttachments": false,
-        "forceOnCards": {
+        "onCardEnter": {
           "currentSide": "B",
           "inPlay": false,
           "peeking": {}
@@ -5465,7 +5466,7 @@
         "name": "Player 2 Eliminated", 
         "tableName": "Eliminated",
         "canHaveAttachments": false,
-        "forceOnCards": {
+        "onCardEnter": {
           "currentSide": "B",
           "inPlay": false,
           "peeking": {}
@@ -5475,17 +5476,18 @@
         "name": "Player 2 Reserve", 
         "tableName": "P2 Reserve",
         "canHaveAttachments": true,
-        "forceOnCards": {
+        "onCardEnter": {
           "currentSide": "A",
           "inPlay": true,
-          "rotation": 90
+          "rotation": 90,
+          "peeking": {}
         }
       },
       "player3Hand": {
         "name": "Player 3 Hand", 
         "tableName": "Hand",
         "canHaveAttachments": false,
-        "forceOnCards": {
+        "onCardEnter": {
           "currentSide": "B",
           "inPlay": false,
           "peeking": {"player3": true}
@@ -5496,7 +5498,7 @@
         "tableName": "Deck",
         "canHaveAttachments": false,
         "shuffleOnLoad": true,
-        "forceOnCards": {
+        "onCardEnter": {
           "currentSide": "B",
           "inPlay": false,
           "controller": "player3",
@@ -5510,7 +5512,7 @@
         "name": "Player 3 Cycled", 
         "tableName": "Cycled",
         "canHaveAttachments": false,
-        "forceOnCards": {
+        "onCardEnter": {
           "currentSide": "B",
           "inPlay": false,
           "peeking": {}
@@ -5520,7 +5522,7 @@
         "name": "Player 3 Eliminated", 
         "tableName": "Eliminated",
         "canHaveAttachments": false,
-        "forceOnCards": {
+        "onCardEnter": {
           "currentSide": "B",
           "inPlay": false,
           "peeking": {}
@@ -5530,17 +5532,18 @@
         "name": "Player 3 Reserve", 
         "tableName": "P3 Reserve",
         "canHaveAttachments": true,
-        "forceOnCards": {
+        "onCardEnter": {
           "currentSide": "A",
           "inPlay": true,
-          "rotation": 90
+          "rotation": 90,
+          "peeking": {}
         }
       },
       "player4Hand": {
         "name": "Player 4 Hand", 
         "tableName": "Hand",
         "canHaveAttachments": false,
-        "forceOnCards": {
+        "onCardEnter": {
           "currentSide": "B",
           "inPlay": false,
           "peeking": {"player4": true}
@@ -5551,7 +5554,7 @@
         "tableName": "Deck",
         "canHaveAttachments": false,
         "shuffleOnLoad": true,
-        "forceOnCards": {
+        "onCardEnter": {
           "currentSide": "B",
           "inPlay": false,
           "controller": "player4",
@@ -5565,7 +5568,7 @@
         "name": "Player 4 Cycled", 
         "tableName": "Cycled",
         "canHaveAttachments": false,
-        "forceOnCards": {
+        "onCardEnter": {
           "currentSide": "B",
           "inPlay": false,
           "peeking": {}
@@ -5575,7 +5578,7 @@
         "name": "Player 4 Eliminated", 
         "tableName": "Eliminated",
         "canHaveAttachments": false,
-        "forceOnCards": {
+        "onCardEnter": {
           "currentSide": "B",
           "inPlay": false,
           "peeking": {}
@@ -5585,24 +5588,24 @@
         "name": "Player 4 Reserve", 
         "tableName": "P4 Reserve",
         "canHaveAttachments": true,
-        "forceOnCards": {
+        "onCardEnter": {
           "currentSide": "A",
           "inPlay": true,
-          "rotation": 90
+          "rotation": 90,
+          "peeking": {}
         }
       },
       "sharedRules": {
         "name": "Rules", 
         "tableName": "Rules",
         "canHaveAttachments": true,
-        "forceOnCards": {
+        "onCardEnter": {
           "currentSide": "A",
           "inPlay": false,
           "rotation": 0
         }
       }
     },
-    "favoriteGroupIds": [],
     "phases": [
       {
         "phaseId": "Location",
@@ -5765,66 +5768,40 @@
       "a6cdd8d3-cd6e-4d1a-908b-2f788fbb357e": {
         "_label": "Aragorn",
         "rules": [
-            { 
-              "type": "onChange", 
-              "path": "$THIS_PATH",
-              "before": ["NOT", "$THIS.inPlay"], 
-              "after": ["$THIS.inPlay"], 
-              "then": [
-                ["DEFINE", "$TARGET", ["ONE_CARD", ["EQUAL", "$CARD.sides.A.name", "Strider"]]],
-                ["MOVE_CARD", "$TARGET.id", ["JOIN_STRING", "$TARGET.controller", "Eliminated"], 0, 0],
-                ["GAME_ADD_MESSAGE", "Strider was removed from the game."]
-              ]
-            }
-        ]
-      },
-      "celeborn-cd6e-4d1a-908b-2f788fbb357e": {
-        "_label": "Celeborn",
-        "rules": [
           { 
-            "type": "onChange", 
-            "path": ["cardById", "*"],
-            "before": ["NOT", "$THIS.inPlay"], 
-            "after": ["$THIS.inPlay"], 
+            "type": "trigger", 
+            "listenTo": [["cardById", "$THIS_ID", "inPlay"]],
+            "condition": ["AND", "$THIS.inPlay", ["PREV", ["NOT", "$THIS.inPlay"]]],
             "then": [
-              ["COND", 
-                ["IN_STRING", "$THIS.traits", "Silvan"],
-                ["GAME_INCREASE_VAL", "cardById", "$THIS.id", "tokens", "willpower", 1]
-              ]
-            ]
-          }
-        ]
-      },
-      "visionary-leadership-908b-2f788fbb357e": {
-        "_label": "Visionary Leadership",
-        "rules": [
-          { 
-            "type": "passive",
-            "listenTo": ["$THIS.inPlay", "$THIS.parentCard.tokens.resource"],
-            "onCondition": ["AND", "$THIS.inPlay", ["GREATER_THAN", "$THIS.parentCard.tokens.resource"], 0],
-            "onDo": [
-              ["FOR_EACH_KEY_VAL", "$CARD", "$CARD_ID", "$CARD_BY_ID", [
-                ["COND",
-                  ["AND", "$CARD.inPlay", ["IN_STRING", "$CARD.sides.sideUp.traits", "Gondor"]],
-                  ["GAME_INCREASE_VAL", "cardById", "$CARD.id", "tokens", "willpower", 1]
-                ]
-              ]]
-            ],
-            "offDo": [
-              ["FOR_EACH_KEY_VAL", "$CARD", "$CARD_ID", "$CARD_BY_ID", [
-                ["COND",
-                  ["AND", "$CARD.inPlay", ["IN_STRING", "$CARD.sides.sideUp.traits", "Gondor"]],
-                  ["GAME_DECREASE_VAL", "cardById", "$CARD.id", "tokens", "willpower", 1]
-                ]
-              ]]
+              ["DEFINE", "$TARGET", ["ONE_CARD", ["EQUAL", "$CARD.sides.A.name", "Strider"]]],
+              ["MOVE_CARD", "$TARGET.id", ["JOIN_STRING", "$TARGET.controller", "Eliminated"], 0, 0],
+              ["GAME_ADD_MESSAGE", "Strider was removed from the game."]
             ]
           },
-          {
-            "type": "trigger",
-            "listenTo": ["$GAME.cardById.*.inPlay"],
-            "before": ["OR", ["NOT", "$P1"], ["GREATER_THAN", "$THIS.parentCard.tokens.resource"], 0],
-            "after": ["AND", "$P1", ["GREATER_THAN", "$THIS.parentCard.tokens.resource"], 0],
-            "then": ["GAME_INCREASE_VAL", "cardById", "$P1.parent.id", "tokens", "willpower", 1]
+          { 
+            "type": "passive", 
+            "listenTo": [["cardById", "*", "groupId"], ["cardById", "*", "inPlay"], ["cardById", "*", "currentSide"]],
+            "condition": [
+              "AND", 
+                "$THIS.inPlay",
+                ["NOT_EQUAL",
+                  ["ONE_CARD", 
+                    ["AND",
+                      ["EQUAL", "$CARD.groupId", "$THIS.groupId"],
+                      ["EQUAL", "$CARD.sideUp.type", "Army"]
+                    ]
+                  ],
+                  null
+                ]
+            ],
+            "onDo": [
+              ["GAME_INCREASE_VAL", "cardById", "$THIS_ID", "tokens", "attackBlue", 1],
+              ["GAME_INCREASE_VAL", "cardById", "$THIS_ID", "tokens", "defenseBlue", 1]
+            ],
+            "offDo": [
+              ["GAME_DECREASE_VAL", "cardById", "$THIS_ID", "tokens", "attackBlue", 1],
+              ["GAME_DECREASE_VAL", "cardById", "$THIS_ID", "tokens", "defenseBlue", 1]
+            ]
           }
         ]
       }

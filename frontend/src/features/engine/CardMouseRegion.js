@@ -2,7 +2,7 @@
 import React from "react";
 import useLongPress from "../../hooks/useLongPress";
 import { useDispatch, useSelector } from "react-redux";
-import { setMousePosition, setDropdownMenuObj, setActiveCardId, setScreenPosition, setCardClicked } from "../store/playerUiSlice";
+import { setMouseTopBottom, setDropdownMenu, setActiveCardId, setScreenLeftRight, setCardClicked } from "../store/playerUiSlice";
 import { useHandleTouchAction } from "./functions/useHandleTouchAction";
 import { getVisibleFaceSrc } from "../definitions/common";
 
@@ -18,24 +18,25 @@ export const CardMouseRegion = React.memo(({
     const playerN = useSelector(state => state?.playerUi?.playerN);
     const touchMode = useSelector(state => state?.playerUi?.touchMode);
     const touchAction = useSelector(state => state?.playerUi?.touchAction);
+    const dropdownMenuVisible = useSelector(state => state?.playerUi?.dropdownMenu?.visible);
     const handleTouchAction = useHandleTouchAction();
 
     const makeActive = (event) => {
-        const screenPosition = event.clientX > (window.innerWidth/2) ? "right" : "left";
+        const screenLeftRight = event.clientX > (window.innerWidth/2) ? "right" : "left";
         dispatch(setActiveCardId(cardId));
-        dispatch(setScreenPosition(screenPosition));
-        dispatch(setMousePosition(topOrBottom))
+        dispatch(setScreenLeftRight(screenLeftRight));
+        dispatch(setMouseTopBottom(topOrBottom))
         dispatch(setCardClicked(true));
     }
 
     const handleSetDropDownMenu = () => {
-        const dropdownMenuObj = {
+        const dropdownMenu = {
             type: "card",
             cardId: card.id,
             title: getVisibleFaceSrc(card, playerN)?.name,
             visible: true,
         }
-        if (playerN) dispatch(setDropdownMenuObj(dropdownMenuObj));
+        if (playerN) dispatch(setDropdownMenu(dropdownMenu));
     }
 
     const handleClick = (event) => {
@@ -49,7 +50,7 @@ export const CardMouseRegion = React.memo(({
     
     const handleMouseOver = (event) => {
         event.stopPropagation();
-        makeActive(event);
+        if (!dropdownMenuVisible) makeActive(event);
         //setIsActive(true);
     }
 

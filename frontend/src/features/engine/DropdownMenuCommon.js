@@ -6,7 +6,7 @@ import { DropdownMenuFirstPlayer } from "./DropdownMenuFirstPlayer";
 import { useDispatch, useSelector } from 'react-redux';
 import { calcHeightCommon } from "./DropdownMenuHelpers";
 import "../../css/custom-dropdown.css";
-import { setDropdownMenuObj } from "../store/playerUiSlice";
+import { setActiveCardId, setDropdownMenu } from "../store/playerUiSlice";
 import { useDoActionList } from "./functions/useDoActionList";
 
 export const DropdownMenuCommon = React.memo(({
@@ -15,7 +15,7 @@ export const DropdownMenuCommon = React.memo(({
 }) => {
   
   const dispatch = useDispatch();
-  const dropdownMenuObj = useSelector(state => state?.playerUi?.dropdownMenuObj)
+  const dropdownMenu = useSelector(state => state?.playerUi?.dropdownMenu)
   const [activeMenu, setActiveMenu] = useState('main');
   const [menuHeight, setMenuHeight] = useState(null);
   const dropdownClickCommon = useDropdownClickCommon;
@@ -33,11 +33,12 @@ export const DropdownMenuCommon = React.memo(({
     }
     doActionList(dropdownOptions.action);
     setActiveMenu("main");
-    dispatch(setDropdownMenuObj(null));
+    dispatch(setDropdownMenu(null));
+    dispatch(setActiveCardId(null));
     setMenuHeight(null);
   }
 
-  if (dropdownMenuObj.type === "card") {
+  if (dropdownMenu.type === "card") {
     return (
       <DropdownMenuCard
         mouseX={mouseX}
@@ -48,7 +49,7 @@ export const DropdownMenuCommon = React.memo(({
         activeMenu={activeMenu}
       />
     )
-  } else if (dropdownMenuObj.type === "group") {
+  } else if (dropdownMenu.type === "group") {
     return (
       <DropdownMenuGroup
         mouseX={mouseX}
@@ -59,7 +60,7 @@ export const DropdownMenuCommon = React.memo(({
         activeMenu={activeMenu}
       />
     )
-  } else if (dropdownMenuObj.type === "firstPlayer") {
+  } else if (dropdownMenu.type === "firstPlayer") {
     return (
       <DropdownMenuFirstPlayer
         mouseX={mouseX}

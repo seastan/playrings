@@ -6,7 +6,7 @@ import { getParentCardsInGroup } from "../plugins/lotrlcg/functions/helpers";
 import { setValues } from "../store/gameUiSlice";
 import { faBars } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { setBrowseGroupId, setDropdownMenuObj, setTyping } from "../store/playerUiSlice";
+import { setBrowseGroupId, setDropdownMenu, setTyping } from "../store/playerUiSlice";
 import { useGameL10n } from "../../hooks/useGameL10n";
 import BroadcastContext from "../../contexts/BroadcastContext";
 import { useGameDefinition } from "./functions/useGameDefinition";
@@ -54,12 +54,12 @@ export const Browse = React.memo(({}) => {
 
   const handleBarsClick = (event) => {
     event.stopPropagation();
-    const dropdownMenuObj = {
+    const dropdownMenu = {
         type: "group",
         group: group,
         title: gameDef.groups[groupId].name
     }
-    dispatch(setDropdownMenuObj(dropdownMenuObj));
+    dispatch(setDropdownMenu(dropdownMenu));
   }
 
   // This allows the deck to be hidden instantly upon close (by hiding the top card)
@@ -87,7 +87,7 @@ export const Browse = React.memo(({}) => {
       ["FOR_EACH_VAL", "$STACK_ID", `$GROUP_BY_ID.${groupId}.stackIds`,
         [
           ["DEFINE", "$CARD_ID", "$STACK_BY_ID.$STACK_ID.cardIds.[0]"],
-          ["GAME_SET_VAL", "cardById", "$CARD_ID", "peeking", playerN, false]
+          ["GAME_SET_VAL", "/cardById/$CARD_ID/peeking/" + playerN, false]
         ]
       ],
       ["SHUFFLE_GROUP", groupId],
@@ -95,7 +95,7 @@ export const Browse = React.memo(({}) => {
       ["GAME_ADD_MESSAGE", "$PLAYER_N", " shuffled ", group.name+"."],
     ];
     doActionList(actionList);
-    if (group?.forceOnCards?.currentSide === "B") stopPeekingTopCard();
+    if (group?.onCardEnter?.currentSide === "B") stopPeekingTopCard();
   }
 
   const closeAndOrder = () => {
@@ -110,7 +110,7 @@ export const Browse = React.memo(({}) => {
       ["GAME_ADD_MESSAGE", "$PLAYER_N", " closed ", group.name+"."],
     ];
     doActionList(actionList);
-    if (group?.forceOnCards?.currentSide === "B") stopPeekingTopCard();
+    if (group?.onCardEnter?.currentSide === "B") stopPeekingTopCard();
   }
 
   const closeAndPeeking = () => {
