@@ -33,7 +33,7 @@ export const Room = ({ slug }) => {
       const latestMessagesDelta = myDelta.latestMessages;
       if (latestMessagesDelta && latestMessagesDelta.length == 2 && latestMessagesDelta[1] && latestMessagesDelta[1].length > 0) {
         console.log('hi')
-        setMessages(latestMessagesDelta[1])
+        //setMessages(latestMessagesDelta[1])
 
         // console.log("inloop a")
         // for (var message of myDelta.latestMessages) {
