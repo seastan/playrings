@@ -7,6 +7,8 @@ import { useGameL10n } from "../../hooks/useGameL10n";
 import BroadcastContext from "../../contexts/BroadcastContext";
 import { usePlugin } from "./functions/usePlugin";
 import { useGameDefinition } from "./functions/useGameDefinition";
+import { useDoActionList } from "./functions/useDoActionList";
+import { useLoadList } from "./functions/useLoadList";
 
 const RESULTS_LIMIT = 150;
 
@@ -18,32 +20,30 @@ export const SpawnExistingCardModal = React.memo(({}) => {
     const playerN = useSelector(state => state?.playerUi?.playerN);
     const plugin = usePlugin();
     const gameDef = useGameDefinition();
+    const loadList = useLoadList();
     console.log("pluginspawn", plugin)
     const cardDb = plugin?.card_db || {};
+    const doActionList = useDoActionList();
     const [loadGroupId, setLoadGroupId] = useState(gameDef?.spawnExistingCardModal?.spawnGroupIds[0])
-
-    console.log("spawn cardDb", cardDb)
 
     const [spawnFilteredIDs, setSpawnFilteredIDs] = useState(Object.keys(cardDb));
     if (Object.keys(cardDb).length === 0) return;
 
     const handleGroupIdChange = (event) => {
-      console.log("groupidchange", event.target.value)
       setLoadGroupId(event.target.value);
     }
 
-    const handleSpawnClick = (cardID) => {
-        const cardDetails = cardDb[cardID];
+    const handleSpawnClick = (cardId) => {
+        const cardDetails = cardDb[cardId];
         if (!cardDetails || !playerN) return;
-        const loadList = [{'cardDetails': cardDetails, 'quantity': 1, 'loadGroupId': loadGroupId}]
-        gameBroadcast("game_action", {action: "load_cards", options: {load_list: loadList}});
-        chatBroadcast("game_update", {message: "spawned "+cardDetails["A"]["name"]+"."});
+        const cardList = [{'uuid': cardId, 'quantity': 1, 'loadGroupId': loadGroupId}]
+        loadList(cardList);
+        doActionList(["GAME_ADD_MESSAGE", "$PLAYER_N", " spawned "+cardDetails["A"]["name"]+"."])
     }
 
     const handleSpawnTyping = (event) => {
-        //setSpawnCardName(event.target.value);
         const filteredName = event.target.value;
-        const filteredIDs = []; //Object.keys(cardDB);
+        const filteredIDs = [];
         Object.keys(cardDb).map((cardID, index) => {
           const cardRow = cardDb[cardID]
           const sideA = cardRow["A"]

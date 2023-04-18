@@ -1,4 +1,4 @@
-import { useContext } from 'react';
+import { useContext, useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import BroadcastContext from '../../../contexts/BroadcastContext';
 import { usePlugin } from './usePlugin';
@@ -6,7 +6,14 @@ import { usePlugin } from './usePlugin';
 export const useLoadList = () => {
   const { gameBroadcast, chatBroadcast } = useContext(BroadcastContext);
   const playerN = useSelector(state => state?.playerUi?.playerN);
-  const cardDb = usePlugin()?.card_db;
+  const plugin = usePlugin();
+  const [cardDb, setCardDb] = useState(null);
+
+  useEffect(() => {
+    if (plugin && plugin.card_db) {
+      setCardDb(plugin.card_db);
+    }
+  }, [plugin]);
 
   const loadList = (list) => {
     console.log('loadList', list);
