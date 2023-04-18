@@ -137,20 +137,14 @@ export const TopBarMenu = React.memo(({}) => {
       doActionList(actionList);
     } else if (data.action === "random_coin") {
       const result = getRandomIntInclusive(0,1);
-      if (result) chatBroadcast("game_update",{message: "flipped heads."});
-      else chatBroadcast("game_update",{message: "flipped tails."});
+      if (result) doActionList(["GAME_ADD_MESSAGE", "$PLAYER_N", " flipped heads."]);
+      else doActionList(["GAME_ADD_MESSAGE", "$PLAYER_N", " flipped tails."]);
     } else if (data.action === "random_number") {
       const max = parseInt(prompt("Random number between 1 and...",randomNumBetween));
       if (max>=1) {
         dispatch(setRandomNumBetween(max))
         const result = getRandomIntInclusive(1,max);
-        chatBroadcast("game_update",{message: "chose a random number (1-"+max+"): "+result});
-      }
-    } else if (data.action === "cards_per_round") {
-      const num = parseInt(prompt("Set the number of cards drawn during resource phase:",cardsPerRound));
-      if (num>=0) {
-        gameBroadcast("game_action", {action: "update_values", options: {updates: [["playerData", playerN, "cardsDrawn", num]]}});
-        chatBroadcast("game_update",{message: "set the number of cards they draw during the resource phase to "+num+"."});
+        doActionList(["GAME_ADD_MESSAGE", "$PLAYER_N", " chose a random number (1-"+max+"): "+result]);
       }
     } else if (data.action === "adjust_card_size") {
       const num = parseInt(prompt("Adjust the apparent card size for yourself only (10-1000):",Math.round(zoomFactor*100)));

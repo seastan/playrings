@@ -12,11 +12,8 @@ export const PluginProvider = ({ children }) => {
   );
 
   useEffect(() => {
-    console.log('plugininfo 1', pluginId);
     doFetchUrl('/be/api/plugins/' + pluginId);
   }, [pluginId]);
-
-  console.log('plugininfo 2', pluginId, data);
 
   return (
     <PluginContext.Provider value={{ plugin: data, isLoading }}>
