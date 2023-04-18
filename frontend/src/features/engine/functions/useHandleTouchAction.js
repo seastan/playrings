@@ -37,7 +37,7 @@ export const useHandleTouchAction = () => {
                 const hasToken = touchedCard.tokens[tokenType] > 0;
                 if (!hasToken && increment < 0 && gameDef["tokens"]?.[tokenType]?.modifier !== true) return; // Can't have negative non-modifier tokens
                 const actionList = [
-                    ["GAME_INCREASE_VAL", "$ACTIVE_TOKENS_PATH", tokenType, increment],
+                    ["GAME_INCREASE_VAL", "/$ACTIVE_TOKENS_PATH/" + tokenType, increment],
                     ["GAME_ADD_MESSAGE", "$PLAYER_N", increment > 0 ? " added " : " removed ", Math.abs(increment), " ", gameDef["tokens"]?.[tokenType]?.name," token to ", "$ACTIVE_FACE.name", "."]
                 ]
                 doActionList(actionList);

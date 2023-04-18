@@ -125,11 +125,59 @@ defmodule DragnCardsGame.GameUiTest do
     aragorn_card = Evaluate.evaluate(game, ["ONE_CARD", ["EQUAL", "$CARD.cardDbId", aragorn_card_db_id]])
 
     assert aragorn_card["tokens"]["defenseBlue"] == nil
-    game = Evaluate.evaluate_with_timeout(game, ["GAME_INCREASE_VAL", "cardById", aragorn_card["id"], "tokens", "defenseBlue", 1])
+    game = Evaluate.evaluate_with_timeout(game,
+      ["FOR_EACH_START_STOP_STEP", "$i", 0, 10000, 1,
+        ["GAME_INCREASE_VAL", "/cardById/" <> aragorn_card["id"] <> "/tokens/defenseBlue", 1]
+      ])
     aragorn_card = Evaluate.evaluate(game, ["ONE_CARD", ["EQUAL", "$CARD.cardDbId", aragorn_card_db_id]])
 
     assert aragorn_card["tokens"]["defenseBlue"] == nil
     assert Enum.count(game["messages"]) == 1
+
+  end
+
+  test "Peeking", %{gameui: gameui, user: user, plugin: plugin} do
+    game = gameui["game"]
+    card_by_id = game["cardById"]
+    aragorn_card_db_id = "a6cdd8d3-cd6e-4d1a-908b-2f788fbb357e"
+
+    aragorn_card_id = Evaluate.evaluate(game, ["ONE_CARD", ["EQUAL", "$CARD.cardDbId", aragorn_card_db_id]])["id"]
+
+    game = Evaluate.evaluate(game, ["MOVE_CARD", aragorn_card_id, "player3Deck", 0])
+
+    assert game["cardById"][aragorn_card_id]["peeking"]["player3"] == nil
+
+    game = Evaluate.evaluate(game, ["MOVE_CARD", aragorn_card_id, "player3Hand", 0])
+
+    assert game["cardById"][aragorn_card_id]["peeking"]["player3"] == true
+
+    game = Evaluate.evaluate(game, ["MOVE_CARD", aragorn_card_id, "player3Reserve", 0])
+
+    assert game["cardById"][aragorn_card_id]["peeking"]["player3"] == nil
+
+    game = Evaluate.evaluate(game, ["MOVE_CARD", aragorn_card_id, "player3Hand", 0])
+
+    assert game["cardById"][aragorn_card_id]["peeking"]["player3"] == true
+
+    game = Evaluate.evaluate(game, ["MOVE_CARD", aragorn_card_id, "player3Deck", 0])
+
+    assert game["cardById"][aragorn_card_id]["peeking"]["player3"] == nil
+
+    game = Evaluate.evaluate(game, ["MOVE_CARD", aragorn_card_id, "player2Hand", 0])
+
+    assert game["cardById"][aragorn_card_id]["peeking"]["player2"] == true
+
+    game = Evaluate.evaluate(game, ["MOVE_CARD", aragorn_card_id, "player3Reserve", 0])
+
+    assert game["cardById"][aragorn_card_id]["peeking"]["player2"] == nil
+
+    game = Evaluate.evaluate(game, ["GAME_SET_VAL", "/cardById/" <> aragorn_card_id <> "/peeking/player3", true])
+
+    assert game["cardById"][aragorn_card_id]["peeking"]["player3"] == true
+
+    game = Evaluate.evaluate(game, ["MOVE_CARD", aragorn_card_id, "player2Reserve", 0])
+
+    assert game["cardById"][aragorn_card_id]["peeking"]["player3"] == true
 
   end
 

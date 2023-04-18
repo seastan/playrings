@@ -20,7 +20,7 @@ export const useAddToken = () => {
     const resolveTokenDict = () => {
         for (const [tokenType, value] of Object.entries(tokenDict)) {
             const actionList = [
-                ["GAME_INCREASE_VAL", "$ACTIVE_CARD_PATH", "tokens", tokenType, value],
+                ["GAME_INCREASE_VAL", "/$ACTIVE_CARD_PATH/tokens/" + tokenType, value],
                 ["GAME_ADD_MESSAGE", "$PLAYER_N", value >= 0 ? " added " : " removed ", 
                     Math.abs(value), " ", gameDef?.tokens?.[tokenType]?.name, " tokens to ", 
                     "$ACTIVE_FACE.name", "."]

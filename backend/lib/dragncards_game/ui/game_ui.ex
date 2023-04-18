@@ -237,8 +237,10 @@ defmodule DragnCardsGame.GameUI do
   # Modify the card orientation/tokens based on where it is now
   def update_card_state(game, card_id, orig_group_id \\ nil) do
     {dest_group_id, dest_stack_index, dest_card_index} = gsc(game, card_id)
+    orig_group = get_group(game, orig_group_id)
     dest_group = get_group(game, dest_group_id)
     card = get_card(game, card_id)
+    prev_card = card
     parent_card = get_card_by_gsc(game, [dest_group_id, dest_stack_index, 0])
 
     game = Evaluate.evaluate(game, ["GAME_SET_VAL", "/cardById/" <> card_id <> "/groupId", dest_group_id])
@@ -246,14 +248,20 @@ defmodule DragnCardsGame.GameUI do
     game = Evaluate.evaluate(game, ["GAME_SET_VAL", "/cardById/" <> card_id <> "/cardIndex", dest_card_index])
     game = Evaluate.evaluate(game, ["GAME_SET_VAL", "/cardById/" <> card_id <> "/stackParentCardId", parent_card["id"]])
 
-    game = Enum.reduce(dest_group["onCardEnter"], game, fn({key, val}, acc) ->
-        Evaluate.evaluate(acc, ["GAME_SET_VAL", "/cardById/" <> card_id <> "/" <> key, val])
-      end)
-
-    game = case card["currentSide"] do
-      "A" -> Evaluate.evaluate(game, ["GAME_SET_VAL", "/cardById/" <> card_id <> "/peeking", %{}])
-      _ -> game
+    # If card gets moved to a facedown pile, or gets flipped up, erase peeking
+    game = if dest_group["onCardEnter"]["currentSide"] == "B" or (prev_card["currentSide"] == "B" and dest_group["onCardEnter"]["currentSide"] == "A") do
+      Evaluate.evaluate(game, ["GAME_SET_VAL", "/cardById/" <> card_id <> "/peeking", %{}])
+    else
+      game
     end
+
+    game = Enum.reduce(dest_group["onCardEnter"], game, fn({key, val}, acc) ->
+        if orig_group["onCardEnter"][key] != dest_group["onCardEnter"][key] do
+          Evaluate.evaluate(acc, ["GAME_SET_VAL", "/cardById/" <> card_id <> "/" <> key, val])
+        else
+          acc
+        end
+      end)
 
   end
 

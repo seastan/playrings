@@ -4896,7 +4896,7 @@
           ["EQUAL", "$PLAYER_N", "player1"],
           [
             ["GAME_SET_VAL", "/firstPlayer", ["NEXT_PLAYER", "$GAME.firstPlayer"]],
-            ["GAME_INCREASE_VAL", "roundNumber", 1],
+            ["GAME_INCREASE_VAL", "/roundNumber", 1],
             ["GAME_ADD_MESSAGE", "$PLAYER_N", " moved the first player token and increased the round number."]
           ]
         ]
@@ -4908,7 +4908,7 @@
         ["DRAW_CARD"]
       ],
       "nextStep": [
-        ["GAME_INCREASE_VAL", "stepIndex", 1],
+        ["GAME_INCREASE_VAL", "/stepIndex", 1],
         ["COND",
           ["EQUAL", "$GAME.stepIndex", ["LENGTH", "$GAME.gameDef.steps"],
           ["GAME_SET_VAL", "/stepIndex", 0]
@@ -4919,7 +4919,7 @@
         ["GAME_ADD_MESSAGE", "$PLAYER_N", " set the round step to ", "$STEP.text", "."]
       ],
       "prevStep": [
-        ["GAME_DECREASE_VAL", "stepIndex", 1],
+        ["GAME_DECREASE_VAL", "/stepIndex", 1],
         ["COND",
           ["LESS_THAN", "$GAME.stepIndex", 0],
           ["GAME_SET_VAL", "/stepIndex", ["MINUS", ["LENGTH", "$GAME.gameDef.steps"], 1]]
@@ -5111,8 +5111,7 @@
           "currentSide": "B",
           "controller": "shared",
           "inPlay": false,
-          "deckGroupId": "sharedBattlegroundRed",
-          "peeking": {}
+          "deckGroupId": "sharedBattlegroundRed"
         }
       },
       "sharedBattlegroundRed": {
@@ -5124,8 +5123,7 @@
           "currentSide": "B",
           "controller": "shared",
           "inPlay": false,
-          "deckGroupId": "sharedBattlegroundRed",
-          "peeking": {}
+          "deckGroupId": "sharedBattlegroundRed"
         }
       },
       "sharedScoringBlue": {
@@ -5154,8 +5152,7 @@
         "onCardEnter": {
           "currentSide": "B",
           "inPlay": false,
-          "deckGroupId": "sharedPathDeck1",
-          "peeking": {}
+          "deckGroupId": "sharedPathDeck1"
         }
       },
       "sharedPathDeck2": {
@@ -5166,8 +5163,7 @@
         "onCardEnter": {
           "currentSide": "B",
           "inPlay": false,
-          "deckGroupId": "sharedPathDeck2",
-          "peeking": {}
+          "deckGroupId": "sharedPathDeck2"
         }
       },
       "sharedPathDeck3": {
@@ -5178,8 +5174,7 @@
         "onCardEnter": {
           "currentSide": "B",
           "inPlay": false,
-          "deckGroupId": "sharedPathDeck3",
-          "peeking": {}
+          "deckGroupId": "sharedPathDeck3"
         }
       },
       "sharedPathDeck4": {
@@ -5190,8 +5185,7 @@
         "onCardEnter": {
           "currentSide": "B",
           "inPlay": false,
-          "deckGroupId": "sharedPathDeck4",
-          "peeking": {}
+          "deckGroupId": "sharedPathDeck4"
         }
       },
       "sharedPathDeck5": {
@@ -5202,8 +5196,7 @@
         "onCardEnter": {
           "currentSide": "B",
           "inPlay": false,
-          "deckGroupId": "sharedPathDeck5",
-          "peeking": {}
+          "deckGroupId": "sharedPathDeck5"
         }
       },
       "sharedPathDeck6": {
@@ -5214,8 +5207,7 @@
         "onCardEnter": {
           "currentSide": "B",
           "inPlay": false,
-          "deckGroupId": "sharedPathDeck6",
-          "peeking": {}
+          "deckGroupId": "sharedPathDeck6"
         }
       },
       "sharedPathDeck7": {
@@ -5226,8 +5218,7 @@
         "onCardEnter": {
           "currentSide": "B",
           "inPlay": false,
-          "deckGroupId": "sharedPathDeck7",
-          "peeking": {}
+          "deckGroupId": "sharedPathDeck7"
         }
       },
       "sharedPathDeck8": {
@@ -5238,8 +5229,7 @@
         "onCardEnter": {
           "currentSide": "B",
           "inPlay": false,
-          "deckGroupId": "sharedPathDeck8",
-          "peeking": {}
+          "deckGroupId": "sharedPathDeck8"
         }
       },
       "sharedPathDeck9": {
@@ -5250,8 +5240,7 @@
         "onCardEnter": {
           "currentSide": "B",
           "inPlay": false,
-          "deckGroupId": "sharedPathDeck9",
-          "peeking": {}
+          "deckGroupId": "sharedPathDeck9"
         }
       },
       "sharedSetAside": {
@@ -5392,8 +5381,7 @@
           "controller": "player1",
           "deckGroupId": "player1Deck",
           "cycleGroupId": "player1Cycled",
-          "eliminateGroupId": "player1Eliminated",
-          "peeking": {}
+          "eliminateGroupId": "player1Eliminated"
         }
       },
       "player1Cycled": {
@@ -5402,8 +5390,7 @@
         "canHaveAttachments": false,
         "onCardEnter": {
           "currentSide": "B",
-          "inPlay": false,
-          "peeking": {}
+          "inPlay": false
         }
       },
       "player1Eliminated": {
@@ -5412,8 +5399,7 @@
         "canHaveAttachments": false,
         "onCardEnter": {
           "currentSide": "B",
-          "inPlay": false,
-          "peeking": {}
+          "inPlay": false
         }
       },
       "player1Reserve": {
@@ -5423,8 +5409,7 @@
         "onCardEnter": {
           "currentSide": "A",
           "inPlay": true,
-          "rotation": 90,
-          "peeking": {}
+          "rotation": 90
         }
       },
       "player2Hand": {
@@ -5448,8 +5433,7 @@
           "controller": "player2",
           "deckGroupId": "player2Deck",
           "cycleGroupId": "player2Cycled",
-          "eliminateGroupId": "player2Eliminated",
-          "peeking": {}
+          "eliminateGroupId": "player2Eliminated"
         }
       },
       "player2Cycled": {
@@ -5458,8 +5442,7 @@
         "canHaveAttachments": false,
         "onCardEnter": {
           "currentSide": "B",
-          "inPlay": false,
-          "peeking": {}
+          "inPlay": false
         }
       },
       "player2Eliminated": {
@@ -5468,8 +5451,7 @@
         "canHaveAttachments": false,
         "onCardEnter": {
           "currentSide": "B",
-          "inPlay": false,
-          "peeking": {}
+          "inPlay": false
         }
       },
       "player2Reserve": {
@@ -5479,8 +5461,7 @@
         "onCardEnter": {
           "currentSide": "A",
           "inPlay": true,
-          "rotation": 90,
-          "peeking": {}
+          "rotation": 90
         }
       },
       "player3Hand": {
@@ -5504,8 +5485,7 @@
           "controller": "player3",
           "deckGroupId": "player3Deck",
           "cycleGroupId": "player3Cycled",
-          "eliminateGroupId": "player3Eliminated",
-          "peeking": {}
+          "eliminateGroupId": "player3Eliminated"
         }
       },
       "player3Cycled": {
@@ -5514,8 +5494,7 @@
         "canHaveAttachments": false,
         "onCardEnter": {
           "currentSide": "B",
-          "inPlay": false,
-          "peeking": {}
+          "inPlay": false
         }
       },
       "player3Eliminated": {
@@ -5524,8 +5503,7 @@
         "canHaveAttachments": false,
         "onCardEnter": {
           "currentSide": "B",
-          "inPlay": false,
-          "peeking": {}
+          "inPlay": false
         }
       },
       "player3Reserve": {
@@ -5535,8 +5513,7 @@
         "onCardEnter": {
           "currentSide": "A",
           "inPlay": true,
-          "rotation": 90,
-          "peeking": {}
+          "rotation": 90
         }
       },
       "player4Hand": {
@@ -5560,8 +5537,7 @@
           "controller": "player4",
           "deckGroupId": "player4Deck",
           "cycleGroupId": "player4Cycled",
-          "eliminateGroupId": "player4Eliminated",
-          "peeking": {}
+          "eliminateGroupId": "player4Eliminated"
         }
       },
       "player4Cycled": {
@@ -5570,8 +5546,7 @@
         "canHaveAttachments": false,
         "onCardEnter": {
           "currentSide": "B",
-          "inPlay": false,
-          "peeking": {}
+          "inPlay": false
         }
       },
       "player4Eliminated": {
@@ -5580,8 +5555,7 @@
         "canHaveAttachments": false,
         "onCardEnter": {
           "currentSide": "B",
-          "inPlay": false,
-          "peeking": {}
+          "inPlay": false
         }
       },
       "player4Reserve": {
@@ -5591,8 +5565,7 @@
         "onCardEnter": {
           "currentSide": "A",
           "inPlay": true,
-          "rotation": 90,
-          "peeking": {}
+          "rotation": 90
         }
       },
       "sharedRules": {
@@ -5795,12 +5768,12 @@
                 ]
             ],
             "onDo": [
-              ["GAME_INCREASE_VAL", "cardById", "$THIS_ID", "tokens", "attackBlue", 1],
-              ["GAME_INCREASE_VAL", "cardById", "$THIS_ID", "tokens", "defenseBlue", 1]
+              ["GAME_INCREASE_VAL", "/cardById/$THIS_ID/tokens/attackBlue", 1],
+              ["GAME_INCREASE_VAL", "/cardById/$THIS_ID/tokens/defenseBlue", 1]
             ],
             "offDo": [
-              ["GAME_DECREASE_VAL", "cardById", "$THIS_ID", "tokens", "attackBlue", 1],
-              ["GAME_DECREASE_VAL", "cardById", "$THIS_ID", "tokens", "defenseBlue", 1]
+              ["GAME_DECREASE_VAL", "/cardById/$THIS_ID/tokens/attackBlue", 1],
+              ["GAME_DECREASE_VAL", "/cardById/$THIS_ID/tokens/defenseBlue", 1]
             ]
           }
         ]

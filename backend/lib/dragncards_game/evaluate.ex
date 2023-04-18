@@ -344,22 +344,14 @@ defmodule DragnCardsGame.Evaluate do
             value = evaluate(game, Enum.at(code, 2))
             put_by_path(game, path, value)
           "GAME_INCREASE_VAL" ->
-            path = Enum.slice(code, 1, Enum.count(code)-2)
-            path = Enum.reduce(path, [], fn(path_item, acc)->
-              eval_path_item = evaluate(game, path_item)
-              if is_binary(eval_path_item) do
-                acc ++ [eval_path_item]
-              else
-                acc ++ eval_path_item
-              end
-            end)
-            delta = evaluate(game, Enum.at(code, Enum.count(code)-1))
+            path = evaluate(game, Enum.at(code, 1))
+            delta = evaluate(game, Enum.at(code, 2))
             old_value = get_in(game, path) || 0
             put_by_path(game, path, old_value + delta)
           "GAME_DECREASE_VAL" ->
             path = Enum.slice(code, 1, Enum.count(code)-2)
             delta = evaluate(game, Enum.at(code, Enum.count(code)-1))
-            evaluate(game, ["GAME_INCREASE_VAL"] ++ path ++ [-delta])
+            evaluate(game, ["GAME_INCREASE_VAL", Enum.at(code, 1), -Enum.at(code, 2)])
           "COND" ->
             ifthens = Enum.slice(code, 1, Enum.count(code))
             Enum.reduce_while(0..Enum.count(ifthens)-1//2, nil, fn(i, acc) ->
