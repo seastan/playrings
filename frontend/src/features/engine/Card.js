@@ -11,6 +11,7 @@ import { useCardScaleFactor } from "../../hooks/useCardScaleFactor";
 import { useGameDefinition } from "./functions/useGameDefinition";
 import { useGetDefaultAction } from "./functions/useGetDefaultAction";
 import { attachmentOffset, getFirstCardOffset, getVisibleFaceSrc } from "../definitions/common";
+import { useGameL10n } from "../../hooks/useGameL10n";
 
 export const Card = React.memo(({
     cardId,
@@ -24,6 +25,7 @@ export const Card = React.memo(({
     const dispatch = useDispatch();
     const user = useProfile();
     const gameDef = useGameDefinition();
+    const l10n = useGameL10n();
     //const card = useSelector(state => state?.gameUi?.game?.cardById[cardId]);
     const cardCurrentSide = useSelector(state => state?.gameUi?.game?.cardById[cardId]?.currentSide);
     const cardSides = useSelector(state => state?.gameUi?.game?.cardById[cardId]?.sides);
@@ -107,7 +109,7 @@ export const Card = React.memo(({
                         className={"absolute w-full pointer-events-none bg-green-700 font-bold rounded text-white text-xs text-center" + (defaultAction.position === "bottom" ? " bottom-0" : "")}
                         style={{height:"40px", opacity: "80%"}}>
                             <div>Tap to</div>
-                            {defaultAction.label}
+                            {l10n(defaultAction.labelId)}
                     </div>}
                 {(cardPeeking[playerN] && !defaultPeeking && (cardCurrentSide === "B")) ? <FontAwesomeIcon className="absolute top-0 right-0 text-2xl" icon={faEye}/>:null}
                 <Target

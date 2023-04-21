@@ -543,10 +543,11 @@ defmodule DragnCardsGame.GameUI do
       rounds: game["roundNumber"],
       num_players: game["numPlayers"],
       game_json: game,
+      description: Evaluate.evaluate(game, game["gameDef"]["saveDescription"])
     }
     result =
-      case Repo.get_by(Replay, [user: user_id, uuid: game_uuid]) do
-        nil  -> %Replay{user: user_id, uuid: game_uuid} # Replay not found, we build one
+      case Repo.get_by(Replay, [user_id: user_id, uuid: game_uuid]) do
+        nil  -> %Replay{user_id: user_id, uuid: game_uuid} # Replay not found, we build one
         replay -> replay  # Replay exists, let's use it
       end
       |> Replay.changeset(updates)

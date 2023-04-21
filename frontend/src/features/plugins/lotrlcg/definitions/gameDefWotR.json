@@ -1,5 +1,210 @@
 {
     "pluginName": "WotR The Card Game",
+    "labels": {
+      "labelMarkAsFreePeoplesVictory": {
+        "English": "Mark as Free Peoples Victory"
+      },
+      "labelMarkAsShadowVictory": {
+        "English": "Mark as Shadow Victory"
+      },
+      "labelMarkAsIncomplete": {
+        "English": "Mark as Incomplete"
+      },
+      "delete": {
+        "English": "Delete"
+      },
+      "shuffleGroupIntoDeck": {
+        "English": "Shuffle into deck"
+      },
+      "myDeck": {
+        "English": "My Deck"
+      },
+      "player1Deck": {
+        "English": "Player 1 Deck"
+      },
+      "player2Deck": {
+        "English": "Player 2 Deck"
+      },
+      "player3Deck": {
+        "English": "Player 3 Deck"
+      },
+      "player4Deck": {
+        "English": "Player 4 Deck"
+      },
+      "freePeoplesBattlegroundDeck": {
+        "English": "Free Peoples Battleground Deck"
+      },
+      "shadowBattlegroundDeck": {
+        "English": "Shadow Battleground Deck"
+      },
+      "pathDeck1": {
+        "English": "Path Deck 1"
+      },
+      "pathDeck2": {
+        "English": "Path Deck 2"
+      },
+      "pathDeck3": {
+        "English": "Path Deck 3"
+      },
+      "pathDeck4": {
+        "English": "Path Deck 4"
+      },
+      "pathDeck5": {
+        "English": "Path Deck 5"
+      },
+      "pathDeck6": {
+        "English": "Path Deck 6"
+      },
+      "pathDeck7": {
+        "English": "Path Deck 7"
+      },
+      "pathDeck8": {
+        "English": "Path Deck 8"
+      },
+      "pathDeck9": {
+        "English": "Path Deck 9"
+      },
+      "drawCard": {
+        "English": "Draw a card"
+      },
+      "pass": {
+        "English": "Pass"
+      },
+      "saveGame": {
+        "English": "Save game"
+      },
+      "clearTargetsArrows": {
+        "English": "Clear targets/arrows"
+      },
+      "undoOneAction": {
+        "English": "Undo one action"
+      },
+      "redoOneAction": {
+        "English": "Redo one action"
+      },
+      "moveToPreviousGameStep": {
+        "English": "Move to previous game step"
+      },
+      "moveToNextGameStep": {
+        "English": "Move to next game step"
+      },
+      "moveToPreviousPhase": {
+        "English": "Move to previous phase"
+      },
+      "moveToNextPhase": {
+        "English": "Move to next phase"
+      },
+      "drawCardsAndStartNewRound": {
+        "English": "Draw cards and start new round"
+      },
+      "flip": {
+        "English": "Flip"
+      },
+      "targetCard": {
+        "English": "Target card"
+      },
+      "addToScoringArea": {
+        "English": "Add to scoring area"
+      },
+      "cycleCard": {
+        "English": "Cycle card"
+      },
+      "eliminateCard": {
+        "English": "Eliminate card"
+      },
+      "toggleRotate": {
+        "English": "Rotate card"
+      },"removeTokens": {
+        "English": "Remove Tokens"
+      },
+      "rotate": {
+        "English": "Rotate"
+      },
+      "eliminate": {
+        "English": "Eliminate"
+      },
+      "target": {
+        "English": "Target"
+      },
+      "claim": {
+        "English": "Claim"
+      },
+      "drawArrow": {
+        "English": "Draw Arrow"
+      },
+      "draw": {
+        "English": "Draw"
+      },
+      "clearTargets": {
+        "English": "Clear Targets"
+      },
+      "undo": {
+        "English": "Undo"
+      },
+      "undoMany": {
+        "English": "Undo many"
+      },
+      "nextStep": {
+        "English": "Next step"
+      },
+      "save": {
+        "English": "Save"
+      },
+      "cycle": {
+        "English": "Cycle"
+      },
+      "location": {
+        "English": "Location"
+      },
+      "action": {
+        "English": "Action"
+      },
+      "combat": {
+        "English": "Combat"
+      },
+      "victory": {
+        "English": "Victory"
+      },
+      "drawPhase": {
+        "English": "Draw"
+      },
+      "attackBlueIcon": {
+        "English": "icon(https://dragncards-wotr.s3.amazonaws.com/tokens/AttackBlue.png)"
+      },
+      "defenseBlueIcon": {
+        "English": "icon(https://dragncards-wotr.s3.amazonaws.com/tokens/DefenseBlue.png)"
+      },
+      "pathBlueIcon": {
+        "English": "icon(https://dragncards-wotr.s3.amazonaws.com/tokens/PathBlue.png)"
+      },
+      "attackRedIcon": {
+        "English": "icon(https://dragncards-wotr.s3.amazonaws.com/tokens/AttackRed.png)"
+      },
+      "defenseRedIcon": {
+        "English": "icon(https://dragncards-wotr.s3.amazonaws.com/tokens/DefenseRed.png)"
+      },
+      "pathRedIcon": {
+        "English": "icon(https://dragncards-wotr.s3.amazonaws.com/tokens/PathRed.png)"
+      },
+      "corruptionIcon": {
+        "English": "icon(https://dragncards-wotr.s3.amazonaws.com/tokens/Corruption.png)"
+      },
+      "rotateCard": {
+        "English": "Rotate card"
+      },
+      "round": {
+        "English": "Round"
+      },
+      "freePVP": {
+        "English": "Free P. VP"
+      },
+      "shadowVP": {
+        "English": "Shadow VP"
+      },
+      "standard": {
+        "English": "Standard"
+      }
+    },
     "lobby": {
       "tutorialUrl": "https://www.youtube.com/watch?v=mshb1EDsnB8&list=PLuyP-hlzlHjd-XADfU-kqJaGpSE9RWHRa&index=1"
     },
@@ -9,31 +214,41 @@
         "ringTokens": {"type": "integer", "default": 1, "min": 0},
         "team": {"type": "string", "default": ""}
     },
-    "dropdownMenus": {
-      "plugin": {},
-      "card": {
-        "moveToGroupIds": [],
-        "options": [
-          {
-            "label": "Toggle rotate",
-            "actionList": "toggleRotate"
-          },
-          {
-            "label": "Delete",
-            "actionList": "deleteCard"
-          }
-        ]
-      },
-      "group": {
-        "moveToGroupIds": [],
-        "options": [
-          {
-            "label": "Shuffle into deck",
-            "actionList": "shuffleGroupIntoDeck"
-          }
-        ]
-      }
+    "cardMenu": {
+      "moveToGroupIds": [],
+      "options": [
+        {
+          "labelId": "toggleRotate",
+          "actionList": "toggleRotate"
+        },
+        {
+          "labelId": "delete",
+          "actionList": "deleteCard"
+        }
+      ]
     },
+    "groupMenu": {
+      "moveToGroupIds": [],
+      "options": [
+        {
+          "labelId": "shuffleGroupIntoDeck",
+          "actionList": "shuffleGroupIntoDeck"
+        }
+      ]
+    },
+    "pluginMenu": {
+      
+    },
+    "clearTableOptions": [
+      {"labelId": "labelMarkAsFreePeoplesVictory", "actionList": ["GAME_SET_VAL", "/victoryState", "FreePeoples"]},
+      {"labelId": "labelMarkAsShadowVictory", "actionList": ["GAME_SET_VAL", "/victoryState", "Shadow"]},
+      {"labelId": "labelMarkAsIncomplete", "actionList": ["GAME_SET_VAL", "/victoryState", "Incomplete"]}
+    ],
+    "closeRoomOptions": [
+      {"labelId": "labelMarkAsFreePeoplesVictory", "actionList": ["GAME_SET_VAL", "/victoryState", "FreePeoples"]},
+      {"labelId": "labelMarkAsShadowVictory", "actionList": ["GAME_SET_VAL", "/victoryState", "Shadow"]},
+      {"labelId": "labelMarkAsIncomplete", "actionList": ["GAME_SET_VAL", "/victoryState", "Incomplete"]}
+    ],
     "cardTypes": {
       "Army":          {"width": 0.72, "height": 1.0, "tokens": ["attackBlue","defenseBlue","attackRed","defenseRed","pathRed","pathBlue","corruption"]},
       "Character":     {"width": 0.72, "height": 1.0, "tokens": ["attackBlue","defenseBlue","attackRed","defenseRed","pathRed","pathBlue","corruption"]},
@@ -72,17 +287,17 @@
     "topBarCounters": {
       "shared": [
         {
-          "name": "Round",
+          "labelId": "round",
           "imageUrl": "https://dragncards-lotrlcg.s3.amazonaws.com/tokens/time.png",
           "gameProperty": "roundNumber"
         },
         {
-          "name": "Free P. VP",
+          "labelId": "freePVP",
           "imageUrl": "",
           "gameProperty": "victoryPointsBlue"
         },
         {
-          "name": "Shadow VP",
+          "labelId": "shadowVP",
           "imageUrl": "",
           "gameProperty": "victoryPointsRed"
         }
@@ -98,7 +313,8 @@
     "gameProperties": {
       "victoryPointsRed": {"type": "integer", "default": 0},
       "victoryPointsBlue": {"type": "integer", "default": 0},
-      "roundNumber": {"type": "integer", "default": 0}
+      "roundNumber": {"type": "integer", "default": 0},
+      "victoryState": {"type": "string", "default": ""}
     },
     "cardProperties": {
     },
@@ -4647,152 +4863,152 @@
         {"propName": "cardNumber", "propLabel": "Number"}
       ],
       "spawnGroups": [
-        {"id": "playerNDeck", "label": "My Deck"},
-        {"id": "player1Deck", "label": "Player 1 Deck"},
-        {"id": "player2Deck", "label": "Player 2 Deck"},
-        {"id": "player3Deck", "label": "Player 3 Deck"},
-        {"id": "player4Deck", "label": "Player 4 Deck"},
-        {"id": "sharedBattlegroundBlue","label": "Free Peoples Battleground Deck"},
-        {"id": "sharedBattlegroundRed", "label": "Shadow Battleground Deck"},
-        {"id": "sharedPathDeck1", "label": "Path Deck 1"},
-        {"id": "sharedPathDeck2", "label": "Path Deck 2"},
-        {"id": "sharedPathDeck3", "label": "Path Deck 3"},
-        {"id": "sharedPathDeck4", "label": "Path Deck 4"},
-        {"id": "sharedPathDeck5", "label": "Path Deck 5"},
-        {"id": "sharedPathDeck6", "label": "Path Deck 6"},
-        {"id": "sharedPathDeck7", "label": "Path Deck 7"},
-        {"id": "sharedPathDeck8", "label": "Path Deck 8"},
-        {"id": "sharedPathDeck9", "label": "Path Deck 9"}
+        {"id": "playerNDeck", "labelId": "myDeck"},
+        {"id": "player1Deck", "labelId": "player1Deck"},
+        {"id": "player2Deck", "labelId": "player2Deck"},
+        {"id": "player3Deck", "labelId": "player3Deck"},
+        {"id": "player4Deck", "labelId": "player4Deck"},
+        {"id": "sharedBattlegroundBlue","labelId": "freePeoplesBattlegroundDeck"},
+        {"id": "sharedBattlegroundRed", "labelId": "shadowBattlegroundDeck"},
+        {"id": "sharedPathDeck1", "labelId": "pathDeck1"},
+        {"id": "sharedPathDeck2", "labelId": "pathDeck2"},
+        {"id": "sharedPathDeck3", "labelId": "pathDeck3"},
+        {"id": "sharedPathDeck4", "labelId": "pathDeck4"},
+        {"id": "sharedPathDeck5", "labelId": "pathDeck5"},
+        {"id": "sharedPathDeck6", "labelId": "pathDeck6"},
+        {"id": "sharedPathDeck7", "labelId": "pathDeck7"},
+        {"id": "sharedPathDeck8", "labelId": "pathDeck8"},
+        {"id": "sharedPathDeck9", "labelId": "pathDeck9"}
       ]
     },
     "hotkeys": {
       "token": [
-        {"key": "1", "tokenType": "attackBlue", "label": "icon(https://dragncards-wotr.s3.amazonaws.com/tokens/AttackBlue.png)"},
-        {"key": "2", "tokenType": "defenseBlue", "label": "icon(https://dragncards-wotr.s3.amazonaws.com/tokens/DefenseBlue.png)"},
-        {"key": "3", "tokenType": "pathBlue", "label": "icon(https://dragncards-wotr.s3.amazonaws.com/tokens/PathBlue.png)"},
-        {"key": "4", "tokenType": "attackRed", "label": "icon(https://dragncards-wotr.s3.amazonaws.com/tokens/AttackRed.png)"},
-        {"key": "5", "tokenType": "defenseRed", "label": "icon(https://dragncards-wotr.s3.amazonaws.com/tokens/DefenseRed.png)"},
-        {"key": "6", "tokenType": "pathRed", "label": "icon(https://dragncards-wotr.s3.amazonaws.com/tokens/PathRed.png)"},
-        {"key": "7", "tokenType": "corruption", "label": "icon(https://dragncards-wotr.s3.amazonaws.com/tokens/Corruption.png)"}
+        {"key": "1", "tokenType": "attackBlue", "labelId": "attackBlueIcon"},
+        {"key": "2", "tokenType": "defenseBlue", "labelId": "defenseBlueIcon"},
+        {"key": "3", "tokenType": "pathBlue", "labelId": "pathBlueIcon"},
+        {"key": "4", "tokenType": "attackRed", "labelId": "attackRedIcon"},
+        {"key": "5", "tokenType": "defenseRed", "labelId": "defenseRedIcon"},
+        {"key": "6", "tokenType": "pathRed", "labelId": "pathRedIcon"},
+        {"key": "7", "tokenType": "corruption", "labelId": "corruptionIcon"}
       ],
       "game": [
-        {"key": "D", "actionListId": "drawCard", "label": "Draw a card"},
-        {"key": "P", "actionListId": "pass", "label": "Pass"},
-        {"key": "Shift+P", "actionListId": "saveGame", "label": "Save game"},
-        {"key": "Escape", "actionListId": "clearTargets", "label": "Clear targets/arrows"},
-        {"key": "Ctrl+Z", "actionListId": "undo", "label": "Undo one action"},
-        {"key": "Ctrl+Y", "actionListId": "redo", "label": "Redo one action"},
-        {"key": "ArrowUp", "actionListId": "prevStep", "label": "Move to previous game step"},
-        {"key": "ArrowDown", "actionListId": "nextStep", "label": "Move to next game step"},
-        {"key": "ArrowUp", "actionListId": "prevPhase", "label": "Move to previous phase"},
-        {"key": "ArrowDown", "actionListId": "nextPhase", "label": "Move to next phase"}
+        {"key": "D", "actionListId": "drawCard", "labelId": "drawCard"},
+        {"key": "P", "actionListId": "pass", "labelId": "pass"},
+        {"key": "Shift+P", "actionListId": "saveGame", "labelId": "saveGame"},
+        {"key": "Escape", "actionListId": "clearTargets", "labelId": "clearTargetsArrows"},
+        {"key": "Ctrl+Z", "actionListId": "undo", "labelId": "undoOneAction"},
+        {"key": "Ctrl+Y", "actionListId": "redo", "labelId": "redoOneAction"},
+        {"key": "ArrowUp", "actionListId": "prevStep", "labelId": "moveToPreviousGameStep"},
+        {"key": "ArrowDown", "actionListId": "nextStep", "labelId": "moveToNextGameStep"},
+        {"key": "ArrowUp", "actionListId": "prevPhase", "labelId": "moveToPreviousPhase"},
+        {"key": "ArrowDown", "actionListId": "nextPhase", "labelId": "moveToNextPhase"}
       ],
       "card": [
-        {"key": "Shift+N", "actionListId": "newRound", "label": "Draw cards and start new round"},
-        {"key": "F", "actionListId": "flipCard", "label": "Flip"},
-        {"key": "T", "actionListId": "targetCard", "label": "Target card"},
-        {"key": "S", "actionListId": "addToScoringArea", "label": "Add to scoring area"},
-        {"key": "C", "actionListId": "cycleCard", "label": "Cycle card"},
-        {"key": "E", "actionListId": "eliminateCard", "label": "Eliminate card"},
-        {"key": "R", "actionListId": "toggleRotate", "label": "Rotate card"}
+        {"key": "Shift+N", "actionListId": "newRound", "labelId": "drawCardsAndStartNewRound"},
+        {"key": "F", "actionListId": "flipCard", "labelId": "flip"},
+        {"key": "T", "actionListId": "targetCard", "labelId": "targetCard"},
+        {"key": "S", "actionListId": "addToScoringArea", "labelId": "addToScoringArea"},
+        {"key": "C", "actionListId": "cycleCard", "labelId": "cycleCard"},
+        {"key": "E", "actionListId": "eliminateCard", "labelId": "eliminateCard"},
+        {"key": "R", "actionListId": "toggleRotate", "labelId": "rotateCard"}
       ]
     },
     "touchBar": [
       [
         {
           "id": "removeTokens",
-          "label": "Remove Tokens",
+          "labelId": "removeTokens",
           "actionType": "card",
           "actionListId": "zeroTokens"
         },
         {
           "id": "incrementBlueAttack",
-          "label": "",
+          "labelId": "",
           "imageUrl": "https://dragncards-wotr.s3.amazonaws.com/tokens/AttackBlue.png",
           "actionType": "token",
           "tokenType": "attackBlue"
         },
         {
           "id": "incrementBlueDefense",
-          "label": "",
+          "labelId": "",
           "imageUrl": "https://dragncards-wotr.s3.amazonaws.com/tokens/DefenseBlue.png",
           "actionType": "token",
           "tokenType": "defenseBlue"
         },
         {
           "id": "incrementRedAttack",
-          "label": "",
+          "labelId": "",
           "imageUrl": "https://dragncards-wotr.s3.amazonaws.com/tokens/AttackRed.png",
           "actionType": "token",
           "tokenType": "attackRed"
         },
         {
           "id": "incrementRedDefense",
-          "label": "",
+          "labelId": "",
           "imageUrl": "https://dragncards-wotr.s3.amazonaws.com/tokens/DefenseRed.png",
           "actionType": "token",
           "tokenType": "defenseRed"
         },
         {
           "id": "incrementBluePath",
-          "label": "",
+          "labelId": "",
           "imageUrl": "https://dragncards-wotr.s3.amazonaws.com/tokens/PathBlue.png",
           "actionType": "token",
           "tokenType": "pathBlue"
         },
         {
           "id": "incrementRedPath",
-          "label": "",
+          "labelId": "",
           "imageUrl": "https://dragncards-wotr.s3.amazonaws.com/tokens/PathRed.png",
           "actionType": "token",
           "tokenType": "pathRed"
         },
         {
           "id": "incrementCorruption",
-          "label": "",
+          "labelId": "",
           "imageUrl": "https://dragncards-wotr.s3.amazonaws.com/tokens/Corruption.png",
           "actionType": "token",
           "tokenType": "corruption"
         },
         {
           "id": "toggleRotate",
-          "label": "Rotate",
+          "labelId": "rotate",
           "actionType": "card",
           "actionListId": "toggleRotate"
         },
         {
           "id": "flip",
-          "label": "Flip",
+          "labelId": "flip",
           "actionType": "card",
           "actionListId": "flipCard"
         },
         {
           "id": "cycle",
-          "label": "Cycle",
+          "labelId": "cycle",
           "actionType": "card",
           "actionListId": "cycleCard"
         },
         {
           "id": "eliminate",
-          "label": "Eliminate",
+          "labelId": "eliminate",
           "actionType": "card",
           "actionListId": "eliminateCard"
         },
         {
           "id": "target",
-          "label": "Target",
+          "labelId": "target",
           "actionType": "card",
           "actionListId": "targetCard"
         },
         {
           "id": "claim",
-          "label": "Claim",
+          "labelId": "claim",
           "actionType": "card",
           "actionListId": "addToScoringArea"
         },
         {
           "id": "drawArrow",
-          "label": "Draw Arrow",
+          "labelId": "drawArrow",
           "actionType": "card",
           "actionListId": "drawArrow"
         }
@@ -4800,37 +5016,37 @@
       [
         {
           "id": "drawCard",
-          "label": "Draw",
+          "labelId": "draw",
           "actionType": "game",
           "actionListId": "drawCard"
         },
         {
           "id": "clearTargets",
-          "label": "Clear Targets",
+          "labelId": "clearTargets",
           "actionType": "game",
           "actionListId": "clearTargets"
         },
         {
           "id": "undo",
-          "label": "Undo",
+          "labelId": "undo",
           "actionType": "engine",
           "actionId": "undo"
         },
         {
           "id": "undoMany",
-          "label": "Undo many",
+          "labelId": "undoMany",
           "actionType": "engine",
           "actionId": "undoMany"
         },
         {
           "id": "nextStep",
-          "label": "Next step",
+          "labelId": "nextStep",
           "actionType": "game",
           "actionListId": "nextStep"
         },
         {
           "id": "save",
-          "label": "Save",
+          "labelId": "save",
           "actionType": "engine",
           "actionId": "save"
         }
@@ -4839,7 +5055,7 @@
     "defaultActions": [
       {
         "actionListId": "cycleCard",
-        "label": "cycle",
+        "labelId": "cycle",
         "condition": ["$ACTIVE_CARD.inPlay"]
       }
     ],
@@ -5582,27 +5798,27 @@
     "phases": [
       {
         "phaseId": "Location",
-        "label" : "Location",
+        "labelId" : "location",
         "height" : "10%"
       },
       {
         "phaseId": "Action",
-        "label" : "Action",
+        "labelId" : "action",
         "height" : "10%"
       },
       {
         "phaseId": "Combat",
-        "label" : "Combat",
+        "labelId" : "combat",
         "height" : "60%"
       },
       {
         "phaseId": "Victory",
-        "label" : "Victory",
+        "labelId" : "victory",
         "height" : "10%"
       },
       {
         "phaseId": "Draw",
-        "label" : "Draw",
+        "labelId" : "drawPhase",
         "height" : "10%"
       }
     ],
@@ -5631,7 +5847,7 @@
       "textPropertiesSideA": ["name", "faction", "text"] 
     },
     "layoutMenu": [
-      {"name": "Standard", "layoutId": "standard", "numPlayers": 4}
+      {"labelId": "standard", "layoutId": "standard", "numPlayers": 4}
     ],
     "layouts": {
       "standard": {
@@ -5739,7 +5955,7 @@
     ],
     "automation": {
       "a6cdd8d3-cd6e-4d1a-908b-2f788fbb357e": {
-        "_label": "Aragorn",
+        "_labelId": "Aragorn",
         "rules": [
           { 
             "type": "trigger", 

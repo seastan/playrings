@@ -3,16 +3,18 @@ import { useSelector, useDispatch } from 'react-redux';
 import useFocus from "../../hooks/useFocus";
 import { useDoActionList } from "./functions/useDoActionList";
 import { setTyping } from "../store/playerUiSlice";
+import { useGameL10n } from "../../hooks/useGameL10n";
 
 var delayBroadcast;
 
 export const TopBarSharedCounter = React.memo(({
   gameProperty,
   imageUrl,
-  name,
+  labelId,
 }) => {
   const dispatch = useDispatch();
   const doActionList = useDoActionList();
+  const l10n = useGameL10n();
   const [value, setValue] = useState(useSelector(state => state?.gameUi?.game?.[gameProperty]) || 0);
   const [previousValue, setPreviousValue] = useState(value);
   const playerN = useSelector(state => state?.playerUi?.playerN);  
@@ -28,7 +30,7 @@ export const TopBarSharedCounter = React.memo(({
       setPreviousValue(newValue);
       const listOfActions = [
         ["GAME_SET_VAL", "/" + gameProperty, newValue],
-        ["GAME_ADD_MESSAGE", "$PLAYER_N", totalDelta >= 0 ? " increased " : " decreased ", name, " by ", Math.abs(totalDelta), "."]
+        ["GAME_ADD_MESSAGE", "$PLAYER_N", totalDelta >= 0 ? " increased " : " decreased ", l10n(labelId), " by ", Math.abs(totalDelta), "."]
       ];
       doActionList(listOfActions);
       setInputFocus();
@@ -36,7 +38,7 @@ export const TopBarSharedCounter = React.memo(({
   }
 
   return(<>
-      <div className="h-1/2 w-full flex justify-center">{name}</div>
+      <div className="h-1/2 w-full flex justify-center">{l10n(labelId)}</div>
       <div className="h-1/2 w-full flex justify-center">
         <img className="h-full ml-1" src={imageUrl}></img>
         <input 

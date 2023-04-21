@@ -8,6 +8,7 @@ import { useGameL10n } from "../../hooks/useGameL10n";
 import { useGameDefinition } from "./functions/useGameDefinition";
 import { keyClass } from "../definitions/common";
 import { keyStyle } from "../definitions/common";
+import { useSiteL10n } from "../../hooks/useSiteL10n";
 
 const keyStyleL = {width: "7vh", height: "3vh", borderRadius: "0.5vh"}
 const keyStyleXL = {width: "12vh", height: "3vh", borderRadius: "0.5vh"}
@@ -57,16 +58,17 @@ const processLabel = (label) => {
 
 export const HotkeyTable = React.memo(({hotkeyList}) => {
   const l10n = useGameL10n();
+  const siteL10n = useSiteL10n();
   if (hotkeyList) return(
     <table className="table-fixed rounded-lg w-full">
       <tr className="bg-gray-800">
-          <th className={col1Class}>{l10n("Key")}</th>
-          <th className={col2Class}>{l10n("Description")}</th>
+          <th className={col1Class}>{siteL10n("hotkeyTableKey")}</th>
+          <th className={col2Class}>{siteL10n("hotkeyTableDescription")}</th>
       </tr>
       {hotkeyList.map((el, elIndex) => {
       const keys = el.key.split("+")
-      const labelList = processLabel(el.label);
-      //console.log("processlabel",processLabel(el.label))
+      console.log("label HotkeyTable", el.labelId, l10n(el.labelId))
+      const labelList = processLabel(l10n(el.labelId));
       return (
         <tr className={elIndex % 2 == 0 ? "bg-gray-500" : "bg-gray-600"}>
           <td className="p-1 text-center">
@@ -80,7 +82,7 @@ export const HotkeyTable = React.memo(({hotkeyList}) => {
           <td className="text-center">
             {labelList.map((labelEl, _labelElIndex) => {
               if (labelEl.startsWith("icon(")) return <img className="m-auto h-6 inline-block" src={labelEl.slice(5,-1)}/> 
-              else return l10n(labelEl)
+              else return labelEl
             })}
           </td>
         </tr>

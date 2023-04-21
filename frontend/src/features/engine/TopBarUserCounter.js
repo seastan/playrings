@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import useFocus from "../../hooks/useFocus";
 import { useDoActionList } from "./functions/useDoActionList";
 import { setTyping } from "../store/playerUiSlice";
+import { useGameL10n } from "../../hooks/useGameL10n";
 
 var delayBroadcast;
 
@@ -10,10 +11,11 @@ export const TopBarUserCounter = React.memo(({
   playerI,
   playerProperty,
   imageUrl,
-  name,
+  labelId,
 }) => {
   const dispatch = useDispatch();
   const doActionList = useDoActionList();
+  const l10n = useGameL10n();
   const backEndValue = useSelector(state => state?.gameUi?.game?.playerData?.[playerI]?.[playerProperty]);
   const [value, setValue] = useState( backEndValue || 0);
   const [previousValue, setPreviousValue] = useState(value);
@@ -31,7 +33,7 @@ export const TopBarUserCounter = React.memo(({
       setPreviousValue(newValue);
       const listOfActions = [
         ["GAME_INCREASE_VAL", "/playerData/$PLAYER_N/" + playerProperty, totalDelta],
-        ["GAME_ADD_MESSAGE", "$PLAYER_N", totalDelta >= 0 ? " increased " : " decreased ", name, " by ", Math.abs(totalDelta), "."]
+        ["GAME_ADD_MESSAGE", "$PLAYER_N", totalDelta >= 0 ? " increased " : " decreased ", l10n(labelId), " by ", Math.abs(totalDelta), "."]
       ]
       doActionList(listOfActions);
       setInputFocus();

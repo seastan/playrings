@@ -13,6 +13,7 @@ import { useGameL10n } from "../../../../hooks/useGameL10n";
 import BroadcastContext from "../../../../contexts/BroadcastContext";
 import { useGameDefinition } from "../../../engine/functions/useGameDefinition";
 import { useDoActionList } from "../../../engine/functions/useDoActionList";
+import { useSiteL10n } from "../../../../hooks/useSiteL10n";
 
 export const TopBarMenu = React.memo(({}) => {
   const {gameBroadcast, chatBroadcast} = useContext(BroadcastContext);
@@ -20,6 +21,7 @@ export const TopBarMenu = React.memo(({}) => {
   const myUserID = myUser?.id;
   const history = useHistory();
   const l10n = useGameL10n();
+  const siteL10n = useSiteL10n();
   const gameDef = useGameDefinition();
   const doActionList = useDoActionList();
 
@@ -47,28 +49,22 @@ export const TopBarMenu = React.memo(({}) => {
     }
     if (data.action === "clear_table") {
       // Mark status
-      chatBroadcast("game_update", {message: "marked game as "+data.state+"."});
-      gameBroadcast("game_action", {action: "update_values", options: {updates: [["victoryState", data.state]]}});
+      doActionList(data.actionList);
       // Save replay
-      if (round > 0) {
-        gameBroadcast("game_action", {action: "save_replay", options: {}});
-        chatBroadcast("game_update",{message: "saved the replay to their profile."});
-      }
+      gameBroadcast("game_action", {action: "save_replay", options: {}});
+      doActionList(["GAME_ADD_MESSAGE", "$PLAYER_N", " saved the game."]);
       // Reset game
       gameBroadcast("game_action", {action: "reset_game", options: {}});
-      chatBroadcast("game_update", {message: "reset the game."});
+      doActionList(["GAME_ADD_MESSAGE", "$PLAYER_N", " reset the game."]);
     } else if (data.action === "close_room") {
       // Mark status
-      chatBroadcast("game_update", {message: "marked game as "+data.state+"."});
-      gameBroadcast("game_action", {action: "update_values", options: {updates: [["victoryState", data.state]]}});
+      doActionList(data.actionList);
       // Save replay
-      if (round > 0) {
-        gameBroadcast("game_action", {action: "save_replay", options: {}});
-        chatBroadcast("game_update",{message: "saved the replay to their profile."});
-      }
+      gameBroadcast("game_action", {action: "save_replay", options: {}});
+      doActionList(["GAME_ADD_MESSAGE", "$PLAYER_N", " saved the game."]);
       // Close room
       history.push("/profile");
-      chatBroadcast("game_update", {message: "closed the room."});
+      doActionList(["GAME_ADD_MESSAGE", "$PLAYER_N", " closed the room."]);
       gameBroadcast("close_room", {});
     } else if (data.action === "load_deck") {
       loadFileDeck();
@@ -510,118 +506,121 @@ export const TopBarMenu = React.memo(({}) => {
   }
 
   return(
-    <li key={"Menu"}><div className="h-full flex items-center justify-center select-none">{l10n("Menu")}</div>
+    <li key={"Menu"}><div className="h-full flex items-center justify-center select-none">{siteL10n("menu")}</div>
       <ul className="second-level-menu">
         {isHost &&
           <li key={"layout"}>
-              {l10n("Layout")}
+              {siteL10n("layout")}
               <span className="float-right mr-1"><FontAwesomeIcon icon={faChevronRight}/></span>
             <ul className="third-level-menu">
               {gameDef.layoutMenu?.map((info, index) => {
                 return(
-                  <li key={info.layoutId} onClick={() => handleMenuClick({action:"layout", value: info})}>{l10n(info.name)}</li>
+                  <li key={info.layoutId} onClick={() => handleMenuClick({action:"layout", value: info})}>{l10n(info.labelId)}</li>
                 )
               })}
              </ul>
           </li>                
         }
         <li key={"load"}>
-            {l10n("Load")}
+            {siteL10n("load")}
             <span className="float-right mr-1"><FontAwesomeIcon icon={faChevronRight}/></span>
           <ul className="third-level-menu">
-            <li key={"load_prebuilt_deck"} onClick={() => handleMenuClick({action:"spawn_deck"})}>{l10n("Load prebuilt deck")}</li>
+            <li key={"load_prebuilt_deck"} onClick={() => handleMenuClick({action:"spawn_deck"})}>{siteL10n("Load prebuilt deck")}</li>
             <li key={"load_game"} onClick={() => handleMenuClick({action:"load_game"})}>
-              {l10n("Load game (.json)")}
+              {siteL10n("loadGameJson")}
               <input type='file' id='file' ref={inputFileGame} style={{display: 'none'}} onChange={uploadGameAsJson} accept=".json"/>
             </li>
             <li key={"load_game_def"} onClick={() => handleMenuClick({action:"load_game_def"})}>
-              {l10n("Load game definition (.json)")}
+              {siteL10n("loadGameDefinitionJson")}
               <input type='file' id='file' ref={inputFileGameDef} style={{display: 'none'}} onChange={uploadGameDef} accept=".json"/>
             </li>
             <li key={"load_custom"} onClick={() => handleMenuClick({action:"load_custom"})}>
-              {l10n("Load custom cards (.txt)")}
+              {siteL10n("loadCustomCardsTxt")}
               <input type='file' id='file' ref={inputFileCustom} style={{display: 'none'}} onChange={uploadCustomCards} accept=".txt"/>
             </li>
           </ul>
         </li> 
         <li key={"touch_mode"}>
-            {l10n("Touch mode")}
+            {siteL10n("touchMode")}
             <span className="float-right mr-1"><FontAwesomeIcon icon={faChevronRight}/></span>
           <ul className="third-level-menu">
-              <li key={"touch_enabled"} onClick={() => dispatch(setTouchMode(true))}>{l10n("Enable")}</li>
-              <li key={"touch_disabled"} onClick={() => {dispatch(setTouchMode(false)) && dispatch(setTouchAction(null))}}>{l10n("Disable")}</li>
+              <li key={"touch_enabled"} onClick={() => dispatch(setTouchMode(true))}>{siteL10n("enable")}</li>
+              <li key={"touch_disabled"} onClick={() => {dispatch(setTouchMode(false)) && dispatch(setTouchAction(null))}}>{siteL10n("Disable")}</li>
           </ul>
         </li> 
         <li key={"unload"}>
-            {l10n("Unload")}
+            {siteL10n("unload")}
             <span className="float-right mr-1"><FontAwesomeIcon icon={faChevronRight}/></span>
           <ul className="third-level-menu">        
-            <li key={"unload_my_deck"} onClick={() => handleMenuClick({action:"unload_my_deck"})}>{l10n("Unload my deck")}</li>
-            <li key={"unload_shared_cards"} onClick={() => handleMenuClick({action:"unload_shared_cards"})}>{l10n("Unload shared cards")}</li>
+            <li key={"unload_my_deck"} onClick={() => handleMenuClick({action:"unload_my_deck"})}>{siteL10n("unloadMyDeck")}</li>
+            <li key={"unload_shared_cards"} onClick={() => handleMenuClick({action:"unload_shared_cards"})}>{siteL10n("unloadSharedCards")}</li>
           </ul>
         </li>
         <li key={"spawn"}>
-            {l10n("Spawn card")}
+            {siteL10n("spawnCard")}
             <span className="float-right mr-1"><FontAwesomeIcon icon={faChevronRight}/></span>
           <ul className="third-level-menu">
-            <li key={"spawn_existing"} onClick={() => handleMenuClick({action:"spawn_existing"})}>{l10n("From the card pool")}</li>
-            <li key={"spawn_custom"} onClick={() => handleMenuClick({action:"spawn_custom"})}>{l10n("Create your own card")}</li>
+            <li key={"spawn_existing"} onClick={() => handleMenuClick({action:"spawn_existing"})}>{siteL10n("fromTheCardPool")}</li>
+            <li key={"spawn_custom"} onClick={() => handleMenuClick({action:"spawn_custom"})}>{siteL10n("createYourOwnCard")}</li>
           </ul>
         </li> 
         <li key={"random"}>
-            {l10n("Random")}
+            {siteL10n("random")}
             <span className="float-right mr-1"><FontAwesomeIcon icon={faChevronRight}/></span>
           <ul className="third-level-menu">
-            <li key={"random_coin"} onClick={() => handleMenuClick({action:"random_coin"})}>{l10n("Coin")}</li>
-            <li key={"random_number"} onClick={() => handleMenuClick({action:"random_number"})}>{l10n("Number")}</li>
+            <li key={"random_coin"} onClick={() => handleMenuClick({action:"random_coin"})}>{siteL10n("coin")}</li>
+            <li key={"random_number"} onClick={() => handleMenuClick({action:"random_number"})}>{siteL10n("number")}</li>
           </ul>
         </li> 
         <li key={"options"}>
-            {l10n("Options")}
+            {siteL10n("dragnOptions")}
             <span className="float-right mr-1"><FontAwesomeIcon icon={faChevronRight}/></span>
           <ul className="third-level-menu">
-            <li key={"adjust_card_size"} onClick={() => handleMenuClick({action:"adjust_card_size"})}>{l10n("Adjust card size")}</li>
-            {gameDef.dropdownMenus?.plugin?.options?.map((menuFunction, _index) => {
-                return(
-                  <li key={menuFunction.id} onClick={() => doActionList(menuFunction.actionList)}>{l10n(menuFunction.label)}</li>
-                )
-              }
-            )}
-            <li key={"cards_per_round"} onClick={() => handleMenuClick({action:"cards_per_round"})}>{l10n("Cards per round")}</li>
+            <li key={"adjust_card_size"} onClick={() => handleMenuClick({action:"adjust_card_size"})}>{siteL10n("adjustCardSize")}</li>
+
           </ul>
         </li> 
         <li key={"advanced_functions"}>
-            {l10n("Special Functions")}
+            {siteL10n("pluginOptions")}
             <span className="float-right mr-1"><FontAwesomeIcon icon={faChevronRight}/></span>
           <ul className="third-level-menu">
+            {gameDef.dropdownMenus?.plugin?.options?.map((menuFunction, _index) => {
+              return(
+                <li key={menuFunction.id} onClick={() => doActionList(menuFunction.actionList)}>{l10n(menuFunction.labelId)}</li>
+              )
+            })}
           </ul>
         </li> 
         <li key={"download"}>
-            {l10n("Download")}
+            {siteL10n("download")}
             <span className="float-right mr-1"><FontAwesomeIcon icon={faChevronRight}/></span>
           <ul className="third-level-menu">        
-            <li key={"download"} onClick={() => handleMenuClick({action:"download"})}>{l10n("Game state (.json)")}</li>
+            <li key={"download"} onClick={() => handleMenuClick({action:"download"})}>{siteL10n("gameStateJson")}</li>
           </ul>
         </li>
         {isHost &&
           <li key={"reset"}>
-            {l10n("Clear table")}
+            {siteL10n("clearTable")}
             <span className="float-right mr-1"><FontAwesomeIcon icon={faChevronRight}/></span>
             <ul className="third-level-menu">
-              <li key={"reset_victory"} onClick={() => handleMenuClick({action:"clear_table", state: "victory"})}>{l10n("Mark as victory")}</li>
-              <li key={"reset_defeat"} onClick={() => handleMenuClick({action:"clear_table", state: "defeat"})}>{l10n("Mark as defeat")}</li>
-              <li key={"reset_incomplete"} onClick={() => handleMenuClick({action:"clear_table", state: "incomplete"})}>{l10n("Mark as incomplete")}</li>
+              {gameDef["clearTableOptions"]?.map((option, index) => {
+                return(
+                  <li key={index} onClick={() => handleMenuClick({action:"clear_table", actionList: option.actionList})}>{l10n(option.labelId)}</li>
+                )
+              })}
             </ul>
           </li> 
         }      
         {isHost &&
           <li key={"shut_down"}>
-            {l10n("Close room")}
+            {siteL10n("closeRoom")}
               <span className="float-right mr-1"><FontAwesomeIcon icon={faChevronRight}/></span>
             <ul className="third-level-menu">
-              <li key={"close_victory"} onClick={() => handleMenuClick({action:"close_room", state: "victory"})}>{l10n("Mark as victory")}</li>
-              <li key={"close_defeat"} onClick={() => handleMenuClick({action:"close_room", state: "defeat"})}>{l10n("Mark as defeat")}</li>
-              <li key={"close_incomplete"} onClick={() => handleMenuClick({action:"close_room", state: "incomplete"})}>{l10n("Mark as incomplete")}</li>
+              {gameDef["clearTableOptions"]?.map((option, index) => {
+                return(
+                  <li key={index} onClick={() => handleMenuClick({action:"close_room", actionList: option.actionList})}>{l10n(option.labelId)}</li>
+                )
+              })}
             </ul>
           </li> 
         }

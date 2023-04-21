@@ -5,17 +5,17 @@ import useProfile from "../../hooks/useProfile";
 import useIsLoggedIn from "../../hooks/useIsLoggedIn";
 import { Link } from "react-router-dom";
 import { setDropdownMenu, setObservingPlayerN, setTyping } from "../store/playerUiSlice";
-import { useGameL10n } from "../../hooks/useGameL10n";
 import BroadcastContext from "../../contexts/BroadcastContext";
 import { TopBarUserCounter } from "./TopBarUserCounter";
 import { useGameDefinition } from "./functions/useGameDefinition";
+import { useSiteL10n } from "../../hooks/useSiteL10n";
 
 export const TopBarUser = React.memo(({
   playerI
 }) => {
   const {gameBroadcast, chatBroadcast} = useContext(BroadcastContext);
   const dispatch = useDispatch();
-  const l10n = useGameL10n();
+  const siteL10n = useSiteL10n();
   const gameDef = useGameDefinition();
   const playerN = useSelector(state => state?.playerUi?.playerN);
   const observingPlayerN = useSelector(state => state?.playerUi?.observingPlayerN);
@@ -79,12 +79,12 @@ export const TopBarUser = React.memo(({
       return(<Link to="/login" className="h-full w-1/2 float-left flex justify-center hover:bg-gray-500 text-white">Log In</Link>)
     } else if (sittingUserID) {
       if (sittingUserID === myUserID) {
-        return(<div onClick={() => handleSitClick("get_up")} className={"h-full w-1/2 float-left flex justify-center bg-gray-500"}>{l10n("Get up")}</div>)
+        return(<div onClick={() => handleSitClick("get_up")} className={"h-full w-1/2 float-left flex justify-center bg-gray-500"}>{siteL10n("getUp")}</div>)
       } else {
-        return(<div className={"h-full w-1/2 float-left flex justify-center text-black"}>{l10n("Taken")}</div>)
+        return(<div className={"h-full w-1/2 float-left flex justify-center text-black"}>{siteL10n("taken")}</div>)
       }
     } else {
-      return(<div onClick={() => handleSitClick("sit")} className={"h-full w-1/2 float-left flex justify-center hover:bg-gray-500"}>{l10n("Sit")}</div>)
+      return(<div onClick={() => handleSitClick("sit")} className={"h-full w-1/2 float-left flex justify-center hover:bg-gray-500"}>{siteL10n("sit")}</div>)
     }
   }
   
@@ -108,7 +108,7 @@ export const TopBarUser = React.memo(({
             className={"h-full w-1/2 float-left flex justify-center "+
               ((observingPlayerN===playerI) ? "bg-gray-500" : "hover:bg-gray-500")}
             onClick={() => handleObserveClick()}
-          >{l10n("Look")}</div>
+          >{siteL10n("look")}</div>
         </div>
       </div>
 
@@ -120,7 +120,7 @@ export const TopBarUser = React.memo(({
                 playerI={playerI}
                 playerProperty={menuItem.playerProperty} 
                 imageUrl={menuItem.imageUrl} 
-                name={menuItem.name}/>
+                labelId={menuItem.labelId}/>
             </div>
           )
         })}

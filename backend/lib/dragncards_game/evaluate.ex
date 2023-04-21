@@ -177,7 +177,6 @@ defmodule DragnCardsGame.Evaluate do
   # end
 
   def evaluate(game, code) do
-    game = put_in(game["evaluate_depth"], (game["evaluate_depth"] || 0) + 1)
     #IO.inspect(code)
     if is_list(code) && Enum.count(code) > 0 do
       if is_list(Enum.at(code, 0)) do
