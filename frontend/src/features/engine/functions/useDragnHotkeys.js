@@ -1,5 +1,6 @@
 import { useContext } from "react";
 import BroadcastContext from "../../../contexts/BroadcastContext";
+import store from "../../../store";
 import { useDoActionList } from "./useDoActionList";
 
 export const dragnHotkeys = [
@@ -23,44 +24,44 @@ export const dragnHotkeys = [
     return (actionListId) => {
       switch (actionListId) {
         case "saveGame":
-          gameBroadcast("game_action", {action: "save_replay", options: {}});
+          return gameBroadcast("game_action", {action: "save_replay", options: {player_ui: store.getState().playerUi}});
         case "clearTargets":
-          doActionList([
+            return doActionList([
             ["FOR_EACH_KEY_VAL", "$CARD_ID", "$CARD", "$CARD_BY_ID",
               ["GAME_SET_VAL", "/cardById/$CARD_ID/targeting/$PLAYER_N", false]
             ],
             ["GAME_ADD_MESSAGE", "$PLAYER_N", " cleared their targets."]
           ])
         case "undo":
-          gameBroadcast("game_action", {action: "step_through", options: {"size": 1, "direction": "undo"}});
+            return gameBroadcast("game_action", {action: "step_through", options: {"size": 1, "direction": "undo", player_ui: store.getState().playerUi}});
         case "redo":
-          gameBroadcast("game_action", {action: "step_through", options: {"size": 1, "direction": "undo"}});
+            return gameBroadcast("game_action", {action: "step_through", options: {"size": 1, "direction": "undo", player_ui: store.getState().playerUi}});
         case "undoMany":
-          gameBroadcast("game_action", {action: "step_through", options: {"size": 20, "direction": "undo"}});
+            return gameBroadcast("game_action", {action: "step_through", options: {"size": 20, "direction": "undo", player_ui: store.getState().playerUi}});
         case "redoMany":
-          gameBroadcast("game_action", {action: "step_through", options: {"size": 20, "direction": "undo"}});
+            return gameBroadcast("game_action", {action: "step_through", options: {"size": 20, "direction": "undo", player_ui: store.getState().playerUi}});
         case "prevStep": 
-          doActionList([
-            ["GAME_DECREASE_VAL", "/stepIndex", 1],
-            ["COND",
-              ["LESS_THAN", "$GAME.stepIndex", 0],
-              ["GAME_SET_VAL", "/stepIndex", ["MINUS", ["LENGTH", "$GAME.gameDef.steps"], 1]]
-            ],
-            ["DEFINE", "$STEP_INDEX", "$GAME.stepIndex"],
-            ["DEFINE", "$STEP", "$GAME.gameDef.steps.[$STEP_INDEX]"],
-            ["GAME_ADD_MESSAGE", "$PLAYER_N", " set the round step to ", "$STEP.text", "."]
-          ])
+            return doActionList([
+                ["GAME_DECREASE_VAL", "/stepIndex", 1],
+                ["COND",
+                ["LESS_THAN", "$GAME.stepIndex", 0],
+                ["GAME_SET_VAL", "/stepIndex", ["MINUS", ["LENGTH", "$GAME.gameDef.steps"], 1]]
+                ],
+                ["DEFINE", "$STEP_INDEX", "$GAME.stepIndex"],
+                ["DEFINE", "$STEP", "$GAME.gameDef.steps.[$STEP_INDEX]"],
+                ["GAME_ADD_MESSAGE", "$PLAYER_N", " set the round step to ", "$STEP.text", "."]
+            ])
         case "nextStep":
-          doActionList([
-            ["GAME_INCREASE_VAL", "/stepIndex", 1],
-            ["COND",
-              ["EQUAL", "$GAME.stepIndex", ["LENGTH", "$GAME.gameDef.steps"],
-              ["GAME_SET_VAL", "/stepIndex", 0]
-            ]
-            ],
-            ["DEFINE", "$STEP_INDEX", "$GAME.stepIndex"],
-            ["DEFINE", "$STEP", "$GAME.gameDef.steps.[$STEP_INDEX]"],
-            ["GAME_ADD_MESSAGE", "$PLAYER_N", " set the round step to ", "$STEP.text", "."]
+            return doActionList([
+                ["GAME_INCREASE_VAL", "/stepIndex", 1],
+                    ["COND",
+                    ["EQUAL", "$GAME.stepIndex", ["LENGTH", "$GAME.gameDef.steps"],
+                    ["GAME_SET_VAL", "/stepIndex", 0]
+                    ]
+                ],
+                ["DEFINE", "$STEP_INDEX", "$GAME.stepIndex"],
+                ["DEFINE", "$STEP", "$GAME.gameDef.steps.[$STEP_INDEX]"],
+                ["GAME_ADD_MESSAGE", "$PLAYER_N", " set the round step to ", "$STEP.text", "."]
           ])
         }
     }
