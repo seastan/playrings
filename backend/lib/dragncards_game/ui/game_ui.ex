@@ -552,7 +552,8 @@ defmodule DragnCardsGame.GameUI do
       end
       |> Replay.changeset(updates)
       |> Repo.insert_or_update
-    game
+
+    Evaluate.evaluate(game, ["GAME_ADD_MESSAGE", "$PLAYER_N", " saved the game."])
   end
 
   def set_last_update(gameui) do

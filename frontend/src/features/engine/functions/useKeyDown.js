@@ -4,6 +4,7 @@ import BroadcastContext from '../../../contexts/BroadcastContext';
 import { setKeypress } from '../../store/playerUiSlice';
 import { useAddToken } from './useAddToken';
 import { useDoActionList } from './useDoActionList';
+import { dragnHotkeys, useDoDragnHotkey } from './useDragnHotkeys';
 import { useGameDefinition } from './useGameDefinition';
 
 export const useKeyDown = () => {
@@ -15,6 +16,7 @@ export const useKeyDown = () => {
     const mouseTopBottom = useSelector(state => state?.playerUi?.mouseTopBottom);
     const {gameBroadcast, chatBroadcast} = useContext(BroadcastContext);
     const doActionList = useDoActionList();
+    const doDragnHotkey = useDoDragnHotkey()
     const addToken = useAddToken();
     console.log("gameb render keydown 1", gameBroadcast)
 
@@ -52,6 +54,13 @@ export const useKeyDown = () => {
         for (var keyObj of gameDef?.hotkeys.card) {
             if (keyObj.key === dictKey) {
                 doActionList(keyObj.actionListId)
+                console.log("keydown action ",keyObj.actionListId, gameDef.actionLists[keyObj.actionListId])
+                return;
+            }
+        }
+        for (var keyObj of dragnHotkeys) {
+            if (keyObj.key === dictKey) {
+                doDragnHotkey(keyObj.actionListId)
                 console.log("keydown action ",keyObj.actionListId, gameDef.actionLists[keyObj.actionListId])
                 return;
             }

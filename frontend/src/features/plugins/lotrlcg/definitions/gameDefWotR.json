@@ -70,30 +70,6 @@
       "pass": {
         "English": "Pass"
       },
-      "saveGame": {
-        "English": "Save game"
-      },
-      "clearTargetsArrows": {
-        "English": "Clear targets/arrows"
-      },
-      "undoOneAction": {
-        "English": "Undo one action"
-      },
-      "redoOneAction": {
-        "English": "Redo one action"
-      },
-      "moveToPreviousGameStep": {
-        "English": "Move to previous game step"
-      },
-      "moveToNextGameStep": {
-        "English": "Move to next game step"
-      },
-      "moveToPreviousPhase": {
-        "English": "Move to previous phase"
-      },
-      "moveToNextPhase": {
-        "English": "Move to next phase"
-      },
       "drawCardsAndStartNewRound": {
         "English": "Draw cards and start new round"
       },
@@ -134,18 +110,6 @@
       },
       "draw": {
         "English": "Draw"
-      },
-      "clearTargets": {
-        "English": "Clear Targets"
-      },
-      "undo": {
-        "English": "Undo"
-      },
-      "undoMany": {
-        "English": "Undo many"
-      },
-      "nextStep": {
-        "English": "Next step"
       },
       "save": {
         "English": "Save"
@@ -4893,15 +4857,7 @@
       ],
       "game": [
         {"key": "D", "actionListId": "drawCard", "labelId": "drawCard"},
-        {"key": "P", "actionListId": "pass", "labelId": "pass"},
-        {"key": "Shift+P", "actionListId": "saveGame", "labelId": "saveGame"},
-        {"key": "Escape", "actionListId": "clearTargets", "labelId": "clearTargetsArrows"},
-        {"key": "Ctrl+Z", "actionListId": "undo", "labelId": "undoOneAction"},
-        {"key": "Ctrl+Y", "actionListId": "redo", "labelId": "redoOneAction"},
-        {"key": "ArrowUp", "actionListId": "prevStep", "labelId": "moveToPreviousGameStep"},
-        {"key": "ArrowDown", "actionListId": "nextStep", "labelId": "moveToNextGameStep"},
-        {"key": "ArrowUp", "actionListId": "prevPhase", "labelId": "moveToPreviousPhase"},
-        {"key": "ArrowDown", "actionListId": "nextPhase", "labelId": "moveToNextPhase"}
+        {"key": "P", "actionListId": "pass", "labelId": "pass"}
       ],
       "card": [
         {"key": "Shift+N", "actionListId": "newRound", "labelId": "drawCardsAndStartNewRound"},
@@ -5122,33 +5078,6 @@
       ],
       "drawCard": [
         ["DRAW_CARD"]
-      ],
-      "nextStep": [
-        ["GAME_INCREASE_VAL", "/stepIndex", 1],
-        ["COND",
-          ["EQUAL", "$GAME.stepIndex", ["LENGTH", "$GAME.gameDef.steps"],
-          ["GAME_SET_VAL", "/stepIndex", 0]
-        ]
-        ],
-        ["DEFINE", "$STEP_INDEX", "$GAME.stepIndex"],
-        ["DEFINE", "$STEP", "$GAME.gameDef.steps.[$STEP_INDEX]"],
-        ["GAME_ADD_MESSAGE", "$PLAYER_N", " set the round step to ", "$STEP.text", "."]
-      ],
-      "prevStep": [
-        ["GAME_DECREASE_VAL", "/stepIndex", 1],
-        ["COND",
-          ["LESS_THAN", "$GAME.stepIndex", 0],
-          ["GAME_SET_VAL", "/stepIndex", ["MINUS", ["LENGTH", "$GAME.gameDef.steps"], 1]]
-        ],
-        ["DEFINE", "$STEP_INDEX", "$GAME.stepIndex"],
-        ["DEFINE", "$STEP", "$GAME.gameDef.steps.[$STEP_INDEX]"],
-        ["GAME_ADD_MESSAGE", "$PLAYER_N", " set the round step to ", "$STEP.text", "."]
-      ],
-      "clearTargets": [
-        ["FOR_EACH_KEY_VAL", "$CARD_ID", "$CARD", "$CARD_BY_ID",
-          ["GAME_SET_VAL", "/cardById/$CARD_ID/targeting/$PLAYER_N", false]
-        ],
-        ["GAME_ADD_MESSAGE", "$PLAYER_N", " cleared their targets."]
       ],
       "zeroTokens": [
         ["GAME_SET_VAL", "$ACTIVE_TOKENS_PATH", {}],

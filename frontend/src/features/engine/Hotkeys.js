@@ -9,6 +9,7 @@ import { useGameDefinition } from "./functions/useGameDefinition";
 import { keyClass } from "../definitions/common";
 import { keyStyle } from "../definitions/common";
 import { useSiteL10n } from "../../hooks/useSiteL10n";
+import { dragnHotkeys } from "./functions/useDragnHotkeys";
 
 const keyStyleL = {width: "7vh", height: "3vh", borderRadius: "0.5vh"}
 const keyStyleXL = {width: "12vh", height: "3vh", borderRadius: "0.5vh"}
@@ -60,14 +61,13 @@ export const HotkeyTable = React.memo(({hotkeyList}) => {
   const l10n = useGameL10n();
   const siteL10n = useSiteL10n();
   if (hotkeyList) return(
-    <table className="table-fixed rounded-lg w-full">
+    <table className="table-fixed rounded-lg w-full mb-6">
       <tr className="bg-gray-800">
           <th className={col1Class}>{siteL10n("hotkeyTableKey")}</th>
           <th className={col2Class}>{siteL10n("hotkeyTableDescription")}</th>
       </tr>
       {hotkeyList.map((el, elIndex) => {
       const keys = el.key.split("+")
-      console.log("label HotkeyTable", el.labelId, l10n(el.labelId))
       const labelList = processLabel(l10n(el.labelId));
       return (
         <tr className={elIndex % 2 == 0 ? "bg-gray-500" : "bg-gray-600"}>
@@ -95,7 +95,7 @@ export const HotkeyTable = React.memo(({hotkeyList}) => {
 export const Hotkeys = React.memo(({}) => {
   const dispatch = useDispatch();
   const gameDef = useGameDefinition();
-  const l10n = useGameL10n();
+  const siteL10n = useSiteL10n();
   const showWindow = useSelector(state => state?.playerUi?.showHotkeys);
   const tabPressed = useSelector(state => state?.playerUi?.keypress?.Tab);
   if (!showWindow && !tabPressed) return;
@@ -105,19 +105,21 @@ export const Hotkeys = React.memo(({}) => {
       <div className={windowClassL} style={windowStyleL}>
         <div className="w-full p-3 overflow-y-scroll">
           <div className="w-1/3 float-left p-3">
-            <h2 className="mb-2">{l10n("Tokens")}</h2>
-            {l10n("Hover over the top/bottom half of the card when pressing the key to add/remove tokens.")}
+            <h2 className="mb-2">{siteL10n("tokens")}</h2>
+            {siteL10n("hoverOverTopBottom")}
             <HotkeyTable hotkeyList={gameDef?.hotkeys?.token}/>
           </div>
           <div className="w-1/3 float-left p-3">
-            <h2 className="mb-2">{l10n("Card hotkeys")}</h2>
-            {l10n("Hover over a card.")}
+            <h2 className="mb-2">{siteL10n("cardHotkeys")}</h2>
+            {siteL10n("hoverOverACard")}
             <HotkeyTable hotkeyList={gameDef?.hotkeys?.card}/>
           </div>
           <div className="w-1/3 float-left p-3">
-            <h2 className="mb-2">{l10n("Game hotkeys")}</h2>
+            <h2 className="mb-2">{siteL10n("gameHotkeys")}</h2>
             <HotkeyTable hotkeyList={gameDef?.hotkeys?.game}/>
-            </div>
+            <h2 className="mb-2">{siteL10n("dragnHotkeys")}</h2>
+            <HotkeyTable hotkeyList={dragnHotkeys}/>
+          </div>
         </div>
       </div>
     )
@@ -134,16 +136,18 @@ export const Hotkeys = React.memo(({}) => {
               onTouchStart={() => dispatch(setShowHotkeys(false))}/>
           </div>
           <div className="w-full p-3 overflow-y-scroll" style={{height: "523px"}}>
-            <h2 className="mb-2">{l10n("Tokens")}</h2>
-            {l10n("Hover over the top/bottom half of the card when pressing the key to add/remove tokens.")}
+            <h2 className="mb-2">{siteL10n("tokens")}</h2>
+            {siteL10n("hoverOverTopBottom")}
             <HotkeyTable hotkeyList={gameDef?.hotkeys?.token}/>
             <br />
-            <h2 className="mb-2">{l10n("Card hotkeys")}</h2>
-            {l10n("Hover over a card.")}
+            <h2 className="mb-2">{siteL10n("cardHotkeys")}</h2>
+            {siteL10n("hoverOverACard.")}
             <HotkeyTable hotkeyList={gameDef?.hotkeys?.card}/>
             <br />
-            <h2 className="mb-2">{l10n("Game hotkeys")}</h2>
+            <h2 className="mb-2">{siteL10n("gameHotkeys")}</h2>
             <HotkeyTable hotkeyList={gameDef?.hotkeys?.game}/>
+            <h2 className="mb-2">{siteL10n("dragnHotkeys")}</h2>
+            <HotkeyTable hotkeyList={dragnHotkeys}/>
           </div>
         </div>
       </Draggable>

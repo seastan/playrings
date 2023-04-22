@@ -50,6 +50,7 @@ export const getFirstCardOffset = (width, cardSize) => {
   return 0.2 + (1.39-width)*cardSize/2;
 }
 
+
 export const dragnActionLists = {
   setRotation: (deg) => (
     [
@@ -74,12 +75,6 @@ export const dragnActionLists = {
       ]
     ]
   ),
-  clearTargets: () => ([
-    ["FOR_EACH_KEY_VAL", "$CARD_ID", "$CARD", "$CARD_BY_ID",
-      ["GAME_SET_VAL", "cardById/$CARD_ID/targeting/$PLAYER_N", false]
-    ],
-    ["GAME_ADD_MESSAGE", "$PLAYER_N", " cleared their targets."]
-  ]),
   targetCard: (cardId) => ([
     ["GAME_SET_VAL", "/cardById/" + cardId + "/targeting/$PLAYER_N", true],
     ["GAME_ADD_MESSAGE", "$PLAYER_N", " targeted ", ["FACEUP_NAME_FROM_CARD_ID", cardId], "."]

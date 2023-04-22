@@ -113,5 +113,59 @@ export const siteL10n = {
   "markAsIncomplete": {
     "English": "Mark as incomplete"
   },
+  "undoManyActions": {
+    "English": "Undo many actions"
+  },
+  "redoManyActions": {
+    "English": "Redo many actions"
+  },
+  "saveGame": {
+    "English": "Save game"
+  },
+  "clearTargetsArrows": {
+    "English": "Clear targets/arrows"
+  },
+  "undoOneAction": {
+    "English": "Undo one action"
+  },
+  "redoOneAction": {
+    "English": "Redo one action"
+  },
+  "undoManyActions": {
+    "English": "Undo 20 actions"
+  },
+  "redoManyActions": {
+    "English": "Redo 20 actions"
+  },
+  "moveToPreviousGameStep": {
+    "English": "Move to previous game step"
+  },
+  "moveToNextGameStep": {
+    "English": "Move to next game step"
+  },
+  "moveToPreviousPhase": {
+    "English": "Move to previous phase"
+  },
+  "moveToNextPhase": {
+    "English": "Move to next phase"
+  },
+  "tokens": {
+    "English": "Tokens"
+  },
+  "hoverOverTopBottom": {
+    "English": "Hover over the top/bottom half of the card when pressing the key to add/remove tokens."
+  },
+  "cardHotkeys": {
+    "English": "Card Hotkeys"
+  },
+  "gameHotkeys": {
+    "English": "Game Hotkeys"
+  },
+  "dragnHotkeys": {
+    "English": "Dragn Hotkeys"
+  },
+  "hoverOverACard": {
+    "English": "Hover over a card."
+  }
 
 }

@@ -3,7 +3,6 @@ import { faArrowUp, faArrowDown, faRandom, faChevronRight, faCheck } from "@fort
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { DropdownItem, GoBack } from "./DropdownMenuHelpers";
 import "../../css/custom-dropdown.css";
-import { PHASEINFO } from "../plugins/lotrlcg/definitions/constants";
 import { useSelector } from "react-redux";
 import { useGameL10n } from "../../hooks/useGameL10n";
 import { useGameDefinition } from "./functions/useGameDefinition";

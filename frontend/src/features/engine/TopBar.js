@@ -1,5 +1,5 @@
 import React from "react";
-import { TopBarMenu } from "../plugins/lotrlcg/components/TopBarMenu";
+import { TopBarMenu } from "./TopBarMenu";
 import { TopBarView } from "./TopBarView";
 import { TopBarDataContainer } from "./TopBarDataContainer";
 import { useGameL10n } from "../../hooks/useGameL10n";
