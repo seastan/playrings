@@ -21,16 +21,16 @@ defmodule DragnCardsGame.GameUiTest do
 
     gameui = GameUI.new("game_name", user, options)
 
-    {:ok, file_content} = File.read("../frontend/src/features/plugins/lotrlcg/definitions/gameDefWotR.json")
+    # {:ok, file_content} = File.read("../frontend/src/features/plugins/lotrlcg/definitions/gameDefWotR.json")
 
-    game_def = case Jason.decode(file_content) do
-      {:ok, json_map} ->
-        json_map
-      {:error, reason} ->
-        IO.puts("Error decoding JSON: #{reason}")
-    end
+    # game_def = case Jason.decode(file_content) do
+    #   {:ok, json_map} ->
+    #     json_map
+    #   {:error, reason} ->
+    #     IO.puts("Error decoding JSON: #{reason}")
+    # end
 
-    gameui = put_in(gameui["game"]["gameDef"], game_def)
+    # gameui = put_in(gameui["game"]["gameDef"], game_def)
 
     # Load a deck
     cards = plugin.game_def["preBuiltDecks"]["Trilogy"]["cards"]
@@ -49,6 +49,67 @@ defmodule DragnCardsGame.GameUiTest do
     {:ok, %{gameui: gameui, user: user, plugin: plugin}}
   end
 
+  def trim(gameui) do
+    gameui
+    |> put_in(["game", "cardById"], nil)
+    |> put_in(["game", "stackById"], nil)
+    |> put_in(["game", "groupById"], nil)
+    |> put_in(["game", "playerData"], nil)
+   # |> put_in(["deltas"], nil)
+    |> put_in(["game", "automation"], nil)
+  end
+
+  test "Undo", %{gameui: gameui, user: user, plugin: plugin} do
+
+    IO.puts("game_action 1")
+
+    IO.inspect(Enum.count(gameui["deltas"]))
+    gameui = GameUI.game_action(gameui, 1, "evaluate", %{"for_player_n" => "player1", "action_list" => ["GAME_SET_VAL", "/roundNumber", 1]})
+    IO.puts("game_action 2")
+    IO.inspect(Enum.count(gameui["deltas"]))
+    IO.puts("game_action 3")
+    assert gameui["game"]["roundNumber"] == 1
+    assert gameui["replayLength"] == 2
+
+    gameui = GameUI.step_through(gameui,
+      %{
+        "size" => "single",
+        "direction" => "undo",
+      })
+
+    assert gameui["game"]["roundNumber"] == 0
+    assert gameui["replayLength"] == 2
+
+
+    gameui = GameUI.step_through(gameui,
+      %{
+        "size" => "single",
+        "direction" => "redo",
+      })
+
+    assert gameui["game"]["roundNumber"] == 1
+    assert gameui["replayLength"] == 2
+
+
+    gameui = GameUI.step_through(gameui,
+      %{
+        "size" => "single",
+        "direction" => "undo",
+      })
+    assert gameui["game"]["roundNumber"] == 0
+    assert gameui["replayLength"] == 2
+
+    gameui = GameUI.game_action(gameui, 1, "evaluate", %{"for_player_n" => "player1", "action_list" => ["GAME_SET_VAL", "/roundNumber", 2]})
+
+    assert gameui["game"]["roundNumber"] == 2
+    assert gameui["replayLength"] == 2
+
+    gameui = GameUI.game_action(gameui, 1, "evaluate", %{"for_player_n" => "player1", "action_list" => ["GAME_SET_VAL", "/roundNumber", 3]})
+
+    assert gameui["game"]["roundNumber"] == 3
+    assert gameui["replayLength"] == 3
+
+  end
 
 
   test "GameUI initializes with the correct name", %{gameui: gameui, user: user} do
@@ -126,7 +187,7 @@ defmodule DragnCardsGame.GameUiTest do
 
     assert aragorn_card["tokens"]["defenseBlue"] == nil
     game = Evaluate.evaluate_with_timeout(game,
-      ["FOR_EACH_START_STOP_STEP", "$i", 0, 10000, 1,
+      ["FOR_EACH_START_STOP_STEP", "$i", 0, 100000, 1,
         ["GAME_INCREASE_VAL", "/cardById/" <> aragorn_card["id"] <> "/tokens/defenseBlue", 1]
       ])
     aragorn_card = Evaluate.evaluate(game, ["ONE_CARD", ["EQUAL", "$CARD.cardDbId", aragorn_card_db_id]])

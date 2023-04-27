@@ -16,12 +16,15 @@ export const UserName: React.FC<Props> = ({ userID, defaultName }) => {
     if (userID == null) {
       return;
     }
+    console.log("userTrace UserName 1", userID)
     dispatch(fetchUser(userID, authContext));
+    console.log("userTrace UserName 2", userID)
   }, [authContext, dispatch, userID]);
 
   const user = useSelector(
     (state: RootState) => state.users.usersById[userID || 0]
   );
+  console.log("userTrace UserName Render 1", user)
 
   if (userID === null || userID === undefined) {
     return <span className="text-gray-400">{defaultName ? defaultName : "anonymous"}</span>;

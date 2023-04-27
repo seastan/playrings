@@ -108,6 +108,7 @@ export const deepUpdate = (obj1, obj2, submittedTimestamp = 0) => {
       continue; 
     } else {
       // One of the values is not an object/array, so it's a basic type and should be updated
+      console.log("deepUpdate 1", p, obj1[p], obj2[p])
       obj1[p] = obj2[p];
     }
   }

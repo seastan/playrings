@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from 'react-redux';
 import useFocus from "../../hooks/useFocus";
 import { useDoActionList } from "./functions/useDoActionList";
@@ -15,10 +15,15 @@ export const TopBarSharedCounter = React.memo(({
   const dispatch = useDispatch();
   const doActionList = useDoActionList();
   const l10n = useGameL10n();
-  const [value, setValue] = useState(useSelector(state => state?.gameUi?.game?.[gameProperty]) || 0);
+  const stateValue = useSelector(state => state?.gameUi?.game?.[gameProperty]);
+  const [value, setValue] = useState(stateValue || 0);
   const [previousValue, setPreviousValue] = useState(value);
   const playerN = useSelector(state => state?.playerUi?.playerN);  
   const [inputRef, setInputFocus] = useFocus();
+
+  useEffect(() => {
+    setValue(stateValue)
+  }, [stateValue])
 
   const handleValueChange = (event) => {
     const newValue = event.target.value;

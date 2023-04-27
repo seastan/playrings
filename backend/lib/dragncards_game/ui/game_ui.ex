@@ -16,9 +16,8 @@ defmodule DragnCardsGame.GameUI do
   @spec new(String.t(), User.t(), Map.t()) :: GameUI.t()
   def new(game_name, user, %{} = options) do
     Logger.debug("gameui new")
-    game_def = Plugins.get_game_def(options["pluginId"])
     gameui = %{
-      "game" => Game.load(game_def, options),
+      "game" => Game.load(options),
       "roomName" => game_name,
       "options" => options,
       "createdAt" => DateTime.utc_now(),
@@ -30,7 +29,10 @@ defmodule DragnCardsGame.GameUI do
         "player3" => nil,
         "player4" => nil,
       },
-      "playersInRoom" => %{},
+      "deltas" => [],
+      "replayStep" => 0,
+      "replayLength" => 0, # Length of deltas. We need this because the delta array is not broadcast.
+      "sockets" => %{},
       "lastUpdate" => System.system_time(:second),
     }
   end
@@ -473,6 +475,7 @@ defmodule DragnCardsGame.GameUI do
   ################################################################
   # Game actions                                                 #
   ################################################################
+
   def game_action(gameui, user_id, action, options) do
     user_alias = get_alias_by_user_id(gameui, user_id)
     player_n = get_player_n(gameui, user_id)
@@ -481,9 +484,16 @@ defmodule DragnCardsGame.GameUI do
     game = gameui["game"]
     game = put_in(game["playerUi"], options["player_ui"])
     game = put_in(game["messages"], [])
+    IO.puts("game_action check 1")
+    IO.inspect(user_id)
+    IO.inspect(action)
+    IO.inspect(player_n)
+    IO.puts("game_action check 2")
     game_new = if player_n do
       case action do
         "evaluate" ->
+          IO.puts("evaluating game_action 1")
+          IO.inspect(options["action_list"])
           Evaluate.evaluate_with_timeout(game, options["action_list"])
         "set_game" ->
           options["game"]
@@ -491,8 +501,6 @@ defmodule DragnCardsGame.GameUI do
           reset_game(game)
         "load_cards" ->
           load_cards(game, player_n, options["load_list"])
-        "step_through" ->
-          step_through(game, options["size"], options["direction"])
         "save_replay" ->
           save_replay(game, user_id)
         _ ->
@@ -504,13 +512,189 @@ defmodule DragnCardsGame.GameUI do
     #game_new = save_replay(game_new, user_id)
     # Compare state before and after, and add a delta (unless we are undoing a move or loading a game with undo info)
     game_new = Map.delete(game_new, "playerUi")
-    gameui = if options["preserve_undo"] != true do
-      game_new = Game.add_delta(game_new, game)
-      put_in(gameui["game"], game_new)
-    else
-      put_in(gameui["game"]["replayLength"], Enum.count(gameui["game"]["deltas"]))
-    end
+    IO.puts("round_num before")
+    IO.inspect(game_new["roundNumber"])
+    game_new = put_in(game_new["variables"], %{})
+    gameui = put_in(gameui, ["game"], game_new)
+    gameui = add_delta(gameui, game)
+    IO.puts("round_num after")
+    IO.inspect(gameui["game"]["roundNumber"])
+    # IO.puts("hand size 1")
+    # IO.inspect(gameui["game"]["groupById"]["player1Hand"]["stackIds"])
+    # IO.inspect(Enum.count(gameui["game"]["groupById"]["player1Hand"]["stackIds"]))
+    # IO.puts("hand size 2")
+    #IO.puts("deltas 1")
+    #IO.inspect(gameui["game"]["deltas"])
+    #IO.inspect(gameui["game"]["replayLength"])
     set_last_update(gameui)
+  end
+
+
+  def add_delta(gameui, prev_game) do
+    game = gameui["game"]
+    #IO.puts("deltas")
+    #IO.inspect(game)
+    ds = gameui["deltas"]
+    num_deltas = Enum.count(ds)
+    new_step = gameui["replayStep"]+1
+    gameui = put_in(gameui["replayStep"], new_step)
+    gameui = put_in(gameui["replayLength"], new_step)
+    d = get_delta(prev_game, game)
+    if d do
+      # add timestamp to delta
+      timestamp = System.system_time(:millisecond)
+      d = put_in(d["unix_ms"], "#{timestamp}")
+      ds = Enum.slice(ds, Enum.count(ds)-gameui["replayStep"]+1..-1)
+      ds = [d | ds]
+      game = put_in(gameui["deltas"], ds)
+    else
+      game
+    end
+  end
+
+  def step(gameui, direction) do
+    case direction do
+      "undo" ->
+        IO.puts("step 1")
+        IO.inspect(gameui["deltas"])
+        IO.puts("step 2")
+
+        undo(gameui)
+      "redo" ->
+        redo(gameui)
+      _ ->
+        gameui
+    end
+  end
+
+  def undo(gameui) do
+    replay_step = gameui["replayStep"]
+    if replay_step > 0 do
+      game = gameui["game"]
+      ds = gameui["deltas"]
+      d = Enum.at(ds,Enum.count(ds)-replay_step)
+      game = apply_delta(game, d, "undo")
+      gameui = put_in(gameui, ["game"], game)
+      gameui = put_in(gameui, ["replayStep"], replay_step-1)
+    else
+      gameui
+    end
+  end
+
+  def redo(gameui) do
+    replay_step = gameui["replayStep"]
+    ds = gameui["deltas"]
+    if replay_step < Enum.count(ds) do
+      game = gameui["game"]
+      d = Enum.at(ds,Enum.count(ds)-replay_step-1)
+      game = apply_delta(game, d, "redo")
+      gameui = put_in(gameui, ["game"], game)
+      gameui = put_in(gameui["replayStep"], replay_step+1)
+    else
+      gameui
+    end
+  end
+
+  def get_delta(game_old, game_new) do
+    diff_map = MapDiff.diff(game_old, game_new)
+    delta("game", diff_map)
+  end
+
+  def delta(key, diff_map) do
+    case diff_map[:changed] do
+      :equal ->
+        nil
+      :added ->
+        [":removed", diff_map[:value]]
+      # TODO: Check that removal behaves properly
+      :removed ->
+        [diff_map[:value], ":removed"]
+      :primitive_change ->
+        [diff_map[:removed],diff_map[:added]]
+      :map_change ->
+        diff_value = diff_map[:value]
+        Enum.reduce(diff_value, %{}, fn({k,v},acc) ->
+          d2 = delta(k, v)
+          if v[:changed] != :equal and k != "playerUi" do
+            acc |> Map.put(k, d2)
+          else
+            acc
+          end
+        end)
+        _ ->
+          nil
+    end
+  end
+
+  def apply_delta(map, delta, direction) do
+    # IO.puts("applying delta 1")
+    # IO.inspect(delta)
+    # IO.inspect(direction)
+    # IO.puts("applying delta 2")
+    if is_map(map) and is_map(delta) do
+      delta = Map.delete(delta, "unix_ms")
+      # Loop over keys in delta and apply the changes to the map
+      Enum.reduce(delta, map, fn({k, v}, acc) ->
+        if is_map(v) do
+          if k == "stackIds" do
+            IO.puts("applying stackIds delta 1")
+            IO.inspect(map)
+            IO.inspect(v)
+            IO.puts("applying stackIds delta 2")
+          end
+          put_in(acc[k], apply_delta(map[k], v, direction))
+        else
+          new_val = if direction == "undo" do
+            Enum.at(v,0)
+          else
+            Enum.at(v,1)
+          end
+          if new_val == ":removed" do
+            Map.delete(acc, k)
+          else
+            IO.puts("undo val 1")
+            IO.inspect(k)
+            IO.inspect(acc[k])
+            IO.inspect(new_val)
+            IO.puts("undo val 2")
+            put_in(acc[k], new_val)
+          end
+        end
+      end)
+    else
+      # IO.puts("undo error")
+      # IO.inspect(map)
+      # IO.puts("delta")
+      # IO.inspect(delta)
+      map
+    end
+  end
+
+  def apply_delta_list(game, delta_list, direction) do
+    Enum.reduce(delta_list, game, fn(delta, acc) ->
+      apply_delta(acc, delta, direction)
+    end)
+  end
+
+  def apply_deltas_until_round_change(gameui, direction) do
+    deltas = gameui["deltas"]
+    round_init = gameui["roundNumber"]
+    Enum.reduce_while(deltas, gameui, fn(delta, acc) ->
+      replay_step = acc["replayStep"]
+      # Check if we run into the beginning/end
+      cond do
+        direction == "undo" and replay_step == 0 ->
+          {:halt, acc}
+        direction == "redo" and replay_step == Enum.count(deltas) ->
+          {:halt, acc}
+      # Check if round has changed
+        acc["roundNumber"] != round_init ->
+          {:halt, acc}
+      # Otherwise continue
+        true ->
+          {:cont, step(acc, direction)}
+      end
+    end)
   end
 
   def get_player_n(gameui, user_id) do
@@ -539,11 +723,12 @@ defmodule DragnCardsGame.GameUI do
 
   def save_replay(game, user_id) do
     game_uuid = game["id"]
+    game_def = Plugins.get_game_def(game["options"]["pluginId"])
     updates = %{
       rounds: game["roundNumber"],
       num_players: game["numPlayers"],
       game_json: game,
-      description: Evaluate.evaluate(game, game["gameDef"]["saveDescription"])
+      description: Evaluate.evaluate(game, game_def["saveDescription"])
     }
     result =
       case Repo.get_by(Replay, [user_id: user_id, uuid: game_uuid]) do
@@ -572,25 +757,32 @@ defmodule DragnCardsGame.GameUI do
     put_in(gameui["lastUpdate"], timestamp)
   end
 
-  def step_through(game_old, size, direction) do
-    game_new = cond do
+
+  def step_through(gameui, options) do
+    size = options["size"]
+    direction = options["direction"]
+    IO.puts("step_through 1")
+    IO.inspect(Enum.count(gameui["deltas"]))
+    IO.puts("step_through 2")
+
+    cond do
       size == "single" ->
-        Game.step(game_old, direction)
+        step(gameui, direction)
       size == "round" ->
-        Game.apply_deltas_until_round_change(game_old, direction)
+        apply_deltas_until_round_change(gameui, direction)
       true ->
-        game_old
+        gameui
     end
   end
 
   def reset_game(game) do
-    Game.new(game["gameDef"], game["options"])
+    Game.new(game["options"])
   end
 
-  def create_card_in_group(game, group_id, load_list_item) do
+  def create_card_in_group(game, game_def, group_id, load_list_item) do
     group_size = Enum.count(get_stack_ids(game, group_id))
     # Can't insert a card directly into a group need to make a stack first
-    new_card = Card.card_from_card_details(load_list_item["cardDetails"], game["gameDef"], load_list_item["uuid"], group_id)
+    new_card = Card.card_from_card_details(load_list_item["cardDetails"], game_def, load_list_item["uuid"], group_id)
     new_stack = Stack.stack_from_card(new_card)
     new_card = new_card
     |> Map.put("groupId", group_id)
@@ -601,13 +793,13 @@ defmodule DragnCardsGame.GameUI do
     |> insert_stack_in_group(group_id, new_stack["id"], group_size)
     |> update_stack(new_stack)
     |> update_card(new_card)
-    |> implement_card_automations(new_card)
+    |> implement_card_automations(game_def, new_card)
     |> update_card_state(new_card["id"], nil)
     game
   end
 
-  def implement_card_automations(game, card) do
-    card_automation = game["gameDef"]["automation"][card["cardDbId"]]
+  def implement_card_automations(game, game_def, card) do
+    card_automation = game_def["automation"][card["cardDbId"]]
     if card_automation == nil do
       game
     else
@@ -636,7 +828,7 @@ defmodule DragnCardsGame.GameUI do
   #   end
   # end
 
-  def load_card(game, load_list_item) do
+  def load_card(game, game_def, load_list_item) do
     quantity = load_list_item["quantity"]
 
     game = if quantity <= 0 do
@@ -646,7 +838,7 @@ defmodule DragnCardsGame.GameUI do
 
       1..quantity
       |> Enum.reduce(game, fn(_index, acc) ->
-        create_card_in_group(acc, group_id, load_list_item)
+        create_card_in_group(acc, game_def, group_id, load_list_item)
       end)
     end
   end
@@ -671,13 +863,14 @@ defmodule DragnCardsGame.GameUI do
   end
 
   def load_cards(game, player_n, load_list) do
+    game_def = Plugins.get_game_def(game["options"]["pluginId"])
     # Get deck size before load
     player_n_deck_id = player_n<>"Deck"
     deck_size_before = Enum.count(get_stack_ids(game, player_n_deck_id))
     old_game = game
 
     game = Enum.reduce(load_list, game, fn load_list_item, acc ->
-      load_card(acc, load_list_item)
+      load_card(acc, game_def, load_list_item)
     end)
 
     game = shuffle_changed_decks(game, old_game)

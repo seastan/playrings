@@ -7,54 +7,30 @@ defmodule DragnCardsWeb.RoomChannel do
 
   require Logger
 
+
   def join("room:" <> room_slug, _payload, %{assigns: %{user_id: user_id}} = socket) do
-    # if authorized?(payload) do
     state = GameUIServer.state(room_slug)
 
     socket =
       socket
       |> assign(:room_slug, room_slug)
-      |> assign(:game_ui, state)
 
-    # {:ok, socket}
     send(self, :after_join)
-    {:ok, client_state(socket, "join_room"), socket}
-    # else
-    #   {:error, %{reason: "unauthorized"}}
-    # end
+    {:ok, socket}
   end
 
-  def handle_info(:after_join, %{assigns: %{room_slug: room_slug, user_id: user_id}} = socket) do
+  def handle_info(:after_join, %{assigns: %{room_slug: room_slug, user_id: user_id}, channel_pid: pid} = socket) do
     # state = GameUIServer.state(room_slug)
-    if GameUIServer.game_exists?(room_slug) do
-      state = GameUIServer.state(room_slug)
-
-      GameUIServer.add_player_to_room(room_slug, user_id)
-      state = GameUIServer.state(room_slug)
-      socket = socket |> assign(:game_ui, state)
-
-      notify(socket, user_id)
-    end
-    {:noreply, socket}
-  end
-
-  # Channels can be used in a request/response fashion
-  # by sending replies to requests from the client
-  def handle_in("ping", payload, socket) do
-    {:reply, {:ok, payload}, socket}
-  end
-
-  # It is also common to receive messages from the client and
-  # broadcast to everyone in the current topic (room:lobby).
-  def handle_in("shout", payload, socket) do
-    broadcast(socket, "shout", payload)
+    IO.puts("nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn after join")
+    IO.inspect(socket)
+    GameUIServer.add_player_to_room(room_slug, user_id, pid)
+    notify(socket, user_id)
     {:noreply, socket}
   end
 
   def handle_in("request_state", _payload, %{assigns: %{room_slug: room_slug}} = socket) do
     state = GameUIServer.state(room_slug)
-    socket = socket |> assign(:game_ui, state)
-    {:reply, {:ok, client_state(socket, "request_state")}, socket}
+    {:reply, {:ok, client_state(socket, state)}, socket}
   end
 
   def handle_in(
@@ -66,42 +42,12 @@ defmodule DragnCardsWeb.RoomChannel do
     },
     %{assigns: %{room_slug: room_slug, user_id: user_id}} = socket
   ) do
-    IO.inspect("room_channel game_action")
     GameUIServer.game_action(room_slug, user_id, action, options)
     state = GameUIServer.state(room_slug)
-    state = if is_map(state) do
-      put_in(state["submittedTimestamp"], timestamp)
-    end
 
-    socket = socket |> assign(:game_ui, state)
-
-    new_delta = Enum.at(state["game"]["deltas"],0)
-    notify_new_delta(socket, user_id, new_delta)
-
-    {:reply, {:ok, client_state(socket, "game_action")}, socket}
-  end
-
-  def handle_in(
-    "step_through",
-    %{
-      "action" => action,
-      "options" => options,
-      "timestamp" => timestamp,
-    },
-    %{assigns: %{room_slug: room_slug, user_id: user_id}} = socket
-  ) do
-    GameUIServer.game_action(room_slug, user_id, action, options)
-    state = GameUIServer.state(room_slug)
-    state = if is_map(state) do
-      put_in(state["submittedTimestamp"], timestamp)
-    else
-      state
-    end
-
-    socket = socket |> assign(:game_ui, state)
     notify(socket, user_id)
 
-    {:reply, {:ok, client_state(socket, "step_through")}, socket}
+    {:reply, {:ok, "game_action"}, socket}
   end
 
   def handle_in(
@@ -114,29 +60,10 @@ defmodule DragnCardsWeb.RoomChannel do
     %{assigns: %{room_slug: room_slug, user_id: user_id}} = socket
   ) do
     GameUIServer.set_seat(room_slug, user_id, player_i, new_user_id)
-    state = GameUIServer.state(room_slug)
 
-    socket = socket |> assign(:game_ui, state)
     notify(socket, user_id)
 
-    {:reply, {:ok, client_state(socket, "set_seat")}, socket}
-  end
-
-  def handle_in(
-    "set_game_def",
-    %{
-      "game_def" => game_def,
-      "timestamp" => timestamp,
-    },
-    %{assigns: %{room_slug: room_slug, user_id: user_id}} = socket
-  ) do
-    GameUIServer.set_game_def(room_slug, user_id, game_def)
-    state = GameUIServer.state(room_slug)
-
-    socket = socket |> assign(:game_ui, state)
-    notify(socket, user_id)
-
-    {:reply, {:ok, client_state(socket, "set_game_def")}, socket}
+    {:reply, :ok, socket}
   end
 
   def handle_in(
@@ -145,12 +72,10 @@ defmodule DragnCardsWeb.RoomChannel do
     %{assigns: %{room_slug: room_slug, user_id: user_id}} = socket
   ) do
     GameUIServer.close_room(room_slug, user_id)
-    state = GameUIServer.state(room_slug)
 
-    socket = socket |> assign(:game_ui, state)
     notify(socket, user_id)
 
-    {:reply, {:ok, client_state(socket,"close_room")}, socket}
+    {:reply, :ok, socket}
   end
 
   @doc """
@@ -190,65 +115,24 @@ defmodule DragnCardsWeb.RoomChannel do
     on_terminate(socket)
   end
 
-  defp on_terminate(%{assigns: %{room_slug: room_slug, user_id: user_id}} = socket) do
-    state = GameUIServer.leave(room_slug, user_id)
-    socket = socket |> assign(:game_ui, state)
+  defp on_terminate(%{assigns: %{room_slug: room_slug, user_id: user_id}, channel_pid: pid} = socket) do
+    state = GameUIServer.leave(room_slug, user_id, pid)
     notify(socket, user_id)
   end
 
   defp notify(socket, user_id) do
-    # # Fake a phx_reply event to everyone
+    # Fake a phx_reply event to everyone
     payload = %{
       response: %{user_id: user_id},
       status: "ok"
     }
 
-    # broadcast!(socket, "phx_reply", payload)
     broadcast!(socket, "ask_for_update", payload)
-  end
-
-  defp notify_new_delta(socket, user_id, new_delta) do
-    # # Fake a phx_reply event to everyone
-    payload = %{
-      response: %{user_id: user_id, new_delta: new_delta},
-      status: "ok"
-    }
-    broadcast!(socket, "new_delta", payload)
-  end
-
-  # Remove deltas from a gameui, as it's not needed for rendering
-  def remove_deltas(gameui) do
-    gameui = if gameui do
-      put_in(gameui["game"]["deltas"], [])
-    else
-      gameui
-    end
-  end
-
-  def reduce_size(gameui, just_joined) do
-    gameui = if just_joined || gameui["game"]["last_action"] == "load_cards" do
-      gameui
-    else
-      Enum.reduce(gameui["game"]["cardById"], gameui, fn({card_id, card}, acc) ->
-        put_in(acc["game"]["cardById"][card_id]["sides"], nil)
-      end)
-    end
   end
 
   # This is what part of the state gets sent to the client.
   # It can be used to transform or hide it before they get it.
-  defp client_state(socket, type \\ "") do
-    if Map.has_key?(socket.assigns, :game_ui) do
-      gameui = socket.assigns.game_ui
-      if type == "game_action" do
-        my_delta = Enum.at(gameui["game"]["deltas"],0)
-        socket.assigns |> Map.put(:my_delta,my_delta) |> Map.put(:game_ui,nil)
-      else
-        gameui = remove_deltas(gameui)
-        socket.assigns |> Map.put(:game_ui,gameui)
-      end
-    else
-      socket.assigns
-    end
+  defp client_state(socket, state) do
+    state
   end
 end

@@ -1,5 +1,7 @@
 import { useSelector } from 'react-redux';
+import { usePlugin } from './usePlugin';
 
 export const useGameDefinition = () => {
-    return useSelector(state => state?.gameUi?.game?.gameDef);
+    const plugin = usePlugin();
+    return plugin?.gameDef; //useSelector(state => state?.gameUi?.game?.gameDef);
 }

@@ -71,6 +71,14 @@ defmodule DragnCardsGame.GameUIServer do
   end
 
   @doc """
+  game_action/4: Perform given action on a card.
+  """
+  @spec step_through(String.t(), Map.t()) :: GameUI.t()
+  def step_through(game_name, options) do
+    game_exists?(game_name) && GenServer.call(via_tuple(game_name), {:step_through, options})
+  end
+
+  @doc """
   set_seat/4: Set a seat value.
   """
   @spec set_seat(String.t(), integer, String.t(), integer) :: GameUI.t()
@@ -79,19 +87,11 @@ defmodule DragnCardsGame.GameUIServer do
   end
 
   @doc """
-  set_game_def/3: Set a game definition.
-  """
-  @spec set_game_def(String.t(), integer, Map.t()) :: GameUI.t()
-  def set_game_def(game_name, user_id, game_def) do
-    game_exists?(game_name) && GenServer.call(via_tuple(game_name), {:set_game_def, user_id, game_def})
-  end
-
-  @doc """
   add_player_to_room/2: Add a player to the room.
   """
-  @spec add_player_to_room(String.t(), integer) :: GameUI.t()
-  def add_player_to_room(game_name, user_id) do
-    GenServer.call(via_tuple(game_name), {:add_player_to_room, user_id})
+  @spec add_player_to_room(String.t(), integer, pid()) :: GameUI.t()
+  def add_player_to_room(game_name, user_id, pid) do
+    GenServer.call(via_tuple(game_name), {:add_player_to_room, user_id, pid})
   end
 
   @doc """
@@ -108,8 +108,8 @@ defmodule DragnCardsGame.GameUIServer do
   Maybe eventually there will be some sophisticated disconnect/reconnect
   system?
   """
-  def leave(game_name, user_id) do
-    game_exists?(game_name) && GenServer.call(via_tuple(game_name), {:leave, user_id})
+  def leave(game_name, user_id, pid) do
+    game_exists?(game_name) && GenServer.call(via_tuple(game_name), {:leave, user_id, pid})
   end
   #####################################
   ####### IMPLEMENTATION ##############
@@ -170,6 +170,19 @@ defmodule DragnCardsGame.GameUIServer do
     |> save_and_reply()
   end
 
+  def handle_call({:step_through, options}, _from, gameui) do
+    Logger.debug("handle step_through #{options}")
+    try do
+      gameui = GameUI.step_through(gameui, options)
+      gameui = put_in(gameui["error"], false)
+    rescue
+      e in RuntimeError ->
+        IO.inspect(e)
+        put_in(gameui["error"],true)
+    end
+    |> save_and_reply()
+  end
+
   def handle_call({:set_seat, user_id, player_i, new_user_id}, _from, gameui) do
     try do
       gameui = put_in(gameui["playerInfo"][player_i],PlayerInfo.new(new_user_id))
@@ -181,31 +194,8 @@ defmodule DragnCardsGame.GameUIServer do
     |> save_and_reply()
   end
 
-  def handle_call({:set_game_def, user_id, game_def}, _from, gameui) do
-    try do
-      gameui = put_in(gameui["gameDef"],game_def)
-    rescue
-      e in RuntimeError ->
-        IO.inspect(e)
-        put_in(gameui["error"],true)
-    end
-    |> save_and_reply()
-  end
-
-  def handle_call({:add_player_to_room, user_id}, _from, gameui) do
-    Logger.debug("Added player to room: #{user_id}")
-    if gameui["playersInRoom"] do
-      players_in_room_old = gameui["playersInRoom"]
-      number_windows_open = players_in_room_old["#{user_id}"]
-      players_in_room_new = if number_windows_open != nil do
-        put_in(players_in_room_old["#{user_id}"], number_windows_open + 1)
-      else
-        put_in(players_in_room_old["#{user_id}"], 1)
-      end
-      put_in(gameui["playersInRoom"], players_in_room_new)
-    else
-      gameui
-    end
+  def handle_call({:add_player_to_room, user_id, pid}, _from, gameui) do
+    put_in(gameui, ["sockets", pid_to_string(pid)], user_id)
     |> save_and_reply()
   end
 
@@ -244,16 +234,8 @@ defmodule DragnCardsGame.GameUIServer do
     @timeout
   end
 
-  def handle_call({:leave, user_id}, _from, gameui) do
-    # When a user leaves, we currently do nothing
-    players_in_room_old = gameui["playersInRoom"]
-    number_windows_open = players_in_room_old["#{user_id}"]
-    players_in_room_new = if number_windows_open == nil or number_windows_open == 0 do
-      players_in_room_old
-    else
-      put_in(players_in_room_old["#{user_id}"], number_windows_open - 1)
-    end
-    put_in(gameui["playersInRoom"], players_in_room_new)
+  def handle_call({:leave, user_id, pid}, _from, gameui) do
+    Map.delete(gameui, ["sockets", pid_to_string(pid)])
     |> save_and_reply()
   end
 
@@ -274,5 +256,10 @@ defmodule DragnCardsGame.GameUIServer do
     Logger.info("Terminate (Non Timeout) running for #{state["roomName"]}")
     GameRegistry.remove(state["roomName"])
     :ok
+  end
+
+  def pid_to_string(pid) do
+    list = pid |> :erlang.pid_to_list()
+    to_string(list)
   end
 end

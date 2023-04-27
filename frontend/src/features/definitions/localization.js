@@ -132,10 +132,10 @@ export const siteL10n = {
     "English": "Redo one action"
   },
   "undoManyActions": {
-    "English": "Undo 20 actions"
+    "English": "Undo round"
   },
   "redoManyActions": {
-    "English": "Redo 20 actions"
+    "English": "Redo round"
   },
   "moveToPreviousGameStep": {
     "English": "Move to previous game step"

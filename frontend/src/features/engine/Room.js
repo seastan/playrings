@@ -42,7 +42,19 @@ export const Room = ({ slug }) => {
         // }
       }
 
-    } else if (event === "phx_reply" && payload.response.game_ui != null) {
+    } else if (event === "phx_reply" && payload.response.game != null) {
+      // Update store with the full state received
+      const game_ui = payload.response;
+      if (roomName !== game_ui.roomName) { // Entered a new room
+        // Reset player UI
+        dispatch(resetPlayerUi())
+      }
+      // Simulate high ping/lag;
+      //delayBroadcast = setTimeout(function() {
+        console.log("dispatching to game", game_ui)
+        dispatch(setGameUi(game_ui));
+      //}, 5000);
+    } else if (event === "new_state" && payload.response.game_ui != null) {
       // Update store with the full state received
       const { game_ui } = payload.response;
       if (roomName !== game_ui.roomName) { // Entered a new room

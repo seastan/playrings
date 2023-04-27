@@ -277,7 +277,6 @@
     "gameProperties": {
       "victoryPointsRed": {"type": "integer", "default": 0},
       "victoryPointsBlue": {"type": "integer", "default": 0},
-      "roundNumber": {"type": "integer", "default": 0},
       "victoryState": {"type": "string", "default": ""}
     },
     "cardProperties": {

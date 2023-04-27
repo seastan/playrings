@@ -19,8 +19,14 @@ defmodule DragnCardsWeb.PluginsController do
   end
 
   def get_plugin(conn, params) do
+    IO.puts("get_plugin 1")
+    IO.inspect(params)
     {plugin_id, ""} = Integer.parse(params["plugin_id"])
+    IO.puts("get_plugin 2")
+    IO.inspect(plugin_id)
     plugin = Repo.get_by(Plugin, id: plugin_id)
+    IO.puts("get_plugin 3")
+    IO.inspect(plugin.id)
     render(conn, "single.json", plugin: plugin)
   end
 

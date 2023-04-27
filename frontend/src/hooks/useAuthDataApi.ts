@@ -102,7 +102,9 @@ const useAuthDataApi = (
       setIsError(false);
       setIsLoading(true);
 
-      const an_axios = axios.create();
+      const an_axios = axios.create({
+        timeout: 10000, // 10 seconds
+      });
       console.log("debug1 create", an_axios)
       an_axios.interceptors.response.use(id, intercept_error);
       try {
