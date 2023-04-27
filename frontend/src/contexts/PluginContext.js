@@ -11,17 +11,17 @@ export const PluginProvider = ({ children }) => {
     '/be/api/plugins/' + pluginId,
     null
   );
-  console.log("pluginTrace PluginProvider base 1", {pluginId, isLoading})
+  console.log("pluginTrace PluginProvider base 1", {data, isLoading})
 
   useEffect(() => {
     console.log("pluginTrace PluginProvider useEffect 1", {pluginId, isLoading})
     doFetchUrl('/be/api/plugins/' + pluginId);
-    console.log("pluginTrace PluginProvider useEffect 2", {pluginId, isLoading})
+    console.log("pluginTrace PluginProvider useEffect 2", {data, isLoading})
   }, [pluginId]);
 
   return (
     <PluginContext.Provider value={{ plugin: data, isLoading }}>
-        {isLoading ?
+        {isLoading || data?.game_def == null ?
             <div className="absolute flex h-full w-full items-center justify-center opacity-80 bg-gray-800">
             <RotatingLines
                 height={100}
@@ -29,6 +29,7 @@ export const PluginProvider = ({ children }) => {
                 strokeColor="white"/>
             </div>
         :
+        // <div>Hello world</div>}
         children}
     </PluginContext.Provider>
   );

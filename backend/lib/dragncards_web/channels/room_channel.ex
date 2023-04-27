@@ -43,7 +43,20 @@ defmodule DragnCardsWeb.RoomChannel do
     %{assigns: %{room_slug: room_slug, user_id: user_id}} = socket
   ) do
     GameUIServer.game_action(room_slug, user_id, action, options)
-    state = GameUIServer.state(room_slug)
+
+    notify(socket, user_id)
+
+    {:reply, {:ok, "game_action"}, socket}
+  end
+
+  def handle_in(
+    "step_through",
+    %{
+      "options" => options,
+    },
+    %{assigns: %{room_slug: room_slug, user_id: user_id}} = socket
+  ) do
+    GameUIServer.step_through(room_slug, options)
 
     notify(socket, user_id)
 

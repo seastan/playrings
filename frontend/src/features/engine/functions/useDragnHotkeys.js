@@ -33,13 +33,13 @@ export const dragnHotkeys = [
             ["GAME_ADD_MESSAGE", "$PLAYER_N", " cleared their targets."]
           ])
         case "undo":
-            return gameBroadcast("step_through", {options: {size: "single", direction: "undo", preserve_undo: true, player_ui: store.getState().playerUi}});
+            return gameBroadcast("step_through", {options: {size: "single", direction: "undo"}});
         case "redo":
-            return gameBroadcast("step_through", {options: {size: "single", direction: "redo", preserve_undo: true, player_ui: store.getState().playerUi}});
+            return gameBroadcast("step_through", {options: {size: "single", direction: "redo"}});
         case "undoMany":
-            return gameBroadcast("step_through", {options: {size: "round", direction: "undo", preserve_undo: true, player_ui: store.getState().playerUi}});
+            return gameBroadcast("step_through", {options: {size: "round", direction: "undo"}});
         case "redoMany":
-            return gameBroadcast("step_through", {options: {size: "round", direction: "redo", preserve_undo: true, player_ui: store.getState().playerUi}});
+            return gameBroadcast("step_through", {options: {size: "round", direction: "redo"}});
         case "prevStep": 
             return doActionList([
                 ["GAME_DECREASE_VAL", "/stepIndex", 1],

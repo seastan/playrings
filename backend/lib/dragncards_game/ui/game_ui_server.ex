@@ -171,7 +171,7 @@ defmodule DragnCardsGame.GameUIServer do
   end
 
   def handle_call({:step_through, options}, _from, gameui) do
-    Logger.debug("handle step_through #{options}")
+    Logger.debug("handle step_through")
     try do
       gameui = GameUI.step_through(gameui, options)
       gameui = put_in(gameui["error"], false)
