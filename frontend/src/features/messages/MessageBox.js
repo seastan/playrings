@@ -21,8 +21,12 @@ export const MessageBox = ({ hover, chatBroadcast }) => {
   } 
 
   useEffect(() => {
-    if (newMessageObjects) setAllChatMessageObjects([...allChatMessageObjects, ...newMessageObjects.filter((message) => message.sent_by !== -1)])
-    if (newMessageObjects) setAllLogMessageObjects([...allLogMessageObjects, ...newMessageObjects.filter((message) => message.sent_by === -1)])
+    const filteredNewChatMessageObjects = newMessageObjects?.filter(obj2 => obj2.sent_by !== -1 && !allChatMessageObjects.find(obj1 => obj1.shortcode === obj2.shortcode));
+    const filteredNewLogMessageObjects = newMessageObjects?.filter(obj2 => obj2.sent_by === -1 && !allLogMessageObjects.find(obj1 => obj1.shortcode === obj2.shortcode));
+    console.log("MessageBox useEffect", {newMessageObjects, filteredNewLogMessageObjects, allLogMessageObjects})
+
+    if (newMessageObjects) setAllChatMessageObjects([...allChatMessageObjects, ...filteredNewChatMessageObjects])
+    if (newMessageObjects) setAllLogMessageObjects([...allLogMessageObjects, ...filteredNewLogMessageObjects])
   }, [newMessageObjects]);
 
   return (

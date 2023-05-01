@@ -30,6 +30,7 @@ defmodule DragnCardsGame.GameUI do
       "replayStep" => 0,
       "replayLength" => 0, # Length of deltas. We need this because the delta array is not broadcast.
       "sockets" => %{},
+      "logTimestamp" => nil,
       "logMessages" => [] # These game messages will be delivered to chat
     }
   end
@@ -474,13 +475,6 @@ defmodule DragnCardsGame.GameUI do
   ################################################################
 
   def game_action(gameui, user_id, action, options) do
-
-    IO.puts(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> WHY AM I HERE 1")
-    IO.inspect(action)
-    IO.inspect(options)
-    IO.puts(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> WHY AM I HERE 2")
-
-
     user_alias = get_alias_by_user_id(gameui, user_id)
     player_n = get_player_n(gameui, user_id)
     player_n = if options["for_player_n"] do options["for_player_n"] else player_n end
@@ -520,7 +514,9 @@ defmodule DragnCardsGame.GameUI do
   end
 
   def update_log(gameui, messages) do
-    put_in(gameui, ["logMessages"], messages)
+    gameui
+    |> put_in(["logTimestamp"], System.system_time(:millisecond))
+    |> put_in(["logMessages"], messages)
   end
 
   def add_delta(gameui, prev_game) do
@@ -529,7 +525,6 @@ defmodule DragnCardsGame.GameUI do
     num_deltas = Enum.count(ds)
     new_step = gameui["replayStep"]+1
     gameui = put_in(gameui["replayStep"], new_step)
-    IO.puts(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> WHY AM I HERE")
     gameui = put_in(gameui["replayLength"], new_step)
     d = get_delta(prev_game, game)
     if d do
@@ -547,14 +542,9 @@ defmodule DragnCardsGame.GameUI do
   def step(gameui, direction) do
     case direction do
       "undo" ->
-          gameui = undo(gameui)
+          undo(gameui)
       "redo" ->
-        if gameui["replayStep"] >= Enum.count(gameui["deltas"]) do
-          gameui = update_log(gameui, ["--- Nothing to redo ---"])
-        else
-          gameui = redo(gameui)
-          gameui = update_log(gameui, ["--- Starting redo ---"] ++ gameui["game"]["messages"] ++ ["--- Finished redo ---"])
-        end
+        redo(gameui)
       _ ->
         gameui
     end
@@ -568,40 +558,39 @@ defmodule DragnCardsGame.GameUI do
       deltas = gameui["deltas"]
       delta = Enum.at(deltas,Enum.count(deltas)-replay_step)
       game = apply_delta(game, delta, "undo")
-
-      IO.puts("undo ...............................................1")
-      IO.inspect(messages)
-        IO.puts("undo ...............................................2")
-        IO.inspect(gameui["replayStep"])
-        IO.inspect(gameui["replayLength"])
       messages = if messages == [] do
         [inspect(delta)]
       else
         messages
       end
-      IO.puts("undo ...............................................3")
-      IO.inspect(messages)
-      IO.puts("undo ...............................................4")
-      gameui = update_log(gameui, ["--- Starting undo ---"] ++ messages ++ ["--- Finished undo ---"])
-
-      gameui = put_in(gameui, ["game"], game)
-      gameui = put_in(gameui, ["replayStep"], replay_step-1)
+      gameui
+        |> update_log(Enum.map(messages, fn(message) -> "UNDO: " <> message end))
+        |> put_in(["game"], game)
+        |> put_in(["replayStep"], replay_step-1)
     else
-      update_log(gameui, ["--- Nothing to undo ---"])
+      update_log(gameui, ["UNDO: Nothing to undo"])
     end
   end
 
   def redo(gameui) do
     replay_step = gameui["replayStep"]
-    ds = gameui["deltas"]
-    if replay_step < Enum.count(ds) do
+    deltas = gameui["deltas"]
+    if replay_step < Enum.count(deltas) do
       game = gameui["game"]
-      d = Enum.at(ds,Enum.count(ds)-replay_step-1)
-      game = apply_delta(game, d, "redo")
-      gameui = put_in(gameui, ["game"], game)
-      gameui = put_in(gameui["replayStep"], replay_step+1)
-    else
+      delta = Enum.at(deltas,Enum.count(deltas)-replay_step-1)
+      game = apply_delta(game, delta, "redo")
+      messages = game["messages"]
+      messages = if messages == [] do
+        [inspect(delta)]
+      else
+        messages
+      end
       gameui
+        |> update_log(Enum.map(messages, fn(message) -> "REDO: " <> message end))
+        |> put_in(["game"], game)
+        |> put_in(["replayStep"], replay_step+1)
+    else
+      update_log(gameui, ["REDO: Nothing to redo"])
     end
   end
 

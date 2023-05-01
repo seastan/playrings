@@ -73,7 +73,7 @@ defmodule DragnCardsWeb.RoomChannel do
   ) do
     GameUIServer.set_seat(room_slug, user_id, player_i, new_user_id)
 
-    notify(socket, room_slug, user_id)
+    notify_quiet(socket, room_slug, user_id)
 
     {:reply, :ok, socket}
   end
@@ -144,6 +144,20 @@ defmodule DragnCardsWeb.RoomChannel do
   defp on_terminate(%{assigns: %{room_slug: room_slug, user_id: user_id}, channel_pid: pid} = socket) do
     state = GameUIServer.leave(room_slug, user_id, pid)
     notify(socket, room_slug, user_id)
+  end
+
+
+  defp notify_quiet(socket, room_slug, user_id) do
+
+    gameui = GameUIServer.state(room_slug)
+
+    # Send a phx_reply event to everyone to ask for an update. Include the messages from the current update
+    payload = %{
+      response: %{user_id: user_id},
+      status: "ok",
+    }
+
+    broadcast!(socket, "ask_for_update", payload)
   end
 
   defp notify(socket, room_slug, user_id) do

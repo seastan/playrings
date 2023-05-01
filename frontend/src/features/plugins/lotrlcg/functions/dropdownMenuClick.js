@@ -7,6 +7,7 @@ import { useDoActionList } from "../../../engine/functions/useDoActionList";
 // dropdownMenu is an object that gets populated with infor about a card when a card is pressed, or about a group when a group is pressed.
 
 export const useDropdownClickCommon = (dropdownOptions) => {
+  alert("useDropdownClickCommon 1")
   const dropdownClickCard = useDropdownClickCard;
   const dropdownClickGroup = useDropdownClickGroup;
   const dropdownClickFirstPlayer = useDropdownClickFirstPlayer;
@@ -92,5 +93,6 @@ export const useDropdownClickGroup = (dropdownOptions, actionProps) => {
 
 export const useDropdownClickFirstPlayer = (dropdownOptions, actionProps) => {
   const {state, dispatch, gameBroadcast, chatBroadcast} = actionProps;
-  
+  alert("useDropdownClickFirstPlayer 1")
+
 } 
