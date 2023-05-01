@@ -71,6 +71,14 @@ defmodule DragnCardsGame.GameUIServer do
   end
 
   @doc """
+  set_game_def/3: Set a new game definition.
+  """
+  @spec set_game_def(String.t(), integer, Map.t()) :: GameUI.t()
+  def set_game_def(game_name, user_id, game_def) do
+    game_exists?(game_name) && GenServer.call(via_tuple(game_name), {:set_game_def, user_id, game_def})
+  end
+
+  @doc """
   game_action/4: Perform given action on a card.
   """
   @spec step_through(String.t(), Map.t()) :: GameUI.t()
@@ -120,7 +128,7 @@ defmodule DragnCardsGame.GameUIServer do
     gameui =
       case :ets.lookup(:game_uis, game_name) do
         [] ->
-          gameui = GameUI.new(game_name, user, options)
+          gameui = GameUI.new(game_name, user.id, options)
           :ets.insert(:game_uis, {game_name, gameui})
           gameui
 
@@ -147,6 +155,7 @@ defmodule DragnCardsGame.GameUIServer do
 
   def handle_call({:game_action, user_id, action, options}, _from, gameui) do
     Logger.debug("handle game_action #{user_id} #{action}")
+    gameui
     try do
       gameui = GameUI.game_action(gameui, user_id, action, options)
       gameui = put_in(gameui["error"], false)
@@ -174,6 +183,19 @@ defmodule DragnCardsGame.GameUIServer do
     Logger.debug("handle step_through")
     try do
       gameui = GameUI.step_through(gameui, options)
+      gameui = put_in(gameui["error"], false)
+    rescue
+      e in RuntimeError ->
+        IO.inspect(e)
+        put_in(gameui["error"],true)
+    end
+    |> save_and_reply()
+  end
+
+  def handle_call({:set_game_def, user_id, game_def}, _from, gameui) do
+    Logger.debug("handle step_through")
+    try do
+      gameui = GameUI.new(gameui, user_id, gameui["options"])
       gameui = put_in(gameui["error"], false)
     rescue
       e in RuntimeError ->

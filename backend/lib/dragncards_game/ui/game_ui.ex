@@ -13,27 +13,24 @@ defmodule DragnCardsGame.GameUI do
 
   @type t :: Map.t()
 
-  @spec new(String.t(), User.t(), Map.t()) :: GameUI.t()
-  def new(game_name, user, %{} = options) do
+  @spec new(String.t(), integer(), Map.t()) :: GameUI.t()
+  def new(game_name, user_id, %{} = options) do
     Logger.debug("gameui new")
     gameui = %{
       "game" => Game.load(options),
       "roomName" => game_name,
       "options" => options,
       "createdAt" => DateTime.utc_now(),
-      "createdBy" => user.id,
+      "createdBy" => user_id,
       "privacyType" => options["privacyType"],
       "playerInfo" => %{
-        "player1" => PlayerInfo.new(user.id),
-        "player2" => nil,
-        "player3" => nil,
-        "player4" => nil,
+        "player1" => PlayerInfo.new(user_id)
       },
       "deltas" => [],
       "replayStep" => 0,
       "replayLength" => 0, # Length of deltas. We need this because the delta array is not broadcast.
       "sockets" => %{},
-      "lastUpdate" => System.system_time(:second),
+      "logMessages" => [] # These game messages will be delivered to chat
     }
   end
 
@@ -477,67 +474,62 @@ defmodule DragnCardsGame.GameUI do
   ################################################################
 
   def game_action(gameui, user_id, action, options) do
+
+    IO.puts(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> WHY AM I HERE 1")
+    IO.inspect(action)
+    IO.inspect(options)
+    IO.puts(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> WHY AM I HERE 2")
+
+
     user_alias = get_alias_by_user_id(gameui, user_id)
     player_n = get_player_n(gameui, user_id)
     player_n = if options["for_player_n"] do options["for_player_n"] else player_n end
     Logger.debug("game_action #{user_id} #{player_n} #{action}")
-    game = gameui["game"]
-    game = put_in(game["playerUi"], options["player_ui"])
-    game = put_in(game["messages"], [])
-    IO.puts("game_action check 1")
-    IO.inspect(user_id)
-    IO.inspect(action)
-    IO.inspect(player_n)
-    IO.puts("game_action check 2")
-    game_new = if player_n do
-      case action do
-        "evaluate" ->
-          IO.puts("evaluating game_action 1")
-          IO.inspect(options["action_list"])
-          Evaluate.evaluate_with_timeout(game, options["action_list"])
-        "set_game" ->
-          options["game"]
-        "reset_game" ->
-          reset_game(game)
-        "load_cards" ->
-          load_cards(game, player_n, options["load_list"])
-        "save_replay" ->
-          save_replay(game, user_id)
-        _ ->
-          game
-      end
-    else
-      game
-    end
-    #game_new = save_replay(game_new, user_id)
-    # Compare state before and after, and add a delta (unless we are undoing a move or loading a game with undo info)
-    game_new = Map.delete(game_new, "playerUi")
-    IO.puts("round_num before")
-    IO.inspect(game_new["roundNumber"])
-    game_new = put_in(game_new["variables"], %{})
-    gameui = put_in(gameui, ["game"], game_new)
-    gameui = add_delta(gameui, game)
-    IO.puts("round_num after")
-    IO.inspect(gameui["game"]["roundNumber"])
-    # IO.puts("hand size 1")
-    # IO.inspect(gameui["game"]["groupById"]["player1Hand"]["stackIds"])
-    # IO.inspect(Enum.count(gameui["game"]["groupById"]["player1Hand"]["stackIds"]))
-    # IO.puts("hand size 2")
-    #IO.puts("deltas 1")
-    #IO.inspect(gameui["game"]["deltas"])
-    #IO.inspect(gameui["game"]["replayLength"])
-    set_last_update(gameui)
+    game_old = gameui["game"]
+
+    game_new = game_old
+      |> put_in(["playerUi"], options["player_ui"])
+      |> put_in(["messages"], [])
+      |> resolve_action_type(action, options, player_n, user_id)
+      |> Map.delete("playerUi")
+      |> put_in(["variables"], %{})
+
+    set_last_room_update(gameui)
+
+    gameui
+    |> put_in(["game"], game_new)
+    |> update_log(game_new["messages"])
+    |> add_delta(game_old)
   end
 
+  def resolve_action_type(game, type, options, player_n, user_id) do
+    case type do
+      "evaluate" ->
+        Evaluate.evaluate_with_timeout(game, options["action_list"])
+      "set_game" ->
+        options["game"]
+      "reset_game" ->
+        reset_game(game)
+      "load_cards" ->
+        load_cards(game, player_n, options["load_list"])
+      "save_replay" ->
+        save_replay(game, user_id)
+      _ ->
+        game
+    end
+  end
+
+  def update_log(gameui, messages) do
+    put_in(gameui, ["logMessages"], messages)
+  end
 
   def add_delta(gameui, prev_game) do
     game = gameui["game"]
-    #IO.puts("deltas")
-    #IO.inspect(game)
     ds = gameui["deltas"]
     num_deltas = Enum.count(ds)
     new_step = gameui["replayStep"]+1
     gameui = put_in(gameui["replayStep"], new_step)
+    IO.puts(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> WHY AM I HERE")
     gameui = put_in(gameui["replayLength"], new_step)
     d = get_delta(prev_game, game)
     if d do
@@ -555,13 +547,14 @@ defmodule DragnCardsGame.GameUI do
   def step(gameui, direction) do
     case direction do
       "undo" ->
-        IO.puts("step 1")
-        IO.inspect(gameui["deltas"])
-        IO.puts("step 2")
-
-        undo(gameui)
+          gameui = undo(gameui)
       "redo" ->
-        redo(gameui)
+        if gameui["replayStep"] >= Enum.count(gameui["deltas"]) do
+          gameui = update_log(gameui, ["--- Nothing to redo ---"])
+        else
+          gameui = redo(gameui)
+          gameui = update_log(gameui, ["--- Starting redo ---"] ++ gameui["game"]["messages"] ++ ["--- Finished redo ---"])
+        end
       _ ->
         gameui
     end
@@ -571,13 +564,30 @@ defmodule DragnCardsGame.GameUI do
     replay_step = gameui["replayStep"]
     if replay_step > 0 do
       game = gameui["game"]
-      ds = gameui["deltas"]
-      d = Enum.at(ds,Enum.count(ds)-replay_step)
-      game = apply_delta(game, d, "undo")
+      messages = game["messages"]
+      deltas = gameui["deltas"]
+      delta = Enum.at(deltas,Enum.count(deltas)-replay_step)
+      game = apply_delta(game, delta, "undo")
+
+      IO.puts("undo ...............................................1")
+      IO.inspect(messages)
+        IO.puts("undo ...............................................2")
+        IO.inspect(gameui["replayStep"])
+        IO.inspect(gameui["replayLength"])
+      messages = if messages == [] do
+        [inspect(delta)]
+      else
+        messages
+      end
+      IO.puts("undo ...............................................3")
+      IO.inspect(messages)
+      IO.puts("undo ...............................................4")
+      gameui = update_log(gameui, ["--- Starting undo ---"] ++ messages ++ ["--- Finished undo ---"])
+
       gameui = put_in(gameui, ["game"], game)
       gameui = put_in(gameui, ["replayStep"], replay_step-1)
     else
-      gameui
+      update_log(gameui, ["--- Nothing to undo ---"])
     end
   end
 
@@ -636,12 +646,6 @@ defmodule DragnCardsGame.GameUI do
       # Loop over keys in delta and apply the changes to the map
       Enum.reduce(delta, map, fn({k, v}, acc) ->
         if is_map(v) do
-          if k == "stackIds" do
-            IO.puts("applying stackIds delta 1")
-            IO.inspect(map)
-            IO.inspect(v)
-            IO.puts("applying stackIds delta 2")
-          end
           put_in(acc[k], apply_delta(map[k], v, direction))
         else
           new_val = if direction == "undo" do
@@ -652,20 +656,11 @@ defmodule DragnCardsGame.GameUI do
           if new_val == ":removed" do
             Map.delete(acc, k)
           else
-            IO.puts("undo val 1")
-            IO.inspect(k)
-            IO.inspect(acc[k])
-            IO.inspect(new_val)
-            IO.puts("undo val 2")
             put_in(acc[k], new_val)
           end
         end
       end)
     else
-      # IO.puts("undo error")
-      # IO.inspect(map)
-      # IO.puts("delta")
-      # IO.inspect(delta)
       map
     end
   end
@@ -741,20 +736,21 @@ defmodule DragnCardsGame.GameUI do
     Evaluate.evaluate(game, ["GAME_ADD_MESSAGE", "$PLAYER_N", " saved the game."])
   end
 
-  def set_last_update(gameui) do
-    timestamp = System.system_time(:second)
-    room = Repo.get_by(Room, [slug: gameui["roomName"]])
-    if room do
-      updates = %{
-        last_update: timestamp,
-        room_title: gameui["game"]["roomTitle"],
-        num_players: gameui["game"]["numPlayers"]
-      }
-      room
-      |> Room.changeset(updates)
-      |> Repo.insert_or_update
+  def set_last_room_update(gameui) do
+    if rem(Enum.count(gameui["deltas"]), 20) == 0 do
+      timestamp = System.system_time(:second)
+      room = Repo.get_by(Room, [slug: gameui["roomName"]])
+      if room do
+        updates = %{
+          last_update: timestamp,
+          room_title: gameui["game"]["roomTitle"],
+          num_players: gameui["game"]["numPlayers"]
+        }
+        room
+        |> Room.changeset(updates)
+        |> Repo.insert_or_update
+      end
     end
-    put_in(gameui["lastUpdate"], timestamp)
   end
 
 
@@ -850,7 +846,8 @@ defmodule DragnCardsGame.GameUI do
       new_stack_ids = get_stack_ids(new_game, group_id)
       # Check if the number of stacks in the deck has changed, and if so, we shuffle
       if group["shuffleOnLoad"] && length(old_stack_ids) != length(new_stack_ids) do
-        shuffle_group(acc, group_id)
+        acc = shuffle_group(acc, group_id)
+        acc = Evaluate.evaluate(acc, ["GAME_ADD_MESSAGE", "$PLAYER_N", " shuffled ", acc["groupById"][group_id]["name"], "."])
       else
         acc
       end
@@ -864,17 +861,17 @@ defmodule DragnCardsGame.GameUI do
 
   def load_cards(game, player_n, load_list) do
     game_def = Plugins.get_game_def(game["options"]["pluginId"])
-    # Get deck size before load
-    player_n_deck_id = player_n<>"Deck"
-    deck_size_before = Enum.count(get_stack_ids(game, player_n_deck_id))
+
     old_game = game
 
     game = Enum.reduce(load_list, game, fn load_list_item, acc ->
       load_card(acc, game_def, load_list_item)
     end)
 
+    game = Evaluate.evaluate(game, ["GAME_ADD_MESSAGE", "$PLAYER_N", " loaded cards."])
+
     game = shuffle_changed_decks(game, old_game)
-    # IO.puts("load_cards 2")
+
 
     # # Check if we should load the first quest card
     # main_quest_stack_ids = get_stack_ids(game, "sharedMainQuest")

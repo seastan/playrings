@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import ChatMessages from "./MessageLines";
 import ChatInput from "./ChatInput";
 import useIsLoggedIn from "../../hooks/useIsLoggedIn";
@@ -6,16 +6,14 @@ import { useMessages } from "../../contexts/MessagesContext";
 import { useSelector } from "react-redux";
 
 export const MessageBox = ({ hover, chatBroadcast }) => {
-  const newChatMessageObjects = useMessages();
+  const newMessageObjects = useMessages();
   const [showingLog, setShowingLog] = useState(true);
   const [smoothScroll, setSmoothScroll] = useState(false);
-  const newLogMessages = useSelector(state => state?.gameUi?.game?.messages);
-  const newLogMessageObjects = newLogMessages.map(lm => {return {text: lm, set_by: null}});
 
   const [allLogMessageObjects, setAllLogMessageObjects] = useState([]);
   const [allChatMessageObjects, setAllChatMessageObjects] = useState([]);
 
-  console.log("Rendering Chat")
+  console.log("Rendering Chat", newMessageObjects)
 
   const handleShowChatClick = () => {
     setShowingLog(!showingLog);
@@ -23,12 +21,9 @@ export const MessageBox = ({ hover, chatBroadcast }) => {
   } 
 
   useEffect(() => {
-    if (newLogMessageObjects) setAllLogMessageObjects([...allLogMessageObjects, ...newLogMessageObjects])
-  }, [newLogMessages]);
-
-  useEffect(() => {
-    if (newChatMessageObjects) setAllChatMessageObjects([...allChatMessageObjects, ...newChatMessageObjects])
-  }, [newChatMessageObjects]);
+    if (newMessageObjects) setAllChatMessageObjects([...allChatMessageObjects, ...newMessageObjects.filter((message) => message.sent_by !== -1)])
+    if (newMessageObjects) setAllLogMessageObjects([...allLogMessageObjects, ...newMessageObjects.filter((message) => message.sent_by === -1)])
+  }, [newMessageObjects]);
 
   return (
     <div className="overflow-hidden h-full">

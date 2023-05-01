@@ -1,6 +1,7 @@
 import { useContext, useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import BroadcastContext from '../../../contexts/BroadcastContext';
+import store from '../../../store';
 import { usePlugin } from './usePlugin';
 
 export const useLoadList = () => {
@@ -33,7 +34,10 @@ export const useLoadList = () => {
 
     gameBroadcast('game_action', {
       action: 'load_cards',
-      options: { load_list: newList },
+      options: { 
+        load_list: newList,
+        player_ui: store.getState().playerUi
+      },
     });
   };
 

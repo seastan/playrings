@@ -9,12 +9,12 @@ export const useActiveCard = () => {
     const [previousActiveCardId, setPreviousActiveCardId] = useState(null);
 
     const cardFromState = useSelector(state => state?.gameUi?.game?.cardById?.[activeCardId]);
-    useEffect(() => {
-        if (cardFromState?.groupId && previousActiveCardId) {
-            dispatch(setActiveCardId(null));
-        }
-        setPreviousActiveCardId(cardFromState?.groupId);
-    }, [cardFromState?.groupId, cardFromState?.stackIndex, cardFromState?.cardIndex]);
+    // useEffect(() => {
+    //     if (cardFromState?.groupId && previousActiveCardId) {
+    //         dispatch(setActiveCardId(null));
+    //     }
+    //     setPreviousActiveCardId(cardFromState?.groupId);
+    // }, [cardFromState?.groupId, cardFromState?.stackIndex, cardFromState?.cardIndex]);
 
     return cardFromState;
 };

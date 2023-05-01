@@ -54,7 +54,7 @@ defmodule DragnCardsGame.GameRegistry do
       name: gameui["roomName"],
       created_by: gameui["createdBy"],
       privacy_type: gameui["privacyType"],
-      last_update: gameui["lastUpdate"],
+      last_update: System.system_time(:second),
       num_players: gameui["game"]["numPlayers"],
       plugin_id: gameui["options"]["pluginId"]
     }

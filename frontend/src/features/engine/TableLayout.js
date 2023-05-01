@@ -92,66 +92,7 @@ export const TableLayout = React.memo(({
           onMouseLeave={() => handleStopChatHover()}>
           <MessageBox hover={chatHover} chatBroadcast={chatBroadcast}/>
         </div>
-        {/* <QuickAccess/> */}
       </div>
-      {/* Top row
-      <div 
-        className="relative w-full" 
-        style={{height: rowHeight}}>
-        {layout[0].regions.map((region, regionIndex) => (
-          <TableRegion
-            key={regionIndex}
-            region={region}
-            registerDivToArrowsContext={registerDivToArrowsContext}
-          />
-        ))}
-      </div>
-      {/* Middle rows
-      <div 
-        className="relative float-left"
-        style={{height: `${100-2*(100/numRows)}%`, width:`${middleRowsWidth}%`}}>
-        {layout.map((row, rowIndex) => {  
-          if (browseGroupId && rowIndex === numRows - 2) {
-            return(
-              <div 
-                className="relative bg-gray-700 rounded-lg w-full" 
-                style={{height: `${100/(numRows-2)}%`}}>
-                <Browse
-                  groupId={browseGroupId}/>
-              </div>
-            )
-          } else if (rowIndex > 0 && rowIndex < numRows - 1) {
-            return(
-              <div 
-                key={rowIndex}
-                className="relative w-full" 
-                style={{height: `${100/(numRows-2)}%`}}>
-                {row.regions.map((region, regionIndex) => (
-                  <TableRegion
-                    key={regionIndex}
-                    region={region}
-                    registerDivToArrowsContext={registerDivToArrowsContext}
-                  />
-                ))}
-              </div>
-            )
-          } else return null;
-        })}
-      </div>
-      <SideGroup
-        registerDivToArrowsContext={registerDivToArrowsContext}/>
-      {/* Bottom row
-      <div 
-        className="relative float-left w-full" 
-        style={{height: rowHeight}}>
-        {layout[numRows-1].regions.map((region, regionIndex) => (
-          <TableRegion
-            key={regionIndex}
-            region={region}
-            registerDivToArrowsContext={registerDivToArrowsContext}
-          />
-        ))}
-      </div> */}
     </>
   )
 })

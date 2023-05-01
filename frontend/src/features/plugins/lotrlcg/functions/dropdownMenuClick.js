@@ -17,135 +17,8 @@ export const useDropdownClickCommon = (dropdownOptions) => {
 }
 
 export const useDropdownClickCard = (dropdownOptions) => {
-  // const {gameBroadcast, chatBroadcast} = useContext(BroadcastContext);
-  // const gameUi = useSelector(state => state?.gameUi);
-  // const playerUi = useSelector(state => state?.playerUi);
-  // const game = gameUi?.game;
-  // const dropdownMenu = playerUi?.dropdownMenu;
-  // const playerN = playerUi?.playerN;
-  // const menuCard = dropdownMenu.card;
-  // const displayName = getDisplayName(menuCard);
   const doActionList = useDoActionList();
   doActionList(dropdownOptions.action);
-/*   console.log("dropdownClick")
-  if (dropdownOptions.action === "toggle_rotate") {
-    console.log("dropdownExhaust", menuCard)
-    cardAction("toggle_rotate", menuCard?.id, null, actionProps);
-  } else if (dropdownOptions.action === "flipCard") {
-    alert("here")
-    cardAction("flip", menuCard?.id, null, actionProps);
-  } else if (dropdownOptions.action === "detach") {
-    cardAction("detach", menuCard?.id, null, actionProps);
-  } else if (dropdownOptions.action === "swap_side") {
-    cardAction("swap_side", menuCard?.id, null, actionProps);
-  } else if (dropdownOptions.action === "peek") {
-    gameBroadcast("game_action", {action: "peek_card", options: {card_id: menuCard.id, value: true}})
-    chatBroadcast("game_update", {message: "peeked at "+displayName+"."})
-  } else if (dropdownOptions.action === "unpeek") {
-    gameBroadcast("game_action", {action: "peek_card", options: {card_id: menuCard.id, value: false}})
-    chatBroadcast("game_update", {message: " stopped peeking at "+displayName+"."})
-  } else if (dropdownOptions.action === "lock") {
-    gameBroadcast("game_action", {action: "update_values", options: {updates: [["cardById", menuCard.id, "locked", true]]}})
-    chatBroadcast("game_update", {message: " locked "+displayName+"."})
-  } else if (dropdownOptions.action === "delete") {
-    gameBroadcast("game_action", {
-      action: "action_on_matching_cards", 
-      options: {
-        criteria:[["id", menuCard?.id]], 
-        action: "delete_card", 
-        options: {}
-      }
-    });
-    chatBroadcast("game_update", {message: " deleted "+displayName+"."})
-  } else if (dropdownOptions.action === "unlock") {
-    gameBroadcast("game_action", {action: "update_values", options: {updates: [["cardById", menuCard.id, "locked", false]]}})
-    chatBroadcast("game_update", {message: " unlocked "+displayName+"."})
-  } else if (dropdownOptions.action === "moveCard") {
-    const destGroupTitle = GROUPSINFO[dropdownOptions.destGroupId].name;
-    if (dropdownOptions.position === "top") {
-      gameBroadcast("game_action", {action: "move_card", options: {card_id: menuCard.id, dest_group_id: dropdownOptions.destGroupId, dest_stack_index: 0, dest_card_index: 0, combine: false, preserve_state: false}})
-      chatBroadcast("game_update",{message: "moved "+displayName+" to top of "+destGroupTitle+"."})
-    } else if (dropdownOptions.position === "bottom") {
-      gameBroadcast("game_action", {action: "move_card", options: {card_id: menuCard.id, dest_group_id: dropdownOptions.destGroupId, dest_stack_index: -1, dest_card_index: 0, combine: false, preserve_state: false}})
-      chatBroadcast("game_update", {message: "moved "+displayName+" to bottom of "+destGroupTitle+"."})
-    } else if (dropdownOptions.position === "shuffle") {
-      gameBroadcast("game_action", {action: "move_card", options: {card_id: menuCard.id, dest_group_id: dropdownOptions.destGroupId, dest_stack_index: 0, dest_card_index: 0, combine: false, preserve_state: false}})
-      gameBroadcast("game_action", {action: "shuffle_group", options: {group_id: dropdownOptions.destGroupId}})
-      chatBroadcast("game_update", {message: "shuffled "+displayName+" into "+destGroupTitle+"."})
-    } else if (dropdownOptions.position === "shuffle_into_top") {
-      const num = parseInt(prompt("Shuffle into top...","5"));
-      // Get stack Ids
-      const stackIds = game.groupById[dropdownOptions.destGroupId].stackIds;
-      if (num > stackIds.length) {
-        alert("Not enough cards in destination group.")
-        return;
-      }
-      const topX = stackIds.slice(0,num);
-      //alert(topX)
-      const topXShuffled = shuffle(topX);
-      const newStackIds = topXShuffled.concat(stackIds.slice(num)); 
-      gameBroadcast("game_action", {action: "update_values", options: {updates: [["groupById", dropdownOptions.destGroupId, "stackIds", newStackIds]]}})
-      // Select random number
-      const newIndex = getRandomIntInclusive(0,num);
-      // Move card in
-      gameBroadcast("game_action", {action: "move_card", options: {card_id: menuCard.id, dest_group_id: dropdownOptions.destGroupId, dest_stack_index: newIndex, dest_card_index: 0, combine: false, preserve_state: false}})
-      chatBroadcast("game_update", {message: "shuffled "+displayName+" into the top "+num+" of "+destGroupTitle+"."})
-    } else if (dropdownOptions.position === "shuffle_into_bottom") {
-      const num = parseInt(prompt("Shuffle into bottom...","10"));
-      // Get stack Ids
-      const stackIds = game.groupById[dropdownOptions.destGroupId].stackIds;
-      const numStacks = stackIds.length;
-      if (num > numStacks) {
-        alert("Not enough cards in destination group.")
-        return;
-      }
-      const bottomX = stackIds.slice(numStacks-num);
-      const bottomXShuffled = shuffle(bottomX);
-      const newStackIds = stackIds.slice(0,numStacks-num).concat(bottomXShuffled); 
-      gameBroadcast("game_action", {action: "update_values", options: {updates: [["groupById", dropdownOptions.destGroupId, "stackIds", newStackIds]]}})
-      // Select random number
-      const newIndex = getRandomIntInclusive(numStacks-num,numStacks);
-      // Move card in
-      gameBroadcast("game_action", {action: "move_card", options: {card_id: menuCard.id, dest_group_id: dropdownOptions.destGroupId, dest_stack_index: newIndex, dest_card_index: 0, combine: false, preserve_state: false}})
-      chatBroadcast("game_update", {message: "shuffled "+displayName+" into the bottom "+num+" of "+destGroupTitle+"."})
-    }
-  } else if (dropdownOptions.action === "incrementTokenPerRound") {
-      const increment = dropdownOptions.increment;
-      const tokenType = dropdownOptions.tokenType;
-      gameBroadcast("game_action", {action: "update_values", options: {updates: [["cardById", menuCard.id, "tokensPerRound", tokenType, increment]]}})
-      chatBroadcast("game_update", {message: "added "+increment+" "+tokenType+" token(s) per round to "+displayName+"."})
-  } else if (dropdownOptions.action === "toggleTrigger") {
-    const stepId = dropdownOptions.stepId;
-    const currentFace = getCurrentFace(menuCard);
-    const triggers = [...currentFace.triggers];
-    if (triggers.includes(stepId)) {
-      const triggerIndex = triggers.indexOf(stepId);
-      if (triggerIndex !== -1) triggers.splice(triggerIndex, 1);
-      chatBroadcast("game_update", {message: "removed a step "+stepId+" trigger from "+displayName+"."})
-      gameBroadcast("game_action", {action: "card_action", options: {action: "remove_trigger", card_id: menuCard.id, options: {round_step: stepId}}})
-    } else {
-      triggers.push(stepId);
-      chatBroadcast("game_update", {message: "added a step "+stepId+" trigger to "+displayName+"."})
-      gameBroadcast("game_action", {action: "card_action", options: {action: "add_trigger", card_id: menuCard.id, options: {round_step: stepId}}})
-    }
-    gameBroadcast("game_action", {action: "update_values", options: {updates: [["cardById", menuCard.id, "sides", menuCard.currentSide, "triggers", triggers]]}})
-    
-  } else if (dropdownOptions.action === "swap_with_top") {
-    const gsc = getGroupIdStackIndexCardIndex(game, menuCard.id);
-    const stackIndex = gsc.stackIndex;
-    const deckStackIds = game.groupById[playerN+"Deck"].stackIds;
-    if (deckStackIds.length > 0) {
-        const stackId0 = deckStackIds[0];
-        const cardId0 = game.stackById[stackId0].cardIds[0];
-        //gameBroadcast("game_action", {action: "swap_card", options: {card_id_1: }})
-        gameBroadcast("game_action", {action: "move_card", options: {card_id: menuCard.id, dest_group_id: playerN+"Deck", dest_stack_index: 0, dest_card_index: 0, combine: false, preserve_state: false}})
-        gameBroadcast("game_action", {action: "move_card", options: {card_id: cardId0, dest_group_id: playerN+"Hand", dest_stack_index: stackIndex, dest_card_index: 0, combine: false, preserve_state: false}})
-        chatBroadcast("game_update", {message: "swapped a card in their hand with the top of their deck."})       
-    }
-  } else if (dropdownOptions.action === "setRotation") {
-    chatBroadcast("game_update", {message: "set rotation of "+displayName+" to "+dropdownOptions.rotation+"."})
-    gameBroadcast("game_action", {action: "update_values", options: {updates: [["cardById", menuCard.id, "rotation", dropdownOptions.rotation]]}})
-  } */
 }
 
 export const useDropdownClickGroup = (dropdownOptions, actionProps) => {
@@ -219,6 +92,5 @@ export const useDropdownClickGroup = (dropdownOptions, actionProps) => {
 
 export const useDropdownClickFirstPlayer = (dropdownOptions, actionProps) => {
   const {state, dispatch, gameBroadcast, chatBroadcast} = actionProps;
-  gameBroadcast("game_action", {action: "update_values", options: {updates: [["firstPlayer", dropdownOptions.action]]}})
-  chatBroadcast("game_update",{message: "set first player to "+dropdownOptions.title+"."})
+  
 } 

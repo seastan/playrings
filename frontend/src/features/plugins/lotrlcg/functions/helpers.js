@@ -491,8 +491,6 @@ export const onLoad = (
   // Make sure this only ever gets loaded once
   if (options?.loaded || redoStepsExist) return;
   dispatch(setLoaded(true));
-  const newOptions = {...options, loaded: true}
-  gameBroadcast("game_action", {action: "update_values", options: {updates: [["options", newOptions]]}})
 
   const ringsDbInfo = options?.ringsDbInfo;
   const deckToLoad = ringsDbInfo?.[0] || ringsDbInfo?.[1] || ringsDbInfo?.[2] || ringsDbInfo?.[3];

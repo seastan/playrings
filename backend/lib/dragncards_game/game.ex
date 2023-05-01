@@ -60,11 +60,10 @@
       "groupById" => Groups.new(game_def["groups"]),
       "stackById" => %{},
       "cardById"  => %{},
-      "latestMessages" => [],
       "options" => options,
       "variables" => %{},
       "automation" => %{},
-      "messages" => []
+      "messages" => [] # These messages will be delivered to the GameUi parent, which will then relay them to chat
     }
     # Add player data
     player_data = %{}

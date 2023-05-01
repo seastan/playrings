@@ -5021,9 +5021,13 @@
         ["GAME_SET_VAL", "/layoutVariants/redPlayers", 2],
         ["GAME_SET_VAL", "/cardsPerRound", {"player1": 3, "player2": 3, "player3": 3, "player4": 3}],
         ["MOVE_STACKS", "player1Deck", "player1Hand", 7, "bottom"],
+        ["GAME_ADD_MESSAGE", "player1 drew their starting hand."],
         ["MOVE_STACKS", "player2Deck", "player2Hand", 7, "bottom"],
+        ["GAME_ADD_MESSAGE", "player2 drew their starting hand."],
         ["MOVE_STACKS", "player3Deck", "player3Hand", 7, "bottom"],
-        ["MOVE_STACKS", "player4Deck", "player4Hand", 7, "bottom"]
+        ["GAME_ADD_MESSAGE", "player3 drew their starting hand."],
+        ["MOVE_STACKS", "player4Deck", "player4Hand", 7, "bottom"],
+        ["GAME_ADD_MESSAGE", "player4 drew their starting hand."]
       ],
       "twoPlayerSetup": [
         ["GAME_SET_VAL", "/numPlayers", 2],
@@ -5033,7 +5037,9 @@
         ["GAME_SET_VAL", "/player1CardsPerRound", 4],
         ["GAME_SET_VAL", "/player2CardsPerRound", 6],
         ["MOVE_STACKS", "player1Deck", "player1Hand", 4, "bottom"],
-        ["MOVE_STACKS", "player2Deck", "player2Hand", 6, "bottom"]
+        ["GAME_ADD_MESSAGE", "player1 drew their starting hand."],
+        ["MOVE_STACKS", "player2Deck", "player2Hand", 6, "bottom"],
+        ["GAME_ADD_MESSAGE", "player2 drew their starting hand."]
       ],
       "threePlayerSetup": [
         ["GAME_SET_VAL", "/numPlayers", 3],
@@ -5041,8 +5047,11 @@
         ["GAME_SET_VAL", "/layoutVariants/redPlayers", 2],
         ["GAME_SET_VAL", "/cardsPerRound", {"player1": 6, "player2": 4, "player3": 4}],
         ["MOVE_STACKS", "player1Deck", "player1Hand", 6, "bottom"],
+        ["GAME_ADD_MESSAGE", "player1 drew their starting hand."],
         ["MOVE_STACKS", "player2Deck", "player2Hand", 7, "bottom"],
-        ["MOVE_STACKS", "player3Deck", "player3Hand", 7, "bottom"]
+        ["GAME_ADD_MESSAGE", "player2 drew their starting hand."],
+        ["MOVE_STACKS", "player3Deck", "player3Hand", 7, "bottom"],
+        ["GAME_ADD_MESSAGE", "player3 drew their starting hand."]
       ],
       "fellowshipSetup": [
         ["GAME_SET_VAL", "/numPlayers", 3],
@@ -5050,7 +5059,9 @@
         ["GAME_SET_VAL", "/layoutVariants/redPlayers", 2],
         ["GAME_SET_VAL", "/cardsPerRound", {"player1": 3, "player2": 4}],
         ["MOVE_STACKS", "player1Deck", "player1Hand", 7, "bottom"],
-        ["MOVE_STACKS", "player2Deck", "player2Hand", 7, "bottom"]
+        ["GAME_ADD_MESSAGE", "player1 drew their starting hand."],
+        ["MOVE_STACKS", "player2Deck", "player2Hand", 7, "bottom"],
+        ["GAME_ADD_MESSAGE", "player2 drew their starting hand."]
       ],
       "newRound": [
         ["FOR_EACH_KEY_VAL", "$CARD_ID", "$CARD", "$CARD_BY_ID", 

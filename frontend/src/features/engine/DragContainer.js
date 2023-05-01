@@ -109,7 +109,10 @@ export const DragContainer = React.memo(({}) => {
       // We could add some logic here to flip the card locally instantly, but there would still be a delay to get load the image
       // const updates = [["game", "cardById", topOfOrigStackCardId, "currentSide", "A"]];
       // dispatch(setValues({updates: updates}));
-      doActionList(["MOVE_STACK", origStackId, destGroupId, dest.index, false, destGroupId === origGroupId])
+      doActionList([
+        ["GAME_ADD_MESSAGE", "$PLAYER_N", " moved ", ["FACEUP_NAME_FROM_STACK_ID", origStackId], " from ", "$GAME.groupById."+origGroupId+".name", " to ", "$GAME.groupById."+destGroupId+".name", "."],
+        ["MOVE_STACK", origStackId, destGroupId, dest.index, false, destGroupId === origGroupId]
+      ])
       dispatch(setGroupById(newGroupById));
     }
 

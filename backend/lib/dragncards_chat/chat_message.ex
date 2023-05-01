@@ -15,18 +15,16 @@ defmodule DragnCardsChat.ChatMessage do
           text: String.t(),
           sent_by: integer | nil,
           when: DateTime.t(),
-          shortcode: String.t(),
-          game_update: boolean,
+          shortcode: String.t()
         }
 
-  @spec new(String.t(), integer | nil, boolean) :: ChatMessage.t()
-  def new(text, sent_by, game_update \\ false) do
+  @spec new(String.t(), integer | nil) :: ChatMessage.t()
+  def new(text, sent_by) do
     %ChatMessage{
       text: text,
       sent_by: sent_by,
       when: DateTime.utc_now(),
-      shortcode: shortcode(),
-      game_update: game_update
+      shortcode: shortcode()
     }
   end
 

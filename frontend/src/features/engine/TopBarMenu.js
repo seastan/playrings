@@ -104,7 +104,7 @@ export const TopBarMenu = React.memo(({}) => {
       else newRingsDbInfo = [null, null, null, null];
       newRingsDbInfo[playerIndex] = {id: ringsDbId, type: ringsDbType, domain: ringsDbDomain};
       const newOptions = {...options, ringsDbInfo: newRingsDbInfo, loaded: true}
-      gameBroadcast("game_action", {action: "update_values", options: {updates: [["options", newOptions]]}});
+      //gameBroadcast("game_action", {action: "update_values", options: {updates: [["options", newOptions]]}});
       const gameUi = store.getState()?.gameUi;
       loadRingsDb(gameUi, playerN, ringsDbDomain, ringsDbType, ringsDbId, gameBroadcast, chatBroadcast, dispatch);
     } else if (data.action === "unload_my_deck") {

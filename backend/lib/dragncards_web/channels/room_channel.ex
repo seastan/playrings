@@ -4,6 +4,7 @@ defmodule DragnCardsWeb.RoomChannel do
   """
   use DragnCardsWeb, :channel
   alias DragnCardsGame.{Card, GameUIServer, GameUI}
+  alias DragnCardsChat.{ChatMessage}
 
   require Logger
 
@@ -21,10 +22,8 @@ defmodule DragnCardsWeb.RoomChannel do
 
   def handle_info(:after_join, %{assigns: %{room_slug: room_slug, user_id: user_id}, channel_pid: pid} = socket) do
     # state = GameUIServer.state(room_slug)
-    IO.puts("nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn after join")
-    IO.inspect(socket)
     GameUIServer.add_player_to_room(room_slug, user_id, pid)
-    notify(socket, user_id)
+    notify(socket, room_slug, user_id)
     {:noreply, socket}
   end
 
@@ -44,7 +43,7 @@ defmodule DragnCardsWeb.RoomChannel do
   ) do
     GameUIServer.game_action(room_slug, user_id, action, options)
 
-    notify(socket, user_id)
+    notify(socket, room_slug, user_id)
 
     {:reply, {:ok, "game_action"}, socket}
   end
@@ -58,7 +57,7 @@ defmodule DragnCardsWeb.RoomChannel do
   ) do
     GameUIServer.step_through(room_slug, options)
 
-    notify(socket, user_id)
+    notify(socket, room_slug, user_id)
 
     {:reply, {:ok, "game_action"}, socket}
   end
@@ -74,7 +73,21 @@ defmodule DragnCardsWeb.RoomChannel do
   ) do
     GameUIServer.set_seat(room_slug, user_id, player_i, new_user_id)
 
-    notify(socket, user_id)
+    notify(socket, room_slug, user_id)
+
+    {:reply, :ok, socket}
+  end
+
+  def handle_in(
+    "set_game_def",
+    %{
+      "game_def" => game_def,
+    },
+    %{assigns: %{room_slug: room_slug, user_id: user_id}} = socket
+  ) do
+    GameUIServer.set_game_def(room_slug, user_id, game_def)
+
+    notify(socket, room_slug, user_id)
 
     {:reply, :ok, socket}
   end
@@ -86,7 +99,7 @@ defmodule DragnCardsWeb.RoomChannel do
   ) do
     GameUIServer.close_room(room_slug, user_id)
 
-    notify(socket, user_id)
+    notify(socket, room_slug, user_id)
 
     {:reply, :ok, socket}
   end
@@ -130,14 +143,22 @@ defmodule DragnCardsWeb.RoomChannel do
 
   defp on_terminate(%{assigns: %{room_slug: room_slug, user_id: user_id}, channel_pid: pid} = socket) do
     state = GameUIServer.leave(room_slug, user_id, pid)
-    notify(socket, user_id)
+    notify(socket, room_slug, user_id)
   end
 
-  defp notify(socket, user_id) do
-    # Fake a phx_reply event to everyone
+  defp notify(socket, room_slug, user_id) do
+
+    gameui = GameUIServer.state(room_slug)
+
+    messages = Enum.map(gameui["logMessages"], fn(message_text) ->
+      ChatMessage.new(message_text, -1)
+    end)
+
+    # Send a phx_reply event to everyone to ask for an update. Include the messages from the current update
     payload = %{
       response: %{user_id: user_id},
-      status: "ok"
+      status: "ok",
+      messages: messages
     }
 
     broadcast!(socket, "ask_for_update", payload)
