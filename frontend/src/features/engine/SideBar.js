@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { SideBarPhase } from "./SideBarPhase";
-import { SideBarNewRound } from "./SideBarNewRound";
 import { useGameDefinition } from "./functions/useGameDefinition";
 import { useSelector } from "react-redux";
 
@@ -31,10 +30,7 @@ export const SideBar = React.memo(({}) => {
 
   return(
     <div className="bg-gray-500" style={{width:"6vh", zIndex: 1e4}}>
-      <div className="bg-red-300" style={{height:"3vh"}}>
-        <SideBarNewRound/>
-      </div>
-      <div style={{height:"calc(100% - 3vh)"}}>
+      <div className="h-full">
         {gameDef?.phases?.map((phaseInfo, phaseIndex) => {
           return(<SideBarPhase key={phaseIndex} phaseInfo={phaseInfo} triggerMap={triggerMap}/>)
       })}
