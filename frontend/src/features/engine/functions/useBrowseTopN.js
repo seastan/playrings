@@ -1,4 +1,5 @@
 import { useDispatch } from "react-redux";
+import { useGameL10n } from "../../../hooks/useGameL10n";
 import store from "../../../store";
 import { setBrowseGroupId, setBrowseGroupTopN } from "../../store/playerUiSlice";
 import { useDoActionList } from "./useDoActionList";
@@ -10,12 +11,13 @@ export const useBrowseTopN = () => {
     const doActionList = useDoActionList();
     const dispatch = useDispatch();
     const playerN = usePlayerN();
+    const l10n = useGameL10n();
     return (groupId, topNstr) => {    
       const state = store.getState();
       const group = state?.gameUi?.game?.groupById?.[groupId];
       const stackIds = group["stackIds"];
       const numStacks = stackIds.length;
-      const groupName = gameDef.groups[groupId].name;
+      const groupName = l10n(gameDef.groups[groupId].labelId);
       var peekStackIds = [];
       var topNint = 0;
       // Set peeking based on topNstr

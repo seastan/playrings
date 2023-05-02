@@ -125,6 +125,7 @@ defmodule DragnCardsGame.GameUIServer do
 
   def init({game_name, user, options = %{}}) do
     Logger.debug("gameuiserver init")
+    options = put_in(options, ["language"], user.language)
     gameui =
       case :ets.lookup(:game_uis, game_name) do
         [] ->

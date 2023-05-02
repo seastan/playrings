@@ -166,6 +166,43 @@ export const siteL10n = {
   },
   "hoverOverACard": {
     "English": "Hover over a card."
-  }
+  },
+  "top": {
+    "English": "Top"
+  },
+  "bottom": {
+    "English": "Bottom"
+  },
+  "shuffleIn": {
+    "English": "Shuffle in"
+  },
+  "shuffleIntoTopX": {
+    "English": "Shuffle into top X"
+  },
+  "shuffleIntoBottomX": {
+    "English": "Shuffle into bottom X"
+  },
+  "detach": {
+    "English": "Detach"
+  },
+  "flip": {
+    "English": "Flip"
+  },
+  "delete": {
+    "English": "Delete"
+  },
+  "moveTo": {
+    "English": "Move To"
+  },
+  "toggleTriggers": {
+    "English": "Toggle Triggers"
+  },
+  "setRotation": {
+    "English": "Set Rotation"
+  },
+  "deckOfOrigin": {
+    "English": "Deck of origin"
+  },
+
 
 }

@@ -822,7 +822,7 @@ defmodule DragnCardsGame.GameUI do
     end
   end
 
-  def shuffle_changed_decks(new_game, old_game) do
+  def shuffle_changed_decks(new_game, old_game, game_def) do
     new_game["groupById"]
     |> Enum.reduce(new_game, fn({group_id, group}, acc) ->
       old_stack_ids = get_stack_ids(old_game, group_id)
@@ -830,11 +830,19 @@ defmodule DragnCardsGame.GameUI do
       # Check if the number of stacks in the deck has changed, and if so, we shuffle
       if group["shuffleOnLoad"] && length(old_stack_ids) != length(new_stack_ids) do
         acc = shuffle_group(acc, group_id)
-        acc = Evaluate.evaluate(acc, ["GAME_ADD_MESSAGE", "$PLAYER_N", " shuffled ", acc["groupById"][group_id]["name"], "."])
+        acc = Evaluate.evaluate(acc, ["GAME_ADD_MESSAGE", "$PLAYER_N", " shuffled ", l10n(acc, game_def, group["labelId"]), "."])
       else
         acc
       end
     end)
+  end
+
+  def l10n(game, game_def, label_id) do
+    language = game["options"]["language"]
+    case get_in(game_def["labels"][label_id], [language]) do
+      nil -> label_id
+      val -> val
+    end
   end
 
   def shuffle_group(gameui, group_id) do
@@ -853,7 +861,7 @@ defmodule DragnCardsGame.GameUI do
 
     game = Evaluate.evaluate(game, ["GAME_ADD_MESSAGE", "$PLAYER_N", " loaded cards."])
 
-    game = shuffle_changed_decks(game, old_game)
+    game = shuffle_changed_decks(game, old_game, game_def)
 
 
     # # Check if we should load the first quest card

@@ -418,8 +418,8 @@ defmodule DragnCardsGame.Evaluate do
             end
           "DELETE_CARD" ->
             card_id = evaluate(game, Enum.at(code, 1))
-            Logger.debug("here")
-            GameUI.delete_card(game, card_id)
+            game
+            |> GameUI.delete_card(card_id)
           "ATTACH_CARD" ->
             card_id = evaluate(game, Enum.at(code, 1))
             dest_card_id = evaluate(game, Enum.at(code, 2))

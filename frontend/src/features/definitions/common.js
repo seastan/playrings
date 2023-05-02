@@ -130,5 +130,9 @@ export const dragnActionLists = {
         ["GAME_ADD_MESSAGE", "$PLAYER_N", " flipped ", ["FACEUP_NAME_FROM_CARD_ID", card.id], " faceup."]
       ]
     ]
+  ]),
+  deleteCard: (card) => ([
+    ["GAME_ADD_MESSAGE", "$PLAYER_N", " deleted ", ["FACEUP_NAME_FROM_CARD_ID", card.id], "."],
+    ["DELETE_CARD", card.id]
   ])
 }

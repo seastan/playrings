@@ -15,7 +15,7 @@ defmodule DragnCards.Users.User do
     pow_user_fields()
     field(:alias, :string)
     field(:supporter_level, :integer)
-    field(:language, :string)
+    field(:language, :string, default: "English")
     timestamps()
   end
 

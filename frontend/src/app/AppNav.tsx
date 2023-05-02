@@ -42,9 +42,11 @@ export const AppNav: React.FC<Props> = () => {
         className="flex"
         style={{fontSize: "2vh"}}
       >
-        <Link to={"/myplugins/"+user?.id} className={headerLinkClass}>
-          <span className="ml-1">My Plugins</span>
-        </Link>
+        {authToken && (
+          <Link to={"/myplugins/"+user?.id} className={headerLinkClass}>
+            <span className="ml-1">My Plugins</span>
+          </Link>
+        )}
         <ProfileLink className={headerLinkClass} />
         {!authToken && (
           <>

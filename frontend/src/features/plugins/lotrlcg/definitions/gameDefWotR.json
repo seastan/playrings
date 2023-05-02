@@ -19,18 +19,6 @@
       "myDeck": {
         "English": "My Deck"
       },
-      "player1Deck": {
-        "English": "Player 1 Deck"
-      },
-      "player2Deck": {
-        "English": "Player 2 Deck"
-      },
-      "player3Deck": {
-        "English": "Player 3 Deck"
-      },
-      "player4Deck": {
-        "English": "Player 4 Deck"
-      },
       "freePeoplesBattlegroundDeck": {
         "English": "Free Peoples Battleground Deck"
       },
@@ -167,6 +155,168 @@
       },
       "standard": {
         "English": "Standard"
+      },
+      "setAside": {
+          "English": "Set Aside"
+      },
+      "activeLocation1": {
+          "English": "Active Location 1"
+      },
+      "location1": {
+          "English": "Location 1"
+      },
+      "activeLocation2": {
+          "English": "Active Location 2"
+      },
+      "location2": {
+          "English": "Location 2"
+      },
+      "activeLocation3": {
+          "English": "Active Location 3"
+      },
+      "location3": {
+          "English": "Location 3"
+      },
+      "activeLocation4": {
+          "English": "Active Location 4"
+      },
+      "location4": {
+          "English": "Location 4"
+      },
+      "activeShadow1": {
+          "English": "Active Shadow 1"
+      },
+      "shadow1": {
+          "English": "Shadow 1"
+      },
+      "activeShadow2": {
+          "English": "Active Shadow 2"
+      },
+      "shadow2": {
+          "English": "Shadow 2"
+      },
+      "activeShadow3": {
+          "English": "Active Shadow 3"
+      },
+      "shadow3": {
+          "English": "Shadow 3"
+      },
+      "activeShadow4": {
+          "English": "Active Shadow 4"
+      },
+      "shadow4": {
+          "English": "Shadow 4"
+      },
+      "activeFreePeoples1": {
+          "English": "Active Free Peoples 1"
+      },
+      "freePeoples1": {
+          "English": "Free Peoples 1"
+      },
+      "activeFreePeoples2": {
+          "English": "Active Free Peoples 2"
+      },
+      "freePeoples2": {
+          "English": "Free Peoples 2"
+      },
+      "activeFreePeoples3": {
+          "English": "Active Free Peoples 3"
+      },
+      "freePeoples3": {
+          "English": "Free Peoples 3"
+      },
+      "activeFreePeoples4": {
+          "English": "Active Free Peoples 4"
+      },
+      "freePeoples4": {
+          "English": "Free Peoples 4"
+      },
+      "player1Hand": {
+          "English": "Player 1 Hand"
+      },
+      "hand": {
+          "English": "Hand"
+      },
+      "player1Deck": {
+          "English": "Player 1 Deck"
+      },
+      "deck": {
+          "English": "Deck"
+      },
+      "player1Cycled": {
+          "English": "Player 1 Cycled"
+      },
+      "cycled": {
+          "English": "Cycled"
+      },
+      "player1Eliminated": {
+          "English": "Player 1 Eliminated"
+      },
+      "eliminated": {
+          "English": "Eliminated"
+      },
+      "player1Reserve": {
+          "English": "Player 1 Reserve"
+      },
+      "p1Reserve": {
+          "English": "P1 Reserve"
+      },
+      "player2Hand": {
+          "English": "Player 2 Hand"
+      },
+      "player2Deck": {
+          "English": "Player 2 Deck"
+      },
+      "player2Cycled": {
+          "English": "Player 2 Cycled"
+      },
+      "player2Eliminated": {
+          "English": "Player 2 Eliminated"
+      },
+      "player2Reserve": {
+          "English": "Player 2 Reserve"
+      },
+      "p2Reserve": {
+          "English": "P2 Reserve"
+      },
+      "player3Hand": {
+          "English": "Player 3 Hand"
+      },
+      "player3Deck": {
+          "English": "Player 3 Deck"
+      },
+      "player3Cycled": {
+          "English": "Player 3 Cycled"
+      },
+      "player3Eliminated": {
+          "English": "Player 3 Eliminated"
+      },
+      "player3Reserve": {
+          "English": "Player 3 Reserve"
+      },
+      "p3Reserve": {
+          "English": "P3 Reserve"
+      },
+      "player4Hand": {
+          "English": "Player 4 Hand"
+      },
+      "player4Deck": {
+          "English": "Player 4 Deck"
+      },
+      "player4Cycled": {
+          "English": "Player 4 Cycled"
+      },
+      "player4Eliminated": {
+          "English": "Player 4 Eliminated"
+      },
+      "player4Reserve": {
+          "English": "Player 4 Reserve"
+      },
+      "p4Reserve": {
+          "English": "P4 Reserve"
+      },
+      "rules": {
+          "English": "Rules"
       }
     },
     "lobby": {
@@ -184,10 +334,6 @@
         {
           "labelId": "toggleRotate",
           "actionList": "toggleRotate"
-        },
-        {
-          "labelId": "delete",
-          "actionList": "deleteCard"
         }
       ]
     },
@@ -5258,8 +5404,8 @@
     },
     "groups": {
       "sharedBattlegroundBlue": {
-        "name": "Free Peoples Battleground Deck", 
-        "tableName": "",
+        "labelId": "freePeoplesBattlegroundDeck", 
+        "tableLabelId": "",
         "canHaveAttachments": false,
         "shuffleOnLoad": true,
         "onCardEnter": {
@@ -5270,8 +5416,8 @@
         }
       },
       "sharedBattlegroundRed": {
-        "name": "Shadow Battleground Deck", 
-        "tableName": "",
+        "labelId": "shadowBattlegroundDeck", 
+        "tableLabelId": "",
         "canHaveAttachments": false,
         "shuffleOnLoad": true,
         "onCardEnter": {
@@ -5282,8 +5428,8 @@
         }
       },
       "sharedScoringBlue": {
-        "name": "Free Peoples Scoring Area", 
-        "tableName": "Free Peoples Scoring Area",
+        "labelId": "freePeoplesScoringArea", 
+        "tableLabelId": "freePeoplesScoringArea",
         "canHaveAttachments": false,
         "onCardEnter": {
           "currentSide": "A",
@@ -5291,8 +5437,8 @@
         }
       },
       "sharedScoringRed": {
-        "name": "Shadow Scoring Area", 
-        "tableName": "Shadow Scoring Area",
+        "labelId": "shadowScoringArea", 
+        "tableLabelId": "shadowScoringArea",
         "canHaveAttachments": false,
         "onCardEnter": {
           "currentSide": "A",
@@ -5300,8 +5446,8 @@
         }
       },
       "sharedPathDeck1": {
-        "name": "Path Deck 1",
-        "tableName": "Path Deck 1",
+        "labelId": "pathDeck1",
+        "tableLabelId": "pathDeck1",
         "canHaveAttachments": false,
         "shuffleOnLoad": true,
         "onCardEnter": {
@@ -5311,8 +5457,8 @@
         }
       },
       "sharedPathDeck2": {
-        "name": "Path Deck 2",
-        "tableName": "Path Deck 2",
+        "labelId": "pathDeck2",
+        "tableLabelId": "pathDeck2",
         "canHaveAttachments": false,
         "shuffleOnLoad": true,
         "onCardEnter": {
@@ -5322,8 +5468,8 @@
         }
       },
       "sharedPathDeck3": {
-        "name": "Path Deck 3",
-        "tableName": "Path Deck 3",
+        "labelId": "pathDeck3",
+        "tableLabelId": "pathDeck3",
         "canHaveAttachments": false,
         "shuffleOnLoad": true,
         "onCardEnter": {
@@ -5333,8 +5479,8 @@
         }
       },
       "sharedPathDeck4": {
-        "name": "Path Deck 4",
-        "tableName": "Path Deck 4",
+        "labelId": "pathDeck4",
+        "tableLabelId": "pathDeck4",
         "canHaveAttachments": false,
         "shuffleOnLoad": true,
         "onCardEnter": {
@@ -5344,8 +5490,8 @@
         }
       },
       "sharedPathDeck5": {
-        "name": "Path Deck 5",
-        "tableName": "Path Deck 5",
+        "labelId": "pathDeck5",
+        "tableLabelId": "pathDeck5",
         "canHaveAttachments": false,
         "shuffleOnLoad": true,
         "onCardEnter": {
@@ -5355,8 +5501,8 @@
         }
       },
       "sharedPathDeck6": {
-        "name": "Path Deck 6",
-        "tableName": "Path Deck 6",
+        "labelId": "pathDeck6",
+        "tableLabelId": "pathDeck6",
         "canHaveAttachments": false,
         "shuffleOnLoad": true,
         "onCardEnter": {
@@ -5366,8 +5512,8 @@
         }
       },
       "sharedPathDeck7": {
-        "name": "Path Deck 7",
-        "tableName": "Path Deck 7",
+        "labelId": "pathDeck7",
+        "tableLabelId": "pathDeck7",
         "canHaveAttachments": false,
         "shuffleOnLoad": true,
         "onCardEnter": {
@@ -5377,8 +5523,8 @@
         }
       },
       "sharedPathDeck8": {
-        "name": "Path Deck 8",
-        "tableName": "Path Deck 8",
+        "labelId": "pathDeck8",
+        "tableLabelId": "pathDeck8",
         "canHaveAttachments": false,
         "shuffleOnLoad": true,
         "onCardEnter": {
@@ -5388,8 +5534,8 @@
         }
       },
       "sharedPathDeck9": {
-        "name": "Path Deck 9",
-        "tableName": "Path Deck 9",
+        "labelId": "pathDeck9",
+        "tableLabelId": "pathDeck9",
         "canHaveAttachments": false,
         "shuffleOnLoad": true,
         "onCardEnter": {
@@ -5399,8 +5545,8 @@
         }
       },
       "sharedSetAside": {
-        "name": "Set Aside", 
-        "tableName": "Set Aside",
+        "labelId": "setAside", 
+        "tableLabelId": "setAside",
         "canHaveAttachments": true,
         "onCardEnter": {
           "currentSide": "A",
@@ -5408,8 +5554,8 @@
         }
       },
       "sharedActiveLocation1": {
-        "name": "Active Location 1", 
-        "tableName": "Location 1",
+        "labelId": "activeLocation1", 
+        "tableLabelId": "location1",
         "canHaveAttachments": true,
         "onCardEnter": {
           "currentSide": "A",
@@ -5417,8 +5563,8 @@
         }
       },
       "sharedActiveLocation2": {
-        "name": "Active Location 2", 
-        "tableName": "Location 2",
+        "labelId": "activeLocation2", 
+        "tableLabelId": "location2",
         "canHaveAttachments": true,
         "onCardEnter": {
           "currentSide": "A",
@@ -5426,8 +5572,8 @@
         }
       },
       "sharedActiveLocation3": {
-        "name": "Active Location 3", 
-        "tableName": "Location 3",
+        "labelId": "activeLocation3", 
+        "tableLabelId": "location3",
         "canHaveAttachments": true,
         "onCardEnter": {
           "currentSide": "A",
@@ -5435,8 +5581,8 @@
         }
       },
       "sharedActiveLocation4": {
-        "name": "Active Location 4", 
-        "tableName": "Location 4",
+        "labelId": "activeLocation4", 
+        "tableLabelId": "location4",
         "canHaveAttachments": true,
         "onCardEnter": {
           "currentSide": "A",
@@ -5444,8 +5590,8 @@
         }
       },
       "sharedActiveRed1": {
-        "name": "Active Shadow 1", 
-        "tableName": "Shadow 1",
+        "labelId": "activeShadow1", 
+        "tableLabelId": "shadow1",
         "canHaveAttachments": true,
         "onCardEnter": {
           "currentSide": "A",
@@ -5453,8 +5599,8 @@
         }
       },
       "sharedActiveRed2": {
-        "name": "Active Shadow 2", 
-        "tableName": "Shadow 2",
+        "labelId": "activeShadow2", 
+        "tableLabelId": "shadow2",
         "canHaveAttachments": true,
         "onCardEnter": {
           "currentSide": "A",
@@ -5462,8 +5608,8 @@
         }
       },
       "sharedActiveRed3": {
-        "name": "Active Shadow 3", 
-        "tableName": "Shadow 3",
+        "labelId": "activeShadow3", 
+        "tableLabelId": "shadow3",
         "canHaveAttachments": true,
         "onCardEnter": {
           "currentSide": "A",
@@ -5471,8 +5617,8 @@
         }
       },
       "sharedActiveRed4": {
-        "name": "Active Shadow 4", 
-        "tableName": "Shadow 4",
+        "labelId": "activeShadow4", 
+        "tableLabelId": "shadow4",
         "canHaveAttachments": true,
         "onCardEnter": {
           "currentSide": "A",
@@ -5480,8 +5626,8 @@
         }
       },
       "sharedActiveBlue1": {
-        "name": "Active Free Peoples 1", 
-        "tableName": "Free Peoples 1",
+        "labelId": "activeFreePeoples1", 
+        "tableLabelId": "freePeoples1",
         "canHaveAttachments": true,
         "onCardEnter": {
           "currentSide": "A",
@@ -5489,8 +5635,8 @@
         }
       },
       "sharedActiveBlue2": {
-        "name": "Active Free Peoples 2", 
-        "tableName": "Free Peoples 2",
+        "labelId": "activeFreePeoples2", 
+        "tableLabelId": "freePeoples2",
         "canHaveAttachments": true,
         "onCardEnter": {
           "currentSide": "A",
@@ -5498,8 +5644,8 @@
         }
       },
       "sharedActiveBlue3": {
-        "name": "Active Free Peoples 3", 
-        "tableName": "Free Peoples 3",
+        "labelId": "activeFreePeoples3", 
+        "tableLabelId": "freePeoples3",
         "canHaveAttachments": true,
         "onCardEnter": {
           "currentSide": "A",
@@ -5507,8 +5653,8 @@
         }
       },
       "sharedActiveBlue4": {
-        "name": "Active Free Peoples 4", 
-        "tableName": "Free Peoples 4",
+        "labelId": "activeFreePeoples4", 
+        "tableLabelId": "freePeoples4",
         "canHaveAttachments": true,
         "onCardEnter": {
           "currentSide": "A",
@@ -5516,8 +5662,8 @@
         }
       },
       "player1Hand": {
-        "name": "Player 1 Hand", 
-        "tableName": "Hand",
+        "labelId": "player1Hand", 
+        "tableLabelId": "hand",
         "canHaveAttachments": false,
         "onCardEnter": {
           "currentSide": "B",
@@ -5526,8 +5672,8 @@
         }
       },
       "player1Deck": {
-        "name": "Player 1 Deck", 
-        "tableName": "Deck",
+        "labelId": "player1Deck", 
+        "tableLabelId": "deck",
         "canHaveAttachments": false,
         "shuffleOnLoad": true,
         "onCardEnter": {
@@ -5540,8 +5686,8 @@
         }
       },
       "player1Cycled": {
-        "name": "Player 1 Cycled", 
-        "tableName": "Cycled",
+        "labelId": "player1Cycled", 
+        "tableLabelId": "cycled",
         "canHaveAttachments": false,
         "onCardEnter": {
           "currentSide": "B",
@@ -5549,8 +5695,8 @@
         }
       },
       "player1Eliminated": {
-        "name": "Player 1 Eliminated", 
-        "tableName": "Eliminated",
+        "labelId": "player1Eliminated", 
+        "tableLabelId": "eliminated",
         "canHaveAttachments": false,
         "onCardEnter": {
           "currentSide": "B",
@@ -5558,8 +5704,8 @@
         }
       },
       "player1Reserve": {
-        "name": "Player 1 Reserve", 
-        "tableName": "P1 Reserve",
+        "labelId": "player1Reserve", 
+        "tableLabelId": "p1Reserve",
         "canHaveAttachments": true,
         "onCardEnter": {
           "currentSide": "A",
@@ -5568,8 +5714,8 @@
         }
       },
       "player2Hand": {
-        "name": "Player 2 Hand", 
-        "tableName": "Hand",
+        "labelId": "player2Hand", 
+        "tableLabelId": "hand",
         "canHaveAttachments": false,
         "onCardEnter": {
           "currentSide": "B",
@@ -5578,8 +5724,8 @@
         }
       },
       "player2Deck": {
-        "name": "Player 2 Deck", 
-        "tableName": "Deck",
+        "labelId": "player2Deck", 
+        "tableLabelId": "deck",
         "canHaveAttachments": false,
         "shuffleOnLoad": true,
         "onCardEnter": {
@@ -5592,8 +5738,8 @@
         }
       },
       "player2Cycled": {
-        "name": "Player 2 Cycled", 
-        "tableName": "Cycled",
+        "labelId": "player2Cycled", 
+        "tableLabelId": "cycled",
         "canHaveAttachments": false,
         "onCardEnter": {
           "currentSide": "B",
@@ -5601,8 +5747,8 @@
         }
       },
       "player2Eliminated": {
-        "name": "Player 2 Eliminated", 
-        "tableName": "Eliminated",
+        "labelId": "player2Eliminated", 
+        "tableLabelId": "eliminated",
         "canHaveAttachments": false,
         "onCardEnter": {
           "currentSide": "B",
@@ -5610,8 +5756,8 @@
         }
       },
       "player2Reserve": {
-        "name": "Player 2 Reserve", 
-        "tableName": "P2 Reserve",
+        "labelId": "player2Reserve", 
+        "tableLabelId": "p2Reserve",
         "canHaveAttachments": true,
         "onCardEnter": {
           "currentSide": "A",
@@ -5620,8 +5766,8 @@
         }
       },
       "player3Hand": {
-        "name": "Player 3 Hand", 
-        "tableName": "Hand",
+        "labelId": "player3Hand", 
+        "tableLabelId": "hand",
         "canHaveAttachments": false,
         "onCardEnter": {
           "currentSide": "B",
@@ -5630,8 +5776,8 @@
         }
       },
       "player3Deck": {
-        "name": "Player 3 Deck", 
-        "tableName": "Deck",
+        "labelId": "player3Deck", 
+        "tableLabelId": "deck",
         "canHaveAttachments": false,
         "shuffleOnLoad": true,
         "onCardEnter": {
@@ -5644,8 +5790,8 @@
         }
       },
       "player3Cycled": {
-        "name": "Player 3 Cycled", 
-        "tableName": "Cycled",
+        "labelId": "player3Cycled", 
+        "tableLabelId": "cycled",
         "canHaveAttachments": false,
         "onCardEnter": {
           "currentSide": "B",
@@ -5653,8 +5799,8 @@
         }
       },
       "player3Eliminated": {
-        "name": "Player 3 Eliminated", 
-        "tableName": "Eliminated",
+        "labelId": "player3Eliminated", 
+        "tableLabelId": "eliminated",
         "canHaveAttachments": false,
         "onCardEnter": {
           "currentSide": "B",
@@ -5662,8 +5808,8 @@
         }
       },
       "player3Reserve": {
-        "name": "Player 3 Reserve", 
-        "tableName": "P3 Reserve",
+        "labelId": "player3Reserve", 
+        "tableLabelId": "p3Reserve",
         "canHaveAttachments": true,
         "onCardEnter": {
           "currentSide": "A",
@@ -5672,8 +5818,8 @@
         }
       },
       "player4Hand": {
-        "name": "Player 4 Hand", 
-        "tableName": "Hand",
+        "labelId": "player4Hand", 
+        "tableLabelId": "hand",
         "canHaveAttachments": false,
         "onCardEnter": {
           "currentSide": "B",
@@ -5682,8 +5828,8 @@
         }
       },
       "player4Deck": {
-        "name": "Player 4 Deck", 
-        "tableName": "Deck",
+        "labelId": "player4Deck", 
+        "tableLabelId": "deck",
         "canHaveAttachments": false,
         "shuffleOnLoad": true,
         "onCardEnter": {
@@ -5696,8 +5842,8 @@
         }
       },
       "player4Cycled": {
-        "name": "Player 4 Cycled", 
-        "tableName": "Cycled",
+        "labelId": "player4Cycled", 
+        "tableLabelId": "cycled",
         "canHaveAttachments": false,
         "onCardEnter": {
           "currentSide": "B",
@@ -5705,8 +5851,8 @@
         }
       },
       "player4Eliminated": {
-        "name": "Player 4 Eliminated", 
-        "tableName": "Eliminated",
+        "labelId": "player4Eliminated", 
+        "tableLabelId": "eliminated",
         "canHaveAttachments": false,
         "onCardEnter": {
           "currentSide": "B",
@@ -5714,8 +5860,8 @@
         }
       },
       "player4Reserve": {
-        "name": "Player 4 Reserve", 
-        "tableName": "P4 Reserve",
+        "labelId": "player4Reserve", 
+        "tableLabelId": "p4Reserve",
         "canHaveAttachments": true,
         "onCardEnter": {
           "currentSide": "A",
@@ -5724,8 +5870,8 @@
         }
       },
       "sharedRules": {
-        "name": "Rules", 
-        "tableName": "Rules",
+        "labelId": "rules", 
+        "tableLabelId": "rules",
         "canHaveAttachments": true,
         "onCardEnter": {
           "currentSide": "A",

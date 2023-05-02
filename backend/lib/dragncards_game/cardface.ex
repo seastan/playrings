@@ -26,13 +26,7 @@ defmodule DragnCardsGame.CardFace do
         prop = trigger_info["faceProperty"]
         regex_string = trigger_info["regex"]
         step_id = trigger_info["stepId"]
-        IO.puts("checking for triggers 1")
-        IO.inspect(acc)
-        IO.puts("prop #{prop}")
-        IO.inspect(regex_string)
-        IO.inspect(step_id)
         search_string = face_details[prop]
-        IO.puts("search_string #{search_string}")
         if search_string do
           case Regex.compile(regex_string, "i") do
             {:ok, regex} ->
