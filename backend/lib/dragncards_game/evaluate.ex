@@ -179,17 +179,14 @@ defmodule DragnCardsGame.Evaluate do
   def evaluate(game, code) do
     #IO.inspect(code)
     if is_list(code) && Enum.count(code) > 0 do
+
       if is_list(Enum.at(code, 0)) do
-        #actions = Enum.slice(code, 1, Enum.count(code))
+
         Enum.reduce(code, game, fn(action, acc) ->
           evaluate(acc, action)
         end)
+
       else
-        # code = Enum.reduce(code, [], fn(code_line, acc) ->
-        #   IO.puts("evaluating")
-        #   IO.inspect(code_line)
-        #   acc ++ [evaluate(game, code_line)]
-        # end)
 
         case Enum.at(code,0) do
           "PREV" ->
@@ -433,8 +430,8 @@ defmodule DragnCardsGame.Evaluate do
             num = if argc == 0 do 1 else evaluate(game, Enum.at(code, 1)) end
             player_n = game["playerUi"]["playerN"]
             game
-              |> GameUI.move_stacks(player_n <> "Deck", player_n <> "Hand", num, "bottom")
-              |> evaluate(["GAME_ADD_MESSAGE", "$PLAYER_N", " drew a card."])
+            |> GameUI.move_stacks(player_n <> "Deck", player_n <> "Hand", num, "bottom")
+            |> evaluate(["GAME_ADD_MESSAGE", "$PLAYER_N", " drew a card."])
           "MOVE_STACK" ->
             argc = Enum.count(code) - 1
             stack_id = evaluate(game, Enum.at(code, 1))
@@ -519,6 +516,7 @@ defmodule DragnCardsGame.Evaluate do
             end
           _ ->
             code
+            #evaluate(game, ["GAME_ADD_MESSAGE", "Command " <> Enum.at(code,0) <> " not recognized in " <> inspect(code)])
         end
       end
     else # value

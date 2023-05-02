@@ -268,7 +268,7 @@
       ],
       "player": [
         {
-          "name": "Ring Tokens",
+          "labelId": "Ring Tokens",
           "imageUrl": "https://dragncards-wotr.s3.amazonaws.com/tokens/RingBlue.png",
           "playerProperty": "ringTokens"
         }

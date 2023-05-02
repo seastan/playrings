@@ -19,7 +19,7 @@ export const MessageLine = ({ message }) => {
       {message.sent_by > 0 && <span className="text-blue-400">
         <UserName userID={message.sent_by} />
       </span>}
-      <span className="text-white"> {processedText}</span>
+      <span className={processedText.startsWith("ERROR:") ? "text-red-500" : "text-white"}> {processedText}</span>
     </div>
   )
 

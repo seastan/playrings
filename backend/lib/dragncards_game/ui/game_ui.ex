@@ -550,13 +550,10 @@ defmodule DragnCardsGame.GameUI do
     end
   end
 
-  def undo(gameui) do
-    replay_step = gameui["replayStep"]
+  def undo(%{"replayStep" => replay_step, "deltas" => deltas, "game" => game} = gameui) do
     if replay_step > 0 do
-      game = gameui["game"]
       messages = game["messages"]
-      deltas = gameui["deltas"]
-      delta = Enum.at(deltas,Enum.count(deltas)-replay_step)
+      delta = Enum.at(deltas, Enum.count(deltas)-replay_step)
       game = apply_delta(game, delta, "undo")
       messages = if messages == [] do
         [inspect(delta)]
@@ -564,7 +561,7 @@ defmodule DragnCardsGame.GameUI do
         messages
       end
       gameui
-        |> update_log(Enum.map(messages, fn(message) -> "UNDO: " <> message end))
+        |> update_log(Enum.map(messages, &("UNDO: " <> &1)))
         |> put_in(["game"], game)
         |> put_in(["replayStep"], replay_step-1)
     else
@@ -572,11 +569,8 @@ defmodule DragnCardsGame.GameUI do
     end
   end
 
-  def redo(gameui) do
-    replay_step = gameui["replayStep"]
-    deltas = gameui["deltas"]
+  def redo(%{"replayStep" => replay_step, "deltas" => deltas, "game" => game} = gameui) do
     if replay_step < Enum.count(deltas) do
-      game = gameui["game"]
       delta = Enum.at(deltas,Enum.count(deltas)-replay_step-1)
       game = apply_delta(game, delta, "redo")
       messages = game["messages"]
@@ -586,7 +580,7 @@ defmodule DragnCardsGame.GameUI do
         messages
       end
       gameui
-        |> update_log(Enum.map(messages, fn(message) -> "REDO: " <> message end))
+        |> update_log(Enum.map(messages, &("REDO: " <> &1)))
         |> put_in(["game"], game)
         |> put_in(["replayStep"], replay_step+1)
     else
