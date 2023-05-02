@@ -8,6 +8,7 @@ import { useGameDefinition } from "./functions/useGameDefinition";
 import { useEvaluateCondition } from "../../hooks/useEvaluateCondition";
 import { dragnActionLists, getVisibleFace, getVisibleSide } from "../definitions/common";
 import { useSiteL10n } from "../../hooks/useSiteL10n";
+import { useGameL10n } from "../../hooks/useGameL10n";
 
 export const DropdownMenuCard = React.memo(({
   mouseX,
@@ -18,6 +19,7 @@ export const DropdownMenuCard = React.memo(({
   activeMenu,
 }) => {    
   const l10n = useSiteL10n();
+  const gameL10n = useGameL10n();
   const gameDef = useGameDefinition();
   const playerN = useSelector(state => state?.playerUi?.playerN);
   const dropdownMenu = useSelector(state => state?.playerUi?.dropdownMenu);
@@ -28,39 +30,38 @@ export const DropdownMenuCard = React.memo(({
   const visibleFace = getVisibleFace(menuCard);
   const evaluateCondition = useEvaluateCondition();
   
-  const DropdownMoveTo = (props) => {
+  const DropdownMoveTo = (destGroupId, handleDropdownClick) => {
+    const label = gameL10n(gameDef?.groups?.[destGroupId]?.labelId);
     return (
       <div className="menu">
         <GoBack goToMenu="moveTo" clickCallback={handleDropdownClick}/>
         <DropdownItem
           leftIcon={<FontAwesomeIcon icon={faArrowUp}/>}
-          action={dragnActionLists.moveCardToTop(menuCardId, props.destGroupId)}
+          action={dragnActionLists.moveCardToTop(menuCardId, destGroupId, label)}
           clickCallback={handleDropdownClick}>
           {l10n("top")}
         </DropdownItem>
         <DropdownItem
           leftIcon={<FontAwesomeIcon icon={faRandom}/>}
-          action={dragnActionLists.moveCardToShuffled(menuCardId, props.destGroupId)}
+          action={dragnActionLists.moveCardToShuffled(menuCardId, destGroupId, label)}
           clickCallback={handleDropdownClick}>
           {l10n("shuffleIn")}
         </DropdownItem>
         <DropdownItem
           leftIcon={<FontAwesomeIcon icon={faRandom}/>}
-          action={dragnActionLists.moveCardToTopX(menuCardId, props.destGroupId)}
+          action={dragnActionLists.moveCardToTopX(menuCardId, destGroupId, label)}
           clickCallback={handleDropdownClick}>
           {l10n("shuffleIntoTopX")}
         </DropdownItem>
         <DropdownItem
           leftIcon={<FontAwesomeIcon icon={faRandom}/>}
-          action={dragnActionLists.moveCardToBottomX(menuCard)}
+          action={dragnActionLists.moveCardToBottomX(menuCard, destGroupId, label)}
           clickCallback={handleDropdownClick}>
           {l10n("shuffleIntoBottomX")}
         </DropdownItem>
         <DropdownItem
           leftIcon={<FontAwesomeIcon icon={faArrowDown}/>}
-          action="moveCard"
-          destGroupId={props.destGroupId}
-          position="bottom"
+          action={dragnActionLists.moveCardToBottom(menuCardId, destGroupId, label)}
           clickCallback={handleDropdownClick}>
           {l10n("bottom")}
         </DropdownItem>
@@ -151,46 +152,16 @@ export const DropdownMenuCard = React.memo(({
         </div>}
 
         {activeMenu === "moveTo"+menuCard?.deckGroupId &&
-        <DropdownMoveTo destGroupId={menuCard?.deckGroupId}/>}
+        
+        DropdownMoveTo(menuCard?.deckGroupId,handleDropdownClick)
+        
+        }
 
-        {gameDef?.cardMenu?.moveToGroupIds?.map((groupId, index) => {
+        {/* {gameDef?.cardMenu?.moveToGroupIds?.map((groupId, index) => {
           if (activeMenu === "moveTo"+groupId) return(
             <DropdownMoveTo key={index} destGroupId={groupId}/>
           )
-        })}
-
-        {activeMenu === "perRound" &&
-        <div className="menu">
-          <GoBack goToMenu="main" clickCallback={handleDropdownClick}/>
-          {Object.keys(gameDef.tokens).map((tokenType, _tokenIndex) => (
-            <DropdownItem
-              rightIcon={<FontAwesomeIcon icon={faChevronRight}/>}
-              goToMenu={tokenType+"PerRound"}
-              tokenType={tokenType}
-              clickCallback={handleDropdownClick}>
-              {l10n(tokenType)}
-            </DropdownItem>
-          ))}
-        </div>}
-
-      {Object.keys(gameDef.tokens).map((tokenType, _tokenIndex) => {
-        const visible = activeMenu === tokenType+"PerRound";
-        if (visible) return(
-          <div className="menu">
-            <GoBack goToMenu="perRound" clickCallback={handleDropdownClick}/>
-            {[-3,-2,-1,0,1,2,3,4,5].map((increment, _tokenIndex) => (
-              <DropdownItem
-                rightIcon={(menuCard.tokensPerRound[tokenType]===increment ||
-                  (!menuCard.tokensPerRound[tokenType] && increment===0)) ? <FontAwesomeIcon icon={faCheck}/> : null}
-                action={"incrementTokenPerRound"}
-                tokenType={tokenType}
-                increment={increment}
-                clickCallback={handleDropdownClick}>
-                {increment}
-              </DropdownItem>
-            ))}
-          </div>)
-        })}
+        })} */}
 
         {activeMenu === "toggleTrigger" &&
         <div className="menu">

@@ -83,30 +83,30 @@ export const dragnActionLists = {
     ["GAME_SET_VAL", "/stepIndex", stepIndex],
     ["GAME_ADD_MESSAGE", "$PLAYER_N", " set the round step to ", stepInfo.text, "."]
   ]),
-  moveCardToTop: (cardId, destGroupId) => ([
+  moveCardToTop: (cardId, destGroupId, label) => ([
     ["MOVE_CARD", cardId, destGroupId, 0],
-    ["GAME_ADD_MESSAGE", "$PLAYER_N", " moved ", ["FACEUP_NAME_FROM_CARD_ID", cardId], " to top of ", "$GAME.groupById."+destGroupId+".name", "."]
+    ["GAME_ADD_MESSAGE", "$PLAYER_N", " moved ", ["FACEUP_NAME_FROM_CARD_ID", cardId], " to top of ", label, "."]
   ]),
-  moveCardToShuffled: (cardId, destGroupId) => ([
+  moveCardToShuffled: (cardId, destGroupId, label) => ([
     ["MOVE_CARD", cardId, destGroupId, 0],
     ["SHUFFLE_GROUP", destGroupId],
-    ["GAME_ADD_MESSAGE", "$PLAYER_N", " shuffled ", ["FACEUP_NAME_FROM_CARD_ID", cardId], " into ", "$GAME.groupById."+destGroupId+".name", "."]
+    ["GAME_ADD_MESSAGE", "$PLAYER_N", " shuffled ", ["FACEUP_NAME_FROM_CARD_ID", cardId], " into ", label, "."]
   ]),
-  moveCardToBottom: (cardId, destGroupId) => ([
+  moveCardToBottom: (cardId, destGroupId, label) => ([
     ["MOVE_CARD", cardId, destGroupId, -1],
-    ["GAME_ADD_MESSAGE", "$PLAYER_N", " moved ", ["FACEUP_NAME_FROM_CARD_ID", cardId], " to bottom of ", "$GAME.groupById."+destGroupId+".name", "."]
+    ["GAME_ADD_MESSAGE", "$PLAYER_N", " moved ", ["FACEUP_NAME_FROM_CARD_ID", cardId], " to bottom of ", label, "."]
   ]),
-  moveCardToTopX: (cardId, destGroupId) => ([
+  moveCardToTopX: (cardId, destGroupId, label) => ([
     ["INPUT", "integer", "$VAL", "Shuffle into top:", 5],
     ["MOVE_CARD", cardId, destGroupId, 0],
     ["SHUFFLE_TOP_X", destGroupId, "$VAL"],
-    ["GAME_ADD_MESSAGE", "$PLAYER_N", " shuffled ", ["FACEUP_NAME_FROM_CARD_ID", cardId], " into the top ", "$VAL", " cards of ", "$GAME.groupById."+destGroupId+".name", "."]
+    ["GAME_ADD_MESSAGE", "$PLAYER_N", " shuffled ", ["FACEUP_NAME_FROM_CARD_ID", cardId], " into the top ", "$VAL", " cards of ", label, "."]
   ]),
-  moveCardToBottomX: (cardId, destGroupId) => ([
+  moveCardToBottomX: (cardId, destGroupId, label) => ([
     ["INPUT", "integer", "$VAL", "Shuffle into bottom:", 5],
     ["MOVE_CARD", cardId, destGroupId, -1],
     ["SHUFFLE_BOTTOM_X", destGroupId, "$VAL"],
-    ["GAME_ADD_MESSAGE", "$PLAYER_N", " shuffled ", ["FACEUP_NAME_FROM_CARD_ID", cardId], " into the bottom ", "$VAL", " cards of ", "$GAME.groupById."+destGroupId+".name", "."]
+    ["GAME_ADD_MESSAGE", "$PLAYER_N", " shuffled ", ["FACEUP_NAME_FROM_CARD_ID", cardId], " into the bottom ", "$VAL", " cards of ", label, "."]
   ]),
   detach: (card) => ([
     ["COND",
