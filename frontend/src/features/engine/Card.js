@@ -23,16 +23,13 @@ export const Card = React.memo(({
     isDragging,
 }) => { 
     const dispatch = useDispatch();
-    const user = useProfile();
     const gameDef = useGameDefinition();
     const l10n = useGameL10n();
-    //const card = useSelector(state => state?.gameUi?.game?.cardById[cardId]);
     const cardCurrentSide = useSelector(state => state?.gameUi?.game?.cardById[cardId]?.currentSide);
     const cardSides = useSelector(state => state?.gameUi?.game?.cardById[cardId]?.sides);
     const cardPeeking = useSelector(state => state?.gameUi?.game?.cardById[cardId]?.peeking);
     const cardTokens = useSelector(state => state?.gameUi?.game?.cardById[cardId]?.tokens);
     const cardRotation = useSelector(state => state?.gameUi?.game?.cardById[cardId]?.rotation);
-    const cardCommitted = useSelector(state => state?.gameUi?.game?.cardById[cardId]?.committed);
     const playerN = useSelector(state => state?.playerUi?.playerN);
     const dropdownMenuVisible = useSelector(state => state?.playerUi?.dropdownMenu?.visible);
     const cardScaleFactor = useCardScaleFactor();
@@ -111,7 +108,7 @@ export const Card = React.memo(({
                             <div>Tap to</div>
                             {l10n(defaultAction.labelId)}
                     </div>}
-                {(cardPeeking[playerN] && !defaultPeeking && (cardCurrentSide === "B")) ? <FontAwesomeIcon className="absolute top-0 right-0 text-2xl" icon={faEye}/>:null}
+                {(cardPeeking[playerN] && !defaultPeeking && !isDragging && (cardCurrentSide === "B")) ? <FontAwesomeIcon className="absolute top-0 right-0 text-2xl" icon={faEye}/>:null}
                 <Target
                     cardId={cardId}/>
                 <CardMouseRegion 

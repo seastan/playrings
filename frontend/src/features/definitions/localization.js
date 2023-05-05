@@ -202,7 +202,7 @@ export const siteL10n = {
   },
   "deckOfOrigin": {
     "English": "Deck of origin"
-  },
+  }
 
 
 }

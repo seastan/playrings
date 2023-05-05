@@ -103,7 +103,7 @@ export const DropdownMenuCard = React.memo(({
               <DropdownItem 
                 action={menuItem.actionList} 
                 clickCallback={handleDropdownClick}>
-                  {l10n(menuItem.labelId)}
+                  {gameL10n(menuItem.labelId)}
               </DropdownItem> 
             )
           })}
@@ -145,16 +145,14 @@ export const DropdownMenuCard = React.memo(({
                 rightIcon={<FontAwesomeIcon icon={faChevronRight}/>}
                 goToMenu={"moveTo"+groupId}
                 clickCallback={handleDropdownClick}>
-                {l10n(gameDef?.groups?.[groupId]?.labelId)}
+                {gameL10n(gameDef?.groups?.[groupId]?.labelId)}
               </DropdownItem>
             )
           })}
         </div>}
 
         {activeMenu === "moveTo"+menuCard?.deckGroupId &&
-        
-        DropdownMoveTo(menuCard?.deckGroupId,handleDropdownClick)
-        
+          DropdownMoveTo(menuCard?.deckGroupId,handleDropdownClick)
         }
 
         {/* {gameDef?.cardMenu?.moveToGroupIds?.map((groupId, index) => {
@@ -171,7 +169,7 @@ export const DropdownMenuCard = React.memo(({
               rightIcon={<FontAwesomeIcon icon={faChevronRight}/>}
               goToMenu={phaseInfo.phaseId+"ToggleTrigger"}
               clickCallback={handleDropdownClick}>
-              {l10n(phaseInfo.phaseId)}
+              {gameL10n(phaseInfo.labelId)}
             </DropdownItem>
           ))}
         </div>}
@@ -187,7 +185,7 @@ export const DropdownMenuCard = React.memo(({
                   rightIcon={visibleFace?.triggers?.[stepInfo.stepId] ? <FontAwesomeIcon icon={faCheck}/> : null}
                   action={dragnActionLists.toggleTrigger(stepInfo.stepId)}
                   clickCallback={handleDropdownClick}>
-                  <div className="text-xs">{stepInfo.text}</div>
+                  <div className="text-xs">{gameL10n(stepInfo.labelId)}</div>
                 </DropdownItem>
               )})}
           </div>)

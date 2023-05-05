@@ -23,7 +23,7 @@ defmodule DragnCardsWeb.RoomChannel do
   def handle_info(:after_join, %{assigns: %{room_slug: room_slug, user_id: user_id}, channel_pid: pid} = socket) do
     # state = GameUIServer.state(room_slug)
     GameUIServer.add_player_to_room(room_slug, user_id, pid)
-    notify(socket, room_slug, user_id)
+    notify_quiet(socket, room_slug, user_id)
     {:noreply, socket}
   end
 

@@ -76,13 +76,14 @@
       "eliminateCard": {
         "English": "Eliminate card"
       },
-      "toggleRotate": {
-        "English": "Rotate card"
-      },"removeTokens": {
+      "removeTokens": {
         "English": "Remove Tokens"
       },
       "rotate": {
         "English": "Rotate"
+      },
+      "toggleRotate": {
+        "English": "Toggle rotate"
       },
       "eliminate": {
         "English": "Eliminate"
@@ -157,166 +158,211 @@
         "English": "Standard"
       },
       "setAside": {
-          "English": "Set Aside"
+        "English": "Set Aside"
       },
       "activeLocation1": {
-          "English": "Active Location 1"
+        "English": "Active Location 1"
       },
       "location1": {
-          "English": "Location 1"
+        "English": "Location 1"
       },
       "activeLocation2": {
-          "English": "Active Location 2"
+        "English": "Active Location 2"
       },
       "location2": {
-          "English": "Location 2"
+        "English": "Location 2"
       },
       "activeLocation3": {
-          "English": "Active Location 3"
+        "English": "Active Location 3"
       },
       "location3": {
-          "English": "Location 3"
+        "English": "Location 3"
       },
       "activeLocation4": {
-          "English": "Active Location 4"
+        "English": "Active Location 4"
       },
       "location4": {
-          "English": "Location 4"
+        "English": "Location 4"
       },
       "activeShadow1": {
-          "English": "Active Shadow 1"
+        "English": "Active Shadow 1"
       },
       "shadow1": {
-          "English": "Shadow 1"
+        "English": "Shadow 1"
       },
       "activeShadow2": {
-          "English": "Active Shadow 2"
+        "English": "Active Shadow 2"
       },
       "shadow2": {
-          "English": "Shadow 2"
+        "English": "Shadow 2"
       },
       "activeShadow3": {
-          "English": "Active Shadow 3"
+        "English": "Active Shadow 3"
       },
       "shadow3": {
-          "English": "Shadow 3"
+        "English": "Shadow 3"
       },
       "activeShadow4": {
-          "English": "Active Shadow 4"
+        "English": "Active Shadow 4"
       },
       "shadow4": {
-          "English": "Shadow 4"
+        "English": "Shadow 4"
       },
       "activeFreePeoples1": {
-          "English": "Active Free Peoples 1"
+        "English": "Active Free Peoples 1"
       },
       "freePeoples1": {
-          "English": "Free Peoples 1"
+        "English": "Free Peoples 1"
       },
       "activeFreePeoples2": {
-          "English": "Active Free Peoples 2"
+        "English": "Active Free Peoples 2"
       },
       "freePeoples2": {
-          "English": "Free Peoples 2"
+        "English": "Free Peoples 2"
       },
       "activeFreePeoples3": {
-          "English": "Active Free Peoples 3"
+        "English": "Active Free Peoples 3"
       },
       "freePeoples3": {
-          "English": "Free Peoples 3"
+        "English": "Free Peoples 3"
       },
       "activeFreePeoples4": {
-          "English": "Active Free Peoples 4"
+        "English": "Active Free Peoples 4"
       },
       "freePeoples4": {
-          "English": "Free Peoples 4"
+        "English": "Free Peoples 4"
       },
       "player1Hand": {
-          "English": "Player 1 Hand"
+        "English": "Player 1 Hand"
       },
       "hand": {
-          "English": "Hand"
+        "English": "Hand"
       },
       "player1Deck": {
-          "English": "Player 1 Deck"
+        "English": "Player 1 Deck"
       },
       "deck": {
-          "English": "Deck"
+        "English": "Deck"
       },
       "player1Cycled": {
-          "English": "Player 1 Cycled"
+        "English": "Player 1 Cycled"
       },
       "cycled": {
-          "English": "Cycled"
+        "English": "Cycled"
       },
       "player1Eliminated": {
-          "English": "Player 1 Eliminated"
+        "English": "Player 1 Eliminated"
       },
       "eliminated": {
-          "English": "Eliminated"
+        "English": "Eliminated"
       },
       "player1Reserve": {
-          "English": "Player 1 Reserve"
+        "English": "Player 1 Reserve"
       },
       "p1Reserve": {
-          "English": "P1 Reserve"
+        "English": "P1 Reserve"
       },
       "player2Hand": {
-          "English": "Player 2 Hand"
+        "English": "Player 2 Hand"
       },
       "player2Deck": {
-          "English": "Player 2 Deck"
+        "English": "Player 2 Deck"
       },
       "player2Cycled": {
-          "English": "Player 2 Cycled"
+        "English": "Player 2 Cycled"
       },
       "player2Eliminated": {
-          "English": "Player 2 Eliminated"
+        "English": "Player 2 Eliminated"
       },
       "player2Reserve": {
-          "English": "Player 2 Reserve"
+        "English": "Player 2 Reserve"
       },
       "p2Reserve": {
-          "English": "P2 Reserve"
+        "English": "P2 Reserve"
       },
       "player3Hand": {
-          "English": "Player 3 Hand"
+        "English": "Player 3 Hand"
       },
       "player3Deck": {
-          "English": "Player 3 Deck"
+        "English": "Player 3 Deck"
       },
       "player3Cycled": {
-          "English": "Player 3 Cycled"
+        "English": "Player 3 Cycled"
       },
       "player3Eliminated": {
-          "English": "Player 3 Eliminated"
+        "English": "Player 3 Eliminated"
       },
       "player3Reserve": {
-          "English": "Player 3 Reserve"
+        "English": "Player 3 Reserve"
       },
       "p3Reserve": {
-          "English": "P3 Reserve"
+        "English": "P3 Reserve"
       },
       "player4Hand": {
-          "English": "Player 4 Hand"
+        "English": "Player 4 Hand"
       },
       "player4Deck": {
-          "English": "Player 4 Deck"
+        "English": "Player 4 Deck"
       },
       "player4Cycled": {
-          "English": "Player 4 Cycled"
+        "English": "Player 4 Cycled"
       },
       "player4Eliminated": {
-          "English": "Player 4 Eliminated"
+        "English": "Player 4 Eliminated"
       },
       "player4Reserve": {
-          "English": "Player 4 Reserve"
+        "English": "Player 4 Reserve"
       },
       "p4Reserve": {
-          "English": "P4 Reserve"
+        "English": "P4 Reserve"
       },
       "rules": {
-          "English": "Rules"
+        "English": "Rules"
+      },
+      "step-1.1": {
+        "English": "1.1: First player activates 1 battleground"
+      },
+      "step-1.2": {
+        "English": "1.2: First player activates 1 path"
+      },
+      "step-2.1": {
+        "English": "2.1: Players take turns taking actions or passing"
+      },
+      "step-3.0": {
+        "English": "3.0: Starting player decides the order the battleground and path combats are resolved"
+      },
+      "step-3.1": {
+        "English": "3.1: Count the number of attacking icons"
+      },
+      "step-3.2": {
+        "English": "3.2: Subtract battleground or path icons"
+      },
+      "step-3.3": {
+        "English": "3.3: Discard defending cards to subtract more icons"
+      },
+      "step-3.4": {
+        "English": "3.4: Leftover defending cards are cycled"
+      },
+      "step-3.5": {
+        "English": "3.5: All attacking cards are eliminated"
+      },
+      "step-3.6": {
+        "English": "3.6: If path, Shadow team gains corruption tokens equal to excess attack"
+      },
+      "step-3.7": {
+        "English": "3.7: Winning side takes control (Shadow team takes control of paths facedown)"
+      },
+      "step-4.1": {
+        "English": "4.1: If the difference between scores is 10 or more, the team with the higher score wins"
+      },
+      "step-4.2": {
+        "English": "4.2: If the last path combat has been resolved, the team with the higher score wins"
+      },
+      "step-5.1": {
+        "English": "5.1: Draw cards"
+      },
+      "step-5.2": {
+        "English": "5.2: Pass the starting player token to the next player"
       }
     },
     "lobby": {
@@ -5908,21 +5954,21 @@
       }
     ],
     "steps": [
-      {"stepId": "1.1", "phaseId": "Location", "text": "1.1: First player activates 1 battleground"},
-      {"stepId": "1.2", "phaseId": "Location", "text": "1.2: First player activates 1 path"},
-      {"stepId": "2.1", "phaseId": "Action",   "text": "2.1: Players take turns taking actions or passing"},
-      {"stepId": "3.0", "phaseId": "Combat",   "text": "3.0: Starting player decides the order the battleground and path combats are resolved"},
-      {"stepId": "3.1", "phaseId": "Combat",   "text": "3.1: Count the number of attacking icons"},
-      {"stepId": "3.2", "phaseId": "Combat",   "text": "3.2: Subtract battleground or path icons"},
-      {"stepId": "3.3", "phaseId": "Combat",   "text": "3.3: Discard defending cards to subtract more icons"},
-      {"stepId": "3.4", "phaseId": "Combat",   "text": "3.4: Leftover defending cards are cycled"},
-      {"stepId": "3.5", "phaseId": "Combat",   "text": "3.5: All attacking cards are eliminated"},
-      {"stepId": "3.6", "phaseId": "Combat",   "text": "3.6: If path, Shadow team gains corruption tokens equal to excess attack"},
-      {"stepId": "3.7", "phaseId": "Combat",   "text": "3.7: Winning side takes control (Shadow team takes control of paths facedown)"},
-      {"stepId": "4.1", "phaseId": "Victory",  "text": "4.1: If the difference between scores is 10 or more, the team with the higher score wins"},
-      {"stepId": "4.2", "phaseId": "Victory",  "text": "4.2: If the last path combat has been resolved, the team with the higher score wins"},
-      {"stepId": "5.1", "phaseId": "Draw",     "text": "5.1: Draw cards"},
-      {"stepId": "5.2", "phaseId": "Draw",     "text": "5.2: Pass the starting player token to the next player"}
+      {"stepId": "1.1", "phaseId": "Location", "labelId": "step-1.1" "1.1: First player activates 1 battleground"},
+      {"stepId": "1.2", "phaseId": "Location", "labelId": "step-1.2" "1.2: First player activates 1 path"},
+      {"stepId": "2.1", "phaseId": "Action",   "labelId": "step-2.1" "2.1: Players take turns taking actions or passing"},
+      {"stepId": "3.0", "phaseId": "Combat",   "labelId": "step-3.0" "3.0: Starting player decides the order the battleground and path combats are resolved"},
+      {"stepId": "3.1", "phaseId": "Combat",   "labelId": "step-3.1" "3.1: Count the number of attacking icons"},
+      {"stepId": "3.2", "phaseId": "Combat",   "labelId": "step-3.2" "3.2: Subtract battleground or path icons"},
+      {"stepId": "3.3", "phaseId": "Combat",   "labelId": "step-3.3" "3.3: Discard defending cards to subtract more icons"},
+      {"stepId": "3.4", "phaseId": "Combat",   "labelId": "step-3.4" "3.4: Leftover defending cards are cycled"},
+      {"stepId": "3.5", "phaseId": "Combat",   "labelId": "step-3.5" "3.5: All attacking cards are eliminated"},
+      {"stepId": "3.6", "phaseId": "Combat",   "labelId": "step-3.6" "3.6: If path, Shadow team gains corruption tokens equal to excess attack"},
+      {"stepId": "3.7", "phaseId": "Combat",   "labelId": "step-3.7" "3.7: Winning side takes control (Shadow team takes control of paths facedown)"},
+      {"stepId": "4.1", "phaseId": "Victory",  "labelId": "step-4.1" "4.1: If the difference between scores is 10 or more, the team with the higher score wins"},
+      {"stepId": "4.2", "phaseId": "Victory",  "labelId": "step-4.2" "4.2: If the last path combat has been resolved, the team with the higher score wins"},
+      {"stepId": "5.1", "phaseId": "Draw",     "labelId": "step-5.1" "5.1: Draw cards"},
+      {"stepId": "5.2", "phaseId": "Draw",     "labelId": "step-5.2" "5.2: Pass the starting player token to the next player"}
     ],
     "stepTriggers": [],
     "tooltips": {},
