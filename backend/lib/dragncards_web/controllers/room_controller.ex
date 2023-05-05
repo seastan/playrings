@@ -11,8 +11,6 @@ defmodule DragnCardsWeb.RoomController do
 
   def index(conn, _params) do
     rooms = Rooms.list_rooms()
-    IO.inspect("++++++++++++++++++++++++++ rooms")
-    IO.inspect(rooms)
     render(conn, "index.json", rooms: rooms)
   end
 

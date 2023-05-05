@@ -85,6 +85,12 @@ defmodule DragnCards.Rooms do
     |> notify_lobby()
   end
 
+  def update_room_name_by_slug(slug, name) do
+    Room
+    |> where([r], r.slug == ^slug)
+    |> Repo.update_all(set: [name: name])
+  end
+
   @doc """
   Deletes a Room.
 

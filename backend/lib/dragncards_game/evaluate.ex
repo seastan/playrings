@@ -4,6 +4,7 @@ defmodule DragnCardsGame.Evaluate do
   """
   require Logger
   alias DragnCardsGame.{GameUI}
+  alias DragnCards.Rooms
 
   def put_by_path(game_old, path, val_new) do
     # IO.puts("val_new 1")
@@ -339,6 +340,10 @@ defmodule DragnCardsGame.Evaluate do
             path = evaluate(game, Enum.at(code, 1))
             value = evaluate(game, Enum.at(code, 2))
             put_by_path(game, path, value)
+          "UPDATE_ROOM_NAME" ->
+            name = evaluate(game, Enum.at(code, 1))
+            Rooms.update_room_name_by_slug(game["roomSlug"], name)
+            evaluate(game, ["GAME_SET_VAL", "/roomName", name])
           "GAME_INCREASE_VAL" ->
             path = evaluate(game, Enum.at(code, 1))
             delta = evaluate(game, Enum.at(code, 2))

@@ -129,21 +129,24 @@ defmodule DragnCardsGame.GameUIServer do
     gameui =
       case :ets.lookup(:game_uis, game_name) do
         [] ->
+          IO.puts("gameuiserver init 1")
           gameui = GameUI.new(game_name, user.id, options)
           :ets.insert(:game_uis, {game_name, gameui})
+
+          IO.puts("gameuiserver init 2")
           gameui
 
         [{^game_name, gameui}] ->
           gameui
       end
     IO.puts("game_ui_server init")
-    IO.inspect(gameui["roomName"])
-    path = [:code.priv_dir(:dragncards), "python", "lotrlcg"] |> Path.join()
-    {:ok, pypid} = :python.start([{:python_path, to_charlist(path)}, {:python, 'python3'}])
-    IO.puts("game_ui_server init")
-    IO.inspect(:code.priv_dir(:dragncards))
-    gameui = put_in(gameui["pypid"], :erlang.pid_to_list(pypid))
-    gr = GameRegistry.add(gameui["roomName"], gameui)
+    IO.inspect(gameui["roomSlug"])
+    # path = [:code.priv_dir(:dragncards), "python", "lotrlcg"] |> Path.join()
+    # {:ok, pypid} = :python.start([{:python_path, to_charlist(path)}, {:python, 'python3'}])
+    # IO.puts("game_ui_server init")
+    # IO.inspect(:code.priv_dir(:dragncards))
+    # gameui = put_in(gameui["pypid"], :erlang.pid_to_list(pypid))
+    gr = GameRegistry.add(gameui["roomSlug"], gameui)
     IO.puts("game_ui_server GameRegistry")
     IO.inspect(gr)
     #GameRegistry.add(gameui["roomName"]<>"-pypid", pypid)
@@ -243,11 +246,11 @@ defmodule DragnCardsGame.GameUIServer do
     # but causes tests to fail.  Not sure it's a real failure
     # spawn_link(fn ->
 
-    GameRegistry.update(new_gameui["roomName"], new_gameui)
+    GameRegistry.update(new_gameui["roomSlug"], new_gameui)
     # end)
 
     spawn_link(fn ->
-      :ets.insert(:game_uis, {new_gameui["roomName"], new_gameui})
+      :ets.insert(:game_uis, {new_gameui["roomSlug"], new_gameui})
     end)
 
     {:reply, new_gameui, new_gameui, timeout(new_gameui)}
@@ -271,16 +274,16 @@ defmodule DragnCardsGame.GameUIServer do
   end
 
   def terminate({:shutdown, :timeout}, state) do
-    Logger.info("Terminate (Timeout) running for #{state["roomName"]}")
-    :ets.delete(:game_uis, state["roomName"])
-    GameRegistry.remove(state["roomName"])
+    Logger.info("Terminate (Timeout) running for #{state["roomSlug"]}")
+    :ets.delete(:game_uis, state["roomSlug"])
+    GameRegistry.remove(state["roomSlug"])
     :ok
   end
 
   # Do I need to trap exits here?
   def terminate(_reason, state) do
-    Logger.info("Terminate (Non Timeout) running for #{state["roomName"]}")
-    GameRegistry.remove(state["roomName"])
+    Logger.info("Terminate (Non Timeout) running for #{state["roomSlug"]}")
+    GameRegistry.remove(state["roomSlug"])
     :ok
   end
 

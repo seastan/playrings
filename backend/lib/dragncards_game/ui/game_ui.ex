@@ -14,11 +14,11 @@ defmodule DragnCardsGame.GameUI do
   @type t :: Map.t()
 
   @spec new(String.t(), integer(), Map.t()) :: GameUI.t()
-  def new(game_name, user_id, %{} = options) do
-    Logger.debug("gameui new")
+  def new(room_slug, user_id, %{} = options) do
+    IO.puts("gameui new 1")
     gameui = %{
-      "game" => Game.load(options),
-      "roomName" => game_name,
+      "game" => Game.load(room_slug, options),
+      "roomSlug" => room_slug,
       "options" => options,
       "createdAt" => DateTime.utc_now(),
       "createdBy" => user_id,
@@ -33,6 +33,8 @@ defmodule DragnCardsGame.GameUI do
       "logTimestamp" => nil,
       "logMessages" => [] # These game messages will be delivered to chat
     }
+    IO.puts("gameui new 2")
+    gameui
   end
 
   def pretty_print(game, header \\ nil) do
@@ -722,11 +724,11 @@ defmodule DragnCardsGame.GameUI do
   def set_last_room_update(gameui) do
     if rem(Enum.count(gameui["deltas"]), 20) == 0 do
       timestamp = System.system_time(:second)
-      room = Repo.get_by(Room, [slug: gameui["roomName"]])
+      room = Repo.get_by(Room, [slug: gameui["roomSlug"]])
       if room do
         updates = %{
           last_update: timestamp,
-          room_title: gameui["game"]["roomTitle"],
+          name: gameui["game"]["roomName"],
           num_players: gameui["game"]["numPlayers"]
         }
         room

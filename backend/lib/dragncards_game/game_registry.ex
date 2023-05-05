@@ -51,7 +51,8 @@ defmodule DragnCardsGame.GameRegistry do
   # inserting or updating a Room.
   defp to_room_param(%{} = gameui) do
     %{
-      name: gameui["roomName"],
+      slug: gameui["roomSlug"],
+      name: gameui["roomSlug"],
       created_by: gameui["createdBy"],
       privacy_type: gameui["privacyType"],
       last_update: System.system_time(:second),

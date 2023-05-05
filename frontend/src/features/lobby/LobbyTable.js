@@ -7,7 +7,7 @@ import useDataApi from "../../hooks/useDataApi";
 import useChannel from "../../hooks/useChannel";
 
 const columns = [
-  {name: "quest", label: "Quest", options: { filter: false, sort: true }},
+  {name: "name", label: "Label", options: { filter: false, sort: true }},
   {name: "host", label: "Host", options: { filter: false, sort: true }},
   //{name: "looking_for_players", label: "Looking for players", options: { filter: true, sort: true }},
   {name: "mode", label: "Mode", options: { filter: true, sort: true }},
@@ -34,6 +34,9 @@ export const LobbyTable = ({ selectedPlugin }) => {
     "/be/api/rooms",
     null
   );
+
+    console.log("Rendering LobbyTable", data)
+
   const onChannelMessage = useCallback(
     (event, payload) => {
       if (event === "rooms_update" && payload.rooms != null) {
@@ -52,18 +55,18 @@ export const LobbyTable = ({ selectedPlugin }) => {
     for (var i=0; i<rooms.length; i++) {
     //for (var replay of replayData) {
       var room = rooms[i];
-      console.log("Room", room)
+      console.log("Room 1", {room, selectedPlugin})
       const elapsedSeconds = (room.last_update ? currentUnixTime - room.last_update : Number.MAX_SAFE_INTEGER);
       const status = (elapsedSeconds < 60 ? "Active" : "Idle");
       if (status === "Active") activeRooms++;
       if (status === "Active" && room.privacy_type !== "public") activePrivate++;
-      if (room.plugin_id !== selectedPlugin.plugin_id) continue;
+      if (room.plugin_id !== selectedPlugin.id) continue;
+      console.log("Room 2", {room, selectedPlugin})
       // Currently there is no "admin" user field so I am usering supporter_level === 100 as a hack
-      if (room.privacy_type === "public" || (room.privacy_type === "playtest" && myUser?.playtester) || myUser?.id === room.created_by || myUser?.supporter_level === 100) {
+      if (room.privacy_type === "public" || myUser?.id === room.created_by || myUser?.admin) {
         console.log("pluginuuid",room.plugin_id, selectedPlugin.plugin_id)
         filteredRooms.push({
-          name: room.name,
-          quest: <Link to={"/room/" + room.slug}>{room.encounter_name || "Unspecified"}</Link>,
+          name: <Link to={"/room/" + room.slug}>{room.name || "Unspecified"}</Link>,
           host: <UserName userID={room.created_by} defaultName="Unspecified"></UserName>,
           //looking_for_players: "No",
           num_players: room.num_players || 1,

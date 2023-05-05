@@ -12,7 +12,7 @@ var delayBroadcast;
 
 export const Room = ({ slug }) => {
   const dispatch = useDispatch();
-  const roomName = useSelector(state => state.gameUi.roomName);
+  const roomSlug = useSelector(state => state.gameUi.roomSlug);
   const setMessages = useSetMessages();
   const myUser = useProfile();
   const myUserId = myUser?.id;
@@ -50,7 +50,7 @@ export const Room = ({ slug }) => {
     if (event === "phx_reply" && payload.response.game != null) {
       // Update store with the full state received
       const game_ui = payload.response;
-      if (roomName !== game_ui.roomName) { // Entered a new room
+      if (roomSlug !== game_ui.roomSlug) { // Entered a new room
         // Reset player UI
         dispatch(resetPlayerUi())
       }
@@ -85,7 +85,7 @@ export const Room = ({ slug }) => {
       }
     }
 
-  }, [roomName]);
+  }, [roomSlug]);
 
   const onChatMessage = useCallback((event, payload) => {
     if (
@@ -114,7 +114,7 @@ export const Room = ({ slug }) => {
   // console.log("plugin room",plugin)
   //if (plugin === null) return (<div className="text-white m-4">Loading...</div>);
 
-  if (roomName !== slug) return (<div></div>);
+  if (roomSlug !== slug) return (<div></div>);
   else {
     return (
       <RoomProviders 
