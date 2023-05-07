@@ -81,7 +81,6 @@
   
   .dropdown {
     position: absolute;
-    width: 300px;
     /* transform: translateX(-45%); */
     background-color: var(--bg);
     border: var(--border);
@@ -122,7 +121,7 @@
   }
 
   .menu-item {
-    height: 30px;
+    height: 3.0vh;
     display: flex;
     align-items: center;
     border-radius: var(--border-radius);
@@ -170,3 +169,4 @@
   
     transition: height var(--speed) ease;
   }
+  

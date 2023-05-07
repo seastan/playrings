@@ -184,7 +184,7 @@ padding: 0;
 
 .third-level-menu > li
 {
-    height: 35px;
+    
     background: rgb(75, 85, 99);
     padding-left: 10px;
     padding-top: 5px;
@@ -206,7 +206,7 @@ padding: 0;
 .second-level-menu > li
 {
     position: relative;
-    height: 35px;
+    height: 3.0vh;
     background: rgb(75, 85, 99);
     z-index: 10000;
     padding-left: 10px;

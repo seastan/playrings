@@ -52,12 +52,11 @@ export const DropdownMenuGroup = React.memo(({
   }
 
   const left = mouseX < (window.innerWidth/2)  ? mouseX : mouseX -300;
-  const top = mouseY < (window.innerHeight/2) ? mouseY : mouseY -300;
 
   return (
     <div 
       className="dropdown" 
-      style={{ height: menuHeight, zIndex: 1e7, top: top, left: left }}
+      style={{ height: menuHeight, zIndex: 1e7, bottom: 5, left: left }}
       >
         <div className="menu-title">{dropdownMenuObj.title}</div>
 

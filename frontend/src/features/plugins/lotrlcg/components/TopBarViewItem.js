@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { GROUPSINFO } from "../definitions/constants";
 import { setBrowseGroupId, setBrowseGroupTopN } from "../../../store/playerUiSlice";
 import { useGameL10n } from "../../../../hooks/useGameL10n";
+import "./TopBarViewItem.css"
 
 export const TopBarViewItem = React.memo(({
   groupId,
@@ -30,11 +31,13 @@ export const TopBarViewItem = React.memo(({
   if (deckType === "play") return;
 
   return(
-    <li className="relative cursor-pointer" onClick={() => handleMenuClick({action:"look_at",groupId:groupId})} key={groupId}>
-    <a className="absolute" href="#">
-    {l10n(GROUPSINFO[groupId].name)}
-    </a>
-    <div className="absolute right-2 top-1 select-none">{stackIds.length}</div>
+    <li className="relative cursor-pointer top-bar-item-with-count" onClick={() => handleMenuClick({action:"look_at",groupId:groupId})} key={groupId}>
+      <a href="#">
+        {l10n(GROUPSINFO[groupId].name)}
+      </a>
+      <div className="select-none">
+        {stackIds.length}
+      </div>
     </li>
   )
 })
