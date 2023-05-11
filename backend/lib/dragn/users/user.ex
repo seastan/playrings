@@ -16,6 +16,7 @@ defmodule DragnCards.Users.User do
     field(:alias, :string)
     field(:supporter_level, :integer)
     field(:language, :string, default: "English")
+    field(:plugin_settings, :map, default: %{})
     timestamps()
   end
 
@@ -49,7 +50,8 @@ defmodule DragnCards.Users.User do
       inserted_at: user.inserted_at,
       email_confirmed_at: user.email_confirmed_at,
       supporter_level: user.supporter_level,
-      language: user.language
+      language: user.language,
+      plugin_settings: user.plugin_settings
     }
   end
 
@@ -67,4 +69,14 @@ defmodule DragnCards.Users.User do
       alias: user.alias
     }
   end
+
+  def alt_art_updates(user, nested_map) do
+    plugin_settings_old = user.plugin_settings || %{}
+    plugin_settings_new = Map.merge(plugin_settings_old, nested_map)
+    IO.puts("alt_art_updates 1")
+    IO.inspect(plugin_settings_new)
+    IO.puts("alt_art_updates 2")
+    %{plugin_settings: plugin_settings_new}
+  end
+
 end

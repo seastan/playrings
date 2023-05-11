@@ -9,6 +9,11 @@ import { useEvaluateCondition } from "../../hooks/useEvaluateCondition";
 import { dragnActionLists, getVisibleFace, getVisibleSide } from "../definitions/common";
 import { useSiteL10n } from "../../hooks/useSiteL10n";
 import { useGameL10n } from "../../hooks/useGameL10n";
+import { useAuthOptions } from "../../hooks/useAuthOptions";
+import { usePlugin } from "./functions/usePlugin";
+import useProfile from "../../hooks/useProfile";
+import axios from "axios";
+import { deepUpdate } from "../store/updateValues";
 
 export const DropdownMenuCard = React.memo(({
   mouseX,
@@ -19,16 +24,57 @@ export const DropdownMenuCard = React.memo(({
   activeMenu,
 }) => {    
   const l10n = useSiteL10n();
+  const pluginId = usePlugin().id;
+  const siteL10n = useSiteL10n();
   const gameL10n = useGameL10n();
+  const user = useProfile();
+  const authOptions = useAuthOptions();
   const gameDef = useGameDefinition();
   const playerN = useSelector(state => state?.playerUi?.playerN);
   const dropdownMenu = useSelector(state => state?.playerUi?.dropdownMenu);
   const menuCardId = dropdownMenu.cardId;
   const menuCard = useSelector(state => state?.gameUi?.game?.cardById?.[menuCardId]);
-  const menuCardIndex = dropdownMenu.cardIndex;
-  const visibleSide = getVisibleSide(menuCard);
-  const visibleFace = getVisibleFace(menuCard);
+  const visibleSide = getVisibleSide(menuCard, playerN);
+  const visibleFace = getVisibleFace(menuCard, playerN);
   const evaluateCondition = useEvaluateCondition();
+
+  const setAltArt = async () => {
+    if (user.supporter_level < 5) {
+      window.open('https://www.patreon.com/dragncards', '_blank');
+      return;
+    }
+    var url = prompt(siteL10n("altArtPrompt"));
+    if (url && !(url.endsWith(".png") || url.endsWith(".jpg"))) {
+      alert("Error: Given URL does not end with .jpg or .png")
+      return;
+    }
+    if (url === "") {
+      url = null;
+    }
+    const key = menuCard.cardDbId;
+    
+    var nestedObj;
+    if (visibleFace?.imageUrl) {
+      nestedObj = {[pluginId]: {alt_art: {[key]: {[visibleSide]: url}}}}
+    } else {
+      nestedObj = {[pluginId]: {alt_art: {[visibleFace.name]: url}}}
+    }
+    
+    const res = await axios.post("/be/api/v1/profile/update_alt_art", nestedObj, authOptions);
+
+    const pluginSettings = user.plugin_settings;
+    deepUpdate(pluginSettings, nestedObj);
+    const newProfileData = {
+      user_profile: {
+        ...user,
+        plugin_settings: pluginSettings
+      }}
+
+    user.setData(newProfileData);
+    if (res.status !== 200) {
+      alert("Error setting new alt art."); 
+    }
+  }
   
   const DropdownMoveTo = (destGroupId, handleDropdownClick) => {
     const label = gameL10n(gameDef?.groups?.[destGroupId]?.labelId);
@@ -126,6 +172,12 @@ export const DropdownMenuCard = React.memo(({
               goToMenu="setRotation"
               clickCallback={handleDropdownClick}>
               {l10n("setRotation")}
+            </DropdownItem>}          
+          {true &&
+            <DropdownItem
+              rightIcon={user?.supporter_level < 5 ? <img style={{height: "20px"}} src="https://upload.wikimedia.org/wikipedia/commons/9/94/Patreon_logo.svg"/> : null}
+              clickCallback={() => setAltArt()}>
+              {l10n("Set Alt Art")}
             </DropdownItem>}
         </div>}
         

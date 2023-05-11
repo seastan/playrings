@@ -13,7 +13,7 @@ const gameUiSlice = createSlice({
       if (!state) {
         state = payload;
       } else {
-        deepUpdate(state, payload, payload?.submittedTimestamp);
+        deepUpdate(state, payload);
       }
       // Object.keys(payload).forEach((key) => {
       //   if (key !== "game") state[key] = payload[key];

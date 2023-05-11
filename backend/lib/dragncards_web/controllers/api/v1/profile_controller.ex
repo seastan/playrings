@@ -64,4 +64,20 @@ defmodule DragnCardsWeb.API.V1.ProfileController do
         |> json(%{success: %{message: "Failed to update settings"}})
     end
   end
+
+  def update_alt_art(conn, nested_obj) do
+    user = Repo.get!(User, conn.assigns.current_user.id)
+    updates = User.alt_art_updates(user, nested_obj)
+    changeset = Ecto.Changeset.change(user, updates)
+
+    case Repo.update(changeset) do
+      {:ok, user} ->
+        Pow.Plug.update_user(conn, %{})
+        conn
+        |> json(%{success: %{message: "Updated user's plugin settings"}})
+      {:error, changeset} ->
+        conn
+        |> json(%{error: %{message: "Failed to update user's plugin settings", changeset: changeset}})
+    end
+  end
 end

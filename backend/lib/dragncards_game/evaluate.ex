@@ -520,8 +520,8 @@ defmodule DragnCardsGame.Evaluate do
                 game
             end
           _ ->
-            code
-            #evaluate(game, ["GAME_ADD_MESSAGE", "Command " <> Enum.at(code,0) <> " not recognized in " <> inspect(code)])
+            #code
+            evaluate(game, ["GAME_ADD_MESSAGE", "Command " <> Enum.at(code,0) <> " not recognized in " <> inspect(code)])
         end
       end
     else # value

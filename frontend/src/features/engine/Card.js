@@ -12,6 +12,8 @@ import { useGameDefinition } from "./functions/useGameDefinition";
 import { useGetDefaultAction } from "./functions/useGetDefaultAction";
 import { attachmentOffset, getFirstCardOffset, getVisibleFaceSrc } from "../definitions/common";
 import { useGameL10n } from "../../hooks/useGameL10n";
+import { useVisibleFaceSrc } from "./functions/useVisibleFaceSrc";
+import { useVisibleFace } from "./functions/useVisibleFace";
 
 export const Card = React.memo(({
     cardId,
@@ -33,14 +35,16 @@ export const Card = React.memo(({
     const playerN = useSelector(state => state?.playerUi?.playerN);
     const dropdownMenuVisible = useSelector(state => state?.playerUi?.dropdownMenu?.visible);
     const cardScaleFactor = useCardScaleFactor();
+    const cardVisibleFace = useVisibleFace(cardId);
+    const visibleFaceSrc = useVisibleFaceSrc(cardId);
 
     const touchMode = useSelector(state => state?.playerUi?.touchMode);
     if (!cardCurrentSide) return;
     var cardVisibleSide = cardCurrentSide;
     if (cardPeeking[playerN] && cardCurrentSide == "B") cardVisibleSide = "A";
     const currentFace = cardSides[cardCurrentSide];
-    const cardVisibleFace = cardSides[cardVisibleSide];
-    const visibleFaceSrc = getVisibleFaceSrc(cardVisibleFace, playerN, gameDef);
+     // const cardVisibleFace = cardSides[cardVisibleSide];
+     // getVisibleFaceSrc(cardVisibleFace, playerN, gameDef);
     const zIndex = 1000 - cardIndex;
     console.log('Rendering Card ',cardVisibleFace.name);
     const isActive = useSelector(state => {return state?.playerUi?.activeCardId === cardId});

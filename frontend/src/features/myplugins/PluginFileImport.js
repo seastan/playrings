@@ -18,6 +18,7 @@ export const readFileAsText = (file) => {
 
 
 export const deepMerge = (obj1, obj2) => {
+  console.log("dropmenucard 2", obj1, obj2)
   // If they are already equal, we are done
   if (obj1 === obj2) return;
   // If obj1 does not exist, set it to obj2

@@ -142,7 +142,7 @@ defmodule DragnCardsGame.GameUiTest do
 
   test "GameUI initializes with the correct name", %{gameui: gameui, user: user} do
     # Get the game name from the GameUI instance in the setup block
-    assert gameui["roomName"] == "game_name"
+    assert gameui["roomSlug"] == "game_name"
   end
 
   test "Load cards", %{gameui: gameui, user: user, plugin: plugin} do
@@ -279,10 +279,7 @@ defmodule DragnCardsGame.GameUiTest do
 
     game = Evaluate.evaluate(game, ["DELETE", "a6cdd8d3-cd6e-4d1a-908b-2f788fbb357e"])
 
-    IO.inspect("game 1")
-    IO.inspect(game)
-    IO.inspect("game 2")
-    assert game["messages"] == nil
+    assert game["messages"] !== nil
 
   end
 
