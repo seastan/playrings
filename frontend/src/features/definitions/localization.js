@@ -202,6 +202,15 @@ export const siteL10n = {
   },
   "deckOfOrigin": {
     "English": "Deck of origin"
+  },
+  "altArtPrompt": {
+    "English": "Enter the URL of the alt art image (must end in .jpg or .png). Leave blank to remove alt art."
+  },
+  "altArtFormatError": {
+    "English": "Alt art URL must end in .jpg or .png."
+  },
+  "altArtSetError": {
+    "English": "Error setting new alt art."
   }
 
 

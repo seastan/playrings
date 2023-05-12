@@ -162,12 +162,9 @@ export const DragContainer = React.memo(({}) => {
     //         arrowThickness: 2,
     //       }
     //     }}>
-    // <DragDropContext onDragEnd={onDragEnd}>
-    //     <Table
-    //       playerN={playerN}
-    //       setTyping={setTyping}
-    //     />
-    // </DragDropContext>
-    //   </ArcherContainer>
+    //   <DragDropContext onDragEnd={onDragEnd} onBeforeDragStart={onBeforeDragStart}>
+    //     <Table/>
+    //   </DragDropContext>
+    // </ArcherContainer>
   )
 });

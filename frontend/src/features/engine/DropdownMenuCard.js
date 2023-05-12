@@ -1,5 +1,5 @@
 import React from "react";
-import { faArrowUp, faArrowDown, faRandom, faChevronRight, faCheck } from "@fortawesome/free-solid-svg-icons";
+import { faArrowUp, faArrowDown, faRandom, faChevronRight, faCheck, faExternalLinkAlt } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { DropdownItem, GoBack } from "./DropdownMenuHelpers";
 import "../../css/custom-dropdown.css";
@@ -45,7 +45,7 @@ export const DropdownMenuCard = React.memo(({
     }
     var url = prompt(siteL10n("altArtPrompt"));
     if (url && !(url.endsWith(".png") || url.endsWith(".jpg"))) {
-      alert("Error: Given URL does not end with .jpg or .png")
+      alert(siteL10n("altArtFormatError"))
       return;
     }
     if (url === "") {
@@ -72,7 +72,7 @@ export const DropdownMenuCard = React.memo(({
 
     user.setData(newProfileData);
     if (res.status !== 200) {
-      alert("Error setting new alt art."); 
+      alert(siteL10n("altArtSetError")); 
     }
   }
   
@@ -172,13 +172,12 @@ export const DropdownMenuCard = React.memo(({
               goToMenu="setRotation"
               clickCallback={handleDropdownClick}>
               {l10n("setRotation")}
-            </DropdownItem>}          
-          {true &&
-            <DropdownItem
-              rightIcon={user?.supporter_level < 5 ? <img style={{height: "20px"}} src="https://upload.wikimedia.org/wikipedia/commons/9/94/Patreon_logo.svg"/> : null}
-              clickCallback={() => setAltArt()}>
-              {l10n("Set Alt Art")}
             </DropdownItem>}
+          <DropdownItem
+            rightIcon={user?.supporter_level < 5000 ? <span><img style={{height: "20px"}} src="https://upload.wikimedia.org/wikipedia/commons/9/94/Patreon_logo.svg"/><FontAwesomeIcon icon={faExternalLinkAlt}/></span> : null}
+            clickCallback={() => setAltArt()}>
+            {l10n("Set Alt Art")}
+          </DropdownItem>
         </div>}
         
         {activeMenu === "moveTo" &&

@@ -49,7 +49,7 @@
     "postcss-import": "^12.0.1",
     "prettier": "^2.0.4",
     "react": "^16.13.1",
-    "react-archer": "^3.0.0",
+    "react-archer": "^4.0.1",
     "react-beautiful-dnd": "^13.1.1",
     "react-clear-cache": "^1.4.12",
     "react-contextmenu": "^2.14.0",
