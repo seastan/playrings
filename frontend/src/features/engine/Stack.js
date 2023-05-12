@@ -106,11 +106,8 @@ export const Stack = React.memo(({
               return(
                 <Card
                   key={cardId}
-                  groupId={groupId}
-                  region={region}
                   offset={offsets[cardIndex]}
                   cardId={cardId} 
-                  cardIndex={cardIndex}
                   isDragging={(cardIndex === cardIds.length - 1) ? dragSnapshot.isDragging : false}/>
               )
           })}

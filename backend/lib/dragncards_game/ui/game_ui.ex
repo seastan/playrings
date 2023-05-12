@@ -251,6 +251,9 @@ defmodule DragnCardsGame.GameUI do
     game = Evaluate.evaluate(game, ["GAME_SET_VAL", "/cardById/" <> card_id <> "/stackParentCardId", parent_card["id"]])
 
     # If card gets moved to a facedown pile, or gets flipped up, erase peeking
+    IO.puts("updateing card state -----------------------------------")
+    IO.inspect(dest_group["onCardEnter"])
+    IO.inspect(prev_card["currentSide"])
     game = if dest_group["onCardEnter"]["currentSide"] == "B" or (prev_card["currentSide"] == "B" and dest_group["onCardEnter"]["currentSide"] == "A") do
       Evaluate.evaluate(game, ["GAME_SET_VAL", "/cardById/" <> card_id <> "/peeking", %{}])
     else
@@ -259,6 +262,7 @@ defmodule DragnCardsGame.GameUI do
 
     game = Enum.reduce(dest_group["onCardEnter"], game, fn({key, val}, acc) ->
         if orig_group["onCardEnter"][key] != dest_group["onCardEnter"][key] do
+          IO.puts("updating card state Onenter: " <> key <> " " <> inspect(val))
           Evaluate.evaluate(acc, ["GAME_SET_VAL", "/cardById/" <> card_id <> "/" <> key, val])
         else
           acc

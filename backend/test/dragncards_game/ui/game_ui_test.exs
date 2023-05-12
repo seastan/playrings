@@ -156,14 +156,14 @@ defmodule DragnCardsGame.GameUiTest do
     aragorn_card_db_id = "a6cdd8d3-cd6e-4d1a-908b-2f788fbb357e"
     strider_card_db_id = "f88cd1e7-0e1e-40d9-91bc-990ba64c5bc3"
 
-    aragorn_card = Evaluate.evaluate(game, ["ONE_CARD", ["EQUAL", "$CARD.cardDbId", aragorn_card_db_id]])
-    strider_card = Evaluate.evaluate(game, ["ONE_CARD", ["EQUAL", "$CARD.cardDbId", strider_card_db_id]])
+    aragorn_card = Evaluate.evaluate(game, ["ONE_CARD", "$CARD", ["EQUAL", "$CARD.cardDbId", aragorn_card_db_id]])
+    strider_card = Evaluate.evaluate(game, ["ONE_CARD", "$CARD", ["EQUAL", "$CARD.cardDbId", strider_card_db_id]])
 
     assert strider_card["groupId"] != "player3Eliminated"
 
     game = Evaluate.evaluate(game, ["MOVE_CARD", aragorn_card["id"], "player3Reserve", 0])
 
-    strider_card = Evaluate.evaluate(game, ["ONE_CARD", ["EQUAL", "$CARD.cardDbId", strider_card_db_id]])
+    strider_card = Evaluate.evaluate(game, ["ONE_CARD", "$CARD", ["EQUAL", "$CARD.cardDbId", strider_card_db_id]])
     # IO.inspect("strider 1")
     # IO.inspect(strider_card)
     # IO.inspect("strider 2")
@@ -178,29 +178,29 @@ defmodule DragnCardsGame.GameUiTest do
     aragorn_card_db_id = "a6cdd8d3-cd6e-4d1a-908b-2f788fbb357e"
     knights_card_db_id = "fe77aaef-a595-47a8-bb0d-4d5796234fec"
 
-    aragorn_card = Evaluate.evaluate(game, ["ONE_CARD", ["EQUAL", "$CARD.cardDbId", aragorn_card_db_id]])
-    knights_card = Evaluate.evaluate(game, ["ONE_CARD", ["EQUAL", "$CARD.cardDbId", knights_card_db_id]])
+    aragorn_card = Evaluate.evaluate(game, ["ONE_CARD", "$CARD", ["EQUAL", "$CARD.cardDbId", aragorn_card_db_id]])
+    knights_card = Evaluate.evaluate(game, ["ONE_CARD", "$CARD", ["EQUAL", "$CARD.cardDbId", knights_card_db_id]])
 
     assert aragorn_card["tokens"]["attackBlue"] == nil
 
     game = Evaluate.evaluate(game, ["MOVE_CARD", aragorn_card["id"], "player3Reserve", 0])
 
-    aragorn_card = Evaluate.evaluate(game, ["ONE_CARD", ["EQUAL", "$CARD.cardDbId", aragorn_card_db_id]])
+    aragorn_card = Evaluate.evaluate(game, ["ONE_CARD", "$CARD", ["EQUAL", "$CARD.cardDbId", aragorn_card_db_id]])
     assert aragorn_card["tokens"]["attackBlue"] == nil
 
     game = Evaluate.evaluate(game, ["MOVE_CARD", knights_card["id"], "player1Reserve", 0])
 
-    aragorn_card = Evaluate.evaluate(game, ["ONE_CARD", ["EQUAL", "$CARD.cardDbId", aragorn_card_db_id]])
+    aragorn_card = Evaluate.evaluate(game, ["ONE_CARD", "$CARD", ["EQUAL", "$CARD.cardDbId", aragorn_card_db_id]])
     assert aragorn_card["tokens"]["attackBlue"] == nil
 
     game = Evaluate.evaluate(game, ["MOVE_CARD", knights_card["id"], "player3Reserve", 0])
 
-    aragorn_card = Evaluate.evaluate(game, ["ONE_CARD", ["EQUAL", "$CARD.cardDbId", aragorn_card_db_id]])
+    aragorn_card = Evaluate.evaluate(game, ["ONE_CARD", "$CARD", ["EQUAL", "$CARD.cardDbId", aragorn_card_db_id]])
     assert aragorn_card["tokens"]["attackBlue"] == 1
 
     game = Evaluate.evaluate(game, ["MOVE_CARD", knights_card["id"], "player1Reserve", 0])
 
-    aragorn_card = Evaluate.evaluate(game, ["ONE_CARD", ["EQUAL", "$CARD.cardDbId", aragorn_card_db_id]])
+    aragorn_card = Evaluate.evaluate(game, ["ONE_CARD", "$CARD", ["EQUAL", "$CARD.cardDbId", aragorn_card_db_id]])
     assert aragorn_card["tokens"]["attackBlue"] == 0
 
   end
@@ -211,7 +211,7 @@ defmodule DragnCardsGame.GameUiTest do
     aragorn_card_db_id = "a6cdd8d3-cd6e-4d1a-908b-2f788fbb357e"
     knights_card_db_id = "fe77aaef-a595-47a8-bb0d-4d5796234fec"
 
-    aragorn_card = Evaluate.evaluate(game, ["ONE_CARD", ["EQUAL", "$CARD.cardDbId", aragorn_card_db_id]])
+    aragorn_card = Evaluate.evaluate(game, ["ONE_CARD", "$CARD", ["EQUAL", "$CARD.cardDbId", aragorn_card_db_id]])
 
     assert aragorn_card["tokens"]["defenseBlue"] == nil
     game = Evaluate.evaluate_with_timeout(game,
@@ -229,7 +229,7 @@ defmodule DragnCardsGame.GameUiTest do
     card_by_id = game["cardById"]
     aragorn_card_db_id = "a6cdd8d3-cd6e-4d1a-908b-2f788fbb357e"
 
-    aragorn_card_id = Evaluate.evaluate(game, ["ONE_CARD", ["EQUAL", "$CARD.cardDbId", aragorn_card_db_id]])["id"]
+    aragorn_card_id = Evaluate.evaluate(game, ["ONE_CARD", "$CARD", ["EQUAL", "$CARD.cardDbId", aragorn_card_db_id]])["id"]
 
     game = Evaluate.evaluate(game, ["MOVE_CARD", aragorn_card_id, "player3Deck", 0])
 

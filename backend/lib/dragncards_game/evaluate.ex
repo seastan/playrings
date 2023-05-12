@@ -7,10 +7,10 @@ defmodule DragnCardsGame.Evaluate do
   alias DragnCards.Rooms
 
   def put_by_path(game_old, path, val_new) do
-    IO.puts("val_new 1")
-    IO.inspect(path)
-    IO.inspect(val_new)
-    IO.puts("val_new 2")
+    # IO.puts("val_new 1")
+    # IO.inspect(path)
+    # IO.inspect(val_new)
+    # IO.puts("val_new 2")
     path_minus_key = Enum.slice(path, 0, Enum.count(path)-1)
     key = Enum.at(path, -1)
     # IO.puts("path_minus_key 1")
@@ -305,7 +305,7 @@ defmodule DragnCardsGame.Evaluate do
                   int_str = evaluate(game, String.slice(pathi,1..-2))
                   int = convert_to_integer(int_str)
                   Enum.at(acc, int)
-                pathi == "sideUp" ->
+                pathi == "currentFace" ->
                   acc["sides"][acc["currentSide"]]
                 pathi == "stackParentCard" ->
                   game["cardById"][acc["stackParentCardId"]]
@@ -416,6 +416,7 @@ defmodule DragnCardsGame.Evaluate do
               evaluate(acc, function)
             end)
           "MOVE_CARD" ->
+            IO.puts("MOVE_CARD" <> inspect(code))
             argc = Enum.count(code) - 1
             card_id = evaluate(game, Enum.at(code, 1))
             if card_id do
@@ -495,10 +496,10 @@ defmodule DragnCardsGame.Evaluate do
             face = card["sides"][card["currentSide"]]
             face["name"]
           "ONE_CARD" ->
+            var_name = Enum.at(code, 1)
             one_card = Enum.find(Map.values(game["cardById"]), fn(card) ->
-              game = evaluate(game, ["DEFINE", "$CARD_ID", card["id"]])
-              game = evaluate(game, ["DEFINE", "$CARD", card])
-              evaluate(game, Enum.at(code, 1))
+              game = evaluate(game, ["DEFINE", var_name, card])
+              evaluate(game, Enum.at(code, 2))
             end)
             one_card
           "ACTION_LIST" ->

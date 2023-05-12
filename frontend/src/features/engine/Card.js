@@ -4,9 +4,7 @@ import { Tokens } from './Tokens';
 import { CardMouseRegion } from "./CardMouseRegion";
 import { Target } from "./Target";
 import { setActiveCardId } from "../store/playerUiSlice";
-import { useCardScaleFactor } from "../../hooks/useCardScaleFactor";
 import { useGameDefinition } from "./functions/useGameDefinition";
-import { attachmentOffset } from "../definitions/common";
 import { useVisibleFace } from "./functions/useVisibleFace";
 import { CardArrows } from "./CardArrows";
 import { CardImage } from "./CardImage";
@@ -16,10 +14,7 @@ import { PeekingSymbol } from "./PeekingSymbol";
 
 export const Card = React.memo(({
     cardId,
-    groupId,
-    region,
     offset,
-    cardIndex,
     isDragging,
 }) => { 
     const dispatch = useDispatch();

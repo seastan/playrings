@@ -54,8 +54,11 @@ defmodule DragnCards.ProfileControllerTest do
     plugin_id = 3
     card_db_id = "my_card_db_id"
     url = "https://example.com/my_card_db_image.png"
+    nested_map = %{
+      plugin_id => %{card_db_id => url}
+    }
 
-    updates = User.alt_art_updates(user, plugin_id, card_db_id, url)
+    updates = User.alt_art_updates(user, nested_map)
 
     changeset = Ecto.Changeset.change(user, updates)
 

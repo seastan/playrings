@@ -86,11 +86,8 @@ export const PileImage = React.memo(({
         stackHeight={stackHeight}>
         <Card
           key={cardToShow.id}
-          groupId={cardToShow.groupId}
-          region={region}
           offset={0}
           cardId={cardToShow.id} 
-          cardIndex={cardToShow.cardIndex}
           isDragging={false}/>
       </StackContainer>
     </DropZone>

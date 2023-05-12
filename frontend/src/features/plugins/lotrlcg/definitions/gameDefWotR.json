@@ -6099,7 +6099,7 @@
             "listenTo": [["cardById", "$THIS_ID", "inPlay"]],
             "condition": ["AND", "$THIS.inPlay", ["PREV", ["NOT", "$THIS.inPlay"]]],
             "then": [
-              ["DEFINE", "$TARGET", ["ONE_CARD", ["EQUAL", "$CARD.sides.A.name", "Strider"]]],
+              ["DEFINE", "$TARGET", ["ONE_CARD", "$CARD", ["EQUAL", "$CARD.sides.A.name", "Strider"]]],
               ["MOVE_CARD", "$TARGET.id", ["JOIN_STRING", "$TARGET.controller", "Eliminated"], 0, 0],
               ["GAME_ADD_MESSAGE", "Strider was removed from the game."]
             ]
@@ -6112,9 +6112,10 @@
                 "$THIS.inPlay",
                 ["NOT_EQUAL",
                   ["ONE_CARD", 
+                    "$CARD",
                     ["AND",
                       ["EQUAL", "$CARD.groupId", "$THIS.groupId"],
-                      ["EQUAL", "$CARD.sideUp.type", "Army"]
+                      ["EQUAL", "$CARD.currentFace.type", "Army"]
                     ]
                   ],
                   null

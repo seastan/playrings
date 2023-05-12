@@ -74,7 +74,7 @@ export const dragnHotkeys = [
                   ["EQUAL", "$FROM_CARD_ID", null],
                   [
                     ["GAME_SET_VAL", "/playerData/$PLAYER_N/drawingArrowFrom", "$ACTIVE_CARD_ID"],
-                    ["GAME_ADD_MESSAGE", "$PLAYER_N", " is drawing an arrow from ", "$ACTIVE_CARD.sideUp.name", "."]
+                    ["GAME_ADD_MESSAGE", "$PLAYER_N", " is drawing an arrow from ", "$ACTIVE_CARD.currentFace.name", "."]
                   ],
                   ["IN_LIST", "$GAME.cardById.$FROM_CARD_ID.arrows.$PLAYER_N", "$ACTIVE_CARD_ID"],
                   [
@@ -82,11 +82,11 @@ export const dragnHotkeys = [
                       ["REMOVE_FROM_LIST_BY_VALUE", "$GAME.cardById.$FROM_CARD_ID.arrows.$PLAYER_N", "$ACTIVE_CARD_ID"]
                     ],
                     ["GAME_SET_VAL", "/playerData/$PLAYER_N/drawingArrowFrom", null],
-                    ["GAME_ADD_MESSAGE", "$PLAYER_N", " removed an arrow to ", "$ACTIVE_CARD.sideUp.name", "."]
+                    ["GAME_ADD_MESSAGE", "$PLAYER_N", " removed an arrow to ", "$ACTIVE_CARD.currentFace.name", "."]
                   ],
                   true,
                   [
-                    ["GAME_ADD_MESSAGE", "$PLAYER_N", " drew an arrow to ", "$ACTIVE_CARD.sideUp.name", "."],
+                    ["GAME_ADD_MESSAGE", "$PLAYER_N", " drew an arrow to ", "$ACTIVE_CARD.currentFace.name", "."],
                     ["GAME_SET_VAL", "/cardById/$FROM_CARD_ID/arrows/$PLAYER_N", ["APPEND", "$GAME.cardById.$FROM_CARD_ID.arrows.$PLAYER_N", "$ACTIVE_CARD_ID"]],
                     ["GAME_SET_VAL", "/playerData/$PLAYER_N/drawingArrowFrom", null]
                   ]

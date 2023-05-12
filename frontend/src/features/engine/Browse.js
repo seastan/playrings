@@ -103,7 +103,7 @@ export const Browse = React.memo(({}) => {
       ["FOR_EACH_VAL", "$STACK_ID", `$GROUP_BY_ID.${groupId}.stackIds`,
         [
           ["DEFINE", "$CARD_ID", "$STACK_BY_ID.$STACK_ID.cardIds.[0]"],
-          ["GAME_SET_VAL", "cardById", "$CARD_ID", "peeking", playerN, false]
+          ["GAME_SET_VAL", "/cardById/$CARD_ID/peeking", playerN, false]
         ]
       ],
       ["SHUFFLE_GROUP", groupId],
