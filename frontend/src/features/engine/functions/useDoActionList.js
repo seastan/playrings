@@ -1,5 +1,4 @@
 import { useContext } from 'react';
-import { useSelector } from 'react-redux';
 import BroadcastContext from '../../../contexts/BroadcastContext';
 import store from '../../../store';
 import { useGameDefinition } from './useGameDefinition';

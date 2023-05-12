@@ -20,7 +20,7 @@ import { onLoad } from "../plugins/lotrlcg/functions/helpers";
 import BroadcastContext from "../../contexts/BroadcastContext";
 import { DeckbuilderModal } from "./DeckbuilderModal";
 
-export const Table = React.memo(({registerDivToArrowsContext}) => {
+export const Table = React.memo(() => {
   const {gameBroadcast, chatBroadcast} = useContext(BroadcastContext);
   const dispatch = useDispatch();
   const tooltipIds = useSelector(state => state?.playerUi?.tooltipIds);
@@ -75,7 +75,7 @@ export const Table = React.memo(({registerDivToArrowsContext}) => {
           </div>
           {/* Table */}
           <div className="relative w-full" style={{height: touchMode ? "82%" : "94%"}}>
-            <TableLayout registerDivToArrowsContext={registerDivToArrowsContext}/>
+            <TableLayout/>
           </div>
           {/* Touch Bar */}
           {touchMode && <div className="relative bg-gray-700 w-full" style={{height: "12%"}}>

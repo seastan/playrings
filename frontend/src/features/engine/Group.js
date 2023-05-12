@@ -10,8 +10,7 @@ import { useGameDefinition } from "./functions/useGameDefinition";
 
 export const Group = React.memo(({
   groupId,
-  region,
-  registerDivToArrowsContext
+  region
 }) => {
   console.log("Rendering Group ",groupId);
   const dispatch = useDispatch();
@@ -64,7 +63,6 @@ export const Group = React.memo(({
         groupId={group.id}
         region={region}
         selectedStackIndices={[...Array(numStacks).keys()]}
-        registerDivToArrowsContext={registerDivToArrowsContext}
       />
     </div>
   )

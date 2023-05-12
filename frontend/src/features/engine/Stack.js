@@ -7,7 +7,7 @@ import useWindowDimensions from "../../hooks/useWindowDimensions";
 import store from "../../store";
 import NaturalDragAnimation from 'natural-drag-animation-rbdnd';
 import { useLayout } from "./functions/useLayout";
-import { attachmentOffset } from "../definitions/common";
+import { ATTACHMENT_OFFSET } from "../definitions/common";
 
 export const StackContainer = styled.div`
   position: relative;
@@ -26,8 +26,7 @@ export const Stack = React.memo(({
   stackIndex,
   stackId,
   numStacks,
-  registerDivToArrowsContext,
-  hidden,
+  hidden
 }) => {
   const stack = useSelector(state => state?.gameUi?.game?.stackById[stackId]);
   const touchMode = useSelector(state => state?.playerUi?.touchMode);
@@ -70,7 +69,7 @@ export const Stack = React.memo(({
   const cardWidth = card0?.sides[card0?.currentSide]?.width;
   const cardHeight = card0?.sides[card0?.currentSide]?.height;
   const stackHeight = cardHeight*cardSize*zoomFactor;
-  const stackWidth = cardWidth*cardSize + attachmentOffset * (numCards - 1);
+  const stackWidth = cardWidth*cardSize + ATTACHMENT_OFFSET * (numCards - 1);
   const stackWidthFan = Math.min(handSpacing, cardWidth*cardSize*zoomFactor);
   
   return (
@@ -112,7 +111,6 @@ export const Stack = React.memo(({
                   offset={offsets[cardIndex]}
                   cardId={cardId} 
                   cardIndex={cardIndex}
-                  registerDivToArrowsContext={registerDivToArrowsContext}
                   isDragging={(cardIndex === cardIds.length - 1) ? dragSnapshot.isDragging : false}/>
               )
           })}

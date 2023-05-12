@@ -3,8 +3,7 @@ import { useSelector } from 'react-redux';
 import { Group } from "./Group";
 
 export const TableRegion = React.memo(({
-  region,
-  registerDivToArrowsContext,
+  region
 }) => {
   console.log("Rendering TableRegion", region);
   const observingPlayerN = useSelector(state => state?.playerUi?.observingPlayerN);
@@ -30,7 +29,6 @@ export const TableRegion = React.memo(({
         <Group
           groupId={formattedGroupId}
           region={formattedRegion}
-          registerDivToArrowsContext={registerDivToArrowsContext}
         />
       }
     </div>

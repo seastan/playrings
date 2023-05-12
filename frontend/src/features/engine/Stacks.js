@@ -44,8 +44,7 @@ const StacksList = React.memo(({
   region,
   stackIds,
   mouseHere,
-  selectedStackIndices,
-  registerDivToArrowsContext
+  selectedStackIndices
 }) => {
   const draggingFromGroupId = useSelector(state => state?.playerUi?.draggingFromGroupId);
   const isPile = region.type == "pile";
@@ -68,7 +67,6 @@ const StacksList = React.memo(({
           stackIndex={stackIndex}
           stackId={stackId}
           numStacks={selectedStackIndices.length}
-          registerDivToArrowsContext={registerDivToArrowsContext}
           hidden={isPile && isDraggingOver && !isDraggingFrom}/> 
       ) : null 
     ))
@@ -79,7 +77,6 @@ export const Stacks = React.memo(({
   groupId,
   region,
   selectedStackIndices,
-  registerDivToArrowsContext
 }) => {
   console.log("Rendering Stacks for ",groupId, region);
   const [mouseHere, setMouseHere] = useState(false);
@@ -102,7 +99,8 @@ export const Stacks = React.memo(({
           {...dropProvided.droppableProps}
           direction={region.direction}
           onMouseEnter={() => setMouseHere(region.type === "pile" && true)} 
-          onMouseLeave={() => setMouseHere(region.type === "pile" && false)}>
+          //onMouseLeave={() => setMouseHere(region.type === "pile" && false)}
+          >
             <PileImage 
               region={region} 
               stackIds={stackIds} 
@@ -120,8 +118,7 @@ export const Stacks = React.memo(({
                 region={region} 
                 stackIds={stackIds}
                 mouseHere={mouseHere}
-                selectedStackIndices={(selectedStackIndices ? selectedStackIndices : [...Array(stackIds.length).keys()])}
-                registerDivToArrowsContext={registerDivToArrowsContext}/>
+                selectedStackIndices={(selectedStackIndices ? selectedStackIndices : [...Array(stackIds.length).keys()])}/>
               {dropProvided.placeholder}
             </DropZone>
         </Container>

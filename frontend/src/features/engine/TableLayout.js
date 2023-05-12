@@ -10,9 +10,7 @@ import { useDoActionList } from "./functions/useDoActionList";
 
 var delayBroadcast;
 
-export const TableLayout = React.memo(({
-  registerDivToArrowsContext,
-}) => {
+export const TableLayout = React.memo(() => {
   const {gameBroadcast, chatBroadcast} = useContext(BroadcastContext);
   console.log("Rendering TableLayout");
   const sideGroupId = useSelector(state => state?.playerUi?.sideGroupId);
@@ -60,7 +58,6 @@ export const TableLayout = React.memo(({
           <TableRegion
             key={regionIndex}
             region={region}
-            registerDivToArrowsContext={registerDivToArrowsContext}
           />
         )
       })}

@@ -5,13 +5,13 @@ import { useDispatch, useSelector } from "react-redux";
 import { setMouseTopBottom, setDropdownMenu, setActiveCardId, setScreenLeftRight, setCardClicked } from "../store/playerUiSlice";
 import { useHandleTouchAction } from "./functions/useHandleTouchAction";
 import { getVisibleFace } from "../definitions/common";
+import { useCardZIndex } from "./functions/useCardZIndex";
 
 
 export const CardMouseRegion = React.memo(({
     topOrBottom,
     cardId,
-    isActive,
-    zIndex,
+    isActive
 }) => {
     const dispatch = useDispatch();
     const card = useSelector(state => state?.gameUi?.game?.cardById[cardId]);
@@ -19,6 +19,7 @@ export const CardMouseRegion = React.memo(({
     const touchMode = useSelector(state => state?.playerUi?.touchMode);
     const touchAction = useSelector(state => state?.playerUi?.touchAction);
     const dropdownMenuVisible = useSelector(state => state?.playerUi?.dropdownMenu?.visible);
+    const zIndex = useCardZIndex(cardId);
     const handleTouchAction = useHandleTouchAction();
 
     const makeActive = (event) => {

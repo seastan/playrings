@@ -9,6 +9,8 @@ import store from "../../store";
 import { setDraggingFromGroupId, setTouchAction } from "../store/playerUiSlice";
 import { Table } from "./Table";
 import { useDoActionList } from "./functions/useDoActionList";
+import { ArcherContainer } from 'react-archer';
+
 
 export const DragContainer = React.memo(({}) => {
   console.log("Rendering DragContainer");
@@ -119,52 +121,23 @@ export const DragContainer = React.memo(({}) => {
   }
 
   return(
-    <DragDropContext onDragEnd={onDragEnd} onBeforeDragStart={onBeforeDragStart}>
-      <ArrowsBetweenDivsContextProvider>
-        {({ registerDivToArrowsContext }) => (
-          <>
-            {Object.keys(playerData).map((playerI, playerIndex) => {
-              return(
-                playerData[playerI].arrows.map((arrowStartStop, arrowIndex) => {
-                  return(
-                    <ArrowBetweenDivs
-                      from={{ id: 'arrow-'+arrowStartStop[0], placement: ArrowAnchorPlacement.TOP }}
-                      to={{ id: 'arrow-'+arrowStartStop[1], placement: ArrowAnchorPlacement.BOTTOM }}
-                      orientation={LineOrientation.VERTICAL}
-                      strokeWidth={4}
-                      color={arrowColors[playerIndex]}
-                    />
-                  )
-                })
-              )
-            })}
 
-          <Table
-            registerDivToArrowsContext={usingArrows ? registerDivToArrowsContext: null}
-          />
-        </>
-        )}
-      </ArrowsBetweenDivsContextProvider>
-
-    </DragDropContext>
-
-    //   <ArcherContainer 
-    //     className="h-full w-full" 
-    //     strokeColor="rgba(0,0,0,0.5)" 
-    //     strokeWidth="15"
-    //     svgContainerStyle={{ 
-    //       zIndex: 1e5,
-    //     }} 
-    //     ref={archerContainerRef}
-    //     endShape={{
-    //       arrow: {
-    //         arrowLength: 2,
-    //         arrowThickness: 2,
-    //       }
-    //     }}>
-    //   <DragDropContext onDragEnd={onDragEnd} onBeforeDragStart={onBeforeDragStart}>
-    //     <Table/>
-    //   </DragDropContext>
-    // </ArcherContainer>
+      <ArcherContainer 
+        className="h-full w-full" 
+        strokeColor="rgba(255,0,0,0.6)" 
+        strokeWidth="15"
+        svgContainerStyle={{ 
+          zIndex: 1e5,
+        }} 
+        endShape={{
+          arrow: {
+            arrowLength: 1,
+            arrowThickness: 2,
+          }
+        }}>
+      <DragDropContext onDragEnd={onDragEnd} onBeforeDragStart={onBeforeDragStart}>
+        <Table/>
+      </DragDropContext>
+    </ArcherContainer>
   )
 });

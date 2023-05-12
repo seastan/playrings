@@ -211,6 +211,9 @@ export const siteL10n = {
   },
   "altArtSetError": {
     "English": "Error setting new alt art."
+  },
+  "startStopDrawingArrow": {
+    "English": "Start/stop drawing arrow"
   }
 
 

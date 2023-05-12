@@ -91,7 +91,6 @@ export const PileImage = React.memo(({
           offset={0}
           cardId={cardToShow.id} 
           cardIndex={cardToShow.cardIndex}
-          registerDivToArrowsContext={null}
           isDragging={false}/>
       </StackContainer>
     </DropZone>

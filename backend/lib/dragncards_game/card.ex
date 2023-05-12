@@ -28,6 +28,7 @@ defmodule DragnCardsGame.Card do
       "owner" => controller,
       "peeking" => %{},
       "targeting" => %{},
+      "arrows" => %{},
       "tokens" => Tokens.new(),
 
       "sides"=> %{

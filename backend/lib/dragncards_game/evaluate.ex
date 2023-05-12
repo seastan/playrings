@@ -7,9 +7,10 @@ defmodule DragnCardsGame.Evaluate do
   alias DragnCards.Rooms
 
   def put_by_path(game_old, path, val_new) do
-    # IO.puts("val_new 1")
-    # IO.inspect(path)
-    # IO.inspect(val_new)
+    IO.puts("val_new 1")
+    IO.inspect(path)
+    IO.inspect(val_new)
+    IO.puts("val_new 2")
     path_minus_key = Enum.slice(path, 0, Enum.count(path)-1)
     key = Enum.at(path, -1)
     # IO.puts("path_minus_key 1")
@@ -211,8 +212,8 @@ defmodule DragnCardsGame.Evaluate do
               acc ++ [evaluate(game, item)]
             end)
           "APPEND" ->
-            list = evaluate(game, Enum.at(code, 1))
-            ["LIST"] ++ list ++ [evaluate(game, Enum.at(code, 2))]
+            list = evaluate(game, Enum.at(code, 1)) || []
+            list ++ [evaluate(game, Enum.at(code, 2))]
           "NEXT_PLAYER" ->
             current_player_i = evaluate(game, Enum.at(code, 1))
             current_i = String.to_integer(String.slice(current_player_i, -1..-1))
@@ -272,7 +273,12 @@ defmodule DragnCardsGame.Evaluate do
           "IN_STRING" ->
             String.contains?(evaluate(game, Enum.at(code,1)), evaluate(game, Enum.at(code,2)))
           "IN_LIST" ->
-            Enum.member?(evaluate(game, Enum.at(code,1)), evaluate(game, Enum.at(code,2)))
+            list = evaluate(game, Enum.at(code,1)) || []
+            Enum.member?(list, evaluate(game, Enum.at(code,2)))
+          "REMOVE_FROM_LIST_BY_VALUE" ->
+            list = evaluate(game, Enum.at(code,1)) || []
+            value = evaluate(game, Enum.at(code,2))
+            Enum.filter(list, fn(x) -> x != value end)
           "ADD" ->
             (evaluate(game, Enum.at(code,1)) || 0) + (evaluate(game, Enum.at(code,2)) || 0)
           "SUBTRACT" ->
