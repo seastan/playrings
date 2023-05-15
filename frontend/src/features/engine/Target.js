@@ -1,6 +1,6 @@
 import React from "react";
 import { useSelector } from 'react-redux';
-import { useCardScaleFactor } from "../../hooks/useCardScaleFactor";
+import { useCardScaleFactor } from "./hooks/useCardScaleFactor";
 
 export const Target = React.memo(({
     cardId,

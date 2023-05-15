@@ -2,7 +2,7 @@ import React from "react";
 import { TopBarMenu } from "./TopBarMenu";
 import { TopBarView } from "./TopBarView";
 import { TopBarDataContainer } from "./TopBarDataContainer";
-import { useGameL10n } from "../../hooks/useGameL10n";
+import { useGameL10n } from "./hooks/useGameL10n";
 import { useDispatch } from "react-redux";
 import { setShowModal } from "../store/playerUiSlice";
 

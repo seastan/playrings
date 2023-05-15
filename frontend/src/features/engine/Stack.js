@@ -6,8 +6,8 @@ import { Draggable } from "react-beautiful-dnd";
 import useWindowDimensions from "../../hooks/useWindowDimensions";
 import store from "../../store";
 import NaturalDragAnimation from 'natural-drag-animation-rbdnd';
-import { useLayout } from "./functions/useLayout";
-import { ATTACHMENT_OFFSET } from "../definitions/common";
+import { useLayout } from "./hooks/useLayout";
+import { ATTACHMENT_OFFSET } from "./functions/common";
 
 export const StackContainer = styled.div`
   position: relative;

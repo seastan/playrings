@@ -1,5 +1,5 @@
 import React from "react";
-import { useGameDefinition } from "./functions/useGameDefinition";
+import { useGameDefinition } from "./hooks/useGameDefinition";
 import { TopBarSharedCounter } from "./TopBarSharedCounter";
 
 export const TopBarShared = React.memo(() => {

@@ -1,7 +1,7 @@
 import React from "react";
 import { useSelector } from "react-redux";
-import { useGameL10n } from "../../hooks/useGameL10n";
-import { useGameDefinition } from "./functions/useGameDefinition";
+import { useGameL10n } from "./hooks/useGameL10n";
+import { useGameDefinition } from "./hooks/useGameDefinition";
 import { SideBarRoundStep } from "./SideBarRoundStep";
 
 export const SideBarPhase = React.memo(({

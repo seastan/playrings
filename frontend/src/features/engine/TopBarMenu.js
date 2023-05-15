@@ -4,15 +4,14 @@ import { useHistory } from "react-router-dom";
 import useProfile from "../../hooks/useProfile";
 import store from "../../store";
 import { getCardByGroupIdStackIndexCardIndex, getSideAName, loadRingsDb, processLoadList, processPostLoad, shuffle } from "../plugins/lotrlcg/functions/helpers";
-import { functionOnMatchingCards, listOfMatchingCards } from "./functions/flatListOfCards";
 import { loadDeckFromXmlText, getRandomIntInclusive } from "../plugins/lotrlcg/functions/helpers";
 import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { setZoomFactor, setLoaded, setRandomNumBetween, setShowModal, setTouchAction, setTouchMode } from "../store/playerUiSlice";
-import { useGameL10n } from "../../hooks/useGameL10n";
+import { useGameL10n } from "./hooks/useGameL10n";
 import BroadcastContext from "../../contexts/BroadcastContext";
-import { useGameDefinition } from "./functions/useGameDefinition";
-import { useDoActionList } from "./functions/useDoActionList";
+import { useGameDefinition } from "./hooks/useGameDefinition";
+import { useDoActionList } from "./hooks/useDoActionList";
 import { useSiteL10n } from "../../hooks/useSiteL10n";
 
 export const TopBarMenu = React.memo(({}) => {

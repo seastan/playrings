@@ -4,7 +4,7 @@ import styled from "@emotion/styled";
 import { Droppable } from "react-beautiful-dnd";
 import { Stack } from "./Stack";
 import { PileImage } from "./PileImage"
-import { useLayout } from "./functions/useLayout";
+import { useLayout } from "./hooks/useLayout";
 
 const Container = styled.div`
   background-color: ${props => props.isDraggingOver ? "rgba(1,1,1,0.3)" : ""};

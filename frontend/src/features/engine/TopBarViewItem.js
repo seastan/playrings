@@ -1,14 +1,14 @@
 import React from "react";
 import { useDispatch, useSelector } from 'react-redux';
 import { setBrowseGroupId, setBrowseGroupTopN } from "../store/playerUiSlice";
-import { useGameL10n } from "../../hooks/useGameL10n";
+import { useGameL10n } from "./hooks/useGameL10n";
 
 export const TopBarViewItem = React.memo(({
   groupId,
 }) => {
   const dispatch = useDispatch();
-  const l10n = useGameL10n();
-  const group = useSelector(state => state?.gameUi?.game?.groupById[groupId]);
+  const gameL10n = useGameL10n();
+  const group = useSelector(state => state?.gameUi?.game?.groupById?.[groupId]);
   const playerN = useSelector(state => state?.playerUi?.playerN);
 
   const handleMenuClick = (data) => {
@@ -24,14 +24,11 @@ export const TopBarViewItem = React.memo(({
   if (!group) return;
 
   const stackIds = group.stackIds;
-  const deckType = group.type;
-
-  if (deckType === "play") return;
 
   return(
     <li className="relative cursor-pointer" onClick={() => handleMenuClick({action:"look_at",groupId:groupId})} key={groupId}>
     <a className="absolute" href="#">
-    {l10n(group.name)}
+      {gameL10n(group.labelId)}
     </a>
     <div className="absolute right-2 top-1 select-none">{stackIds.length}</div>
     </li>

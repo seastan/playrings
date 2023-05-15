@@ -4,9 +4,9 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { DropdownItem, GoBack } from "./DropdownMenuHelpers";
 import "../../css/custom-dropdown.css";
 import { useSelector } from "react-redux";
-import { useGameL10n } from "../../hooks/useGameL10n";
-import { useGameDefinition } from "./functions/useGameDefinition";
-import { usePlayerIList } from "./functions/usePlayerIList";
+import { useGameL10n } from "./hooks/useGameL10n";
+import { useGameDefinition } from "./hooks/useGameDefinition";
+import { usePlayerIList } from "./hooks/usePlayerIList";
 
 export const DropdownMenuGroup = React.memo(({
   mouseX,

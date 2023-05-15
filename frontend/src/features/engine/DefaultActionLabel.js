@@ -1,7 +1,7 @@
 import React from "react";
 import { useSelector } from "react-redux";
-import { useGameL10n } from "../../hooks/useGameL10n";
-import { useGetDefaultAction } from "./functions/useGetDefaultAction";
+import { useGameL10n } from "./hooks/useGameL10n";
+import { useGetDefaultAction } from "./hooks/useGetDefaultAction";
 
 export const DefaultActionLabel = React.memo(({
     cardId,

@@ -1,17 +1,17 @@
 import React, { useContext, useState } from "react";
 import { useSelector, useDispatch } from 'react-redux';
 import { Stacks } from "./Stacks";
-import { useBrowseTopN } from "./functions/useBrowseTopN";
+import { useBrowseTopN } from "./hooks/useBrowseTopN";
 import { getParentCardsInGroup } from "../plugins/lotrlcg/functions/helpers";
 import { setValues } from "../store/gameUiSlice";
 import { faBars } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { setBrowseGroupId, setDropdownMenu, setTyping } from "../store/playerUiSlice";
-import { useGameL10n } from "../../hooks/useGameL10n";
+import { useGameL10n } from "./hooks/useGameL10n";
 import BroadcastContext from "../../contexts/BroadcastContext";
-import { useGameDefinition } from "./functions/useGameDefinition";
-import { useDoActionList } from "./functions/useDoActionList";
-import { useLayout } from "./functions/useLayout";
+import { useGameDefinition } from "./hooks/useGameDefinition";
+import { useDoActionList } from "./hooks/useDoActionList";
+import { useLayout } from "./hooks/useLayout";
 
 const isNormalInteger = (str) => {
   var n = Math.floor(Number(str));

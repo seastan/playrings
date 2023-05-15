@@ -1,5 +1,5 @@
 import { useDispatch } from "react-redux";
-import { useGameL10n } from "../../../hooks/useGameL10n";
+import { useGameL10n } from "./useGameL10n";
 import store from "../../../store";
 import { setBrowseGroupId, setBrowseGroupTopN } from "../../store/playerUiSlice";
 import { useDoActionList } from "./useDoActionList";

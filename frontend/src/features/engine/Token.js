@@ -3,9 +3,9 @@ import { useSelector } from 'react-redux';
 import { faChevronDown, faChevronUp } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import BroadcastContext from "../../contexts/BroadcastContext";
-import { useGameDefinition } from "./functions/useGameDefinition";
+import { useGameDefinition } from "./hooks/useGameDefinition";
 import store from "../../store";
-import { useDoActionList } from "./functions/useDoActionList";
+import { useDoActionList } from "./hooks/useDoActionList";
 import Draggable from "react-draggable";
 
 var delayBroadcast;

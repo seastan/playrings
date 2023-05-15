@@ -1,23 +1,13 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { Redirect } from "react-router";
-import Select from 'react-select'
-import { v4 as uuidv4 } from 'uuid';
 import axios from "axios";
 import ReactModal from "react-modal";
 import Button from "../../components/basic/Button";
-import useProfile from "../../hooks/useProfile";
-import useIsLoggedIn from "../../hooks/useIsLoggedIn";
-import { Link } from "react-router-dom";
 import { useSiteL10n } from "../../hooks/useSiteL10n";
-import { isObject } from "../store/updateValues";
 import useForm from "../../hooks/useForm";
 import useAuth from "../../hooks/useAuth";
-import { setShowModal } from "../store/playerUiSlice";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheck } from "@fortawesome/free-solid-svg-icons";
 import { checkValidGameDef, mergeJSONs, readFileAsText } from "./PluginFileImport";
-const { convertCSVToArray } = require('convert-csv-to-array');
-const converter = require('convert-csv-to-array');
 
 ReactModal.setAppElement("#root");
 

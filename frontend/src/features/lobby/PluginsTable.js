@@ -1,17 +1,11 @@
 import React, { useState } from "react";
-import UserName from "../user/UserName";
-import useProfile from "../../hooks/useProfile";
-import { Link } from "react-router-dom";
-import MUIDataTable, { MUIDataTableOptions } from "mui-datatables";
 import Button from "../../components/basic/Button";
 import { RotatingLines } from "react-loader-spinner";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faStar as faStarO } from "@fortawesome/free-regular-svg-icons";
-import { faChevronRight, faEdit, faStar as faStarS, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { faChevronRight, faStar as faStarS } from "@fortawesome/free-solid-svg-icons";
 import moment from "moment";
 import { useSiteL10n } from "../../hooks/useSiteL10n";
-
-
 
 export const PluginsTable = ({ plugins, setSelectedPlugin}) => {
   const siteL10n = useSiteL10n();
@@ -26,7 +20,7 @@ export const PluginsTable = ({ plugins, setSelectedPlugin}) => {
     </div>
   }
 
-  const trClass = "relative m-2 h-full hover:bg-gray-600 w-full flex items-center text-white no-underline select-none"
+  const trClass = "relative m-2 h-full w-full flex items-center text-white no-underline select-none"
 
   return (
     <div className="w-full">
@@ -35,7 +29,7 @@ export const PluginsTable = ({ plugins, setSelectedPlugin}) => {
         {plugins?.map((plugin, pluginIndex) => {
           return(
             <tr className={trClass} onClick={() => setSelectedPlugin(plugin)}>
-              <div className={"absolute w-full h-full opacity-50 " + ((pluginIndex % 2 === 0) ? " bg-gray-800" : " bg-gray-900")}></div>
+              <div className={"absolute rounded-lg w-full h-full opacity-50  hover:bg-gray-600 " + ((pluginIndex % 2 === 0) ? " bg-gray-800" : " bg-gray-900")}></div>
               <div className="relative m-4">
                 <div className="text-xl inline">{plugin.name}</div>
                 <a 

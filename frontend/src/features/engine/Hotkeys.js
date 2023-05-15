@@ -4,12 +4,12 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Draggable from 'react-draggable';
 import { useDispatch, useSelector } from "react-redux";
 import { setShowHotkeys } from "../store/playerUiSlice";
-import { useGameL10n } from "../../hooks/useGameL10n";
-import { useGameDefinition } from "./functions/useGameDefinition";
-import { keyClass } from "../definitions/common";
-import { keyStyle } from "../definitions/common";
+import { useGameL10n } from "./hooks/useGameL10n";
+import { useGameDefinition } from "./hooks/useGameDefinition";
+import { keyClass } from "./functions/common";
+import { keyStyle } from "./functions/common";
 import { useSiteL10n } from "../../hooks/useSiteL10n";
-import { dragnHotkeys } from "./functions/useDragnHotkeys";
+import { dragnHotkeys } from "./hooks/useDragnHotkeys";
 
 const keyStyleL = {width: "7vh", height: "3vh", borderRadius: "0.5vh"}
 const keyStyleXL = {width: "12vh", height: "3vh", borderRadius: "0.5vh"}

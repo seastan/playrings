@@ -2,37 +2,8 @@ import { sectionToLoadGroupId, sectionToDiscardGroupId, sectionToDeckGroupId } f
 import axios from "axios";
 import { setLoaded, setTooltipIds } from "../../../store/playerUiSlice";
 import store from "../../../../store";
-import { listOfMatchingCards } from "../../../engine/functions/flatListOfCards";
-import { getCurrentFace } from "../../../definitions/common";
 
 const cardDb = [];
-
-
-export const getDisplayName = (card) => {
-  if (!card) return;
-  const currentSide = card.currentSide;
-  const currentFace = getCurrentFace(card);
-  if (currentSide === "A") {
-      const printName = currentFace.printName;
-      const id = card.id;
-      const id4digit = id.substr(id.length - 4);
-      return printName;//+' ('+id4digit+')'; // Add unique identifier?
-  } else { // Side B logic
-      const sideBName = card.sides.B.name;
-      if (sideBName === "player") {
-          return sideBName+' card';
-      } else if (sideBName === "encounter") {
-          return sideBName+' card';
-      } else if (sideBName) {
-          const printName = currentFace.printName;
-          const id = card["id"];
-          const id4digit = id.substr(id.length - 4);
-          return printName;//+' ('+id4digit+')'; // Add unique identifier?
-      } else {
-          return 'undefinedCard';
-      }
-  }
-}
 
 export const getRandomIntInclusive = (min, max) => {
   min = Math.ceil(min);
@@ -58,9 +29,6 @@ export const getFlippedCard = (card) => {
   return (card.currentSide === "A") ? {...card, ["currentSide"]: "B"} : {...card, ["currentSide"]: "A"};
 }
 
-export const getDisplayNameFlipped = (card) => {
-  return getDisplayName(getFlippedCard(card));
-}
 
 export const getPlayerN = (playerInfo, id) => {
   if (!playerInfo) return null;
@@ -328,13 +296,6 @@ export const processPostLoad = (gameUi, loadList, playerN, gameBroadcast, chatBr
   if (loreFatty) {
     gameBroadcast("game_action", {action: "increment_threat", options: {increment: -2}})
     chatBroadcast("game_update", {message: "reduced threat by 2."});
-  }
-  const loreMirlonde = isCardDbIdInLoadList(loadList, "536c80ba-ad8b-447e-b378-1684508eb0f9")
-  if (loreMirlonde) {
-    const loreHeroes = listOfMatchingCards(gameUi, [["sides","A","sphere","Lore"]])
-    const reduction = loreHeroes.length;
-    gameBroadcast("game_action", {action: "increment_threat", options: {increment: -reduction}})
-    chatBroadcast("game_update", {message: "reduced threat by "+reduction+" (Mirlonde)."});
   }
   const glitteringCaves = isCardDbIdInLoadList(loadList, "03a074ce-d581-4672-b6ea-ed97b7afd415");
   if (glitteringCaves) {

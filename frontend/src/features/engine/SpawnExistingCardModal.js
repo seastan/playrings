@@ -3,12 +3,12 @@ import ReactModal from "react-modal";
 import { useDispatch, useSelector } from "react-redux";
 import useProfile from "../../hooks/useProfile";
 import { setShowModal, setTyping } from "../store/playerUiSlice";
-import { useGameL10n } from "../../hooks/useGameL10n";
+import { useGameL10n } from "./hooks/useGameL10n";
 import BroadcastContext from "../../contexts/BroadcastContext";
-import { usePlugin } from "./functions/usePlugin";
-import { useGameDefinition } from "./functions/useGameDefinition";
-import { useDoActionList } from "./functions/useDoActionList";
-import { useLoadList } from "./functions/useLoadList";
+import { usePlugin } from "./hooks/usePlugin";
+import { useGameDefinition } from "./hooks/useGameDefinition";
+import { useDoActionList } from "./hooks/useDoActionList";
+import { useLoadList } from "./hooks/useLoadList";
 
 const RESULTS_LIMIT = 150;
 

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { SideBarPhase } from "./SideBarPhase";
-import { useGameDefinition } from "./functions/useGameDefinition";
+import { useGameDefinition } from "./hooks/useGameDefinition";
 import { useSelector } from "react-redux";
 
 export const SideBar = React.memo(({}) => {

@@ -6,7 +6,7 @@ import useChannel from "../../hooks/useChannel";
 import { applyDelta, setGameUi } from "../store/gameUiSlice";
 import useProfile from "../../hooks/useProfile";
 import { resetPlayerUi } from "../store/playerUiSlice";
-import { usePlugin } from "./functions/usePlugin";
+import { usePlugin } from "./hooks/usePlugin";
 
 var delayBroadcast;
 

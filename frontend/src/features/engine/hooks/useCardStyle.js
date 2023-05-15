@@ -1,6 +1,6 @@
 import { useSelector } from 'react-redux';
-import { useCardScaleFactor } from '../../../hooks/useCardScaleFactor';
-import { ATTACHMENT_OFFSET } from '../../definitions/common';
+import { useCardScaleFactor } from './useCardScaleFactor';
+import { ATTACHMENT_OFFSET } from '../functions/common';
 import { useCardProp } from './useCardProp';
 import { useCardZIndex } from './useCardZIndex';
 import { useGameDefinition } from './useGameDefinition';

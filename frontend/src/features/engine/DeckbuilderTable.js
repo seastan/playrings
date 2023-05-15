@@ -1,8 +1,8 @@
 import React, {useEffect, useMemo, useState} from "react";
-import { useGameDefinition } from "./functions/useGameDefinition";
-import { usePlugin } from "./functions/usePlugin";
-import { keyClass } from "../definitions/common";
-import { keyStyle } from "../definitions/common";
+import { useGameDefinition } from "./hooks/useGameDefinition";
+import { usePlugin } from "./hooks/usePlugin";
+import { keyClass } from "./functions/common";
+import { keyStyle } from "./functions/common";
 
 const RESULTS_LIMIT = 250;
 

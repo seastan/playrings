@@ -1,5 +1,5 @@
 import React from "react";
-import { useVisibleFaceSrc } from "./functions/useVisibleFaceSrc";
+import { useVisibleFaceSrc } from "./hooks/useVisibleFaceSrc";
 
 export const CardImage = React.memo(({
     cardId,

@@ -1,8 +1,8 @@
 import React from "react";
 import { useSelector } from 'react-redux';
 import { Token } from "./Token";
-import { useGameDefinition } from "./functions/useGameDefinition";
-import { useCardZIndex } from "./functions/useCardZIndex";
+import { useGameDefinition } from "./hooks/useGameDefinition";
+import { useCardZIndex } from "./hooks/useCardZIndex";
 
 export const Tokens = React.memo(({ 
     cardId,

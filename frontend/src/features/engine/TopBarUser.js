@@ -7,7 +7,7 @@ import { Link } from "react-router-dom";
 import { setDropdownMenu, setObservingPlayerN, setTyping } from "../store/playerUiSlice";
 import BroadcastContext from "../../contexts/BroadcastContext";
 import { TopBarUserCounter } from "./TopBarUserCounter";
-import { useGameDefinition } from "./functions/useGameDefinition";
+import { useGameDefinition } from "./hooks/useGameDefinition";
 import { useSiteL10n } from "../../hooks/useSiteL10n";
 
 export const TopBarUser = React.memo(({

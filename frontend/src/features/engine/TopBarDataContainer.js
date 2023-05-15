@@ -1,7 +1,7 @@
 import React from "react";
 import { TopBarUser } from "./TopBarUser";
 import { TopBarShared } from "./TopBarShared";
-import { usePlayerIList } from "./functions/usePlayerIList";
+import { usePlayerIList } from "./hooks/usePlayerIList";
 
 export const TopBarDataContainer = React.memo(({}) => {
 

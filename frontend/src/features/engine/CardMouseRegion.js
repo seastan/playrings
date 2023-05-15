@@ -1,11 +1,11 @@
 
 import React from "react";
-import useLongPress from "../../hooks/useLongPress";
+import useLongPress from "./hooks/useLongPress";
 import { useDispatch, useSelector } from "react-redux";
 import { setMouseTopBottom, setDropdownMenu, setActiveCardId, setScreenLeftRight, setCardClicked } from "../store/playerUiSlice";
-import { useHandleTouchAction } from "./functions/useHandleTouchAction";
-import { getVisibleFace } from "../definitions/common";
-import { useCardZIndex } from "./functions/useCardZIndex";
+import { useHandleTouchAction } from "./hooks/useHandleTouchAction";
+import { useCardZIndex } from "./hooks/useCardZIndex";
+import { useVisibleFace } from "./hooks/useVisibleFace";
 
 
 export const CardMouseRegion = React.memo(({
@@ -15,6 +15,7 @@ export const CardMouseRegion = React.memo(({
 }) => {
     const dispatch = useDispatch();
     const card = useSelector(state => state?.gameUi?.game?.cardById[cardId]);
+    const visibleFace = useVisibleFace(cardId);
     const playerN = useSelector(state => state?.playerUi?.playerN);
     const touchMode = useSelector(state => state?.playerUi?.touchMode);
     const touchAction = useSelector(state => state?.playerUi?.touchAction);
@@ -34,7 +35,7 @@ export const CardMouseRegion = React.memo(({
         const dropdownMenu = {
             type: "card",
             cardId: card.id,
-            title: getVisibleFace(card, playerN)?.name,
+            title: visibleFace?.name,
             visible: true,
         }
         if (playerN) dispatch(setDropdownMenu(dropdownMenu));

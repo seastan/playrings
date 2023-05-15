@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from 'react-redux';
 import { setActiveCardId } from "../store/playerUiSlice";
-import { useGameL10n } from "../../hooks/useGameL10n";
-import { useGameDefinition } from "./functions/useGameDefinition";
-import { useDoActionList } from "./functions/useDoActionList";
-import { dragnActionLists } from "../definitions/common";
+import { useGameL10n } from "./hooks/useGameL10n";
+import { useGameDefinition } from "./hooks/useGameDefinition";
+import { useDoActionList } from "./hooks/useDoActionList";
+import { dragnActionLists } from "./functions/dragnActionLists";
 
 export const ReminderButton = React.memo(({
   triggerCardIds
@@ -85,7 +85,7 @@ export const SideBarRoundStep = React.memo(({
           triggerCardIds={triggerCardIds}/>
       }
       <div className={`flex flex-1 h-full items-center justify-center ${isRoundStep ? "bg-red-800" : "bg-gray-500"} ${hovering ? "block" : "hidden"}`} >
-        <div>{l10n(stepInfo.text)}</div>
+        <div>{l10n(stepInfo.labelId)}</div>
       </div>
     </div>
   )

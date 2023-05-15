@@ -5,7 +5,7 @@ import useProfile from "../../hooks/useProfile";
 import { setPlayerN } from "../store/playerUiSlice";
 import { getPlayerN } from "../plugins/lotrlcg/functions/helpers";
 import BroadcastContext from "../../contexts/BroadcastContext";
-import { usePlugin } from "./functions/usePlugin";
+import { usePlugin } from "./hooks/usePlugin";
 import { PluginProvider } from "../../contexts/PluginContext";
 
 export const RoomProviders = ({ gameBroadcast, chatBroadcast }) => {

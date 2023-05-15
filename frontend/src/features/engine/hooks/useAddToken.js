@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import store from '../../../store';
-import { defaultdict } from '../../definitions/common';
+import { defaultdict } from '../functions/common';
 import { setValues } from '../../store/gameUiSlice';
 import { useDoActionList } from './useDoActionList';
 import { useGameDefinition } from './useGameDefinition';

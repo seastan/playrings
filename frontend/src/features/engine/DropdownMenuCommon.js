@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { useDropdownClickCommon } from "../plugins/lotrlcg/functions/dropdownMenuClick";
 import { DropdownMenuCard } from "./DropdownMenuCard";
 import { DropdownMenuGroup } from "./DropdownMenuGroup";
 import { DropdownMenuFirstPlayer } from "./DropdownMenuFirstPlayer";
@@ -7,7 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { calcHeightCommon } from "./DropdownMenuHelpers";
 import "../../css/custom-dropdown.css";
 import { setActiveCardId, setDropdownMenu } from "../store/playerUiSlice";
-import { useDoActionList } from "./functions/useDoActionList";
+import { useDoActionList } from "./hooks/useDoActionList";
 
 export const DropdownMenuCommon = React.memo(({
   mouseX,
@@ -18,7 +17,6 @@ export const DropdownMenuCommon = React.memo(({
   const dropdownMenu = useSelector(state => state?.playerUi?.dropdownMenu)
   const [activeMenu, setActiveMenu] = useState('main');
   const [menuHeight, setMenuHeight] = useState(null);
-  const dropdownClickCommon = useDropdownClickCommon;
   const doActionList = useDoActionList();
 
   const calcHeight = (el) => {

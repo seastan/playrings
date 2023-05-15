@@ -5,8 +5,7 @@ import axios from "axios";
 import ReactModal from "react-modal";
 import Button from "../../components/basic/Button";
 import useProfile from "../../hooks/useProfile";
-import useIsLoggedIn from "../../hooks/useIsLoggedIn";
-import { Link } from "react-router-dom";
+import { PleaseLogIn } from "./PleaseLogIn";
 
 const options = [
   { value: 'public', label: 'Public' },
@@ -110,12 +109,7 @@ export const CreateRoomModal = ({
           </Button>
         </div>
         :
-        <span className="mt-5 p-2 text-white bg-gray-600 rounded">
-          <Link to="/login" className="mr-1 text-white">
-            Log in 
-          </Link> 
-          first, then try again
-        </span>
+        <PleaseLogIn/>
       }
       {isError && (
         <div className="mt-2 bg-red-200 p-2 rounded border">

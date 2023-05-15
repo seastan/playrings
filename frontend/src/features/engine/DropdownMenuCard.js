@@ -4,16 +4,18 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { DropdownItem, GoBack } from "./DropdownMenuHelpers";
 import "../../css/custom-dropdown.css";
 import { useSelector } from "react-redux";
-import { useGameDefinition } from "./functions/useGameDefinition";
+import { useGameDefinition } from "./hooks/useGameDefinition";
 import { useEvaluateCondition } from "../../hooks/useEvaluateCondition";
-import { dragnActionLists, getVisibleFace, getVisibleSide } from "../definitions/common";
+import { dragnActionLists } from "./functions/dragnActionLists";
 import { useSiteL10n } from "../../hooks/useSiteL10n";
-import { useGameL10n } from "../../hooks/useGameL10n";
+import { useGameL10n } from "./hooks/useGameL10n";
 import { useAuthOptions } from "../../hooks/useAuthOptions";
-import { usePlugin } from "./functions/usePlugin";
+import { usePlugin } from "./hooks/usePlugin";
 import useProfile from "../../hooks/useProfile";
 import axios from "axios";
 import { deepUpdate } from "../store/updateValues";
+import { useVisibleSide } from "./hooks/useVisibleSide";
+import { useVisibleFace } from "./hooks/useVisibleFace";
 
 export const DropdownMenuCard = React.memo(({
   mouseX,
@@ -34,8 +36,8 @@ export const DropdownMenuCard = React.memo(({
   const dropdownMenu = useSelector(state => state?.playerUi?.dropdownMenu);
   const menuCardId = dropdownMenu.cardId;
   const menuCard = useSelector(state => state?.gameUi?.game?.cardById?.[menuCardId]);
-  const visibleSide = getVisibleSide(menuCard, playerN);
-  const visibleFace = getVisibleFace(menuCard, playerN);
+  const visibleSide = useVisibleSide(menuCardId);
+  const visibleFace = useVisibleFace(menuCardId);
   const evaluateCondition = useEvaluateCondition();
 
   const setAltArt = async () => {
@@ -174,7 +176,7 @@ export const DropdownMenuCard = React.memo(({
               {l10n("setRotation")}
             </DropdownItem>}
           <DropdownItem
-            rightIcon={user?.supporter_level < 5000 ? <span><img style={{height: "20px"}} src="https://upload.wikimedia.org/wikipedia/commons/9/94/Patreon_logo.svg"/><FontAwesomeIcon icon={faExternalLinkAlt}/></span> : null}
+            rightIcon={user?.supporter_level < 5 ? <img style={{height: "20px"}} src="https://upload.wikimedia.org/wikipedia/commons/9/94/Patreon_logo.svg"/> : null}
             clickCallback={() => setAltArt()}>
             {l10n("Set Alt Art")}
           </DropdownItem>

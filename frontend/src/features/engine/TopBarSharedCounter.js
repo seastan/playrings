@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from 'react-redux';
 import useFocus from "../../hooks/useFocus";
-import { useDoActionList } from "./functions/useDoActionList";
+import { useDoActionList } from "./hooks/useDoActionList";
 import { setTyping } from "../store/playerUiSlice";
-import { useGameL10n } from "../../hooks/useGameL10n";
+import { useGameL10n } from "./hooks/useGameL10n";
 
 var delayBroadcast;
 

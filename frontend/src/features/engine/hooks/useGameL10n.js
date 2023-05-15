@@ -1,6 +1,6 @@
-import { siteL10n } from "../features/definitions/localization";
-import { useGameDefinition } from "../features/engine/functions/useGameDefinition";
-import useProfile from "./useProfile";
+import { siteL10n } from "../../definitions/localization";
+import { useGameDefinition } from "./useGameDefinition";
+import useProfile from "../../../hooks/useProfile";
 
 export const useGameL10n = () => {
     const user = useProfile();

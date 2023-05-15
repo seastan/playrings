@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
-import { useGameDefinition } from "./functions/useGameDefinition";
-import { usePlugin } from "./functions/usePlugin";
+import { useGameDefinition } from "./hooks/useGameDefinition";
+import { usePlugin } from "./hooks/usePlugin";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronLeft, faChevronRight, faDownload, faPlay, faSave, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { useAuthOptions } from "../../hooks/useAuthOptions";
@@ -8,9 +8,9 @@ import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import BroadcastContext from "../../contexts/BroadcastContext";
 import { RotatingLines } from "react-loader-spinner";
-import { keyClass } from "../definitions/common";
-import { keyStyle } from "../definitions/common";
-import { useGameL10n } from "../../hooks/useGameL10n";
+import { keyClass } from "./functions/common";
+import { keyStyle } from "./functions/common";
+import { useGameL10n } from "./hooks/useGameL10n";
 
 export const DeckbuilderCurrent = React.memo(({currentGroupId, setCurrentGroupId, numChanges, setNumChanges, doFetchHash, setHoverCardDetails, modifyDeckList, currentDeck, setCurrentDeck}) => {
   const gameDef = useGameDefinition();

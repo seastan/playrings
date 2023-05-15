@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { useDispatch, useSelector } from 'react-redux';
 import { setKeypress } from "../store/playerUiSlice";
 import { DragContainer } from "./DragContainer";
-import { useKeyDown } from "./functions/useKeyDown";
+import { useKeyDown } from "./hooks/useKeyDown";
 
 const RoomGame = React.memo(({}) => {
   console.log('Rendering RoomGame');

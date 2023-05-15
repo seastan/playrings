@@ -6,8 +6,8 @@ import Select from 'react-select'
 import { setShowModal, setTyping } from "../store/playerUiSlice";
 import { useDispatch } from "react-redux";
 import BroadcastContext from "../../contexts/BroadcastContext";
-import { useGameDefinition } from "./functions/useGameDefinition";
-import { usePlugin } from "./functions/usePlugin";
+import { useGameDefinition } from "./hooks/useGameDefinition";
+import { usePlugin } from "./hooks/usePlugin";
 
 export const SpawnCustomCardModal = React.memo(({}) => {
   const dispatch = useDispatch();

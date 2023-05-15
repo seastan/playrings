@@ -9,6 +9,7 @@ import useIsLoggedIn from "../../hooks/useIsLoggedIn";
 import { Announcements } from "./Announcements";
 import { PluginsTable } from "./PluginsTable";
 import { Audio, Circles, FidgetSpinner, InfinitySpin, RevolvingDot, RotatingLines, RotatingSquare } from "react-loader-spinner";
+import { PatreonModal } from "../support/PatreonModal";
 
 const isNormalInteger = (str) => {
   var n = Math.floor(Number(str));
@@ -30,7 +31,7 @@ export const Lobby = () => {
   const myUser = useProfile();
   const myUserId = myUser?.id;
   const history = useHistory();
-  const [showModal, setShowModal] = useState(false);
+  const [showModal, setShowModal] = useState(null);
   const [replayId, setReplayId] = useState("");
   const [ringsDbInfo, setRingsDbInfo] = useState([null,null,null,null]);
   const [loadShuffle, setLoadShuffle] = useState(false);
@@ -64,7 +65,7 @@ export const Lobby = () => {
         if (splitUrl[newroomIndex + 3] && splitUrl[newroomIndex + 3] === "shuffle") setLoadShuffle(true);
         else setLoadShuffle(false);
       }
-      setShowModal(true);
+      setShowModal("createRoom");
     }
   }, []);
 
@@ -73,14 +74,14 @@ export const Lobby = () => {
 
   const handleCreateRoomClick = () => {
     if (isLoggedIn) {
-      if (myUser?.email_confirmed_at) setShowModal(true);
+      if (myUser?.email_confirmed_at) setShowModal("createRoom");
       else alert("You must confirm your email before you can start a game.")
     } else {
       history.push("/login")
     }
   }
 
-  const lobbyButtonClass = "border cursor-pointer hover:bg-white hover:text-black h-full w-full flex items-center justify-center text-white no-underline select-none"
+  const lobbyButtonClass = "border rounded-lg cursor-pointer hover:bg-white hover:text-black h-full w-full flex items-center justify-center text-white no-underline select-none"
 
   return (
       <div 
@@ -106,9 +107,9 @@ export const Lobby = () => {
             </div>
             <div className="w-1/2 h-full float-right">
               <div className="w-full h-1/3 p-2">
-                <a className={lobbyButtonClass} target="_blank" href="https://patreon.com/DragnCards">
+                <div className={lobbyButtonClass} onClick={() => setShowModal("patreon")}>
                   Patreon
-                </a>
+                </div>
               </div>
               <div className="w-full h-1/3 p-2">
                 <a className={lobbyButtonClass} target="_blank" href="https://discord.gg/7BQv5ethUm">
@@ -163,9 +164,9 @@ export const Lobby = () => {
                 </p>
               </div>
               <CreateRoomModal
-                isOpen={showModal}
+                isOpen={showModal === "createRoom"}
                 isLoggedIn={isLoggedIn}
-                closeModal={() => setShowModal(false)}
+                closeModal={() => setShowModal(null)}
                 plugin={selectedPlugin}
               />
             </>
@@ -176,6 +177,13 @@ export const Lobby = () => {
             </div>
           }
         </div>
+
+        <PatreonModal
+          isOpen={showModal === "patreon"}
+          isLoggedIn={isLoggedIn}
+          closeModal={() => setShowModal(null)}
+        />
+
         {/* <div className="w-full mb-4 lg:w-1/4 xl:w-2/6">
           <div className="flex items-end h-full">
             <Chat chatBroadcast={chatBroadcast} messages={messages} setTyping={setTyping} />

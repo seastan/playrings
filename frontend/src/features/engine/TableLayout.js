@@ -5,8 +5,8 @@ import MessageBox from "../messages/MessageBox";
 import "../../css/custom-misc.css"; 
 import BroadcastContext from "../../contexts/BroadcastContext";
 import { TableRegion } from "./TableRegion";
-import { useLayout } from "./functions/useLayout";
-import { useDoActionList } from "./functions/useDoActionList";
+import { useLayout } from "./hooks/useLayout";
+import { useDoActionList } from "./hooks/useDoActionList";
 
 var delayBroadcast;
 

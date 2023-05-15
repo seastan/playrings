@@ -1,7 +1,7 @@
 import React from "react";
 import UserName from "../user/UserName";
 import { useSelector } from "react-redux";
-import { usePlayerIList } from "../engine/functions/usePlayerIList";
+import { usePlayerIList } from "../engine/hooks/usePlayerIList";
 
 
 export const MessageLine = ({ message }) => {

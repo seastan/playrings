@@ -6,7 +6,7 @@ import axios from "axios";
 import useAuth from "../../hooks/useAuth";
 import { useDispatch, useSelector } from "react-redux";
 import { setTooltipIds } from "../store/playerUiSlice";
-import { useGameDefinition } from "./functions/useGameDefinition";
+import { useGameDefinition } from "./hooks/useGameDefinition";
 
 export const TooltipModal = React.memo(({
     tooltipId,

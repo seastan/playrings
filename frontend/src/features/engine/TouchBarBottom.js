@@ -1,9 +1,9 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useGameDefinition } from "./functions/useGameDefinition";
+import { useGameDefinition } from "./hooks/useGameDefinition";
 import { setMouseXY, setDropdownMenu, setTouchAction } from "../store/playerUiSlice";
-import { useDoActionList } from "./functions/useDoActionList";
-import { useGameL10n } from "../../hooks/useGameL10n";
+import { useDoActionList } from "./hooks/useDoActionList";
+import { useGameL10n } from "./hooks/useGameL10n";
 
 export const TouchButton = React.memo(({buttonObj}) => {
   const dispatch = useDispatch();

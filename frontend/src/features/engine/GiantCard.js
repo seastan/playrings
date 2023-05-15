@@ -1,22 +1,20 @@
-import React, { useEffect } from "react";
+import React from "react";
 import useProfile from "../../hooks/useProfile";
 import { useSelector } from "react-redux";
-import { useGameDefinition } from "./functions/useGameDefinition";
-import { getVisibleFace, getVisibleFaceSrc } from "../definitions/common";
-import { useActiveCard } from "./functions/useActiveCard";
+import { useVisibleFace } from "./hooks/useVisibleFace";
+import { useVisibleFaceSrc } from "./hooks/useVisibleFaceSrc";
+import { useActiveCardId } from "./hooks/useActiveCardId";
 
 export const GiantCard = React.memo(({}) => {
   const user = useProfile();
-  const gameDef = useGameDefinition();
-  const playerN = useSelector(state => state?.playerUi?.playerN);
   const touchAction = useSelector(state => state?.playerUi?.touchAction);
-  const activeCard = useActiveCard();
-  const visibleFace = getVisibleFace(activeCard, playerN);
+  const activeCardId = useActiveCardId();
+  const visibleFace = useVisibleFace(activeCardId);
   const screenLeftRight = useSelector(state => state?.playerUi?.screenLeftRight);
-  const visibleFaceSrc = getVisibleFaceSrc(visibleFace, user, gameDef);
-  console.log("Rendering GiantCard", activeCard, visibleFace, visibleFaceSrc);
+  const visibleFaceSrc = useVisibleFaceSrc(activeCardId);
+  console.log("Rendering GiantCard", visibleFace, visibleFaceSrc);
 
-  if (activeCard && !touchAction) {
+  if (activeCardId && !touchAction) {
     var height = visibleFace.height >= visibleFace.width ? "70vh" : "50vh";
     if (user?.language === "English_HD") height = visibleFace.height >= visibleFace.width ? "90vh" : "70vh";
     return (

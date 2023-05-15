@@ -4,12 +4,12 @@ import { Tokens } from './Tokens';
 import { CardMouseRegion } from "./CardMouseRegion";
 import { Target } from "./Target";
 import { setActiveCardId } from "../store/playerUiSlice";
-import { useGameDefinition } from "./functions/useGameDefinition";
-import { useVisibleFace } from "./functions/useVisibleFace";
+import { useGameDefinition } from "./hooks/useGameDefinition";
+import { useVisibleFace } from "./hooks/useVisibleFace";
 import { CardArrows } from "./CardArrows";
 import { CardImage } from "./CardImage";
 import { DefaultActionLabel } from "./DefaultActionLabel";
-import { useCardStyle } from "./functions/useCardStyle";
+import { useCardStyle } from "./hooks/useCardStyle";
 import { PeekingSymbol } from "./PeekingSymbol";
 
 export const Card = React.memo(({

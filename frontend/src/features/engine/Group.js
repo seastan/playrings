@@ -3,10 +3,10 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Stacks } from "./Stacks";
 import { faBars, faEye } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useBrowseTopN } from "./functions/useBrowseTopN"; 
+import { useBrowseTopN } from "./hooks/useBrowseTopN"; 
 import { setDropdownMenu } from "../store/playerUiSlice";
-import { useGameL10n } from "../../hooks/useGameL10n";
-import { useGameDefinition } from "./functions/useGameDefinition";
+import { useGameL10n } from "./hooks/useGameL10n";
+import { useGameDefinition } from "./hooks/useGameDefinition";
 
 export const Group = React.memo(({
   groupId,

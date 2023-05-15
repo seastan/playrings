@@ -3,7 +3,7 @@ import Select from 'react-select'
 import ReactModal from "react-modal";
 import { useDispatch } from "react-redux";
 import { setFavoriteGroupId, setShowModal, setSideGroupId } from "../store/playerUiSlice";
-import { useGameDefinition } from "./functions/useGameDefinition";
+import { useGameDefinition } from "./hooks/useGameDefinition";
 
 const options = [
   { value: 'public', label: 'Public' },

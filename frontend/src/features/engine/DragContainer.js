@@ -8,7 +8,7 @@ import { reorderGroupStackIds } from "./Reorder";
 import store from "../../store";
 import { setDraggingFromGroupId, setTouchAction } from "../store/playerUiSlice";
 import { Table } from "./Table";
-import { useDoActionList } from "./functions/useDoActionList";
+import { useDoActionList } from "./hooks/useDoActionList";
 import { ArcherContainer } from 'react-archer';
 
 
