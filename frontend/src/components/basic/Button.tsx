@@ -6,6 +6,7 @@ interface Props {
   onClick?: (e: React.MouseEvent) => void;
   isPrimary?: boolean;
   isSubmit?: boolean;
+  isCancel?: boolean;
   className?: string;
   disabled?: boolean;
 }
@@ -16,6 +17,7 @@ export const Button: React.FC<Props> = ({
   className,
   isPrimary,
   isSubmit,
+  isCancel,
   disabled,
 }) => {
   // bg-gray-300
@@ -24,8 +26,9 @@ export const Button: React.FC<Props> = ({
     "px-2 py-1 rounded w-full",
     { "bg-gray-300": !isPrimary },
     { "bg-blue-800 text-gray-100 shadow-lg": isPrimary && !isSubmit },
-    { "bg-green-800 text-gray-100 shadow-lg": isSubmit },
-    { "bg-gray-600 text-gray-400 cursor-not-allowed": disabled }
+    { "bg-green-700 text-gray-100 shadow-lg": isSubmit && !disabled },
+    { "bg-gray-600 text-gray-400 cursor-not-allowed": disabled },
+    { "bg-red-800 text-white": isCancel }
   );
   return (
     <button

@@ -13,12 +13,13 @@ import { TouchBarBottom } from "./TouchBarBottom";
 
 import "../../css/custom-dropdown.css";
 import { TooltipModal } from "./TooltipModal";
-import { setMouseXY, setDropdownMenu, setScreenLeftRight, setTouchAction, setActiveCardId } from "../store/playerUiSlice";
+import { setMouseXY, setDropdownMenu, setScreenLeftRight, setTouchAction, setActiveCardId, setShowModal } from "../store/playerUiSlice";
 import { useDispatch, useSelector } from "react-redux";
 import useProfile from "../../hooks/useProfile";
 import { onLoad } from "../plugins/lotrlcg/functions/helpers";
 import BroadcastContext from "../../contexts/BroadcastContext";
 import { DeckbuilderModal } from "./DeckbuilderModal";
+import { PatreonModal } from "../support/PatreonModal";
 
 export const Table = React.memo(() => {
   const {gameBroadcast, chatBroadcast} = useContext(BroadcastContext);
@@ -89,6 +90,8 @@ export const Table = React.memo(() => {
       {showModal === "prebuilt_deck" ? <SpawnPrebuiltModal/> : null}
       {showModal === "custom" ? <SpawnCustomCardModal/> : null}
       {showModal === "builder" ? <DeckbuilderModal/> : null}
+      {showModal === "patreon" ? 
+        <PatreonModal isOpen={true} isLoggedIn={myUserId} closeModal={() => dispatch(setShowModal(null))}/> : null}
       {tooltipIds.map((tooltipId, index) => {
         return(
         <TooltipModal

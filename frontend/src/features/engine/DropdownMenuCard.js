@@ -3,7 +3,7 @@ import { faArrowUp, faArrowDown, faRandom, faChevronRight, faCheck, faExternalLi
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { DropdownItem, GoBack } from "./DropdownMenuHelpers";
 import "../../css/custom-dropdown.css";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useGameDefinition } from "./hooks/useGameDefinition";
 import { useEvaluateCondition } from "../../hooks/useEvaluateCondition";
 import { dragnActionLists } from "./functions/dragnActionLists";
@@ -16,6 +16,7 @@ import axios from "axios";
 import { deepUpdate } from "../store/updateValues";
 import { useVisibleSide } from "./hooks/useVisibleSide";
 import { useVisibleFace } from "./hooks/useVisibleFace";
+import { setActiveCardId, setDropdownMenu, setShowModal } from "../store/playerUiSlice";
 
 export const DropdownMenuCard = React.memo(({
   mouseX,
@@ -25,6 +26,7 @@ export const DropdownMenuCard = React.memo(({
   calcHeight,
   activeMenu,
 }) => {    
+  const dispatch = useDispatch();
   const l10n = useSiteL10n();
   const pluginId = usePlugin().id;
   const siteL10n = useSiteL10n();
@@ -41,8 +43,10 @@ export const DropdownMenuCard = React.memo(({
   const evaluateCondition = useEvaluateCondition();
 
   const setAltArt = async () => {
-    if (user.supporter_level < 5) {
-      window.open('https://www.patreon.com/dragncards', '_blank');
+    if (user.supporter_level < 5000) {
+      dispatch(setShowModal("patreon"))
+      dispatch(setDropdownMenu(null));
+      dispatch(setActiveCardId(null));
       return;
     }
     var url = prompt(siteL10n("altArtPrompt"));

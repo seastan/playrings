@@ -104,7 +104,7 @@ export const CreateRoomModal = ({
           <Button onClick={createRoom} className="mt-2" disabled={isLoading}>
             Create
           </Button>
-          <Button onClick={closeModal} className="mt-2 bg-red-300">
+          <Button isCancel onClick={closeModal} className="mt-2">
             Cancel
           </Button>
         </div>

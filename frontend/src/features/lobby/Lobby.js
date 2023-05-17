@@ -1,30 +1,15 @@
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
 import CreateRoomModal from "./CreateRoomModal";
 import LobbyTable from "./LobbyTable";
 import useDataApi from "../../hooks/useDataApi";
-import useChannel from "../../hooks/useChannel";
 import useProfile from "../../hooks/useProfile";
 import useIsLoggedIn from "../../hooks/useIsLoggedIn";
 import { Announcements } from "./Announcements";
 import { PluginsTable } from "./PluginsTable";
-import { Audio, Circles, FidgetSpinner, InfinitySpin, RevolvingDot, RotatingLines, RotatingSquare } from "react-loader-spinner";
 import { PatreonModal } from "../support/PatreonModal";
-
-const isNormalInteger = (str) => {
-  var n = Math.floor(Number(str));
-  return n !== Infinity && String(n) === str && n >= 0;
-}
-
-const filterArrayForPositiveInt = (arr) => {
-  const newArr = [];
-  for (var s of arr) {
-    if (isNormalInteger(s)) {
-      newArr.push(s);
-    }
-  }
-  return newArr;
-}
+import { LobbyButton } from "../../components/basic/LobbyButton";
+import { TermsOfServiceModal } from "./TermsOfServiceModal";
 
 export const Lobby = () => {
   const isLoggedIn = useIsLoggedIn();
@@ -32,6 +17,7 @@ export const Lobby = () => {
   const myUserId = myUser?.id;
   const history = useHistory();
   const [showModal, setShowModal] = useState(null);
+  const [showTermsOfService, setShowTermsOfService] = useState(false);
   const [replayId, setReplayId] = useState("");
   const [ringsDbInfo, setRingsDbInfo] = useState([null,null,null,null]);
   const [loadShuffle, setLoadShuffle] = useState(false);
@@ -81,8 +67,6 @@ export const Lobby = () => {
     }
   }
 
-  const lobbyButtonClass = "border rounded-lg cursor-pointer hover:bg-white hover:text-black h-full w-full flex items-center justify-center text-white no-underline select-none"
-
   return (
       <div 
         className="w-full overflow-y-scroll overflow-x-hidden" 
@@ -107,19 +91,19 @@ export const Lobby = () => {
             </div>
             <div className="w-1/2 h-full float-right">
               <div className="w-full h-1/3 p-2">
-                <div className={lobbyButtonClass} onClick={() => setShowModal("patreon")}>
+                <LobbyButton onClick={() => setShowModal("patreon")}>
                   Patreon
-                </div>
+                </LobbyButton>
               </div>
               <div className="w-full h-1/3 p-2">
-                <a className={lobbyButtonClass} target="_blank" href="https://discord.gg/7BQv5ethUm">
+                <LobbyButton onClick={() => window.open('https://discord.gg/7BQv5ethUm', '_blank')}>
                   Discord
-                </a>
+                </LobbyButton>
               </div>
               <div className="w-full h-1/3 p-2">
-                <a className={lobbyButtonClass} target="_blank" href="https://github.com/seastan/DragnCards">
+                <LobbyButton onClick={() => window.open('https://github.com/seastan/DragnCards', '_blank')}>
                   GitHub
-                </a>
+                </LobbyButton>
               </div>
             </div>
           </div>
@@ -133,17 +117,17 @@ export const Lobby = () => {
               </div>
               <div className="flex justify-center w-full" style={{maxWidth: "600px"}}>
                 <div className="w-full h-24 py-2 text-3xl">
-                  <a className={lobbyButtonClass} target="_blank" href="https://www.youtube.com/watch?v=mshb1EDsnB8&list=PLuyP-hlzlHjd-XADfU-kqJaGpSE9RWHRa&index=1">
+                  <LobbyButton onClick={() => window.open("https://www.youtube.com/watch?v=mshb1EDsnB8&list=PLuyP-hlzlHjd-XADfU-kqJaGpSE9RWHRa&index=1", '_blank')}>
                     Tutorial
-                  </a>
+                  </LobbyButton>
                 </div>
               </div>
               
               <div className="flex justify-center w-full" style={{maxWidth: "600px"}}>
                 <div className="w-full h-24 py-2 text-3xl">
-                  <div className={lobbyButtonClass} onClick={() => handleCreateRoomClick()}>
+                  <LobbyButton onClick={() => handleCreateRoomClick()}>
                     {isLoggedIn ? "Create Room" : "Log in to create a room"}
-                  </div>
+                  </LobbyButton>
                 </div>
               </div>
               
@@ -154,15 +138,6 @@ export const Lobby = () => {
                   <LobbyTable selectedPlugin={selectedPlugin} />
                 </div>
               </div>
-              <h3 className="mt-6 font-semibold text-center">About</h3>
-              <div className="max-w-none">
-                <p className="mb-2">
-                  DragnCards is a{" "}
-                  <span className="font-semibold">
-                    free online multiplayer card game platform
-                  </span>, and is not affiliated with any particular company.
-                </p>
-              </div>
               <CreateRoomModal
                 isOpen={showModal === "createRoom"}
                 isLoggedIn={isLoggedIn}
@@ -171,13 +146,38 @@ export const Lobby = () => {
               />
             </>
             :
-            <div className="w-full">
+            <div className="w-full" style={{minHeight: "600px"}}>
               <div className="text-center text-white text-2xl mb-2">Public Plugins</div>
               <PluginsTable plugins={plugins} setSelectedPlugin={setSelectedPlugin} />
+
             </div>
+            
           }
         </div>
 
+        <div className="mx-auto w-full p-2" style={{maxWidth: "600px"}}>
+          <h3 className="mt-6 font-semibold text-center text-gray-300">About</h3>
+          <div className="max-w-none">
+            <p className="mb-2 text-xs text-gray-300">
+              DragnCards is a free and independent online multiplayer card game platform. 
+              We don't claim intellectual property rights over any content on this site. 
+              Game-related assets visible on DragnCards are not hosted on our platform, 
+              but rather are linked to by plugin developers, who are are responsible for 
+              ensuring their plugin doesn't infringe upon third-party rights. DragnCards 
+              is not endorsed by or affiliated with any game publishers or developers. 
+              Please refer to our{" "}
+              <span className="underline cursor-pointer" onClick={() => setShowTermsOfService(true)}>
+                Terms of Service and Privacy Policy
+              </span> for more info.
+            </p>
+          </div>
+        </div>
+
+        <TermsOfServiceModal
+          isOpen={showTermsOfService}
+          closeModal={() => setShowTermsOfService(false)}
+        />
+        
         <PatreonModal
           isOpen={showModal === "patreon"}
           isLoggedIn={isLoggedIn}

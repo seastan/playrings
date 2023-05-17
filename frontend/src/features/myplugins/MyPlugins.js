@@ -1,10 +1,7 @@
 import React, { useEffect, useMemo, useReducer, useState } from "react";
 import { useHistory } from "react-router-dom";
-import MUIDataTable, { MUIDataTableOptions } from "mui-datatables";
-import Container from "../../components/basic/Container";
 import useProfile from "../../hooks/useProfile";
 import useDataApi from "../../hooks/useDataApi";
-import Button from "../../components/basic/Button";
 import { parseISO, format, formatDistanceToNow } from "date-fns";
 import axios from "axios";
 import { EditPluginModal } from "./EditPluginModal";
@@ -14,8 +11,9 @@ import { faEdit, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { NewPluginModal } from "./NewPluginModal";
 import { useSiteL10n } from "../../hooks/useSiteL10n";
 import useAuth from "../../hooks/useAuth";
+import { LobbyButton } from "../../components/basic/LobbyButton";
 
-const lobbyButtonClass = "border cursor-pointer hover:bg-white hover:text-black h-full w-full flex items-center justify-center text-white no-underline select-none"
+//const lobbyButtonClass = 
 const iconButtonClass = "cursor-pointer hover:bg-white hover:text-black h-full w-full flex items-center justify-center text-white no-underline select-none"
 
 const MyPluginEntry = ({plugin, setSelectedPlugin, forceUpdate, index}) => {
@@ -94,9 +92,9 @@ export const MyPlugins = () => {
   return (
     <div className="mt-4 mx-auto w-full p-2" style={{maxWidth: "600px"}}>
       <div className="w-full p-2" style={{height: "70px"}}>
-        <a className={lobbyButtonClass} target="_blank" onClick={() => handleNewClick()}>
+        <LobbyButton onClick={() => handleNewClick()}>
           New Plugin
-        </a>
+        </LobbyButton>
       </div>
       {data?.my_plugins.map((plugin, index) => {
         return(
