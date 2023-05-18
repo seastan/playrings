@@ -54,7 +54,7 @@ export const Lobby = () => {
     }
   }, []);
 
-  const plugins = apiPlugins?.data?.data ? apiPlugins.data.data : [];
+  const plugins = apiPlugins?.data?.data ? apiPlugins.data.data : null;
   console.log("pluginslist",plugins);
 
   return (
