@@ -178,7 +178,7 @@ defmodule DragnCardsGame.GameUIServer do
     rescue
       exception ->
         stack_trace = __STACKTRACE__
-        Logger.error("Error in my_function: #{inspect exception}, stack trace: #{inspect stack_trace}")
+        Logger.error("Error in #{action}: #{inspect exception}, stack trace: #{inspect stack_trace}")
         put_in(gameui["logMessages"], ["ERROR: " <> inspect(stack_trace)])
     end
     |> save_and_reply()
