@@ -13,6 +13,7 @@ import Profile from "../features/profile/Profile";
 import RequestResetPassword from "../features/auth/RequestResetPassword";
 import DoResetPassword from "../features/auth/DoResetPassword";
 import ConfirmEmail from "../features/auth/ConfirmEmail";
+import { MyPlugins } from "../features/myplugins/MyPlugins";
 
 const PrivatePage: React.FC = () => {
   return <div>this is a priv page</div>;
@@ -26,6 +27,7 @@ const AppRouter: React.FC = () => {
         <Route path="/login" component={Login} />
         <Route path="/signup" component={Signup} />
         <Route path="/profile" component={Profile} />
+        <Route path="/myplugins" component={MyPlugins} />
         <Route path="/newroom" component={Lobby} />
         <Route
           path="/reset-password/:reset_token"

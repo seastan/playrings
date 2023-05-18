@@ -55,10 +55,15 @@ defmodule DragnCards.Rooms do
 
   """
   def create_room(attrs \\ %{}) do
+    IO.puts("Rooms.create_room")
+    IO.inspect(attrs)
+    room =
     %Room{}
     |> Room.changeset(attrs)
     |> Repo.insert()
     |> notify_lobby()
+    IO.inspect(room)
+    room
   end
 
   @doc """
@@ -78,6 +83,12 @@ defmodule DragnCards.Rooms do
     |> Room.changeset(attrs)
     |> Repo.update()
     |> notify_lobby()
+  end
+
+  def update_room_name_by_slug(slug, name) do
+    Room
+    |> where([r], r.slug == ^slug)
+    |> Repo.update_all(set: [name: name])
   end
 
   @doc """

@@ -1,64 +1,24 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { useSelector } from 'react-redux';
-import { Group } from "./Group";
 import { Browse } from "./Browse";
-import { LAYOUTINFO } from "../plugins/lotrlcg/definitions/constants";
-import Chat from "../chat/Chat";
+import MessageBox from "../messages/MessageBox";
 import "../../css/custom-misc.css"; 
-import { QuickAccess } from "./QuickAccess";
-import { SideGroup } from "./SideGroup";
+import BroadcastContext from "../../contexts/BroadcastContext";
+import { TableRegion } from "./TableRegion";
+import { useLayout } from "./hooks/useLayout";
+import { useDoActionList } from "./hooks/useDoActionList";
 
 var delayBroadcast;
 
-export const TableRegion = React.memo(({
-  region,
-  gameBroadcast,
-  chatBroadcast,
-  registerDivToArrowsContext,
-}) => {
-  const observingPlayerN = useSelector(state => state?.playerUi?.observingPlayerN);
-  const browseGroupId = useSelector(state => state?.playerUi?.browseGroup?.id);
-  const groupId = ["Hand", "Deck", "Discard"].includes(region.id) ? observingPlayerN + region.id : region.id;
-  const beingBrowsed = groupId === browseGroupId;
-  return (
-    <div
-      className="h-full float-left"
-      style={{
-        width: region.width,
-        padding: "0 0 0 0.5vw",
-        background: (region.style === "shaded") ? "rgba(0, 0, 0, 0.3)" : "",
-        MozBoxShadow: (region.boxShadow) ? '0 10px 10px 5px rgba(0,0,0,0.3)' : "",
-        WebkitBoxShadow: (region.boxShadow) ? '0 10px 10px 5px rgba(0,0,0,0.3)' : "",
-        boxShadow: (region.boxShadow) ? '0 10px 10px 5px rgba(0,0,0,0.3)' : "",
-      }}
-    >
-      {beingBrowsed ? null :
-        <Group
-          groupId={groupId}
-          gameBroadcast={gameBroadcast} 
-          chatBroadcast={chatBroadcast}
-          hideTitle={region.hideTitle}
-          registerDivToArrowsContext={registerDivToArrowsContext}
-        />
-      }
-    </div>
-  )
-})
-
-export const TableLayout = React.memo(({
-  gameBroadcast,
-  chatBroadcast,
-  registerDivToArrowsContext,
-}) => {
+export const TableLayout = React.memo(() => {
+  const {gameBroadcast, chatBroadcast} = useContext(BroadcastContext);
   console.log("Rendering TableLayout");
-  const numPlayers = useSelector(state => state?.gameUi?.game?.numPlayers);
-  const layout = useSelector(state => state?.gameUi?.game?.layout);
   const sideGroupId = useSelector(state => state?.playerUi?.sideGroupId);
-  const browseGroupId = useSelector(state => state?.playerUi?.browseGroup?.id);
+  const layoutVariants = useSelector(state => state?.gameUi?.game?.layoutVariants);
   const [chatHover, setChatHover] = useState(false);
-  const layoutInfo = LAYOUTINFO["layout" + numPlayers + layout];
-  const numRows = layoutInfo.length;
-  const rowHeight = `${100/numRows}%`; 
+  const layout = useLayout();
+  const numRows = layout.length;
+  const doActionList = useDoActionList();  
 
   if (!layout) return;
 
@@ -81,80 +41,54 @@ export const TableLayout = React.memo(({
 
   return (
     <>
-      {/* Top row */}
-      <div 
-        className="relative w-full" 
-        style={{height: rowHeight}}>
-        {layoutInfo[0].regions.map((region, _regionIndex) => (
+      <Browse/>
+      {layout.regions.map((region, regionIndex) => {
+        if (region?.layoutVariants) {
+          const variantVisible = () => {
+            for (const [key, value] of Object.entries(region?.layoutVariants)) {
+              if (layoutVariants?.[key] !== value) {
+                return false;
+              }
+            }
+            return true;
+          }
+          if (!variantVisible()) return;
+        }
+        return(
           <TableRegion
+            key={regionIndex}
             region={region}
-            gameBroadcast={gameBroadcast} 
-            chatBroadcast={chatBroadcast}
-            registerDivToArrowsContext={registerDivToArrowsContext}
           />
-        ))}
-      </div>
-      {/* Middle rows */}
-      <div 
-        className="relative float-left"
-        style={{height: `${100-2*(100/numRows)}%`, width:`${middleRowsWidth}%`}}>
-        {layoutInfo.map((row, rowIndex) => {  
-          if (browseGroupId && rowIndex === numRows - 2) {
-            return(
-            <div 
-              className="relative bg-gray-700 rounded-lg w-full" 
-              style={{height: `${100/(numRows-2)}%`}}>
-              <Browse
-                groupId={browseGroupId}
-                gameBroadcast={gameBroadcast}
-                chatBroadcast={chatBroadcast}/>
-              </div>
-            )
-          } else if (rowIndex > 0 && rowIndex < numRows - 1) {
-            return(
-              <div 
-                className="relative w-full" 
-                style={{height: `${100/(numRows-2)}%`}}>
-                {row.regions.map((region, _regionIndex) => (
-                  <TableRegion
-                    region={region}
-                    gameBroadcast={gameBroadcast} 
-                    chatBroadcast={chatBroadcast}
-                    registerDivToArrowsContext={registerDivToArrowsContext}
-                  />
-                ))}
-              </div>
-            )
-          } else return null;
-        })}
-      </div>
-      <SideGroup
-        gameBroadcast={gameBroadcast}
-        chatBroadcast={chatBroadcast}
-        registerDivToArrowsContext={registerDivToArrowsContext}/>
-      {/* Bottom row */}
-      <div 
-        className="relative float-left w-full" 
-        style={{height: rowHeight}}>
-        {layoutInfo[numRows-1].regions.map((region, _regionIndex) => (
-          <TableRegion
-            region={region}
-            gameBroadcast={gameBroadcast} 
-            chatBroadcast={chatBroadcast}
-            registerDivToArrowsContext={registerDivToArrowsContext}
-          />
-        ))}
-      </div>
-      {/* Quickview and Chat */}
-      <div className="absolute right-0 bottom-0 h-full" style={{width:"25%", height: rowHeight}}>
+        )
+      })}
+      {layout.tableButtons.map((tableButton, buttonIndex) => {        
+        if (tableButton?.layoutVariants) {
+          const variantVisible = () => {
+            for (const [key, value] of Object.entries(tableButton?.layoutVariants)) {
+              if (layoutVariants?.[key] !== value) {
+                return false;
+              }
+            }
+            return true;
+          }
+          if (!variantVisible()) return;
+        }
+        return(
+          <div 
+            className="absolute flex cursor-pointer border border-gray-500 justify-center items-center text-gray-400 bg-gray-700 hover:bg-gray-500" style={{left: tableButton.left, top: tableButton.top, width: tableButton.width, height: tableButton.height}}
+            onClick={() => {doActionList(tableButton?.actionListId)}}>
+            {tableButton.text}
+          </div>
+        )
+      })}
+      <div className="absolute" style={{left: layout.chat.left, top: layout.chat.top, width: layout.chat.width, height: layout.chat.height}}>
         <div 
           className="absolute bottom-0 left-0" 
-          style={{height: chatHover ? `${numRows*100}%` : `100%`, width:'100%', paddingRight:"30px", opacity: 0.7, zIndex: chatHover ? 1e6 : 1e3}}
+          style={{height: chatHover ? "100vh" : "100%", width:'100%', opacity: 0.7, zIndex: chatHover ? 1e6 : 1e3}}
           onMouseEnter={() => handleStartChatHover()}
           onMouseLeave={() => handleStopChatHover()}>
-          <Chat hover={chatHover} chatBroadcast={chatBroadcast}/>
+          <MessageBox hover={chatHover} chatBroadcast={chatBroadcast}/>
         </div>
-        <QuickAccess/>
       </div>
     </>
   )

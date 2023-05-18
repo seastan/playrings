@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import Select from 'react-select'
 import ReactModal from "react-modal";
-import { GROUPSINFO } from "../plugins/lotrlcg/definitions/constants";
 import { useDispatch } from "react-redux";
 import { setFavoriteGroupId, setShowModal, setSideGroupId } from "../store/playerUiSlice";
+import { useGameDefinition } from "./hooks/useGameDefinition";
 
 const options = [
   { value: 'public', label: 'Public' },
@@ -11,28 +11,14 @@ const options = [
   { value: 'playtest', label: 'Playtest' },
 ]
 
-
 export const FavoriteGroupModal = ({}) => {
   const dispatch = useDispatch();
+  const gameDef = useGameDefinition();
   const [selected, setSelected] = useState(null);
 
-  const groupIds = [
-    "sharedQuestDeck",
-    "sharedEncounterDeck3",
-    "player1Hand",
-    "player1Discard",
-    "player2Hand", 
-    "player2Discard",
-    "player3Hand", 
-    "player3Discard",
-    "player4Hand",
-    "player4Discard",
-    "sharedOther",
-  ]
-
   const options = [];
-  groupIds.forEach(groupId => {
-    options.push({value: groupId, label: GROUPSINFO[groupId].name})
+  if (gameDef.favoriteGroupIds) gameDef.favoriteGroupIds.forEach(groupId => {
+    options.push({value: groupId, label: gameDef.groups[groupId].name})
   });
 
   const handleDropdownChange = (entry) => {

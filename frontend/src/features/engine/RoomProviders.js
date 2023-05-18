@@ -1,17 +1,23 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useDispatch, useSelector } from 'react-redux';
 import RoomGame from "./RoomGame";
 import useProfile from "../../hooks/useProfile";
 import { setPlayerN } from "../store/playerUiSlice";
-import { GetPlayerN } from "../plugins/lotrlcg/functions/helpers";
+import { getPlayerN } from "../plugins/lotrlcg/functions/helpers";
+import BroadcastContext from "../../contexts/BroadcastContext";
+import { usePlugin } from "./hooks/usePlugin";
+import { PluginProvider } from "../../contexts/PluginContext";
 
 export const RoomProviders = ({ gameBroadcast, chatBroadcast }) => {
   console.log("Rendering RoomProviders");
   const dispatch = useDispatch();
-  const playerIds = useSelector(state => state?.gameUi?.playerIds);
+  const playerInfo = useSelector(state => state?.gameUi?.playerInfo);
   const myUser = useProfile();
-  const playerN = GetPlayerN(playerIds, myUser?.id);
-  dispatch(setPlayerN(playerN));
+  const playerN = getPlayerN(playerInfo, myUser?.id);
+  useEffect(() => {
+    dispatch(setPlayerN(playerN));
+  }, [playerN])
+  
 
   return (
       <div className="background"
@@ -21,9 +27,12 @@ export const RoomProviders = ({ gameBroadcast, chatBroadcast }) => {
           backgroundRepeat: "no-repeat",
           backgroundSize: "cover",
           backgroundPositionY: "50%",
-        }}
-      >
-        <RoomGame gameBroadcast={gameBroadcast} chatBroadcast={chatBroadcast}/>
+        }}>
+        <BroadcastContext.Provider value={{gameBroadcast, chatBroadcast}}>
+          <PluginProvider>
+            <RoomGame/>
+          </PluginProvider>
+        </BroadcastContext.Provider>
       </div>
   );
 };

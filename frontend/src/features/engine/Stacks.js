@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 import { useSelector } from 'react-redux';
 import styled from "@emotion/styled";
 import { Droppable } from "react-beautiful-dnd";
 import { Stack } from "./Stack";
-import CardBack from "./CardBack"
+import { PileImage } from "./PileImage"
+import { useLayout } from "./hooks/useLayout";
 
 const Container = styled.div`
   background-color: ${props => props.isDraggingOver ? "rgba(1,1,1,0.3)" : ""};
@@ -18,108 +19,108 @@ const Container = styled.div`
   height: 100%;
   width: calc(100% - 17px);
   user-select: none;
-  overflow-x: ${props => ["deck", "discard", "vertical"].includes(props.groupType) ? "none" : "auto"};
-  overflow-y: ${props => props.groupType === "vertical" ? "auto" : "hidden"};
+  overflow-x: ${props => props.direction === "vertical" ? "hidden" : "auto"};
+  overflow-y: ${props => props.direction === "vertical" ? "auto" : "hidden"};
   max-height: 100%;
   position: relative;
 `;
 
-const DropZone = styled.div`
+export const DropZone = styled.div`
   /* stop the list collapsing when empty */
-  display: ${props => ["deck", "discard", "vertical"].includes(props.groupType) ? "" : "flex"};
-  width: 100%;
+  position: absolute;
+  display: ${props => props.direction === "vertical" ? "" : "flex"};
+  overflow-x: none;
+  width: calc(100% - ${props => props.margin}vh);
   height: 100%;
   min-height: 100%;
-  padding: 0 0 0 0;
+  padding: 0.5vh;
+  margin: 0 0 0 ${props => props.margin}vh;
 `;
 
 const StacksList = React.memo(({
   isDraggingOver,
   isDraggingFrom,
-  gameBroadcast,
-  chatBroadcast,
   groupId,
-  groupType,
+  region,
   stackIds,
-  selectedStackIndices,
-  registerDivToArrowsContext
+  mouseHere,
+  selectedStackIndices
 }) => {
-  const pile = (groupType=="deck" || groupType=="discard")
+  const draggingFromGroupId = useSelector(state => state?.playerUi?.draggingFromGroupId);
+  const isPile = region.type == "pile";
   // Truncate stacked piles
-  var stackIdsToShow;
-  if (pile && stackIds.length>1) stackIdsToShow = [stackIds[0]]
-  else stackIdsToShow = stackIds;
+  console.log("Rendering StacksList", {groupId, region, draggingFromGroupId});
+  var stackIdsToShow = stackIds;
+  if (isPile) {
+    stackIdsToShow = [];
+    if (stackIds.length > 0 && ((mouseHere && draggingFromGroupId === null) || draggingFromGroupId === groupId)) stackIdsToShow = [stackIds[0]];
+  }
+
   if (!stackIdsToShow) return null;
   return (
     stackIdsToShow?.map((stackId, stackIndex) => (
       (selectedStackIndices.includes(stackIndex)) ? (
         <Stack
           key={stackId}
-          gameBroadcast={gameBroadcast}
-          chatBroadcast={chatBroadcast}
           groupId={groupId}
-          groupType={groupType}
+          region={region}
           stackIndex={stackIndex}
           stackId={stackId}
           numStacks={selectedStackIndices.length}
-          registerDivToArrowsContext={registerDivToArrowsContext}
-          hidden={pile && isDraggingOver && !isDraggingFrom}
-        /> 
+          hidden={isPile && isDraggingOver && !isDraggingFrom}/> 
       ) : null 
     ))
   ) 
 });
 
 export const Stacks = React.memo(({
-  gameBroadcast,
-  chatBroadcast,
   groupId,
-  groupType,
+  region,
   selectedStackIndices,
-  registerDivToArrowsContext
 }) => {
-  console.log("Rendering Stacks for ",groupId);
+  console.log("Rendering Stacks for ",groupId, region);
+  const [mouseHere, setMouseHere] = useState(false);
+  const layout = useLayout();
+  const rowSpacing = layout?.rowSpacing;
   const group = useSelector(state => state?.gameUi?.game?.groupById?.[groupId]);
   const stackIds = group.stackIds;
-  const isCombineEnabled = (groupType === "play");
   return(
     <Droppable
       droppableId={groupId}
       key={groupId}
       isDropDisabled={false}
-      isCombineEnabled={isCombineEnabled}
-      direction={["deck", "discard", "vertical"].includes(groupType) ? "vertical" : "horizontal"}
-    >
+      isCombineEnabled={group.canHaveAttachments}
+      direction={region.direction}>
       {(dropProvided, dropSnapshot) => (
         <Container
           isDraggingOver={dropSnapshot.isDraggingOver}
           isDropDisabled={false}
           isDraggingFrom={Boolean(dropSnapshot.draggingFromThisWith)}
           {...dropProvided.droppableProps}
-          groupType={groupType}
-        >
-          <div className="h-full">
-            <CardBack 
-              groupType={groupType} 
+          direction={region.direction}
+          onMouseEnter={() => setMouseHere(region.type === "pile" && true)} 
+          //onMouseLeave={() => setMouseHere(region.type === "pile" && false)}
+          >
+            <PileImage 
+              region={region} 
               stackIds={stackIds} 
               isDraggingOver={dropSnapshot.isDraggingOver} 
               isDraggingFrom={Boolean(dropSnapshot.draggingFromThisWith)}>
-            </CardBack>
-            <DropZone ref={dropProvided.innerRef} groupType={groupType}>
+            </PileImage>
+            <DropZone 
+              ref={dropProvided.innerRef} 
+              direction={region.direction}
+              margin={region.type === "row" ? rowSpacing/2 : 0}>
               <StacksList
                 isDraggingOver={dropSnapshot.isDraggingOver}
                 isDraggingFrom={Boolean(dropSnapshot.draggingFromThisWith)}
-                gameBroadcast={gameBroadcast} 
-                chatBroadcast={chatBroadcast} 
                 groupId={groupId}
-                groupType={(groupType ? groupType : group.type)} 
+                region={region} 
                 stackIds={stackIds}
-                selectedStackIndices={(selectedStackIndices ? selectedStackIndices : [...Array(stackIds.length).keys()])}
-                registerDivToArrowsContext={registerDivToArrowsContext}
-              />
+                mouseHere={mouseHere}
+                selectedStackIndices={(selectedStackIndices ? selectedStackIndices : [...Array(stackIds.length).keys()])}/>
               {dropProvided.placeholder}
             </DropZone>
-          </div>
         </Container>
       )}
     </Droppable>

@@ -1,54 +1,33 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from 'react-redux';
-import { setActiveCardObj } from "../store/playerUiSlice";
-import { getDisplayName } from "../plugins/lotrlcg/functions/helpers";
-import { useGameL10n } from "../../hooks/useGameL10n";
-
+import { setActiveCardId } from "../store/playerUiSlice";
+import { useGameL10n } from "./hooks/useGameL10n";
+import { useGameDefinition } from "./hooks/useGameDefinition";
+import { useDoActionList } from "./hooks/useDoActionList";
+import { dragnActionLists } from "./functions/dragnActionLists";
 
 export const ReminderButton = React.memo(({
-  triggerCardIds,
-  gameBroadcast,
-  chatBroadcast,
-}) => {  
+  triggerCardIds
+}) => {
   const dispatch = useDispatch();
   const numTriggers = triggerCardIds ? triggerCardIds.length : 0;
   const cardById = useSelector(state => state?.gameUi?.game?.cardById);
   const playerN = useSelector(state => state?.playerUi?.playerN)
   const triggerCard = triggerCardIds?.length === 1 ? cardById[triggerCardIds[0]] : null;
+  const doActionList = useDoActionList();
   const targetTriggers = (event) => {
     event.stopPropagation();
     if (!playerN) return;
-    // Remove targets from all cards you targeted
-    gameBroadcast("game_action", {
-        action: "action_on_matching_cards", 
-        options: {
-            criteria:[["targeting", playerN, true]], 
-            action: "update_card_values", 
-            options: {updates: [["targeting", playerN, false]]}
-        }
-    });
-    chatBroadcast("game_update", {message: "removes targets."})
-    gameBroadcast("game_action", {action: "target_card_ids", options:{card_ids: triggerCardIds}});
+    doActionList(dragnActionLists.clearTargets());
     for (var cardId of triggerCardIds) {
-      const card = cardById[cardId];
-      const displayName = getDisplayName(card);
-      chatBroadcast("game_update", {message: "targeted "+displayName+"."});
+      doActionList(dragnActionLists.targetCard(cardId));
     }
   }  
   const handleStartHover = () => {
-    dispatch(setActiveCardObj({
-      card: triggerCard,
-      mousePosition: "top", 
-      screenPosition: "left",
-      clicked: false,
-      setIsActive: null,
-      groupId: null,
-      groupType: null,
-      cardIndex: null,
-  }));
+    dispatch(setActiveCardId(triggerCard?.id));
   }
   const handleStopHover = () => {
-    dispatch(setActiveCardObj(null));
+    dispatch(setActiveCardId(null));
   };
   return(
     <div 
@@ -63,52 +42,50 @@ export const ReminderButton = React.memo(({
 })
 
 export const SideBarRoundStep = React.memo(({
-  phase,
-  stepInfo, 
-  gameBroadcast,
-  chatBroadcast,
+  stepInfo,
+  triggerCardIds
 }) => {
   const l10n = useGameL10n();
-  const gameRoundStep = useSelector(state => state?.gameUi?.game?.roundStep);
+  const gameDef = useGameDefinition();
+  const stepId = stepInfo?.stepId;
+  const currentStepIndex = useSelector(state => state?.gameUi?.game?.stepIndex);
+  const currentStepId = gameDef?.steps?.[currentStepIndex]?.stepId;
   const playerN = useSelector(state => state?.playerUi?.playerN)
-  const triggerCardIds = useSelector(state => state?.gameUi?.game?.triggerMap?.[stepInfo.id]);
-  const numTriggers = triggerCardIds ? triggerCardIds.length : 0;
   const [hovering, setHovering] = useState(null);
-  const isRoundStep = (gameRoundStep === stepInfo.id);
+  const isRoundStep = (currentStepId === stepId);
+  const doActionList = useDoActionList();
 
-  console.log("Rendering SideBarRoundStep", stepInfo);
-  const handleButtonClick = (id) => {
+  console.log("Rendering SideBarRoundStep", stepInfo, triggerCardIds);
+  const handleButtonClick = () => {
     if (!playerN) return;
-    gameBroadcast("game_action", {action: "update_values", options:{updates: [["game", "roundStep", id], ["game", "phase", phase]]}});     
-    chatBroadcast("game_update", {message: "set the round step to "+id+": "+l10n(id)+"."})
+    var stepIndex = 0;
+    gameDef.steps.forEach((stepInfoI, index) => {
+      if (stepInfoI.stepId == stepId) stepIndex = index;
+    });
+    doActionList(dragnActionLists.setStep(stepInfo, stepIndex));
   }
-
 
   return (
     <div 
-      key={stepInfo.id}
+      key={stepId}
       className={`flex flex-1 items-center`} 
       style={{
         width: hovering ? "750px" : "100%",
         fontSize: "1.7vh",
       }}
-      onClick={() => handleButtonClick(stepInfo.id)}
-      onMouseEnter={() => setHovering(stepInfo.id)}
-      onMouseLeave={() => setHovering(null)}
-    >
+      onClick={() => handleButtonClick()}
+      onMouseEnter={() => setHovering(stepId)}
+      onMouseLeave={() => setHovering(null)}>
       <div className="flex justify-center" style={{width:"3vh"}}/>
       <div className={`flex h-full items-center justify-center ${isRoundStep ? "bg-red-800" : "bg-gray-500"} ${stepInfo.actions ? "underline" : ""}`} style={{width:"3vh"}}>
-        {stepInfo.id}
+        {stepId}
       </div>
-      {numTriggers > 0 &&
+      {triggerCardIds?.length > 0 &&
         <ReminderButton
-          triggerCardIds={triggerCardIds}
-          gameBroadcast={gameBroadcast}
-          chatBroadcast={chatBroadcast}
-        />
+          triggerCardIds={triggerCardIds}/>
       }
       <div className={`flex flex-1 h-full items-center justify-center ${isRoundStep ? "bg-red-800" : "bg-gray-500"} ${hovering ? "block" : "hidden"}`} >
-        <div dangerouslySetInnerHTML={{ __html: l10n(stepInfo.id) }} />
+        <div>{l10n(stepInfo.labelId)}</div>
       </div>
     </div>
   )

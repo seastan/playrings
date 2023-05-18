@@ -6,19 +6,12 @@ import useProfile from "../../hooks/useProfile";
 import useForm from "../../hooks/useForm";
 import axios from "axios";
 import useAuth from "../../hooks/useAuth";
+import { useAuthOptions } from "../../hooks/useAuthOptions";
 
 
 export const ProfileSettings = () => {
   const user = useProfile();
-  const { authToken, renewToken, setAuthAndRenewToken } = useAuth();
-  const authOptions = useMemo(
-    () => ({
-      headers: {
-        Authorization: authToken,
-      },
-    }),
-    [authToken]
-  );
+  const authOptions = useAuthOptions();
   const history = useHistory();
   const required_support_level = 5;
   const [errorMessage, setErrorMessage] = useState("");
@@ -85,6 +78,26 @@ export const ProfileSettings = () => {
     setInputs({...inputs, language: user.language || ""})
     setShowResolutionMessage(true);
   }
+
+
+  const PatreonButton = ({patreonClientId, amount, redirectURI}) => {
+    const clientId = `&client_id=${patreonClientId}`;
+    const pledgeLevel = `&min_cents=${amount}`;
+    const v2Params = "&scope=identity%20identity[email]";
+    const redirectUri = `&redirect_uri=${redirectURI}`;
+    const href = `https://www.patreon.com/oauth2/become-patron?response_type=code${pledgeLevel}${clientId}${redirectUri}${v2Params}`;
+    return (
+      <a
+        className="patreon-button link-button"
+        data-patreon-widget-type="become-patron-button"
+        href={href}
+        rel="noreferrer"
+        target="_blank">
+        <img style={{height: "20px"}} src="https://upload.wikimedia.org/wikipedia/commons/9/94/Patreon_logo.svg"/>
+      </a>
+    );
+  };
+
   return (
     <Container>
       <div className="bg-gray-100 p-4 rounded max-w-xl shadow">
@@ -161,6 +174,9 @@ export const ProfileSettings = () => {
         <div className="alert alert-info mt-4">{successMessage}</div>
       )}
       </div>
+
+      <PatreonButton patreonClientId={"MUANs_lS4yBmji1txII2sV6NJ3X1JEp5OSzPVr_rkU02jz3S2jTubjoMOSPK5Jul"} amount={1000} redirectURI={"https://www.dragncards.com/auth/patreon/callback"}/>
+
     </Container>
 
   );

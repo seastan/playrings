@@ -1,72 +1,52 @@
 [
   {
-    "cardRow": {
-      "cardid": "f36b6f95-59bc-4d1f-9f03-be1645fe3b58"
-    },
+    "uuid": "f36b6f95-59bc-4d1f-9f03-be1645fe3b58",
     "quantity": 1,
-    "groupId": "sharedSetAside"
+    "loadGroupId": "sharedSetAside"
   },
   {
-    "cardRow": {
-      "cardid": "6b61a3fd-1e84-4516-8a42-972524daaf50"
-    },
+    "uuid": "6b61a3fd-1e84-4516-8a42-972524daaf50",
     "quantity": 1,
-    "groupId": "sharedSetAside"
+    "loadGroupId": "sharedSetAside"
   },
   {
-    "cardRow": {
-      "cardid": "586c2dcd-2157-455b-a195-b9452149427c"
-    },
+    "uuid": "586c2dcd-2157-455b-a195-b9452149427c",
     "quantity": 1,
-    "groupId": "sharedSetAside"
+    "loadGroupId": "sharedSetAside"
   },
   {
-    "cardRow": {
-      "cardid": "f0235b2f-7d6d-4868-8d3e-15c6d59f151a"
-    },
+    "uuid": "f0235b2f-7d6d-4868-8d3e-15c6d59f151a",
     "quantity": 4,
-    "groupId": "sharedSetAside"
+    "loadGroupId": "sharedSetAside"
   },
   {
-    "cardRow": {
-      "cardid": "90625d04-76cb-43cc-a66c-2e0eaf80ba3e"
-    },
+    "uuid": "90625d04-76cb-43cc-a66c-2e0eaf80ba3e",
     "quantity": 4,
-    "groupId": "sharedSetAside"
+    "loadGroupId": "sharedSetAside"
   },
   {
-    "cardRow": {
-      "cardid": "129afdd2-fd59-4e66-93ad-0fdcac795a48"
-    },
+    "uuid": "129afdd2-fd59-4e66-93ad-0fdcac795a48",
     "quantity": 1,
-    "groupId": "sharedSetAside"
+    "loadGroupId": "sharedSetAside"
   },
   {
-    "cardRow": {
-      "cardid": "27bfa88c-9090-4d17-9796-bbebbe9f2af6"
-    },
+    "uuid": "27bfa88c-9090-4d17-9796-bbebbe9f2af6",
     "quantity": 1,
-    "groupId": "sharedSetAside"
+    "loadGroupId": "sharedSetAside"
   },
   {
-    "cardRow": {
-      "cardid": "0fd2ea73-0c15-40c5-b648-fc772f091756"
-    },
+    "uuid": "0fd2ea73-0c15-40c5-b648-fc772f091756",
     "quantity": 1,
-    "groupId": "sharedSetAside"
+    "loadGroupId": "sharedSetAside"
   },
   {
-    "cardRow": {
-      "cardid": "c49a24f2-9237-4e25-8dfd-2abc5bcb6922"
-    },
+    "uuid": "c49a24f2-9237-4e25-8dfd-2abc5bcb6922",
     "quantity": 1,
-    "groupId": "sharedSetAside"
+    "loadGroupId": "sharedSetAside"
   },
   {
-    "cardRow": {
-      "cardid": "1937d06b-cba7-41f3-85c9-273323e96fb1"
-    },
+    "uuid": "1937d06b-cba7-41f3-85c9-273323e96fb1",
     "quantity": 4,
-    "groupId": "sharedSetAside"
+    "loadGroupId": "sharedSetAside"
   }
 ]
