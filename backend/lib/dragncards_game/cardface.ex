@@ -52,7 +52,7 @@ defmodule DragnCardsGame.CardFace do
   def card_face_from_card_face_details(card_face_details, game_def) do
     type = card_face_details["type"]
     name = card_face_details["name"]
-    triggers = trigger_steps_from_face_details(card_face_details, game_def["stepTriggers"])
+    triggers = trigger_steps_from_face_details(card_face_details, game_def["stepReminderRegex"])
     width = game_def["cardTypes"][type]["width"] || game_def["cardBacks"][name]["width"] || 1
     height = game_def["cardTypes"][type]["height"] || game_def["cardBacks"][name]["height"] || 1
     card_face = card_face_details

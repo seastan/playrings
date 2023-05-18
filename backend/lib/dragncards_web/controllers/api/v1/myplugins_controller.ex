@@ -74,12 +74,11 @@ defmodule DragnCardsWeb.MyPluginsController do
   @spec delete(Conn.t(), map()) :: Conn.t()
   def delete(conn, %{"id" => plugin_id}) do
     user = Pow.Plug.current_user(conn)
-    #plugin = Repo.get(Plugin, plugin_id)
-    plugin = Repo.one(from p in Plugin, select: [:plugin_id], where: p.id == ^plugin_id)
-    plugin_id = plugin.plugin_id
+    plugin = Repo.one(from p in Plugin, select: [:id], where: p.id == ^plugin_id)
+    plugin_id = plugin.id
     user_id = user.id
     user_alias = user.alias
-    {rows_deleted, _} = from(x in Plugin, where: x.plugin_id == ^plugin_id and x.author_user_id == ^user_id) |> Repo.delete_all
+    {rows_deleted, _} = from(x in Plugin, where: x.id == ^plugin_id and x.author_id == ^user_id) |> Repo.delete_all
     conn
     |> json(%{success: %{message: "Updated settings"}})
   end

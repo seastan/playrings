@@ -9,6 +9,7 @@ import useAuth from "../../hooks/useAuth";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheck } from "@fortawesome/free-solid-svg-icons";
 import { checkValidGameDef, mergeJSONs, readFileAsText } from "./PluginFileImport";
+import { processArrayOfRows, stringTo2DArray, useProcessArrayOfRows } from "./uploadPluginFunctions";
 const { convertCSVToArray } = require('convert-csv-to-array');
 const converter = require('convert-csv-to-array');
 
@@ -120,42 +121,6 @@ export const NewPluginModal = ({ isOpen, closeModal }) => {
     inputFileGameDef.current.value = "";
   }
 
-
-  const processArrayOfRows = (arrayOfRows) => {
-    const header0 = arrayOfRows[0][0];
-    if (!header0.includes("uuid")) throw new Error("Missing uuid column.")
-    if (!header0.includes("name")) throw new Error("Missing name column.")
-    if (!header0.includes("imageUrl")) throw new Error("Missing imageUrl column.")
-    if (!header0.includes("cardBack")) throw new Error("Missing cardBack column.")
-    const header0Str = JSON.stringify(header0);
-    const cardDb = {};
-    for (var rows of arrayOfRows) {
-      const headerStr = JSON.stringify(rows[0]);
-      if (header0Str !== header0Str) throw new Error("File headers do not match.")
-      for (var i=1; i<rows.length; i++) {
-        const row = rows[i];
-        const faceA = row;
-        var faceB = {};
-        if (faceA.cardBack === "double_sided") {
-          faceB = rows[i+1];
-          i += 1;
-        } else {
-          for (var key of header0) {
-            faceB[key] = null;
-          }
-          faceB["name"] = faceA.cardBack;
-          if (!inputs?.gameDef?.cardBacks || !Object.keys(inputs.gameDef.cardBacks).includes(faceB["name"])) throw new Error(`cardBack for ${faceA.name} not found in gameDef.cardBacks`)
-        }
-        cardDb[faceA.uuid] = {
-          "A": faceA,
-          "B": faceB
-        }
-      }
-    }
-    console.log("database", cardDb)
-    return cardDb;
-  }
-
   const uploadCardDbTsv = async(event) => {
     event.preventDefault();
     const files = event.target.files;
@@ -173,11 +138,11 @@ export const NewPluginModal = ({ isOpen, closeModal }) => {
     Promise.all(readers).then((tsvList) => {
       console.log("unmerged",tsvList);
       const arrayOfRows = []; // Each element is a 2D array representing a tsv file
-      for (var tsvString of tsvList) {
+      for (var tsvString of tsvList) { 
+        console.log("tsvString", tsvString)
         try {
-          const rows = convertCSVToArray(tsvString, {
-            separator: '\t',
-          });
+          const rows = stringTo2DArray(tsvString);
+          console.log("tsvString rows", rows)
           arrayOfRows.push(rows)
         } catch(err) {
           console.log("err",err)
@@ -188,7 +153,7 @@ export const NewPluginModal = ({ isOpen, closeModal }) => {
         }
       }
       try {
-        const cardDb = processArrayOfRows(arrayOfRows);
+        const cardDb = processArrayOfRows(inputs, null, arrayOfRows);
         setSuccessMessageCardDb(`Card database uploaded successfully: ${Object.keys(cardDb).length} cards.`);
         setErrorMessageCardDb("");
         setValidCardDb(true);
