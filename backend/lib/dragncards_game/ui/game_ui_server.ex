@@ -177,10 +177,8 @@ defmodule DragnCardsGame.GameUIServer do
       gameui = put_in(gameui["game"]["last_action"], action)
     rescue
       exception ->
-        stack_trace = System.stacktrace()
+        stack_trace = __STACKTRACE__
         Logger.error("Error in my_function: #{inspect exception}, stack trace: #{inspect stack_trace}")
-      #e in RuntimeError ->
-      #  IO.inspect(e)
         put_in(gameui["logMessages"], ["ERROR: " <> inspect(stack_trace)])
     end
     |> save_and_reply()
