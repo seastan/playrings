@@ -408,14 +408,14 @@
       
     },
     "clearTableOptions": [
-      {"labelId": "labelMarkAsFreePeoplesVictory", "actionList": ["GAME_SET_VAL", "/victoryState", "FreePeoples"]},
-      {"labelId": "labelMarkAsShadowVictory", "actionList": ["GAME_SET_VAL", "/victoryState", "Shadow"]},
-      {"labelId": "labelMarkAsIncomplete", "actionList": ["GAME_SET_VAL", "/victoryState", "Incomplete"]}
+      {"labelId": "labelMarkAsFreePeoplesVictory", "actionList": ["SET", "/victoryState", "FreePeoples"]},
+      {"labelId": "labelMarkAsShadowVictory", "actionList": ["SET", "/victoryState", "Shadow"]},
+      {"labelId": "labelMarkAsIncomplete", "actionList": ["SET", "/victoryState", "Incomplete"]}
     ],
     "closeRoomOptions": [
-      {"labelId": "labelMarkAsFreePeoplesVictory", "actionList": ["GAME_SET_VAL", "/victoryState", "FreePeoples"]},
-      {"labelId": "labelMarkAsShadowVictory", "actionList": ["GAME_SET_VAL", "/victoryState", "Shadow"]},
-      {"labelId": "labelMarkAsIncomplete", "actionList": ["GAME_SET_VAL", "/victoryState", "Incomplete"]}
+      {"labelId": "labelMarkAsFreePeoplesVictory", "actionList": ["SET", "/victoryState", "FreePeoples"]},
+      {"labelId": "labelMarkAsShadowVictory", "actionList": ["SET", "/victoryState", "Shadow"]},
+      {"labelId": "labelMarkAsIncomplete", "actionList": ["SET", "/victoryState", "Incomplete"]}
     ],
     "cardTypes": {
       "Army":          {"width": 0.72, "height": 1.0, "tokens": ["attackBlue","defenseBlue","attackRed","defenseRed","pathRed","pathBlue","corruption"]},
@@ -5223,94 +5223,94 @@
     ],
     "actionLists": {
       "trilogySetup": [
-        ["GAME_SET_VAL", "/numPlayers", 4],
-        ["GAME_SET_VAL", "/layoutVariants/bluePlayers", 2],
-        ["GAME_SET_VAL", "/layoutVariants/redPlayers", 2],
-        ["GAME_SET_VAL", "/cardsPerRound", {"player1": 3, "player2": 3, "player3": 3, "player4": 3}],
+        ["SET", "/numPlayers", 4],
+        ["SET", "/layoutVariants/bluePlayers", 2],
+        ["SET", "/layoutVariants/redPlayers", 2],
+        ["SET", "/cardsPerRound", {"player1": 3, "player2": 3, "player3": 3, "player4": 3}],
         ["MOVE_STACKS", "player1Deck", "player1Hand", 7, "bottom"],
-        ["GAME_ADD_MESSAGE", "player1 drew their starting hand."],
+        ["LOG", "player1 drew their starting hand."],
         ["MOVE_STACKS", "player2Deck", "player2Hand", 7, "bottom"],
-        ["GAME_ADD_MESSAGE", "player2 drew their starting hand."],
+        ["LOG", "player2 drew their starting hand."],
         ["MOVE_STACKS", "player3Deck", "player3Hand", 7, "bottom"],
-        ["GAME_ADD_MESSAGE", "player3 drew their starting hand."],
+        ["LOG", "player3 drew their starting hand."],
         ["MOVE_STACKS", "player4Deck", "player4Hand", 7, "bottom"],
-        ["GAME_ADD_MESSAGE", "player4 drew their starting hand."]
+        ["LOG", "player4 drew their starting hand."]
       ],
       "twoPlayerSetup": [
-        ["GAME_SET_VAL", "/numPlayers", 2],
-        ["GAME_SET_VAL", "/layoutVariants/bluePlayers", 1],
-        ["GAME_SET_VAL", "/layoutVariants/redPlayers", 1],
-        ["GAME_SET_VAL", "/cardsPerRound", {"player1": 4, "player2": 6}],
-        ["GAME_SET_VAL", "/player1CardsPerRound", 4],
-        ["GAME_SET_VAL", "/player2CardsPerRound", 6],
+        ["SET", "/numPlayers", 2],
+        ["SET", "/layoutVariants/bluePlayers", 1],
+        ["SET", "/layoutVariants/redPlayers", 1],
+        ["SET", "/cardsPerRound", {"player1": 4, "player2": 6}],
+        ["SET", "/player1CardsPerRound", 4],
+        ["SET", "/player2CardsPerRound", 6],
         ["MOVE_STACKS", "player1Deck", "player1Hand", 4, "bottom"],
-        ["GAME_ADD_MESSAGE", "player1 drew their starting hand."],
+        ["LOG", "player1 drew their starting hand."],
         ["MOVE_STACKS", "player2Deck", "player2Hand", 6, "bottom"],
-        ["GAME_ADD_MESSAGE", "player2 drew their starting hand."]
+        ["LOG", "player2 drew their starting hand."]
       ],
       "threePlayerSetup": [
-        ["GAME_SET_VAL", "/numPlayers", 3],
-        ["GAME_SET_VAL", "/layoutVariants/bluePlayers", 1],
-        ["GAME_SET_VAL", "/layoutVariants/redPlayers", 2],
-        ["GAME_SET_VAL", "/cardsPerRound", {"player1": 6, "player2": 4, "player3": 4}],
+        ["SET", "/numPlayers", 3],
+        ["SET", "/layoutVariants/bluePlayers", 1],
+        ["SET", "/layoutVariants/redPlayers", 2],
+        ["SET", "/cardsPerRound", {"player1": 6, "player2": 4, "player3": 4}],
         ["MOVE_STACKS", "player1Deck", "player1Hand", 6, "bottom"],
-        ["GAME_ADD_MESSAGE", "player1 drew their starting hand."],
+        ["LOG", "player1 drew their starting hand."],
         ["MOVE_STACKS", "player2Deck", "player2Hand", 7, "bottom"],
-        ["GAME_ADD_MESSAGE", "player2 drew their starting hand."],
+        ["LOG", "player2 drew their starting hand."],
         ["MOVE_STACKS", "player3Deck", "player3Hand", 7, "bottom"],
-        ["GAME_ADD_MESSAGE", "player3 drew their starting hand."]
+        ["LOG", "player3 drew their starting hand."]
       ],
       "fellowshipSetup": [
-        ["GAME_SET_VAL", "/numPlayers", 3],
-        ["GAME_SET_VAL", "/layoutVariants/bluePlayers", 1],
-        ["GAME_SET_VAL", "/layoutVariants/redPlayers", 2],
-        ["GAME_SET_VAL", "/cardsPerRound", {"player1": 3, "player2": 4}],
+        ["SET", "/numPlayers", 3],
+        ["SET", "/layoutVariants/bluePlayers", 1],
+        ["SET", "/layoutVariants/redPlayers", 2],
+        ["SET", "/cardsPerRound", {"player1": 3, "player2": 4}],
         ["MOVE_STACKS", "player1Deck", "player1Hand", 7, "bottom"],
-        ["GAME_ADD_MESSAGE", "player1 drew their starting hand."],
+        ["LOG", "player1 drew their starting hand."],
         ["MOVE_STACKS", "player2Deck", "player2Hand", 7, "bottom"],
-        ["GAME_ADD_MESSAGE", "player2 drew their starting hand."]
+        ["LOG", "player2 drew their starting hand."]
       ],
       "newRound": [
         ["FOR_EACH_KEY_VAL", "$CARD_ID", "$CARD", "$CARD_BY_ID", 
           [
             ["COND",
               ["EQUAL", "$CARD.groupId", ["JOIN_STRING", "$PLAYER_N", "Reserve"]],
-              ["GAME_SET_VAL", "/cardById/$CARD_ID/rotation", 0]
+              ["SET", "/cardById/$CARD_ID/rotation", 0]
             ]
           ]
         ],
         ["DRAW_CARD", "$GAME.cardsPerRound.$PLAYER_N"],
-        ["GAME_ADD_MESSAGE", "$PLAYER_N", " performed their draw step."],
+        ["LOG", "$PLAYER_N", " performed their draw step."],
         ["COND",
           ["EQUAL", "$PLAYER_N", "player1"],
           [
-            ["GAME_SET_VAL", "/firstPlayer", ["NEXT_PLAYER", "$GAME.firstPlayer"]],
-            ["GAME_INCREASE_VAL", "/roundNumber", 1],
-            ["GAME_ADD_MESSAGE", "$PLAYER_N", " moved the first player token and increased the round number."]
+            ["SET", "/firstPlayer", ["NEXT_PLAYER", "$GAME.firstPlayer"]],
+            ["INCREASE_VAL", "/roundNumber", 1],
+            ["LOG", "$PLAYER_N", " moved the first player token and increased the round number."]
           ]
         ]
       ],
       "pass": [
-        ["GAME_ADD_MESSAGE", "$PLAYER_N", " passes."]
+        ["LOG", "$PLAYER_N", " passes."]
       ],
       "drawCard": [
         ["DRAW_CARD"]
       ],
       "zeroTokens": [
-        ["GAME_SET_VAL", "$ACTIVE_TOKENS_PATH", {}],
-        ["GAME_ADD_MESSAGE", "$PLAYER_N", " removed all tokens from ", "$ACTIVE_FACE.name", "."]
+        ["SET", "$ACTIVE_TOKENS_PATH", {}],
+        ["LOG", "$PLAYER_N", " removed all tokens from ", "$ACTIVE_FACE.name", "."]
       ],
       "toggleRotate": [
         ["COND",
           ["AND", ["EQUAL", "$ACTIVE_CARD.rotation", 90], "$ACTIVE_CARD.inPlay"],
           [
-            ["GAME_SET_VAL", "/cardById/$ACTIVE_CARD_ID/rotation", 0],
-            ["GAME_ADD_MESSAGE", "$PLAYER_N", " rotated ", "$ACTIVE_FACE.name", "."]
+            ["SET", "/cardById/$ACTIVE_CARD_ID/rotation", 0],
+            ["LOG", "$PLAYER_N", " rotated ", "$ACTIVE_FACE.name", "."]
           ],
           ["AND", ["EQUAL", "$ACTIVE_CARD.rotation", 0], "$ACTIVE_CARD.inPlay"],
           [
-            ["GAME_SET_VAL", "/cardById/$ACTIVE_CARD_ID/rotation", 90],
-            ["GAME_ADD_MESSAGE", "$PLAYER_N", " rotated ", "$ACTIVE_FACE.name", "."]
+            ["SET", "/cardById/$ACTIVE_CARD_ID/rotation", 90],
+            ["LOG", "$PLAYER_N", " rotated ", "$ACTIVE_FACE.name", "."]
           ]
         ]
       ],
@@ -5318,19 +5318,19 @@
         ["COND",
           ["EQUAL", "$ACTIVE_CARD.currentSide", "A"],
           [
-            ["GAME_ADD_MESSAGE", "$PLAYER_N", " flipped ", "$ACTIVE_FACE.name", " facedown."],
-            ["GAME_SET_VAL", "/$ACTIVE_CARD_PATH/currentSide", "B"]
+            ["LOG", "$PLAYER_N", " flipped ", "$ACTIVE_FACE.name", " facedown."],
+            ["SET", "/$ACTIVE_CARD_PATH/currentSide", "B"]
           ],
           true,
           [
-            ["GAME_SET_VAL", "/cardById/$ACTIVE_CARD_ID/currentSide", "A"],
-            ["GAME_ADD_MESSAGE", "$PLAYER_N", " flipped ", "$ACTIVE_FACE.name", " faceup."]
+            ["SET", "/cardById/$ACTIVE_CARD_ID/currentSide", "A"],
+            ["LOG", "$PLAYER_N", " flipped ", "$ACTIVE_FACE.name", " faceup."]
           ]
         ]
       ],
       "targetCard": [
-        ["GAME_SET_VAL", "/cardById/$ACTIVE_CARD_ID/targeting/$PLAYER_N", true],
-        ["GAME_ADD_MESSAGE", "$PLAYER_N", " targeted ", "$ACTIVE_FACE.name", "."]
+        ["SET", "/cardById/$ACTIVE_CARD_ID/targeting/$PLAYER_N", true],
+        ["LOG", "$PLAYER_N", " targeted ", "$ACTIVE_FACE.name", "."]
       ],
       "addToScoringArea": [
         ["COND",
@@ -5343,10 +5343,10 @@
       "cycleCard": [
         ["COND",
           ["EQUAL", "$ACTIVE_CARD.cycleGroupId", null],
-          ["GAME_ADD_MESSAGE", "$PLAYER_N", " failed to cycle ", "$ACTIVE_FACE.name", " because it is not associated with a cycle pile. Please drag the card instead."],
+          ["LOG", "$PLAYER_N", " failed to cycle ", "$ACTIVE_FACE.name", " because it is not associated with a cycle pile. Please drag the card instead."],
           true,
           [
-            ["GAME_ADD_MESSAGE", "$PLAYER_N", " cycled ", "$ACTIVE_FACE.name", "."],
+            ["LOG", "$PLAYER_N", " cycled ", "$ACTIVE_FACE.name", "."],
             ["MOVE_CARD", "$ACTIVE_CARD_ID", "$ACTIVE_CARD.cycleGroupId", 0, 0]
           ]
         ]
@@ -5354,10 +5354,10 @@
       "eliminateCard": [
         ["COND",
           ["EQUAL", "$ACTIVE_CARD.eliminateGroupId", null],
-          ["GAME_ADD_MESSAGE", "$PLAYER_N", " failed to eliminate ", "$ACTIVE_FACE.name", " because it is not associated with an eliminated pile. Please drag the card instead."],
+          ["LOG", "$PLAYER_N", " failed to eliminate ", "$ACTIVE_FACE.name", " because it is not associated with an eliminated pile. Please drag the card instead."],
           true,
           [
-            ["GAME_ADD_MESSAGE", "$PLAYER_N", " eliminated ", "$ACTIVE_FACE.name", "."],
+            ["LOG", "$PLAYER_N", " eliminated ", "$ACTIVE_FACE.name", "."],
             ["MOVE_CARD", "$ACTIVE_CARD_ID", "$ACTIVE_CARD.eliminateGroupId", 0, 0]
           ]
         ]
@@ -5367,7 +5367,7 @@
           ["GREATER_THAN", "$ACTIVE_CARD.cardIndex", 0],
           [
             ["MOVE_CARD", "$ACTIVE_CARD_ID", "$ACTIVE_CARD.groupId", ["ADD", "$ACTIVE_CARD.stackIndex", 1], 0],
-            ["GAME_ADD_MESSAGE", "$PLAYER_N", " detached ", "$ACTIVE_FACE.name", "."]
+            ["LOG", "$PLAYER_N", " detached ", "$ACTIVE_FACE.name", "."]
           ]
         ]
       ],
@@ -5377,13 +5377,13 @@
         ["COND",
           ["EQUAL", "$ACTIVE_CARD.peeking.$PLAYER_N", true],
           [
-            ["GAME_ADD_MESSAGE", "$PLAYER_N", " stopped peeking at a card in ", "$GROUP_NAME"],
-            ["GAME_SET_VAL", "/cardById/$ACTIVE_CARD_ID/peeking/$PLAYER_N", false]
+            ["LOG", "$PLAYER_N", " stopped peeking at a card in ", "$GROUP_NAME"],
+            ["SET", "/cardById/$ACTIVE_CARD_ID/peeking/$PLAYER_N", false]
           ],
           true,
           [
-            ["GAME_ADD_MESSAGE", "$PLAYER_N", " started peeking at a card in ", "$GROUP_NAME"],
-            ["GAME_SET_VAL", "/cardById/$ACTIVE_CARD_ID/peeking/$PLAYER_N", true]
+            ["LOG", "$PLAYER_N", " started peeking at a card in ", "$GROUP_NAME"],
+            ["SET", "/cardById/$ACTIVE_CARD_ID/peeking/$PLAYER_N", true]
           ]
         ]
       ],
@@ -5401,47 +5401,47 @@
             ]
           ]
         ],
-        ["GAME_ADD_MESSAGE", "$PLAYER_N", " shuffled the cards in ", "$ORIG_GROUP.name", " into their corresponding decks."]
+        ["LOG", "$PLAYER_N", " shuffled the cards in ", "$ORIG_GROUP.name", " into their corresponding decks."]
       ],
       "deleteCard": [
-        ["GAME_ADD_MESSAGE", "$PLAYER_N", " deleted ", "$ACTIVE_FACE.name", "."],
+        ["LOG", "$PLAYER_N", " deleted ", "$ACTIVE_FACE.name", "."],
         ["DELETE", "$ACTIVE_CARD_ID"]
       ],
       "layoutPath1": [
-        ["GAME_SET_VAL", "/layoutVariants/path", 1]
+        ["SET", "/layoutVariants/path", 1]
       ],
       "layoutPath2": [
-        ["GAME_SET_VAL", "/layoutVariants/path", 2]
+        ["SET", "/layoutVariants/path", 2]
       ],
       "layoutPath3": [
-        ["GAME_SET_VAL", "/layoutVariants/path", 3]
+        ["SET", "/layoutVariants/path", 3]
       ],
       "layoutPath4": [
-        ["GAME_SET_VAL", "/layoutVariants/path", 4]
+        ["SET", "/layoutVariants/path", 4]
       ],
       "layoutPath5": [
-        ["GAME_SET_VAL", "/layoutVariants/path", 5]
+        ["SET", "/layoutVariants/path", 5]
       ],
       "layoutPath6": [
-        ["GAME_SET_VAL", "/layoutVariants/path", 6]
+        ["SET", "/layoutVariants/path", 6]
       ],
       "layoutPath7": [
-        ["GAME_SET_VAL", "/layoutVariants/path", 7]
+        ["SET", "/layoutVariants/path", 7]
       ],
       "layoutPath8": [
-        ["GAME_SET_VAL", "/layoutVariants/path", 8]
+        ["SET", "/layoutVariants/path", 8]
       ],
       "layoutPath9": [
-        ["GAME_SET_VAL", "/layoutVariants/path", 9]
+        ["SET", "/layoutVariants/path", 9]
       ],
       "layoutLocation2": [
-        ["GAME_SET_VAL", "/layoutVariants/location", 2]
+        ["SET", "/layoutVariants/location", 2]
       ],
       "layoutLocation3": [
-        ["GAME_SET_VAL", "/layoutVariants/location", 3]
+        ["SET", "/layoutVariants/location", 3]
       ],
       "layoutLocation4": [
-        ["GAME_SET_VAL", "/layoutVariants/location", 4]
+        ["SET", "/layoutVariants/location", 4]
       ]
     },
     "faceProperties": {
@@ -6107,7 +6107,7 @@
             "then": [
               ["DEFINE", "$TARGET", ["ONE_CARD", "$CARD", ["EQUAL", "$CARD.sides.A.name", "Strider"]]],
               ["MOVE_CARD", "$TARGET.id", ["JOIN_STRING", "$TARGET.controller", "Eliminated"], 0, 0],
-              ["GAME_ADD_MESSAGE", "Strider was removed from the game."]
+              ["LOG", "Strider was removed from the game."]
             ]
           },
           { 
@@ -6128,12 +6128,12 @@
                 ]
             ],
             "onDo": [
-              ["GAME_INCREASE_VAL", "/cardById/$THIS_ID/tokens/attackBlue", 1],
-              ["GAME_INCREASE_VAL", "/cardById/$THIS_ID/tokens/defenseBlue", 1]
+              ["INCREASE_VAL", "/cardById/$THIS_ID/tokens/attackBlue", 1],
+              ["INCREASE_VAL", "/cardById/$THIS_ID/tokens/defenseBlue", 1]
             ],
             "offDo": [
-              ["GAME_DECREASE_VAL", "/cardById/$THIS_ID/tokens/attackBlue", 1],
-              ["GAME_DECREASE_VAL", "/cardById/$THIS_ID/tokens/defenseBlue", 1]
+              ["DECREASE_VAL", "/cardById/$THIS_ID/tokens/attackBlue", 1],
+              ["DECREASE_VAL", "/cardById/$THIS_ID/tokens/defenseBlue", 1]
             ]
           }
         ]

@@ -245,17 +245,17 @@ defmodule DragnCardsGame.GameUI do
     prev_card = card
     parent_card = get_card_by_gsc(game, [dest_group_id, dest_stack_index, 0])
 
-    game = Evaluate.evaluate(game, ["GAME_SET_VAL", "/cardById/" <> card_id <> "/groupId", dest_group_id])
-    game = Evaluate.evaluate(game, ["GAME_SET_VAL", "/cardById/" <> card_id <> "/stackIndex", dest_stack_index])
-    game = Evaluate.evaluate(game, ["GAME_SET_VAL", "/cardById/" <> card_id <> "/cardIndex", dest_card_index])
-    game = Evaluate.evaluate(game, ["GAME_SET_VAL", "/cardById/" <> card_id <> "/stackParentCardId", parent_card["id"]])
+    game = Evaluate.evaluate(game, ["SET", "/cardById/" <> card_id <> "/groupId", dest_group_id])
+    game = Evaluate.evaluate(game, ["SET", "/cardById/" <> card_id <> "/stackIndex", dest_stack_index])
+    game = Evaluate.evaluate(game, ["SET", "/cardById/" <> card_id <> "/cardIndex", dest_card_index])
+    game = Evaluate.evaluate(game, ["SET", "/cardById/" <> card_id <> "/stackParentCardId", parent_card["id"]])
 
     # If card gets moved to a facedown pile, or gets flipped up, erase peeking
     IO.puts("updateing card state -----------------------------------")
     IO.inspect(dest_group["onCardEnter"])
     IO.inspect(prev_card["currentSide"])
     game = if dest_group["onCardEnter"]["currentSide"] == "B" or (prev_card["currentSide"] == "B" and dest_group["onCardEnter"]["currentSide"] == "A") do
-      Evaluate.evaluate(game, ["GAME_SET_VAL", "/cardById/" <> card_id <> "/peeking", %{}])
+      Evaluate.evaluate(game, ["SET", "/cardById/" <> card_id <> "/peeking", %{}])
     else
       game
     end
@@ -263,7 +263,7 @@ defmodule DragnCardsGame.GameUI do
     game = Enum.reduce(dest_group["onCardEnter"], game, fn({key, val}, acc) ->
         if orig_group["onCardEnter"][key] != dest_group["onCardEnter"][key] do
           IO.puts("updating card state Onenter: " <> key <> " " <> inspect(val))
-          Evaluate.evaluate(acc, ["GAME_SET_VAL", "/cardById/" <> card_id <> "/" <> key, val])
+          Evaluate.evaluate(acc, ["SET", "/cardById/" <> card_id <> "/" <> key, val])
         else
           acc
         end
@@ -722,7 +722,7 @@ defmodule DragnCardsGame.GameUI do
       |> Replay.changeset(updates)
       |> Repo.insert_or_update
 
-    Evaluate.evaluate(game, ["GAME_ADD_MESSAGE", "$PLAYER_N", " saved the game."])
+    Evaluate.evaluate(game, ["LOG", "$PLAYER_N", " saved the game."])
   end
 
   def set_last_room_update(gameui) do
@@ -806,9 +806,9 @@ defmodule DragnCardsGame.GameUI do
   #     game = Evaluate.evaluate(game, define_this_card(card_id))
   #     path = Evaluate.evaluate(game, rule["path"])
   #     if Evaluate.evaluate(game, ["GAME_GET_VAL", path ++ ["_automate_"]]) do
-  #       Evaluate.evaluate(game, ["GAME_SET_VAL"] ++ path ++ ["_automate_", card_id, val])
+  #       Evaluate.evaluate(game, ["SET"] ++ path ++ ["_automate_", card_id, val])
   #     else
-  #       Evaluate.evaluate(game, ["GAME_SET_VAL"] ++ path ++ ["_automate_", %{card_id => val}])
+  #       Evaluate.evaluate(game, ["SET"] ++ path ++ ["_automate_", %{card_id => val}])
   #     end
   #   end
   # end
@@ -836,7 +836,7 @@ defmodule DragnCardsGame.GameUI do
       # Check if the number of stacks in the deck has changed, and if so, we shuffle
       if group["shuffleOnLoad"] && length(old_stack_ids) != length(new_stack_ids) do
         acc = shuffle_group(acc, group_id)
-        acc = Evaluate.evaluate(acc, ["GAME_ADD_MESSAGE", "$PLAYER_N", " shuffled ", l10n(acc, game_def, group["labelId"]), "."])
+        acc = Evaluate.evaluate(acc, ["LOG", "$PLAYER_N", " shuffled ", l10n(acc, game_def, group["labelId"]), "."])
       else
         acc
       end
@@ -865,7 +865,7 @@ defmodule DragnCardsGame.GameUI do
       load_card(acc, game_def, load_list_item)
     end)
 
-    game = Evaluate.evaluate(game, ["GAME_ADD_MESSAGE", "$PLAYER_N", " loaded cards."])
+    game = Evaluate.evaluate(game, ["LOG", "$PLAYER_N", " loaded cards."])
 
     game = shuffle_changed_decks(game, old_game, game_def)
 

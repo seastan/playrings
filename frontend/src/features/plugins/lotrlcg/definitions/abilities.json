@@ -10,7 +10,7 @@
                     ["EQUAL", "$CARD.sides.A.name", "Strider"], 
                     [
                         ["MOVE_CARD", "$CARD_ID", ["JOIN_STRING", "$CARD.controller", "Eliminated"], 0, 0],
-                        ["GAME_ADD_MESSAGE", "Aragorn was removed from the game."]
+                        ["LOG", "Aragorn was removed from the game."]
                     ]
                 ]
             ]

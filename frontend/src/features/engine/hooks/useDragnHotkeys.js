@@ -30,11 +30,11 @@ export const dragnHotkeys = [
             return doActionList([
             ["FOR_EACH_KEY_VAL", "$CARD_ID", "$CARD", "$CARD_BY_ID",
               [
-                ["GAME_SET_VAL", "/cardById/$CARD_ID/targeting/$PLAYER_N", false],
-                ["GAME_SET_VAL", "/cardById/$CARD_ID/arrows/$PLAYER_N", null]
+                ["SET", "/cardById/$CARD_ID/targeting/$PLAYER_N", false],
+                ["SET", "/cardById/$CARD_ID/arrows/$PLAYER_N", null]
               ]
             ],
-            ["GAME_ADD_MESSAGE", "$PLAYER_N", " cleared their targets and arrows."]
+            ["LOG", "$PLAYER_N", " cleared their targets and arrows."]
           ])
         case "undo":
             return gameBroadcast("step_through", {options: {size: "single", direction: "undo"}});
@@ -46,26 +46,26 @@ export const dragnHotkeys = [
             return gameBroadcast("step_through", {options: {size: "round", direction: "redo"}});
         case "prevStep": 
             return doActionList([
-                ["GAME_DECREASE_VAL", "/stepIndex", 1],
+                ["DECREASE_VAL", "/stepIndex", 1],
                 ["COND",
                 ["LESS_THAN", "$GAME.stepIndex", 0],
-                ["GAME_SET_VAL", "/stepIndex", ["MINUS", ["LENGTH", "$GAME.gameDef.steps"], 1]]
+                ["SET", "/stepIndex", ["MINUS", ["LENGTH", "$GAME.gameDef.steps"], 1]]
                 ],
                 ["DEFINE", "$STEP_INDEX", "$GAME.stepIndex"],
                 ["DEFINE", "$STEP", "$GAME.gameDef.steps.[$STEP_INDEX]"],
-                ["GAME_ADD_MESSAGE", "$PLAYER_N", " set the round step to ", "$STEP.text", "."]
+                ["LOG", "$PLAYER_N", " set the round step to ", "$STEP.text", "."]
             ])
         case "nextStep":
             return doActionList([
-                ["GAME_INCREASE_VAL", "/stepIndex", 1],
+                ["INCREASE_VAL", "/stepIndex", 1],
                     ["COND",
                     ["EQUAL", "$GAME.stepIndex", ["LENGTH", "$GAME.gameDef.steps"],
-                    ["GAME_SET_VAL", "/stepIndex", 0]
+                    ["SET", "/stepIndex", 0]
                     ]
                 ],
                 ["DEFINE", "$STEP_INDEX", "$GAME.stepIndex"],
                 ["DEFINE", "$STEP", "$GAME.gameDef.steps.[$STEP_INDEX]"],
-                ["GAME_ADD_MESSAGE", "$PLAYER_N", " set the round step to ", "$STEP.text", "."]
+                ["LOG", "$PLAYER_N", " set the round step to ", "$STEP.text", "."]
           ])
         case "drawArrow":
             return doActionList([
@@ -73,22 +73,22 @@ export const dragnHotkeys = [
                 ["COND",
                   ["EQUAL", "$FROM_CARD_ID", null],
                   [
-                    ["GAME_SET_VAL", "/playerData/$PLAYER_N/drawingArrowFrom", "$ACTIVE_CARD_ID"],
-                    ["GAME_ADD_MESSAGE", "$PLAYER_N", " is drawing an arrow from ", "$ACTIVE_CARD.currentFace.name", "."]
+                    ["SET", "/playerData/$PLAYER_N/drawingArrowFrom", "$ACTIVE_CARD_ID"],
+                    ["LOG", "$PLAYER_N", " is drawing an arrow from ", "$ACTIVE_CARD.currentFace.name", "."]
                   ],
                   ["IN_LIST", "$GAME.cardById.$FROM_CARD_ID.arrows.$PLAYER_N", "$ACTIVE_CARD_ID"],
                   [
-                    ["GAME_SET_VAL", "/cardById/$FROM_CARD_ID/arrows/$PLAYER_N", 
+                    ["SET", "/cardById/$FROM_CARD_ID/arrows/$PLAYER_N", 
                       ["REMOVE_FROM_LIST_BY_VALUE", "$GAME.cardById.$FROM_CARD_ID.arrows.$PLAYER_N", "$ACTIVE_CARD_ID"]
                     ],
-                    ["GAME_SET_VAL", "/playerData/$PLAYER_N/drawingArrowFrom", null],
-                    ["GAME_ADD_MESSAGE", "$PLAYER_N", " removed an arrow to ", "$ACTIVE_CARD.currentFace.name", "."]
+                    ["SET", "/playerData/$PLAYER_N/drawingArrowFrom", null],
+                    ["LOG", "$PLAYER_N", " removed an arrow to ", "$ACTIVE_CARD.currentFace.name", "."]
                   ],
                   true,
                   [
-                    ["GAME_ADD_MESSAGE", "$PLAYER_N", " drew an arrow to ", "$ACTIVE_CARD.currentFace.name", "."],
-                    ["GAME_SET_VAL", "/cardById/$FROM_CARD_ID/arrows/$PLAYER_N", ["APPEND", "$GAME.cardById.$FROM_CARD_ID.arrows.$PLAYER_N", "$ACTIVE_CARD_ID"]],
-                    ["GAME_SET_VAL", "/playerData/$PLAYER_N/drawingArrowFrom", null]
+                    ["LOG", "$PLAYER_N", " drew an arrow to ", "$ACTIVE_CARD.currentFace.name", "."],
+                    ["SET", "/cardById/$FROM_CARD_ID/arrows/$PLAYER_N", ["APPEND", "$GAME.cardById.$FROM_CARD_ID.arrows.$PLAYER_N", "$ACTIVE_CARD_ID"]],
+                    ["SET", "/playerData/$PLAYER_N/drawingArrowFrom", null]
                   ]
                 ]
             ])

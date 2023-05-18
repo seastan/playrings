@@ -26,16 +26,16 @@ export const useBrowseTopN = () => {
       if (topNstr === "All") {
         topNint = numStacks;
         peekStackIds = stackIds;
-        message = ["GAME_ADD_MESSAGE", "$PLAYER_N", " looked at ", groupName, "."];
+        message = ["LOG", "$PLAYER_N", " looked at ", groupName, "."];
       } else if (topNstr === "None") {
         topNint = numStacks; 
         peekStackIds = [];
         visibility = false;
-        message = ["GAME_ADD_MESSAGE", "$PLAYER_N", " stopped looking at ", groupName, "."];
+        message = ["LOG", "$PLAYER_N", " stopped looking at ", groupName, "."];
       } else {
         topNint = parseInt(topNstr) || 0;
         peekStackIds = stackIds.slice(0, topNint);
-        message = ["GAME_ADD_MESSAGE", "$PLAYER_N", " looked at the top ", topNstr, " cards of ", groupName, "."]
+        message = ["LOG", "$PLAYER_N", " looked at the top ", topNstr, " cards of ", groupName, "."]
       }
       dispatch(setBrowseGroupId(group.id));
       dispatch(setBrowseGroupTopN(topNstr));
@@ -44,7 +44,7 @@ export const useBrowseTopN = () => {
           [
             ["DEFINE", "$STACK_ID", `$GROUP_BY_ID.${group.id}.stackIds.[$i]`],
             ["DEFINE", "$CARD_ID", "$STACK_BY_ID.$STACK_ID.cardIds.[0]"],
-            ["GAME_SET_VAL", "/cardById/$CARD_ID/peeking/" + playerN, true]
+            ["SET", "/cardById/$CARD_ID/peeking/" + playerN, true]
           ]
         ],
         message

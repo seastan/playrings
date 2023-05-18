@@ -87,12 +87,12 @@ export const Browse = React.memo(({}) => {
       ["FOR_EACH_VAL", "$STACK_ID", `$GROUP_BY_ID.${groupId}.stackIds`,
         [
           ["DEFINE", "$CARD_ID", "$STACK_BY_ID.$STACK_ID.cardIds.[0]"],
-          ["GAME_SET_VAL", "/cardById/$CARD_ID/peeking/" + playerN, false]
+          ["SET", "/cardById/$CARD_ID/peeking/" + playerN, false]
         ]
       ],
       ["SHUFFLE_GROUP", groupId],
-      ["GAME_ADD_MESSAGE", "$PLAYER_N", " closed ", group.name+"."],
-      ["GAME_ADD_MESSAGE", "$PLAYER_N", " shuffled ", group.name+"."],
+      ["LOG", "$PLAYER_N", " closed ", group.name+"."],
+      ["LOG", "$PLAYER_N", " shuffled ", group.name+"."],
     ];
     doActionList(actionList);
     if (group?.onCardEnter?.currentSide === "B") stopPeekingTopCard();
@@ -103,11 +103,11 @@ export const Browse = React.memo(({}) => {
       ["FOR_EACH_VAL", "$STACK_ID", `$GROUP_BY_ID.${groupId}.stackIds`,
         [
           ["DEFINE", "$CARD_ID", "$STACK_BY_ID.$STACK_ID.cardIds.[0]"],
-          ["GAME_SET_VAL", "/cardById/$CARD_ID/peeking", playerN, false]
+          ["SET", "/cardById/$CARD_ID/peeking", playerN, false]
         ]
       ],
       ["SHUFFLE_GROUP", groupId],
-      ["GAME_ADD_MESSAGE", "$PLAYER_N", " closed ", group.name+"."],
+      ["LOG", "$PLAYER_N", " closed ", group.name+"."],
     ];
     doActionList(actionList);
     if (group?.onCardEnter?.currentSide === "B") stopPeekingTopCard();
@@ -115,7 +115,7 @@ export const Browse = React.memo(({}) => {
 
   const closeAndPeeking = () => {
     const actionList = [
-      ["GAME_ADD_MESSAGE", "$PLAYER_N", " is still peeking at ", group.name+"."],
+      ["LOG", "$PLAYER_N", " is still peeking at ", group.name+"."],
     ];
     doActionList(actionList);
   }

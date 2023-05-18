@@ -61,7 +61,7 @@ export const DropdownMenuGroup = React.memo(({
 
   const actionListShuffle = [
     ["SHUFFLE_GROUP", menuGroup.id],
-    ["GAME_ADD_MESSAGE", "$PLAYER_N", " shuffled ", group.name]
+    ["LOG", "$PLAYER_N", " shuffled ", group.name]
   ]
 
   return (

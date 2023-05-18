@@ -38,7 +38,7 @@ export const SpawnExistingCardModal = React.memo(({}) => {
         if (!cardDetails || !playerN) return;
         const cardList = [{'uuid': cardId, 'quantity': 1, 'loadGroupId': loadGroupId}]
         loadList(cardList);
-        doActionList(["GAME_ADD_MESSAGE", "$PLAYER_N", " spawned "+cardDetails["A"]["name"]+"."])
+        doActionList(["LOG", "$PLAYER_N", " spawned "+cardDetails["A"]["name"]+"."])
     }
 
     const handleSpawnTyping = (event) => {

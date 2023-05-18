@@ -23,7 +23,7 @@ defmodule DragnCardsGame.Evaluate do
       else
         case get_in(game_old, path_minus_key) do
           nil ->
-            evaluate(game_old, ["LOGGER", "Error: Tried to set a value at a nonexistent path: "] ++ path_minus_key)
+            evaluate(game_old, ["LOG_DEV", "Error: Tried to set a value at a nonexistent path: "] ++ path_minus_key)
 
           val_old ->
             put_in(game_old, path, val_new)
@@ -97,10 +97,6 @@ defmodule DragnCardsGame.Evaluate do
   def apply_passive_rule(rule, path, game_old, game_new) do
     onBefore = evaluate(game_old, rule["condition"])
     onAfter = evaluate(game_new, rule["condition"])
-    # IO.inspect("apply_passive_rule 1")
-    # IO.inspect(path)
-    # IO.inspect(onBefore)
-    # IO.inspect(onAfter)
 
     cond do
       !onBefore && onAfter ->
@@ -157,26 +153,11 @@ defmodule DragnCardsGame.Evaluate do
     case Task.yield(task, 500) do
       nil ->
         Task.shutdown(task, :brutal_kill)
-        evaluate(game, ["GAME_ADD_MESSAGE", "Action timed out."])
+        evaluate(game, ["LOG", "Action timed out."])
       {:ok, result} ->
         result
     end
   end
-
-  # def evaluate_with_timeout(game, code) do
-  #   ref = make_ref()
-
-  #   Process.send_after(self(), {:timeout, ref}, 500)
-
-  #   result = evaluate(game, code)
-
-  #   receive do
-  #     {:response, result} -> result
-  #     {:timeout, ^ref} ->
-  #       raise "my_function timed out"
-  #       #evaluate(game, ["GAME_ADD_MESSAGE", "Action timed out."])
-  #   end
-  # end
 
   def evaluate(game, code) do
     #IO.inspect(code)
@@ -193,44 +174,52 @@ defmodule DragnCardsGame.Evaluate do
         case Enum.at(code,0) do
           "PREV" ->
             evaluate(game["prev_game"], Enum.at(code, 1))
-          "LOGGER" ->
+
+          "LOG_DEV" ->
             IO.puts("LOGGER:")
-            IO.inspect(code)
             statements = Enum.slice(code, 1, Enum.count(code))
             message = message_list_to_string(game, statements)
             IO.inspect(message)
             game
+
           "DEFINE" ->
             var_name = Enum.at(code, 1)
             value = evaluate(game, Enum.at(code, 2))
             put_in(game, ["variables", var_name], value)
+
           "POINTER" ->
             Enum.at(code, 1)
+
           "LIST" ->
             list = Enum.slice(code, 1, Enum.count(code))
             Enum.reduce(list, [], fn(item,acc)->
               acc ++ [evaluate(game, item)]
             end)
+
           "APPEND" ->
             list = evaluate(game, Enum.at(code, 1)) || []
             list ++ [evaluate(game, Enum.at(code, 2))]
+
           "NEXT_PLAYER" ->
             current_player_i = evaluate(game, Enum.at(code, 1))
             current_i = String.to_integer(String.slice(current_player_i, -1..-1))
             next_i = current_i + 1
             next_i = if next_i > game["numPlayers"] do 1 else next_i end
             "player" <> Integer.to_string(next_i)
+
           "GET_INDEX" ->
             list = evaluate(game, Enum.at(code, 1))
             value = evaluate(game, Enum.at(code, 2))
             Enum.find_index(list, fn(x) -> x == value end)
+
           "AT_INDEX" ->
-            #raise "stop"
             list = evaluate(game, Enum.at(code, 1))
             index = evaluate(game, Enum.at(code, 2))
             if list do Enum.at(list, index) else nil end
+
           "LENGTH" ->
             Enum.count(evaluate(game, Enum.at(code,1)))
+
           "AND" ->
             statements = Enum.slice(code, 1, Enum.count(code))
             Enum.reduce_while(statements, false, fn(statement, acc) ->
@@ -240,6 +229,7 @@ defmodule DragnCardsGame.Evaluate do
                 {:halt, false}
               end
             end)
+
           "OR" ->
             statements = Enum.slice(code, 1, Enum.count(code))
             Enum.reduce_while(statements, false, fn(statement, acc) ->
@@ -249,53 +239,66 @@ defmodule DragnCardsGame.Evaluate do
                 {:cont, acc}
               end
             end)
+
           "EQUAL" ->
-            # IO.puts("equal 1")
-            # IO.inspect(Enum.at(code,1))
-            # IO.inspect(evaluate(game, Enum.at(code,1)))
-            # IO.inspect(Enum.at(code,2))
-            # IO.inspect(evaluate(game, Enum.at(code,2)))
             evaluate(game, Enum.at(code,1)) == evaluate(game, Enum.at(code,2))
+
           "NOT_EQUAL" ->
             evaluate(game, Enum.at(code,1)) != evaluate(game, Enum.at(code,2))
+
           "LESS_THAN" ->
             evaluate(game, Enum.at(code,1)) < evaluate(game, Enum.at(code,2))
+
           "GREATER_THAN" ->
             evaluate(game, Enum.at(code,1)) > evaluate(game, Enum.at(code,2))
+
           "LESS_EQUAL" ->
             evaluate(game, Enum.at(code,1)) <= evaluate(game, Enum.at(code,2))
+
           "GREATER_EQUAL" ->
             evaluate(game, Enum.at(code,1)) >= evaluate(game, Enum.at(code,2))
+
           "NOT" ->
             !evaluate(game, Enum.at(code,1))
+
           "JOIN_STRING" ->
             evaluate(game, Enum.at(code,1)) <> evaluate(game, Enum.at(code,2))
+
           "IN_STRING" ->
             String.contains?(evaluate(game, Enum.at(code,1)), evaluate(game, Enum.at(code,2)))
+
           "IN_LIST" ->
             list = evaluate(game, Enum.at(code,1)) || []
             Enum.member?(list, evaluate(game, Enum.at(code,2)))
+
           "REMOVE_FROM_LIST_BY_VALUE" ->
             list = evaluate(game, Enum.at(code,1)) || []
             value = evaluate(game, Enum.at(code,2))
             Enum.filter(list, fn(x) -> x != value end)
+
           "ADD" ->
             (evaluate(game, Enum.at(code,1)) || 0) + (evaluate(game, Enum.at(code,2)) || 0)
+
           "SUBTRACT" ->
             (evaluate(game, Enum.at(code,1)) || 0) - (evaluate(game, Enum.at(code,2)) || 0)
+
           "MULTIPLY" ->
             (evaluate(game, Enum.at(code,1)) || 0) * (evaluate(game, Enum.at(code,2)) || 0)
+
           "DIVIDE" ->
             divisor = (evaluate(game, Enum.at(code,2)) || 0)
             if divisor do (evaluate(game, Enum.at(code,1)) || 0) / divisor else nil end
+
           "RANDOM_INT" ->
             mn = evaluate(game, Enum.at(code,1))
             mx = evaluate(game, Enum.at(code,2))
             Enum.random(mn, mx)
+
           "OBJ_GET_VAL" ->
             map = evaluate(game, Enum.at(code,1))
             key = evaluate(game, Enum.at(code,2))
             map[key]
+
           "OBJ_GET_BY_PATH" ->
             map = evaluate(game, Enum.at(code,1))
             path = evaluate(game, Enum.at(code,2))
@@ -315,19 +318,23 @@ defmodule DragnCardsGame.Evaluate do
                   nil
               end
             end)
+
           "GAME_GET_VAL" ->
             path = evaluate(game, Enum.at(code,1))
             get_in(game, path)
+
           "GET_STACK_ID" ->
             group_id = evaluate(game, Enum.at(code,1))
             stack_index = evaluate(game, Enum.at(code,2))
             if group_id do evaluate(game, ["AT_INDEX", "$GAME.groupById." <> group_id <> ".stackIds", stack_index]) else nil end
+
           "GET_CARD_ID" ->
             group_id = evaluate(game, Enum.at(code,1))
             stack_index = evaluate(game, Enum.at(code,2))
             stack_id = evaluate(game, ["GET_STACK_ID", group_id, stack_index])
             card_index = evaluate(game, Enum.at(code,3))
             if stack_id do evaluate(game, ["AT_INDEX", "$GAME.stackById." <> stack_id <> ".cardIds", card_index]) else nil end
+
           "OBJ_SET_VAL" ->
             case Enum.count(code) do
               4 ->
@@ -342,41 +349,43 @@ defmodule DragnCardsGame.Evaluate do
                 value = evaluate(game, Enum.at(code,4))
                 put_in(obj, path ++ [key], value)
             end
-          "GAME_SET_VAL" ->
+
+          "SET" ->
             path = evaluate(game, Enum.at(code, 1))
             value = evaluate(game, Enum.at(code, 2))
             put_by_path(game, path, value)
+
           "UPDATE_ROOM_NAME" ->
             name = evaluate(game, Enum.at(code, 1))
             Rooms.update_room_name_by_slug(game["roomSlug"], name)
-            evaluate(game, ["GAME_SET_VAL", "/roomName", name])
-          "GAME_INCREASE_VAL" ->
+            evaluate(game, ["SET", "/roomName", name])
+
+          "INCREASE_VAL" ->
             path = evaluate(game, Enum.at(code, 1))
             delta = evaluate(game, Enum.at(code, 2))
             old_value = get_in(game, path) || 0
             put_by_path(game, path, old_value + delta)
-          "GAME_DECREASE_VAL" ->
+
+          "DECREASE_VAL" ->
             path = Enum.slice(code, 1, Enum.count(code)-2)
             delta = evaluate(game, Enum.at(code, Enum.count(code)-1))
-            evaluate(game, ["GAME_INCREASE_VAL", Enum.at(code, 1), -Enum.at(code, 2)])
+            evaluate(game, ["INCREASE_VAL", Enum.at(code, 1), -Enum.at(code, 2)])
+
           "COND" ->
             ifthens = Enum.slice(code, 1, Enum.count(code))
             Enum.reduce_while(0..Enum.count(ifthens)-1//2, nil, fn(i, acc) ->
-              # IO.puts("checking if")
-              # IO.inspect(Enum.at(ifthens, i))
-              # IO.inspect(evaluate(game, Enum.at(ifthens, i)))
               if evaluate(game, Enum.at(ifthens, i)) == true do
-                #IO.puts("true")
                 {:halt, evaluate(game, Enum.at(ifthens, i+1))}
               else
-                #IO.puts("false")
                 {:cont, game}
               end
             end)
-          "GAME_ADD_MESSAGE" ->
+
+          "LOG" ->
             statements = Enum.slice(code, 1, Enum.count(code))
             message = message_list_to_string(game, statements)
             put_in(game["messages"], game["messages"] ++ [message])
+
           "FOR_EACH_START_STOP_STEP" ->
             var_name = Enum.at(code, 1)
             start = evaluate(game, Enum.at(code, 2))
@@ -387,12 +396,12 @@ defmodule DragnCardsGame.Evaluate do
               acc = put_in(acc, ["variables", var_name], i)
               acc = evaluate(acc, function)
             end)
+
           "FOR_EACH_KEY_VAL" ->
             argc = Enum.count(code) - 1
             key_name = Enum.at(code, 1)
             val_name = Enum.at(code, 2)
             old_list = evaluate(game, Enum.at(code, 3))
-            #old_list = evaluate(game, ["GAME_GET_VAL", obj_path])
             function = Enum.at(code, 4)
             old_list = if argc >= 5 do
               order = if argc >= 6 and evaluate(game, Enum.at(code, 6)) == "DESC" do :desc else :asc end
@@ -405,16 +414,17 @@ defmodule DragnCardsGame.Evaluate do
               acc = put_in(acc, ["variables", val_name], val)
               evaluate(acc, function)
             end)
+
           "FOR_EACH_VAL" ->
             argc = Enum.count(code) - 1
             val_name = Enum.at(code, 1)
             list = evaluate(game, Enum.at(code, 2))
-            #old_list = evaluate(game, ["GAME_GET_VAL", obj_path])
             function = Enum.at(code, 3)
             Enum.reduce(list, game, fn(val, acc) ->
               acc = put_in(acc, ["variables", val_name], val)
               evaluate(acc, function)
             end)
+
           "MOVE_CARD" ->
             IO.puts("MOVE_CARD" <> inspect(code))
             argc = Enum.count(code) - 1
@@ -428,22 +438,26 @@ defmodule DragnCardsGame.Evaluate do
             else
               game
             end
+
           "DELETE_CARD" ->
             card_id = evaluate(game, Enum.at(code, 1))
             game
             |> GameUI.delete_card(card_id)
+
           "ATTACH_CARD" ->
             card_id = evaluate(game, Enum.at(code, 1))
             dest_card_id = evaluate(game, Enum.at(code, 2))
             dest_card = game["cardById"][dest_card_id]
             GameUI.move_card(game, card_id, dest_card["groupId"], dest_card["stackIndex"], -1, true)
+
           "DRAW_CARD" ->
             argc = Enum.count(code) - 1
             num = if argc == 0 do 1 else evaluate(game, Enum.at(code, 1)) end
             player_n = game["playerUi"]["playerN"]
             game
             |> GameUI.move_stacks(player_n <> "Deck", player_n <> "Hand", num, "bottom")
-            |> evaluate(["GAME_ADD_MESSAGE", "$PLAYER_N", " drew a card."])
+            |> evaluate(["LOG", "$PLAYER_N", " drew a card."])
+
           "MOVE_STACK" ->
             argc = Enum.count(code) - 1
             stack_id = evaluate(game, Enum.at(code, 1))
@@ -451,6 +465,7 @@ defmodule DragnCardsGame.Evaluate do
             dest_stack_index = evaluate(game, Enum.at(code, 3))
             combine = if argc >= 4 do evaluate(game, Enum.at(code, 4)) else nil end
             GameUI.move_stack(game, stack_id, dest_group_id, dest_stack_index, combine)
+
           "DISCARD_STACK" ->
             stack_id = evaluate(game, Enum.at(code, 1))
             stack = game["stackById"][stack_id]
@@ -458,6 +473,7 @@ defmodule DragnCardsGame.Evaluate do
             Enum.reduce(card_ids, game, fn(card_id, acc) ->
               evaluate(acc, ["DISCARD_CARD", card_id])
             end)
+
           "MOVE_STACKS" ->
             argc = Enum.count(code) - 1
             orig_group_id = evaluate(game, Enum.at(code, 1))
@@ -465,11 +481,13 @@ defmodule DragnCardsGame.Evaluate do
             top_n = evaluate(game, Enum.at(code, 3))
             position = evaluate(game, Enum.at(code, 4))
             GameUI.move_stacks(game, orig_group_id, dest_group_id, top_n, position)
+
           "SHUFFLE_GROUP" ->
             group_id = evaluate(game, Enum.at(code, 1))
             stack_ids = game["groupById"][group_id]["stackIds"]
             shuffled_stack_ids = stack_ids |> Enum.shuffle
             put_in(game, ["groupById", group_id, "stackIds"], shuffled_stack_ids)
+
           "SHUFFLE_TOP_X" ->
             group_id = evaluate(game, Enum.at(code, 1))
             x = evaluate(game, Enum.at(code, 2))
@@ -478,6 +496,7 @@ defmodule DragnCardsGame.Evaluate do
             stack_ids_r = Enum.slice(stack_ids, x, Enum.count(stack_ids))
             stack_ids_l = stack_ids_l |> Enum.shuffle
             put_in(game, ["groupById", group_id, "stackIds"], stack_ids_l ++ stack_ids_r)
+
           "SHUFFLE_BOTTOM_X" ->
             group_id = evaluate(game, Enum.at(code, 1))
             x = evaluate(game, Enum.at(code, 2))
@@ -486,15 +505,18 @@ defmodule DragnCardsGame.Evaluate do
             stack_ids_l = Enum.slice(stack_ids, 0, Enum.count(stack_ids) - x)
             stack_ids_r = stack_ids_r |> Enum.shuffle
             put_in(game, ["groupById", group_id, "stackIds"], stack_ids_l ++ stack_ids_r)
+
           "FACEUP_NAME_FROM_STACK_ID" ->
             stack_id = evaluate(game, Enum.at(code, 1))
             card_id = Enum.at(game["stackById"][stack_id]["cardIds"],0)
             evaluate(game, ["FACEUP_NAME_FROM_CARD_ID", card_id])
+
           "FACEUP_NAME_FROM_CARD_ID" ->
             card_id = evaluate(game, Enum.at(code, 1))
             card = game["cardById"][card_id]
             face = card["sides"][card["currentSide"]]
             face["name"]
+
           "ONE_CARD" ->
             var_name = Enum.at(code, 1)
             one_card = Enum.find(Map.values(game["cardById"]), fn(card) ->
@@ -502,6 +524,7 @@ defmodule DragnCardsGame.Evaluate do
               evaluate(game, Enum.at(code, 2))
             end)
             one_card
+
           "ACTION_LIST" ->
             argc = Enum.count(code) - 1
             case argc do
@@ -528,56 +551,74 @@ defmodule DragnCardsGame.Evaluate do
             end
           _ ->
             #code
-            evaluate(game, ["GAME_ADD_MESSAGE", "Command " <> Enum.at(code,0) <> " not recognized in " <> inspect(code)])
+            evaluate(game, ["LOG", "Command " <> Enum.at(code,0) <> " not recognized in " <> inspect(code)])
         end
       end
     else # value
-      #IO.puts("parsing value #{code}")
       cond do
         code == "$PLAYER_N" ->
           game["playerUi"]["playerN"]
+
         code == "$GAME" ->
           game
+
         code == "$GAME_PATH" ->
           []
+
         code == "$GROUP_BY_ID" ->
           game["groupById"]
+
         code == "$STACK_BY_ID" ->
           game["stackById"]
+
         code == "$CARD_BY_ID" ->
           game["cardById"]
+
         code == "$CARD_BY_ID_PATH" ->
           ["cardById"]
+
         code == "$PLAYER_DATA" ->
           game["playerData"]
+
         code == "$PLAYER_DATA_PATH" ->
           ["playerData"]
+
         code == "$ACTIVE_CARD_PATH" ->
           ["cardById", game["playerUi"]["activeCardId"]]
+
         code == "$ACTIVE_FACE_PATH" ->
           active_card = evaluate(game, "$ACTIVE_CARD")
           evaluate(game, "$ACTIVE_CARD_PATH") ++ ["sides", active_card["currentSide"]]
+
         code == "$ACTIVE_TOKENS_PATH" ->
           evaluate(game, "$ACTIVE_CARD_PATH") ++ ["tokens"]
+
         code == "$ACTIVE_CARD" ->
           get_in(game, evaluate(game, "$ACTIVE_CARD_PATH"))
+
         code == "$ACTIVE_CARD_ID" ->
           evaluate(game, "$ACTIVE_CARD.id")
+
         code == "$ACTIVE_FACE" ->
           get_in(game, evaluate(game, "$ACTIVE_FACE_PATH"))
+
         code == "$ACTIVE_TOKENS" ->
           get_in(game, evaluate(game, "$ACTIVE_TOKENS_PATH"))
+
         Map.has_key?(game, "variables") && Map.has_key?(game["variables"], code) ->
           game["variables"][code]
+
         is_binary(code) and String.starts_with?(code, "$") and String.contains?(code, ".") ->
           split = String.split(code, ".")
           obj = evaluate(game, Enum.at(split, 0))
           path = ["LIST"] ++ Enum.slice(split, 1, Enum.count(split))
           evaluate(game, ["OBJ_GET_BY_PATH", obj, path])
+
         is_binary(code) and String.starts_with?(code, "/") ->
           split = String.split(code, "/")
           path = ["LIST"] ++ Enum.slice(split, 1, Enum.count(split))
           List.flatten(evaluate(game, path))
+
         true ->
           code
       end

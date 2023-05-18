@@ -25,7 +25,7 @@ defmodule MyTest do
         # end)
 
         case Enum.at(code,0) do
-          "LOGGER" ->
+          "LOG_DEV" ->
             statements = Enum.slice(code, 1, Enum.count(code))
             message = Enum.reduce(statements, "", fn(statement, acc) ->
               str_statement = inspect(evaluate(game, statement))
@@ -126,7 +126,7 @@ defmodule MyTest do
                 value = evaluate(game, Enum.at(code,4))
                 put_in(obj, path ++ [key], value)
             end
-          "GAME_SET_VAL" ->
+          "SET" ->
             path = Enum.slice(code, 1, Enum.count(code)-2)
             path = Enum.reduce(path, [], fn(path_item, acc)->
               eval_path_item = evaluate(game, path_item)
@@ -138,7 +138,7 @@ defmodule MyTest do
             end)
             value = evaluate(game, Enum.at(code, Enum.count(code)-1))
             put_in(game, path, value)
-          "GAME_INCREASE_VAL" ->
+          "INCREASE_VAL" ->
             path = Enum.slice(code, 1, Enum.count(code)-2)
             path = Enum.reduce(path, [], fn(path_item, acc)->
               eval_path_item = evaluate(game, path_item)
@@ -151,10 +151,10 @@ defmodule MyTest do
             delta = evaluate(game, Enum.at(code, Enum.count(code)-1))
             old_value = get_in(game, path)
             put_in(game, path, old_value + delta)
-          "GAME_DECREASE_VAL" ->
+          "DECREASE_VAL" ->
             path = Enum.slice(code, 1, Enum.count(code)-2)
             delta = evaluate(game, Enum.at(code, Enum.count(code)-1))
-            evaluate(game, ["GAME_INCREASE_VAL"] ++ path ++ [-delta])
+            evaluate(game, ["INCREASE_VAL"] ++ path ++ [-delta])
           "COND" ->
             ifthens = Enum.slice(code, 1, Enum.count(code))
             Enum.reduce_while(0..Enum.count(ifthens)-1//2, nil, fn(i, acc) ->
@@ -167,7 +167,7 @@ defmodule MyTest do
             #IO.puts("COND then")
             #IO.inspect("then")
             #evaluate(game, then)
-          "GAME_ADD_MESSAGE" ->
+          "LOG" ->
             statements = Enum.slice(code, 1, Enum.count(code))
             message = Enum.reduce(statements, "", fn(statement, acc) ->
               str_statement = inspect(evaluate(game, statement))
@@ -369,16 +369,16 @@ if true do
   code = "$ACTIVE_CARD_PATH"
   MyTest.assert(1, MyTest.evaluate(game, code), ["cardById", "abc"])
 
-  code = ["GAME_SET_VAL", "$ACTIVE_CARD_PATH", "rotation", 45]
+  code = ["SET", "$ACTIVE_CARD_PATH", "rotation", 45]
   MyTest.assert(2, MyTest.evaluate(game, code)["cardById"]["abc"]["rotation"], 45)
 
-  code = [["GAME_SET_VAL", "$ACTIVE_CARD_PATH", "rotation", 45],["GAME_SET_VAL", "$ACTIVE_CARD_PATH", "rotation", 65]]
+  code = [["SET", "$ACTIVE_CARD_PATH", "rotation", 45],["SET", "$ACTIVE_CARD_PATH", "rotation", 65]]
   MyTest.assert(3, MyTest.evaluate(game, code)["cardById"]["abc"]["rotation"], 65)
 
   code = ["EQUAL", ["OBJ_GET_VAL", "$ACTIVE_CARD", "rotation"], 0]
   MyTest.assert(4, MyTest.evaluate(game, code), true)
 
-  code = ["COND", ["EQUAL", ["OBJ_GET_VAL", "$ACTIVE_CARD", "rotation"], 0], ["GAME_SET_VAL", "$ACTIVE_CARD_PATH", "rotation", 95]]
+  code = ["COND", ["EQUAL", ["OBJ_GET_VAL", "$ACTIVE_CARD", "rotation"], 0], ["SET", "$ACTIVE_CARD_PATH", "rotation", 95]]
   MyTest.assert(5, MyTest.evaluate(game, code)["cardById"]["abc"]["rotation"], 95)
 
   code =
@@ -386,25 +386,25 @@ if true do
       ["COND",
         ["EQUAL", "$ACTIVE_CARD.rotation", 0],
         [
-            ["GAME_SET_VAL", "$ACTIVE_CARD_PATH", "rotation", 90],
-            ["GAME_ADD_MESSAGE","$playerN"," rotated ", "$ACTIVE_FACE.name", " 90 degrees."]
+            ["SET", "$ACTIVE_CARD_PATH", "rotation", 90],
+            ["LOG","$playerN"," rotated ", "$ACTIVE_FACE.name", " 90 degrees."]
         ],
         ["EQUAL", "$ACTIVE_CARD.rotation", 90],
         [
-            ["GAME_SET_VAL", "$ACTIVE_CARD_PATH", "rotation", 0],
-            ["GAME_ADD_MESSAGE","$playerN"," rotated ", "$ACTIVE_FACE.name", " -90 degrees."]
+            ["SET", "$ACTIVE_CARD_PATH", "rotation", 0],
+            ["LOG","$playerN"," rotated ", "$ACTIVE_FACE.name", " -90 degrees."]
         ]
       ],
       ["COND",
         ["EQUAL", "$ACTIVE_CARD.rotation", 0],
         [
-            ["GAME_SET_VAL", "$ACTIVE_CARD_PATH", "rotation", 90],
-            ["GAME_ADD_MESSAGE","$playerN"," rotated ", "$ACTIVE_FACE.name", " 90 degrees."]
+            ["SET", "$ACTIVE_CARD_PATH", "rotation", 90],
+            ["LOG","$playerN"," rotated ", "$ACTIVE_FACE.name", " 90 degrees."]
         ],
         ["EQUAL", "$ACTIVE_CARD.rotation", 90],
         [
-            ["GAME_SET_VAL", "$ACTIVE_CARD_PATH", "rotation", -10],
-            ["GAME_ADD_MESSAGE","$playerN"," rotated ", "$ACTIVE_FACE.name", " -90 degrees."]
+            ["SET", "$ACTIVE_CARD_PATH", "rotation", -10],
+            ["LOG","$playerN"," rotated ", "$ACTIVE_FACE.name", " -90 degrees."]
         ]
       ]
     ]
@@ -413,17 +413,17 @@ if true do
   code = ["OBJ_SET_VAL", "$ACTIVE_CARD", "rotation", 44]
   MyTest.assert(7, MyTest.evaluate(game, code)["rotation"], 44)
 
-  code = ["FOR_EACH_KEY_VAL", "$CARD_ID", "$CARD", "$CARD_BY_ID", ["GAME_SET_VAL", "$CARD_BY_ID_PATH", "$CARD_ID", ["OBJ_SET_VAL", "$CARD", "rotation", 77]]]
+  code = ["FOR_EACH_KEY_VAL", "$CARD_ID", "$CARD", "$CARD_BY_ID", ["SET", "$CARD_BY_ID_PATH", "$CARD_ID", ["OBJ_SET_VAL", "$CARD", "rotation", 77]]]
   MyTest.assert(8, MyTest.evaluate(game, code)["cardById"]["ghi"]["rotation"], 77)
 
-  code = ["FOR_EACH_KEY_VAL", "$CARD_ID", "$CARD", "$CARD_BY_ID", ["GAME_SET_VAL", ["LIST", "cardById", "$CARD_ID", "rotation"], 77]]
+  code = ["FOR_EACH_KEY_VAL", "$CARD_ID", "$CARD", "$CARD_BY_ID", ["SET", ["LIST", "cardById", "$CARD_ID", "rotation"], 77]]
   MyTest.assert(8, MyTest.evaluate(game, code)["cardById"]["ghi"]["rotation"], 77)
 
   code =
     ["FOR_EACH_KEY_VAL", "$CARD_ID", "$CARD", "$CARD_BY_ID",
       ["COND",
         ["EQUAL", "$CARD.exhausted", true],
-        ["GAME_SET_VAL", ["LIST", "cardById", "$CARD_ID", "rotation"], 77],
+        ["SET", ["LIST", "cardById", "$CARD_ID", "rotation"], 77],
         true,
         "$GAME"
       ]
@@ -434,7 +434,7 @@ if true do
     ["FOR_EACH_KEY_VAL", "$PLAYER_I", "$PLAYER_I_DATA", "$GAME.playerData",
       ["COND",
         ["EQUAL", "$PLAYER_I_DATA.willpower", 0],
-        ["GAME_SET_VAL", "playerData", "$PLAYER_I", "willpower", 22],
+        ["SET", "playerData", "$PLAYER_I", "willpower", 22],
         true,
         "$GAME",
       ]
@@ -753,7 +753,7 @@ card_id = Enum.at(game["stackById"][stack_id]["cardIds"],0)
 code = ["MOVE_CARD", card_id, "sharedVictory", 0, 0]
 MyTest.assert(11, MyTest.evaluate(game, code)["cardById"][card_id]["groupId"], "sharedVictory")
 
-code = ["FOR_EACH_START_STOP_STEP", "$i", 1, 30, 2, ["GAME_ADD_MESSAGE", "$i"]]
+code = ["FOR_EACH_START_STOP_STEP", "$i", 1, 30, 2, ["LOG", "$i"]]
 MyTest.assert(12, MyTest.evaluate(game, code)["variables"]["$i"], 29)
 
 code = ["FOR_EACH_START_STOP_STEP", "$i", 0, 10, 1, ["MOVE_CARD", ["GET_CARD_ID", "sharedEncounterDeck", 0, 0], "sharedVictory", 0, 0]]
@@ -774,12 +774,12 @@ actions = %{
     ["COND",
       ["EQUAL", "$GAME.playerUi.playerN", "player1"],
       [
-        ["GAME_INCREASE_VAL", "roundNumber", 1],
-        ["GAME_ADD_MESSAGE", "player1 increased the round."],
-        ["GAME_SET_VAL", "phaseId", "Resource"],
-        ["GAME_ADD_MESSAGE", "player1 set the phase to Resource."],
-        ["GAME_SET_VAL", "stepId", "1.R"],
-        ["GAME_ADD_MESSAGE", "player1 set the round step to 1.R."]
+        ["INCREASE_VAL", "roundNumber", 1],
+        ["LOG", "player1 increased the round."],
+        ["SET", "phaseId", "Resource"],
+        ["LOG", "player1 set the phase to Resource."],
+        ["SET", "stepId", "1.R"],
+        ["LOG", "player1 set the round step to 1.R."]
       ],
       true,
       "$GAME"
@@ -793,15 +793,15 @@ actions = %{
           ["EQUAL", "$CARD.inPlay", true],
         ],
         [
-          ["GAME_INCREASE_VAL", "cardById", "$CARD_ID", "tokens", "resource", 1],
-          ["GAME_ADD_MESSAGE", "$PLAYER_N", " added 1 resource token to ", ["OBJ_GET_VAL", "$CARD", "sides", ["OBJ_GET_VAL", "$CARD", "currentSide"], "name"], "."],
+          ["INCREASE_VAL", "cardById", "$CARD_ID", "tokens", "resource", 1],
+          ["LOG", "$PLAYER_N", " added 1 resource token to ", ["OBJ_GET_VAL", "$CARD", "sides", ["OBJ_GET_VAL", "$CARD", "currentSide"], "name"], "."],
         ],
         true,
         "$GAME"
       ],
       ["COND",
         ["EQUAL", "$CARD.controller", "playerN"],
-        ["GAME_SET_VAL", "cardById", "$CARD_ID", "committed", false],
+        ["SET", "cardById", "$CARD_ID", "committed", false],
         true,
         "$GAME"
       ],
@@ -811,8 +811,8 @@ actions = %{
           ["EQUAL", "$CARD.inPlay", true],
         ],
         [
-          ["GAME_SET_VAL", "cardById", "$CARD_ID", "tokens", "resource", 1], #["OBJ_GET_VAL", "$CARD", "extraResources"]],
-          ["GAME_ADD_MESSAGE", "$PLAYER_N", " added ", ["OBJ_GET_VAL", "$CARD", "extraResources"]," extra resource token(s) to ", ["OBJ_GET_VAL", "$CARD", "sides", ["OBJ_GET_VAL", "$CARD", "currentSide"], "type"]]
+          ["SET", "cardById", "$CARD_ID", "tokens", "resource", 1], #["OBJ_GET_VAL", "$CARD", "extraResources"]],
+          ["LOG", "$PLAYER_N", " added ", ["OBJ_GET_VAL", "$CARD", "extraResources"]," extra resource token(s) to ", ["OBJ_GET_VAL", "$CARD", "sides", ["OBJ_GET_VAL", "$CARD", "currentSide"], "type"]]
         ],
         true,
         "$GAME"
@@ -821,21 +821,21 @@ actions = %{
     ["FOR_EACH_START_STOP_STEP", "$i", 0, "$GAME.playerData.player1.cardsDrawn", 1,
       [
         ["MOVE_CARD", ["GET_CARD_ID", ["JOIN_STRING", "$PLAYER_N", "Deck"], 0, 0], ["JOIN_STRING", "$PLAYER_N", "Hand"], 0, 0],
-        ["GAME_ADD_MESSAGE", "$PLAYER_N", " drew 1 card."]
+        ["LOG", "$PLAYER_N", " drew 1 card."]
       ]
     ],
-    ["GAME_SET_VAL", "playerData", "$PLAYER_N", "willpower", 0],
-    ["GAME_SET_VAL", "playerData", "$PLAYER_N", "refreshed", false],
+    ["SET", "playerData", "$PLAYER_N", "willpower", 0],
+    ["SET", "playerData", "$PLAYER_N", "refreshed", false],
   ],
   "refresh" => [
     ["COND",
       ["EQUAL", "$GAME.playerUi.playerN", "player1"],
       [
-        ["GAME_SET_VAL", "phaseId", "Refresh"],
-        ["GAME_SET_VAL", "stepId", "7.R"],
-        ["GAME_SET_VAL", "firstPlayer", ["NEXT_PLAYER", "$GAME.firstPlayer"]],
-        ["GAME_ADD_MESSAGE", "player1 set the phase to Refresh."],
-        ["GAME_ADD_MESSAGE", "player1 set the round step to 7.R."]
+        ["SET", "phaseId", "Refresh"],
+        ["SET", "stepId", "7.R"],
+        ["SET", "firstPlayer", ["NEXT_PLAYER", "$GAME.firstPlayer"]],
+        ["LOG", "player1 set the phase to Refresh."],
+        ["LOG", "player1 set the round step to 7.R."]
       ],
       true,
       "$GAME"
@@ -847,15 +847,15 @@ actions = %{
           ["EQUAL", "$CARD.inPlay", true],
         ],
         [
-          ["GAME_SET_VAL", "cardById", "$CARD_ID", "rotation", 0],
-          ["GAME_SET_VAL", "cardById", "$CARD_ID", "exhausted", false]
+          ["SET", "cardById", "$CARD_ID", "rotation", 0],
+          ["SET", "cardById", "$CARD_ID", "exhausted", false]
         ],
         true,
         "$GAME"
       ],
     ]],
-    ["GAME_SET_VAL", "playerData", "$PLAYER_N", "refreshed", true],
-    ["GAME_ADD_MESSAGE", "player1 refeshed."]
+    ["SET", "playerData", "$PLAYER_N", "refreshed", true],
+    ["LOG", "player1 refeshed."]
   ],
   "revealEncounterFaceup" => [
     ["DEFINE", "$REVEAL_FACEDOWN", false],
@@ -880,23 +880,23 @@ actions = %{
         ["EQUAL", "$GAME.phaseId", "Quest"],
         [
           ["MOVE_STACKS", "sharedEncounterDiscard", "sharedEncounterDeck", ["LENGTH", "$GAME.groupById.sharedEncounterDiscard.stackIds"], "shuffle"],
-          ["GAME_ADD_MESSAGE", "$PLAYER_N"," shuffled the encounter discard pile into the encounter deck."]
+          ["LOG", "$PLAYER_N"," shuffled the encounter discard pile into the encounter deck."]
         ],
         true,
-        ["GAME_ADD_MESSAGE", "$PLAYER_N", "tried to reveal a card, but the encounter deck is empty and it's not the quest phase."]
+        ["LOG", "$PLAYER_N", "tried to reveal a card, but the encounter deck is empty and it's not the quest phase."]
       ],
       true,
       [
         ["DEFINE", "$STACK_ID", ["AT_INDEX", "$GAME.groupById.sharedEncounterDeck.stackIds", 0]],
         ["MOVE_STACK", "$STACK_ID", "sharedStaging", -1, false, "$REVEAL_FACEDOWN"],
-        ["GAME_ADD_MESSAGE", "$PLAYER_N", " revealed ", ["FACEUP_NAME_FROM_STACK_ID", "$STACK_ID"]]
+        ["LOG", "$PLAYER_N", " revealed ", ["FACEUP_NAME_FROM_STACK_ID", "$STACK_ID"]]
       ]
     ],
     ["COND",
       ["EQUAL", ["LENGTH", "$GAME.groupById.sharedEncounterDeck.stackIds"], 0],
       [
         ["MOVE_STACKS", "sharedEncounterDiscard", "sharedEncounterDeck", ["LENGTH", "$GAME.groupById.sharedEncounterDiscard.stackIds"], "shuffle"],
-        ["GAME_ADD_MESSAGE", "$PLAYER_N"," shuffled the encounter discard pile into the encounter deck."]
+        ["LOG", "$PLAYER_N"," shuffled the encounter discard pile into the encounter deck."]
       ],
       true,
       "$GAME"
@@ -905,12 +905,12 @@ actions = %{
   "revealSecondary" => [
     ["COND",
       ["EQUAL", ["LENGTH", "$GAME.groupById.sharedEncounterDeck2.stackIds"], 0],
-      ["GAME_ADD_MESSAGE", "$PLAYER_N", " tried to reveal a card from the second encounter deck, but it's empty."],
+      ["LOG", "$PLAYER_N", " tried to reveal a card from the second encounter deck, but it's empty."],
       true,
       [
         ["DEFINE", "$STACK_ID", ["AT_INDEX", "$GAME.groupById.sharedEncounterDeck2.stackIds", 0]],
         ["MOVE_STACK", "$STACK_ID", "sharedStaging", -1, false, "$REVEAL_FACEDOWN"],
-        ["GAME_ADD_MESSAGE", "$PLAYER_N", " revealed ", ["FACEUP_NAME_FROM_STACK_ID", "$STACK_ID"]]
+        ["LOG", "$PLAYER_N", " revealed ", ["FACEUP_NAME_FROM_STACK_ID", "$STACK_ID"]]
       ]
     ]
   ],
@@ -922,8 +922,8 @@ actions = %{
     ["COND",
       ["AND", ["EQUAL", "$GAME.playerUi.playerN", "player1"], ["NOT_EQUAL", "$STEP_ID", "$GAME.stepId"]],
       [
-        ["GAME_SET_VAL", "stepId", "$STEP_ID"],
-        ["GAME_ADD_MESSAGE", "$PLAYER_N", " set the round step to ", "$GAME.gameDef.steps.$STEP_ID.text", "."]
+        ["SET", "stepId", "$STEP_ID"],
+        ["LOG", "$PLAYER_N", " set the round step to ", "$GAME.gameDef.steps.$STEP_ID.text", "."]
       ],
       true,
       "$GAME"
@@ -941,16 +941,16 @@ actions = %{
               ["COND",
                 ["EQUAL", ["LENGTH", "$GAME.groupById.sharedEncounterDeck.stackIds"], 0],
                 [
-                  ["GAME_ADD_MESSAGE", "$PLAYER_N", " tried to deal a shadow card but the encounter deck is empty."],
-                  ["LOGGER", "tried to deal shadow but couldn't"],
+                  ["LOG", "$PLAYER_N", " tried to deal a shadow card but the encounter deck is empty."],
+                  ["LOG_DEV", "tried to deal shadow but couldn't"],
                 ],
                 true,
                 [
                   ["DEFINE", "$SHADOW_CARD_ID", ["GET_CARD_ID", "sharedEncounterDeck", 0, 0]],
                   ["ATTACH_CARD", "$SHADOW_CARD_ID", "$CARD_ID"],
-                  ["GAME_SET_VAL", "cardById", "$SHADOW_CARD_ID", "rotation", -30],
-                  ["GAME_SET_VAL", "cardById", "$SHADOW_CARD_ID", "currentSide", "B"],
-                  ["GAME_ADD_MESSAGE", "$PLAYER_N", " dealt a shadow card to ", ["FACEUP_NAME_FROM_CARD_ID", "$CARD_ID"], "."]
+                  ["SET", "cardById", "$SHADOW_CARD_ID", "rotation", -30],
+                  ["SET", "cardById", "$SHADOW_CARD_ID", "currentSide", "B"],
+                  ["LOG", "$PLAYER_N", " dealt a shadow card to ", ["FACEUP_NAME_FROM_CARD_ID", "$CARD_ID"], "."]
                 ]
               ],
               true,
@@ -979,28 +979,28 @@ actions = %{
   "next_step" => [
     ["COND",
       ["EQUAL", "$GAME.stepId", ["AT_INDEX", "$GAME.gameDef.stepOrder", -1]],
-      ["GAME_SET_VAL", "stepId", ["AT_INDEX", "$GAME.gameDef.stepOrder", 0]],
+      ["SET", "stepId", ["AT_INDEX", "$GAME.gameDef.stepOrder", 0]],
       true,
-      [["LOGGER", "here"],
-      ["GAME_SET_VAL", "stepId", ["AT_INDEX", "$GAME.gameDef.stepOrder", ["ADD", ["GET_INDEX", "$GAME.gameDef.stepOrder", "$GAME.stepId"], 1]]]
+      [["LOG_DEV", "here"],
+      ["SET", "stepId", ["AT_INDEX", "$GAME.gameDef.stepOrder", ["ADD", ["GET_INDEX", "$GAME.gameDef.stepOrder", "$GAME.stepId"], 1]]]
       ]
     ],
     ["DEFINE", "$STEP_ID", "$GAME.stepId"],
     ["DEFINE", "$STEP", "$GAME.gameDef.steps.$STEP_ID"],
-    ["GAME_ADD_MESSAGE", "$PLAYER_N", " set the round step to ", "$STEP.text", "."]
+    ["LOG", "$PLAYER_N", " set the round step to ", "$STEP.text", "."]
   ],
   "prev_step" => [
     ["COND",
       ["EQUAL", "$GAME.stepId", ["AT_INDEX", "$GAME.gameDef.stepOrder", 0]],
-      ["GAME_SET_VAL", "stepId", ["AT_INDEX", "$GAME.gameDef.stepOrder", -1]],
+      ["SET", "stepId", ["AT_INDEX", "$GAME.gameDef.stepOrder", -1]],
       true,
-      [["LOGGER", "here"],
-      ["GAME_SET_VAL", "stepId", ["AT_INDEX", "$GAME.gameDef.stepOrder", ["SUBTRACT", ["GET_INDEX", "$GAME.gameDef.stepOrder", "$GAME.stepId"], 1]]]
+      [["LOG_DEV", "here"],
+      ["SET", "stepId", ["AT_INDEX", "$GAME.gameDef.stepOrder", ["SUBTRACT", ["GET_INDEX", "$GAME.gameDef.stepOrder", "$GAME.stepId"], 1]]]
       ]
     ],
     ["DEFINE", "$STEP_ID", "$GAME.stepId"],
     ["DEFINE", "$STEP", "$GAME.gameDef.steps.$STEP_ID"],
-    ["GAME_ADD_MESSAGE", "$PLAYER_N", " set the round step to ", "$STEP.text", "."]
+    ["LOG", "$PLAYER_N", " set the round step to ", "$STEP.text", "."]
   ],
   "mulligan" => [
     ["DEFINE", "$HAND_GROUP_ID", ["JOIN_STRING", "$PLAYER_N", "Hand"]],
@@ -1010,51 +1010,51 @@ actions = %{
     ["DRAW", "$HAND_SIZE"]
   ],
   "clear_targets" => [
-    ["GAME_SET_VAL", "playerData", "$PLAYER_N", "arrows", %{}],
-    ["GAME_SET_VAL", "playerData", "$PLAYER_N", "targeting", %{}],
-    ["GAME_ADD_MESSAGE", "PLAYER_N", " cleared their targets."]
+    ["SET", "playerData", "$PLAYER_N", "arrows", %{}],
+    ["SET", "playerData", "$PLAYER_N", "targeting", %{}],
+    ["LOG", "PLAYER_N", " cleared their targets."]
   ],
   "increase_threat" => [
-    ["GAME_INCREASE_VAL", "playerData", "$PLAYER_N", "threat", 1],
-    ["GAME_ADD_MESSAGE", "PLAYER_N", " increased their threat by 1."]
+    ["INCREASE_VAL", "playerData", "$PLAYER_N", "threat", 1],
+    ["LOG", "PLAYER_N", " increased their threat by 1."]
   ],
   "increase_threat_all" => [
     ["FOR_EACH_KEY_VAL", "$PLAYER_I", "$PLAYER_I_DATA", "$GAME.playerData",
-      ["GAME_INCREASE_VAL", "playerData", "$PLAYER_I", "threat", 1]
+      ["INCREASE_VAL", "playerData", "$PLAYER_I", "threat", 1]
     ],
-    ["GAME_ADD_MESSAGE", "PLAYER_N", " increased each player's threat by 1."]
+    ["LOG", "PLAYER_N", " increased each player's threat by 1."]
   ],
   "decrease_threat" => [
-    ["GAME_INCREASE_VAL", "playerData", "$PLAYER_N", "threat", -1],
-    ["GAME_ADD_MESSAGE", "PLAYER_N", " decreased their threat by 1."]
+    ["INCREASE_VAL", "playerData", "$PLAYER_N", "threat", -1],
+    ["LOG", "PLAYER_N", " decreased their threat by 1."]
   ],
   "decrease_threat_all" => [
     ["FOR_EACH_KEY_VAL", "$PLAYER_I", "$PLAYER_I_DATA", "$GAME.playerData",
-      ["GAME_INCREASE_VAL", "playerData", "$PLAYER_I", "threat", -1]
+      ["INCREASE_VAL", "playerData", "$PLAYER_I", "threat", -1]
     ],
-    ["GAME_ADD_MESSAGE", "PLAYER_N", " increased each player's threat by 1."]
+    ["LOG", "PLAYER_N", " increased each player's threat by 1."]
   ],
   "draw_next_seat" => [
     ["DRAW", 1, ["NEXT_PLAYER", "$PLAYER_N"]],
-    ["GAME_ADD_MESSAGE", "PLAYER_N", " drew 1 card."]
+    ["LOG", "PLAYER_N", " drew 1 card."]
   ],
   "zero_tokens" => [
-    ["GAME_SET_VAL", "$ACTIVE_TOKENS_PATH", %{}],
-    ["GAME_ADD_MESSAGE", "PLAYER_N", " removed all tokens from ", "$ACTIVE_FACE.name", "."]
+    ["SET", "$ACTIVE_TOKENS_PATH", %{}],
+    ["LOG", "PLAYER_N", " removed all tokens from ", "$ACTIVE_FACE.name", "."]
   ],
   "toggle_exhaust" => [
     ["COND",
       ["AND", ["EQUAL", "$ACTIVE_CARD.rotation", 90], "$CARD.inPlay"],
       [
-        ["GAME_SET_VAL", "$ACTIVE_CARD_PATH", "rotation", 0],
-        ["GAME_SET_VAL", "$ACTIVE_CARD_PATH", "exhausted", false],
-        ["GAME_SET_VAL", "PLAYER_N", " readied ", "$ACTIVE_FACE.name", "."]
+        ["SET", "$ACTIVE_CARD_PATH", "rotation", 0],
+        ["SET", "$ACTIVE_CARD_PATH", "exhausted", false],
+        ["SET", "PLAYER_N", " readied ", "$ACTIVE_FACE.name", "."]
       ],
       ["AND", ["EQUAL", "$ACTIVE_CARD.rotation", 0], "$CARD.inPlay"],
       [
-        ["GAME_SET_VAL", "$ACTIVE_CARD_PATH", "rotation", 90],
-        ["GAME_SET_VAL", "$ACTIVE_CARD_PATH", "exhausted", true],
-        ["GAME_SET_VAL", "PLAYER_N", " exhausted ", "$ACTIVE_FACE.name", "."]
+        ["SET", "$ACTIVE_CARD_PATH", "rotation", 90],
+        ["SET", "$ACTIVE_CARD_PATH", "exhausted", true],
+        ["SET", "PLAYER_N", " exhausted ", "$ACTIVE_FACE.name", "."]
       ],
       true,
       "$GAME"
@@ -1064,15 +1064,15 @@ actions = %{
     ["COND",
       ["EQUAL", "$ACTIVE_CARD.currentSide", "A"],
       [
-        ["GAME_SET_VAL", "PLAYER_N", " flipped ", "$ACTIVE_FACE.name", " facedown."],
-        ["GAME_SET_VAL", "$ACTIVE_CARD_PATH", "rotation", 0],
-        ["GAME_SET_VAL", "$ACTIVE_CARD_PATH", "exhausted", false],
+        ["SET", "PLAYER_N", " flipped ", "$ACTIVE_FACE.name", " facedown."],
+        ["SET", "$ACTIVE_CARD_PATH", "rotation", 0],
+        ["SET", "$ACTIVE_CARD_PATH", "exhausted", false],
       ],
       true,
       [
-        ["GAME_SET_VAL", "$ACTIVE_CARD_PATH", "rotation", 90],
-        ["GAME_SET_VAL", "$ACTIVE_CARD_PATH", "exhausted", true],
-        ["GAME_SET_VAL", "PLAYER_N", " flipped ", "$ACTIVE_FACE.name", " faceup."],
+        ["SET", "$ACTIVE_CARD_PATH", "rotation", 90],
+        ["SET", "$ACTIVE_CARD_PATH", "exhausted", true],
+        ["SET", "PLAYER_N", " flipped ", "$ACTIVE_FACE.name", " faceup."],
       ]
     ]
   ],
@@ -1081,8 +1081,8 @@ actions = %{
     ["COND",
       ["AND", ["EQUAL", "$GAME.playerUi.playerN", "player1"], ["NOT_EQUAL", "$STEP_ID", "$GAME.stepId"]],
       [
-        ["GAME_SET_VAL", "stepId", "$STEP_ID"],
-        ["GAME_ADD_MESSAGE", "$PLAYER_N", " set the round step to ", "$GAME.gameDef.steps.$STEP_ID.text", "."]
+        ["SET", "stepId", "$STEP_ID"],
+        ["LOG", "$PLAYER_N", " set the round step to ", "$GAME.gameDef.steps.$STEP_ID.text", "."]
       ],
       true,
       "$GAME"
@@ -1090,17 +1090,17 @@ actions = %{
     ["COND",
       ["AND", ["EQUAL", "$ACTIVE_CARD.rotation", 0], ["EQUAL", "$ACTIVE_CARD.committed", false], "$CARD.inPlay"],
       [
-        ["GAME_SET_VAL", "$ACTIVE_CARD_PATH", "rotation", 90],
-        ["GAME_SET_VAL", "$ACTIVE_CARD_PATH", "exhausted", true],
-        ["GAME_INCREASE_VAL", "playerData", "$ACTIVE_CARD.controller", "willpower", "$ACTIVE_FACE.willpower"],
-        ["GAME_SET_VAL", "PLAYER_N", " committed ", "$ACTIVE_FACE.name", "to the quest."]
+        ["SET", "$ACTIVE_CARD_PATH", "rotation", 90],
+        ["SET", "$ACTIVE_CARD_PATH", "exhausted", true],
+        ["INCREASE_VAL", "playerData", "$ACTIVE_CARD.controller", "willpower", "$ACTIVE_FACE.willpower"],
+        ["SET", "PLAYER_N", " committed ", "$ACTIVE_FACE.name", "to the quest."]
       ],
       ["AND", ["EQUAL", "$ACTIVE_CARD.committed", true], "$CARD.inPlay"],
       [
-        ["GAME_SET_VAL", "$ACTIVE_CARD_PATH", "rotation", 0],
-        ["GAME_SET_VAL", "$ACTIVE_CARD_PATH", "exhausted", false],
-        ["GAME_DECREASE_VAL", "playerData", "$ACTIVE_CARD.controller", "willpower", "$ACTIVE_FACE.willpower"],
-        ["GAME_SET_VAL", "PLAYER_N", " uncommitted ", "$ACTIVE_FACE.name", "to the quest."]
+        ["SET", "$ACTIVE_CARD_PATH", "rotation", 0],
+        ["SET", "$ACTIVE_CARD_PATH", "exhausted", false],
+        ["DECREASE_VAL", "playerData", "$ACTIVE_CARD.controller", "willpower", "$ACTIVE_FACE.willpower"],
+        ["SET", "PLAYER_N", " uncommitted ", "$ACTIVE_FACE.name", "to the quest."]
       ],
       true,
       "$GAME"
@@ -1111,8 +1111,8 @@ actions = %{
     ["COND",
       ["AND", ["EQUAL", "$GAME.playerUi.playerN", "player1"], ["NOT_EQUAL", "$STEP_ID", "$GAME.stepId"]],
       [
-        ["GAME_SET_VAL", "stepId", "$STEP_ID"],
-        ["GAME_ADD_MESSAGE", "$PLAYER_N", " set the round step to ", "$GAME.gameDef.steps.$STEP_ID.text", "."]
+        ["SET", "stepId", "$STEP_ID"],
+        ["LOG", "$PLAYER_N", " set the round step to ", "$GAME.gameDef.steps.$STEP_ID.text", "."]
       ],
       true,
       "$GAME"
@@ -1120,13 +1120,13 @@ actions = %{
     ["COND",
       ["AND", ["EQUAL", "$ACTIVE_CARD.rotation", 0], ["EQUAL", "$ACTIVE_CARD.committed", false], "$CARD.inPlay"],
       [
-        ["GAME_INCREASE_VAL", "playerData", "$ACTIVE_CARD.controller", "willpower", "$ACTIVE_FACE.willpower"],
-        ["GAME_SET_VAL", "PLAYER_N", " committed ", "$ACTIVE_FACE.name", "to the quest without exhausting."]
+        ["INCREASE_VAL", "playerData", "$ACTIVE_CARD.controller", "willpower", "$ACTIVE_FACE.willpower"],
+        ["SET", "PLAYER_N", " committed ", "$ACTIVE_FACE.name", "to the quest without exhausting."]
       ],
       ["AND", ["EQUAL", "$ACTIVE_CARD.committed", true], "$CARD.inPlay"],
       [
-        ["GAME_DECREASE_VAL", "playerData", "$ACTIVE_CARD.controller", "willpower", "$ACTIVE_FACE.willpower"],
-        ["GAME_SET_VAL", "PLAYER_N", " removed ", "$ACTIVE_FACE.name", "from the quest."]
+        ["DECREASE_VAL", "playerData", "$ACTIVE_CARD.controller", "willpower", "$ACTIVE_FACE.willpower"],
+        ["SET", "PLAYER_N", " removed ", "$ACTIVE_FACE.name", "from the quest."]
       ],
       true,
       "$GAME"
@@ -1137,14 +1137,14 @@ actions = %{
       "$CARD.inPlay",
       ["COND",
         ["EQUAL", ["LENGTH", "$GAME.groupById.sharedEncounterDeck.stackIds"], 0],
-        ["GAME_ADD_MESSAGE", "$PLAYER_N", " tried to deal a shadow card but the encounter deck is empty."],
+        ["LOG", "$PLAYER_N", " tried to deal a shadow card but the encounter deck is empty."],
         true,
         [
           ["DEFINE", "$SHADOW_CARD_ID", ["GET_CARD_ID", "sharedEncounterDeck", 0, 0]],
           ["ATTACH_CARD", "$SHADOW_CARD_ID", "$ACTIVE_CARD_ID"],
-          ["GAME_SET_VAL", "cardById", "$SHADOW_CARD_ID", "rotation", -30],
-          ["GAME_SET_VAL", "cardById", "$SHADOW_CARD_ID", "currentSide", "B"],
-          ["GAME_ADD_MESSAGE", "$PLAYER_N", " dealt a shadow card to ", "$ACTIVE_FACE.name", "."]
+          ["SET", "cardById", "$SHADOW_CARD_ID", "rotation", -30],
+          ["SET", "cardById", "$SHADOW_CARD_ID", "currentSide", "B"],
+          ["LOG", "$PLAYER_N", " dealt a shadow card to ", "$ACTIVE_FACE.name", "."]
         ]
       ],
       true,
@@ -1152,8 +1152,8 @@ actions = %{
     ]
   ],
   "target_card" => [
-    ["GAME_SET_VAL", "playerData", "targeting", "$PLAYER_N", "$ACTIVE_CARD_ID", true],
-    ["GAME_ADD_MESSAGE", "$PLAYER_N", " targeted ", "$ACTIVE_FACE.name", "."]
+    ["SET", "playerData", "targeting", "$PLAYER_N", "$ACTIVE_CARD_ID", true],
+    ["LOG", "$PLAYER_N", " targeted ", "$ACTIVE_FACE.name", "."]
   ],
   "victory" => [
     ["MOVE_CARD", "$ACTIVE_CARD_ID", "sharedVictory", 0, 0]
@@ -1168,7 +1168,7 @@ actions = %{
           [
             ["DEFINE", "$CARD", "$GAME.cardById.$CARD_ID"],
             ["DEFINE", "$CURRENT_SIDE", "$CARD.currentSide"],
-            ["GAME_ADD_MESSAGE", "$PLAYER_N", " discarded ", "$CARD.sides.$CURRENT_SIDE.name", "."],
+            ["LOG", "$PLAYER_N", " discarded ", "$CARD.sides.$CURRENT_SIDE.name", "."],
             ["DISCARD", "$CARD_ID"],
           ]
         ]
@@ -1176,7 +1176,7 @@ actions = %{
       true,
       [
         ["DEFINE", "$CURRENT_SIDE", "$ACTIVE_CARD.currentSide"],
-        ["GAME_ADD_MESSAGE", "$PLAYER_N", " discarded ", "$ACTIVE_CARD.sides.$CURRENT_SIDE.name", "."],
+        ["LOG", "$PLAYER_N", " discarded ", "$ACTIVE_CARD.sides.$CURRENT_SIDE.name", "."],
         ["DISCARD_CARD", "$ACTIVE_CARD_ID"],
       ]
     ]
@@ -1185,14 +1185,14 @@ actions = %{
     ["MOVE_CARD", "$ACTIVE_CARD_ID", "$ACTIVE_CARD.deckGroupId", 0, 0],
     ["DEFINE", "$GROUP_ID", "$ACTIVE_CARD.deckGroupId"],
     ["SHUFFLE_GROUP", "$GROUP_ID"],
-    ["GAME_ADD_MESSAGE", "$PLAYER_N", " shuffled ", "$GAME.groupById.$GROUP_ID.name", "."]
+    ["LOG", "$PLAYER_N", " shuffled ", "$GAME.groupById.$GROUP_ID.name", "."]
   ],
   "detach" => [
     ["COND",
       ["GREATER_THAN", "$ACTIVE_CARD.cardIndex", 0],
       [
         ["MOVE_CARD", "$ACTIVE_CARD_ID", "$ACTIVE_CARD.groupId", ["ADD", "$ACTIVE_CARD.stackIndex", 1], 0],
-        ["GAME_ADD_MESSAGE", "$PLAYER_N", " detached ", "$ACTIVE_FACE.name", "."]
+        ["LOG", "$PLAYER_N", " detached ", "$ACTIVE_FACE.name", "."]
       ],
       true,
       "$GAME"
@@ -1203,9 +1203,9 @@ actions = %{
       ["GREATER_THAN", "$ACTIVE_CARD.cardIndex", 0],
       ["COND",
         ["EQUAL", "$ACTIVE_CARD.attachmentDirection", -1],
-        ["GAME_SET_VAL", "cardById", "$ACTIVE_CARD_ID", "attachmentDirection", 1],
+        ["SET", "cardById", "$ACTIVE_CARD_ID", "attachmentDirection", 1],
         true,
-        ["GAME_SET_VAL", "cardById", "$ACTIVE_CARD_ID", "attachmentDirection", -1],
+        ["SET", "cardById", "$ACTIVE_CARD_ID", "attachmentDirection", -1],
       ],
       true,
       "$GAME"
