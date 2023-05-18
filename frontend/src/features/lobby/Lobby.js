@@ -10,12 +10,11 @@ import { PluginsTable } from "./PluginsTable";
 import { PatreonModal } from "../support/PatreonModal";
 import { LobbyButton } from "../../components/basic/LobbyButton";
 import { TermsOfServiceModal } from "./TermsOfServiceModal";
+import { PluginLobby } from "./PluginLobby";
+import { Footer } from "./Footer";
 
 export const Lobby = () => {
   const isLoggedIn = useIsLoggedIn();
-  const myUser = useProfile();
-  const myUserId = myUser?.id;
-  const history = useHistory();
   const [showModal, setShowModal] = useState(null);
   const [showTermsOfService, setShowTermsOfService] = useState(false);
   const [replayId, setReplayId] = useState("");
@@ -57,15 +56,6 @@ export const Lobby = () => {
 
   const plugins = apiPlugins?.data?.data ? apiPlugins.data.data : [];
   console.log("pluginslist",plugins);
-
-  const handleCreateRoomClick = () => {
-    if (isLoggedIn) {
-      if (myUser?.email_confirmed_at) setShowModal("createRoom");
-      else alert("You must confirm your email before you can start a game.")
-    } else {
-      history.push("/login")
-    }
-  }
 
   return (
       <div 
@@ -111,67 +101,13 @@ export const Lobby = () => {
 
         <div className="mx-auto w-full p-2" style={{maxWidth: "600px"}}>
           {selectedPlugin ?
-            <>
-              <div className="text-white text-xl">
-                {selectedPlugin.plugin_name}
-              </div>
-              <div className="flex justify-center w-full" style={{maxWidth: "600px"}}>
-                <div className="w-full h-24 py-2 text-3xl">
-                  <LobbyButton onClick={() => window.open("https://www.youtube.com/watch?v=mshb1EDsnB8&list=PLuyP-hlzlHjd-XADfU-kqJaGpSE9RWHRa&index=1", '_blank')}>
-                    Tutorial
-                  </LobbyButton>
-                </div>
-              </div>
-              
-              <div className="flex justify-center w-full" style={{maxWidth: "600px"}}>
-                <div className="w-full h-24 py-2 text-3xl">
-                  <LobbyButton onClick={() => handleCreateRoomClick()}>
-                    {isLoggedIn ? "Create Room" : "Log in to create a room"}
-                  </LobbyButton>
-                </div>
-              </div>
-              
-              <Announcements/>
-              
-              <div className="mb-6 w-full">
-                <div className="mb-4 w-full">
-                  <LobbyTable selectedPlugin={selectedPlugin} />
-                </div>
-              </div>
-              <CreateRoomModal
-                isOpen={showModal === "createRoom"}
-                isLoggedIn={isLoggedIn}
-                closeModal={() => setShowModal(null)}
-                plugin={selectedPlugin}
-              />
-            </>
+            <PluginLobby selectedPlugin={selectedPlugin}/>
             :
-            <div className="w-full" style={{minHeight: "600px"}}>
-              <div className="text-center text-white text-2xl mb-2">Public Plugins</div>
-              <PluginsTable plugins={plugins} setSelectedPlugin={setSelectedPlugin} />
-
-            </div>
-            
+            <PluginsTable plugins={plugins} setSelectedPlugin={setSelectedPlugin}/>
           }
         </div>
 
-        <div className="mx-auto w-full p-2" style={{maxWidth: "600px"}}>
-          <h3 className="mt-6 font-semibold text-center text-gray-300">About</h3>
-          <div className="max-w-none">
-            <p className="mb-2 text-xs text-gray-300">
-              DragnCards is a free and independent online multiplayer card game platform. 
-              We don't claim intellectual property rights over any content on this site. 
-              Game-related assets visible on DragnCards are not hosted on our platform, 
-              but rather are linked to by plugin developers, who are are responsible for 
-              ensuring their plugin doesn't infringe upon third-party rights. DragnCards 
-              is not endorsed by or affiliated with any game publishers or developers. 
-              Please refer to our{" "}
-              <span className="underline cursor-pointer" onClick={() => setShowTermsOfService(true)}>
-                Terms of Service and Privacy Policy
-              </span> for more info.
-            </p>
-          </div>
-        </div>
+        <Footer setShowTermsOfService={setShowTermsOfService}/>
 
         <TermsOfServiceModal
           isOpen={showTermsOfService}
@@ -183,12 +119,6 @@ export const Lobby = () => {
           isLoggedIn={isLoggedIn}
           closeModal={() => setShowModal(null)}
         />
-
-        {/* <div className="w-full mb-4 lg:w-1/4 xl:w-2/6">
-          <div className="flex items-end h-full">
-            <Chat chatBroadcast={chatBroadcast} messages={messages} setTyping={setTyping} />
-          </div>
-        </div> */}
       </div>
   );
 };

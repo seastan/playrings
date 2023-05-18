@@ -12,7 +12,9 @@ defmodule DragnCardsWeb.PluginsView do
         version,
         num_favorites,
         public,
-        updated_at
+        updated_at,
+        announcements,
+        tutorial_url
       } = plugin
       %{
         id: plugin_id,
@@ -23,6 +25,8 @@ defmodule DragnCardsWeb.PluginsView do
         author_id: author_id,
         author_alias: author_alias,
         version: version,
+        announcements: announcements,
+        tutorial_url: tutorial_url
       }
     end)}
     #%{data: render_many(plugins, PluginsView, "plugin.json")} # This wasn't working for some reason

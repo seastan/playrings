@@ -31,7 +31,9 @@ defmodule DragnCards.Plugins do
       p.version,
       p.num_favorites,
       p.public,
-      p.updated_at
+      p.updated_at,
+      p.game_def["announcements"],
+      p.game_def["tutorialUrl"]
     }
     Repo.all(query)
   end

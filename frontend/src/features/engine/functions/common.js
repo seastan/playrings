@@ -10,6 +10,24 @@ export const defaultdict = (defaultObj, defaultVal) => {
   });
 }
 
+export const getRandomIntInclusive = (min, max) => {
+  min = Math.ceil(min);
+  max = Math.floor(max);
+  return Math.floor(Math.random() * (max - min + 1) + min); //The maximum is inclusive and the minimum is inclusive
+}
+
+export const getParentCardsInGroup = (game, groupId) => {
+  const stackIds = game.groupById?.[groupId]?.stackIds || [];
+  const parentCards = [];
+  for (var stackId of stackIds) {
+    const cardIds = game.stackById[stackId].cardIds;
+    const parentCardId = cardIds[0];
+    const parentCard = game.cardById[parentCardId];
+    parentCards.push(parentCard);
+  }
+  return parentCards;
+}
+
 export const getVisibleSide = (card, playerN) => {
   if (!card) return null;
   const currentSide = card.currentSide;

@@ -1,8 +1,6 @@
 {
   "pluginName": "LotR LCG",
-  "lobby": {
-    "tutorialUrl": "https://www.youtube.com/watch?v=mshb1EDsnB8&list=PLuyP-hlzlHjd-XADfU-kqJaGpSE9RWHRa&index=1"
-  },
+  "tutorialUrl": "https://www.youtube.com/watch?v=mshb1EDsnB8&list=PLuyP-hlzlHjd-XADfU-kqJaGpSE9RWHRa&index=1",
   "minPlayers": 1,
   "maxPlayers": 4,
   "playerProperties": {

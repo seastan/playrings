@@ -50,7 +50,7 @@ const stringTo2DArray = (inputString) => {
   return array2D;
 }
 
-export const EditPluginModal = ({ plugin, isOpen, closeModal }) => {
+export const EditPluginModal = ({ plugin, isOpen, closeModal, doFetchHash}) => {
   console.log("Rendering EditPluginModal", plugin)
   const { authToken, renewToken, setAuthAndRenewToken } = useAuth();
   const authOptions = useMemo(
@@ -84,14 +84,6 @@ export const EditPluginModal = ({ plugin, isOpen, closeModal }) => {
       setErrorMessage("Invalid plugin name");
       return;
     }
-/*     if (!inputs.gameDef) {
-      setErrorMessage("No game definition specified.");
-      return;
-    }
-    if (!inputs.cardDb) {
-      setErrorMessage("No card database specified.");
-      return;
-    } */
     const updateData = {
       plugin: {
         id: plugin.id,
@@ -100,7 +92,6 @@ export const EditPluginModal = ({ plugin, isOpen, closeModal }) => {
         public: inputs.public || false,
       },
     };
-    //const res = await axios.post("/be/api/v1/profile/update", data);
 
     setSuccessMessage("");
     setErrorMessage("");
@@ -109,7 +100,8 @@ export const EditPluginModal = ({ plugin, isOpen, closeModal }) => {
     if (
       res.status === 200
     ) {
-      setSuccessMessage("Plugin created.");
+      doFetchHash();
+      setSuccessMessage("Plugin updated.");
       setErrorMessage("");
       setLoadingMessage("");
       closeModal();

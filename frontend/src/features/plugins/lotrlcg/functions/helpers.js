@@ -5,11 +5,7 @@ import store from "../../../../store";
 
 const cardDb = [];
 
-export const getRandomIntInclusive = (min, max) => {
-  min = Math.ceil(min);
-  max = Math.floor(max);
-  return Math.floor(Math.random() * (max - min + 1) + min); //The maximum is inclusive and the minimum is inclusive
-}
+
 
 export const shuffle = (array) => {
   var m = array.length, t, i;
@@ -30,26 +26,6 @@ export const getFlippedCard = (card) => {
 }
 
 
-export const getPlayerN = (playerInfo, id) => {
-  if (!playerInfo) return null;
-  var playerN = null;
-  Object.keys(playerInfo).forEach(playerI => {
-    if (playerInfo[playerI]?.id === id) playerN = playerI;
-  })
-  return playerN;
-}
-
-export const getParentCardsInGroup = (game, groupId) => {
-  const stackIds = game.groupById?.[groupId]?.stackIds || [];
-  const parentCards = [];
-  for (var stackId of stackIds) {
-    const cardIds = game.stackById[stackId].cardIds;
-    const parentCardId = cardIds[0];
-    const parentCard = game.cardById[parentCardId];
-    parentCards.push(parentCard);
-  }
-  return parentCards;
-}
 
 export const getGroupByStackId = (groupById, stackId) => {
   const groupIds = Object.keys(groupById);

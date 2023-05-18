@@ -16,7 +16,6 @@ import { TooltipModal } from "./TooltipModal";
 import { setMouseXY, setDropdownMenu, setScreenLeftRight, setTouchAction, setActiveCardId, setShowModal } from "../store/playerUiSlice";
 import { useDispatch, useSelector } from "react-redux";
 import useProfile from "../../hooks/useProfile";
-import { onLoad } from "../plugins/lotrlcg/functions/helpers";
 import BroadcastContext from "../../contexts/BroadcastContext";
 import { DeckbuilderModal } from "./DeckbuilderModal";
 import { PatreonModal } from "../support/PatreonModal";
@@ -43,7 +42,7 @@ export const Table = React.memo(() => {
     dispatch(setTouchAction(null));
   }
 
-  if (!loaded && isHost) onLoad(options, redoStepsExist, gameBroadcast, chatBroadcast, dispatch);
+  //if (!loaded && isHost) onLoad(options, redoStepsExist, gameBroadcast, chatBroadcast, dispatch);
 
   useEffect(() => {
     const handleMouseDown = (event) => {

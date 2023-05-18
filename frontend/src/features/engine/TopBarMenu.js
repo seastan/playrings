@@ -3,8 +3,6 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useHistory } from "react-router-dom";
 import useProfile from "../../hooks/useProfile";
 import store from "../../store";
-import { getCardByGroupIdStackIndexCardIndex, getSideAName, loadRingsDb, processLoadList, processPostLoad, shuffle } from "../plugins/lotrlcg/functions/helpers";
-import { loadDeckFromXmlText, getRandomIntInclusive } from "../plugins/lotrlcg/functions/helpers";
 import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { setZoomFactor, setLoaded, setRandomNumBetween, setShowModal, setTouchAction, setTouchMode } from "../store/playerUiSlice";
@@ -13,6 +11,9 @@ import BroadcastContext from "../../contexts/BroadcastContext";
 import { useGameDefinition } from "./hooks/useGameDefinition";
 import { useDoActionList } from "./hooks/useDoActionList";
 import { useSiteL10n } from "../../hooks/useSiteL10n";
+import { getRandomIntInclusive } from "./functions/common";
+import { useLoadList } from "./hooks/useLoadList";
+
 
 export const TopBarMenu = React.memo(({}) => {
   const {gameBroadcast, chatBroadcast} = useContext(BroadcastContext);
@@ -23,6 +24,7 @@ export const TopBarMenu = React.memo(({}) => {
   const siteL10n = useSiteL10n();
   const gameDef = useGameDefinition();
   const doActionList = useDoActionList();
+  const loadList = useLoadList();
 
   const createdBy = useSelector(state => state.gameUi?.createdBy);
   const options = useSelector(state => state.gameUi?.game?.options);
@@ -105,7 +107,7 @@ export const TopBarMenu = React.memo(({}) => {
       const newOptions = {...options, ringsDbInfo: newRingsDbInfo, loaded: true}
       //gameBroadcast("game_action", {action: "update_values", options: {updates: [["options", newOptions]]}});
       const gameUi = store.getState()?.gameUi;
-      loadRingsDb(gameUi, playerN, ringsDbDomain, ringsDbType, ringsDbId, gameBroadcast, chatBroadcast, dispatch);
+      //loadRingsDb(gameUi, playerN, ringsDbDomain, ringsDbType, ringsDbId, gameBroadcast, chatBroadcast, dispatch);
     } else if (data.action === "unload_my_deck") {
       const actionList = [
         ["FOR_EACH_KEY_VAL", "$CARD_ID", "$CARD", "$CARD_BY_ID", [
@@ -181,17 +183,6 @@ export const TopBarMenu = React.memo(({}) => {
     inputFileCustom.current.click();
   }
 
-  const loadDeck = async(event) => {
-    event.preventDefault();
-    const reader = new FileReader();
-    reader.onload = async (event) => { 
-      const xmlText = (event.target.result)
-      loadDeckFromXmlText(xmlText, playerN, gameBroadcast, chatBroadcast, options["privacyType"]);
-    }
-    reader.readAsText(event.target.files[0]);
-    inputFileDeck.current.value = "";
-  }
-
   const uploadGameAsJson = async(event) => {
     event.preventDefault();
     const reader = new FileReader();
@@ -240,11 +231,8 @@ export const TopBarMenu = React.memo(({}) => {
     event.preventDefault();
     const reader = new FileReader();
     reader.onload = async (event) => {
-      var loadList = JSON.parse(event.target.result);
-      loadList = processLoadList(loadList, playerN);
-      gameBroadcast("game_action", {action: "load_cards", options: {load_list: loadList}});
-      chatBroadcast("game_update",{message: "loaded a deck."});
-      processPostLoad(null, loadList, playerN, gameBroadcast, chatBroadcast);
+      var list = JSON.parse(event.target.result);
+      loadList(list);
     }
     reader.readAsText(event.target.files[0]);
     inputFileCustom.current.value = "";

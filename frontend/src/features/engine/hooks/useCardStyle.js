@@ -13,6 +13,8 @@ export const useCardStyle = (cardId, isDragging) => {
     const cardScaleFactor = useCardScaleFactor();
     const cardVisibleFace = useVisibleFace(cardId);
     const zIndex = useCardZIndex(cardId);
+    const isActive = useSelector(state => {return state?.playerUi?.activeCardId === cardId});
+    const cardBorderColor = useSelector(state => state?.gameUi?.game?.cardById[cardId]?.borderColor);
 
     var [height, width] = [cardVisibleFace.height, cardVisibleFace.width];
     if (!height || !width) {
@@ -40,7 +42,10 @@ export const useCardStyle = (cardId, isDragging) => {
         transitionProperty: "transform",
         MozBoxShadow: isDragging ? '10px 10px 30px 20px rgba(0, 0, 0, 0.3)' : null,
         WebkitBoxShadow: isDragging ? '10px 10px 30px 20px rgba(0, 0, 0, 0.3)': null,
-        boxShadow: isDragging ? '10px 10px 30px 20px rgba(0, 0, 0, 0.3)': null,
+        boxShadow: isDragging ? '10px 10px 30px 20px rgba(0, 0, 0, 0.3)': null,  
+        '--tw-shadow': cardBorderColor ? '0 0 10px red' : null,
+        boxShadow: cardBorderColor ? 'var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)' : null,
+      
     }
     return style;
 }

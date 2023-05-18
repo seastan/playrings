@@ -14,7 +14,7 @@ import useAuth from "../../hooks/useAuth";
 import { LobbyButton } from "../../components/basic/LobbyButton";
 
 //const lobbyButtonClass = 
-const iconButtonClass = "cursor-pointer hover:bg-white hover:text-black h-full w-full flex items-center justify-center text-white no-underline select-none"
+const iconButtonClass = "cursor-pointer hover:bg-white hover:text-black h-full w-full m-2 rounded flex items-center justify-center text-white no-underline select-none"
 
 const MyPluginEntry = ({plugin, setSelectedPlugin, forceUpdate, index}) => {
   const siteL10n = useSiteL10n();
@@ -40,16 +40,16 @@ const MyPluginEntry = ({plugin, setSelectedPlugin, forceUpdate, index}) => {
     }
   }
   return(
-    <div className={"relative w-full p-4 text-white "+((index % 2 === 0) ? "bg-gray-700" : "bg-gray-800")}>
+    <div className={"relative w-full p-4 my-2 rounded-lg text-white "+((index % 2 === 0) ? "bg-gray-700" : "bg-gray-800")}>
       <h1>{plugin.name}</h1>
       <div className="text-xs">Last update: {moment.utc(plugin.updated_at).local().format("YYYY-MM-DD HH:mm:ss")}</div>
       <div className={plugin.public ? "text-xs text-green-500" : "text-xs text-red-500" }>{plugin.public ? "Public" : "Private"}</div>
-      <div className="absolute top-0" style={{height: "30px", width: "30px", right: "30px"}}>
+      <div className="absolute top-0" style={{height: "30px", width: "30px", right: "45px"}}>
         <a className={iconButtonClass} target="_blank" onClick={() => handleEditClick()}>
           <FontAwesomeIcon className="" icon={faEdit}/>
         </a>
       </div>
-      <div className="absolute top-0" style={{height: "30px", width: "30px", right: "0px"}}>
+      <div className="absolute top-0" style={{height: "30px", width: "30px", right: "15px"}}>
         <a className={iconButtonClass} target="_blank" onClick={() => handleDeleteClick()}>
           <FontAwesomeIcon className="" icon={faTrash}/>
         </a>
@@ -115,6 +115,7 @@ export const MyPlugins = () => {
         plugin={selectedPlugin}
         isOpen={selectedPlugin}
         closeModal={() => {setShowNewModal(false); setSelectedPlugin(null)}}
+        doFetchHash={doFetchHash}
       />}
     </div>
   );

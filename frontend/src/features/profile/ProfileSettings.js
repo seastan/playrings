@@ -101,7 +101,7 @@ export const ProfileSettings = () => {
   return (
     <Container>
       <div className="bg-gray-100 p-4 rounded max-w-xl shadow">
-      <h1 className="font-semibold mb-4 text-black">Customization</h1>
+      <h1 className="font-semibold mb-4 text-black">Settings</h1>
       <form action="POST" onSubmit={handleSubmit}>
         <fieldset>
           <div className="mb-4">
@@ -114,45 +114,9 @@ export const ProfileSettings = () => {
               onChange={handleInputChange}
               value={inputs.language || "English"}>
               <option value="English">English</option>
-              <option value="English_HD">English (High Resolution)</option>
               <option value="French">French</option>
               <option value="Spanish">Spanish</option>
             </select>
-            {showResolutionMessage && <div className="alert alert-danger mt-4">High resolution images are only available to certain Patreon supporters.</div>}
-            <label className="block text-sm font-bold mb-2 mt-4">
-              Background image url
-            </label>
-            <input
-              disabled={user.supporter_level < required_support_level}
-              name="background_url"
-              className="form-control w-full mb-2"
-              onChange={handleInputChange}
-              value={inputs.background_url || ""}
-            />
-          </div>
-          <div className="mb-4">
-            <label className="block text-sm font-bold mb-2">
-              Player card back image url
-            </label>
-            <input
-              disabled={user.supporter_level < required_support_level}
-              name="player_back_url"
-              className="form-control w-full"
-              onChange={handleInputChange}
-              value={inputs.player_back_url || ""}
-            />
-          </div>
-          <div className="mb-4">
-            <label className="block text-sm font-bold mb-2">
-              Encounter card back image url
-            </label>
-            <input
-              disabled={user.supporter_level < required_support_level}
-              name="encounter_back_url"
-              className="form-control w-full"
-              onChange={handleInputChange}
-              value={inputs.encounter_back_url || ""}
-            />
           </div>
           <div className="flex items-center justify-between">
               <Button isSubmit isPrimary className="mx-2">

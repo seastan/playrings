@@ -3,10 +3,19 @@ import { useDispatch, useSelector } from 'react-redux';
 import RoomGame from "./RoomGame";
 import useProfile from "../../hooks/useProfile";
 import { setPlayerN } from "../store/playerUiSlice";
-import { getPlayerN } from "../plugins/lotrlcg/functions/helpers";
 import BroadcastContext from "../../contexts/BroadcastContext";
 import { usePlugin } from "./hooks/usePlugin";
 import { PluginProvider } from "../../contexts/PluginContext";
+
+
+const getPlayerN = (playerInfo, id) => {
+  if (!playerInfo) return null;
+  var playerN = null;
+  Object.keys(playerInfo).forEach(playerI => {
+    if (playerInfo[playerI]?.id === id) playerN = playerI;
+  })
+  return playerN;
+}
 
 export const RoomProviders = ({ gameBroadcast, chatBroadcast }) => {
   console.log("Rendering RoomProviders");
