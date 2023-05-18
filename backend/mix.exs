@@ -35,8 +35,6 @@ defmodule DragnCards.MixProject do
     [
       {:phoenix, "~> 1.6.11"},
       {:phoenix_pubsub, "~> 2.0.0"},
-      {:phoenix, "~> 1.6.11"},
-      {:phoenix_pubsub, "~> 2.0.0"},
       {:phoenix_ecto, "~> 4.0"},
       {:ecto_sql, "~> 3.4.2"},
       {:postgrex, ">= 0.0.0"},
