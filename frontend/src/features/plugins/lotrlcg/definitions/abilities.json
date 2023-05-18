@@ -1,9 +1,29 @@
+[
+    {
+        "type": "onChange", 
+        "path": "$THIS_CARD_PATH",
+        "before": ["NOT", "$THIS_CARD.inPlay"], 
+        "after": ["$THIS_CARD.inPlay"], 
+        "then": [
+            ["FOR_EACH_KEY_VAL", "$CARD_ID", "$CARD", "$CARD_BY_ID", 
+                ["COND", 
+                    ["EQUAL", "$CARD.sides.A.name", "Strider"], 
+                    [
+                        ["MOVE_CARD", "$CARD_ID", ["JOIN_STRING", "$CARD.controller", "Eliminated"], 0, 0],
+                        ["GAME_ADD_MESSAGE", "Aragorn was removed from the game."]
+                    ]
+                ]
+            ]
+        ]
+    }
+]
+
 {
     "51223bd0-ffd1-11df-a976-0801200c9026": {
         "label": "Steward of Gondor",
         "A" : [
             {
-                "trigger": [["groupType","play"],["exhausted",false]],
+                "trigger": [["layoutType","play"],["exhausted",false]],
                 "results": [
                     {
                         "type": "card_action",
@@ -25,7 +45,7 @@
         "label": "Henamarth Riversong",
         "A" : [
             {
-                "trigger": [["groupType","play"],["exhausted",false]],
+                "trigger": [["layoutType","play"],["exhausted",false]],
                 "results": [
                     {
                         "type": "card_action",
@@ -47,7 +67,7 @@
         "label": "Unexpected Courage",
         "A" : [
             {
-                "trigger": [["groupType","play"],["exhausted",false]],
+                "trigger": [["layoutType","play"],["exhausted",false]],
                 "results": [
                     {
                         "type": "card_action",
@@ -69,7 +89,7 @@
         "label": "Fast Hitch",
         "A" : [
             {
-                "trigger": [["groupType","play"],["exhausted",false]],
+                "trigger": [["layoutType","play"],["exhausted",false]],
                 "results": [
                     {
                         "type": "card_action",
@@ -91,7 +111,7 @@
         "label": "Vilya",
         "A" : [
             {
-                "trigger": [["groupType","play"],["exhausted",false]],
+                "trigger": [["layoutType","play"],["exhausted",false]],
                 "results": [
                     {
                         "type": "card_action",
@@ -125,7 +145,7 @@
         "label": "Daeron's Runes",
         "A" : [
             {
-                "trigger": [["groupType","hand"]],
+                "trigger": [["layoutType","hand"]],
                 "results": [
                     {
                         "type": "card_action",
@@ -157,7 +177,7 @@
         "label": "Northern Tracker",
         "A" : [
             {
-                "trigger": [["groupType","play"],["committed",true]],
+                "trigger": [["layoutType","play"],["committed",true]],
                 "results": [
                     {
                         "type": "card_action",
@@ -173,7 +193,7 @@
         "label": "Elven-light",
         "A" : [
             {
-                "trigger": [["groupType","discard"]],
+                "trigger": [["layoutType","discard"]],
                 "results": [
                     {
                         "type": "card_action",
@@ -200,7 +220,7 @@
         "label": "Self Preservation",
         "A" : [
             {
-                "trigger": [["groupType","play"],["exhausted",false]],
+                "trigger": [["layoutType","play"],["exhausted",false]],
                 "results": [
                     {
                         "type": "card_action",
@@ -222,7 +242,7 @@
         "label": "Imladris Stargazer",
         "A" : [
             {
-                "trigger": [["groupType","play"],["exhausted",false]],
+                "trigger": [["layoutType","play"],["exhausted",false]],
                 "results": [
                     {
                         "type": "card_action",
@@ -247,7 +267,7 @@
         "label": "Master of the Forge",
         "A" : [
             {
-                "trigger": [["groupType","play"],["exhausted",false]],
+                "trigger": [["layoutType","play"],["exhausted",false]],
                 "results": [
                     {
                         "type": "card_action",

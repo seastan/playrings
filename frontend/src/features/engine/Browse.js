@@ -1,15 +1,17 @@
 import React, { useContext, useState } from "react";
 import { useSelector, useDispatch } from 'react-redux';
 import { Stacks } from "./Stacks";
-import { GROUPSINFO } from "../plugins/lotrlcg/definitions/constants";
-import { useBrowseTopN } from "./functions/useBrowseTopN";
-import { getParentCardsInGroup } from "../plugins/lotrlcg/functions/helpers";
+import { useBrowseTopN } from "./hooks/useBrowseTopN";
 import { setValues } from "../store/gameUiSlice";
 import { faBars } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { setBrowseGroupId, setDropdownMenuObj, setTyping } from "../store/playerUiSlice";
-import { useGameL10n } from "../../hooks/useGameL10n";
+import { setBrowseGroupId, setDropdownMenu, setTyping } from "../store/playerUiSlice";
+import { useGameL10n } from "./hooks/useGameL10n";
 import BroadcastContext from "../../contexts/BroadcastContext";
+import { useGameDefinition } from "./hooks/useGameDefinition";
+import { useDoActionList } from "./hooks/useDoActionList";
+import { useLayout } from "./hooks/useLayout";
+import { getParentCardsInGroup } from "./functions/common";
 
 const isNormalInteger = (str) => {
   var n = Math.floor(Number(str));
@@ -20,27 +22,44 @@ export const Browse = React.memo(({}) => {
   const {gameBroadcast, chatBroadcast} = useContext(BroadcastContext);
   const dispatch = useDispatch();
   const l10n = useGameL10n();
+  const gameDef = useGameDefinition();
   const playerN = useSelector(state => state?.playerUi?.playerN);
   const groupId = useSelector(state => state?.playerUi?.browseGroup?.id);
   const browseGroupTopN = useSelector(state => state?.playerUi?.browseGroup?.topN);
   const group = useSelector(state => state?.gameUi?.game?.groupById?.[groupId]);
-  const groupType = group["type"];
+  const layout = useLayout();
+  var region = layout?.browse;
+  const browseWidth = region.width;
+  const regionWidthInt = parseInt(browseWidth.substring(0, browseWidth.length - 1))
+  region = {...region, groupId: groupId, width: `${regionWidthInt*0.7}%`}
   const game = useSelector(state => state?.gameUi?.game);
   const parentCards = getParentCardsInGroup(game, groupId);
-  const [selectedCardType, setSelectedCardType] = useState('All');
-  const [selectedCardName, setSelectedCardName] = useState('');
-  const stackIds = group["stackIds"];
+  const [searchForProperty, setSearchForProperty] = useState('All');
+  const [searchForText, setSearchForText] = useState('');
+  const stackIds = group?.["stackIds"] || [];
   const numStacks = stackIds.length;
-  const browseTopN = useBrowseTopN;
+  const browseTopN = useBrowseTopN();
+  const doActionList = useDoActionList();
+  var filterButtons = gameDef?.browse?.filterValuesSideA;
+  filterButtons = ["All", ...filterButtons, "Other"];
+  var pairedFilterButtons = filterButtons?.reduce((acc, curr, i) => {
+    if (i % 2 === 0) {
+      acc.push([curr, filterButtons[i + 1]]);
+    }
+    return acc;
+  }, [])
+
+  if (!group) return;
+  console.log("Rendering Browse", groupId, region)
 
   const handleBarsClick = (event) => {
     event.stopPropagation();
-    const dropdownMenuObj = {
+    const dropdownMenu = {
         type: "group",
         group: group,
-        title: GROUPSINFO[groupId].name
+        title: gameDef.groups[groupId].name
     }
-    dispatch(setDropdownMenuObj(dropdownMenuObj));
+    dispatch(setDropdownMenu(dropdownMenu));
   }
 
   // This allows the deck to be hidden instantly upon close (by hiding the top card)
@@ -50,12 +69,11 @@ export const Browse = React.memo(({}) => {
     const stackId0 = stackIds[0];
     const cardIds = game["stackById"][stackId0]["cardIds"];
     const cardId0 = cardIds[0];
-    const updates = [["game","cardById",cardId0,"peeking",playerN,false]]
+    const updates = [["game", "cardById", cardId0, "peeking", playerN, false]];
     dispatch(setValues({updates: updates})) 
   }
 
   const handleCloseClick = (option) => {
-    chatBroadcast("game_update",{message: "closed "+GROUPSINFO[groupId].name+"."})
     if (playerN) {
       if (option === "shuffle") closeAndShuffle();
       else if (option === "order") closeAndOrder();
@@ -65,96 +83,110 @@ export const Browse = React.memo(({}) => {
   }
 
   const closeAndShuffle = () => {
-    gameBroadcast("game_action", {action: "peek_at", options: {stack_ids: stackIds, value: false}})
-    gameBroadcast("game_action", {action: "shuffle_group", options: {group_id: groupId}})
-    chatBroadcast("game_update",{message: "shuffled "+GROUPSINFO[groupId].name+"."})
-    if (groupType === "deck") stopPeekingTopCard();
+    const actionList = [
+      ["FOR_EACH_VAL", "$STACK_ID", `$GROUP_BY_ID.${groupId}.stackIds`,
+        [
+          ["DEFINE", "$CARD_ID", "$STACK_BY_ID.$STACK_ID.cardIds.[0]"],
+          ["GAME_SET_VAL", "/cardById/$CARD_ID/peeking/" + playerN, false]
+        ]
+      ],
+      ["SHUFFLE_GROUP", groupId],
+      ["GAME_ADD_MESSAGE", "$PLAYER_N", " closed ", group.name+"."],
+      ["GAME_ADD_MESSAGE", "$PLAYER_N", " shuffled ", group.name+"."],
+    ];
+    doActionList(actionList);
+    if (group?.onCardEnter?.currentSide === "B") stopPeekingTopCard();
   }
 
   const closeAndOrder = () => {
-    gameBroadcast("game_action", {action: "peek_at", options: {stack_ids: stackIds, value: false}})
-    if (groupType === "deck") stopPeekingTopCard();
+    const actionList = [
+      ["FOR_EACH_VAL", "$STACK_ID", `$GROUP_BY_ID.${groupId}.stackIds`,
+        [
+          ["DEFINE", "$CARD_ID", "$STACK_BY_ID.$STACK_ID.cardIds.[0]"],
+          ["GAME_SET_VAL", "/cardById/$CARD_ID/peeking", playerN, false]
+        ]
+      ],
+      ["SHUFFLE_GROUP", groupId],
+      ["GAME_ADD_MESSAGE", "$PLAYER_N", " closed ", group.name+"."],
+    ];
+    doActionList(actionList);
+    if (group?.onCardEnter?.currentSide === "B") stopPeekingTopCard();
   }
 
   const closeAndPeeking = () => {
-    chatBroadcast("game_update",{message: "is still peeking at "+GROUPSINFO[groupId].name+"."})
+    const actionList = [
+      ["GAME_ADD_MESSAGE", "$PLAYER_N", " is still peeking at ", group.name+"."],
+    ];
+    doActionList(actionList);
   }
 
   const handleSelectClick = (event) => {
     const topNstr = event.target.value;
-    browseTopN(
-      topNstr, 
-      group,
-      gameBroadcast, 
-      chatBroadcast,
-      dispatch,
-    )
+    browseTopN(group.id, topNstr)
   }
 
   const handleInputTyping = (event) => {
-    setSelectedCardName(event.target.value);
+    setSearchForText(event.target.value);
   }
 
   // If browseGroupTopN not set, or equal to "All" or "None", show all stacks
   var browseGroupTopNint = isNormalInteger(browseGroupTopN) ? parseInt(browseGroupTopN) : numStacks;
   var filteredStackIndices = [...Array(browseGroupTopNint).keys()];
   // Filter by selected card type
-  if (selectedCardType === "Other") 
-      filteredStackIndices = filteredStackIndices.filter((s,i) => (
-        stackIds[s] && 
-        parentCards[s]["sides"]["A"]["type"] !== "Enemy" &&
-        parentCards[s]["sides"]["A"]["type"] !== "Location" &&
-        parentCards[s]["sides"]["A"]["type"] !== "Treachery" &&
-        parentCards[s]["sides"]["A"]["type"] !== "Ally" &&
-        parentCards[s]["sides"]["A"]["type"] !== "Attachment" &&
-        parentCards[s]["sides"]["A"]["type"] !== "Event" &&
-        (parentCards[s]["peeking"][playerN] || parentCards[s]["currentSide"] === "A") 
-  ));
-  else if (selectedCardType !== "All") 
-    filteredStackIndices = filteredStackIndices.filter((s,i) => (
-      stackIds[s] && 
-      parentCards[s]["sides"]["A"]["type"] === selectedCardType &&
-      (parentCards[s]["peeking"][playerN] || parentCards[s]["currentSide"] === "A") 
+  if (searchForProperty === "Other") {
+      filteredStackIndices = filteredStackIndices.filter((stackIndex) => {
+        const stackId = stackIds[stackIndex];
+        const propertyValue = parentCards[stackIndex]?.sides?.A?.[gameDef?.browse?.filterPropertySideA];
+        const isValueOther = !gameDef?.browse?.filterValuesSideA?.includes(propertyValue);
+        const isPeekingOrCurrentSideA = (
+          parentCards[stackIndex].peeking[playerN] || 
+          parentCards[stackIndex].currentSide === "A"
+        );
+        return stackId && isPeekingOrCurrentSideA && isValueOther
+      });
+  } else if (searchForProperty !== "All") 
+    filteredStackIndices = filteredStackIndices.filter((stackIndex) => (
+      stackIds[stackIndex] && 
+      parentCards[stackIndex]?.sides?.A?.[gameDef?.browse?.filterPropertySideA] === searchForProperty &&
+      (parentCards[stackIndex]?.peeking?.[playerN] || parentCards[stackIndex]?.currentSide === "A") 
   ));  
-  console.log(filteredStackIndices)
-  // Filter by card name
-  if (selectedCardName !== "")
-    filteredStackIndices = filteredStackIndices.filter((s,i) => (
-      stackIds[s] && 
-      (
-        parentCards[s]["sides"]["A"]["name"].toLowerCase().includes(selectedCardName.toLowerCase()) ||
-        parentCards[s]["sides"]["A"]["keywords"].toLowerCase().includes(selectedCardName.toLowerCase()) ||
-        parentCards[s]["sides"]["A"]["text"].toLowerCase().includes(selectedCardName.toLowerCase())
-      ) &&
-      (parentCards[s]["peeking"][playerN] || parentCards[s]["currentSide"] === "A")
-    ));
+
+  if (searchForText) {
+    const properties = gameDef.browse.textPropertiesSideA;
+    filteredStackIndices = filteredStackIndices.filter((stackIndex) => {
+      const stackId = stackIds[stackIndex];
+      const card = parentCards[stackIndex]?.sides?.A;
+      const isCardMatching = properties.some((prop) =>
+        card[prop].toLowerCase().includes(searchForText.toLowerCase())
+      );
+      const isPeekingOrCurrentSideA = (
+        parentCards[stackIndex].peeking[playerN] || 
+        parentCards[stackIndex].currentSide === "A"
+      );
+      return stackId && isCardMatching && isPeekingOrCurrentSideA;
+    });
+  }
 
   return(
-    <div className="relative h-full w-full">
-      <div
-        className="relative text-center h-full text-gray-500 float-left select-none"
-        style={{width:"5vh"}}>
-        <div>
-          {group.type !== "play" && <FontAwesomeIcon onClick={(event) => handleBarsClick(event)}  className="hover:text-white" icon={faBars}/>}
-          <span 
-            className="absolute mt-1" 
-            style={{top: "50%", left: "50%", transform: `translate(-50%, 0%) rotate(90deg)`, whiteSpace: "nowrap"}}>
-              {l10n(GROUPSINFO[group.id].tablename)}
-          </span>
-        </div>
-      </div> 
+    <div className="absolute bg-gray-700 w-full" style={{left: region.left, width: browseWidth, top: region.top, height: region.height, zIndex: 1e6}}>
+      <strong className="absolute bg-gray-600 w-full text-gray-300 flex justify-center items-center" style={{top:"-20px", height: "20px"}}>
+        <FontAwesomeIcon onClick={(event) => handleBarsClick(event)}  className="cursor-pointer hover:text-white" icon={faBars}/>
+        <span className="px-2">{l10n(gameDef.groups[group.id].name)}</span>
+        <span className="absolute left-0">(Top)</span>
+      </strong>
+      
 
-      <div className="relative h-full float-left " style={{width: "calc(100% - 60vh)"}}>
+      <div className="h-full float-left " style={{width: "75%"}}>
         <Stacks
           gameBroadcast={gameBroadcast}
           chatBroadcast={chatBroadcast}
           groupId={groupId}
-          groupType={"hand"}
+          region={region}
           selectedStackIndices={filteredStackIndices}
         />
       </div>
-
-      <div className="relative h-full float-left p-2 select-none" style={{width:"35vh"}}>
+ 
+      <div className="absolute h-full p-2 select-none" style={{left:"70%", width:"20%"}}>
             
         <div className="h-1/5 w-full">
           <div className="h-full float-left w-1/2 px-0.5">
@@ -183,19 +215,14 @@ export const Browse = React.memo(({}) => {
             />
           </div>
         </div>
-      
-        {[["All", "Ally"],
-          ["Enemy", "Attachment"],
-          ["Location", "Event"],
-          ["Treachery", "Other"],
-        ].map((row, rowIndex) => {
+        {pairedFilterButtons.map((row, rowIndex) => {
           return(
             <div className="h-1/5 w-full text-white text-center">
               {row.map((item, itemIndex) => {
                 return(
                   <div className="h-full float-left w-1/2 p-0.5">
-                    <div className={"h-full w-full flex items-center justify-center hover:bg-gray-600 rounded" + (selectedCardType === item ? " bg-red-800" : " bg-gray-800")}
-                      onClick={() => setSelectedCardType(item)}>    
+                    <div className={"h-full w-full flex items-center justify-center hover:bg-gray-600 rounded" + (searchForProperty === item ? " bg-red-800" : " bg-gray-800")}
+                      onClick={() => setSearchForProperty(item)}>    
                       {l10n(row[itemIndex])}
                     </div>
                   </div>
@@ -206,7 +233,7 @@ export const Browse = React.memo(({}) => {
         }
       </div>
 
-      <div className="relative h-full float-left p-3 select-none" style={{width:"20vh"}}>
+      <div className="absolute h-full float-left p-3 select-none" style={{left: "90%", width: "10%"}}>
         <div className="h-1/4 w-full text-white text-center">
           <div className="h-full float-left w-full p-0.5">
             <div className="h-full w-full">   

@@ -6,11 +6,12 @@ defmodule DragnCardsGame.GameUIServer do
   @timeout :timer.minutes(60)
 
   require Logger
-  alias DragnCardsGame.{Game, Card, GameUI, GameRegistry, Groups, User, Stack, Tokens}
+  alias DragnCardsGame.{Game, Card, GameUI, GameRegistry, Groups, User, Stack, Tokens, PlayerInfo}
+  alias DragnCards.Users
 
   def is_player(gameui, user_id) do
-    ids = gameui["playerIds"]
-    if Enum.member?([ids["player1"], ids["player2"], ids["player3"], ids["player4"]], user_id) do
+    ids = gameui["playerInfo"]
+    if Enum.member?([ids["player1"]["id"], ids["player2"]["id"], ids["player3"]["id"], ids["player4"]["id"]], user_id) do
         true
     else
         false
@@ -70,7 +71,23 @@ defmodule DragnCardsGame.GameUIServer do
   end
 
   @doc """
-  set_seat/3: Set a seat value.
+  set_game_def/3: Set a new game definition.
+  """
+  @spec set_game_def(String.t(), integer, Map.t()) :: GameUI.t()
+  def set_game_def(game_name, user_id, game_def) do
+    game_exists?(game_name) && GenServer.call(via_tuple(game_name), {:set_game_def, user_id, game_def})
+  end
+
+  @doc """
+  game_action/4: Perform given action on a card.
+  """
+  @spec step_through(String.t(), Map.t()) :: GameUI.t()
+  def step_through(game_name, options) do
+    game_exists?(game_name) && GenServer.call(via_tuple(game_name), {:step_through, options})
+  end
+
+  @doc """
+  set_seat/4: Set a seat value.
   """
   @spec set_seat(String.t(), integer, String.t(), integer) :: GameUI.t()
   def set_seat(game_name, user_id, player_i, new_user_id) do
@@ -80,9 +97,9 @@ defmodule DragnCardsGame.GameUIServer do
   @doc """
   add_player_to_room/2: Add a player to the room.
   """
-  @spec add_player_to_room(String.t(), integer) :: GameUI.t()
-  def add_player_to_room(game_name, user_id) do
-    GenServer.call(via_tuple(game_name), {:add_player_to_room, user_id})
+  @spec add_player_to_room(String.t(), integer, pid()) :: GameUI.t()
+  def add_player_to_room(game_name, user_id, pid) do
+    GenServer.call(via_tuple(game_name), {:add_player_to_room, user_id, pid})
   end
 
   @doc """
@@ -99,25 +116,40 @@ defmodule DragnCardsGame.GameUIServer do
   Maybe eventually there will be some sophisticated disconnect/reconnect
   system?
   """
-  def leave(game_name, user_id) do
-    game_exists?(game_name) && GenServer.call(via_tuple(game_name), {:leave, user_id})
+  def leave(game_name, user_id, pid) do
+    game_exists?(game_name) && GenServer.call(via_tuple(game_name), {:leave, user_id, pid})
   end
   #####################################
   ####### IMPLEMENTATION ##############
   #####################################
 
   def init({game_name, user, options = %{}}) do
+    Logger.debug("gameuiserver init")
+    options = put_in(options, ["language"], user.language)
     gameui =
       case :ets.lookup(:game_uis, game_name) do
         [] ->
-          gameui = GameUI.new(game_name, user, options)
+          IO.puts("gameuiserver init 1")
+          gameui = GameUI.new(game_name, user.id, options)
           :ets.insert(:game_uis, {game_name, gameui})
+
+          IO.puts("gameuiserver init 2")
           gameui
 
         [{^game_name, gameui}] ->
           gameui
       end
-    GameRegistry.add(gameui["gameName"], gameui)
+    IO.puts("game_ui_server init")
+    IO.inspect(gameui["roomSlug"])
+    # path = [:code.priv_dir(:dragncards), "python", "lotrlcg"] |> Path.join()
+    # {:ok, pypid} = :python.start([{:python_path, to_charlist(path)}, {:python, 'python3'}])
+    # IO.puts("game_ui_server init")
+    # IO.inspect(:code.priv_dir(:dragncards))
+    # gameui = put_in(gameui["pypid"], :erlang.pid_to_list(pypid))
+    gr = GameRegistry.add(gameui["roomSlug"], gameui)
+    IO.puts("game_ui_server GameRegistry")
+    IO.inspect(gr)
+    #GameRegistry.add(gameui["roomName"]<>"-pypid", pypid)
     {:ok, gameui, timeout(gameui)}
   end
 
@@ -127,10 +159,51 @@ defmodule DragnCardsGame.GameUIServer do
 
   def handle_call({:game_action, user_id, action, options}, _from, gameui) do
     Logger.debug("handle game_action #{user_id} #{action}")
+    gameui
     try do
       gameui = GameUI.game_action(gameui, user_id, action, options)
       gameui = put_in(gameui["error"], false)
+      # IO.puts("pypid")
+      # pypid = gameui["pypid"] |> :erlang.list_to_pid()
+      # #IO.inspect(gameui["pypid"])
+      # IO.puts("+==================================================================+")
+      # IO.inspect(Jason.encode(gameui))
+      # {status, gameui_json} = Jason.encode(gameui)
+      # plugin_action = gameui["pluginId"]
+      # gameui_json = :python.call(pypid, :lotrlcg_action, :increase_threat, [gameui_json])
+      # IO.puts("gameui_json")
+      # IO.inspect(gameui_json)
+      # {status, gameui} = Jason.decode(gameui_json)
       gameui = put_in(gameui["game"]["last_action"], action)
+    rescue
+      exception ->
+        stack_trace = System.stacktrace()
+        Logger.error("Error in my_function: #{inspect exception}, stack trace: #{inspect stack_trace}")
+      #e in RuntimeError ->
+      #  IO.inspect(e)
+        put_in(gameui["logMessages"], ["ERROR: " <> inspect(stack_trace)])
+    end
+    |> save_and_reply()
+  end
+
+  def handle_call({:step_through, options}, _from, gameui) do
+    Logger.debug("handle step_through")
+    try do
+      gameui = GameUI.step_through(gameui, options)
+      gameui = put_in(gameui["error"], false)
+    rescue
+      e in RuntimeError ->
+        IO.inspect(e)
+        put_in(gameui["error"],true)
+    end
+    |> save_and_reply()
+  end
+
+  def handle_call({:set_game_def, user_id, game_def}, _from, gameui) do
+    Logger.debug("handle step_through")
+    try do
+      gameui = GameUI.new(gameui, user_id, gameui["options"])
+      gameui = put_in(gameui["error"], false)
     rescue
       e in RuntimeError ->
         IO.inspect(e)
@@ -141,7 +214,7 @@ defmodule DragnCardsGame.GameUIServer do
 
   def handle_call({:set_seat, user_id, player_i, new_user_id}, _from, gameui) do
     try do
-      gameui = put_in(gameui["playerIds"][player_i],new_user_id)
+      gameui = put_in(gameui["playerInfo"][player_i],PlayerInfo.new(new_user_id))
     rescue
       e in RuntimeError ->
         IO.inspect(e)
@@ -150,20 +223,8 @@ defmodule DragnCardsGame.GameUIServer do
     |> save_and_reply()
   end
 
-  def handle_call({:add_player_to_room, user_id}, _from, gameui) do
-    Logger.debug("Added player to room: #{user_id}")
-    if gameui["playersInRoom"] do
-      players_in_room_old = gameui["playersInRoom"]
-      number_windows_open = players_in_room_old["#{user_id}"]
-      players_in_room_new = if number_windows_open != nil do
-        put_in(players_in_room_old["#{user_id}"], number_windows_open + 1)
-      else
-        put_in(players_in_room_old["#{user_id}"], 1)
-      end
-      put_in(gameui["playersInRoom"], players_in_room_new)
-    else
-      gameui
-    end
+  def handle_call({:add_player_to_room, user_id, pid}, _from, gameui) do
+    put_in(gameui, ["sockets", pid_to_string(pid)], user_id)
     |> save_and_reply()
   end
 
@@ -185,11 +246,11 @@ defmodule DragnCardsGame.GameUIServer do
     # but causes tests to fail.  Not sure it's a real failure
     # spawn_link(fn ->
 
-    GameRegistry.update(new_gameui["gameName"], new_gameui)
+    GameRegistry.update(new_gameui["roomSlug"], new_gameui)
     # end)
 
     spawn_link(fn ->
-      :ets.insert(:game_uis, {new_gameui["gameName"], new_gameui})
+      :ets.insert(:game_uis, {new_gameui["roomSlug"], new_gameui})
     end)
 
     {:reply, new_gameui, new_gameui, timeout(new_gameui)}
@@ -202,16 +263,8 @@ defmodule DragnCardsGame.GameUIServer do
     @timeout
   end
 
-  def handle_call({:leave, user_id}, _from, gameui) do
-    # When a user leaves, we currently do nothing
-    players_in_room_old = gameui["playersInRoom"]
-    number_windows_open = players_in_room_old["#{user_id}"]
-    players_in_room_new = if number_windows_open == nil or number_windows_open == 0 do
-      players_in_room_old
-    else
-      put_in(players_in_room_old["#{user_id}"], number_windows_open - 1)
-    end
-    put_in(gameui["playersInRoom"], players_in_room_new)
+  def handle_call({:leave, user_id, pid}, _from, gameui) do
+    Map.delete(gameui, ["sockets", pid_to_string(pid)])
     |> save_and_reply()
   end
 
@@ -221,16 +274,21 @@ defmodule DragnCardsGame.GameUIServer do
   end
 
   def terminate({:shutdown, :timeout}, state) do
-    Logger.info("Terminate (Timeout) running for #{state["gameName"]}")
-    :ets.delete(:game_uis, state["gameName"])
-    GameRegistry.remove(state["gameName"])
+    Logger.info("Terminate (Timeout) running for #{state["roomSlug"]}")
+    :ets.delete(:game_uis, state["roomSlug"])
+    GameRegistry.remove(state["roomSlug"])
     :ok
   end
 
   # Do I need to trap exits here?
   def terminate(_reason, state) do
-    Logger.info("Terminate (Non Timeout) running for #{state["gameName"]}")
-    GameRegistry.remove(state["gameName"])
+    Logger.info("Terminate (Non Timeout) running for #{state["roomSlug"]}")
+    GameRegistry.remove(state["roomSlug"])
     :ok
+  end
+
+  def pid_to_string(pid) do
+    list = pid |> :erlang.pid_to_list()
+    to_string(list)
   end
 end

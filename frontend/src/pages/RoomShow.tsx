@@ -12,7 +12,7 @@ export const RoomShow: React.FC<Props> = ({ match }) => {
     params: { slug },
   } = match;
   return(
-    <MessagesProvider value={null}>
+    <MessagesProvider value={[]}>
       <Room slug={slug} />
     </MessagesProvider>
   )

@@ -90,10 +90,10 @@ export const GROUPSINFO = {
 }
 
 
-export const roundStepToText = (roundStep) => {
+export const stepIdToText = (stepId) => {
   for (var phase of PHASEINFO) {
     for (var step of phase.steps) {
-      if (step.id === roundStep) return step.text;
+      if (step.id === stepId) return step.text;
     }
   }
   return "";
@@ -200,25 +200,25 @@ export const PHASEINFO = [
   }
 ]
 
-export const nextRoundStep = (roundStep) => {
+export const nextRoundStep = (stepId) => {
   var stepFound = false;
   for (var phase of PHASEINFO) {
     const steps = phase.steps;
     for (var step of steps) {
-      if (stepFound) return {roundStep: step.id, phase: phase.name};
-      if (step.id == roundStep) stepFound = true;
+      if (stepFound) return {stepId: step.id, phase: phase.name};
+      if (step.id == stepId) stepFound = true;
     }
   }
   return null;
 }
 
-export const prevRoundStep = (roundStep) => {
+export const prevRoundStep = (stepId) => {
   var prev = null;
   for (var phase of PHASEINFO) {
     const steps = phase.steps;
     for (var step of steps) {
-      if (step.id == roundStep) return prev;
-      prev = {roundStep: step.id, phase: phase.name};
+      if (step.id == stepId) return prev;
+      prev = {stepId: step.id, phase: phase.name};
     }
   }
   return null;
@@ -229,7 +229,7 @@ export const nextPhase = (currPhase) => {
   for (var phase of PHASEINFO) {
     const steps = phase.steps;
     for (var step of steps) {
-      if (phaseFound && phase.name !== currPhase) return {roundStep: step.id, phase: phase.name};
+      if (phaseFound && phase.name !== currPhase) return {stepId: step.id, phase: phase.name};
       if (phase.name == currPhase) phaseFound = true;
     }
   }
@@ -242,7 +242,7 @@ export const prevPhase = (currPhase) => {
     const steps = phase.steps;
     for (var step of steps) {
       if (phase.name === currPhase) return prev;
-      if (prev?.phase !== phase.name ) prev = {roundStep: step.id, phase: phase.name};
+      if (prev?.phase !== phase.name ) prev = {stepId: step.id, phase: phase.name};
     }
   }
   return null;

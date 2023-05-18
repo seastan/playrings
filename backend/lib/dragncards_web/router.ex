@@ -37,6 +37,13 @@ defmodule DragnCardsWeb.Router do
 
     post("/replays/delete", ReplayController, :delete)
     resources("/replays/:user_id", ReplayController, except: [:new, :edit])
+
+    # My plugins
+    resources("/myplugins", MyPluginsController)
+
+    # All plugins
+    get("/plugins", PluginsController, :index)
+    get("/plugins/:plugin_id", PluginsController, :get_plugin)
   end
 
   scope "/api/v1", DragnCardsWeb.API.V1, as: :api_v1 do
@@ -55,14 +62,21 @@ defmodule DragnCardsWeb.Router do
     # Profile
     get("/profile", ProfileController, :index)
     post("/profile/update", ProfileController, :update)
+    post("/profile/update_alt_art", ProfileController, :update_alt_art)
     get("/profile/:id", ProfileController, :show)
 
     # Admin Contact
     get("/admin_contact", AdminContactController, :index)
 
+    # Create a game room
+    post("/games", GameController, :create)
+
+    # Decks
+    resources("/decks", DeckController)
+    get("/decks/:user_id/:plugin_id", DeckController, :get_decks)
+
     # Testing Junk
     get("/authtest", JunkController, :authtest)
-    post("/games", GameController, :create)
 
     # Alerts
     get("/alerts", AlertController, :show)

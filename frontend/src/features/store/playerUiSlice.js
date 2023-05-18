@@ -14,10 +14,10 @@ const initialState = {
   showHotkeys: false,
   touchMode: false,
   typing: false,
-  cardSizeFactor: 1.0,
-  activeCardObj: null,
+  zoomFactor: 1.0,
+  activeCardId: null,
   observingPlayerN: "player1",
-  dropdownMenuObj: null,
+  dropdownMenu: null,
   showModal: null,
   loaded: null,
   showPlayersInRoom: false,
@@ -26,11 +26,13 @@ const initialState = {
     topN: 0
   },
   tooltipIds: [],
-  mousePosition: null,
+  mouseXY: null,
+  cardClicked: false,
   touchAction: null,
   sideGroupId: "sharedSetAside",
   favoriteGroupId: null,
   randomNumBetween: "3",
+  draggingFromGroupId: null,
 };
 
 const playerUiSlice = createSlice({
@@ -53,6 +55,9 @@ const playerUiSlice = createSlice({
     setKeypressAlt: (state, { payload }) => {
       state.keypress.Alt = payload;
     },
+    setKeypressShift: (state, { payload }) => {
+      state.keypress.Shift = payload;
+    },
     setKeypressTab: (state, { payload }) => {
       state.keypress.Tab = payload;
     },
@@ -71,17 +76,20 @@ const playerUiSlice = createSlice({
     setTyping: (state, { payload }) => {
       state.typing = payload;
     },
-    setCardSizeFactor: (state, { payload }) => {
-      state.cardSizeFactor = payload;
+    setZoomFactor: (state, { payload }) => {
+      state.zoomFactor = payload;
     },
-    setActiveCardObj: (state, { payload }) => {
-      state.activeCardObj = payload;
+    setActiveCardId: (state, { payload }) => {
+      state.activeCardId = payload;
+    },
+    setScreenLeftRight: (state, { payload }) => {
+      state.screenLeftRight = payload;
     },
     setObservingPlayerN: (state, { payload }) => {
       state.observingPlayerN = payload;
     },
-    setDropdownMenuObj: (state, { payload }) => {
-      state.dropdownMenuObj = payload;
+    setDropdownMenu: (state, { payload }) => {
+      state.dropdownMenu = payload;
     },
     setShowModal: (state, { payload }) => {
       state.showModal = payload;
@@ -101,8 +109,14 @@ const playerUiSlice = createSlice({
     setTooltipIds: (state, { payload }) => {
       state.tooltipIds = payload;
     },
-    setMousePosition: (state, { payload }) => {
-      state.mousePosition = payload;
+    setMouseXY: (state, { payload }) => {
+      state.mouseXY = payload;
+    },
+    setMouseTopBottom: (state, { payload }) => {
+      state.mouseTopBottom = payload;
+    },
+    setCardClicked: (state, { payload }) => {
+      state.cardClicked = payload;
     },
     setTouchAction: (state, { payload }) => {
       state.touchAction = payload;
@@ -116,6 +130,9 @@ const playerUiSlice = createSlice({
     setRandomNumBetween: (state, { payload }) => {
       state.randomNumBetween = payload;
     },
+    setDraggingFromGroupId: (state, { payload }) => {
+      state.draggingFromGroupId = payload;
+    },
   }
 });
 
@@ -125,6 +142,7 @@ export const {
   setPlayerN, 
   setKeypress, 
   setKeypressControl,
+  setKeypressShift,
   setKeypressAlt,
   setKeypressTab,
   setKeypressSpace,
@@ -132,20 +150,24 @@ export const {
   setShowHotkeys, 
   setTouchMode, 
   setTyping,
-  setCardSizeFactor,
-  setActiveCardObj,
+  setZoomFactor,
+  setActiveCardId,
+  setScreenLeftRight,
   setObservingPlayerN,
-  setDropdownMenuObj,
+  setDropdownMenu,
   setShowModal,
   setLoaded,
   setShowPlayersInRoom,
   setBrowseGroupId,
   setBrowseGroupTopN,
   setTooltipIds,
-  setMousePosition,
+  setMouseXY,
+  setMouseTopBottom,
+  setCardClicked,
   setTouchAction,
   setSideGroupId,
   setFavoriteGroupId,
   setRandomNumBetween,
+  setDraggingFromGroupId,
  } = playerUiSlice.actions;
 export default playerUiSlice.reducer;
