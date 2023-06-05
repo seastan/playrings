@@ -1,54 +1,16 @@
-FROM elixir:1.10-alpine as build
+FROM elixir:1.14.4
 
-# install build dependencies
-RUN apk add --update git build-base nodejs python npm
+# Install hex and rebar
+RUN mix local.hex --force && mix local.rebar --force
 
-# prepare build dir
-RUN mkdir /app
+# Set your working directory
 WORKDIR /app
 
-# install hex + rebar
-RUN mix local.hex --force && \
-    mix local.rebar --force
+# Copy your application code to the container
+COPY . .
 
-# set build ENV
-ENV MIX_ENV=prod
-
-# install mix dependencies
-COPY mix.exs mix.lock ./
-COPY config config
+# Install dependencies
 RUN mix deps.get
-RUN mix deps.compile
 
-# build assets
-COPY assets assets
-COPY priv priv
-COPY lib lib
-RUN cd assets && npm install && npm run deploy
-RUN mix phx.digest
-
-# build project
+# Compile the application
 RUN mix compile
-
-# build release
-RUN mix release
-
-# prepare release image
-FROM alpine:3.11.5 AS app
-RUN apk add --update bash openssl
-
-RUN mkdir /app
-WORKDIR /app
-
-COPY --from=build /app/_build/prod/rel/dragncards ./
-RUN chown -R nobody: /app
-USER nobody
-
-ENV HOME=/app
-
-## These environment variables, probably set while running container
-# ENV SECRET_KEY_BASE ..secret here...
-# ENV DATABASE_URL ..secret here..
-
-ADD start.sh /
-CMD ["/start.sh"]
