@@ -87,8 +87,10 @@
   "scripts": {
     "start-elixir": "REACT_APP_WS_URL=ws://172.22.2.174:4000/socket npm-run-all -p start:css start:js",
     "start": "REACT_APP_WS_URL=ws://127.0.0.1:4000/socket npm-run-all -p start:js",
+    "start:docker": "npm-run-all -p start:css start:js:docker",
     "build": "npm-run-all build:js",
     "start:js": "react-scripts start",
+    "start:js:docker": "REACT_APP_DB_HOSTNAME=backend react-scripts --openssl-legacy-provider start",
     "build:js": "react-scripts build",
     "start:css": "postcss src/css/tailwind.src.css -o src/css/tailwind.compiled.css -w",
     "build:css": "postcss src/css/tailwind.src.css -o src/css/tailwind.compiled.css --env production",
@@ -97,7 +99,8 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "lint": "eslint src --ext .js,.jsx,.ts,.tsx",
-    "prettier": "prettier --write src"
+    "prettier": "prettier --write src",
+    "cleandeps": "rm -rf node_modules"
   },
   "eslintConfig": {
     "extends": "react-app"
