@@ -4,7 +4,7 @@ defmodule DragnCardsGame.Evaluate do
   """
   require Logger
   alias DragnCardsGame.{GameUI}
-  alias DragnCards.Rooms
+  alias DragnCards.{Rooms, Plugins}
 
   def put_by_path(game_old, path, val_new) do
     # IO.puts("val_new 1")
@@ -527,25 +527,22 @@ defmodule DragnCardsGame.Evaluate do
 
           "ACTION_LIST" ->
             argc = Enum.count(code) - 1
+            action_list_id = evaluate(game, Enum.at(code, 1))
+            game_def = Plugins.get_game_def(game["options"]["pluginId"])
+            action_list = game_def["actionLists"][action_list_id]
             case argc do
-              0 ->
-                # TODO add error message
-                game
               1 ->
-                action_list_id = evaluate(game, Enum.at(code, 1))
-                evaluate(game, game["actionLists"][action_list_id])
+                evaluate(game, action_list)
               2 ->
-                action_list_id = evaluate(game, Enum.at(code, 1))
                 active_card_id = evaluate(game, Enum.at(code, 2))
                 game = put_in(game, ["playerUi", "activeCardId"], active_card_id)
-                evaluate(game, game["actionLists"][action_list_id])
+                evaluate(game, action_list)
               3 ->
-                action_list_id = evaluate(game, Enum.at(code, 1))
                 active_card_id = evaluate(game, Enum.at(code, 2))
                 player_n = evaluate(game, Enum.at(code, 3))
                 game = put_in(game, ["playerUi", "activeCardId"], active_card_id)
                 game = put_in(game, ["playerUi", "playerN"], player_n)
-                evaluate(game, game["actionLists"][action_list_id])
+                evaluate(game, action_list)
               _ ->
                 game
             end

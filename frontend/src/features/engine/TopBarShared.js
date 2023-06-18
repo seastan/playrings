@@ -13,7 +13,7 @@ export const TopBarShared = React.memo(() => {
           <TopBarSharedCounter 
             gameProperty={menuItem.gameProperty} 
             imageUrl={menuItem.imageUrl} 
-            labelId={menuItem.labelId}/>
+            label={menuItem.label}/>
         </div>
         )
       })}

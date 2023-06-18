@@ -20,7 +20,7 @@ export const TopBarMenu = React.memo(({}) => {
   const myUser = useProfile();
   const myUserID = myUser?.id;
   const history = useHistory();
-  const l10n = useGameL10n();
+  const gameL10n = useGameL10n();
   const siteL10n = useSiteL10n();
   const gameDef = useGameDefinition();
   const doActionList = useDoActionList();
@@ -29,10 +29,8 @@ export const TopBarMenu = React.memo(({}) => {
   const createdBy = useSelector(state => state.gameUi?.createdBy);
   const options = useSelector(state => state.gameUi?.game?.options);
   const ringsDbInfo = options?.ringsDbInfo;
-  const round = useSelector(state => state.gameUi?.game.roundNumber);
   const isHost = myUserID === createdBy;  
   const playerN = useSelector(state => state?.playerUi?.playerN);
-  const cardsPerRound = useSelector(state => state.gameUi?.game.playerData[playerN]?.cardsDrawn);
   const zoomFactor = useSelector(state => state?.playerUi?.zoomFactor);
   const randomNumBetween = useSelector(state => state?.playerUi?.randomNumBetween);
   
@@ -280,7 +278,7 @@ export const TopBarMenu = React.memo(({}) => {
           <ul className="third-level-menu">
             {gameDef.layoutMenu?.map((info, index) => {
               return(
-                <li key={info.layoutId} onClick={() => handleMenuClick({action:"layout", value: info})}>{l10n(info.labelId)}</li>
+                <li key={info.layoutId} onClick={() => handleMenuClick({action:"layout", value: info})}>{gameL10n(info.label)}</li>
               )
             })}
             </ul>
@@ -331,7 +329,7 @@ export const TopBarMenu = React.memo(({}) => {
           <ul className="third-level-menu">
             {gameDef.dropdownMenus?.plugin?.options?.map((menuFunction, _index) => {
               return(
-                <li key={menuFunction.id} onClick={() => doActionList(menuFunction.actionList)}>{l10n(menuFunction.labelId)}</li>
+                <li key={menuFunction.id} onClick={() => doActionList(menuFunction.actionList)}>{gameL10n(menuFunction.label)}</li>
               )
             })}
           </ul>
@@ -350,7 +348,7 @@ export const TopBarMenu = React.memo(({}) => {
             <ul className="third-level-menu">
               {gameDef["clearTableOptions"]?.map((option, index) => {
                 return(
-                  <li key={index} onClick={() => handleMenuClick({action:"clear_table", actionList: option.actionList})}>{l10n(option.labelId)}</li>
+                  <li key={index} onClick={() => handleMenuClick({action:"clear_table", actionList: option.actionList})}>{gameL10n(option.label)}</li>
                 )
               })}
             </ul>
@@ -363,7 +361,7 @@ export const TopBarMenu = React.memo(({}) => {
             <ul className="third-level-menu">
               {gameDef["clearTableOptions"]?.map((option, index) => {
                 return(
-                  <li key={index} onClick={() => handleMenuClick({action:"close_room", actionList: option.actionList})}>{l10n(option.labelId)}</li>
+                  <li key={index} onClick={() => handleMenuClick({action:"close_room", actionList: option.actionList})}>{gameL10n(option.label)}</li>
                 )
               })}
             </ul>

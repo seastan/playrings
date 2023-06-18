@@ -16,7 +16,7 @@ defmodule DragnCardsWeb.RoomChannel do
       socket
       |> assign(:room_slug, room_slug)
 
-    send(self, :after_join)
+    send(self(), :after_join)
     {:ok, socket}
   end
 

@@ -11,13 +11,13 @@ export const useBrowseTopN = () => {
     const doActionList = useDoActionList();
     const dispatch = useDispatch();
     const playerN = usePlayerN();
-    const l10n = useGameL10n();
+    const gameL10n = useGameL10n();
     return (groupId, topNstr) => {    
       const state = store.getState();
       const group = state?.gameUi?.game?.groupById?.[groupId];
       const stackIds = group["stackIds"];
       const numStacks = stackIds.length;
-      const groupName = l10n(gameDef.groups[groupId].labelId);
+      const groupName = gameL10n(gameDef.groups[groupId].label);
       var peekStackIds = [];
       var topNint = 0;
       // Set peeking based on topNstr

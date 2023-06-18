@@ -11,11 +11,11 @@ export const TopBarUserCounter = React.memo(({
   playerI,
   playerProperty,
   imageUrl,
-  labelId,
+  label,
 }) => {
   const dispatch = useDispatch();
   const doActionList = useDoActionList();
-  const l10n = useGameL10n();
+  const gameL10n = useGameL10n();
   const backEndValue = useSelector(state => state?.gameUi?.game?.playerData?.[playerI]?.[playerProperty]);
   const [value, setValue] = useState( backEndValue || 0);
   const [previousValue, setPreviousValue] = useState(value);
@@ -33,7 +33,7 @@ export const TopBarUserCounter = React.memo(({
       setPreviousValue(newValue);
       const listOfActions = [
         ["INCREASE_VAL", "/playerData/$PLAYER_N/" + playerProperty, totalDelta],
-        ["LOG", "$PLAYER_N", totalDelta >= 0 ? " increased " : " decreased ", l10n(labelId), " by ", Math.abs(totalDelta), "."]
+        ["LOG", "$PLAYER_N", totalDelta >= 0 ? " increased " : " decreased ", gameL10n(label), " by ", Math.abs(totalDelta), "."]
       ]
       doActionList(listOfActions);
       setInputFocus();

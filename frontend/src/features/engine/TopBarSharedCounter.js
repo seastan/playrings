@@ -10,11 +10,11 @@ var delayBroadcast;
 export const TopBarSharedCounter = React.memo(({
   gameProperty,
   imageUrl,
-  labelId,
+  label,
 }) => {
   const dispatch = useDispatch();
   const doActionList = useDoActionList();
-  const l10n = useGameL10n();
+  const gameL10n = useGameL10n();
   const stateValue = useSelector(state => state?.gameUi?.game?.[gameProperty]);
   const [value, setValue] = useState(stateValue || 0);
   const [previousValue, setPreviousValue] = useState(value);
@@ -35,7 +35,7 @@ export const TopBarSharedCounter = React.memo(({
       setPreviousValue(newValue);
       const listOfActions = [
         ["SET", "/" + gameProperty, newValue],
-        ["LOG", "$PLAYER_N", totalDelta >= 0 ? " increased " : " decreased ", l10n(labelId), " by ", Math.abs(totalDelta), "."]
+        ["LOG", "$PLAYER_N", totalDelta >= 0 ? " increased " : " decreased ", gameL10n(label), " by ", Math.abs(totalDelta), "."]
       ];
       doActionList(listOfActions);
       setInputFocus();
@@ -43,7 +43,7 @@ export const TopBarSharedCounter = React.memo(({
   }
 
   return(<>
-      <div className="h-1/2 w-full flex justify-center">{l10n(labelId)}</div>
+      <div className="h-1/2 w-full flex justify-center">{gameL10n(label)}</div>
       <div className="h-1/2 w-full flex justify-center">
         <img className="h-full ml-1" src={imageUrl}></img>
         <input 

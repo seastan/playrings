@@ -21,7 +21,7 @@ const isNormalInteger = (str) => {
 export const Browse = React.memo(({}) => {
   const {gameBroadcast, chatBroadcast} = useContext(BroadcastContext);
   const dispatch = useDispatch();
-  const l10n = useGameL10n();
+  const gameL10n = useGameL10n();
   const gameDef = useGameDefinition();
   const playerN = useSelector(state => state?.playerUi?.playerN);
   const groupId = useSelector(state => state?.playerUi?.browseGroup?.id);
@@ -57,7 +57,7 @@ export const Browse = React.memo(({}) => {
     const dropdownMenu = {
         type: "group",
         group: group,
-        title: gameDef.groups[groupId].name
+        title: gameL10n(gameDef.groups[groupId].label)
     }
     dispatch(setDropdownMenu(dropdownMenu));
   }
@@ -91,8 +91,8 @@ export const Browse = React.memo(({}) => {
         ]
       ],
       ["SHUFFLE_GROUP", groupId],
-      ["LOG", "$PLAYER_N", " closed ", group.name+"."],
-      ["LOG", "$PLAYER_N", " shuffled ", group.name+"."],
+      ["LOG", "$PLAYER_N", " closed ", gameL10n(group.label)+"."],
+      ["LOG", "$PLAYER_N", " shuffled ", gameL10n(group.label)+"."],
     ];
     doActionList(actionList);
     if (group?.onCardEnter?.currentSide === "B") stopPeekingTopCard();
@@ -107,7 +107,7 @@ export const Browse = React.memo(({}) => {
         ]
       ],
       ["SHUFFLE_GROUP", groupId],
-      ["LOG", "$PLAYER_N", " closed ", group.name+"."],
+      ["LOG", "$PLAYER_N", " closed ", gameL10n(group.label)+"."],
     ];
     doActionList(actionList);
     if (group?.onCardEnter?.currentSide === "B") stopPeekingTopCard();
@@ -115,7 +115,7 @@ export const Browse = React.memo(({}) => {
 
   const closeAndPeeking = () => {
     const actionList = [
-      ["LOG", "$PLAYER_N", " is still peeking at ", group.name+"."],
+      ["LOG", "$PLAYER_N", " is still peeking at ", gameL10n(group.label)+"."],
     ];
     doActionList(actionList);
   }
@@ -171,7 +171,7 @@ export const Browse = React.memo(({}) => {
     <div className="absolute bg-gray-700 w-full" style={{left: region.left, width: browseWidth, top: region.top, height: region.height, zIndex: 1e6}}>
       <strong className="absolute bg-gray-600 w-full text-gray-300 flex justify-center items-center" style={{top:"-20px", height: "20px"}}>
         <FontAwesomeIcon onClick={(event) => handleBarsClick(event)}  className="cursor-pointer hover:text-white" icon={faBars}/>
-        <span className="px-2">{l10n(gameDef.groups[group.id].name)}</span>
+        <span className="px-2">{gameL10n(gameDef.groups[group.id].label)}</span>
         <span className="absolute left-0">(Top)</span>
       </strong>
       
@@ -195,11 +195,11 @@ export const Browse = React.memo(({}) => {
               id="numFaceup"
               className="form-control w-full bg-gray-900 text-white border-0 h-full px-1 py-0"
               onChange={handleSelectClick}>
-              <option value="" disabled selected>{l10n("Turn faceup...")}</option>
-              <option value="None">{l10n("None")}</option>
-              <option value="All">{l10n("All")}</option>
-              <option value="5">{l10n("Top 5")}</option>
-              <option value="10">{l10n("Top 10")}</option>
+              <option value="" disabled selected>{gameL10n("Turn faceup...")}</option>
+              <option value="None">{gameL10n("None")}</option>
+              <option value="All">{gameL10n("All")}</option>
+              <option value="5">{gameL10n("Top 5")}</option>
+              <option value="10">{gameL10n("Top 10")}</option>
             </select>
           </div>
           <div className="h-full float-left w-1/2 px-0.5">
@@ -223,7 +223,7 @@ export const Browse = React.memo(({}) => {
                   <div className="h-full float-left w-1/2 p-0.5">
                     <div className={"h-full w-full flex items-center justify-center hover:bg-gray-600 rounded" + (searchForProperty === item ? " bg-red-800" : " bg-gray-800")}
                       onClick={() => setSearchForProperty(item)}>    
-                      {l10n(row[itemIndex])}
+                      {gameL10n(row[itemIndex])}
                     </div>
                   </div>
                 )
@@ -252,7 +252,7 @@ export const Browse = React.memo(({}) => {
                 <div className="h-full float-left w-full p-0.5">
                   <div className="flex h-full w-full bg-gray-800 hover:bg-gray-600 rounded items-center justify-center"
                     onClick={(event) => handleCloseClick(row[1])}>    
-                    {l10n(row[0])}
+                    {gameL10n(row[0])}
                   </div>
                 </div>
               </div>

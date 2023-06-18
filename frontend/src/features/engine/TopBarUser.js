@@ -120,7 +120,7 @@ export const TopBarUser = React.memo(({
                 playerI={playerI}
                 playerProperty={menuItem.playerProperty} 
                 imageUrl={menuItem.imageUrl} 
-                labelId={menuItem.labelId}/>
+                label={menuItem.label}/>
             </div>
           )
         })}

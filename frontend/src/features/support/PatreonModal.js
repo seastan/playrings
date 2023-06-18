@@ -22,12 +22,8 @@ export const PatreonModal = ({
         },
         { 
           amount: 1000, 
-          benefits: ["Create own plugin (early access)", "Access to plugin developer Discord channel", "\"Esteemed Supporter\" Discord role"] 
+          benefits: ["\"Esteemed Supporter\" Discord role", "Access to private Discord channels for plugin developer"] 
         },
-        { 
-          amount: 5000, 
-          benefits: ["30 min/month of plugin technical support"] 
-        }
     ];
 
   const patreonClientId = "MUANs_lS4yBmji1txII2sV6NJ3X1JEp5OSzPVr_rkU02jz3S2jTubjoMOSPK5Jul";

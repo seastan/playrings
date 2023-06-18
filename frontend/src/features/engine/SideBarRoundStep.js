@@ -45,7 +45,7 @@ export const SideBarRoundStep = React.memo(({
   stepInfo,
   triggerCardIds
 }) => {
-  const l10n = useGameL10n();
+  const gameL10n = useGameL10n();
   const gameDef = useGameDefinition();
   const stepId = stepInfo?.stepId;
   const currentStepIndex = useSelector(state => state?.gameUi?.game?.stepIndex);
@@ -85,7 +85,7 @@ export const SideBarRoundStep = React.memo(({
           triggerCardIds={triggerCardIds}/>
       }
       <div className={`flex flex-1 h-full items-center justify-center ${isRoundStep ? "bg-red-800" : "bg-gray-500"} ${hovering ? "block" : "hidden"}`} >
-        <div>{l10n(stepInfo.labelId)}</div>
+        <div>{gameL10n(stepInfo.label)}</div>
       </div>
     </div>
   )

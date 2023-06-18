@@ -18,7 +18,6 @@ export const readFileAsText = (file) => {
 
 
 export const deepMerge = (obj1, obj2) => {
-  console.log("dropmenucard 2", obj1, obj2)
   // If they are already equal, we are done
   if (obj1 === obj2) return;
   // If obj1 does not exist, set it to obj2
@@ -57,20 +56,3 @@ export const mergeJSONs = (jsonList) => {
   return json0;
 }
 
-/* const csvToJson = (csv) => {
-  const json0 = JSON.parse(jsonList[0]);
-  for (var i = 1; i < jsonList.length; i++) {
-    deepMerge(json0, JSON.parse(jsonList[i]));
-  }
-  return json0;
-} */
-
-export const checkValidGameDef = (gameDef) => {
-  // Needs to be a non-empty string
-  const pluginName = gameDef?.pluginName;
-  if (pluginName && (typeof pluginName === 'string' || pluginName instanceof String) && pluginName.length > 0) {
-    return true;
-  } else {
-    return "Invalid or missing pluginName value."
-  }
-}

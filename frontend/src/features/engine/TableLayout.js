@@ -7,11 +7,13 @@ import BroadcastContext from "../../contexts/BroadcastContext";
 import { TableRegion } from "./TableRegion";
 import { useLayout } from "./hooks/useLayout";
 import { useDoActionList } from "./hooks/useDoActionList";
+import { useGameL10n } from "./hooks/useGameL10n";
 
 var delayBroadcast;
 
 export const TableLayout = React.memo(() => {
   const {gameBroadcast, chatBroadcast} = useContext(BroadcastContext);
+  const gameL10n = useGameL10n();
   console.log("Rendering TableLayout");
   const sideGroupId = useSelector(state => state?.playerUi?.sideGroupId);
   const layoutVariants = useSelector(state => state?.gameUi?.game?.layoutVariants);
@@ -76,8 +78,8 @@ export const TableLayout = React.memo(() => {
         return(
           <div 
             className="absolute flex cursor-pointer border border-gray-500 justify-center items-center text-gray-400 bg-gray-700 hover:bg-gray-500" style={{left: tableButton.left, top: tableButton.top, width: tableButton.width, height: tableButton.height}}
-            onClick={() => {doActionList(tableButton?.actionListId)}}>
-            {tableButton.text}
+            onClick={() => {doActionList(tableButton?.actionList)}}>
+            {gameL10n(tableButton.label)}
           </div>
         )
       })}

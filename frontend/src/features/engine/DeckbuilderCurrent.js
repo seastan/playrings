@@ -20,7 +20,7 @@ export const DeckbuilderCurrent = React.memo(({currentGroupId, setCurrentGroupId
   const authOptions = useAuthOptions();
   const deckbuilder = gameDef.deckbuilder;
   const spawnGroups = deckbuilder.spawnGroups;
-  const l10n = useGameL10n();
+  const gameL10n = useGameL10n();
   const cardDb = usePlugin()?.card_db || {};
 
   useEffect(() => {
@@ -143,7 +143,7 @@ export const DeckbuilderCurrent = React.memo(({currentGroupId, setCurrentGroupId
               <div 
                 className={"text-white pl-3 py-1 mt-2 cursor-pointer " + (currentGroupId === groupId ? "bg-red-800" : "bg-gray-900")}
                 onClick={() => setCurrentGroupId(groupId)}>
-                {l10n(groupInfo.labelId)} ({groupLength})
+                {gameL10n(groupInfo.label)} ({groupLength})
               </div>
               {currentDeck?.load_list?.map((loadListItem, index) => {
                 const cardUuid = loadListItem.uuid;

@@ -58,7 +58,7 @@ const processLabel = (label) => {
 }
 
 export const HotkeyTable = React.memo(({hotkeyList}) => {
-  const l10n = useGameL10n();
+  const gameL10n = useGameL10n();
   const siteL10n = useSiteL10n();
   if (hotkeyList) return(
     <table className="table-fixed rounded-lg w-full mb-6">
@@ -68,7 +68,7 @@ export const HotkeyTable = React.memo(({hotkeyList}) => {
       </tr>
       {hotkeyList.map((el, elIndex) => {
       const keys = el.key.split("+")
-      const labelList = processLabel(l10n(el.labelId));
+      const labelList = processLabel(gameL10n(el.label));
       return (
         <tr className={elIndex % 2 == 0 ? "bg-gray-500" : "bg-gray-600"}>
           <td className="p-1 text-center">

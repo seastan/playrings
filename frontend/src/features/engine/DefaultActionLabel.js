@@ -19,7 +19,7 @@ export const DefaultActionLabel = React.memo(({
             className={"absolute w-full pointer-events-none bg-green-700 font-bold rounded text-white text-xs text-center" + (defaultAction.position === "bottom" ? " bottom-0" : "")}
             style={{height:"40px", opacity: "80%"}}>
                 <div>Tap to</div>
-                {l10n(defaultAction.labelId)}
+                {l10n(defaultAction.label)}
         </div>
     )
 })

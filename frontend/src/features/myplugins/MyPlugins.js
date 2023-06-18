@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useReducer, useState } from "react";
 import { useHistory } from "react-router-dom";
 import useProfile from "../../hooks/useProfile";
 import useDataApi from "../../hooks/useDataApi";
-import { parseISO, format, formatDistanceToNow } from "date-fns";
+import { parseISO, format, formatDistanceToNow, set } from "date-fns";
 import axios from "axios";
 import { EditPluginModal } from "./EditPluginModal";
 import * as moment from 'moment';
@@ -16,7 +16,7 @@ import { LobbyButton } from "../../components/basic/LobbyButton";
 //const lobbyButtonClass = 
 const iconButtonClass = "cursor-pointer hover:bg-white hover:text-black h-full w-full m-2 rounded flex items-center justify-center text-white no-underline select-none"
 
-const MyPluginEntry = ({plugin, setSelectedPlugin, forceUpdate, index}) => {
+const MyPluginEntry = ({plugin, setSelectedPlugin, setShowEditModal, index}) => {
   const siteL10n = useSiteL10n();
   const { authToken, renewToken, setAuthAndRenewToken } = useAuth();
   const authOptions = useMemo(
@@ -30,8 +30,7 @@ const MyPluginEntry = ({plugin, setSelectedPlugin, forceUpdate, index}) => {
 
   const handleEditClick = () => {
     setSelectedPlugin(plugin);
-    // setPluginId(null);
-    // setShowModal(true);
+    setShowEditModal(true);
   }
   const handleDeleteClick = () => {
     const conf = window.confirm(siteL10n("Are you sure you want to delete your plugin?")+" ("+plugin.name+")");
@@ -62,7 +61,7 @@ const MyPluginEntry = ({plugin, setSelectedPlugin, forceUpdate, index}) => {
 export const MyPlugins = () => {
   const user = useProfile();
   const history = useHistory();
-  const [showNewModal, setShowNewModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
   const [selectedPlugin, setSelectedPlugin] = useState(null);
   const [deletedIndices, setDeletedIndices] = useState([]); 
   const [_, forceUpdate] = useReducer((x) => x + 1, 0);
@@ -86,7 +85,7 @@ export const MyPlugins = () => {
   });
   const handleNewClick = () => {
     setSelectedPlugin(null);
-    setShowNewModal(true);
+    setShowEditModal(true);
   }
 
   return (
@@ -99,24 +98,28 @@ export const MyPlugins = () => {
       {data?.my_plugins.map((plugin, index) => {
         return(
           <MyPluginEntry 
-            key={index} 
-            plugin={plugin} 
-            setSelectedPlugin={setSelectedPlugin} 
-            forceUpdate={doFetchUrl}
+            key={index}
+            plugin={plugin}
+            setSelectedPlugin={setSelectedPlugin}
+            setShowEditModal={setShowEditModal}
             index={index}
-            />)
+          />)
       })}
-      <NewPluginModal
-        isOpen={showNewModal}
-        closeModal={() => {setShowNewModal(false); setSelectedPlugin(null)}}
-      />
-      {selectedPlugin !== null &&
-      <EditPluginModal
-        plugin={selectedPlugin}
-        isOpen={selectedPlugin}
-        closeModal={() => {setShowNewModal(false); setSelectedPlugin(null)}}
-        doFetchHash={doFetchHash}
-      />}
+      {showEditModal ? 
+        selectedPlugin ?
+          <EditPluginModal
+            plugin={selectedPlugin}
+            closeModal={() => {setShowEditModal(false); setSelectedPlugin(null)}}
+            doFetchHash={doFetchHash}
+          />
+          :
+          <EditPluginModal
+            plugin={null}
+            closeModal={() => {setShowEditModal(false); setSelectedPlugin(null)}}
+            doFetchHash={doFetchHash}
+          />
+        : null
+      }
     </div>
   );
 };

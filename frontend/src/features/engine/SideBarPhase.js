@@ -8,7 +8,7 @@ export const SideBarPhase = React.memo(({
   phaseInfo,
   triggerMap,
 }) => {
-  const l10n = useGameL10n();
+  const gameL10n = useGameL10n();
   const gameDef = useGameDefinition();
   const currentStepIndex = useSelector(state => state?.gameUi?.game?.stepIndex);
   const currentPhaseId = gameDef?.steps?.[currentStepIndex]?.phaseId;
@@ -23,7 +23,7 @@ export const SideBarPhase = React.memo(({
         className={`absolute h-full pointer-events-none ${isPhase ? "bg-red-800" : ""}`}
         style={{width:"3vh"}}>
         <div className="absolute" style={{top: "50%", left: "50%", transform: "translate(-50%, -50%) rotate(90deg)"}}>
-          {l10n(phaseInfo.labelId)}
+          {gameL10n(phaseInfo.label)}
         </div>
       </div>
       <div className="w-full h-full flex flex-col float-left">

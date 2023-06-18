@@ -245,8 +245,7 @@ defmodule MyTest do
             dest_group_id = evaluate(game, Enum.at(code, 2))
             dest_stack_index = evaluate(game, Enum.at(code, 3))
             combine = if argc == 4 do evaluate(game, Enum.at(code, 4)) else nil end
-            preserve_state = if argc == 5 do evaluate(game, Enum.at(code, 5)) else nil end
-            GameUI.move_stack(game, stack_id, dest_group_id, dest_stack_index, combine, preserve_state)
+            GameUI.move_stack(game, stack_id, dest_group_id, dest_stack_index, combine)
           "DISCARD_STACK" ->
             stack_id = evaluate(game, Enum.at(code, 1))
             stack = game["stackById"][stack_id]

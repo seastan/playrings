@@ -83,7 +83,7 @@ export const DropdownMenuCard = React.memo(({
   }
   
   const DropdownMoveTo = (destGroupId, handleDropdownClick) => {
-    const label = gameL10n(gameDef?.groups?.[destGroupId]?.labelId);
+    const label = gameL10n(gameDef?.groups?.[destGroupId]?.label);
     return (
       <div className="menu">
         <GoBack goToMenu="moveTo" clickCallback={handleDropdownClick}/>
@@ -155,7 +155,7 @@ export const DropdownMenuCard = React.memo(({
               <DropdownItem 
                 action={menuItem.actionList} 
                 clickCallback={handleDropdownClick}>
-                  {gameL10n(menuItem.labelId)}
+                  {gameL10n(menuItem.label)}
               </DropdownItem> 
             )
           })}
@@ -202,7 +202,7 @@ export const DropdownMenuCard = React.memo(({
                 rightIcon={<FontAwesomeIcon icon={faChevronRight}/>}
                 goToMenu={"moveTo"+groupId}
                 clickCallback={handleDropdownClick}>
-                {gameL10n(gameDef?.groups?.[groupId]?.labelId)}
+                {gameL10n(gameDef?.groups?.[groupId]?.label)}
               </DropdownItem>
             )
           })}
@@ -226,7 +226,7 @@ export const DropdownMenuCard = React.memo(({
               rightIcon={<FontAwesomeIcon icon={faChevronRight}/>}
               goToMenu={phaseInfo.phaseId+"ToggleTrigger"}
               clickCallback={handleDropdownClick}>
-              {gameL10n(phaseInfo.labelId)}
+              {gameL10n(phaseInfo.label)}
             </DropdownItem>
           ))}
         </div>}
@@ -242,7 +242,7 @@ export const DropdownMenuCard = React.memo(({
                   rightIcon={visibleFace?.triggers?.[stepInfo.stepId] ? <FontAwesomeIcon icon={faCheck}/> : null}
                   action={dragnActionLists.toggleTrigger(stepInfo.stepId)}
                   clickCallback={handleDropdownClick}>
-                  <div className="text-xs">{gameL10n(stepInfo.labelId)}</div>
+                  <div className="text-xs">{gameL10n(stepInfo.label)}</div>
                 </DropdownItem>
               )})}
           </div>)

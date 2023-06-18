@@ -17,6 +17,7 @@ defmodule DragnCardsGame.Card do
 
   @spec card_from_card_details(Map.t(), Map.t(), String.t(), String.t()) :: Map.t()
   def card_from_card_details(card_details, game_def, card_db_id, group_id) do
+    IO.puts("card_from_card_details 1 #{card_db_id} #{group_id}")
 
     group = game_def["groups"][group_id]
     controller = group["controller"]

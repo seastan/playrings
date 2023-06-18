@@ -243,6 +243,8 @@ defmodule DragnCardsGame.GameUI do
     dest_group = get_group(game, dest_group_id)
     card = get_card(game, card_id)
     prev_card = card
+    IO.puts("updating card state ----------------------------------- prev_card")
+    IO.inspect(prev_card)
     parent_card = get_card_by_gsc(game, [dest_group_id, dest_stack_index, 0])
 
     game = Evaluate.evaluate(game, ["SET", "/cardById/" <> card_id <> "/groupId", dest_group_id])
@@ -251,7 +253,6 @@ defmodule DragnCardsGame.GameUI do
     game = Evaluate.evaluate(game, ["SET", "/cardById/" <> card_id <> "/stackParentCardId", parent_card["id"]])
 
     # If card gets moved to a facedown pile, or gets flipped up, erase peeking
-    IO.puts("updateing card state -----------------------------------")
     IO.inspect(dest_group["onCardEnter"])
     IO.inspect(prev_card["currentSide"])
     game = if dest_group["onCardEnter"]["currentSide"] == "B" or (prev_card["currentSide"] == "B" and dest_group["onCardEnter"]["currentSide"] == "A") do
@@ -261,14 +262,19 @@ defmodule DragnCardsGame.GameUI do
     end
 
     game = Enum.reduce(dest_group["onCardEnter"], game, fn({key, val}, acc) ->
-        if orig_group["onCardEnter"][key] != dest_group["onCardEnter"][key] do
-          IO.puts("updating card state Onenter: " <> key <> " " <> inspect(val))
-          Evaluate.evaluate(acc, ["SET", "/cardById/" <> card_id <> "/" <> key, val])
-        else
-          acc
-        end
-      end)
+      if orig_group["onCardEnter"][key] != dest_group["onCardEnter"][key] do
+        IO.puts("updating card state Onenter: " <> key <> " " <> inspect(val))
+        Evaluate.evaluate(acc, ["SET", "/cardById/" <> card_id <> "/" <> key, val])
+      else
+        acc
+      end
+    end)
 
+    new_card = get_card(game, card_id)
+    IO.puts("updating card state ----------------------------------- new_card")
+    IO.inspect(new_card)
+
+    game
   end
 
   # Delete card from game
@@ -765,15 +771,25 @@ defmodule DragnCardsGame.GameUI do
   end
 
   def create_card_in_group(game, game_def, group_id, load_list_item) do
+    IO.puts("create_card_in_group 1")
+    IO.inspect(load_list_item)
+    IO.inspect(group_id)
     group_size = Enum.count(get_stack_ids(game, group_id))
+    IO.puts("create_card_in_group 2")
     # Can't insert a card directly into a group need to make a stack first
     new_card = Card.card_from_card_details(load_list_item["cardDetails"], game_def, load_list_item["uuid"], group_id)
+    IO.puts("create_card_in_group 3")
+    IO.inspect(new_card)
     new_stack = Stack.stack_from_card(new_card)
     new_card = new_card
     |> Map.put("groupId", group_id)
     |> Map.put("stackId", new_stack["id"])
     |> Map.put("stackIndex", group_size)
     |> Map.put("cardIndex", 0)
+
+    IO.puts("new_card 2")
+    IO.inspect(new_card)
+
     game = game
     |> insert_stack_in_group(group_id, new_stack["id"], group_size)
     |> update_stack(new_stack)
@@ -836,18 +852,24 @@ defmodule DragnCardsGame.GameUI do
       # Check if the number of stacks in the deck has changed, and if so, we shuffle
       if group["shuffleOnLoad"] && length(old_stack_ids) != length(new_stack_ids) do
         acc = shuffle_group(acc, group_id)
-        acc = Evaluate.evaluate(acc, ["LOG", "$PLAYER_N", " shuffled ", l10n(acc, game_def, group["labelId"]), "."])
+        acc = Evaluate.evaluate(acc, ["LOG", "$PLAYER_N", " shuffled ", l10n(acc, game_def, group["label"]), "."])
       else
         acc
       end
     end)
   end
 
-  def l10n(game, game_def, label_id) do
-    language = game["options"]["language"]
-    case get_in(game_def["labels"][label_id], [language]) do
-      nil -> label_id
-      val -> val
+  def l10n(game, game_def, label) do
+    # Check if label starts with "id:"
+    text = if String.starts_with?(label, "id:") do
+      label_id = String.slice(label, 3..-1)
+      language = game["options"]["language"]
+      case get_in(game_def["labels"][label_id], [language]) do
+        nil -> label
+        val -> val
+      end
+    else
+      label
     end
   end
 

@@ -7,6 +7,7 @@ import { useDoActionList } from './useDoActionList';
 import { dragnHotkeys, useDoDragnHotkey } from './useDragnHotkeys';
 import { useGameDefinition } from './useGameDefinition';
 
+
 export const useKeyDown = () => {
     const gameDef = useGameDefinition();
     const dispatch = useDispatch();
@@ -29,6 +30,8 @@ export const useKeyDown = () => {
         if (k === "Control") dispatch(setKeypress({"Control": unix_sec}));
         if (k === "Shift") dispatch(setKeypress({"Shift": unix_sec}));
         if (k === "Tab") dispatch(setKeypress({"Tab": unix_sec}));
+        if (["Alt", " ", "Control", "Shift", "Tab"].includes(k)) return;
+
         var dictKey = k.length === 1 ? k.toUpperCase() : k;
         //if ((unix_sec - keypressShift) < 30) dictKey = "Shift+"+dictKey;
         //if ((unix_sec - keypressControl) < 30) dictKey = "Ctrl+"+dictKey;
@@ -38,30 +41,30 @@ export const useKeyDown = () => {
         if (keypressAlt) dictKey = "Alt+" + dictKey;
 
         for (var keyObj of gameDef?.hotkeys.token) {
-            if (keyObj.key === dictKey) {
+            if (keyMatch(keyObj.key, dictKey)) {
                 addToken(keyObj.tokenType, mouseTopBottom === "top" ? 1 : -1);
                 return;
             }
         }
         for (var keyObj of gameDef?.hotkeys.game) {
             console.log("keydown action check ",keyObj.key, dictKey)
-            if (keyObj.key === dictKey) {
-                doActionList(keyObj.actionListId)
-                console.log("keydown action ",keyObj.actionListId, gameDef.actionLists[keyObj.actionListId])
+            if (keyMatch(keyObj.key, dictKey)) {
+                doActionList(keyObj.actionList)
+                console.log("keydown action ",keyObj.actionList, gameDef.actionLists[keyObj.actionList])
                 return;
             }
         }
         for (var keyObj of gameDef?.hotkeys.card) {
-            if (keyObj.key === dictKey) {
-                doActionList(keyObj.actionListId)
-                console.log("keydown action ",keyObj.actionListId, gameDef.actionLists[keyObj.actionListId])
+            if (keyMatch(keyObj.key, dictKey)) {
+                doActionList(keyObj.actionList)
+                console.log("keydown action ",keyObj.actionList, gameDef.actionLists[keyObj.actionList])
                 return;
             }
         }
         for (var keyObj of dragnHotkeys) {
             if (keyObj.key === dictKey) {
-                doDragnHotkey(keyObj.actionListId)
-                console.log("keydown action ",keyObj.actionListId, gameDef.actionLists[keyObj.actionListId])
+                doDragnHotkey(keyObj.actionList)
+                console.log("keydown action ",keyObj.actionList, gameDef.actionLists[keyObj.actionList])
                 return;
             }
         }
@@ -86,4 +89,13 @@ export const useKeyDown = () => {
             }
         })
     } */
+}
+
+const keyMatch = (key1, key2) => {
+    console.log("keymatch 1", key1, key2)
+    if (key1 === key2) return true;
+    console.log("keymatch 2", key1.split('+').sort().join('+'), key2.split('+').sort().join('+'))
+    if (key1.split('+').sort().join('+') === key2.split('+').sort().join('+')) return true;
+    console.log("keymatch 3")
+    return false;
 }

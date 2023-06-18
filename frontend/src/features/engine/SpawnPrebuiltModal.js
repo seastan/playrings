@@ -23,7 +23,7 @@ const isStringInDeckName = (str, deckName) => {
 export const SpawnPrebuiltModal = React.memo(({}) => { 
   const {gameBroadcast, chatBroadcast} = useContext(BroadcastContext); 
     const dispatch = useDispatch();
-    const l10n = useGameL10n();
+    const gameL10n = useGameL10n();
     const gameDef = useGameDefinition();
     const myUser = useProfile();
     const [filteredIds, setFilteredIds] = useState([]);
@@ -90,7 +90,7 @@ export const SpawnPrebuiltModal = React.memo(({}) => {
             overflowY: "scroll",
           }
         }}>
-        <h1 className="mb-2">{l10n("Load prebuilt deck")}</h1>
+        <h1 className="mb-2">{gameL10n("Load prebuilt deck")}</h1>
         <input 
           autoFocus
           style={{width:"50%"}} 
@@ -106,15 +106,15 @@ export const SpawnPrebuiltModal = React.memo(({}) => {
         {/* Table */}
         {searchString &&
           ((filteredIds.length === 0) ?
-            <div className="text-white">{l10n("No results")}</div>
+            <div className="text-white">{gameL10n("No results")}</div>
             :
             (filteredIds.length>25) ?
-              <div className="text-white">{l10n("Too many results")}</div> 
+              <div className="text-white">{gameL10n("Too many results")}</div> 
               :
               <table className="table-fixed rounded-lg w-full">
                 <thead>
                   <tr className="text-white bg-gray-800">
-                    <th className="w-1/2">{l10n("Name")}</th>
+                    <th className="w-1/2">{gameL10n("Name")}</th>
                   </tr>
                 </thead>
                 {filteredIds.map((filteredId, index) => {
@@ -144,7 +144,7 @@ export const SpawnPrebuiltModal = React.memo(({}) => {
                   rightIcon={<FontAwesomeIcon icon={faChevronRight}/>}
                   goToMenu={subMenuOption}
                   clickCallback={handleSubMenuClick}>
-                  {l10n(subMenuOption.name)}
+                  {gameL10n(subMenuOption.label)}
                 </DropdownItem>
               )
             })}
@@ -154,7 +154,7 @@ export const SpawnPrebuiltModal = React.memo(({}) => {
                   returnToMenu={activeMenu}
                   deckListOption={deckListOption}
                   clickCallback={handleDeckListClick}>
-                  {l10n(deckListOption.nameOverride || gameDef.preBuiltDecks?.[deckListOption.deckListId]?.name)}
+                  {gameL10n(deckListOption.label)}
                 </DropdownItem>
               )
             })}

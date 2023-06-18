@@ -29,7 +29,7 @@ export const useHandleTouchAction = () => {
         if (!playerN) return null;
         if (touchAction) {
             if (touchAction?.actionType === "game") {
-                doActionList(touchAction?.actionListId)
+                doActionList(touchAction?.actionList)
                 dispatch(setTouchAction(null));
             } else if (touchAction?.actionType === "token" && touchedCard) {
                 const tokenType = touchAction?.tokenType;
@@ -50,7 +50,7 @@ export const useHandleTouchAction = () => {
                     }
                 }
             } else if (touchAction?.actionType === "card" && touchedCard) {
-                doActionList(touchAction?.actionListId)
+                doActionList(touchAction?.actionList)
                 dispatch(setMouseXY(null));
             }
             dispatch(setMouseXY(null));
@@ -58,7 +58,7 @@ export const useHandleTouchAction = () => {
         } else if (touchedCard.id === activeCardId) {
             // If a touched card is the active card, we do the default action
             const defaultAction = getDefaultAction(touchedCard.id);
-            doActionList(defaultAction?.actionListId)
+            doActionList(defaultAction?.actionList)
             return;
         }
     })

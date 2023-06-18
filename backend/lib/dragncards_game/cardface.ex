@@ -50,6 +50,8 @@ defmodule DragnCardsGame.CardFace do
 
   @spec card_face_from_card_face_details(Map.t(), Map.t()) :: Map.t()
   def card_face_from_card_face_details(card_face_details, game_def) do
+    IO.puts("card_face_from_card_face_details  1 #{card_face_details["name"]}")
+
     type = card_face_details["type"]
     name = card_face_details["name"]
     triggers = trigger_steps_from_face_details(card_face_details, game_def["stepReminderRegex"])
