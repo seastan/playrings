@@ -5,7 +5,7 @@ import useProfile from "../../hooks/useProfile";
 import store from "../../store";
 import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { setZoomFactor, setLoaded, setRandomNumBetween, setShowModal, setTouchAction, setTouchMode } from "../store/playerUiSlice";
+import { setZoomFactor, setLoaded, setRandomNumBetween, setShowModal, setTouchAction, setTouchMode, setShowDeveloper } from "../store/playerUiSlice";
 import { useGameL10n } from "./hooks/useGameL10n";
 import BroadcastContext from "../../contexts/BroadcastContext";
 import { useGameDefinition } from "./hooks/useGameDefinition";
@@ -148,6 +148,8 @@ export const TopBarMenu = React.memo(({}) => {
       dispatch(setShowModal("card"));
     } else if (data.action === "spawn_custom") {
       dispatch(setShowModal("custom"));
+    } else if (data.action === "developer_tools") {
+      dispatch(setShowDeveloper(true));
     } else if (data.action === "spawn_deck") {
       dispatch(setShowModal("prebuilt_deck"));
     } else if (data.action === "download") {
@@ -320,6 +322,7 @@ export const TopBarMenu = React.memo(({}) => {
             <span className="float-right mr-1"><FontAwesomeIcon icon={faChevronRight}/></span>
           <ul className="third-level-menu">
             <li key={"adjust_card_size"} onClick={() => handleMenuClick({action:"adjust_card_size"})}>{siteL10n("adjustCardSize")}</li>
+            <li key={"developer_tools"} onClick={() => handleMenuClick({action:"developer_tools"})}>{siteL10n("developerTools")}</li>
 
           </ul>
         </li> 

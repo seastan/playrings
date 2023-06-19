@@ -18,11 +18,11 @@ export const PatreonModal = ({
         },
         { 
           amount: 500, 
-          benefits: ["Custom card backs", "Custom plugin backgrounds"] 
+          benefits: ["Unlimited saved games", "Custom card backs", "Custom plugin backgrounds"] 
         },
         { 
           amount: 1000, 
-          benefits: ["\"Esteemed Supporter\" Discord role", "Access to private Discord channels for plugin developer"] 
+          benefits: ["Unlimited saved games", "Custom card backs", "Custom plugin backgrounds", "\"Esteemed Supporter\" Discord role", "Access to private Discord channels for plugin developers"] 
         },
     ];
 

@@ -40,32 +40,38 @@ export const getGameDefSchema = (gameDef) => {
       },
       "automation": {
         "_type_": "object",
-        "_itemSchema_": {
+        "postLoadActionList": {
+          "_type_": "actionList",
+        },
+        "cards": {
           "_type_": "object",
-          "rules": {
-            "_type_": "array",
-            "_required_": true,
-            "_itemSchema_": {
-              "_type_": {
-                "_type_": "string",
-                "_required_": true,
-              },
-              "listenTo": {
-                "_type_": "array",
-                "_required_": true,
-              },
-              "condition": {
-                "_type_": "array",
-                "_required_": true,
-              },
-              "then": {
-                "_type_": "actionList",
-              },
-              "onDo": {
-                "_type_": "actionList",
-              },
-              "offDo": {
-                "_type_": "actionList",
+          "_itemSchema_": {
+            "_type_": "object",
+            "rules": {
+              "_type_": "array",
+              "_required_": true,
+              "_itemSchema_": {
+                "_type_": {
+                  "_type_": "string",
+                  "_required_": true,
+                },
+                "listenTo": {
+                  "_type_": "array",
+                  "_required_": true,
+                },
+                "condition": {
+                  "_type_": "array",
+                  "_required_": true,
+                },
+                "then": {
+                  "_type_": "actionList",
+                },
+                "onDo": {
+                  "_type_": "actionList",
+                },
+                "offDo": {
+                  "_type_": "actionList",
+                }
               }
             }
           }

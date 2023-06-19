@@ -160,6 +160,13 @@ defmodule DragnCardsGame.Evaluate do
   end
 
   def evaluate(game, code) do
+    # IO.puts("#############################################")
+    # IO.puts("EVALUATING:")
+    # IO.inspect(game["roomSlug"])
+    # IO.inspect(code)
+    # IO.puts("#############################################")
+
+    IO
     #IO.inspect(code)
     if is_list(code) && Enum.count(code) > 0 do
 

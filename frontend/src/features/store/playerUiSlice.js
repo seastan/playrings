@@ -19,6 +19,7 @@ const initialState = {
   observingPlayerN: "player1",
   dropdownMenu: null,
   showModal: null,
+  showDeveloper: null,
   loaded: null,
   showPlayersInRoom: false,
   browseGroup: {
@@ -94,6 +95,9 @@ const playerUiSlice = createSlice({
     setShowModal: (state, { payload }) => {
       state.showModal = payload;
     },
+    setShowDeveloper: (state, { payload }) => {
+      state.showDeveloper = payload;
+    },
     setLoaded: (state, { payload }) => {
       state.loaded = payload;
     },
@@ -156,6 +160,7 @@ export const {
   setObservingPlayerN,
   setDropdownMenu,
   setShowModal,
+  setShowDeveloper,
   setLoaded,
   setShowPlayersInRoom,
   setBrowseGroupId,

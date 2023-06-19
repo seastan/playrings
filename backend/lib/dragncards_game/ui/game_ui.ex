@@ -31,6 +31,7 @@ defmodule DragnCardsGame.GameUI do
       "replayLength" => 0, # Length of deltas. We need this because the delta array is not broadcast.
       "sockets" => %{},
       "logTimestamp" => nil,
+      "loadedCardIds" => [],
       "logMessages" => [] # These game messages will be delivered to chat
     }
     IO.puts("gameui new 2")
@@ -489,7 +490,6 @@ defmodule DragnCardsGame.GameUI do
   def game_action(gameui, user_id, action, options) do
     user_alias = get_alias_by_user_id(gameui, user_id)
     player_n = get_player_n(gameui, user_id)
-    player_n = if options["for_player_n"] do options["for_player_n"] else player_n end
     Logger.debug("game_action #{user_id} #{player_n} #{action}")
     game_old = gameui["game"]
 
@@ -796,6 +796,7 @@ defmodule DragnCardsGame.GameUI do
     |> update_card(new_card)
     |> implement_card_automations(game_def, new_card)
     |> update_card_state(new_card["id"], nil)
+    |> put_in(["loadedCardIds"], game["loadedCardIds"] ++ [new_card["id"]])
     game
   end
 
@@ -883,6 +884,8 @@ defmodule DragnCardsGame.GameUI do
 
     old_game = game
 
+    game = put_in(game, ["loadedCardIds"], [])
+
     game = Enum.reduce(load_list, game, fn load_list_item, acc ->
       load_card(acc, game_def, load_list_item)
     end)
@@ -890,6 +893,12 @@ defmodule DragnCardsGame.GameUI do
     game = Evaluate.evaluate(game, ["LOG", "$PLAYER_N", " loaded cards."])
 
     game = shuffle_changed_decks(game, old_game, game_def)
+
+    if game_def["automation"]["postLoadActionList"] != nil do
+      Evaluate.evaluate_with_timeout(game, game_def["automation"]["postLoadActionList"])
+    else
+      game
+    end
 
 
     # # Check if we should load the first quest card

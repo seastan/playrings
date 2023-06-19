@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { TableLayout } from "./TableLayout";
 import { GiantCard } from "./GiantCard";
 import { TopBar } from "./TopBar";
@@ -19,6 +19,7 @@ import useProfile from "../../hooks/useProfile";
 import BroadcastContext from "../../contexts/BroadcastContext";
 import { DeckbuilderModal } from "./DeckbuilderModal";
 import { PatreonModal } from "../support/PatreonModal";
+import DeveloperModal from "./DeveloperModal";
 
 export const Table = React.memo(() => {
   const {gameBroadcast, chatBroadcast} = useContext(BroadcastContext);
@@ -26,6 +27,7 @@ export const Table = React.memo(() => {
   const tooltipIds = useSelector(state => state?.playerUi?.tooltipIds);
   const touchMode = useSelector(state => state?.playerUi?.touchMode);
   const showModal = useSelector(state => state?.playerUi?.showModal);
+  const showDeveloper = useSelector(state => state?.playerUi?.showDeveloper);
   const options = useSelector(state => state?.gameUi?.game?.options); 
   const loaded = useSelector(state => state?.playerUi?.loaded);
   const redoStepsExist = useSelector(state => state?.gameUi?.game?.replayStep < state?.gameUi?.game?.replayLength-1);
@@ -89,6 +91,7 @@ export const Table = React.memo(() => {
       {showModal === "prebuilt_deck" ? <SpawnPrebuiltModal/> : null}
       {showModal === "custom" ? <SpawnCustomCardModal/> : null}
       {showModal === "builder" ? <DeckbuilderModal/> : null}
+      {showDeveloper ? <DeveloperModal/> : null}
       {showModal === "patreon" ? 
         <PatreonModal isOpen={true} isLoggedIn={myUserId} closeModal={() => dispatch(setShowModal(null))}/> : null}
       {tooltipIds.map((tooltipId, index) => {
