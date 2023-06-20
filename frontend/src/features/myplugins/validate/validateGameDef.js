@@ -60,6 +60,11 @@ const doesTypeMatch = (exp, act) => {
 export const validateSchema = (gameDef, path, data, schema, errors) => {
   // console.log(`Validating ${path}...`);
   // console.log(`Schema: ${schema}`);
+  // Check if schema is undefined
+  if (schema === undefined) {
+    errors.push(`Undefined schema for ${path}`);
+    return;
+  }
   
   // Get expected type
   const expectedType = schema._type_;
@@ -120,7 +125,7 @@ export const validateSchema = (gameDef, path, data, schema, errors) => {
     
       // Do not allow any extra keys
       if (schema._strictKeys_ && !schema[key]) {
-          errors.push(`Invalid key in ${path}: ${key}`);
+          errors.push(`Invalid key in ${path}: ${key}. Valid keys are: ${Object.keys(schema).filter(k => !k.startsWith("_")).join(", ")}`);
           continue;
       }
 
@@ -133,7 +138,9 @@ export const validateSchema = (gameDef, path, data, schema, errors) => {
         }
         // Validate the nested part of the game definition
         validateSchema(gameDef, `${path}.${key}`, item, subSchema, errors);
-      
+      } else if (!schema._itemSchema_) {
+        // If there is no item schema, then this is an error
+        errors.push(`Invalid key in ${path}: ${key}. Valid keys are: ${Object.keys(schema).filter(k => !k.startsWith("_")).join(", ")}.`);
       // Otherwise, use the general item schema
       } else {
         // Validate the nested part of the game definition

@@ -2,11 +2,11 @@
 import fs from 'fs';
 import util from 'util';
 import path from 'path';
-import { mergeJSONs } from '../PluginFileImport';
 import { validateSchema } from './validateGameDef';
 import { getGameDefSchema } from './getGameDefSchema';
+import { mergeJSONs } from '../uploadPluginFunctions';
 
-const jsonsDirectory = '/home/cstanford@novateur.com/repos/other/dragncards-lotrlcg-plugin/jsons';
+const jsonsDirectory = '/home/cstanford@novateur.com/repos/other/dragncards-mc-plugin/json';
 
 const readFile = util.promisify(fs.readFile);
 

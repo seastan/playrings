@@ -1,3 +1,5 @@
+import { mytypeof } from "./validateGameDef";
+
 export const getGameDefSchema = (gameDef) => {
     return ({
       "_type_": "object",
@@ -127,7 +129,7 @@ export const getGameDefSchema = (gameDef) => {
           "_type_": "array",
           "_itemSchema_": {
             "_type_": "string",
-            "_memberOf_": Object.keys(gameDef.groups),
+            "_memberOf_": mytypeof(gameDef?.groups) === "object" ? Object.keys(gameDef.groups) : [],
             "_memberOfPath_": "gameDef.groups",
           }
         },
@@ -180,7 +182,7 @@ export const getGameDefSchema = (gameDef) => {
             "_type_": "array",
             "_itemSchema_": {
               "_type_": "string",
-              "_memberOf_": Object.keys(gameDef.tokens),
+              "_memberOf_": mytypeof(gameDef?.tokens) === "object" ? Object.keys(gameDef.tokens) : [],
               "_memberOfPath_": "gameDef.tokens",
             }
           },
@@ -188,7 +190,7 @@ export const getGameDefSchema = (gameDef) => {
       },
       "clearTableOptions": {
         "_type_": "array",
-        "_required_": true,
+//        "_required_": true,
         "_itemSchema_": {
           "_type_": "object",
           "_strictKeys_": true,
@@ -204,7 +206,7 @@ export const getGameDefSchema = (gameDef) => {
       },
       "closeRoomOptions": {
         "_type_": "array",
-        "_required_": true,
+//        "_required_": true,
         "_itemSchema_": {
           "_type_": "object",
           "_strictKeys_": true,
@@ -220,7 +222,7 @@ export const getGameDefSchema = (gameDef) => {
       },
       "deckbuilder": {
         "_type_": "object",
-        "_required_": true,
+//        "_required_": true,
         "addButtons": {
           "_type_": "array",
           "_itemSchema_": {
@@ -259,7 +261,7 @@ export const getGameDefSchema = (gameDef) => {
             "id": {
               "_type_": "string",
               "_required_": true,
-              "_memberOf_": Object.keys(gameDef.groups),
+              "_memberOf_": mytypeof(gameDef?.groups) === "object" ? Object.keys(gameDef.groups) : [],
               "_memberOfPath_": "gameDef.groups",
             },
             "label": {
@@ -301,7 +303,7 @@ export const getGameDefSchema = (gameDef) => {
                     "deckListId": {
                       "_type_": "string",
                       "_required_": true,
-                      "_memberOf_": Object.keys(gameDef.preBuiltDecks),
+                      "_memberOf_": mytypeof(gameDef?.preBuiltDecks) === "object" ? Object.keys(gameDef.preBuiltDecks) : [],
                       "_memberOfPath_": "gameDef.preBuiltDecks",
                     }
                   }
@@ -320,7 +322,7 @@ export const getGameDefSchema = (gameDef) => {
                 "deckListId": {
                   "_type_": "string",
                   "_required_": true,
-                  "_memberOf_": Object.keys(gameDef.preBuiltDecks),
+                  "_memberOf_": mytypeof(gameDef?.preBuiltDecks) === "object" ? Object.keys(gameDef.preBuiltDecks) : [],
                   "_memberOfPath_": "gameDef.preBuiltDecks",
                 }
               }
@@ -339,7 +341,7 @@ export const getGameDefSchema = (gameDef) => {
             "deckListId": {
               "_type_": "string",
               "_required_": true,
-              "_memberOf_": Object.keys(gameDef.preBuiltDecks),
+              "_memberOf_": mytypeof(gameDef?.preBuiltDecks) === "object" ? Object.keys(gameDef.preBuiltDecks) : [],
               "_memberOfPath_": "gameDef.preBuiltDecks",
             }
           }
@@ -386,7 +388,7 @@ export const getGameDefSchema = (gameDef) => {
       },
       "groupMenu": {
         "_type_": "object",
-        "_required_": true,
+//        "_required_": true,
         "_strictKeys_": true,
         "moveToGroupIds": {
           "_type_": "array",
@@ -433,6 +435,9 @@ export const getGameDefSchema = (gameDef) => {
             "_itemSchema_": {
               "_type_": "any",
             }
+          },
+          "_itemSchema_": {
+            "_type_": "any",
           }
         }
       },
@@ -451,7 +456,7 @@ export const getGameDefSchema = (gameDef) => {
             "tokenType": {
                 "_type_": "string",
                 "_required_": true,
-                "_memberOf_": Object.keys(gameDef.tokens),
+                "_memberOf_": mytypeof(gameDef?.tokens) === "object" ? Object.keys(gameDef.tokens) : [],
                 "_memberOfPath_": "gameDef.tokens",
             },
             "label": {
@@ -521,7 +526,7 @@ export const getGameDefSchema = (gameDef) => {
           "layoutId": {
             "_type_": "string",
             "_required_": true,
-            "_memberOf_": Object.keys(gameDef.layouts),
+            "_memberOf_": mytypeof(gameDef?.layouts) === "object" ? Object.keys(gameDef.layouts) : [],
             "_memberOfPath_": "gameDef.layouts",
           },
           "numPlayers": {
@@ -757,7 +762,7 @@ export const getGameDefSchema = (gameDef) => {
       },
       "preBuiltDecks": {
         "_type_": "object",
-        "_required_": true,
+//        "_required_": true,
         "_itemSchema_": {
           "_type_": "object",
           "_strictKeys_": true,
@@ -778,7 +783,7 @@ export const getGameDefSchema = (gameDef) => {
               "loadGroupId": {
                 "_type_": "string",
                 "_required_": true,
-                "_memberOf_": Object.keys(gameDef.groups),
+                "_memberOf_": mytypeof(gameDef?.groups) === "object" ? Object.keys(gameDef.groups) : [],
                 "_memberOfPath_": "gameDef.groups",
               }
             }
@@ -798,7 +803,7 @@ export const getGameDefSchema = (gameDef) => {
           "_type_": "array",
           "_itemSchema_": {
             "_type_": "string",
-            "_memberOf_": Object.keys(gameDef.groups),
+            "_memberOf_": mytypeof(gameDef?.groups) === "object" ? Object.keys(gameDef.groups) : [],
             "_memberOfPath_": "gameDef.groups",
           }
         }
@@ -893,7 +898,7 @@ export const getGameDefSchema = (gameDef) => {
             "gameProperty": {
               "_type_": "string",
               "_required_": true,
-              "_memberOf_": Object.keys(gameDef.gameProperties) + ["roundNumber"],
+              "_memberOf_": mytypeof(gameDef?.gameProperties) === "object" ? Object.keys(gameDef.gameProperties) + ["roundNumber"] : ["roundNumber"],
               "_memberOfPath_": "gameDef.gameProperties",
             }
           }
@@ -914,7 +919,7 @@ export const getGameDefSchema = (gameDef) => {
             "playerProperty": {
               "_type_": "string",
               "_required_": true,
-              "_memberOf_": Object.keys(gameDef.playerProperties),
+              "_memberOf_": mytypeof(gameDef?.playerProperties) === "object" ? Object.keys(gameDef.playerProperties) : [],
               "_memberOfPath_": "gameDef.playerProperties",
             }
           }
@@ -946,7 +951,7 @@ export const getGameDefSchema = (gameDef) => {
             },
             "tokenType": {
               "_type_": "string",
-              "_memberOf_": Object.keys(gameDef.tokens),
+              "_memberOf_": mytypeof(gameDef?.tokens) === "object" ? Object.keys(gameDef.tokens) : [],
               "_memberOfPath_": "gameDef.tokens",
             },
             "actionList": {
