@@ -136,7 +136,7 @@ export const DeckbuilderCurrent = React.memo(({currentGroupId, setCurrentGroupId
         </div>
         
         {spawnGroups?.map((groupInfo, _groupIndex) => {
-          const groupId = groupInfo.id;
+          const groupId = groupInfo.loadGroupId;
           const groupLength = currentDeck?.load_list?.filter(obj => obj.loadGroupId === groupId).length;
           return(
             <div>
