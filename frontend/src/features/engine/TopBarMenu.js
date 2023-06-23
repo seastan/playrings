@@ -30,7 +30,6 @@ export const TopBarMenu = React.memo(({}) => {
 
   const createdBy = useSelector(state => state.gameUi?.createdBy);
   const options = useSelector(state => state.gameUi?.game?.options);
-  const ringsDbInfo = options?.ringsDbInfo;
   const isHost = myUserID === createdBy;  
   const playerN = useSelector(state => state?.playerUi?.playerN);
   const zoomFactor = useSelector(state => state?.playerUi?.zoomFactor);
@@ -125,7 +124,8 @@ export const TopBarMenu = React.memo(({}) => {
       loadFileCustom();
     }  else if (data.action === "layout") {
       doActionList([
-        ["SET", "/layoutId", data.value.layoutId]
+        ["SET", "/layoutId", data.value.layoutId],
+        ["SET", "/numPlayers", data.value.numPlayers]
       ]);
     } 
   }

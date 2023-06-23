@@ -258,7 +258,7 @@ export const getGameDefSchema = (gameDef) => {
           "_itemSchema_": {
             "_type_": "object",
             "_strictKeys_": true,
-            "id": {
+            "loadGroupId": {
               "_type_": "string",
               "_required_": true,
               "_memberOf_": mytypeof(gameDef?.groups) === "object" ? Object.keys(gameDef.groups) : [],
@@ -369,6 +369,22 @@ export const getGameDefSchema = (gameDef) => {
             "_memberOf_": ["top", "bottom"],
             "_memberOfPath_": `["top", "bottom"]`,
           }
+        }
+      },
+      "faceProperties": {
+        "_type_": "object",
+        "_itemSchema_": {
+          "_type_": "object",
+          "_strictKeys_": true,
+          "type": {
+            "_type_": "string",
+            "_required_": true,
+          },
+          "default": {
+            "_type_": "selfType",
+            "_required_": true,
+            "_nullable_": true,
+          },
         }
       },
       "gameProperties": {
@@ -799,7 +815,7 @@ export const getGameDefSchema = (gameDef) => {
             "_type_": "string",
           },
         },
-        "spawnGroupIds": {
+        "loadGroupIds": {
           "_type_": "array",
           "_itemSchema_": {
             "_type_": "string",

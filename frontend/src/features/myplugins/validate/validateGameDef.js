@@ -91,6 +91,11 @@ export const validateSchema = (gameDef, path, data, schema, errors) => {
 
   // Check type mismatch
   if (doesTypeMatch(expectedType, mytypeof(data)) == false) {
+ 
+      // Check if nullable
+      if (schema._nullable_ && data === null) {
+          return;
+      }
 
       // Incorrect type
       errors.push(gameDefTypeError(path, expectedType, mytypeof(data)));
@@ -100,9 +105,9 @@ export const validateSchema = (gameDef, path, data, schema, errors) => {
   // TODO: Check for memberOf
   if (schema._memberOf_ && !schema._memberOf_.includes(data)) {
       
-    // Special expception for spawnGroups - you can start a group with "playerN" 
+    // Special expception for loadGroupIds - you can start a group with "playerN" 
     // even if it is not in gameDef.groups, and it will be resolved at load time.
-    if (path.includes("gameDef.deckbuilder.spawnGroups") && data.startsWith("playerN"))
+    if (path.includes("loadGroupId") && data.startsWith("playerN"))
       return;
 
     errors.push(`Invalid key in ${path}: "${data}". Key must be present in ${schema._memberOfPath_}.`);

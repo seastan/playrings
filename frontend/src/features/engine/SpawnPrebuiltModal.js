@@ -64,13 +64,8 @@ export const SpawnPrebuiltModal = React.memo(({}) => {
       loadList(gameDef.preBuiltDecks[props.deckListOption.deckListId].cards);
       if (props.deckListOption.postLoadActionList) doActionList(props.deckListOption.postLoadActionList);
       console.log("universalPostLoadActionList 1", gameDef.postLoadActionList)
-      if (gameDef.postLoadActionList) {
-        const universalPostLoadActionList = [
-          ["DEFINE", "$DECK_LIST_ID", props.deckListOption.deckListId],
-          ...gameDef.postLoadActionList
-        ]
-        console.log("universalPostLoadActionList 2", universalPostLoadActionList)
-        doActionList(universalPostLoadActionList);
+      if (gameDef?.automation?.postLoadActionList) {
+        doActionList(gameDef?.automation?.postLoadActionList);
       }
       dispatch(setShowModal(null))
     }

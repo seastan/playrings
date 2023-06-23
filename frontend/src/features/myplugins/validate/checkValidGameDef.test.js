@@ -6,7 +6,7 @@ import { validateSchema } from './validateGameDef';
 import { getGameDefSchema } from './getGameDefSchema';
 import { mergeJSONs } from '../uploadPluginFunctions';
 
-const jsonsDirectory = '/home/cstanford@novateur.com/repos/other/dragncards-mc-plugin/json';
+const jsonsDirectory = '/home/cstanford@novateur.com/repos/other/dragncards-lotrlcg-plugin/jsons';
 
 const readFile = util.promisify(fs.readFile);
 

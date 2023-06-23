@@ -8,9 +8,9 @@ export const useImportViaUrl = () => {
   const importLoadList = useImportLoadList();
   const gameDef = useGameDefinition();
   const doActionList = useDoActionList();
-  return () => {
+  return async () => {
     if (gameDef["pluginName"] === "LotR Living Card Game") {
-      importViaUrlRingsDb(importLoadList, doActionList, playerN);
+      await importViaUrlRingsDb(importLoadList, doActionList, playerN);
     } else {
       alert("Importing via URL is not yet supported for this game. Please request this feature on Discord.");
     }

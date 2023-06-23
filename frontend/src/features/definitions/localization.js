@@ -214,7 +214,10 @@ export const siteL10n = {
   },
   "startStopDrawingArrow": {
     "English": "Start/stop drawing arrow"
-  }
+  },
+  "developerTools": {
+    "English": "Developer tools"
+  },
 
 
 }

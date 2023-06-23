@@ -121,7 +121,36 @@ defmodule DragnCardsGame.CardFace do
     triggers = trigger_steps_from_face_details(card_face_details, game_def["stepReminderRegex"])
     width = game_def["cardTypes"][type]["width"] || game_def["cardBacks"][name]["width"] || 1
     height = game_def["cardTypes"][type]["height"] || game_def["cardBacks"][name]["height"] || 1
-    card_face = card_face_details
+
+    # Loop over keys in card_face_details and convert to correct type
+    # for each key
+    card_face = Enum.reduce(card_face_details, %{}, fn({key, value}, acc) ->
+      # If key is not in game_def['faceProperties'] then make it a string
+      if !Map.has_key?(game_def["faceProperties"], key) do
+        Map.put(acc, key, value)
+      else
+        # Match on game_def['faceProperties'][key]['type']
+        # and convert value to that type
+        case game_def["faceProperties"][key]["type"] do
+          "integer" ->
+            Map.put(acc, key, convert_to_integer(value))
+          "boolean" ->
+            Map.put(acc, key, convert_to_boolean(value))
+          "string" ->
+            Map.put(acc, key, convert_to_string(value))
+          "float" ->
+            Map.put(acc, key, convert_to_float(value))
+          "map" ->
+            Map.put(acc, key, convert_to_map(value))
+          "list" ->
+            Map.put(acc, key, convert_to_list(value))
+          _ ->
+            Map.put(acc, key, value)
+        end
+      end
+    end)
+
+    card_face
     |> Map.put("triggers", triggers)
     |> Map.put("width", width)
     |> Map.put("height", height)
