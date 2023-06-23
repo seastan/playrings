@@ -8,7 +8,7 @@ import BroadcastContext from "../../contexts/BroadcastContext";
 import { usePlugin } from "./hooks/usePlugin";
 import { useGameDefinition } from "./hooks/useGameDefinition";
 import { useDoActionList } from "./hooks/useDoActionList";
-import { useLoadList } from "./hooks/useLoadList";
+import { useImportLoadList } from "./hooks/useImportLoadList";
 
 const RESULTS_LIMIT = 150;
 
@@ -20,7 +20,7 @@ export const SpawnExistingCardModal = React.memo(({}) => {
     const playerN = useSelector(state => state?.playerUi?.playerN);
     const plugin = usePlugin();
     const gameDef = useGameDefinition();
-    const loadList = useLoadList();
+    const loadList = useImportLoadList();
     console.log("pluginspawn", plugin)
     const cardDb = plugin?.card_db || {};
     const doActionList = useDoActionList();

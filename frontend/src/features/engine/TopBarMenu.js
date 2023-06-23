@@ -12,7 +12,8 @@ import { useGameDefinition } from "./hooks/useGameDefinition";
 import { useDoActionList } from "./hooks/useDoActionList";
 import { useSiteL10n } from "../../hooks/useSiteL10n";
 import { getRandomIntInclusive } from "./functions/common";
-import { useLoadList } from "./hooks/useLoadList";
+import { useImportLoadList } from "./hooks/useImportLoadList";
+import { useImportViaUrl } from "./hooks/useImportViaUrl";
 
 
 export const TopBarMenu = React.memo(({}) => {
@@ -24,7 +25,8 @@ export const TopBarMenu = React.memo(({}) => {
   const siteL10n = useSiteL10n();
   const gameDef = useGameDefinition();
   const doActionList = useDoActionList();
-  const loadList = useLoadList();
+  const loadList = useImportLoadList();
+  const importViaUrl = useImportViaUrl();
 
   const createdBy = useSelector(state => state.gameUi?.createdBy);
   const options = useSelector(state => state.gameUi?.game?.options);
@@ -65,47 +67,8 @@ export const TopBarMenu = React.memo(({}) => {
       gameBroadcast("close_room", {});
     } else if (data.action === "load_deck") {
       loadFileDeck();
-    } else if (data.action === "load_ringsdb") {
-      const ringsDbUrl = prompt("Paste full RingsDB URL","");
-      if (!ringsDbUrl) {
-        alert("Invalid URL");
-        return;
-      }
-      if (ringsDbUrl.includes("/fellowship/")) {
-        alert("Fellowship import not yet supported.");
-        return;
-      }
-      const ringsDbDomain = ringsDbUrl.includes("test.ringsdb.com") ? "test" : "ringsdb";
-      var ringsDbType;
-      if (ringsDbUrl.includes("/decklist/")) ringsDbType = "decklist";
-      else if (ringsDbUrl.includes("/deck/")) ringsDbType = "deck";
-      if (!ringsDbType) {
-        alert("Invalid URL");
-        return;
-      }
-      var splitUrl = ringsDbUrl.split( '/' );
-      const typeIndex = splitUrl.findIndex((e) => e === ringsDbType)
-      if (splitUrl && splitUrl.length <= typeIndex + 2) {
-        alert("Invalid URL");
-        return;
-      }
-      const ringsDbId = splitUrl[typeIndex + 2];
-      const playerNToPlayerIndex = (playerN) => {
-        if (playerN === "player1") return 0;
-        if (playerN === "player2") return 1;
-        if (playerN === "player3") return 2;
-        if (playerN === "player4") return 3;
-        return null;
-      }
-      const playerIndex = playerNToPlayerIndex(playerN);
-      var newRingsDbInfo;
-      if (ringsDbInfo) newRingsDbInfo = [...ringsDbInfo];
-      else newRingsDbInfo = [null, null, null, null];
-      newRingsDbInfo[playerIndex] = {id: ringsDbId, type: ringsDbType, domain: ringsDbDomain};
-      const newOptions = {...options, ringsDbInfo: newRingsDbInfo, loaded: true}
-      //gameBroadcast("game_action", {action: "update_values", options: {updates: [["options", newOptions]]}});
-      const gameUi = store.getState()?.gameUi;
-      //loadRingsDb(gameUi, playerN, ringsDbDomain, ringsDbType, ringsDbId, gameBroadcast, chatBroadcast, dispatch);
+    } else if (data.action === "load_url") {
+      importViaUrl();
     } else if (data.action === "unload_my_deck") {
       const actionList = [
         ["FOR_EACH_KEY_VAL", "$CARD_ID", "$CARD", "$CARD_BY_ID", [
@@ -260,6 +223,7 @@ export const TopBarMenu = React.memo(({}) => {
             <span className="float-right mr-1"><FontAwesomeIcon icon={faChevronRight}/></span>
           <ul className="third-level-menu">
             <li key={"load_prebuilt_deck"} onClick={() => handleMenuClick({action:"spawn_deck"})}>{siteL10n("Load prebuilt deck")}</li>
+            <li key={"load_url"} onClick={() => handleMenuClick({action:"load_url"})}>{siteL10n("Load via URL")}</li>
             <li key={"load_game"} onClick={() => handleMenuClick({action:"load_game"})}>
               {siteL10n("loadGameJson")}
               <input type='file' id='file' ref={inputFileGame} style={{display: 'none'}} onChange={uploadGameAsJson} accept=".json"/>

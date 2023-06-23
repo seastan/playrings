@@ -9,7 +9,7 @@ import { setShowModal, setTyping } from "../store/playerUiSlice";
 import { useGameL10n } from "./hooks/useGameL10n";
 import BroadcastContext from "../../contexts/BroadcastContext";
 import { useGameDefinition } from "./hooks/useGameDefinition";
-import { useLoadList } from "./hooks/useLoadList";
+import { useImportLoadList } from "./hooks/useImportLoadList";
 import { useDoActionList } from "./hooks/useDoActionList";
 
 const isStringInDeckName = (str, deckName) => {
@@ -30,7 +30,7 @@ export const SpawnPrebuiltModal = React.memo(({}) => {
     const [activeMenu, setActiveMenu] = useState({"name": "Load a deck", ...gameDef.deckMenu});
     const [menuHeight, setMenuHeight] = useState(null);
     const [searchString, setSearchString] = useState("");
-    const loadList = useLoadList();
+    const loadList = useImportLoadList();
     const doActionList = useDoActionList();
 
     const handleSpawnClick = (id) => {
