@@ -782,6 +782,10 @@ export const getGameDefSchema = (gameDef) => {
         "_itemSchema_": {
           "_type_": "object",
           "_strictKeys_": true,
+          "label": {
+            "_type_": "label",
+            "_required_": true,
+          }, 
           "cards": {
             "_type_": "array",
             "_required_": true,

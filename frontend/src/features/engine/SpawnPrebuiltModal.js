@@ -44,7 +44,7 @@ export const SpawnPrebuiltModal = React.memo(({}) => {
       const filtered = []; //Object.keys(cardDB);
       for (var deckId of Object.keys(gameDef.preBuiltDecks).sort().reverse()) {
         const deck = gameDef.preBuiltDecks[deckId];
-        if (isStringInDeckName(newSearchString, deck.name) && !(deck.playtesting && !myUser.playtester)) filtered.push(deckId);
+        if (isStringInDeckName(newSearchString, gameL10n(deck.label)) && !(deck.playtesting && !myUser.playtester)) filtered.push(deckId);
         setFilteredIds(filtered);
       }
     }
@@ -113,10 +113,10 @@ export const SpawnPrebuiltModal = React.memo(({}) => {
                   </tr>
                 </thead>
                 {filteredIds.map((filteredId, index) => {
-                  const deckName = gameDef.preBuiltDecks?.[filteredId]?.name;
+                  const deckName = gameDef.preBuiltDecks?.[filteredId]?.label;
                   return(
                     <tr className="bg-gray-600 text-white cursor-pointer hover:bg-gray-500 hover:text-black" onClick={() => handleSpawnClick(filteredId)}>
-                      <td className="p-1">{deckName}</td>
+                      <td className="p-1">{gameL10n(deckName)}</td>
                     </tr>
                   );
                 })}
