@@ -42,6 +42,11 @@ const useAuthDataApi = (
     (error: any) => {
       const originalRequest = error.config;
       const renewUrl = "/be/api/v1/session/renew";
+
+      // Log the error details for debugging
+      console.error('userTrace Interceptor caught an error:', error);
+      console.log('userTrace Error response:', error.response);
+      console.log('userTrace Original request:', originalRequest);
       if (
         originalRequest._retry ||
         (error.response != null &&
@@ -103,7 +108,7 @@ const useAuthDataApi = (
       setIsLoading(true);
 
       const an_axios = axios.create({
-        timeout: 300,
+        timeout: 3000,
       });
       console.log("debug1 create", an_axios)
       an_axios.interceptors.response.use(id, intercept_error);

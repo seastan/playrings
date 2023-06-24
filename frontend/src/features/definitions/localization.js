@@ -218,6 +218,9 @@ export const siteL10n = {
   "developerTools": {
     "English": "Developer tools"
   },
+  "noDefinedPreBuiltDecks": {
+    "English": "No pre-built decks have beend defined for this game."
+  }
 
 
 }
