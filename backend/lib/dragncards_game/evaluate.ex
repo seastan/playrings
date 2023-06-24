@@ -463,7 +463,6 @@ defmodule DragnCardsGame.Evaluate do
             player_n = game["playerUi"]["playerN"]
             game
             |> GameUI.move_stacks(player_n <> "Deck", player_n <> "Hand", num, "bottom")
-            |> evaluate(["LOG", "$PLAYER_N", " drew a card."])
 
           "MOVE_STACK" ->
             argc = Enum.count(code) - 1
