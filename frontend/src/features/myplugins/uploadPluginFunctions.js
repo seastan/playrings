@@ -108,6 +108,7 @@ export const processArrayOfRows = (inputs, plugin, arrayOfRows) => {
     if (!header0.includes("name")) throw new Error("Missing name column.")
     if (!header0.includes("imageUrl")) throw new Error("Missing imageUrl column.")
     if (!header0.includes("cardBack")) throw new Error("Missing cardBack column.")
+    if (!header0.includes("type")) throw new Error("Missing type column.")
     const header0Str = JSON.stringify(header0);
     const cardDb = {};
     for (var rows of arrayOfRows) {

@@ -95,7 +95,9 @@ defmodule DragnCardsGame.CardFace do
           case Regex.compile(regex_string, "i") do
             {:ok, regex} ->
               if String.match?(search_string |> String.downcase(), regex) do
-                IO.puts("match!")
+                IO.puts("Regex match found for")
+                IO.inspect(regex)
+                IO.puts("in #{search_string}")
                 Map.put(acc, step_id, true)
               else
                 acc
@@ -114,7 +116,6 @@ defmodule DragnCardsGame.CardFace do
 
   @spec card_face_from_card_face_details(Map.t(), Map.t()) :: Map.t()
   def card_face_from_card_face_details(card_face_details, game_def) do
-    IO.puts("card_face_from_card_face_details  1 #{card_face_details["name"]}")
 
     type = card_face_details["type"]
     name = card_face_details["name"]
@@ -126,7 +127,7 @@ defmodule DragnCardsGame.CardFace do
     # for each key
     card_face = Enum.reduce(card_face_details, %{}, fn({key, value}, acc) ->
       # If key is not in game_def['faceProperties'] then make it a string
-      if !Map.has_key?(game_def["faceProperties"], key) do
+      if !Map.has_key?(game_def, "faceProperties") or !Map.has_key?(game_def["faceProperties"], key) do
         Map.put(acc, key, value)
       else
         # Match on game_def['faceProperties'][key]['type']

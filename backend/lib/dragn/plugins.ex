@@ -54,6 +54,18 @@ defmodule DragnCards.Plugins do
     end
   end
 
+  def get_card_db(id) do
+    query = from p in Plugin,
+    where: [id: ^id],
+    select: {
+      p.card_db
+    }
+    result = case Repo.one(query) do
+      nil -> nil
+      query_result -> elem(query_result, 0)
+    end
+  end
+
   @doc """
   Gets a single plugin.
 

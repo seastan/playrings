@@ -143,14 +143,14 @@ defmodule DragnCardsGame.Evaluate do
   end
 
 
-  def evaluate_with_timeout(game, code) do
+  def evaluate_with_timeout(game, code, timeout_ms \\ 500) do
     ref = make_ref()
 
     task = Task.async(fn ->
       evaluate(game, code)
     end)
 
-    case Task.yield(task, 500) do
+    case Task.yield(task, timeout_ms) do
       nil ->
         Task.shutdown(task, :brutal_kill)
         evaluate(game, ["LOG", "Action timed out."])
@@ -160,13 +160,23 @@ defmodule DragnCardsGame.Evaluate do
   end
 
   def evaluate(game, code) do
-    # IO.puts("#############################################")
+    # IO.puts("############################################# 1")
     # IO.puts("EVALUATING:")
     # IO.inspect(game["roomSlug"])
-    # IO.inspect(code)
-    # IO.puts("#############################################")
+    # # If code is an map, print "map"
+    # # If code is a list, print the first element
+    # if is_list(code) && Enum.count(code) > 0 do
+    #   IO.inspect(Enum.at(code, 0))
+    # else
+    #   if is_map(code) do
+    #     IO.puts("MAP")
+    #   else
+    #     IO.inspect(code)
+    #   end
+    # end
 
-    IO
+    # IO.puts("############################################# 2")
+
     #IO.inspect(code)
     if is_list(code) && Enum.count(code) > 0 do
 
@@ -445,6 +455,18 @@ defmodule DragnCardsGame.Evaluate do
             else
               game
             end
+
+          "LOAD_CARDS" ->
+            load_list = evaluate(game, Enum.at(code, 1))
+            # If load_list is a string, it's a preBuiltDeckId - get the list from game_def
+            load_list = if is_binary(load_list) do
+              load_list_id = load_list
+              game_def = Plugins.get_game_def(game["options"]["pluginId"])
+              get_in(game_def, ["preBuiltDecks", load_list_id, "cards"])
+            else
+              load_list
+            end
+            GameUI.load_cards(game, evaluate(game, "$PLAYER_N"), load_list)
 
           "DELETE_CARD" ->
             card_id = evaluate(game, Enum.at(code, 1))

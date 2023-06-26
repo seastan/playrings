@@ -9,19 +9,19 @@ defmodule DragnCardsWeb.API.V1.GameController do
   alias DragnCardsUtil.{NameGenerator}
   alias DragnCardsGame.GameUISupervisor
 
-  def create(conn, _params) do
+  def create(conn, params) do
     Logger.debug("game_controller create")
     game_name = NameGenerator.generate()
-    user_id = _params["room"]["user"]
+    user_id = params["room"]["user"]
     #query = from User, where: [id: ^user_id], select: [:alias]
     user = Users.get_user(user_id)
     options = %{
-      "privacyType" => _params["room"]["privacy_type"],
-      "replayId" => _params["game_options"]["replay_id"],
-      "ringsDbInfo" => _params["game_options"]["ringsdb_info"],
-      "loadShuffle" => _params["game_options"]["load_shuffle"],
-      "pluginId" => _params["game_options"]["plugin_id"],
-      "pluginVersion" => _params["game_options"]["plugin_version"],
+      "privacyType" => params["room"]["privacy_type"],
+      "replayId" => params["game_options"]["replay_id"],
+      "ringsDbInfo" => params["game_options"]["ringsdb_info"],
+      "loadShuffle" => params["game_options"]["load_shuffle"],
+      "pluginId" => params["game_options"]["plugin_id"],
+      "pluginVersion" => params["game_options"]["plugin_version"],
     }
     GameUISupervisor.start_game(game_name, user, options)
     room = Rooms.get_room_by_name(game_name)
