@@ -7,10 +7,6 @@ config :dragncards, :pow,
 config :dragncards, DragnCards.Mailer, adapter: Swoosh.Adapters.Test
 config :dragncards, DragnCardsWeb.PowMailer, adapter: Swoosh.Adapters.Test
 
-config :dragncards, :plugin_json_path, "/path/to/plugin/json/files"
-config :dragncards, :plugin_tsv_path, "/path/to/plugin/tsv/files"
-
-
 # Configure your database
 config :dragncards, DragnCards.Repo,
   username: "postgres",

@@ -1,7 +1,9 @@
 # NOTE: This files is specific to the LotR LCG plugin. You must copy this file to a new file that is not tracked by git and edit it to match your plugin.
-# You must also go to your backend/config/test.exs file and edit :plugin_json_path and :plugin_tsv_path to point to the correct directories for your plugin.
+
 # This test file can be run via:
 # cd backend
+# export PLUGIN_JSON_PATH=/path/to/directory/containing/your/plugin/jsons/
+# export PLUGIN_TSV_PATH=/path/to/directory/containing/your/plugin/tsvs/
 # mix test test/dragncards_game/custom_plugin_test.exs
 
 defmodule DragnCardsGame.CustomPluginTest do
@@ -23,6 +25,10 @@ defmodule DragnCardsGame.CustomPluginTest do
 
   # Import ExUnit.Callbacks for callback functionality in tests
   import ExUnit.Callbacks
+
+  # Import helper functions
+  alias DragnCardsUtil.{Merger}
+  alias DragnCardsUtil.{TsvProcess}
 
   # Setup block for the tests, executed before each test run
   # NOTE: You shouldn't have to edit this setup block for your plugin.
@@ -79,7 +85,8 @@ defmodule DragnCardsGame.CustomPluginTest do
     user = Repo.one(from u in User, limit: 1)
 
     # Set up plugin JSON paths
-    plugin_json_path = Application.get_env(:dragncards, :plugin_json_path)
+    plugin_json_path = System.get_env("PLUGIN_JSON_PATH")
+    #plugin_json_path = Application.get_env(:dragncards, :plugin_json_path)
 
     # Get list of all JSON files from the plugin_json_path
     filenames = Path.wildcard(Path.join(plugin_json_path, "*.json"))
@@ -88,7 +95,7 @@ defmodule DragnCardsGame.CustomPluginTest do
     game_def = Merger.merge_json_files(filenames)
 
     # Get list of .tsv files from plugin_tsv_path
-    plugin_tsv_path = Application.get_env(:dragncards, :plugin_tsv_path)
+    plugin_tsv_path = System.get_env("PLUGIN_TSV_PATH")
     filenames = Path.wildcard(Path.join(plugin_tsv_path, "*.tsv"))
 
     # Process each .tsv file and merge them into a card_db
@@ -233,80 +240,4 @@ defmodule DragnCardsGame.CustomPluginTest do
     assert res["roundNumber"] == 2
 
   end
-end
-
-defmodule Merger do
-  def merge_json_files(filenames) do
-    filenames
-    |> Enum.map(&read_and_parse_json/1)
-    |> deep_merge()
-  end
-
-  defp read_and_parse_json(filename) do
-    filename
-    |> File.read!()
-    |> Jason.decode!()
-  end
-
-  def deep_merge(list_of_maps) do
-    List.foldl(list_of_maps, %{}, fn map, acc -> Map.merge(acc, map, &merge_values/3) end)
-  end
-
-  defp merge_values(_key, v1, v2) when is_map(v1) and is_map(v2) do
-    Map.merge(v1, v2, &merge_values/3)
-  end
-
-  defp merge_values(_key, _v1, v2), do: v2
-end
-
-defmodule TsvProcess do
-  def process_rows(game_def, rows) do
-
-    header0 = List.first(rows)
-
-    Enum.each(["uuid", "name", "imageUrl", "cardBack", "type"], fn x ->
-      unless Enum.member?(header0, x) do
-        raise "Missing #{x} column"
-      end
-    end)
-
-    # cut off the header row
-    rows = Enum.slice(rows, 1..-1)
-
-    {card_db, _} = Enum.reduce(rows, {%{}, false}, fn(row, {db, skip_row}) ->
-      if skip_row do
-        face_b = make_face(header0, row)
-        db = put_in(db, [face_b["uuid"], "B"], face_b)
-        {db, false}
-      else
-        face_a = make_face(header0, row)
-        face_b = make_null_face(header0)
-        face_b = Map.put(face_b, "name", face_a["cardBack"])
-        db = Map.put(db, face_a["uuid"], %{"A" => face_a, "B" => face_b})
-        if face_a["cardBack"] == "double_sided" do
-          {db, true}
-        else
-          {db, false}
-        end
-      end
-    end)
-
-    card_db
-
-  end
-
-  defp make_face(header0, row) do
-    Enum.reduce(0..(length(header0) - 1), %{}, fn j, face_acc ->
-      col_name = String.trim(Enum.at(header0, j), "\r") |> String.trim("\n")
-      Map.put(face_acc, col_name, String.trim(Enum.at(row, j), "\r") |> String.trim("\n"))
-    end)
-  end
-
-  defp make_null_face(header0) do
-    Enum.reduce(0..(length(header0) - 1), %{}, fn j, face_acc ->
-      col_name = String.trim(Enum.at(header0, j), "\r") |> String.trim("\n")
-      Map.put(face_acc, col_name, nil)
-    end)
-  end
-
 end
