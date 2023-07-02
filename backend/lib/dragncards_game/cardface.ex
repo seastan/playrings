@@ -126,9 +126,15 @@ defmodule DragnCardsGame.CardFace do
     # Loop over keys in card_face_details and convert to correct type
     # for each key
     card_face = Enum.reduce(card_face_details, %{}, fn({key, value}, acc) ->
-      # If key is not in game_def['faceProperties'] then make it a string
-      if !Map.has_key?(game_def, "faceProperties") or !Map.has_key?(game_def["faceProperties"], key) do
-        Map.put(acc, key, value)
+      # If the type has not been defined in game_def['faceProperties'], then make it a string
+      val_type = if Map.has_key?(game_def, "faceProperties") and Map.has_key?(game_def["faceProperties"], key) do
+        game_def["faceProperties"][key]["type"]
+      else
+        "string"
+      end
+
+      if value == nil or (value == "" and val_type != "string") do
+        Map.put(acc, key, nil)
       else
         # Match on game_def['faceProperties'][key]['type']
         # and convert value to that type
@@ -150,7 +156,6 @@ defmodule DragnCardsGame.CardFace do
         end
       end
     end)
-
     card_face
     |> Map.put("triggers", triggers)
     |> Map.put("width", width)

@@ -822,7 +822,7 @@ defmodule DragnCardsGame.GameUI do
 
   def load_card(game, game_def, load_list_item) do
     quantity = load_list_item["quantity"]
-
+    a = game["abc"]["safsa"]
     game = if quantity <= 0 do
       game
     else
@@ -870,26 +870,48 @@ defmodule DragnCardsGame.GameUI do
   end
 
   def load_cards(game, player_n, load_list) do
+    # If load_list is nil, raise an error
+    if load_list == nil do
+      raise "load_list is nil"
+    end
+
+    IO.puts("load_cards 1")
     game_def = Plugins.get_game_def(game["options"]["pluginId"])
+    IO.puts("load_cards 2")
     card_db = Plugins.get_card_db(game["options"]["pluginId"])
+    IO.puts("load_cards 3")
 
     # Loop over load list and add a "cardDetails" field to each item
     load_list = Enum.map(load_list, fn load_list_item ->
+      uuid = Map.fetch!(load_list_item, "uuid")
+      cardDetails = Map.fetch!(card_db, uuid)
+      quantity = Map.fetch!(load_list_item, "quantity")
+      loadGroupId = Map.fetch!(load_list_item, "loadGroupId") |> String.replace("playerN", player_n)
+
       %{
-        "uuid" => load_list_item["uuid"],
-        "cardDetails" => card_db[load_list_item["uuid"]],
-        "quantity" => load_list_item["quantity"],
-        "loadGroupId" => String.replace(load_list_item["loadGroupId"], "playerN", player_n),
+        "uuid" => uuid,
+        "cardDetails" => cardDetails,
+        "quantity" => quantity,
+        "loadGroupId" => loadGroupId,
       }
     end)
+    IO.puts("load_cards 4")
 
     old_game = game
 
     game = put_in(game, ["loadedCardIds"], [])
 
-    game = Enum.reduce(load_list, game, fn load_list_item, acc ->
-      load_card(acc, game_def, load_list_item)
-    end)
+    game = try do
+      Enum.reduce(load_list, game, fn load_list_item, acc ->
+        IO.puts("load_card #{load_list_item["cardDetails"]["A"]["name"]}")
+        load_card(acc, game_def, load_list_item)
+      end)
+    rescue
+      e in RuntimeError ->
+        IO.puts("Error loading list items: #{Exception.message(e)}")
+        {:error, e}
+        game
+    end
 
     game = Evaluate.evaluate(game, ["LOG", "$PLAYER_N", " loaded cards."])
 

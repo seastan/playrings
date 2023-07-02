@@ -153,17 +153,41 @@ defmodule DragnCardsGame.McPluginTest do
   end
 
   # These tests are plugin-specific. You will need to overwite them, but they are here as a starting point.
-  test "Loading Decks", %{user: user, game: game} do
+  test "Loading Decks", %{user: user, game: game, game_def: game_def} do
 
     # Load some decks into the game
-    game = Evaluate.evaluate(game, ["LOAD_CARDS", "Phoenix"])
+    res = Evaluate.evaluate(game, ["LOAD_CARDS", "Phoenix"])
+
+    # Check that the deck was loaded
+    assert length(res["groupById"]["player1Identity"]["stackIds"]) == 1
+    assert length(res["groupById"]["player1Play1"]["stackIds"]) == 2
+
+    # Check hand size
+    assert res["playerData"]["player1"]["handSize"] == 6
+
+    # Get Jean Grey
+    card_db_id = "fe03ab0a-93a3-5d00-9f91-62ec5337569e"
+    card = Evaluate.evaluate(res, ["ONE_CARD", "$CARD", ["EQUAL", "$CARD.cardDbId", card_db_id]])
+    card_id = card["id"]
+    assert res["cardById"][card_id]["currentSide"] == "A"
+
+    # Make it active
+    res = put_in(res["playerUi"]["activeCardId"], card_id)
+
+    # Flip the card
+    res = Evaluate.evaluate(res, game_def["actionLists"]["flipCard"])
+    assert res["cardById"][card_id]["currentSide"] == "B"
+    assert res["playerData"]["player1"]["handSize"] == 5
+    res = Evaluate.evaluate(res, game_def["actionLists"]["flipCard"])
+    assert res["cardById"][card_id]["currentSide"] == "A"
+    assert res["playerData"]["player1"]["handSize"] == 6
 
   end
 
-  test "Card Hotkeys", %{user: user, game: game, game_def: game_def} do
+  # test "Card Hotkeys", %{user: user, game: game, game_def: game_def} do
 
-    # Load some decks into the game
-    game = Evaluate.evaluate(game, ["LOAD_CARDS", "Phoenix"])
+  #   # Load some decks into the game
+  #   game = Evaluate.evaluate(game, ["LOAD_CARDS", "Phoenix"])
 
-  end
+  # end
 end
