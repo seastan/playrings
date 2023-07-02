@@ -45,6 +45,40 @@ export const getGameDefSchema = (gameDef) => {
         "postLoadActionList": {
           "_type_": "actionList",
         },
+        "gameRules": {
+          "_type_": "array",
+          "_required_": false,
+          "_itemSchema_": {
+            "_type_": "object",
+            "type": {
+              "_type_": "string",
+              "_required_": true,
+            },
+            "listenTo": {
+              "_type_": "array",
+              "_required_": true,
+              "_itemSchema_": {
+                "_type_": "any",
+              }
+            },
+            "condition": {
+              "_type_": "array",
+              "_required_": true,
+              "_itemSchema_": {
+                "_type_": "any",
+              }
+            },
+            "then": {
+              "_type_": "actionList",
+            },
+            "onDo": {
+              "_type_": "actionList",
+            },
+            "offDo": {
+              "_type_": "actionList",
+            }
+          }
+        },
         "cards": {
           "_type_": "object",
           "_itemSchema_": {
@@ -53,17 +87,24 @@ export const getGameDefSchema = (gameDef) => {
               "_type_": "array",
               "_required_": true,
               "_itemSchema_": {
-                "_type_": {
+                "_type_": "object",
+                "type": {
                   "_type_": "string",
                   "_required_": true,
                 },
                 "listenTo": {
                   "_type_": "array",
                   "_required_": true,
+                  "_itemSchema_": {
+                    "_type_": "any",
+                  }
                 },
                 "condition": {
                   "_type_": "array",
                   "_required_": true,
+                  "_itemSchema_": {
+                    "_type_": "any",
+                  }
                 },
                 "then": {
                   "_type_": "actionList",

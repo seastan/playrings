@@ -58,7 +58,7 @@
       "cardById"  => %{},
       "options" => options,
       "variables" => %{"$THIS_ID" => nil, "$THIS" => nil, "$TARGET_ID" => nil, "$TARGET" => nil},
-      "automation" => if get_in(game_def, ["automation", "rules"]) do %{"_game_" => %{"rules" => game_def["automation"]["rules"]}} else %{} end,
+      "automation" => if get_in(game_def, ["automation", "gameRules"]) do %{"_game_" => %{"rules" => game_def["automation"]["gameRules"]}} else %{} end,
       "messages" => [] # These messages will be delivered to the GameUi parent, which will then relay them to chat
     }
     IO.puts("game new 2")
