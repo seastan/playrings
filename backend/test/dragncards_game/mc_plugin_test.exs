@@ -162,8 +162,11 @@ defmodule DragnCardsGame.McPluginTest do
     assert length(res["groupById"]["player1Identity"]["stackIds"]) == 1
     assert length(res["groupById"]["player1Play1"]["stackIds"]) == 2
 
-    # Check hand size
+    # Check hand size limit
     assert res["playerData"]["player1"]["handSize"] == 6
+
+    # Check number of cards in hand
+    assert length(res["groupById"]["player1Hand"]["stackIds"]) == 6
 
     # Get Jean Grey
     card_db_id = "fe03ab0a-93a3-5d00-9f91-62ec5337569e"
