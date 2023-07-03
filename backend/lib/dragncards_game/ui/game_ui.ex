@@ -6,8 +6,7 @@ defmodule DragnCardsGame.GameUI do
 
   require Logger
   alias DragnCardsGame.GameVariables
-  alias DragnCardsGame.{Game, GameUI, GameUISeat, Groups, Group, Stack, Card, User, Tokens, CardFace, PlayerInfo, Evaluate, GameVariables}
-  alias DragnCardsChat.{ChatMessage}
+  alias DragnCardsGame.{Game, GameUI, GameUISeat, Groups, Stack, Card, CardFace, PlayerInfo, Evaluate, GameVariables}
 
   alias DragnCards.{Repo, Replay, Plugins}
   alias DragnCards.Rooms.Room
@@ -126,8 +125,8 @@ defmodule DragnCardsGame.GameUI do
   end
 
   def get_group_by_stack_id(game, stack_id) do
-    Enum.reduce(game["groupById"], nil, fn({group_id, group}, acc) ->
-      acc = if stack_id in group["stackIds"] do group else acc end
+    Enum.reduce(game["groupById"], nil, fn({_group_id, group}, acc) ->
+      if stack_id in group["stackIds"] do group else acc end
     end)
   end
 
@@ -147,8 +146,8 @@ defmodule DragnCardsGame.GameUI do
   end
 
   def get_stack_by_card_id(game, card_id) do
-    Enum.reduce(game["stackById"], nil, fn({stack_id, stack}, acc) ->
-      acc = if card_id in stack["cardIds"] do stack else acc end
+    Enum.reduce(game["stackById"], nil, fn({_stack_id, stack}, acc) ->
+      if card_id in stack["cardIds"] do stack else acc end
     end)
   end
 
@@ -218,9 +217,7 @@ defmodule DragnCardsGame.GameUI do
   # Move a card
   def move_card(game, card_id, dest_group_id, dest_stack_index, dest_card_index, combine \\ false) do
     # Get position of card
-    {orig_group_id, orig_stack_index, orig_card_index} = gsc(game, card_id)
-    # Get origin stack
-    orig_stack = get_stack_by_index(game, orig_group_id, orig_stack_index)
+    {orig_group_id, _orig_stack_index, _orig_card_index} = gsc(game, card_id)
     # Perpare destination stack
     game = if combine do
       game
@@ -249,16 +246,16 @@ defmodule DragnCardsGame.GameUI do
     # IO.inspect(prev_card)
     parent_card = get_card_by_group_id_stack_index_card_index(game, [dest_group_id, dest_stack_index, 0])
 
-    game = Evaluate.evaluate(game, ["SET", "/cardById/" <> card_id <> "/groupId", dest_group_id])
-    game = Evaluate.evaluate(game, ["SET", "/cardById/" <> card_id <> "/stackIndex", dest_stack_index])
-    game = Evaluate.evaluate(game, ["SET", "/cardById/" <> card_id <> "/cardIndex", dest_card_index])
-    game = Evaluate.evaluate(game, ["SET", "/cardById/" <> card_id <> "/stackParentCardId", parent_card["id"]])
+    game = Evaluate.evaluate(game, ["SET", "/cardById/" <> card_id <> "/groupId", dest_group_id], ["update_card_state cardId:#{card_id} groupId:#{dest_group_id}"])
+    game = Evaluate.evaluate(game, ["SET", "/cardById/" <> card_id <> "/stackIndex", dest_stack_index], ["update_card_state cardId:#{card_id} stackIndex:#{dest_stack_index}"])
+    game = Evaluate.evaluate(game, ["SET", "/cardById/" <> card_id <> "/cardIndex", dest_card_index], ["update_card_state cardId:#{card_id} cardIndex:#{dest_card_index}"])
+    game = Evaluate.evaluate(game, ["SET", "/cardById/" <> card_id <> "/stackParentCardId", parent_card["id"]], ["update_card_state cardId:#{card_id} stackParentCardId:#{parent_card["id"]}"])
 
     # If card gets moved to a facedown pile, or gets flipped up, erase peeking
     # IO.inspect(dest_group["onCardEnter"])
     # IO.inspect(prev_card["currentSide"])
     game = if dest_group["onCardEnter"]["currentSide"] == "B" or (prev_card["currentSide"] == "B" and dest_group["onCardEnter"]["currentSide"] == "A") do
-      Evaluate.evaluate(game, ["SET", "/cardById/" <> card_id <> "/peeking", %{}])
+      Evaluate.evaluate(game, ["SET", "/cardById/" <> card_id <> "/peeking", %{}], ["update_card_state cardId:#{card_id} peeking:empty"])
     else
       game
     end
@@ -266,15 +263,11 @@ defmodule DragnCardsGame.GameUI do
     game = Enum.reduce(dest_group["onCardEnter"], game, fn({key, val}, acc) ->
       if orig_group["onCardEnter"][key] != dest_group["onCardEnter"][key] do
         # IO.puts("updating card state on enter: " <> key <> " " <> inspect(val))
-        Evaluate.evaluate(acc, ["SET", "/cardById/" <> card_id <> "/" <> key, val])
+        Evaluate.evaluate(acc, ["SET", "/cardById/" <> card_id <> "/" <> key, val], ["update_card_state cardId:#{card_id} #{key}:#{inspect(val)}"])
       else
         acc
       end
     end)
-
-    new_card = get_card(game, card_id)
-    # IO.puts("updating card state ----------------------------------- new_card")
-    # IO.inspect(new_card)
 
     game
   end
@@ -309,7 +302,7 @@ defmodule DragnCardsGame.GameUI do
 
   def refresh_stack_indices_in_group(game, group_id) do
     stack_ids = get_stack_ids(game, group_id)
-    game = Enum.reduce(Enum.with_index(stack_ids), game, fn({stack_id, index}, acc) ->
+    Enum.reduce(Enum.with_index(stack_ids), game, fn({stack_id, index}, acc) ->
       refresh_stack_indices_in_stack(acc, stack_id, index)
     end)
   end
@@ -363,18 +356,16 @@ defmodule DragnCardsGame.GameUI do
     # Update cards in stack one at a time in reverse order
     # This is so that when the stack is removed from play,
     # order is preserved as cards are detached
-    stack = get_stack(game, stack_id)
     dest_group = get_group_by_stack_id(game, stack_id)
-    dest_group_id = dest_group["id"]
     card_ids = get_card_ids(game, stack_id)
     game = Enum.reduce(card_ids, game, fn(card_id, acc) ->
-      acc = update_card_state(acc, card_id, orig_group_id)
+      update_card_state(acc, card_id, orig_group_id)
     end)
     # If a stack is out of play, we need to split it up
     if Enum.count(card_ids)>1 && not dest_group["canHaveAttachments"] do
       reverse_card_ids = Enum.reverse(card_ids)
       Enum.reduce(reverse_card_ids, game, fn(card_id, acc) ->
-        acc = detach(acc, card_id)
+        detach(acc, card_id)
       end)
     else
       game
@@ -384,7 +375,7 @@ defmodule DragnCardsGame.GameUI do
   # Detach a card
   def detach(gameui, card_id) do
     # Get position of card and move it next to the initial stack
-    {group_id, stack_index, card_index} = gsc(gameui, card_id)
+    {group_id, stack_index, _card_index} = gsc(gameui, card_id)
     move_card(gameui, card_id, group_id, stack_index + 1, 0, false)
   end
 
@@ -419,7 +410,7 @@ defmodule DragnCardsGame.GameUI do
       new_orig_stack_ids = List.delete_at(old_orig_stack_ids, orig_stack_index)
       game = update_stack_ids(game, orig_group_id, new_orig_stack_ids)
       # Add to new position
-      game = if combine do
+      if combine do
         # Get existing destination stack
         dest_stack = get_stack_by_index(game, dest_group_id, dest_stack_index)
         dest_stack_id = dest_stack["id"]
@@ -430,12 +421,12 @@ defmodule DragnCardsGame.GameUI do
         game = update_card_ids(game, dest_stack_id, new_dest_card_ids)
         # Delete original stack
         game = delete_stack_from_stack_by_id(game, stack_id)
-        game = update_stack_state(game, dest_stack_id, orig_group_id)
+        update_stack_state(game, dest_stack_id, orig_group_id)
       else
         # Update destination group stack ids
         old_dest_stack_ids = get_stack_ids(game, dest_group_id)
         new_dest_stack_ids = List.insert_at(old_dest_stack_ids, dest_stack_index, stack_id)
-        game = update_stack_ids(game, dest_group_id, new_dest_stack_ids)
+        update_stack_ids(game, dest_group_id, new_dest_stack_ids)
         |> update_stack_state(stack_id, orig_group_id)
       end
     end
@@ -487,7 +478,6 @@ defmodule DragnCardsGame.GameUI do
   ################################################################
 
   def game_action(gameui, user_id, action, options) do
-    user_alias = get_alias_by_user_id(gameui, user_id)
     player_n = get_player_n(gameui, user_id)
     Logger.debug("game_action #{user_id} #{player_n} #{action}")
     game_old = gameui["game"]
@@ -510,7 +500,7 @@ defmodule DragnCardsGame.GameUI do
   def resolve_action_type(game, type, options, player_n, user_id) do
     case type do
       "evaluate" ->
-        Evaluate.evaluate_with_timeout(game, options["action_list"])
+        Evaluate.evaluate_with_timeout(game, options["action_list"], ["evaluate"])
       "set_game" ->
         options["game"]
       "reset_game" ->
@@ -533,7 +523,6 @@ defmodule DragnCardsGame.GameUI do
   def add_delta(gameui, prev_game) do
     game = gameui["game"]
     ds = gameui["deltas"]
-    num_deltas = Enum.count(ds)
     new_step = gameui["replayStep"]+1
     gameui = put_in(gameui["replayStep"], new_step)
     gameui = put_in(gameui["replayLength"], new_step)
@@ -544,7 +533,7 @@ defmodule DragnCardsGame.GameUI do
       d = put_in(d["unix_ms"], "#{timestamp}")
       ds = Enum.slice(ds, Enum.count(ds)-gameui["replayStep"]+1..-1)
       ds = [d | ds]
-      game = put_in(gameui["deltas"], ds)
+      put_in(gameui["deltas"], ds)
     else
       game
     end
@@ -604,7 +593,7 @@ defmodule DragnCardsGame.GameUI do
     delta("game", diff_map)
   end
 
-  def delta(key, diff_map) do
+  def delta(_key, diff_map) do
     case diff_map[:changed] do
       :equal ->
         nil
@@ -668,7 +657,7 @@ defmodule DragnCardsGame.GameUI do
   def apply_deltas_until_round_change(gameui, direction) do
     deltas = gameui["deltas"]
     round_init = gameui["roundNumber"]
-    Enum.reduce_while(deltas, gameui, fn(delta, acc) ->
+    Enum.reduce_while(deltas, gameui, fn(_delta, acc) ->
       replay_step = acc["replayStep"]
       # Check if we run into the beginning/end
       cond do
@@ -717,17 +706,17 @@ defmodule DragnCardsGame.GameUI do
       rounds: game["roundNumber"],
       num_players: game["numPlayers"],
       game_json: game,
-      description: Evaluate.evaluate(game, game_def["saveDescription"])
+      description: Evaluate.evaluate(game, game_def["saveDescription"], ["save_replay"])
     }
-    result =
-      case Repo.get_by(Replay, [user_id: user_id, uuid: game_uuid]) do
-        nil  -> %Replay{user_id: user_id, uuid: game_uuid} # Replay not found, we build one
-        replay -> replay  # Replay exists, let's use it
-      end
-      |> Replay.changeset(updates)
-      |> Repo.insert_or_update
 
-    Evaluate.evaluate(game, ["LOG", "$PLAYER_N", " saved the game."])
+    case Repo.get_by(Replay, [user_id: user_id, uuid: game_uuid]) do
+      nil  -> %Replay{user_id: user_id, uuid: game_uuid} # Replay not found, we build one
+      replay -> replay  # Replay exists, let's use it
+    end
+    |> Replay.changeset(updates)
+    |> Repo.insert_or_update
+
+    Evaluate.evaluate(game, ["LOG", "$PLAYER_N", " saved the game."], [])
   end
 
   def set_last_room_update(gameui) do
@@ -823,8 +812,7 @@ defmodule DragnCardsGame.GameUI do
 
   def load_card(game, game_def, load_list_item) do
     quantity = load_list_item["quantity"]
-    a = game["abc"]["safsa"]
-    game = if quantity <= 0 do
+    if quantity <= 0 do
       game
     else
       group_id = load_list_item["loadGroupId"]
@@ -844,7 +832,7 @@ defmodule DragnCardsGame.GameUI do
       # Check if the number of stacks in the deck has changed, and if so, we shuffle
       if group["shuffleOnLoad"] && length(old_stack_ids) != length(new_stack_ids) do
         acc = shuffle_group(acc, group_id)
-        acc = Evaluate.evaluate(acc, ["LOG", "$PLAYER_N", " shuffled ", l10n(acc, game_def, group["label"]), "."])
+        Evaluate.evaluate(acc, ["LOG", "$PLAYER_N", " shuffled ", l10n(acc, game_def, group["label"]), "."], [])
       else
         acc
       end
@@ -853,7 +841,7 @@ defmodule DragnCardsGame.GameUI do
 
   def l10n(game, game_def, label) do
     # Check if label starts with "id:"
-    text = if String.starts_with?(label, "id:") do
+    if String.starts_with?(label, "id:") do
       label_id = String.slice(label, 3..-1)
       language = game["options"]["language"]
       case get_in(game_def["labels"][label_id], [language]) do
@@ -909,17 +897,15 @@ defmodule DragnCardsGame.GameUI do
       end)
     rescue
       e in RuntimeError ->
-        IO.puts("Error loading list items: #{Exception.message(e)}")
-        {:error, e}
-        game
+        Evaluate.evaluate(game, ["ERROR", "Loading cards: #{Exception.message(e)}"], [])
     end
 
-    game = Evaluate.evaluate(game, ["LOG", "$PLAYER_N", " loaded cards."])
+    game = Evaluate.evaluate(game, ["LOG", "$PLAYER_N", " loaded cards."], [])
 
     game = shuffle_changed_decks(game, old_game, game_def)
 
     if game_def["automation"]["postLoadActionList"] != nil do
-      Evaluate.evaluate_with_timeout(game, game_def["automation"]["postLoadActionList"], 5000)
+      Evaluate.evaluate_with_timeout(game, game_def["automation"]["postLoadActionList"], ["postLoadActionList"], 5000)
     else
       game
     end
