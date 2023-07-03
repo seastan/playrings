@@ -56,6 +56,24 @@ const doesTypeMatch = (exp, act) => {
   }
 }
 
+const camelCaseToSentence = (str) => {
+  // Split on capitalized letters, add spaces, and capitalize first letter of each word
+  var splitStr = str.split(/(?=[A-Z])/).map(function(word, index) {
+      // Capitalize the first letter of the word and join it with the rest of the string
+      word = word.charAt(0).toUpperCase() + word.slice(1);
+      
+      // For words that are purely numbers, we don't add a space before them
+      if (!isNaN(word)) {
+          return word;
+      }
+      
+      // For the rest of the words, we add a space before them
+      return " " + word;
+  });
+
+  // Join all the words together and trim the leading space
+  return splitStr.join("").trim();
+}
 
 export const validateSchema = (gameDef, path, data, schema, errors) => {
   // console.log(`Validating ${path}...`);
@@ -82,7 +100,9 @@ export const validateSchema = (gameDef, path, data, schema, errors) => {
       // Cut out "id:" and check if the remaining string is a valid id
       const labelId = data.substring(3);
       if (!gameDef.labels[labelId]) {
-        errors.push(`Invalid label in ${path}: "${data}". "${labelId}" must be present in gameDef.labels.`);
+        if (errors[0] !== "Missing label ids (and suggestions):") errors.unshift("Missing label ids (and suggestions):");
+        //errors.push(`Invalid label in ${path}: "${data}". "${labelId}" must be present in gameDef.labels.`);
+        errors.splice(1, 0, `"${labelId}": {"English": "${camelCaseToSentence(labelId)}"},`);
         return;
       }
     }
