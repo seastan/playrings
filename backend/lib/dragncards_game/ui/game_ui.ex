@@ -5,7 +5,8 @@ defmodule DragnCardsGame.GameUI do
 
 
   require Logger
-  alias DragnCardsGame.{Game, GameUI, GameUISeat, Groups, Group, Stack, Card, User, Tokens, CardFace, PlayerInfo, Evaluate}
+  alias DragnCardsGame.GameVariables
+  alias DragnCardsGame.{Game, GameUI, GameUISeat, Groups, Group, Stack, Card, User, Tokens, CardFace, PlayerInfo, Evaluate, GameVariables}
   alias DragnCardsChat.{ChatMessage}
 
   alias DragnCards.{Repo, Replay, Plugins}
@@ -496,7 +497,7 @@ defmodule DragnCardsGame.GameUI do
       |> put_in(["messages"], [])
       |> resolve_action_type(action, options, player_n, user_id)
       |> Map.delete("playerUi")
-      |> put_in(["variables"], %{})
+      |> put_in(["variables"], GameVariables.default())
 
     set_last_room_update(gameui)
 

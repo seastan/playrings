@@ -185,6 +185,17 @@ defmodule DragnCardsGame.McPluginTest do
     assert res["cardById"][card_id]["currentSide"] == "A"
     assert res["playerData"]["player1"]["handSize"] == 6
 
+    # Load an encounter deck
+    res = Evaluate.evaluate(res, ["LOAD_CARDS", "Thanos"])
+
+    # Confirm encounter deck
+    assert length(res["groupById"]["sharedEncounterDeck"]["stackIds"]) == 15
+
+    # Reveal encounter card
+    res = Evaluate.evaluate(res, game_def["actionLists"]["revealEncounterFaceup"])
+    assert length(res["groupById"]["sharedEncounterDeck"]["stackIds"]) == 14
+    assert length(res["groupById"]["player1Engaged"]["stackIds"]) == 1
+
   end
 
   # test "Card Hotkeys", %{user: user, game: game, game_def: game_def} do

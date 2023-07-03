@@ -5,7 +5,7 @@
   some toy game used to test everything around it.
   """
   import Ecto.Query
-  alias DragnCardsGame.{Groups, Game, PlayerData}
+  alias DragnCardsGame.{Groups, Game, PlayerData, GameVariables}
   alias DragnCards.{Repo, Replay, Plugins}
 
   @type t :: Map.t()
@@ -57,7 +57,7 @@
       "stackById" => %{},
       "cardById"  => %{},
       "options" => options,
-      "variables" => %{"$THIS_ID" => nil, "$THIS" => nil, "$TARGET_ID" => nil, "$TARGET" => nil},
+      "variables" => GameVariables.default(),
       "automation" => if get_in(game_def, ["automation", "gameRules"]) do %{"_game_" => %{"rules" => game_def["automation"]["gameRules"]}} else %{} end,
       "messages" => [] # These messages will be delivered to the GameUi parent, which will then relay them to chat
     }
