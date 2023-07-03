@@ -15,7 +15,6 @@
   """
   @spec load(String.t(), Map.t()) :: Game.t()
   def load(room_slug, options) do
-    game_def = Plugins.get_game_def(options["pluginId"])
     game = if options["replayId"] != nil and options["replayId"] != "" do
       gameid = options["replayId"]
       query = Ecto.Query.from(e in Replay,
@@ -69,7 +68,7 @@
     end)
     base = put_in(base["playerData"], player_data)
     # Add custom properties
-    game = Enum.reduce(game_def["gameProperties"], base, fn({key,val}, acc) ->
+    Enum.reduce(game_def["gameProperties"], base, fn({key,val}, acc) ->
       put_in(acc[key], val["default"])
     end)
   end

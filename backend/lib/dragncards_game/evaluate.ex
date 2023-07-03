@@ -632,7 +632,7 @@ defmodule DragnCardsGame.Evaluate do
         end
       end
     else # value
-      trace ++ [code]
+      trace = trace ++ [code]
       cond do
         code == "$PLAYER_N" ->
           game["playerUi"]["playerN"]
