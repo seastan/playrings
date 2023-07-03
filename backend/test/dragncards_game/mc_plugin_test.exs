@@ -196,6 +196,16 @@ defmodule DragnCardsGame.McPluginTest do
     assert length(res["groupById"]["sharedEncounterDeck"]["stackIds"]) == 14
     assert length(res["groupById"]["player1Engaged"]["stackIds"]) == 1
 
+    # Check exhaust/ready
+    res = Evaluate.evaluate(res, game_def["actionLists"]["toggleExhaust"])
+    assert res["cardById"][card_id]["exhausted"] == true
+    assert res["cardById"][card_id]["rotation"] == 90
+    res = Evaluate.evaluate(res, game_def["actionLists"]["toggleExhaust"])
+    assert res["cardById"][card_id]["exhausted"] == false
+    assert res["cardById"][card_id]["rotation"] == 0
+
+
+
   end
 
   # test "Card Hotkeys", %{user: user, game: game, game_def: game_def} do
