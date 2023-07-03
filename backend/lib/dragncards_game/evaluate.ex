@@ -458,7 +458,7 @@ defmodule DragnCardsGame.Evaluate do
             end)
 
           "MOVE_CARD" ->
-            IO.puts("MOVE_CARD" <> inspect(code))
+            IO.puts("MOVE_CARD " <> inspect(code))
             argc = Enum.count(code) - 1
             card_id = evaluate(game, Enum.at(code, 1), trace ++ ["MOVE_CARD card_id"])
             if card_id do
@@ -466,12 +466,12 @@ defmodule DragnCardsGame.Evaluate do
               dest_stack_index = evaluate(game, Enum.at(code, 3), trace ++ ["MOVE_CARD dest_stack_index"])
               dest_card_index = if argc >= 4 do evaluate(game, Enum.at(code, 4), trace ++ ["MOVE_CARD dest_stack_index"]) else 0 end
               combine = if argc >= 5 do evaluate(game, Enum.at(code, 5), trace ++ ["MOVE_CARD combine"]) else false end
-              try do
+              #try do
                 GameUI.move_card(game, card_id, dest_group_id, dest_stack_index, dest_card_index, combine)
-              rescue
-                e ->
-                  raise("Failed to move card #{card_id} to dest_group_id:#{dest_group_id} dest_stack_index:#{dest_stack_index} dest_card_index:#{dest_card_index} combine:#{combine}. " <> inspect(e) <> inspect(trace))
-              end
+              # rescue
+              #   e ->
+              #     raise("Failed to move card #{card_id} to dest_group_id:#{dest_group_id} dest_stack_index:#{dest_stack_index} dest_card_index:#{dest_card_index} combine:#{combine}. " <> inspect(e) <> inspect(trace))
+              # end
 
             else
               game

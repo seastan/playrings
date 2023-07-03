@@ -204,6 +204,25 @@ defmodule DragnCardsGame.McPluginTest do
     assert res["cardById"][card_id]["exhausted"] == false
     assert res["cardById"][card_id]["rotation"] == 0
 
+    # Check drawCard
+    res = Evaluate.evaluate(res, game_def["actionLists"]["drawCard"])
+    assert length(res["groupById"]["player1Hand"]["stackIds"]) == 7
+
+    # Move a card in hand to the table
+    card_from_hand = GameUI.get_card_by_group_id_stack_index_card_index(res, ["player1Hand", 0, 0])
+    res = Evaluate.evaluate(res, ["MOVE_CARD", card_from_hand["id"], "player1Play1", -1])
+    assert length(res["groupById"]["player1Hand"]["stackIds"]) == 6
+
+    # Make it active
+    res = put_in(res["playerUi"]["activeCardId"], card_from_hand["id"])
+
+    # Check shuffleIntoDeck
+    deck_size_before = length(res["groupById"]["player1Deck"]["stackIds"])
+    res = Evaluate.evaluate(res, game_def["actionLists"]["shuffleIntoDeck"])
+    deck_size_after = length(res["groupById"]["player1Deck"]["stackIds"])
+    assert deck_size_after == deck_size_before + 1
+
+
 
 
   end

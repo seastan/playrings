@@ -146,9 +146,10 @@ defmodule DragnCardsGame.GameUI do
   end
 
   def get_stack_by_card_id(game, card_id) do
-    Enum.reduce(game["stackById"], nil, fn({_stack_id, stack}, acc) ->
+    stack = Enum.reduce(game["stackById"], nil, fn({_stack_id, stack}, acc) ->
       if card_id in stack["cardIds"] do stack else acc end
     end)
+    if stack do stack else raise "Card not found: #{card_id}" end
   end
 
   def get_stack_by_index(game, group_id, stack_index) do
@@ -178,12 +179,12 @@ defmodule DragnCardsGame.GameUI do
     group = get_group(game, group_id)
     stack_ids = group["stackIds"]
     if Enum.count(stack_ids) <= stack_index do
-      nil
+      raise "Stack not found at stack_index:#{stack_index}"
     else
       stack = get_stack(game, Enum.at(stack_ids, stack_index))
       card_ids = stack["cardIds"]
       if Enum.count(card_ids) <= card_index do
-        nil
+        raise "Card not found at card_index:#{card_index}"
       else
         get_card(game, Enum.at(card_ids, card_index))
       end
