@@ -196,23 +196,23 @@ defmodule DragnCardsGame.GameUI do
   ############################################################
 
   def update_group(game, new_group) do
-    put_in(game["groupById"][new_group["id"]], new_group)
+    Evaluate.evaluate(game, ["SET", "/groupById" <> "/" <> new_group["id"], new_group])
   end
 
   def update_stack_ids(game, group_id, new_stack_ids) do
-    put_in(game["groupById"][group_id]["stackIds"], new_stack_ids)
+    Evaluate.evaluate(game, ["SET", "/groupById/" <> group_id <> "/stackIds", ["LIST"] ++ new_stack_ids])
   end
 
   def update_stack(game, new_stack) do
-    put_in(game["stackById"][new_stack["id"]], new_stack)
+    Evaluate.evaluate(game, ["SET", "/stackById" <> "/" <> new_stack["id"], new_stack])
   end
 
   def update_card_ids(game, stack_id, new_card_ids) do
-    put_in(game["stackById"][stack_id]["cardIds"], new_card_ids)
+    Evaluate.evaluate(game, ["SET", "/stackById/" <> stack_id <> "/cardIds", ["LIST"] ++ new_card_ids])
   end
 
   def update_card(game, new_card) do
-    put_in(game["cardById"][new_card["id"]], new_card)
+    Evaluate.evaluate(game, ["SET", "/cardById" <> "/" <> new_card["id"], new_card])
   end
 
   # Move a card
@@ -285,7 +285,7 @@ defmodule DragnCardsGame.GameUI do
   def delete_card_from_card_by_id(game, card_id) do
     old_card_by_id = game["cardById"]
     new_card_by_id = Map.delete(old_card_by_id, card_id)
-    put_in(game["cardById"], new_card_by_id)
+    Evaluate.evaluate(game, ["SET", "/cardById", new_card_by_id], ["delete_card_from_card_by_id cardId:#{card_id}"])
   end
 
   # Removes a card from a stack, but it stays in cardById
@@ -311,8 +311,7 @@ defmodule DragnCardsGame.GameUI do
   def refresh_stack_indices_in_stack(game, stack_id, index) do
     card_ids = get_card_ids(game, stack_id)
     Enum.reduce(card_ids, game, fn(card_id, acc) ->
-      card = get_card(acc, card_id) |> Map.put("stackIndex", index)
-      update_card(acc, card)
+      Evaluate.evaluate(acc, ["SET", "/cardById/" <> card_id <> "/stackIndex", index], ["refresh_stack_indices_in_stack cardId:#{card_id} stackIndex:#{index}"])
     end)
   end
 
@@ -336,7 +335,7 @@ defmodule DragnCardsGame.GameUI do
   def delete_stack_from_stack_by_id(game, stack_id) do
     old_stack_by_id = game["stackById"]
     new_stack_by_id = Map.delete(old_stack_by_id, stack_id)
-    put_in(game["stackById"], new_stack_by_id)
+    Evaluate.evaluate(game, ["SET", "/stackById", new_stack_by_id])
   end
 
   def delete_stack_id_from_group_by_id(game, stack_id) do
@@ -763,22 +762,31 @@ defmodule DragnCardsGame.GameUI do
     group_size = Enum.count(get_stack_ids(game, group_id))
     # Can't insert a card directly into a group need to make a stack first
     new_card = Card.card_from_card_details(load_list_item["cardDetails"], game_def, load_list_item["uuid"], group_id)
+    new_card_id = new_card["id"]
     new_stack = Stack.stack_from_card(new_card)
-    new_card = new_card
-    |> Map.put("groupId", group_id)
-    |> Map.put("stackId", new_stack["id"])
-    |> Map.put("stackIndex", group_size)
-    |> Map.put("cardIndex", 0)
+
+    # IO.puts("create_card_in_group 1")
+    # game = game
+    # |> Evaluate.evaluate(["SET", "/cardById/" <> new_card_id <> "/groupId", group_id], ["create_card_in_group"])
+    # |> Evaluate.evaluate(["SET", "/cardById/" <> new_card_id <> "/stackId", new_stack["id"]], ["create_card_in_group"])
+    # |> Evaluate.evaluate(["SET", "/cardById/" <> new_card_id <> "/stackIndex", group_size], ["create_card_in_group"])
+    # |> Evaluate.evaluate(["SET", "/cardById/" <> new_card_id <> "/cardIndex", 0], ["create_card_in_group"])
+    # IO.puts("create_card_in_group 2")
+    # new_card = new_card
+    # |> Map.put("groupId", group_id)
+    # |> Map.put("stackId", new_stack["id"])
+    # |> Map.put("stackIndex", group_size)
+    # |> Map.put("cardIndex", 0)
 
 
-    game = game
+    game
     |> insert_stack_in_group(group_id, new_stack["id"], group_size)
     |> update_stack(new_stack)
     |> update_card(new_card)
     |> implement_card_automations(game_def, new_card)
     |> update_card_state(new_card["id"], nil)
-    |> put_in(["loadedCardIds"], game["loadedCardIds"] ++ [new_card["id"]])
-    game
+    |> Evaluate.evaluate(["SET", "/loadedCardIds", ["LIST"] ++ game["loadedCardIds"] ++ [new_card["id"]]], ["create_card_in_group"])
+
   end
 
   def implement_card_automations(game, game_def, card) do
@@ -865,11 +873,11 @@ defmodule DragnCardsGame.GameUI do
       raise "load_list is nil"
     end
 
-    IO.puts("load_cards 1")
+    Logger.debug("load_cards 1")
     game_def = Plugins.get_game_def(game["options"]["pluginId"])
-    IO.puts("load_cards 2")
+    Logger.debug("load_cards 2")
     card_db = Plugins.get_card_db(game["options"]["pluginId"])
-    IO.puts("load_cards 3")
+    Logger.debug("load_cards 3")
 
     # Loop over load list and add a "cardDetails" field to each item
     load_list = Enum.map(load_list, fn load_list_item ->
@@ -885,32 +893,31 @@ defmodule DragnCardsGame.GameUI do
         "loadGroupId" => loadGroupId,
       }
     end)
-    IO.puts("load_cards 4")
+    Logger.debug("load_cards 4")
 
     old_game = game
 
-    game = put_in(game, ["loadedCardIds"], [])
+    game = Evaluate.evaluate(game, ["SET", "/loadedCardIds", []])
 
-    game = try do
+    game =
       Enum.reduce(load_list, game, fn load_list_item, acc ->
-        IO.puts("load_card #{load_list_item["cardDetails"]["A"]["name"]}")
+        Logger.debug("load_card #{load_list_item["cardDetails"]["A"]["name"]} into #{load_list_item["loadGroupId"]}")
         load_card(acc, game_def, load_list_item)
       end)
-    rescue
-      e in RuntimeError ->
-        Evaluate.evaluate(game, ["ERROR", "Loading cards: #{Exception.message(e)}"], [])
-    end
+    # rescue
+    #   e in RuntimeError ->
+    #     Evaluate.evaluate(game, ["ERROR", "Loading cards: #{Exception.message(e)}"])
+    # end
 
-    game = Evaluate.evaluate(game, ["LOG", "$PLAYER_N", " loaded cards."], [])
+    game = Evaluate.evaluate(game, ["LOG", "$PLAYER_N", " loaded cards."])
 
     game = shuffle_changed_decks(game, old_game, game_def)
 
-    if game_def["automation"]["postLoadActionList"] != nil do
+    game =if game_def["automation"]["postLoadActionList"] != nil do
       Evaluate.evaluate_with_timeout(game, game_def["automation"]["postLoadActionList"], ["postLoadActionList"], 5000)
     else
       game
     end
-
 
     # # Check if we should load the first quest card
     # main_quest_stack_ids = get_stack_ids(game, "sharedMainQuest")

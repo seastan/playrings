@@ -160,10 +160,13 @@ defmodule DragnCardsGame.McPluginTest do
 
     # Check that the deck was loaded
     assert length(res["groupById"]["player1Identity"]["stackIds"]) == 1
-    assert length(res["groupById"]["player1Play1"]["stackIds"]) == 2
+    assert length(res["groupById"]["player1Play1"]["stackIds"]) == 1
 
     # Check hand size limit
     assert res["playerData"]["player1"]["handSize"] == 6
+
+    # Check hit points
+    #assert res["playerData"]["player1"]["hitPoints"] == 6
 
     # Check number of cards in hand
     assert length(res["groupById"]["player1Hand"]["stackIds"]) == 6

@@ -47,9 +47,9 @@ export const TopBarUserCounter = React.memo(({
 
   return(
     <div className="h-full w-full flex justify-center">
-      <img className="h-full w-full object-contain ml-1" src={imageUrl}></img>
+      <img className="h-full w-1/3 object-contain ml-1" src={imageUrl}></img>
       <input 
-        className="h-full w-1/2 float-left text-center bg-transparent" 
+        className="h-full w-2/3 float-left text-center bg-transparent" 
         value={value}
         onChange={handleValueChange}
         type="number" min="0" step="1"
