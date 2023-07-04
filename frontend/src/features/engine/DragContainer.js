@@ -112,7 +112,7 @@ export const DragContainer = React.memo(({}) => {
       // const updates = [["game", "cardById", topOfOrigStackCardId, "currentSide", "A"]];
       // dispatch(setValues({updates: updates}));
       doActionList([
-        ["LOG", "$PLAYER_N", " moved ", ["FACEUP_NAME_FROM_STACK_ID", origStackId], " from ", "$GAME.groupById."+origGroupId+".name", " to ", "$GAME.groupById."+destGroupId+".name", "."],
+        ["LOG", "$PLAYER_N", " moved ", ["FACEUP_NAME_FROM_STACK_ID", origStackId], " from ", "$GAME.groupById."+origGroupId+".label", " to ", "$GAME.groupById."+destGroupId+".label", "."],
         ["MOVE_STACK", origStackId, destGroupId, dest.index, false, destGroupId === origGroupId]
       ])
       dispatch(setGroupById(newGroupById));
