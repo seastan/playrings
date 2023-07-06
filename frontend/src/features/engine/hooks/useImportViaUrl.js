@@ -163,8 +163,8 @@ export const loadMarvelCdb = (importLoadList, doActionList, playerN, dbDomain, d
 
   console.log("marvelcdbIdTodatabaseId", marvelcdbIdTodatabaseId)
 
-  const urlBase = "https://marvelcdb.com/api/"
-  const url = dbType === "decklist" ? urlBase+"public/decklist/"+dbId+".json" : urlBase+"oauth2/deck/load/"+dbId;
+  const urlBase = "https://marvelcdb.com/api";
+  const url = `${urlBase}/public/${dbType}/${dbId}.json`;// dbType === "decklist" ? urlBase+"public/decklist/"+dbId+".json" : urlBase+"oauth2/deck/load/"+dbId;
   console.log("Fetching ", url);
   
   fetch(url)
@@ -184,15 +184,15 @@ export const loadMarvelCdb = (importLoadList, doActionList, playerN, dbDomain, d
     Object.keys(slots).forEach((slot, slotIndex) => {
       console.log("card db import", slot, slots[slot])
       const quantity = slots[slot];
-      const slotUrl = urlBase+"public/card/"+slot+".json"
+      const slotUrl = urlBase+"/public/card/"+slot+".json"
       fetches.push(fetch(slotUrl)
         .then(response => response.json())
         .then((slotJsonData) => {
-          // jsonData is parsed json object received from url
           console.log("card db import", slotJsonData.name, slotJsonData)
           // If slotJsonData.code is in the marvelcdbIdTodatabaseId mapping, use that databaseId
           if (slotJsonData.code && marvelcdbIdTodatabaseId[slotJsonData.code]) {
             const databaseId = marvelcdbIdTodatabaseId[slotJsonData.code];
+            // We could add some code here if we want to handle certain car types differently
             loadList.push({'databaseId': databaseId, 'quantity': quantity, 'loadGroupId': playerN+"Deck"});
           } else {
             alert(`Encountered unknown card ID (${slotJsonData.code}) for ${slotJsonData.name}`)
@@ -205,6 +205,7 @@ export const loadMarvelCdb = (importLoadList, doActionList, playerN, dbDomain, d
       )
     })
     Promise.all(fetches).then(function() {
+      console.log("card db import loadList", loadList)
       importLoadList(loadList);
     });
   })
