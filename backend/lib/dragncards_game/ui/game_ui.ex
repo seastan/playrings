@@ -241,10 +241,8 @@ defmodule DragnCardsGame.GameUI do
     {dest_group_id, dest_stack_index, dest_card_index} = gsc(game, card_id)
     orig_group = get_group(game, orig_group_id)
     dest_group = get_group(game, dest_group_id)
-    card = get_card(game, card_id)
-    prev_card = card
-    # IO.puts("updating card state ----------------------------------- prev_card")
-    # IO.inspect(prev_card)
+    old_card = get_card(game, card_id)
+
     parent_card = get_card_by_group_id_stack_index_card_index(game, [dest_group_id, dest_stack_index, 0])
 
     game = Evaluate.evaluate(game, ["SET", "/cardById/" <> card_id <> "/groupId", dest_group_id], ["update_card_state cardId:#{card_id} groupId:#{dest_group_id}"])
@@ -253,14 +251,13 @@ defmodule DragnCardsGame.GameUI do
     game = Evaluate.evaluate(game, ["SET", "/cardById/" <> card_id <> "/stackParentCardId", parent_card["id"]], ["update_card_state cardId:#{card_id} stackParentCardId:#{parent_card["id"]}"])
 
     # If card gets moved to a facedown pile, or gets flipped up, erase peeking
-    # IO.inspect(dest_group["onCardEnter"])
-    # IO.inspect(prev_card["currentSide"])
-    game = if dest_group["onCardEnter"]["currentSide"] == "B" or (prev_card["currentSide"] == "B" and dest_group["onCardEnter"]["currentSide"] == "A") do
+    game = if dest_group["onCardEnter"]["currentSide"] == "B" or (old_card["currentSide"] == "B" and dest_group["onCardEnter"]["currentSide"] == "A") do
       Evaluate.evaluate(game, ["SET", "/cardById/" <> card_id <> "/peeking", %{}], ["update_card_state cardId:#{card_id} peeking:empty"])
     else
       game
     end
 
+    # Assign the group's onCardEnter values
     game = Enum.reduce(dest_group["onCardEnter"], game, fn({key, val}, acc) ->
       if orig_group["onCardEnter"][key] != dest_group["onCardEnter"][key] do
         # IO.puts("updating card state on enter: " <> key <> " " <> inspect(val))
@@ -270,7 +267,14 @@ defmodule DragnCardsGame.GameUI do
       end
     end)
 
-    game
+    # If card has inPlay == false, reset tokens
+    new_card = get_card(game, card_id)
+    if old_card["inPlay"] == true and new_card["inPlay"] == false do
+      Evaluate.evaluate(game, ["SET", "/cardById/" <> card_id <> "/tokens", %{}], ["update_card_state cardId:#{card_id} tokens:empty"])
+    else
+      game
+    end
+
   end
 
   # Delete card from game
@@ -373,10 +377,10 @@ defmodule DragnCardsGame.GameUI do
   end
 
   # Detach a card
-  def detach(gameui, card_id) do
+  def detach(game, card_id) do
     # Get position of card and move it next to the initial stack
-    {group_id, stack_index, _card_index} = gsc(gameui, card_id)
-    move_card(gameui, card_id, group_id, stack_index + 1, 0, false)
+    {group_id, stack_index, _card_index} = gsc(game, card_id)
+    move_card(game, card_id, group_id, stack_index + 1, 0, false)
   end
 
   def move_stack(game, stack_id, dest_group_id, dest_stack_index, combine \\ false) do
