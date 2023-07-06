@@ -263,7 +263,7 @@ export const EditPluginModal = ({ plugin, closeModal, doFetchHash}) => {
             {siteL10n("You may upload multiple tab-separated-value (.tsv) files at once that define different cards and they will be merged automatically. Eech file must share the same header information. A valid game definition must be uploaded first.")}
           </label>
           <Button disabled={!validGameDef} onClick={() => loadFileCardDb()}>
-            {plugin ? siteL10n("(Optional) Update card database (.tsv)") : siteL10n("(Optional) Update card database (.tsv)")}
+            {plugin ? siteL10n("(Optional) Update card database (.tsv)") : siteL10n("Upload card database (.tsv)")}
             <input type='file' multiple id='file' ref={inputFileCardDb} style={{display: 'none'}} onChange={uploadCardDbTsv} accept=".tsv"/>
           </Button>
           {successMessageCardDb && (
