@@ -205,7 +205,7 @@ export const EditPluginModal = ({ plugin, closeModal, doFetchHash}) => {
     downloadAnchorNode.remove();
   }
 
-  const changesMade = plugin && ((inputs.public !== plugin.public) || inputs.gameDef || inputs.cardDb);
+  const changesMade = plugin ? ((inputs.public !== plugin.public) || inputs.gameDef || inputs.cardDb) : (inputs.gameDef || inputs.cardDb);
   
   return (
     <ReactModal
@@ -263,7 +263,7 @@ export const EditPluginModal = ({ plugin, closeModal, doFetchHash}) => {
             {siteL10n("You may upload multiple tab-separated-value (.tsv) files at once that define different cards and they will be merged automatically. Eech file must share the same header information. A valid game definition must be uploaded first.")}
           </label>
           <Button disabled={!validGameDef} onClick={() => loadFileCardDb()}>
-            {siteL10n("Load card database (.tsv)")}
+            {plugin ? siteL10n("(Optional) Update card database (.tsv)") : siteL10n("(Optional) Update card database (.tsv)")}
             <input type='file' multiple id='file' ref={inputFileCardDb} style={{display: 'none'}} onChange={uploadCardDbTsv} accept=".tsv"/>
           </Button>
           {successMessageCardDb && (
@@ -287,8 +287,8 @@ export const EditPluginModal = ({ plugin, closeModal, doFetchHash}) => {
           </Button>
           </div>
           </div> 
-          <Button disabled={!changesMade} isSubmit={changesMade} className="mt-4">
-          {siteL10n("Update Plugin")}
+          <Button disabled={!changesMade || !validCardDb || !validGameDef} isSubmit={changesMade} className="mt-4">
+          {plugin ? siteL10n("Update Plugin") : siteL10n("Create Plugin")}
           </Button>
           {changesMade && <div className="alert alert-info mt-4">{siteL10n("You have unsaved changes.")}</div>}
           {successMessage && (
