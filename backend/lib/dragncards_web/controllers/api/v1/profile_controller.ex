@@ -23,7 +23,11 @@ defmodule DragnCardsWeb.API.V1.ProfileController do
   # Show: Look up the public profile of another user.
   @spec show(Conn.t(), map()) :: Conn.t()
   def show(conn, %{"id" => user_id}) do
+    IO.puts("profile_controller show 1")
+    IO.inspect("user_id #{user_id}")
     user = Users.get_user(user_id)
+    IO.puts("profile_controller show 2")
+    IO.inspect(user)
 
     case user do
       nil ->
@@ -58,6 +62,22 @@ defmodule DragnCardsWeb.API.V1.ProfileController do
       {:error, changeset} -> # Something went wrong
         conn
         |> json(%{success: %{message: "Failed to update settings"}})
+    end
+  end
+
+  def update_alt_art(conn, nested_obj) do
+    user = Repo.get!(User, conn.assigns.current_user.id)
+    updates = User.alt_art_updates(user, nested_obj)
+    changeset = Ecto.Changeset.change(user, updates)
+
+    case Repo.update(changeset) do
+      {:ok, user} ->
+        Pow.Plug.update_user(conn, %{})
+        conn
+        |> json(%{success: %{message: "Updated user's plugin settings"}})
+      {:error, changeset} ->
+        conn
+        |> json(%{error: %{message: "Failed to update user's plugin settings", changeset: changeset}})
     end
   end
 end

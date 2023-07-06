@@ -1,18 +1,32 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useDispatch, useSelector } from 'react-redux';
 import RoomGame from "./RoomGame";
 import useProfile from "../../hooks/useProfile";
 import { setPlayerN } from "../store/playerUiSlice";
-import { GetPlayerN } from "../plugins/lotrlcg/functions/helpers";
 import BroadcastContext from "../../contexts/BroadcastContext";
+import { usePlugin } from "./hooks/usePlugin";
+import { PluginProvider } from "../../contexts/PluginContext";
+
+
+const getPlayerN = (playerInfo, id) => {
+  if (!playerInfo) return null;
+  var playerN = null;
+  Object.keys(playerInfo).forEach(playerI => {
+    if (playerInfo[playerI]?.id === id) playerN = playerI;
+  })
+  return playerN;
+}
 
 export const RoomProviders = ({ gameBroadcast, chatBroadcast }) => {
   console.log("Rendering RoomProviders");
   const dispatch = useDispatch();
-  const playerIds = useSelector(state => state?.gameUi?.playerIds);
+  const playerInfo = useSelector(state => state?.gameUi?.playerInfo);
   const myUser = useProfile();
-  const playerN = GetPlayerN(playerIds, myUser?.id);
-  dispatch(setPlayerN(playerN));
+  const playerN = getPlayerN(playerInfo, myUser?.id);
+  useEffect(() => {
+    dispatch(setPlayerN(playerN));
+  }, [playerN])
+  
 
   return (
       <div className="background"
@@ -22,10 +36,11 @@ export const RoomProviders = ({ gameBroadcast, chatBroadcast }) => {
           backgroundRepeat: "no-repeat",
           backgroundSize: "cover",
           backgroundPositionY: "50%",
-        }}
-      >
+        }}>
         <BroadcastContext.Provider value={{gameBroadcast, chatBroadcast}}>
-          <RoomGame/>
+          <PluginProvider>
+            <RoomGame/>
+          </PluginProvider>
         </BroadcastContext.Provider>
       </div>
   );

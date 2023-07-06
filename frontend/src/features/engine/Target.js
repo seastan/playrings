@@ -1,12 +1,12 @@
 import React from "react";
 import { useSelector } from 'react-redux';
-import { useCardSize } from "../../hooks/useCardSize";
+import { useCardScaleFactor } from "./hooks/useCardScaleFactor";
 
 export const Target = React.memo(({
     cardId,
 }) => {
     const targeting = useSelector(state => state?.gameUi?.game?.cardById[cardId]?.targeting);
-    const cardSize = useCardSize();
+    const cardScaleFactor = useCardScaleFactor();
     if (!targeting) return null;
     var targetString = "";
     if (targeting.player1) targetString += "1";
@@ -18,8 +18,8 @@ export const Target = React.memo(({
     return (
         <div className="absolute"
             style={{
-                width: `${cardSize}vh`,
-                height: `${cardSize}vh`,
+                width: `${cardScaleFactor}vh`,
+                height: `${cardScaleFactor}vh`,
                 opacity: "60%",
                 left: "50%",
                 top: "50%",

@@ -82,7 +82,7 @@ const joinChannel = (
     // Specific Hack for DragnCards
     // See room_channel.ex for more info
     //console.log("game state userid ",event, userId, myUserId)
-    if (event != null && event === "ask_for_update" && userId !== myUserId) {
+    if (event != null && event === "ask_for_update") { // && userId !== myUserId) {
       console.log("requesting game state")
       channel.push("request_state", {});
     }

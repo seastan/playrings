@@ -229,7 +229,7 @@ padding: 0;
     position: relative;
     float: left;
     height: 100%;
-    width: 50%;
+    width: 33.3%;
     background: rgb(75, 85, 99);
 }
 .top-level-menu > li:hover { background: rgb(107, 114, 128); }

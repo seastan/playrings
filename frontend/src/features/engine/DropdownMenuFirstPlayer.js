@@ -13,7 +13,7 @@ export const DropdownMenuFirstPlayer = React.memo(({
   activeMenu,
 }) => {
   const numPlayers = useSelector(state => state.gameUi.game.numPlayers);  
-  const dropdownMenuObj = useSelector(state => state?.playerUi?.dropdownMenuObj)
+  const dropdownMenu = useSelector(state => state?.playerUi?.dropdownMenu)
 
   const left = mouseX < (window.innerWidth/2) ? mouseX : mouseX -300;
   const top = mouseY < (window.innerHeight/2) ? mouseY : mouseY -250;
@@ -23,14 +23,19 @@ export const DropdownMenuFirstPlayer = React.memo(({
       className="dropdown" 
       style={{ height: menuHeight, zIndex: 1e7, top: top, left: left }}
       >
-      <div className="menu-title">{dropdownMenuObj.title}</div>
+      <div className="menu-title">{dropdownMenu.title}</div>
 
       <CSSTransition onEnter={calcHeight} timeout={500} classNames="menu-primary" unmountOnExit
         in={activeMenu === "main"}>
         <div className="menu">
           {Array.from(Array(numPlayers), (e, i) => {
             const title = "Player " + (i + 1);
-            return <DropdownItem action={"player" + (i + 1)} title={title} clickCallback={handleDropdownClick}>{title}</DropdownItem>
+            const playerI = "player" + (i + 1);
+            const actionList = [
+              ["SET", "/firstPlayer", playerI],
+              ["LOG", "$PLAYER_N", " set the first player to ", playerI, "."]
+            ]
+            return <DropdownItem action={actionList} title={title} clickCallback={handleDropdownClick}>{title}</DropdownItem>
           })}
         </div>
       </CSSTransition>

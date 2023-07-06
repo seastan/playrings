@@ -9,19 +9,22 @@ const gameUiSlice = createSlice({
   initialState,
   reducers: {
     setGameUi: (state, { payload }) => {
+      console.log("setting gameui", state, payload)
       if (!state) {
         state = payload;
       } else {
-        deepUpdate(state, payload, payload?.submittedTimestamp);
+        deepUpdate(state, payload);
       }
       // Object.keys(payload).forEach((key) => {
       //   if (key !== "game") state[key] = payload[key];
       // })
     },
     applyDelta: (state, { payload }) => {
+      console.log("setting gameui delta", state, payload)
       if (!state?.game) {
         return;
       } else {
+        console.log("setting gameui delta update", JSON.parse(JSON.stringify(state.game)))
         setGame(updateByDelta(state.game, payload));
       }
     },
@@ -42,6 +45,7 @@ const gameUiSlice = createSlice({
       state.game.stackById[payload.id].cardIds = payload.cardIds;
     },
     setValues: (state, { payload }) => {
+      console.log("setValues", JSON.parse(JSON.stringify(state)), payload)
       updateValues(state, payload.updates);
     },
   },

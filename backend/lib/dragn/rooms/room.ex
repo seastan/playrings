@@ -5,10 +5,11 @@ defmodule DragnCards.Rooms.Room do
   use Ecto.Schema
   import Ecto.Changeset
   alias DragnCardsUtil.Slugify
+  require Logger
 
   # Automatically convert to JSON when broadcasting %Room{}
   # Objects over channel messages
-  @derive {Jason.Encoder, only: [:id, :name, :slug, :created_by, :privacy_type, :last_update, :encounter_name, :num_players]}
+  @derive {Jason.Encoder, only: [:id, :name, :slug, :created_by, :privacy_type, :last_update, :num_players, :plugin_id]}
 
   schema "rooms" do
     field :name, :string
@@ -16,8 +17,8 @@ defmodule DragnCards.Rooms.Room do
     field :created_by, :integer
     field :privacy_type, :string
     field :last_update, :integer
-    field :encounter_name, :string
     field :num_players, :integer
+    field :plugin_id, :integer
 
     timestamps()
   end
@@ -25,8 +26,8 @@ defmodule DragnCards.Rooms.Room do
   @doc false
   def changeset(room, attrs) do
     room
-    |> cast(attrs, [:name, :created_by, :privacy_type, :last_update, :encounter_name, :num_players])
-    |> validate_required([:name, :created_by, :privacy_type, :last_update, :encounter_name, :num_players])
+    |> cast(attrs, [:name, :created_by, :privacy_type, :last_update, :num_players, :plugin_id])
+    |> validate_required([:name, :created_by, :privacy_type, :last_update, :num_players, :plugin_id])
     |> put_slug()
   end
 
@@ -36,6 +37,12 @@ defmodule DragnCards.Rooms.Room do
         put_change(changeset, :slug, Slugify.slugify(name))
 
       _ ->
+        if changeset.errors != [] do
+          Logger.error("Room changeset errors")
+          Enum.reduce(changeset.errors, nil, fn(acc, err) ->
+            Logger.error(err)
+          end)
+        end
         changeset
     end
   end

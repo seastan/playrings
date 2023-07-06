@@ -5,24 +5,24 @@ import "../../css/custom-dropdown.css";
 import { useSelector } from "react-redux";
 
 export const DropdownMenu = React.memo(({}) => {
-  const dropdownMenuObj = useSelector(state => state?.playerUi?.dropdownMenuObj);
+  const dropdownMenu = useSelector(state => state?.playerUi?.dropdownMenu);
   const touchAction = useSelector(state => state?.playerUi?.touchAction);
-  const mousePosition = useSelector(state => state?.playerUi?.mousePosition);
+  const mouseXY = useSelector(state => state?.playerUi?.mouseXY);
   
   const [mouseX, setMouseX] = useState(0);
   const [mouseY, setMouseY] = useState(0); 
   const [isNull, setIsNull] = useState(true);
 
   useEffect(() => {
-    setMouseX(mousePosition?.x);
-    setMouseY(mousePosition?.y);
-    setIsNull(dropdownMenuObj === null);
-  }, [dropdownMenuObj])
+    setMouseX(mouseXY?.x);
+    setMouseY(mouseXY?.y);
+    setIsNull(dropdownMenu === null);
+  }, [dropdownMenu])
 
 
-  console.log("Rendering DropdownMenu ",mousePosition,dropdownMenuObj,isNull,touchAction);
-  if (!mousePosition) return null;
-  if (!dropdownMenuObj) return null;
+  console.log("Rendering DropdownMenu ",mouseXY,dropdownMenu,isNull,touchAction);
+  if (!mouseXY) return null;
+  if (!dropdownMenu) return null;
   if (isNull) return null;
   if (touchAction) return null;
 

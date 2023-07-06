@@ -11,6 +11,7 @@ export const ProfileProvider = ({ children }) => {
     // If we can't load the profile data, we have stale tokens
     // (remember the useAuthDataApi tries to renew automatically)
     // Forget them and log the user out
+    console.log("can't load profile data")
     setAuthAndRenewToken(null, null);
   }, [setAuthAndRenewToken]);
   const { data, doFetchHash, setData } = useAuthDataApi(
@@ -18,6 +19,7 @@ export const ProfileProvider = ({ children }) => {
     null,
     onError
   );
+  console.log("Rendering ProfileProvider", data)
 
   // Every 10 minutes, re-check our profile.
   // This will cause our auth tokens to be refreshed, automatically
@@ -26,6 +28,7 @@ export const ProfileProvider = ({ children }) => {
   // will know.
   const fetchProfileEvery10Mins = useCallback(() => {
     // Make a Timestamp that changes every 10 minutes
+    console.log("fetching profile 1")
     let ts = format(new Date(), "h:mm");
     ts = ts.slice(0, -1);
     doFetchHash(ts);

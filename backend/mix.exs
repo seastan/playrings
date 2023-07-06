@@ -7,7 +7,7 @@ defmodule DragnCards.MixProject do
       version: "0.1.0",
       elixir: "~> 1.5",
       elixirc_paths: elixirc_paths(Mix.env()),
-      compilers: [:phoenix, :gettext] ++ Mix.compilers(),
+      compilers: [:phoenix] ++ Mix.compilers(),
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
       deps: deps()
@@ -40,7 +40,7 @@ defmodule DragnCards.MixProject do
       {:postgrex, ">= 0.0.0"},
       {:phoenix_html, "~> 2.11"},
       {:phoenix_live_reload, "~> 1.2", only: :dev},
-      {:gettext, "~> 0.11"},
+      {:gettext, "~> 0.20"},
       {:jason, "~> 1.0"},
       {:plug_cowboy, "~> 2.0"},
       {:pow, "~> 1.0.19"},
@@ -55,7 +55,8 @@ defmodule DragnCards.MixProject do
       {:map_diff, "~> 1.3"},
       {:erlport, "~> 0.10.1"},
       {:hackney, "~> 1.9"},
-      {:poison, "~> 5.0"}
+      {:poison, "~> 5.0"},
+#      {:luerl, github: "rvirding/luerl"}
     ]
   end
 
