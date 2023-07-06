@@ -427,7 +427,7 @@ export const refinedLoadList = (xmlText,playerN) => {
           cardRow['deckgroupid'] = sectionToDeckGroupId(sectionName,playerN);
           cardRow['discardgroupid'] = sectionToDiscardGroupId(sectionName,playerN);
           if (cardRow['sides']['A']['keywords'].includes("Encounter")) cardRow['discardgroupid'] = "sharedEncounterDiscard";
-          loadList.push({'uuid': cardDbId, 'quantity': quantity, 'loadGroupId': sectionToLoadGroupId(sectionName,playerN)})
+          loadList.push({'databaseId': cardDbId, 'quantity': quantity, 'loadGroupId': sectionToLoadGroupId(sectionName,playerN)})
         }
       })
     })

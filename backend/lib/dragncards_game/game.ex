@@ -5,7 +5,7 @@
   some toy game used to test everything around it.
   """
   import Ecto.Query
-  alias DragnCardsGame.{Groups, Game, PlayerData}
+  alias DragnCardsGame.{Groups, Game, PlayerData, GameVariables}
   alias DragnCards.{Repo, Replay, Plugins}
 
   @type t :: Map.t()
@@ -15,7 +15,6 @@
   """
   @spec load(String.t(), Map.t()) :: Game.t()
   def load(room_slug, options) do
-    game_def = Plugins.get_game_def(options["pluginId"])
     game = if options["replayId"] != nil and options["replayId"] != "" do
       gameid = options["replayId"]
       query = Ecto.Query.from(e in Replay,
@@ -53,12 +52,13 @@
       "layoutVariants" => game_def["layouts"][layout_id]["defaultVariants"] || %{},
       "firstPlayer" => "player1",
       "stepIndex" => 0,
+      "steps" => game_def["steps"],
       "groupById" => Groups.new(game_def["groups"]),
       "stackById" => %{},
       "cardById"  => %{},
       "options" => options,
-      "variables" => %{},
-      "automation" => %{},
+      "variables" => GameVariables.default(),
+      "automation" => if get_in(game_def, ["automation", "gameRules"]) do %{"_game_" => %{"rules" => game_def["automation"]["gameRules"]}} else %{} end,
       "messages" => [] # These messages will be delivered to the GameUi parent, which will then relay them to chat
     }
     IO.puts("game new 2")
@@ -69,7 +69,7 @@
     end)
     base = put_in(base["playerData"], player_data)
     # Add custom properties
-    game = Enum.reduce(game_def["gameProperties"], base, fn({key,val}, acc) ->
+    Enum.reduce(game_def["gameProperties"], base, fn({key,val}, acc) ->
       put_in(acc[key], val["default"])
     end)
   end

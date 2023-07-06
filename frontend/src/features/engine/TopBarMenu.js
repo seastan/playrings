@@ -5,14 +5,15 @@ import useProfile from "../../hooks/useProfile";
 import store from "../../store";
 import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { setZoomFactor, setLoaded, setRandomNumBetween, setShowModal, setTouchAction, setTouchMode } from "../store/playerUiSlice";
+import { setZoomFactor, setLoaded, setRandomNumBetween, setShowModal, setTouchAction, setTouchMode, setShowDeveloper } from "../store/playerUiSlice";
 import { useGameL10n } from "./hooks/useGameL10n";
 import BroadcastContext from "../../contexts/BroadcastContext";
 import { useGameDefinition } from "./hooks/useGameDefinition";
 import { useDoActionList } from "./hooks/useDoActionList";
 import { useSiteL10n } from "../../hooks/useSiteL10n";
 import { getRandomIntInclusive } from "./functions/common";
-import { useLoadList } from "./hooks/useLoadList";
+import { useImportLoadList } from "./hooks/useImportLoadList";
+import { useImportViaUrl } from "./hooks/useImportViaUrl";
 
 
 export const TopBarMenu = React.memo(({}) => {
@@ -20,19 +21,17 @@ export const TopBarMenu = React.memo(({}) => {
   const myUser = useProfile();
   const myUserID = myUser?.id;
   const history = useHistory();
-  const l10n = useGameL10n();
+  const gameL10n = useGameL10n();
   const siteL10n = useSiteL10n();
   const gameDef = useGameDefinition();
   const doActionList = useDoActionList();
-  const loadList = useLoadList();
+  const loadList = useImportLoadList();
+  const importViaUrl = useImportViaUrl();
 
   const createdBy = useSelector(state => state.gameUi?.createdBy);
   const options = useSelector(state => state.gameUi?.game?.options);
-  const ringsDbInfo = options?.ringsDbInfo;
-  const round = useSelector(state => state.gameUi?.game.roundNumber);
   const isHost = myUserID === createdBy;  
   const playerN = useSelector(state => state?.playerUi?.playerN);
-  const cardsPerRound = useSelector(state => state.gameUi?.game.playerData[playerN]?.cardsDrawn);
   const zoomFactor = useSelector(state => state?.playerUi?.zoomFactor);
   const randomNumBetween = useSelector(state => state?.playerUi?.randomNumBetween);
   
@@ -67,47 +66,8 @@ export const TopBarMenu = React.memo(({}) => {
       gameBroadcast("close_room", {});
     } else if (data.action === "load_deck") {
       loadFileDeck();
-    } else if (data.action === "load_ringsdb") {
-      const ringsDbUrl = prompt("Paste full RingsDB URL","");
-      if (!ringsDbUrl) {
-        alert("Invalid URL");
-        return;
-      }
-      if (ringsDbUrl.includes("/fellowship/")) {
-        alert("Fellowship import not yet supported.");
-        return;
-      }
-      const ringsDbDomain = ringsDbUrl.includes("test.ringsdb.com") ? "test" : "ringsdb";
-      var ringsDbType;
-      if (ringsDbUrl.includes("/decklist/")) ringsDbType = "decklist";
-      else if (ringsDbUrl.includes("/deck/")) ringsDbType = "deck";
-      if (!ringsDbType) {
-        alert("Invalid URL");
-        return;
-      }
-      var splitUrl = ringsDbUrl.split( '/' );
-      const typeIndex = splitUrl.findIndex((e) => e === ringsDbType)
-      if (splitUrl && splitUrl.length <= typeIndex + 2) {
-        alert("Invalid URL");
-        return;
-      }
-      const ringsDbId = splitUrl[typeIndex + 2];
-      const playerNToPlayerIndex = (playerN) => {
-        if (playerN === "player1") return 0;
-        if (playerN === "player2") return 1;
-        if (playerN === "player3") return 2;
-        if (playerN === "player4") return 3;
-        return null;
-      }
-      const playerIndex = playerNToPlayerIndex(playerN);
-      var newRingsDbInfo;
-      if (ringsDbInfo) newRingsDbInfo = [...ringsDbInfo];
-      else newRingsDbInfo = [null, null, null, null];
-      newRingsDbInfo[playerIndex] = {id: ringsDbId, type: ringsDbType, domain: ringsDbDomain};
-      const newOptions = {...options, ringsDbInfo: newRingsDbInfo, loaded: true}
-      //gameBroadcast("game_action", {action: "update_values", options: {updates: [["options", newOptions]]}});
-      const gameUi = store.getState()?.gameUi;
-      //loadRingsDb(gameUi, playerN, ringsDbDomain, ringsDbType, ringsDbId, gameBroadcast, chatBroadcast, dispatch);
+    } else if (data.action === "load_url") {
+      importViaUrl();
     } else if (data.action === "unload_my_deck") {
       const actionList = [
         ["FOR_EACH_KEY_VAL", "$CARD_ID", "$CARD", "$CARD_BY_ID", [
@@ -150,6 +110,8 @@ export const TopBarMenu = React.memo(({}) => {
       dispatch(setShowModal("card"));
     } else if (data.action === "spawn_custom") {
       dispatch(setShowModal("custom"));
+    } else if (data.action === "developer_tools") {
+      dispatch(setShowDeveloper(true));
     } else if (data.action === "spawn_deck") {
       dispatch(setShowModal("prebuilt_deck"));
     } else if (data.action === "download") {
@@ -162,7 +124,8 @@ export const TopBarMenu = React.memo(({}) => {
       loadFileCustom();
     }  else if (data.action === "layout") {
       doActionList([
-        ["SET", "/layoutId", data.value.layoutId]
+        ["SET", "/layoutId", data.value.layoutId],
+        ["SET", "/numPlayers", data.value.numPlayers]
       ]);
     } 
   }
@@ -260,6 +223,7 @@ export const TopBarMenu = React.memo(({}) => {
             <span className="float-right mr-1"><FontAwesomeIcon icon={faChevronRight}/></span>
           <ul className="third-level-menu">
             <li key={"load_prebuilt_deck"} onClick={() => handleMenuClick({action:"spawn_deck"})}>{siteL10n("Load prebuilt deck")}</li>
+            <li key={"load_url"} onClick={() => handleMenuClick({action:"load_url"})}>{siteL10n("Load via URL")}</li>
             <li key={"load_game"} onClick={() => handleMenuClick({action:"load_game"})}>
               {siteL10n("loadGameJson")}
               <input type='file' id='file' ref={inputFileGame} style={{display: 'none'}} onChange={uploadGameAsJson} accept=".json"/>
@@ -280,7 +244,7 @@ export const TopBarMenu = React.memo(({}) => {
           <ul className="third-level-menu">
             {gameDef.layoutMenu?.map((info, index) => {
               return(
-                <li key={info.layoutId} onClick={() => handleMenuClick({action:"layout", value: info})}>{l10n(info.labelId)}</li>
+                <li key={info.layoutId} onClick={() => handleMenuClick({action:"layout", value: info})}>{gameL10n(info.label)}</li>
               )
             })}
             </ul>
@@ -322,6 +286,7 @@ export const TopBarMenu = React.memo(({}) => {
             <span className="float-right mr-1"><FontAwesomeIcon icon={faChevronRight}/></span>
           <ul className="third-level-menu">
             <li key={"adjust_card_size"} onClick={() => handleMenuClick({action:"adjust_card_size"})}>{siteL10n("adjustCardSize")}</li>
+            <li key={"developer_tools"} onClick={() => handleMenuClick({action:"developer_tools"})}>{siteL10n("developerTools")}</li>
 
           </ul>
         </li> 
@@ -331,7 +296,7 @@ export const TopBarMenu = React.memo(({}) => {
           <ul className="third-level-menu">
             {gameDef.dropdownMenus?.plugin?.options?.map((menuFunction, _index) => {
               return(
-                <li key={menuFunction.id} onClick={() => doActionList(menuFunction.actionList)}>{l10n(menuFunction.labelId)}</li>
+                <li key={menuFunction.id} onClick={() => doActionList(menuFunction.actionList)}>{gameL10n(menuFunction.label)}</li>
               )
             })}
           </ul>
@@ -350,7 +315,7 @@ export const TopBarMenu = React.memo(({}) => {
             <ul className="third-level-menu">
               {gameDef["clearTableOptions"]?.map((option, index) => {
                 return(
-                  <li key={index} onClick={() => handleMenuClick({action:"clear_table", actionList: option.actionList})}>{l10n(option.labelId)}</li>
+                  <li key={index} onClick={() => handleMenuClick({action:"clear_table", actionList: option.actionList})}>{gameL10n(option.label)}</li>
                 )
               })}
             </ul>
@@ -363,7 +328,7 @@ export const TopBarMenu = React.memo(({}) => {
             <ul className="third-level-menu">
               {gameDef["clearTableOptions"]?.map((option, index) => {
                 return(
-                  <li key={index} onClick={() => handleMenuClick({action:"close_room", actionList: option.actionList})}>{l10n(option.labelId)}</li>
+                  <li key={index} onClick={() => handleMenuClick({action:"close_room", actionList: option.actionList})}>{gameL10n(option.label)}</li>
                 )
               })}
             </ul>

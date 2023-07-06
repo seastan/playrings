@@ -7,6 +7,7 @@ import { applyDelta, setGameUi } from "../store/gameUiSlice";
 import useProfile from "../../hooks/useProfile";
 import { resetPlayerUi } from "../store/playerUiSlice";
 import { usePlugin } from "./hooks/usePlugin";
+import { PluginProvider } from "../../contexts/PluginContext";
 
 var delayBroadcast;
 
@@ -117,9 +118,11 @@ export const Room = ({ slug }) => {
   if (roomSlug !== slug) return (<div></div>);
   else {
     return (
-      <RoomProviders 
-        gameBroadcast={gameBroadcast} 
-        chatBroadcast={chatBroadcast}/>
+      <PluginProvider>
+        <RoomProviders 
+          gameBroadcast={gameBroadcast} 
+          chatBroadcast={chatBroadcast}/>
+      </PluginProvider>
     );
   }
 };

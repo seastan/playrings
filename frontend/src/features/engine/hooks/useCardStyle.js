@@ -22,6 +22,9 @@ export const useCardStyle = (cardId, isDragging) => {
         width = gameDef?.cardBacks?.[cardVisibleFace.name]?.width;
     }
 
+    console.log({width, height});
+    console.log("Rendering CardFace ",cardVisibleFace);
+
     const style = {
         position: "absolute",
         height: `${cardScaleFactor*height}vh`,

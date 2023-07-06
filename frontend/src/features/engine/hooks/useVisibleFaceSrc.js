@@ -11,13 +11,13 @@ export const useVisibleFaceSrc = (cardId) => {
     const gameDef = useGameDefinition();
     const visibleSide = useVisibleSide(cardId);
     const visibleFace = useVisibleFace(cardId);
-    const cardDbId = useSelector(state => state?.gameUi?.game?.cardById?.[cardId]?.cardDbId);
+    const databaseId = useSelector(state => state?.gameUi?.game?.cardById?.[cardId]?.databaseId);
 
     if (!visibleFace) return null;
 
     var src = visibleFace.imageUrl;
 
-    const altArt = user?.plugin_settings?.[plugin?.id]?.alt_art?.[cardDbId]?.[visibleSide];
+    const altArt = user?.plugin_settings?.[plugin?.id]?.alt_art?.[databaseId]?.[visibleSide];
     const altBack = user?.plugin_settings?.[plugin?.id]?.alt_art?.[visibleFace.name];
     const defaultArt = visibleFace.imageUrl;
     const defaultBack = gameDef?.cardBacks?.[visibleFace.name]?.imageUrl;
@@ -28,8 +28,8 @@ export const useVisibleFaceSrc = (cardId) => {
             user?.plugin_settings,
             user?.plugin_settings?.[plugin?.id], 
             user?.plugin_settings?.[plugin?.id]?.alt_art, 
-            user?.plugin_settings?.[plugin?.id]?.alt_art?.[cardDbId],
-            user?.plugin_settings?.[plugin?.id]?.alt_art?.[cardDbId]?.[visibleSide])
+            user?.plugin_settings?.[plugin?.id]?.alt_art?.[databaseId],
+            user?.plugin_settings?.[plugin?.id]?.alt_art?.[databaseId]?.[visibleSide])
     }
 
     var src = altArt || altBack || defaultArt || defaultBack; 

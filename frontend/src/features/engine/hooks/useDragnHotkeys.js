@@ -4,26 +4,26 @@ import store from "../../../store";
 import { useDoActionList } from "./useDoActionList";
 
 export const dragnHotkeys = [
-    {"key": "Shift+P", "actionListId": "saveGame", "labelId": "saveGame"},
-    {"key": "Shift+W", "actionListId": "drawArrow", "labelId": "startStopDrawingArrow"},
-    {"key": "Escape", "actionListId": "clearTargets", "labelId": "clearTargetsArrows"},
-    {"key": "Ctrl+Z", "actionListId": "undo", "labelId": "undoOneAction"},
-    {"key": "Ctrl+Y", "actionListId": "redo", "labelId": "redoOneAction"},
-    {"key": "ArrowLeft", "actionListId": "undo", "labelId": "undoOneAction"},
-    {"key": "ArrowRight", "actionListId": "redo", "labelId": "redoOneAction"},
-    {"key": "Shift+ArrowLeft", "actionListId": "undoMany", "labelId": "undoManyActions"},
-    {"key": "Shift+ArrowRight", "actionListId": "redoMany", "labelId": "redoManyActions"},
-    {"key": "ArrowUp", "actionListId": "prevStep", "labelId": "moveToPreviousGameStep"},
-    {"key": "ArrowDown", "actionListId": "nextStep", "labelId": "moveToNextGameStep"},
-    {"key": "Shift+ArrowUp", "actionListId": "prevPhase", "labelId": "moveToPreviousPhase"},
-    {"key": "Shift+ArrowDown", "actionListId": "nextPhase", "labelId": "moveToNextPhase"}
+    {"key": "Shift+P", "actionList": "saveGame", "label": "saveGame"},
+    {"key": "Shift+W", "actionList": "drawArrow", "label": "startStopDrawingArrow"},
+    {"key": "Escape", "actionList": "clearTargets", "label": "clearTargetsArrows"},
+    {"key": "Ctrl+Z", "actionList": "undo", "label": "undoOneAction"},
+    {"key": "Ctrl+Y", "actionList": "redo", "label": "redoOneAction"},
+    {"key": "ArrowLeft", "actionList": "undo", "label": "undoOneAction"},
+    {"key": "ArrowRight", "actionList": "redo", "label": "redoOneAction"},
+    {"key": "Shift+ArrowLeft", "actionList": "undoMany", "label": "undoManyActions"},
+    {"key": "Shift+ArrowRight", "actionList": "redoMany", "label": "redoManyActions"},
+    {"key": "ArrowUp", "actionList": "prevStep", "label": "moveToPreviousGameStep"},
+    {"key": "ArrowDown", "actionList": "nextStep", "label": "moveToNextGameStep"},
+    {"key": "Shift+ArrowUp", "actionList": "prevPhase", "label": "moveToPreviousPhase"},
+    {"key": "Shift+ArrowDown", "actionList": "nextPhase", "label": "moveToNextPhase"}
   ]
   
   export const useDoDragnHotkey = () => {
     const doActionList = useDoActionList();
     const {gameBroadcast} = useContext(BroadcastContext);
-    return (actionListId) => {
-      switch (actionListId) {
+    return (actionList) => {
+      switch (actionList) {
         case "saveGame":
           return gameBroadcast("game_action", {action: "save_replay", options: {player_ui: store.getState().playerUi}});
         case "clearTargets":

@@ -8,23 +8,23 @@ import BroadcastContext from "../../contexts/BroadcastContext";
 import { usePlugin } from "./hooks/usePlugin";
 import { useGameDefinition } from "./hooks/useGameDefinition";
 import { useDoActionList } from "./hooks/useDoActionList";
-import { useLoadList } from "./hooks/useLoadList";
+import { useImportLoadList } from "./hooks/useImportLoadList";
 
 const RESULTS_LIMIT = 150;
 
 export const SpawnExistingCardModal = React.memo(({}) => {
   const {gameBroadcast, chatBroadcast} = useContext(BroadcastContext);
     const dispatch = useDispatch();
-    const l10n = useGameL10n();
+    const gameL10n = useGameL10n();
     const myUser = useProfile();
     const playerN = useSelector(state => state?.playerUi?.playerN);
     const plugin = usePlugin();
     const gameDef = useGameDefinition();
-    const loadList = useLoadList();
+    const loadList = useImportLoadList();
     console.log("pluginspawn", plugin)
     const cardDb = plugin?.card_db || {};
     const doActionList = useDoActionList();
-    const [loadGroupId, setLoadGroupId] = useState(gameDef?.spawnExistingCardModal?.spawnGroupIds[0])
+    const [loadGroupId, setLoadGroupId] = useState(gameDef?.spawnExistingCardModal?.loadGroupIds[0])
 
     const [spawnFilteredIDs, setSpawnFilteredIDs] = useState(Object.keys(cardDb));
     if (Object.keys(cardDb).length === 0) return;
@@ -36,7 +36,7 @@ export const SpawnExistingCardModal = React.memo(({}) => {
     const handleSpawnClick = (cardId) => {
         const cardDetails = cardDb[cardId];
         if (!cardDetails || !playerN) return;
-        const cardList = [{'uuid': cardId, 'quantity': 1, 'loadGroupId': loadGroupId}]
+        const cardList = [{'databaseId': cardId, 'quantity': 1, 'loadGroupId': loadGroupId}]
         loadList(cardList);
         doActionList(["LOG", "$PLAYER_N", " spawned "+cardDetails["A"]["name"]+"."])
     }
@@ -61,11 +61,11 @@ export const SpawnExistingCardModal = React.memo(({}) => {
         contentLabel="Spawn a card"
         overlayClassName="fixed inset-0 bg-black-50 z-10000"
         className="insert-auto overflow-auto p-5 bg-gray-700 border max-w-lg mx-auto my-12 rounded-lg outline-none max-h-3/4">
-        <h1 className="mb-2">{l10n("Spawn card")}</h1>
+        <h1 className="mb-2">{gameL10n("Spawn card")}</h1>
         <div><span className="text-white">Load group: </span>
           <select className="form-control mb-1" style={{width:"35%"}} id={"loadGroupId"} name={"loadGroupId"} onChange={(event) => handleGroupIdChange(event)}>
             {gameDef?.spawnExistingCardModal?.spawnGroupIds.map((groupId,_groupIndex) => (
-              <option value={groupId}>{gameDef?.groups?.[groupId]?.name}</option>
+              <option value={groupId}>{gameL10n(gameDef?.groups?.[groupId]?.label)}</option>
             ))}
           </select>
         </div>

@@ -16,7 +16,7 @@ export const DropdownMenuGroup = React.memo(({
   calcHeight,
   activeMenu,
 }) => {
-  const l10n = useGameL10n();
+  const gameL10n = useGameL10n();
   const dropdownMenu = useSelector(state => state?.playerUi?.dropdownMenu);
   const playerN = useSelector(state => state?.playerUi?.playerN);
   const playerIList = usePlayerIList();
@@ -34,7 +34,7 @@ export const DropdownMenuGroup = React.memo(({
           destGroupId={props.destGroupId}
           position="top"
           clickCallback={handleDropdownClick}>
-          {l10n("Top")}
+          {gameL10n("Top")}
         </DropdownItem>
         <DropdownItem
           leftIcon={<FontAwesomeIcon icon={faRandom}/>}
@@ -42,7 +42,7 @@ export const DropdownMenuGroup = React.memo(({
           destGroupId={props.destGroupId}
           position="shuffle"
           clickCallback={handleDropdownClick}>
-          {l10n("Shuffle in")}
+          {gameL10n("Shuffle in")}
         </DropdownItem>
         <DropdownItem
           leftIcon={<FontAwesomeIcon icon={faArrowDown}/>}
@@ -50,7 +50,7 @@ export const DropdownMenuGroup = React.memo(({
           destGroupId={props.destGroupId}
           position="bottom"
           clickCallback={handleDropdownClick}>
-          {l10n("Bottom")}
+          {gameL10n("Bottom")}
         </DropdownItem>
       </div>
     )
@@ -71,36 +71,36 @@ export const DropdownMenuGroup = React.memo(({
         <div className="menu-title">{dropdownMenu.title}</div>
         {activeMenu === "main" &&
         <div className="menu">
-          <DropdownItem action={actionListShuffle} clickCallback={handleDropdownClick}>{l10n("Shuffle")}</DropdownItem>
+          <DropdownItem action={actionListShuffle} clickCallback={handleDropdownClick}>{gameL10n("Shuffle")}</DropdownItem>
           {group?.menuOptions?.map((option, _index) => {
             return(
-              <DropdownItem action={option.actionList} clickCallback={handleDropdownClick}>{l10n(option.labelId)}</DropdownItem>
+              <DropdownItem action={option.actionList} clickCallback={handleDropdownClick}>{gameL10n(option.label)}</DropdownItem>
             )
           })}
           {gameDef?.groupMenu?.options?.map((option, _index) => {
             return(
-              <DropdownItem action={option.actionList} clickCallback={handleDropdownClick}>{l10n(option.labelId)}</DropdownItem>
+              <DropdownItem action={option.actionList} clickCallback={handleDropdownClick}>{gameL10n(option.label)}</DropdownItem>
             )
           })}
-          {menuGroup.id === playerN+"Hand" ? <DropdownItem action="makeVisible" clickCallback={handleDropdownClick}>{l10n("Make visible/hidden")}</DropdownItem> : null}
+          {menuGroup.id === playerN+"Hand" ? <DropdownItem action="makeVisible" clickCallback={handleDropdownClick}>{gameL10n("Make visible/hidden")}</DropdownItem> : null}
           
-          <DropdownItem action="lookAt" topN="None" clickCallback={handleDropdownClick}>{l10n("Browse")}</DropdownItem>
-          <DropdownItem action="lookAt" topN="5" clickCallback={handleDropdownClick}>{l10n("Look at top 5")}</DropdownItem>
-          <DropdownItem action="lookAt" topN="10" clickCallback={handleDropdownClick}>{l10n("Look at top 10")}</DropdownItem>
-          <DropdownItem action="lookAt" topN="X" clickCallback={handleDropdownClick}>{l10n("Look at top X")}</DropdownItem>
-          <DropdownItem action="chooseRandom" clickCallback={handleDropdownClick}>{l10n("Choose Random")}</DropdownItem>
-          <DropdownItem action="dealX" side="B" clickCallback={handleDropdownClick}>{l10n("Deal top X facedown")}</DropdownItem>
+          <DropdownItem action="lookAt" topN="None" clickCallback={handleDropdownClick}>{gameL10n("Browse")}</DropdownItem>
+          <DropdownItem action="lookAt" topN="5" clickCallback={handleDropdownClick}>{gameL10n("Look at top 5")}</DropdownItem>
+          <DropdownItem action="lookAt" topN="10" clickCallback={handleDropdownClick}>{gameL10n("Look at top 10")}</DropdownItem>
+          <DropdownItem action="lookAt" topN="X" clickCallback={handleDropdownClick}>{gameL10n("Look at top X")}</DropdownItem>
+          <DropdownItem action="chooseRandom" clickCallback={handleDropdownClick}>{gameL10n("Choose Random")}</DropdownItem>
+          <DropdownItem action="dealX" side="B" clickCallback={handleDropdownClick}>{gameL10n("Deal top X facedown")}</DropdownItem>
           <DropdownItem
             rightIcon={<FontAwesomeIcon icon={faChevronRight}/>}
             goToMenu="setVisibility"
             clickCallback={handleDropdownClick}>
-            {l10n("Set visibility")}
+            {gameL10n("Set visibility")}
           </DropdownItem>
           <DropdownItem
             rightIcon={<FontAwesomeIcon icon={faChevronRight}/>}
             goToMenu="moveTo"
             clickCallback={handleDropdownClick}>
-            {l10n("Move to")}
+            {gameL10n("Move to")}
           </DropdownItem>
           {/* <DropdownItem
             rightIcon={<FontAwesomeIcon icon={faChevronRight}/>}
@@ -117,14 +117,14 @@ export const DropdownMenuGroup = React.memo(({
               rightIcon={<FontAwesomeIcon icon={faChevronRight}/>}
               goToMenu="moveToMy"
               clickCallback={handleDropdownClick}>
-              {l10n("My Deck")}
+              {gameL10n("My Deck")}
             </DropdownItem>
             {gameDef.moveToGroupIds.map((moveToGroupId, _moveToGroupIndex) => (
               <DropdownItem
                 rightIcon={<FontAwesomeIcon icon={faChevronRight}/>}
                 goToMenu={"moveTo"+moveToGroupId}
                 clickCallback={handleDropdownClick}>
-                {l10n(gameDef?.groups?.[moveToGroupId]?.name)}
+                {gameL10n(gameDef?.groups?.[moveToGroupId]?.name)}
               </DropdownItem>
               ))}
         </div>
@@ -137,7 +137,7 @@ export const DropdownMenuGroup = React.memo(({
               action={"setVisibility"}
               value="none"
               clickCallback={handleDropdownClick}>
-              {l10n("None")}
+              {gameL10n("None")}
             </DropdownItem>
             {playerIList.map((playerI, _index) => {
               return(
@@ -146,7 +146,7 @@ export const DropdownMenuGroup = React.memo(({
                   action={"setVisibility"}
                   value={playerI}
                   clickCallback={handleDropdownClick}>
-                  {l10n(playerI)}
+                  {gameL10n(playerI)}
                 </DropdownItem>
               )
             })}
@@ -155,7 +155,7 @@ export const DropdownMenuGroup = React.memo(({
               action={"setVisibility"}
               position="all"
               clickCallback={handleDropdownClick}>
-              {l10n("All")}
+              {gameL10n("All")}
             </DropdownItem>
         </div>
         }

@@ -7,14 +7,17 @@ import useForm from "../../hooks/useForm";
 import useAuth from "../../hooks/useAuth";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheck } from "@fortawesome/free-solid-svg-icons";
-import { checkValidGameDef, mergeJSONs, readFileAsText } from "./PluginFileImport";
-import { processArrayOfRows, stringTo2DArray } from "./uploadPluginFunctions";
+import { mergeJSONs, processArrayOfRows, readFileAsText, stringTo2DArray } from "./uploadPluginFunctions";
+import { validateSchema } from "./validate/validateGameDef";
+import { getGameDefSchema } from "./validate/getGameDefSchema";
+import useProfile from "../../hooks/useProfile";
 
 ReactModal.setAppElement("#root");
 
 
-export const EditPluginModal = ({ plugin, isOpen, closeModal, doFetchHash}) => {
+export const EditPluginModal = ({ plugin, closeModal, doFetchHash}) => {
   console.log("Rendering EditPluginModal", plugin)
+  const user = useProfile();
   const { authToken, renewToken, setAuthAndRenewToken } = useAuth();
   const authOptions = useMemo(
     () => ({
@@ -31,12 +34,12 @@ export const EditPluginModal = ({ plugin, isOpen, closeModal, doFetchHash}) => {
 
   const [validGameDef, setValidGameDef] = useState(false);
   const [validCardDb, setValidCardDb] = useState(false);
-  const [errorMessageGameDef, setErrorMessageGameDef] = useState("");
+  const [errorMessagesGameDef, setErrorMessagesGameDef] = useState([]);
   const [errorMessageCardDb, setErrorMessageCardDb] = useState("");
 
   const [successMessageGameDef, setSuccessMessageGameDef] = useState("");
   const [successMessageCardDb, setSuccessMessageCardDb] = useState("");
-  const l10n = useSiteL10n();
+  const siteL10n = useSiteL10n();
 
   const inputFileGameDef = useRef(null);
   const inputFileCardDb = useRef(null);
@@ -47,19 +50,38 @@ export const EditPluginModal = ({ plugin, isOpen, closeModal, doFetchHash}) => {
       setErrorMessage("Invalid plugin name");
       return;
     }
-    const updateData = {
-      plugin: {
-        id: plugin.id,
-        game_def: inputs.gameDef,
-        card_db: inputs.cardDb,
-        public: inputs.public || false,
-      },
-    };
-
     setSuccessMessage("");
     setErrorMessage("");
     setLoadingMessage("Please wait...");
-    const res = await axios.patch("/be/api/myplugins/"+plugin.id, updateData, authOptions);
+
+    var res;
+
+    if (plugin === null) {
+
+      const updateData = {
+        plugin: {
+          name: inputs.gameDef.pluginName,
+          author_id: user?.id,
+          game_def: inputs.gameDef,
+          card_db: inputs.cardDb,
+          public: inputs.public || false,
+        }
+      }
+      res = await axios.post("/be/api/myplugins", updateData, authOptions);
+
+    } else {
+
+      const updateData = {
+        plugin: {
+          id: plugin.id,
+          game_def: inputs.gameDef,
+          card_db: inputs.cardDb,
+          public: inputs.public || false,
+        }
+      };
+      res = await axios.patch("/be/api/myplugins/"+plugin.id, updateData, authOptions);
+    }
+
     if (
       res.status === 200
     ) {
@@ -73,11 +95,10 @@ export const EditPluginModal = ({ plugin, isOpen, closeModal, doFetchHash}) => {
       setErrorMessage("Error."); 
       setLoadingMessage("");
     }
-    
   });
 
   useEffect(() => {
-    if (inputs && inputs.public !== plugin.public) setInputs({...inputs, public: plugin.public});
+    if (inputs && plugin && inputs.public !== plugin.public) setInputs({...inputs, public: plugin.public});
   },[])
 
   const uploadGameDefJson = async(event) => {
@@ -100,17 +121,22 @@ export const EditPluginModal = ({ plugin, isOpen, closeModal, doFetchHash}) => {
       try {
         mergedJSONs = mergeJSONs(jsonList);
         console.log("mergedJSONs", mergedJSONs)
-        const isValid = checkValidGameDef(mergedJSONs);
-        if (isValid === true) {
+        const errors = []
+        validateSchema(mergedJSONs, "gameDef", mergedJSONs, getGameDefSchema(mergedJSONs), errors);
+        if (errors.length === 0) {
           setSuccessMessageGameDef(`Game definition uploaded successfully: ${mergedJSONs.pluginName}`);
-          setErrorMessageGameDef("");
+          setErrorMessagesGameDef([]);
           setValidGameDef(true);
           setInputs({...inputs, gameDef: mergedJSONs});
         } else {
-          setErrorMessageGameDef(`Error: ${isValid}`)
+          // Set the error message
+          const labelSchema = "";
+          
+          setErrorMessagesGameDef(errors)
+          setValidGameDef(false);
         }
       } catch (error) {
-        setErrorMessageGameDef("Invalid JSON file(s)");
+        setErrorMessagesGameDef(["Invalid JSON file(s)"]);
       }
     });
 
@@ -179,15 +205,15 @@ export const EditPluginModal = ({ plugin, isOpen, closeModal, doFetchHash}) => {
     downloadAnchorNode.remove();
   }
 
-  const changesMade = (inputs.public !== plugin.public) || inputs.gameDef || inputs.cardDb;
+  const changesMade = plugin && ((inputs.public !== plugin.public) || inputs.gameDef || inputs.cardDb);
   
   return (
     <ReactModal
       closeTimeoutMS={200}
-      isOpen={isOpen}
+      isOpen={true}
       onRequestClose={closeModal}
       contentLabel="New Plugin"
-      overlayClassName="fixed inset-0 bg-black-50 z-50"
+      overlayClassName="fixed inset-0 bg-black-50 z-50 overflow-y-scroll"
       className="insert-auto p-5 bg-gray-700 border mx-auto my-12 rounded-lg outline-none"
       style={{
         overlay: {
@@ -198,8 +224,8 @@ export const EditPluginModal = ({ plugin, isOpen, closeModal, doFetchHash}) => {
       }}
     >
       
-      <h1 className="mb-2">Edit Plugin</h1>
-      <h2 className="mb-2">{plugin?.plugin_name}</h2>
+      <h1 className="">{plugin ? siteL10n("Edit") : siteL10n("New")} {siteL10n(" Plugin")}</h1>
+      <div className="text-white text-sm">{plugin?.name}</div>
 
       <form action="POST" onSubmit={handleSubmit}>
         <fieldset>{/* 
@@ -213,56 +239,58 @@ export const EditPluginModal = ({ plugin, isOpen, closeModal, doFetchHash}) => {
               value={inputs.plugin_name || ""}
             /> */}
           <label className="block text-sm font-bold mb-2 mt-4 text-white">
-            Game definition (.json)
+            {siteL10n("Game definition (.json)")}
           </label>
           <label className="block text-xs mb-2 text-white">
-            You may upload multiple jsons at once that define different aspects of the game and they will be merged automatically.
+            {siteL10n("You may upload multiple jsons at once that define different aspects of the game and they will be merged automatically.")}
           </label>
           <Button onClick={() => loadFileGameDef()}>
-            {l10n("Replace game definition (.json)")}
+            {siteL10n("Load game definition (.json)")}
             <input type='file' multiple id='file' ref={inputFileGameDef} style={{display: 'none'}} onChange={uploadGameDefJson} accept=".json"/>
           </Button>
           {successMessageGameDef && (
-            <div className="alert alert-info mt-4">{successMessageGameDef}</div>
+            <div className="alert alert-info mt-1 text-xs p-1 pl-3">{successMessageGameDef}</div>
           )}
-          {errorMessageGameDef && (
-            <div className="alert alert-danger mt-4">{errorMessageGameDef}</div>
+          {errorMessagesGameDef.length > 0 && (
+            errorMessagesGameDef.map((message, i) => (
+              <div index={i} className="alert alert-danger mt-1 text-xs p-1 pl-3">{message}</div>
+            ))
           )}
           <label className="block text-sm font-bold mb-2 mt-4 text-white">
-            Card database (.tsv)
+          {siteL10n("Card database (.tsv)")}
           </label>
           <label className="block text-xs mb-2 text-white">
-            You may upload multiple tab-separated-value (.tsv) files at once that define different cards and they will be merged automatically. Eech file must share the same header information. A valid game definition must be uploaded first.
+            {siteL10n("You may upload multiple tab-separated-value (.tsv) files at once that define different cards and they will be merged automatically. Eech file must share the same header information. A valid game definition must be uploaded first.")}
           </label>
-          <Button onClick={() => loadFileCardDb()}>
-            {l10n("Replace card database (.tsv)")}
+          <Button disabled={!validGameDef} onClick={() => loadFileCardDb()}>
+            {siteL10n("Load card database (.tsv)")}
             <input type='file' multiple id='file' ref={inputFileCardDb} style={{display: 'none'}} onChange={uploadCardDbTsv} accept=".tsv"/>
           </Button>
           {successMessageCardDb && (
-            <div className="alert alert-info mt-4">{successMessageCardDb}</div>
+            <div className="alert alert-info mt-1 text-xs p-1 pl-3">{successMessageCardDb}</div>
           )}
           {errorMessageCardDb && (
-            <div className="alert alert-danger mt-4">{errorMessageCardDb}</div>
+            <div className="alert alert-danger mt-1 text-xs p-1 pl-3">{errorMessageCardDb}</div>
           )}
           <label className="block text-sm font-bold mb-2 mt-4 text-white">
-            Visibility
+          {siteL10n("Visibility")}
           </label>
           <div className="w-full">
             <div className="p-1 float-left w-1/2">
           <Button isPrimary={inputs.public} onClick={() => setInputs({...inputs, public: true})}>
-            {inputs.public && <FontAwesomeIcon className="" icon={faCheck}/>} Public
+            {inputs.public && <FontAwesomeIcon className="" icon={faCheck}/>} {siteL10n("Public")}
           </Button>
           </div>
           <div className="p-1 float-left w-1/2">
           <Button isPrimary={!inputs.public}  onClick={() => setInputs({...inputs, public: false})}>
-            {!inputs.public && <FontAwesomeIcon className="" icon={faCheck}/>} Private
+            {!inputs.public && <FontAwesomeIcon className="" icon={faCheck}/>} {siteL10n("Private")}
           </Button>
           </div>
           </div> 
           <Button disabled={!changesMade} isSubmit={changesMade} className="mt-4">
-            Update Plugin
+          {siteL10n("Update Plugin")}
           </Button>
-          {changesMade && <div className="alert alert-info mt-4">You have unsaved changes.</div>}
+          {changesMade && <div className="alert alert-info mt-4">{siteL10n("You have unsaved changes.")}</div>}
           {successMessage && (
             <div className="alert alert-info mt-4">{successMessage}</div>
           )}

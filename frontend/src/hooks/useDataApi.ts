@@ -8,13 +8,20 @@ async function axiosRetry(
   delay: number
 ): Promise<AxiosResponse> {
   try {
-    const result = await axios(url, options);
+    console.log("pluginTrace axiosRetry try 1", url)
+    const an_axios = axios.create({
+      timeout: 1000, 
+    });
+    const result = await an_axios(url, options);
+
+    console.log("pluginTrace axiosRetry try 2", url, result)
     return result;
   } catch (error) {
+    console.log("pluginTrace axiosRetry catch 1", url, error)
     if (retries > 0) {
       // Wait for the specified delay before retrying
       await new Promise((resolve) => setTimeout(resolve, delay));
-
+      console.log("pluginTrace axiosRetry catch 2", url)
       // Retry with an increased delay
       return axiosRetry(url, options, retries - 1, delay * 2);
     } else {
@@ -36,11 +43,12 @@ const useDataApi = <T extends any>(initialUrl: string, initialData: T) => {
       setIsError(false);
       setIsLoading(true);
       try {
-        const retries = 3;
-        const initialDelay = 1000; // 1 second    
+        const retries = 4;
+        const initialDelay = 1000; 
+        console.log("pluginTrace useDataApi 1", url)
         const result = await axiosRetry(url, {}, retries, initialDelay);
-    
-        //const result = await axios(url, {timeout: 10000});
+        console.log("pluginTrace useDataApi 2", result)
+        //const result = await axios(url, {timeout: 2000});
         setData(result.data);
       } catch (error) {
         setIsError(true);

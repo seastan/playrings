@@ -14,7 +14,7 @@ export const Group = React.memo(({
 }) => {
   console.log("Rendering Group ",groupId);
   const dispatch = useDispatch();
-  const l10n = useGameL10n();
+  const gameL10n = useGameL10n();
   const gameDef = useGameDefinition();
   const group = useSelector(state => state?.gameUi?.game?.groupById?.[groupId]);
   const playerN = useSelector(state => state?.playerUi?.playerN);
@@ -39,7 +39,7 @@ export const Group = React.memo(({
 
   if (!group) return null;
   const numStacks = group.stackIds.length;
-  const tablename = l10n(gameDef.groups[group.id].tableLabelId);
+  const tablename = gameL10n(gameDef.groups[group.id].tableLabel);
   return(
     <div className="h-full w-full">
       
@@ -53,7 +53,7 @@ export const Group = React.memo(({
                 style={{fontSize: "1.5vh", top: "50%", left: "50%", transform: `translate(-50%, -70%) rotate(90deg)`, whiteSpace: "nowrap"}}>
                 {playerN && <FontAwesomeIcon onClick={(event) => handleEyeClick(event)}  className="hover:text-white mr-2" style={{transform: `rotate(-90deg)`}} icon={faEye}/>}
                 {playerN && <FontAwesomeIcon onClick={(event) => handleBarsClick(event)}  className="hover:text-white mr-2" style={{transform: `rotate(-90deg)`}} icon={faBars}/>}
-                  {l10n(tablename) + (region.type === "pile" ? " ("+numStacks+")" : "")}
+                  {gameL10n(tablename) + (region.type === "pile" ? " ("+numStacks+")" : "")}
               </span>
             }
             </div>

@@ -159,8 +159,7 @@ defmodule DragnCardsGame.GameUIServer do
 
   def handle_call({:game_action, user_id, action, options}, _from, gameui) do
     Logger.debug("handle game_action #{user_id} #{action}")
-    gameui
-    try do
+    #try do
       gameui = GameUI.game_action(gameui, user_id, action, options)
       gameui = put_in(gameui["error"], false)
       # IO.puts("pypid")
@@ -175,12 +174,12 @@ defmodule DragnCardsGame.GameUIServer do
       # IO.inspect(gameui_json)
       # {status, gameui} = Jason.decode(gameui_json)
       gameui = put_in(gameui["game"]["last_action"], action)
-    rescue
-      exception ->
-        stack_trace = __STACKTRACE__
-        Logger.error("Error in #{action}: #{inspect exception}, stack trace: #{inspect stack_trace}")
-        put_in(gameui["logMessages"], ["ERROR: " <> inspect(stack_trace)])
-    end
+    #rescue
+    #  exception ->
+    #    stack_trace = __STACKTRACE__
+    #    Logger.error("Error in #{action}: #{inspect exception}, stack trace: #{inspect stack_trace}")
+    #    put_in(gameui["logMessages"], ["ERROR: " <> inspect(stack_trace)])
+    #end
     |> save_and_reply()
   end
 

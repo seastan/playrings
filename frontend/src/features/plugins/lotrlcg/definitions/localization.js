@@ -1,5 +1,6 @@
 export const gameL10n = {
   "English": {
+    "developerTools": "Developer tools",
   },
   "Spanish": {
     "Menu": "Menú",

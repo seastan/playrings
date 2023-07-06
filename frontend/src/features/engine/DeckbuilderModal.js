@@ -51,7 +51,7 @@ export const DeckbuilderModal = React.memo(({}) => {
   const cardDb = usePlugin()?.card_db || {};
   const pluginId = useSelector(state => state?.gameUi?.game?.pluginId);
   const [hoverCardDetails, setHoverCardDetails] = useState();
-  const [currentGroupId, setCurrentGroupId] = useState(spawnGroups?.[0]?.id);
+  const [currentGroupId, setCurrentGroupId] = useState(spawnGroups?.[0]?.loadGroupId);
   const [currentDeck, setCurrentDeck] = useState({});
   const [numChanges, setNumChanges] = useState(0);
   dispatch(setTyping(true));
@@ -85,7 +85,7 @@ export const DeckbuilderModal = React.memo(({}) => {
     // If it was not in the group already, add it to the deck
     if (existingIndex === null) {
       deckCopy.load_list.push({
-        uuid: cardUuid,
+        databaseId: cardUuid,
         quantity: quantity,
         loadGroupId: groupId,
       });

@@ -64,7 +64,6 @@ export const LobbyTable = ({ selectedPlugin }) => {
       console.log("Room 2", {room, selectedPlugin})
       // Currently there is no "admin" user field so I am usering supporter_level === 100 as a hack
       if (room.privacy_type === "public" || myUser?.id === room.created_by || myUser?.admin) {
-        console.log("pluginuuid",room.plugin_id, selectedPlugin.plugin_id)
         filteredRooms.push({
           name: <Link to={"/room/" + room.slug}>{room.name || "Unspecified"}</Link>,
           host: <UserName userID={room.created_by} defaultName="Unspecified"></UserName>,

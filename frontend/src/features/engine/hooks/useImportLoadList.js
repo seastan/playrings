@@ -4,7 +4,7 @@ import BroadcastContext from '../../../contexts/BroadcastContext';
 import store from '../../../store';
 import { usePlugin } from './usePlugin';
 
-export const useLoadList = () => {
+export const useImportLoadList = () => {
   const { gameBroadcast, chatBroadcast } = useContext(BroadcastContext);
   const playerN = useSelector(state => state?.playerUi?.playerN);
   const plugin = usePlugin();
@@ -26,7 +26,7 @@ export const useLoadList = () => {
 
     const newList = list.map(item => ({
       ...item,
-      cardDetails: cardDb[item.uuid],
+      cardDetails: cardDb[item.databaseId],
       loadGroupId: item.loadGroupId.replace(/playerN/g, playerN),
     }));
 

@@ -390,7 +390,7 @@
       "moveToGroupIds": [],
       "options": [
         {
-          "labelId": "toggleRotate",
+          "label": "toggleRotate",
           "actionList": "toggleRotate"
         }
       ]
@@ -399,7 +399,7 @@
       "moveToGroupIds": [],
       "options": [
         {
-          "labelId": "shuffleGroupIntoDeck",
+          "label": "shuffleGroupIntoDeck",
           "actionList": "shuffleGroupIntoDeck"
         }
       ]
@@ -408,14 +408,14 @@
       
     },
     "clearTableOptions": [
-      {"labelId": "labelMarkAsFreePeoplesVictory", "actionList": ["SET", "/victoryState", "FreePeoples"]},
-      {"labelId": "labelMarkAsShadowVictory", "actionList": ["SET", "/victoryState", "Shadow"]},
-      {"labelId": "labelMarkAsIncomplete", "actionList": ["SET", "/victoryState", "Incomplete"]}
+      {"label": "labelMarkAsFreePeoplesVictory", "actionList": ["SET", "/victoryState", "FreePeoples"]},
+      {"label": "labelMarkAsShadowVictory", "actionList": ["SET", "/victoryState", "Shadow"]},
+      {"label": "labelMarkAsIncomplete", "actionList": ["SET", "/victoryState", "Incomplete"]}
     ],
     "closeRoomOptions": [
-      {"labelId": "labelMarkAsFreePeoplesVictory", "actionList": ["SET", "/victoryState", "FreePeoples"]},
-      {"labelId": "labelMarkAsShadowVictory", "actionList": ["SET", "/victoryState", "Shadow"]},
-      {"labelId": "labelMarkAsIncomplete", "actionList": ["SET", "/victoryState", "Incomplete"]}
+      {"label": "labelMarkAsFreePeoplesVictory", "actionList": ["SET", "/victoryState", "FreePeoples"]},
+      {"label": "labelMarkAsShadowVictory", "actionList": ["SET", "/victoryState", "Shadow"]},
+      {"label": "labelMarkAsIncomplete", "actionList": ["SET", "/victoryState", "Incomplete"]}
     ],
     "cardTypes": {
       "Army":          {"width": 0.72, "height": 1.0, "tokens": ["attackBlue","defenseBlue","attackRed","defenseRed","pathRed","pathBlue","corruption"]},
@@ -455,24 +455,24 @@
     "topBarCounters": {
       "shared": [
         {
-          "labelId": "round",
+          "label": "round",
           "imageUrl": "https://dragncards-lotrlcg.s3.amazonaws.com/tokens/time.png",
           "gameProperty": "roundNumber"
         },
         {
-          "labelId": "freePVP",
+          "label": "freePVP",
           "imageUrl": "",
           "gameProperty": "victoryPointsBlue"
         },
         {
-          "labelId": "shadowVP",
+          "label": "shadowVP",
           "imageUrl": "",
           "gameProperty": "victoryPointsRed"
         }
       ],
       "player": [
         {
-          "labelId": "Ring Tokens",
+          "label": "Ring Tokens",
           "imageUrl": "https://dragncards-wotr.s3.amazonaws.com/tokens/RingBlue.png",
           "playerProperty": "ringTokens"
         }
@@ -5033,182 +5033,182 @@
         {"propName": "cardNumber", "propLabel": "Number"}
       ],
       "spawnGroups": [
-        {"id": "playerNDeck", "labelId": "myDeck"},
-        {"id": "player1Deck", "labelId": "player1Deck"},
-        {"id": "player2Deck", "labelId": "player2Deck"},
-        {"id": "player3Deck", "labelId": "player3Deck"},
-        {"id": "player4Deck", "labelId": "player4Deck"},
-        {"id": "sharedBattlegroundBlue","labelId": "freePeoplesBattlegroundDeck"},
-        {"id": "sharedBattlegroundRed", "labelId": "shadowBattlegroundDeck"},
-        {"id": "sharedPathDeck1", "labelId": "pathDeck1"},
-        {"id": "sharedPathDeck2", "labelId": "pathDeck2"},
-        {"id": "sharedPathDeck3", "labelId": "pathDeck3"},
-        {"id": "sharedPathDeck4", "labelId": "pathDeck4"},
-        {"id": "sharedPathDeck5", "labelId": "pathDeck5"},
-        {"id": "sharedPathDeck6", "labelId": "pathDeck6"},
-        {"id": "sharedPathDeck7", "labelId": "pathDeck7"},
-        {"id": "sharedPathDeck8", "labelId": "pathDeck8"},
-        {"id": "sharedPathDeck9", "labelId": "pathDeck9"}
+        {"id": "playerNDeck", "label": "myDeck"},
+        {"id": "player1Deck", "label": "player1Deck"},
+        {"id": "player2Deck", "label": "player2Deck"},
+        {"id": "player3Deck", "label": "player3Deck"},
+        {"id": "player4Deck", "label": "player4Deck"},
+        {"id": "sharedBattlegroundBlue","label": "freePeoplesBattlegroundDeck"},
+        {"id": "sharedBattlegroundRed", "label": "shadowBattlegroundDeck"},
+        {"id": "sharedPathDeck1", "label": "pathDeck1"},
+        {"id": "sharedPathDeck2", "label": "pathDeck2"},
+        {"id": "sharedPathDeck3", "label": "pathDeck3"},
+        {"id": "sharedPathDeck4", "label": "pathDeck4"},
+        {"id": "sharedPathDeck5", "label": "pathDeck5"},
+        {"id": "sharedPathDeck6", "label": "pathDeck6"},
+        {"id": "sharedPathDeck7", "label": "pathDeck7"},
+        {"id": "sharedPathDeck8", "label": "pathDeck8"},
+        {"id": "sharedPathDeck9", "label": "pathDeck9"}
       ]
     },
     "hotkeys": {
       "token": [
-        {"key": "1", "tokenType": "attackBlue", "labelId": "attackBlueIcon"},
-        {"key": "2", "tokenType": "defenseBlue", "labelId": "defenseBlueIcon"},
-        {"key": "3", "tokenType": "pathBlue", "labelId": "pathBlueIcon"},
-        {"key": "4", "tokenType": "attackRed", "labelId": "attackRedIcon"},
-        {"key": "5", "tokenType": "defenseRed", "labelId": "defenseRedIcon"},
-        {"key": "6", "tokenType": "pathRed", "labelId": "pathRedIcon"},
-        {"key": "7", "tokenType": "corruption", "labelId": "corruptionIcon"}
+        {"key": "1", "tokenType": "attackBlue", "label": "attackBlueIcon"},
+        {"key": "2", "tokenType": "defenseBlue", "label": "defenseBlueIcon"},
+        {"key": "3", "tokenType": "pathBlue", "label": "pathBlueIcon"},
+        {"key": "4", "tokenType": "attackRed", "label": "attackRedIcon"},
+        {"key": "5", "tokenType": "defenseRed", "label": "defenseRedIcon"},
+        {"key": "6", "tokenType": "pathRed", "label": "pathRedIcon"},
+        {"key": "7", "tokenType": "corruption", "label": "corruptionIcon"}
       ],
       "game": [
-        {"key": "D", "actionListId": "drawCard", "labelId": "drawCard"},
-        {"key": "P", "actionListId": "pass", "labelId": "pass"}
+        {"key": "D", "actionList": "drawCard", "label": "drawCard"},
+        {"key": "P", "actionList": "pass", "label": "pass"}
       ],
       "card": [
-        {"key": "Shift+N", "actionListId": "newRound", "labelId": "drawCardsAndStartNewRound"},
-        {"key": "F", "actionListId": "flipCard", "labelId": "flip"},
-        {"key": "T", "actionListId": "targetCard", "labelId": "targetCard"},
-        {"key": "S", "actionListId": "addToScoringArea", "labelId": "addToScoringArea"},
-        {"key": "C", "actionListId": "cycleCard", "labelId": "cycleCard"},
-        {"key": "E", "actionListId": "eliminateCard", "labelId": "eliminateCard"},
-        {"key": "R", "actionListId": "toggleRotate", "labelId": "rotateCard"}
+        {"key": "Shift+N", "actionList": "newRound", "label": "drawCardsAndStartNewRound"},
+        {"key": "F", "actionList": "flipCard", "label": "flip"},
+        {"key": "T", "actionList": "targetCard", "label": "targetCard"},
+        {"key": "S", "actionList": "addToScoringArea", "label": "addToScoringArea"},
+        {"key": "C", "actionList": "cycleCard", "label": "cycleCard"},
+        {"key": "E", "actionList": "eliminateCard", "label": "eliminateCard"},
+        {"key": "R", "actionList": "toggleRotate", "label": "rotateCard"}
       ]
     },
     "touchBar": [
       [
         {
           "id": "removeTokens",
-          "labelId": "removeTokens",
+          "label": "removeTokens",
           "actionType": "card",
-          "actionListId": "zeroTokens"
+          "actionList": "zeroTokens"
         },
         {
           "id": "incrementBlueAttack",
-          "labelId": "",
+          "label": "",
           "imageUrl": "https://dragncards-wotr.s3.amazonaws.com/tokens/AttackBlue.png",
           "actionType": "token",
           "tokenType": "attackBlue"
         },
         {
           "id": "incrementBlueDefense",
-          "labelId": "",
+          "label": "",
           "imageUrl": "https://dragncards-wotr.s3.amazonaws.com/tokens/DefenseBlue.png",
           "actionType": "token",
           "tokenType": "defenseBlue"
         },
         {
           "id": "incrementRedAttack",
-          "labelId": "",
+          "label": "",
           "imageUrl": "https://dragncards-wotr.s3.amazonaws.com/tokens/AttackRed.png",
           "actionType": "token",
           "tokenType": "attackRed"
         },
         {
           "id": "incrementRedDefense",
-          "labelId": "",
+          "label": "",
           "imageUrl": "https://dragncards-wotr.s3.amazonaws.com/tokens/DefenseRed.png",
           "actionType": "token",
           "tokenType": "defenseRed"
         },
         {
           "id": "incrementBluePath",
-          "labelId": "",
+          "label": "",
           "imageUrl": "https://dragncards-wotr.s3.amazonaws.com/tokens/PathBlue.png",
           "actionType": "token",
           "tokenType": "pathBlue"
         },
         {
           "id": "incrementRedPath",
-          "labelId": "",
+          "label": "",
           "imageUrl": "https://dragncards-wotr.s3.amazonaws.com/tokens/PathRed.png",
           "actionType": "token",
           "tokenType": "pathRed"
         },
         {
           "id": "incrementCorruption",
-          "labelId": "",
+          "label": "",
           "imageUrl": "https://dragncards-wotr.s3.amazonaws.com/tokens/Corruption.png",
           "actionType": "token",
           "tokenType": "corruption"
         },
         {
           "id": "toggleRotate",
-          "labelId": "rotate",
+          "label": "rotate",
           "actionType": "card",
-          "actionListId": "toggleRotate"
+          "actionList": "toggleRotate"
         },
         {
           "id": "flip",
-          "labelId": "flip",
+          "label": "flip",
           "actionType": "card",
-          "actionListId": "flipCard"
+          "actionList": "flipCard"
         },
         {
           "id": "cycle",
-          "labelId": "cycle",
+          "label": "cycle",
           "actionType": "card",
-          "actionListId": "cycleCard"
+          "actionList": "cycleCard"
         },
         {
           "id": "eliminate",
-          "labelId": "eliminate",
+          "label": "eliminate",
           "actionType": "card",
-          "actionListId": "eliminateCard"
+          "actionList": "eliminateCard"
         },
         {
           "id": "target",
-          "labelId": "target",
+          "label": "target",
           "actionType": "card",
-          "actionListId": "targetCard"
+          "actionList": "targetCard"
         },
         {
           "id": "claim",
-          "labelId": "claim",
+          "label": "claim",
           "actionType": "card",
-          "actionListId": "addToScoringArea"
+          "actionList": "addToScoringArea"
         },
         {
           "id": "drawArrow",
-          "labelId": "drawArrow",
+          "label": "drawArrow",
           "actionType": "card",
-          "actionListId": "drawArrow"
+          "actionList": "drawArrow"
         }
       ],
       [
         {
           "id": "drawCard",
-          "labelId": "draw",
+          "label": "draw",
           "actionType": "game",
-          "actionListId": "drawCard"
+          "actionList": "drawCard"
         },
         {
           "id": "clearTargets",
-          "labelId": "clearTargets",
+          "label": "clearTargets",
           "actionType": "game",
-          "actionListId": "clearTargets"
+          "actionList": "clearTargets"
         },
         {
           "id": "undo",
-          "labelId": "undo",
+          "label": "undo",
           "actionType": "engine",
           "actionId": "undo"
         },
         {
           "id": "undoMany",
-          "labelId": "undoMany",
+          "label": "undoMany",
           "actionType": "engine",
           "actionId": "undoMany"
         },
         {
           "id": "nextStep",
-          "labelId": "nextStep",
+          "label": "nextStep",
           "actionType": "game",
-          "actionListId": "nextStep"
+          "actionList": "nextStep"
         },
         {
           "id": "save",
-          "labelId": "save",
+          "label": "save",
           "actionType": "engine",
           "actionId": "save"
         }
@@ -5216,8 +5216,8 @@
     ],
     "defaultActions": [
       {
-        "actionListId": "cycleCard",
-        "labelId": "cycle",
+        "actionList": "cycleCard",
+        "label": "cycle",
         "condition": ["$ACTIVE_CARD.inPlay"]
       }
     ],
@@ -5465,8 +5465,8 @@
     },
     "groups": {
       "sharedBattlegroundBlue": {
-        "labelId": "freePeoplesBattlegroundDeck", 
-        "tableLabelId": "",
+        "label": "freePeoplesBattlegroundDeck", 
+        "tableLabel": "",
         "canHaveAttachments": false,
         "shuffleOnLoad": true,
         "onCardEnter": {
@@ -5477,8 +5477,8 @@
         }
       },
       "sharedBattlegroundRed": {
-        "labelId": "shadowBattlegroundDeck", 
-        "tableLabelId": "",
+        "label": "shadowBattlegroundDeck", 
+        "tableLabel": "",
         "canHaveAttachments": false,
         "shuffleOnLoad": true,
         "onCardEnter": {
@@ -5489,8 +5489,8 @@
         }
       },
       "sharedScoringBlue": {
-        "labelId": "freePeoplesScoringArea", 
-        "tableLabelId": "freePeoplesScoringArea",
+        "label": "freePeoplesScoringArea", 
+        "tableLabel": "freePeoplesScoringArea",
         "canHaveAttachments": false,
         "onCardEnter": {
           "currentSide": "A",
@@ -5498,8 +5498,8 @@
         }
       },
       "sharedScoringRed": {
-        "labelId": "shadowScoringArea", 
-        "tableLabelId": "shadowScoringArea",
+        "label": "shadowScoringArea", 
+        "tableLabel": "shadowScoringArea",
         "canHaveAttachments": false,
         "onCardEnter": {
           "currentSide": "A",
@@ -5507,8 +5507,8 @@
         }
       },
       "sharedPathDeck1": {
-        "labelId": "pathDeck1",
-        "tableLabelId": "pathDeck1",
+        "label": "pathDeck1",
+        "tableLabel": "pathDeck1",
         "canHaveAttachments": false,
         "shuffleOnLoad": true,
         "onCardEnter": {
@@ -5518,8 +5518,8 @@
         }
       },
       "sharedPathDeck2": {
-        "labelId": "pathDeck2",
-        "tableLabelId": "pathDeck2",
+        "label": "pathDeck2",
+        "tableLabel": "pathDeck2",
         "canHaveAttachments": false,
         "shuffleOnLoad": true,
         "onCardEnter": {
@@ -5529,8 +5529,8 @@
         }
       },
       "sharedPathDeck3": {
-        "labelId": "pathDeck3",
-        "tableLabelId": "pathDeck3",
+        "label": "pathDeck3",
+        "tableLabel": "pathDeck3",
         "canHaveAttachments": false,
         "shuffleOnLoad": true,
         "onCardEnter": {
@@ -5540,8 +5540,8 @@
         }
       },
       "sharedPathDeck4": {
-        "labelId": "pathDeck4",
-        "tableLabelId": "pathDeck4",
+        "label": "pathDeck4",
+        "tableLabel": "pathDeck4",
         "canHaveAttachments": false,
         "shuffleOnLoad": true,
         "onCardEnter": {
@@ -5551,8 +5551,8 @@
         }
       },
       "sharedPathDeck5": {
-        "labelId": "pathDeck5",
-        "tableLabelId": "pathDeck5",
+        "label": "pathDeck5",
+        "tableLabel": "pathDeck5",
         "canHaveAttachments": false,
         "shuffleOnLoad": true,
         "onCardEnter": {
@@ -5562,8 +5562,8 @@
         }
       },
       "sharedPathDeck6": {
-        "labelId": "pathDeck6",
-        "tableLabelId": "pathDeck6",
+        "label": "pathDeck6",
+        "tableLabel": "pathDeck6",
         "canHaveAttachments": false,
         "shuffleOnLoad": true,
         "onCardEnter": {
@@ -5573,8 +5573,8 @@
         }
       },
       "sharedPathDeck7": {
-        "labelId": "pathDeck7",
-        "tableLabelId": "pathDeck7",
+        "label": "pathDeck7",
+        "tableLabel": "pathDeck7",
         "canHaveAttachments": false,
         "shuffleOnLoad": true,
         "onCardEnter": {
@@ -5584,8 +5584,8 @@
         }
       },
       "sharedPathDeck8": {
-        "labelId": "pathDeck8",
-        "tableLabelId": "pathDeck8",
+        "label": "pathDeck8",
+        "tableLabel": "pathDeck8",
         "canHaveAttachments": false,
         "shuffleOnLoad": true,
         "onCardEnter": {
@@ -5595,8 +5595,8 @@
         }
       },
       "sharedPathDeck9": {
-        "labelId": "pathDeck9",
-        "tableLabelId": "pathDeck9",
+        "label": "pathDeck9",
+        "tableLabel": "pathDeck9",
         "canHaveAttachments": false,
         "shuffleOnLoad": true,
         "onCardEnter": {
@@ -5606,8 +5606,8 @@
         }
       },
       "sharedSetAside": {
-        "labelId": "setAside", 
-        "tableLabelId": "setAside",
+        "label": "setAside", 
+        "tableLabel": "setAside",
         "canHaveAttachments": true,
         "onCardEnter": {
           "currentSide": "A",
@@ -5615,8 +5615,8 @@
         }
       },
       "sharedActiveLocation1": {
-        "labelId": "activeLocation1", 
-        "tableLabelId": "location1",
+        "label": "activeLocation1", 
+        "tableLabel": "location1",
         "canHaveAttachments": true,
         "onCardEnter": {
           "currentSide": "A",
@@ -5624,8 +5624,8 @@
         }
       },
       "sharedActiveLocation2": {
-        "labelId": "activeLocation2", 
-        "tableLabelId": "location2",
+        "label": "activeLocation2", 
+        "tableLabel": "location2",
         "canHaveAttachments": true,
         "onCardEnter": {
           "currentSide": "A",
@@ -5633,8 +5633,8 @@
         }
       },
       "sharedActiveLocation3": {
-        "labelId": "activeLocation3", 
-        "tableLabelId": "location3",
+        "label": "activeLocation3", 
+        "tableLabel": "location3",
         "canHaveAttachments": true,
         "onCardEnter": {
           "currentSide": "A",
@@ -5642,8 +5642,8 @@
         }
       },
       "sharedActiveLocation4": {
-        "labelId": "activeLocation4", 
-        "tableLabelId": "location4",
+        "label": "activeLocation4", 
+        "tableLabel": "location4",
         "canHaveAttachments": true,
         "onCardEnter": {
           "currentSide": "A",
@@ -5651,8 +5651,8 @@
         }
       },
       "sharedActiveRed1": {
-        "labelId": "activeShadow1", 
-        "tableLabelId": "shadow1",
+        "label": "activeShadow1", 
+        "tableLabel": "shadow1",
         "canHaveAttachments": true,
         "onCardEnter": {
           "currentSide": "A",
@@ -5660,8 +5660,8 @@
         }
       },
       "sharedActiveRed2": {
-        "labelId": "activeShadow2", 
-        "tableLabelId": "shadow2",
+        "label": "activeShadow2", 
+        "tableLabel": "shadow2",
         "canHaveAttachments": true,
         "onCardEnter": {
           "currentSide": "A",
@@ -5669,8 +5669,8 @@
         }
       },
       "sharedActiveRed3": {
-        "labelId": "activeShadow3", 
-        "tableLabelId": "shadow3",
+        "label": "activeShadow3", 
+        "tableLabel": "shadow3",
         "canHaveAttachments": true,
         "onCardEnter": {
           "currentSide": "A",
@@ -5678,8 +5678,8 @@
         }
       },
       "sharedActiveRed4": {
-        "labelId": "activeShadow4", 
-        "tableLabelId": "shadow4",
+        "label": "activeShadow4", 
+        "tableLabel": "shadow4",
         "canHaveAttachments": true,
         "onCardEnter": {
           "currentSide": "A",
@@ -5687,8 +5687,8 @@
         }
       },
       "sharedActiveBlue1": {
-        "labelId": "activeFreePeoples1", 
-        "tableLabelId": "freePeoples1",
+        "label": "activeFreePeoples1", 
+        "tableLabel": "freePeoples1",
         "canHaveAttachments": true,
         "onCardEnter": {
           "currentSide": "A",
@@ -5696,8 +5696,8 @@
         }
       },
       "sharedActiveBlue2": {
-        "labelId": "activeFreePeoples2", 
-        "tableLabelId": "freePeoples2",
+        "label": "activeFreePeoples2", 
+        "tableLabel": "freePeoples2",
         "canHaveAttachments": true,
         "onCardEnter": {
           "currentSide": "A",
@@ -5705,8 +5705,8 @@
         }
       },
       "sharedActiveBlue3": {
-        "labelId": "activeFreePeoples3", 
-        "tableLabelId": "freePeoples3",
+        "label": "activeFreePeoples3", 
+        "tableLabel": "freePeoples3",
         "canHaveAttachments": true,
         "onCardEnter": {
           "currentSide": "A",
@@ -5714,8 +5714,8 @@
         }
       },
       "sharedActiveBlue4": {
-        "labelId": "activeFreePeoples4", 
-        "tableLabelId": "freePeoples4",
+        "label": "activeFreePeoples4", 
+        "tableLabel": "freePeoples4",
         "canHaveAttachments": true,
         "onCardEnter": {
           "currentSide": "A",
@@ -5723,8 +5723,8 @@
         }
       },
       "player1Hand": {
-        "labelId": "player1Hand", 
-        "tableLabelId": "hand",
+        "label": "player1Hand", 
+        "tableLabel": "hand",
         "canHaveAttachments": false,
         "onCardEnter": {
           "currentSide": "B",
@@ -5733,8 +5733,8 @@
         }
       },
       "player1Deck": {
-        "labelId": "player1Deck", 
-        "tableLabelId": "deck",
+        "label": "player1Deck", 
+        "tableLabel": "deck",
         "canHaveAttachments": false,
         "shuffleOnLoad": true,
         "onCardEnter": {
@@ -5747,8 +5747,8 @@
         }
       },
       "player1Cycled": {
-        "labelId": "player1Cycled", 
-        "tableLabelId": "cycled",
+        "label": "player1Cycled", 
+        "tableLabel": "cycled",
         "canHaveAttachments": false,
         "onCardEnter": {
           "currentSide": "B",
@@ -5756,8 +5756,8 @@
         }
       },
       "player1Eliminated": {
-        "labelId": "player1Eliminated", 
-        "tableLabelId": "eliminated",
+        "label": "player1Eliminated", 
+        "tableLabel": "eliminated",
         "canHaveAttachments": false,
         "onCardEnter": {
           "currentSide": "B",
@@ -5765,8 +5765,8 @@
         }
       },
       "player1Reserve": {
-        "labelId": "player1Reserve", 
-        "tableLabelId": "p1Reserve",
+        "label": "player1Reserve", 
+        "tableLabel": "p1Reserve",
         "canHaveAttachments": true,
         "onCardEnter": {
           "currentSide": "A",
@@ -5775,8 +5775,8 @@
         }
       },
       "player2Hand": {
-        "labelId": "player2Hand", 
-        "tableLabelId": "hand",
+        "label": "player2Hand", 
+        "tableLabel": "hand",
         "canHaveAttachments": false,
         "onCardEnter": {
           "currentSide": "B",
@@ -5785,8 +5785,8 @@
         }
       },
       "player2Deck": {
-        "labelId": "player2Deck", 
-        "tableLabelId": "deck",
+        "label": "player2Deck", 
+        "tableLabel": "deck",
         "canHaveAttachments": false,
         "shuffleOnLoad": true,
         "onCardEnter": {
@@ -5799,8 +5799,8 @@
         }
       },
       "player2Cycled": {
-        "labelId": "player2Cycled", 
-        "tableLabelId": "cycled",
+        "label": "player2Cycled", 
+        "tableLabel": "cycled",
         "canHaveAttachments": false,
         "onCardEnter": {
           "currentSide": "B",
@@ -5808,8 +5808,8 @@
         }
       },
       "player2Eliminated": {
-        "labelId": "player2Eliminated", 
-        "tableLabelId": "eliminated",
+        "label": "player2Eliminated", 
+        "tableLabel": "eliminated",
         "canHaveAttachments": false,
         "onCardEnter": {
           "currentSide": "B",
@@ -5817,8 +5817,8 @@
         }
       },
       "player2Reserve": {
-        "labelId": "player2Reserve", 
-        "tableLabelId": "p2Reserve",
+        "label": "player2Reserve", 
+        "tableLabel": "p2Reserve",
         "canHaveAttachments": true,
         "onCardEnter": {
           "currentSide": "A",
@@ -5827,8 +5827,8 @@
         }
       },
       "player3Hand": {
-        "labelId": "player3Hand", 
-        "tableLabelId": "hand",
+        "label": "player3Hand", 
+        "tableLabel": "hand",
         "canHaveAttachments": false,
         "onCardEnter": {
           "currentSide": "B",
@@ -5837,8 +5837,8 @@
         }
       },
       "player3Deck": {
-        "labelId": "player3Deck", 
-        "tableLabelId": "deck",
+        "label": "player3Deck", 
+        "tableLabel": "deck",
         "canHaveAttachments": false,
         "shuffleOnLoad": true,
         "onCardEnter": {
@@ -5851,8 +5851,8 @@
         }
       },
       "player3Cycled": {
-        "labelId": "player3Cycled", 
-        "tableLabelId": "cycled",
+        "label": "player3Cycled", 
+        "tableLabel": "cycled",
         "canHaveAttachments": false,
         "onCardEnter": {
           "currentSide": "B",
@@ -5860,8 +5860,8 @@
         }
       },
       "player3Eliminated": {
-        "labelId": "player3Eliminated", 
-        "tableLabelId": "eliminated",
+        "label": "player3Eliminated", 
+        "tableLabel": "eliminated",
         "canHaveAttachments": false,
         "onCardEnter": {
           "currentSide": "B",
@@ -5869,8 +5869,8 @@
         }
       },
       "player3Reserve": {
-        "labelId": "player3Reserve", 
-        "tableLabelId": "p3Reserve",
+        "label": "player3Reserve", 
+        "tableLabel": "p3Reserve",
         "canHaveAttachments": true,
         "onCardEnter": {
           "currentSide": "A",
@@ -5879,8 +5879,8 @@
         }
       },
       "player4Hand": {
-        "labelId": "player4Hand", 
-        "tableLabelId": "hand",
+        "label": "player4Hand", 
+        "tableLabel": "hand",
         "canHaveAttachments": false,
         "onCardEnter": {
           "currentSide": "B",
@@ -5889,8 +5889,8 @@
         }
       },
       "player4Deck": {
-        "labelId": "player4Deck", 
-        "tableLabelId": "deck",
+        "label": "player4Deck", 
+        "tableLabel": "deck",
         "canHaveAttachments": false,
         "shuffleOnLoad": true,
         "onCardEnter": {
@@ -5903,8 +5903,8 @@
         }
       },
       "player4Cycled": {
-        "labelId": "player4Cycled", 
-        "tableLabelId": "cycled",
+        "label": "player4Cycled", 
+        "tableLabel": "cycled",
         "canHaveAttachments": false,
         "onCardEnter": {
           "currentSide": "B",
@@ -5912,8 +5912,8 @@
         }
       },
       "player4Eliminated": {
-        "labelId": "player4Eliminated", 
-        "tableLabelId": "eliminated",
+        "label": "player4Eliminated", 
+        "tableLabel": "eliminated",
         "canHaveAttachments": false,
         "onCardEnter": {
           "currentSide": "B",
@@ -5921,8 +5921,8 @@
         }
       },
       "player4Reserve": {
-        "labelId": "player4Reserve", 
-        "tableLabelId": "p4Reserve",
+        "label": "player4Reserve", 
+        "tableLabel": "p4Reserve",
         "canHaveAttachments": true,
         "onCardEnter": {
           "currentSide": "A",
@@ -5931,8 +5931,8 @@
         }
       },
       "sharedRules": {
-        "labelId": "rules", 
-        "tableLabelId": "rules",
+        "label": "rules", 
+        "tableLabel": "rules",
         "canHaveAttachments": true,
         "onCardEnter": {
           "currentSide": "A",
@@ -5944,46 +5944,46 @@
     "phases": [
       {
         "phaseId": "Location",
-        "labelId" : "location",
+        "label" : "location",
         "height" : "10%"
       },
       {
         "phaseId": "Action",
-        "labelId" : "action",
+        "label" : "action",
         "height" : "10%"
       },
       {
         "phaseId": "Combat",
-        "labelId" : "combat",
+        "label" : "combat",
         "height" : "60%"
       },
       {
         "phaseId": "Victory",
-        "labelId" : "victory",
+        "label" : "victory",
         "height" : "10%"
       },
       {
         "phaseId": "Draw",
-        "labelId" : "drawPhase",
+        "label" : "drawPhase",
         "height" : "10%"
       }
     ],
     "steps": [
-      {"stepId": "1.1", "phaseId": "Location", "labelId": "step-1.1"},
-      {"stepId": "1.2", "phaseId": "Location", "labelId": "step-1.2"},
-      {"stepId": "2.1", "phaseId": "Action",   "labelId": "step-2.1"},
-      {"stepId": "3.0", "phaseId": "Combat",   "labelId": "step-3.0"},
-      {"stepId": "3.1", "phaseId": "Combat",   "labelId": "step-3.1"},
-      {"stepId": "3.2", "phaseId": "Combat",   "labelId": "step-3.2"},
-      {"stepId": "3.3", "phaseId": "Combat",   "labelId": "step-3.3"},
-      {"stepId": "3.4", "phaseId": "Combat",   "labelId": "step-3.4"},
-      {"stepId": "3.5", "phaseId": "Combat",   "labelId": "step-3.5"},
-      {"stepId": "3.6", "phaseId": "Combat",   "labelId": "step-3.6"},
-      {"stepId": "3.7", "phaseId": "Combat",   "labelId": "step-3.7"},
-      {"stepId": "4.1", "phaseId": "Victory",  "labelId": "step-4.1"},
-      {"stepId": "4.2", "phaseId": "Victory",  "labelId": "step-4.2"},
-      {"stepId": "5.1", "phaseId": "Draw",     "labelId": "step-5.1"},
-      {"stepId": "5.2", "phaseId": "Draw",     "labelId": "step-5.2"}
+      {"stepId": "1.1", "phaseId": "Location", "label": "step-1.1"},
+      {"stepId": "1.2", "phaseId": "Location", "label": "step-1.2"},
+      {"stepId": "2.1", "phaseId": "Action",   "label": "step-2.1"},
+      {"stepId": "3.0", "phaseId": "Combat",   "label": "step-3.0"},
+      {"stepId": "3.1", "phaseId": "Combat",   "label": "step-3.1"},
+      {"stepId": "3.2", "phaseId": "Combat",   "label": "step-3.2"},
+      {"stepId": "3.3", "phaseId": "Combat",   "label": "step-3.3"},
+      {"stepId": "3.4", "phaseId": "Combat",   "label": "step-3.4"},
+      {"stepId": "3.5", "phaseId": "Combat",   "label": "step-3.5"},
+      {"stepId": "3.6", "phaseId": "Combat",   "label": "step-3.6"},
+      {"stepId": "3.7", "phaseId": "Combat",   "label": "step-3.7"},
+      {"stepId": "4.1", "phaseId": "Victory",  "label": "step-4.1"},
+      {"stepId": "4.2", "phaseId": "Victory",  "label": "step-4.2"},
+      {"stepId": "5.1", "phaseId": "Draw",     "label": "step-5.1"},
+      {"stepId": "5.2", "phaseId": "Draw",     "label": "step-5.2"}
     ],
     "stepTriggers": [],
     "tooltips": {},
@@ -5993,7 +5993,7 @@
       "textPropertiesSideA": ["name", "faction", "text"] 
     },
     "layoutMenu": [
-      {"labelId": "standard", "layoutId": "standard", "numPlayers": 4}
+      {"label": "standard", "layoutId": "standard", "numPlayers": 4}
     ],
     "layouts": {
       "standard": {
@@ -6072,33 +6072,33 @@
           {"groupId": "sharedScoringBlue",     "type": "fan", "direction": "vertical",   "left": "88%", "top": "58%", "width": "12%", "height": "42%"}
         ],
         "tableButtons": [
-          {"actionListId": "layoutPath1", "text": "1", "left": "43%",   "top": "80.5%", "width": "1.5%", "height": "3.5%", "layoutVariants": {"bluePlayers": 2}},
-          {"actionListId": "layoutPath2", "text": "2", "left": "44.5%", "top": "80.5%", "width": "1.5%", "height": "3.5%", "layoutVariants": {"bluePlayers": 2}},
-          {"actionListId": "layoutPath3", "text": "3", "left": "46%",   "top": "80.5%", "width": "1.5%", "height": "3.5%", "layoutVariants": {"bluePlayers": 2}},
-          {"actionListId": "layoutPath4", "text": "4", "left": "47.5%", "top": "80.5%", "width": "1.5%", "height": "3.5%", "layoutVariants": {"bluePlayers": 2}},
-          {"actionListId": "layoutPath5", "text": "5", "left": "49%",   "top": "80.5%", "width": "1.5%", "height": "3.5%", "layoutVariants": {"bluePlayers": 2}},
-          {"actionListId": "layoutPath6", "text": "6", "left": "50.5%", "top": "80.5%", "width": "1.5%", "height": "3.5%", "layoutVariants": {"bluePlayers": 2}},
-          {"actionListId": "layoutPath7", "text": "7", "left": "52%",   "top": "80.5%", "width": "1.5%", "height": "3.5%", "layoutVariants": {"bluePlayers": 2}},
-          {"actionListId": "layoutPath8", "text": "8", "left": "53.5%", "top": "80.5%", "width": "1.5%", "height": "3.5%", "layoutVariants": {"bluePlayers": 2}},
-          {"actionListId": "layoutPath9", "text": "9", "left": "55%",   "top": "80.5%", "width": "1.5%", "height": "3.5%", "layoutVariants": {"bluePlayers": 2}},
-          {"actionListId": "layoutPath1", "text": "1", "left": "74.5%", "top": "80.5%", "width": "1.5%", "height": "3.5%", "layoutVariants": {"bluePlayers": 1}},
-          {"actionListId": "layoutPath2", "text": "2", "left": "76%",   "top": "80.5%", "width": "1.5%", "height": "3.5%", "layoutVariants": {"bluePlayers": 1}},
-          {"actionListId": "layoutPath3", "text": "3", "left": "77.5%", "top": "80.5%", "width": "1.5%", "height": "3.5%", "layoutVariants": {"bluePlayers": 1}},
-          {"actionListId": "layoutPath4", "text": "4", "left": "79%",   "top": "80.5%", "width": "1.5%", "height": "3.5%", "layoutVariants": {"bluePlayers": 1}},
-          {"actionListId": "layoutPath5", "text": "5", "left": "80.5%", "top": "80.5%", "width": "1.5%", "height": "3.5%", "layoutVariants": {"bluePlayers": 1}},
-          {"actionListId": "layoutPath6", "text": "6", "left": "82%",   "top": "80.5%", "width": "1.5%", "height": "3.5%", "layoutVariants": {"bluePlayers": 1}},
-          {"actionListId": "layoutPath7", "text": "7", "left": "83.5%", "top": "80.5%", "width": "1.5%", "height": "3.5%", "layoutVariants": {"bluePlayers": 1}},
-          {"actionListId": "layoutPath8", "text": "8", "left": "85%",   "top": "80.5%", "width": "1.5%", "height": "3.5%", "layoutVariants": {"bluePlayers": 1}},
-          {"actionListId": "layoutPath9", "text": "9", "left": "86.5%", "top": "80.5%", "width": "1.5%", "height": "3.5%", "layoutVariants": {"bluePlayers": 1}},
-          {"actionListId": "layoutLocation2", "text": "2", "left": "86.5%", "top": "32%", "width": "1.5%", "height": "5%"},
-          {"actionListId": "layoutLocation3", "text": "3", "left": "86.5%", "top": "37%", "width": "1.5%", "height": "5%"},
-          {"actionListId": "layoutLocation4", "text": "4", "left": "86.5%", "top": "42%", "width": "1.5%", "height": "5%"}
+          {"actionList": "layoutPath1", "text": "1", "left": "43%",   "top": "80.5%", "width": "1.5%", "height": "3.5%", "layoutVariants": {"bluePlayers": 2}},
+          {"actionList": "layoutPath2", "text": "2", "left": "44.5%", "top": "80.5%", "width": "1.5%", "height": "3.5%", "layoutVariants": {"bluePlayers": 2}},
+          {"actionList": "layoutPath3", "text": "3", "left": "46%",   "top": "80.5%", "width": "1.5%", "height": "3.5%", "layoutVariants": {"bluePlayers": 2}},
+          {"actionList": "layoutPath4", "text": "4", "left": "47.5%", "top": "80.5%", "width": "1.5%", "height": "3.5%", "layoutVariants": {"bluePlayers": 2}},
+          {"actionList": "layoutPath5", "text": "5", "left": "49%",   "top": "80.5%", "width": "1.5%", "height": "3.5%", "layoutVariants": {"bluePlayers": 2}},
+          {"actionList": "layoutPath6", "text": "6", "left": "50.5%", "top": "80.5%", "width": "1.5%", "height": "3.5%", "layoutVariants": {"bluePlayers": 2}},
+          {"actionList": "layoutPath7", "text": "7", "left": "52%",   "top": "80.5%", "width": "1.5%", "height": "3.5%", "layoutVariants": {"bluePlayers": 2}},
+          {"actionList": "layoutPath8", "text": "8", "left": "53.5%", "top": "80.5%", "width": "1.5%", "height": "3.5%", "layoutVariants": {"bluePlayers": 2}},
+          {"actionList": "layoutPath9", "text": "9", "left": "55%",   "top": "80.5%", "width": "1.5%", "height": "3.5%", "layoutVariants": {"bluePlayers": 2}},
+          {"actionList": "layoutPath1", "text": "1", "left": "74.5%", "top": "80.5%", "width": "1.5%", "height": "3.5%", "layoutVariants": {"bluePlayers": 1}},
+          {"actionList": "layoutPath2", "text": "2", "left": "76%",   "top": "80.5%", "width": "1.5%", "height": "3.5%", "layoutVariants": {"bluePlayers": 1}},
+          {"actionList": "layoutPath3", "text": "3", "left": "77.5%", "top": "80.5%", "width": "1.5%", "height": "3.5%", "layoutVariants": {"bluePlayers": 1}},
+          {"actionList": "layoutPath4", "text": "4", "left": "79%",   "top": "80.5%", "width": "1.5%", "height": "3.5%", "layoutVariants": {"bluePlayers": 1}},
+          {"actionList": "layoutPath5", "text": "5", "left": "80.5%", "top": "80.5%", "width": "1.5%", "height": "3.5%", "layoutVariants": {"bluePlayers": 1}},
+          {"actionList": "layoutPath6", "text": "6", "left": "82%",   "top": "80.5%", "width": "1.5%", "height": "3.5%", "layoutVariants": {"bluePlayers": 1}},
+          {"actionList": "layoutPath7", "text": "7", "left": "83.5%", "top": "80.5%", "width": "1.5%", "height": "3.5%", "layoutVariants": {"bluePlayers": 1}},
+          {"actionList": "layoutPath8", "text": "8", "left": "85%",   "top": "80.5%", "width": "1.5%", "height": "3.5%", "layoutVariants": {"bluePlayers": 1}},
+          {"actionList": "layoutPath9", "text": "9", "left": "86.5%", "top": "80.5%", "width": "1.5%", "height": "3.5%", "layoutVariants": {"bluePlayers": 1}},
+          {"actionList": "layoutLocation2", "text": "2", "left": "86.5%", "top": "32%", "width": "1.5%", "height": "5%"},
+          {"actionList": "layoutLocation3", "text": "3", "left": "86.5%", "top": "37%", "width": "1.5%", "height": "5%"},
+          {"actionList": "layoutLocation4", "text": "4", "left": "86.5%", "top": "42%", "width": "1.5%", "height": "5%"}
         ]
       }
     },
     "automation": {
       "a6cdd8d3-cd6e-4d1a-908b-2f788fbb357e": {
-        "_labelId": "Aragorn",
+        "_label": "Aragorn",
         "rules": [
           { 
             "type": "trigger", 

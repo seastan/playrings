@@ -9,7 +9,7 @@ export const TouchButton = React.memo(({buttonObj}) => {
   const dispatch = useDispatch();
   const touchAction = useSelector(state => state?.playerUi?.touchAction);
   const doActionList = useDoActionList();
-  const l10n = useGameL10n();
+  const gameL10n = useGameL10n();
   // Check if action is selected
 
   const selected = touchAction?.id === buttonObj?.id;
@@ -24,7 +24,7 @@ export const TouchButton = React.memo(({buttonObj}) => {
     dispatch(setMouseXY(null));
     // If it's a game function, just do it
     if (buttonObj?.actionType === "game") {
-      doActionList(buttonObj?.actionListId)
+      doActionList(buttonObj?.actionList)
     // If button is selected already, either change it from + to - or deselect it
     } else if (selected) {
       if (touchAction?.actionType === "token" && !touchAction.doubleClicked) {
@@ -45,7 +45,7 @@ export const TouchButton = React.memo(({buttonObj}) => {
       </div>
     : null
 
-  var displayText = l10n(buttonObj.labelId);
+  var displayText = gameL10n(buttonObj.label);
   if (selected && touchAction?.actionType === "token" && !touchAction.doubleClicked) displayText = <span className="flex items-center" style={{fontSize: "42px", textShadow: "rgb(0, 0, 0) 2px 0px 0px, rgb(0, 0, 0) 1.75517px 0.958851px 0px, rgb(0, 0, 0) 1.0806px 1.68294px 0px, rgb(0, 0, 0) 0.141474px 1.99499px 0px, rgb(0, 0, 0) -0.832294px 1.81859px 0px, rgb(0, 0, 0) -1.60229px 1.19694px 0px, rgb(0, 0, 0) -1.97999px 0.28224px 0px, rgb(0, 0, 0) -1.87291px -0.701566px 0px, rgb(0, 0, 0) -1.30729px -1.51361px 0px, rgb(0, 0, 0) -0.421592px -1.95506px 0px, rgb(0, 0, 0) 0.567324px -1.91785px 0px, rgb(0, 0, 0) 1.41734px -1.41108px 0px, rgb(0, 0, 0) 1.92034px -0.558831px 0px"}}>+</span>;
   if (selected && touchAction?.actionType === "token" && touchAction.doubleClicked) displayText = <span className="flex items-center"  style={{fontSize: "42px", textShadow: "rgb(0, 0, 0) 2px 0px 0px, rgb(0, 0, 0) 1.75517px 0.958851px 0px, rgb(0, 0, 0) 1.0806px 1.68294px 0px, rgb(0, 0, 0) 0.141474px 1.99499px 0px, rgb(0, 0, 0) -0.832294px 1.81859px 0px, rgb(0, 0, 0) -1.60229px 1.19694px 0px, rgb(0, 0, 0) -1.97999px 0.28224px 0px, rgb(0, 0, 0) -1.87291px -0.701566px 0px, rgb(0, 0, 0) -1.30729px -1.51361px 0px, rgb(0, 0, 0) -0.421592px -1.95506px 0px, rgb(0, 0, 0) 0.567324px -1.91785px 0px, rgb(0, 0, 0) 1.41734px -1.41108px 0px, rgb(0, 0, 0) 1.92034px -0.558831px 0px"}}>−</span>;
 

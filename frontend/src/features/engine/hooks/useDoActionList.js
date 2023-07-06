@@ -16,7 +16,7 @@ export const useDoActionList = () => {
         var actionList = null;
         if (isList) {
             actionList = idOrList;
-        } else if (!isList && Object.keys(gameDef.actionLists).includes(idOrList)) {
+        } else if (!isList && gameDef?.actionLists && Object.keys(gameDef.actionLists).includes(idOrList)) {
             actionList = gameDef.actionLists[idOrList]
         }
         if (actionList != null) {

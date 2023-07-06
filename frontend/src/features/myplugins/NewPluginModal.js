@@ -8,8 +8,10 @@ import useForm from "../../hooks/useForm";
 import useAuth from "../../hooks/useAuth";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheck } from "@fortawesome/free-solid-svg-icons";
-import { checkValidGameDef, mergeJSONs, readFileAsText } from "./PluginFileImport";
+import { mergeJSONs, readFileAsText } from "./PluginFileImport";
 import { processArrayOfRows, stringTo2DArray, useProcessArrayOfRows } from "./uploadPluginFunctions";
+import { validateSchema } from "./validate/validateGameDef";
+import { getGameDefSchema } from "./validate/getGameDefSchema";
 const { convertCSVToArray } = require('convert-csv-to-array');
 const converter = require('convert-csv-to-array');
 
@@ -108,14 +110,19 @@ export const NewPluginModal = ({ isOpen, closeModal }) => {
       console.log("unmerged",jsonList);
       const mergedJSONs = mergeJSONs(jsonList);
       console.log("mergedJSONs", mergedJSONs)
-      const isValid = checkValidGameDef(mergedJSONs);
-      if (isValid === true) {
+      const errors = []
+      validateSchema(mergedJSONs, "gameDef", mergedJSONs, getGameDefSchema(mergedJSONs), errors);
+      if (errors.length === 0) {
         setSuccessMessageGameDef(`Game definition uploaded successfully: ${mergedJSONs.pluginName}`);
         setErrorMessageGameDef("");
         setValidGameDef(true);
         setInputs({...inputs, gameDef: mergedJSONs});
       } else {
-        setErrorMessageGameDef(`Error: ${isValid}`)
+        // Join all errors into a single string with line separators
+        const errorMessage = errors.join("\n");
+        // Set the error message
+        setErrorMessageGameDef(`${errorMessage}`)
+        setValidGameDef(false);
       }
     });
     inputFileGameDef.current.value = "";

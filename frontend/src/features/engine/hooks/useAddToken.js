@@ -30,7 +30,14 @@ export const useAddToken = () => {
     }
 
     return (tokenType, amount) => {
-        tokenDict[tokenType] += amount;
+        const currentVal = currentTokens?.[tokenType] || 0;
+        var newVal = currentVal + amount;
+        var adjustedAmount = amount;
+        if (newVal < 0 && !gameDef?.tokens?.[tokenType]?.canBeNegative) {
+            return
+        }
+        
+        tokenDict[tokenType] += adjustedAmount;
         const newTokenDict = {...tokenDict};
         setTokenDict(defaultdict(newTokenDict, 0));
         if (delayBroadcast) clearTimeout(delayBroadcast);
@@ -38,8 +45,7 @@ export const useAddToken = () => {
             resolveTokenDict(newTokenDict, doActionList);
             setTokenDict(defaultdict({}, 0));
         }, 400);
-        const currentVal = currentTokens?.[tokenType] || 0;
-        const updates = [["game", "cardById", activeCardId, "tokens", tokenType, currentVal + amount]];
+        const updates = [["game", "cardById", activeCardId, "tokens", tokenType, newVal]];
         dispatch(setValues({updates: updates}));
     }
 }

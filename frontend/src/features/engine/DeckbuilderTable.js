@@ -3,6 +3,7 @@ import { useGameDefinition } from "./hooks/useGameDefinition";
 import { usePlugin } from "./hooks/usePlugin";
 import { keyClass } from "./functions/common";
 import { keyStyle } from "./functions/common";
+import { useGameL10n } from "./hooks/useGameL10n";
 
 const RESULTS_LIMIT = 250;
 
@@ -11,6 +12,7 @@ export const DeckbuilderTable = React.memo(({currentGroupId, modifyDeckList, set
   const deckbuilder = gameDef.deckbuilder;
   const addButtons = [...deckbuilder.addButtons];
   const addButtonsReversed = addButtons.reverse();
+  const gameL10n = useGameL10n();
 
   const cardDb = usePlugin()?.card_db || {};
   const [filters, setFilters] = useState({});
@@ -55,7 +57,7 @@ export const DeckbuilderTable = React.memo(({currentGroupId, modifyDeckList, set
                 {gameDef.deckbuilder?.columns?.map((colDetails, colindex) => {
                   return(
                     <th key={colindex}>
-                      <div className="text-white p-1">{colDetails.propLabel}</div>
+                      <div className="text-white p-1">{gameL10n(colDetails.label)}</div>
                       <div>
                         <input 
                           autoFocus
@@ -64,7 +66,7 @@ export const DeckbuilderTable = React.memo(({currentGroupId, modifyDeckList, set
                           id="name" 
                           name="name" 
                           className="m-2 rounded" 
-                          placeholder={"Filter "+colDetails.propLabel} 
+                          placeholder={"Filter "+gameL10n(colDetails.label)} 
                           onChange={(event) => {handleFilterTyping(event, colDetails.propName)}}/>
                       </div>
                     </th>
@@ -88,7 +90,7 @@ export const DeckbuilderTable = React.memo(({currentGroupId, modifyDeckList, set
                         <div 
                           className={keyClass + " float-right text-white"} 
                           style={keyStyle}
-                          onClick={()=>modifyDeckList(sideA?.uuid, addButtonVal, currentGroupId)}>
+                          onClick={()=>modifyDeckList(sideA?.databaseId, addButtonVal, currentGroupId)}>
                             +{addButtonVal}
                         </div>
                       )
