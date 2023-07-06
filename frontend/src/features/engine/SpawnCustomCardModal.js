@@ -27,7 +27,7 @@ export const SpawnCustomCardModal = React.memo(({}) => {
   const face0 = card0.A;
   const faceProperties = ["imageUrl"];
   for (var prop of Object.keys(face0)) {
-    if (["uuid", "cardBack", "imageUrl"].includes(prop)) continue;
+    if (["databaseId", "cardBack", "imageUrl"].includes(prop)) continue;
     else faceProperties.push(prop);
   };
 

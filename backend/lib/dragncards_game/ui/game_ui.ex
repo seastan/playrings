@@ -761,7 +761,7 @@ defmodule DragnCardsGame.GameUI do
   def create_card_in_group(game, game_def, group_id, load_list_item) do
     group_size = Enum.count(get_stack_ids(game, group_id))
     # Can't insert a card directly into a group need to make a stack first
-    new_card = Card.card_from_card_details(load_list_item["cardDetails"], game_def, load_list_item["uuid"], group_id)
+    new_card = Card.card_from_card_details(load_list_item["cardDetails"], game_def, load_list_item["databaseId"], group_id)
     new_card_id = new_card["id"]
     new_stack = Stack.stack_from_card(new_card)
 
@@ -790,7 +790,7 @@ defmodule DragnCardsGame.GameUI do
   end
 
   def implement_card_automations(game, game_def, card) do
-    card_automation = game_def["automation"]["cards"][card["cardDbId"]]
+    card_automation = game_def["automation"]["cards"][card["databaseId"]]
     if card_automation == nil do
       game
     else
@@ -881,13 +881,13 @@ defmodule DragnCardsGame.GameUI do
 
     # Loop over load list and add a "cardDetails" field to each item
     load_list = Enum.map(load_list, fn load_list_item ->
-      uuid = Map.fetch!(load_list_item, "uuid")
-      cardDetails = Map.fetch!(card_db, uuid)
+      database_id = Map.fetch!(load_list_item, "databaseId")
+      cardDetails = Map.fetch!(card_db, database_id)
       quantity = Map.fetch!(load_list_item, "quantity")
       loadGroupId = Map.fetch!(load_list_item, "loadGroupId") |> String.replace("playerN", player_n)
 
       %{
-        "uuid" => uuid,
+        "databaseId" => database_id,
         "cardDetails" => cardDetails,
         "quantity" => quantity,
         "loadGroupId" => loadGroupId,
@@ -913,7 +913,7 @@ defmodule DragnCardsGame.GameUI do
 
     game = shuffle_changed_decks(game, old_game, game_def)
 
-    game =if game_def["automation"]["postLoadActionList"] != nil do
+    if game_def["automation"]["postLoadActionList"] != nil do
       Evaluate.evaluate_with_timeout(game, game_def["automation"]["postLoadActionList"], ["postLoadActionList"], 5000)
     else
       game

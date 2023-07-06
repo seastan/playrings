@@ -54,7 +54,7 @@ export const DeckbuilderCurrent = React.memo(({currentGroupId, setCurrentGroupId
   //  const detailedLoadList = [];
     console.log("playing 1", currentDeck.load_list);
     for (var loadListItem of currentDeck.load_list) {
-      loadListItem.cardDetails = cardDb[loadListItem.uuid];
+      loadListItem.cardDetails = cardDb[loadListItem.databaseId];
       loadListItem.loadGroupId = loadListItem.loadGroupId.replace("playerN", playerN)
     }
     console.log("playing 2", currentDeck.load_list);
@@ -78,7 +78,7 @@ export const DeckbuilderCurrent = React.memo(({currentGroupId, setCurrentGroupId
     for (var loadListItem of currentDeck.load_list) {
       exportList.push({
         ...loadListItem,
-        "_name": cardDb[loadListItem.uuid]?.A?.name,
+        "_name": cardDb[loadListItem.databaseId]?.A?.name,
       })
     }
     const exportName = currentDeck.name;
@@ -146,7 +146,7 @@ export const DeckbuilderCurrent = React.memo(({currentGroupId, setCurrentGroupId
                 {gameL10n(groupInfo.label)} ({groupLength})
               </div>
               {currentDeck?.load_list?.map((loadListItem, index) => {
-                const cardUuid = loadListItem.uuid;
+                const cardUuid = loadListItem.databaseId;
                 console.log("DeckbuilderCurrent 2", loadListItem, cardUuid, cardDb[cardUuid])
                 if (loadListItem.loadGroupId === groupId)
                 return(

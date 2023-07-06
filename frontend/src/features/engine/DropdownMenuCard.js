@@ -57,7 +57,7 @@ export const DropdownMenuCard = React.memo(({
     if (url === "") {
       url = null;
     }
-    const key = menuCard.cardDbId;
+    const key = menuCard.databaseId;
     
     var nestedObj;
     if (visibleFace?.imageUrl) {

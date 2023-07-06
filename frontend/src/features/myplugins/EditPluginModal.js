@@ -130,6 +130,8 @@ export const EditPluginModal = ({ plugin, closeModal, doFetchHash}) => {
           setInputs({...inputs, gameDef: mergedJSONs});
         } else {
           // Set the error message
+          const labelSchema = "";
+          
           setErrorMessagesGameDef(errors)
           setValidGameDef(false);
         }

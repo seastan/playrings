@@ -833,7 +833,7 @@ export const getGameDefSchema = (gameDef) => {
             "_itemSchema_": {
               "_type_": "object",
               "_strictKeys_": true,
-              "uuid": {
+              "databaseId": {
                 "_type_": "string",
                 "_required_": true,
               },

@@ -4,7 +4,7 @@
 # cd backend
 # export PLUGIN_JSON_PATH=/path/to/directory/containing/your/plugin/jsons/
 # export PLUGIN_TSV_PATH=/path/to/directory/containing/your/plugin/tsvs/
-# mix test test/dragncards_game/custom_plugin_test.exs
+# mix test test/dragncards_game/mc_plugin_test.exs
 
 defmodule DragnCardsGame.McPluginTest do
   # ExUnit.Case module brings the functionality for testing in Elixir
@@ -154,6 +154,7 @@ defmodule DragnCardsGame.McPluginTest do
 
   # These tests are plugin-specific. You will need to overwite them, but they are here as a starting point.
   test "Loading Decks", %{user: user, game: game, game_def: game_def} do
+    IO.puts("Loading Decks")
 
     # Load some decks into the game
     res = Evaluate.evaluate(game, ["LOAD_CARDS", "Phoenix"])
@@ -166,14 +167,15 @@ defmodule DragnCardsGame.McPluginTest do
     assert res["playerData"]["player1"]["handSize"] == 6
 
     # Check hit points
-    #assert res["playerData"]["player1"]["hitPoints"] == 6
+    assert res["playerData"]["player1"]["hitPoints"] == 9
 
     # Check number of cards in hand
     assert length(res["groupById"]["player1Hand"]["stackIds"]) == 6
 
     # Get Jean Grey
-    card_db_id = "fe03ab0a-93a3-5d00-9f91-62ec5337569e"
-    card = Evaluate.evaluate(res, ["ONE_CARD", "$CARD", ["EQUAL", "$CARD.cardDbId", card_db_id]])
+    card_db_id = "2c1d1f38-fe42-504d-9e70-b0112062f399"
+    card = Evaluate.evaluate(res, ["ONE_CARD", "$CARD", ["EQUAL", "$CARD.databaseId", card_db_id]])
+    IO.inspect(card)
     card_id = card["id"]
     assert res["cardById"][card_id]["currentSide"] == "A"
 

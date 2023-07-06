@@ -207,6 +207,7 @@ defmodule DragnCardsGame.Evaluate do
         end)
 
       else
+        #IO.inspect(code)
 
         case Enum.at(code,0) do
           "PREV" ->

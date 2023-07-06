@@ -104,41 +104,71 @@ export const processArrayOfRows = (inputs, plugin, arrayOfRows) => {
 
     const gameDef = plugin?.gameDef || inputs.gameDef;
     const header0 = arrayOfRows[0][0];
-    if (!header0.includes("uuid")) throw new Error("Missing uuid column.")
+    if (!header0.includes("databaseId")) throw new Error("Missing databaseId column.")
     if (!header0.includes("name")) throw new Error("Missing name column.")
     if (!header0.includes("imageUrl")) throw new Error("Missing imageUrl column.")
     if (!header0.includes("cardBack")) throw new Error("Missing cardBack column.")
     if (!header0.includes("type")) throw new Error("Missing type column.")
     const header0Str = JSON.stringify(header0);
     const cardDb = {};
+    var multiSidedDbId = "";
+    var multiSidedFace = "A";
     for (var rows of arrayOfRows) {
         const headerStr = JSON.stringify(rows[0]);
         if (headerStr !== header0Str) throw new Error("File headers do not match.")
         for (var i=1; i<rows.length; i++) {
             const row = rows[i];
-            const faceA = {};
+            const face = {};
             for (var j=0; j<header0.length; j++) {
                 const colName = header0[j].replace(/\r$/, '');
-                faceA[colName] = row[j].replace(/\r$/, '');
+                face[colName] = row[j].replace(/\r$/, '');
             }
-            var faceB = {};
-            if (faceA.cardBack === "double_sided") {
-                for (var j=0; j<header0.length; j++) {
-                    const colName = header0[j].replace(/\r$/, '');
-                    faceB[colName] = rows[i+1][j].replace(/\r$/, '');
-                }
-                i += 1;
+            const dbId = face.databaseId;
+            // Is this a multi-side of a previous card?
+            if (dbId === multiSidedDbId) {
+              // If database_id is not in db, raise an error
+              if (!cardDb[dbId]) throw new Error(`databaseId ${dbId} not found in cardDb`)
+              cardDb[dbId][multiSidedFace] = face;
+              if (multiSidedFace === "B") {
+                multiSidedFace = "C";
+              } else if (multiSidedFace === "C") {
+                multiSidedFace = "D";
+              } else if (multiSidedFace === "D") {
+                multiSidedFace = "E";
+              } else if (multiSidedFace === "E") {
+                multiSidedFace = "F";
+              } else if (multiSidedFace === "F") {
+                multiSidedFace = "G";
+              } else if (multiSidedFace === "G") {
+                multiSidedFace = "H";
+              } else if (multiSidedFace === "H") {
+                multiSidedFace = "I";
+              } else {
+                throw new Error(`Too many sides for databaseId ${dbId}`)
+              }
             } else {
-                for (var key of header0) {
-                    faceB[key] = null;
-                }
-                faceB["name"] = faceA.cardBack;
-                if (!gameDef?.cardBacks || !Object.keys(gameDef.cardBacks).includes(faceB["name"])) throw new Error(`cardBack for ${faceA.name} not found in gameDef.cardBacks`)
+              const faceA = face;
+              var faceB = {};
+              for (var key of header0) {
+                  faceB[key] = null;
+              }
+              if (faceA.cardBack !== "multi_sided") {
+                if (!gameDef?.cardBacks || !Object.keys(gameDef.cardBacks).includes(faceA.cardBack)) throw new Error(`cardBack for ${faceA.name} (${faceA.cardBack}) not found in gameDef.cardBacks`)
+              }
+              faceB["name"] = faceA.cardBack;
+              cardDb[faceA.databaseId] = {
+                  "A": faceA,
+                  "B": faceB
+              }
+              if (faceA.cardBack === "multi_sided") {
+                multiSidedDbId = faceA.databaseId;
+                multiSidedFace = "B";
+              } else {
+                multiSidedDbId = "";
+                multiSidedFace = "A";
+              }
             }
-            cardDb[faceA.uuid] = {
-                "A": faceA,
-                "B": faceB
-            }
+          
         }
     }
     return cardDb;

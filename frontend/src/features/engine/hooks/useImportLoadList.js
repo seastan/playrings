@@ -26,7 +26,7 @@ export const useImportLoadList = () => {
 
     const newList = list.map(item => ({
       ...item,
-      cardDetails: cardDb[item.uuid],
+      cardDetails: cardDb[item.databaseId],
       loadGroupId: item.loadGroupId.replace(/playerN/g, playerN),
     }));
 

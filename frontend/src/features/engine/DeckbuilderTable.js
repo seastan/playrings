@@ -90,7 +90,7 @@ export const DeckbuilderTable = React.memo(({currentGroupId, modifyDeckList, set
                         <div 
                           className={keyClass + " float-right text-white"} 
                           style={keyStyle}
-                          onClick={()=>modifyDeckList(sideA?.uuid, addButtonVal, currentGroupId)}>
+                          onClick={()=>modifyDeckList(sideA?.databaseId, addButtonVal, currentGroupId)}>
                             +{addButtonVal}
                         </div>
                       )

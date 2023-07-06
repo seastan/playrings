@@ -52,6 +52,7 @@
       "layoutVariants" => game_def["layouts"][layout_id]["defaultVariants"] || %{},
       "firstPlayer" => "player1",
       "stepIndex" => 0,
+      "steps" => game_def["steps"],
       "groupById" => Groups.new(game_def["groups"]),
       "stackById" => %{},
       "cardById"  => %{},

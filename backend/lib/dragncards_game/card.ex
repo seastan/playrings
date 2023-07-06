@@ -22,7 +22,7 @@ defmodule DragnCardsGame.Card do
     controller = group["controller"]
     base = %{
       "id" => Ecto.UUID.generate,
-      "cardDbId" => card_db_id,
+      "databaseId" => card_db_id,
       "currentSide" => group["defaultSideUp"],
       "rotation" => 0,
       "owner" => controller,
@@ -39,15 +39,5 @@ defmodule DragnCardsGame.Card do
     card = Enum.reduce(game_def["cardProperties"], base, fn({key,val}, acc) ->
       put_in(acc[key], val["default"])
     end)
-    #if group["id"] == "sharedStaging" do
-      # IO.puts("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
-      # IO.inspect(group_id)
-      # IO.inspect(game_def["groups"][group_id])
-      # IO.inspect(card_details["uuid"])
-      # IO.inspect(card["cardDbId"])
-      # IO.inspect(card["deckGroupId"])
-      # card
-    #end
-    card
   end
 end

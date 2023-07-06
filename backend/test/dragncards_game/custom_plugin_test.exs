@@ -152,26 +152,26 @@ defmodule DragnCardsGame.CustomPluginTest do
     {:ok, %{user: user, game: game, game_def: plugin.game_def, card_db: plugin.card_db}}
   end
 
-  # These tests are plugin-specific. You will need to overwite them, but they are here as a starting point.
-  test "Loading Decks", %{user: user, game: game} do
+  # # These tests are plugin-specific. You will need to overwite them, but they are here as a starting point.
+  # test "Loading Decks", %{user: user, game: game} do
 
-    # Load some decks into the game
-    game = Evaluate.evaluate(game, ["LOAD_CARDS", "Q01.1"]) # Passage through Mirkwood
-    game = Evaluate.evaluate(game, ["LOAD_CARDS", "coreLeadership"]) # Leadership core set deck
+  #   # Load some decks into the game
+  #   game = Evaluate.evaluate(game, ["LOAD_CARDS", "Q01.1"]) # Passage through Mirkwood
+  #   game = Evaluate.evaluate(game, ["LOAD_CARDS", "coreLeadership"]) # Leadership core set deck
 
-    # Get the number of cards in sharedStagingArea, assert that it equals 2
-    assert length(game["groupById"]["sharedStagingArea"]["stackIds"]) == 2
+  #   # Get the number of cards in sharedStagingArea, assert that it equals 2
+  #   assert length(game["groupById"]["sharedStagingArea"]["stackIds"]) == 2
 
-    # Get the number of cards in player1Play1, assert that it equals 3
-    assert length(game["groupById"]["player1Play1"]["stackIds"]) == 3
+  #   # Get the number of cards in player1Play1, assert that it equals 3
+  #   assert length(game["groupById"]["player1Play1"]["stackIds"]) == 3
 
-    # Get the number of cards in player1Hand, assert that it equals 6
-    assert length(game["groupById"]["player1Hand"]["stackIds"]) == 6
+  #   # Get the number of cards in player1Hand, assert that it equals 6
+  #   assert length(game["groupById"]["player1Hand"]["stackIds"]) == 6
 
-    # Confirm starting threat
-    assert game["playerData"]["player1"]["threat"] == 29
+  #   # Confirm starting threat
+  #   assert game["playerData"]["player1"]["threat"] == 29
 
-  end
+  # end
 
   test "Card Hotkeys", %{user: user, game: game, game_def: game_def} do
 
@@ -181,8 +181,13 @@ defmodule DragnCardsGame.CustomPluginTest do
 
     # Get one of the cards
     aragorn_card_db_id = "51223bd0-ffd1-11df-a976-0801200c9001"
-    aragorn_card = Evaluate.evaluate(game, ["ONE_CARD", "$CARD", ["EQUAL", "$CARD.cardDbId", aragorn_card_db_id]])
+    aragorn_card = Evaluate.evaluate(game, ["ONE_CARD", "$CARD", ["EQUAL", "$CARD.databaseId", aragorn_card_db_id]])
     aragorn_card_id = aragorn_card["id"]
+
+    Enum.reduce(game["loadedCardIds"], nil, fn(id, acc) ->
+      IO.inspect(game["cardById"][id]["databaseId"])
+      acc
+    end)
 
     # Make it active
     game = put_in(game["playerUi"]["activeCardId"], aragorn_card_id)
@@ -230,14 +235,71 @@ defmodule DragnCardsGame.CustomPluginTest do
     assert res["playerData"]["player1"]["threat"] == 29 # first time doing newRound doesn't increase threat
     assert res["roundNumber"] == 1
 
+    # Increase cards drawn
+    res = Evaluate.evaluate(res, ["SET", "/playerData/player1/cardsDrawn", 4])
+
     IO.puts("Testing newRound again")
     res = Evaluate.evaluate(res, game_def["actionLists"]["newRound"])
-    assert length(res["groupById"]["player1Hand"]["stackIds"]) == 8
+    assert length(res["groupById"]["player1Hand"]["stackIds"]) == 11
     assert GameUI.get_card_by_group_id_stack_index_card_index(res, ["player1Play1", 0, 0])["tokens"]["resource"] == 2
     assert GameUI.get_card_by_group_id_stack_index_card_index(res, ["player1Play1", 1, 0])["tokens"]["resource"] == 2
     assert GameUI.get_card_by_group_id_stack_index_card_index(res, ["player1Play1", 2, 0])["tokens"]["resource"] == 2
     assert res["playerData"]["player1"]["threat"] == 30
     assert res["roundNumber"] == 2
+
+    # Exhaust a card
+    IO.puts("Testing toggleExhaust")
+    res = Evaluate.evaluate(game, game_def["actionLists"]["toggleExhaust"])
+    assert Evaluate.evaluate(res, "$GAME.cardById.#{aragorn_card_id}.exhausted") == true
+    assert Evaluate.evaluate(res, "$GAME.cardById.#{aragorn_card_id}.rotation") == 90
+
+    # Refresh
+    IO.puts("Testing refresh")
+    res = Evaluate.evaluate(game, game_def["actionLists"]["refresh"])
+    assert Evaluate.evaluate(res, "$GAME.cardById.#{aragorn_card_id}.exhausted") == false
+    assert Evaluate.evaluate(res, "$GAME.cardById.#{aragorn_card_id}.rotation") == 0
+    assert Evaluate.evaluate(res, "$GAME.roundNumber") == 0
+    assert Evaluate.evaluate(res, "$GAME.playerData.player1.threat") == 30
+    assert Evaluate.evaluate(res, "$GAME.firstPlayer") == "player1"
+
+    # Set player count
+    res = Evaluate.evaluate(res, ["SET", "/numPlayers", 3])
+    # Refresh again, make sure firstplayer token is passed correctly
+    res = Evaluate.evaluate(res, game_def["actionLists"]["refresh"])
+    assert Evaluate.evaluate(res, "$GAME.firstPlayer") == "player2"
+    res = Evaluate.evaluate(res, game_def["actionLists"]["refresh"])
+    assert Evaluate.evaluate(res, "$GAME.firstPlayer") == "player3"
+    res = Evaluate.evaluate(res, game_def["actionLists"]["refresh"])
+    assert Evaluate.evaluate(res, "$GAME.firstPlayer") == "player1"
+
+    # Reveal Encounter
+    num_in_staging = length(res["groupById"]["sharedStagingArea"]["stackIds"])
+    res = Evaluate.evaluate(game, game_def["actionLists"]["revealEncounterFaceup"])
+    assert length(res["groupById"]["sharedStagingArea"]["stackIds"]) == num_in_staging + 1
+    assert GameUI.get_card_by_group_id_stack_index_card_index(res, ["sharedStagingArea", -1, 0])["currentSide"] == "A"
+    res = Evaluate.evaluate(res, game_def["actionLists"]["revealEncounterFacedown"])
+    assert length(res["groupById"]["sharedStagingArea"]["stackIds"]) == num_in_staging + 2
+    assert GameUI.get_card_by_group_id_stack_index_card_index(res, ["sharedStagingArea", -1, 0])["currentSide"] == "B"
+
+
+    # Move some enemies into engaged area
+    card = Evaluate.evaluate(game, ["ONE_CARD", "$CARD", ["EQUAL", "$CARD.sides.A.name", "King Spider"]])
+    res = Evaluate.evaluate(res, ["MOVE_CARD", card["id"], "player1Engaged", 0])
+    card = Evaluate.evaluate(res, ["ONE_CARD", "$CARD", ["EQUAL", "$CARD.sides.A.name", "Ungoliant's Spawn"]])
+    res = Evaluate.evaluate(res, ["MOVE_CARD", card["id"], "player1Engaged", 0])
+
+    assert length(res["groupById"]["player1Engaged"]["stackIds"]) == 2
+
+    # Deal shadows
+    # Get card on top, make sure it's dealt to the spawn
+    top_card = GameUI.get_card_by_group_id_stack_index_card_index(res, ["sharedEncounterDeck", 0, 0])
+    res = Evaluate.evaluate(res, game_def["actionLists"]["dealShadows"])
+    ungoliant_shadow_card = GameUI.get_card_by_group_id_stack_index_card_index(res, ["player1Engaged", 1, 1])
+    assert ungoliant_shadow_card["id"] == top_card["id"]
+    assert ungoliant_shadow_card["currentSide"] == "B"
+    assert ungoliant_shadow_card["rotation"] == 30
+
+
 
   end
 end

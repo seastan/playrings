@@ -3,17 +3,19 @@ import { usePlayerN } from "./usePlayerN";
 import { useImportLoadList } from "./useImportLoadList";
 import { useDoActionList } from "./useDoActionList";
 import { el } from "date-fns/locale";
+import { useCardDb } from "./useCardDb";
 
 export const useImportViaUrl = () => {
   const playerN = usePlayerN();
   const importLoadList = useImportLoadList();
   const gameDef = useGameDefinition();
   const doActionList = useDoActionList();
+  const cardDb = useCardDb();
   return async () => {
     if (gameDef["pluginName"] === "LotR Living Card Game") {
       await importViaUrlRingsDb(importLoadList, doActionList, playerN);
     } else if (gameDef["pluginName"] === "Marvel Champions: The Card Game") {
-      await importViaUrlMarvelCdb(importLoadList, doActionList, playerN);
+      await importViaUrlMarvelCdb(importLoadList, doActionList, playerN, cardDb);
     } else {
       alert("Importing via URL is not yet supported for this game. Please request this feature on Discord.");
     }
@@ -77,7 +79,7 @@ export const loadRingsDb = (importLoadList, doActionList, playerN, ringsDbDomain
             var loadGroupId = (type === "Hero" || type === "Contract") ? playerN+"Play1" : playerN+"Deck";
             if (slotJsonData.text.includes("Encounter")) loadGroupId = playerN+"Sideboard";
             console.log("ringsdbimport", slotJsonData.name, slotJsonData)
-            loadList.push({'uuid': slotJsonData.octgnid, 'quantity': quantity, 'loadGroupId': loadGroupId});
+            loadList.push({'databaseId': slotJsonData.octgnid, 'quantity': quantity, 'loadGroupId': loadGroupId});
           } else {
             alert("Encountered unknown card ID for "+slotJsonData.name)
           }
@@ -97,7 +99,7 @@ export const loadRingsDb = (importLoadList, doActionList, playerN, ringsDbDomain
           // jsonData is parsed json object received from url
           if (slotJsonData.octgnid) {
             const loadGroupId = playerN+"Sideboard";
-            loadList.push({'uuid': slotJsonData.octgnid, 'quantity': quantity, 'loadGroupId': loadGroupId});
+            loadList.push({'databaseId': slotJsonData.octgnid, 'quantity': quantity, 'loadGroupId': loadGroupId});
           } else {
             alert("Encountered unknown card ID for "+slotJsonData.name)
           }
@@ -120,7 +122,7 @@ export const loadRingsDb = (importLoadList, doActionList, playerN, ringsDbDomain
 
 
 
-const importViaUrlMarvelCdb = async (importLoadList, doActionList, playerN) => {
+const importViaUrlMarvelCdb = async (importLoadList, doActionList, playerN, cardDb) => {
   const dbUrl = prompt("Paste full MarvelCDB URL","");
   if (!dbUrl.includes("marvelcdb.com")) {
     alert("Only importing from MarvelCDB is supported at this time.");
@@ -141,20 +143,43 @@ const importViaUrlMarvelCdb = async (importLoadList, doActionList, playerN) => {
     return;
   }
   const dbId = splitUrl[typeIndex + 2];
-  return loadMarvelCdb(importLoadList, doActionList, playerN, dbDomain, dbType, dbId);
+  return loadMarvelCdb(importLoadList, doActionList, playerN, dbDomain, dbType, dbId, cardDb);
 }
 
 
-export const loadMarvelCdb = (importLoadList, doActionList, playerN, dbDomain, dbType, dbId) => {
+export const loadMarvelCdb = (importLoadList, doActionList, playerN, dbDomain, dbType, dbId, cardDb) => {
   doActionList(["LOG", "$PLAYER_N", " is importing a deck from MarvelCDB."]);
-  const urlBase = "https://www.marvelcdb.com/api/"
+
+  // Generate a mapping from marcelcdbId to databaseId
+  const marvelcdbIdTodatabaseId = {};
+  Object.keys(cardDb).forEach((databaseId, _databaseIdIndex) => {
+    const cardDetails = cardDb[databaseId];
+    for (var [side, details] of Object.entries(cardDetails)) {
+      if (details.marvelcdbId) {
+        marvelcdbIdTodatabaseId[details.marvelcdbId] = databaseId;
+      }
+    }
+  })
+
+  console.log("marvelcdbIdTodatabaseId", marvelcdbIdTodatabaseId)
+
+  const urlBase = "https://marvelcdb.com/api/"
   const url = dbType === "decklist" ? urlBase+"public/decklist/"+dbId+".json" : urlBase+"oauth2/deck/load/"+dbId;
   console.log("Fetching ", url);
+  
   fetch(url)
   .then(response => response.json())
   .then((jsonData) => {
+    console.log("card db import response", jsonData)
+    const itentityCode = jsonData.investigator_code;
     const slots = jsonData.slots;
     var loadList = [];
+    if (itentityCode && marvelcdbIdTodatabaseId[itentityCode]) {
+      const databaseId = marvelcdbIdTodatabaseId[itentityCode];
+      loadList.push({'databaseId': databaseId, 'quantity': 1, 'loadGroupId': playerN+"Identity"});
+    } else {
+      alert("Encountered missing or unknown card ID for identity")
+    }
     var fetches = [];
     Object.keys(slots).forEach((slot, slotIndex) => {
       console.log("card db import", slot, slots[slot])
@@ -165,13 +190,12 @@ export const loadMarvelCdb = (importLoadList, doActionList, playerN, dbDomain, d
         .then((slotJsonData) => {
           // jsonData is parsed json object received from url
           console.log("card db import", slotJsonData.name, slotJsonData)
-          if (slotJsonData.octgnid) {
-            const type = slotJsonData.type_name;
-            var loadGroupId = (type === "Hero" || type === "Alter-Ego") ? playerN+"Identity" : playerN+"Deck";
-            console.log("card db import", slotJsonData.name, slotJsonData)
-            loadList.push({'uuid': slotJsonData.octgnid, 'quantity': quantity, 'loadGroupId': loadGroupId});
+          // If slotJsonData.code is in the marvelcdbIdTodatabaseId mapping, use that databaseId
+          if (slotJsonData.code && marvelcdbIdTodatabaseId[slotJsonData.code]) {
+            const databaseId = marvelcdbIdTodatabaseId[slotJsonData.code];
+            loadList.push({'databaseId': databaseId, 'quantity': quantity, 'loadGroupId': playerN+"Deck"});
           } else {
-            alert("Encountered unknown card ID for "+slotJsonData.name)
+            alert(`Encountered unknown card ID (${slotJsonData.code}) for ${slotJsonData.name}`)
           }
         })
         .catch((error) => {

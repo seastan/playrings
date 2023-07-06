@@ -85,7 +85,7 @@ export const DeckbuilderModal = React.memo(({}) => {
     // If it was not in the group already, add it to the deck
     if (existingIndex === null) {
       deckCopy.load_list.push({
-        uuid: cardUuid,
+        databaseId: cardUuid,
         quantity: quantity,
         loadGroupId: groupId,
       });
