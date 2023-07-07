@@ -11,9 +11,9 @@ use Mix.Config
 # before starting your production server.
 config :dragncards, DragnCardsWeb.Endpoint,
   http: [port: 4000],
-  url: [host: "dragncards.com", port: 4000],
+  url: [host: "beta.dragncards.com", port: 4000],
   cache_static_manifest: "priv/static/cache_manifest.json",
-  check_origin: ["//localhost", "//dragncards", "//dragncards.com", "//www.dragncards.com"],
+  check_origin: ["//localhost", "//beta.dragncards", "//beta.dragncards.com", "//www.beta.dragncards.com"],
   # check_origin: [
   #   "//dragncards.com",
   #   "//api.dragncards.com",

@@ -32,6 +32,12 @@ export const useBrowseTopN = () => {
         peekStackIds = [];
         visibility = false;
         message = ["LOG", "$PLAYER_N", " stopped looking at ", groupName, "."];
+      } else if (topNstr === "X") {
+        // Get integer input from the browser
+        var topNprompt = window.prompt("How many cards do you want to look at?", "");
+        topNint = parseInt(topNprompt) || 0;
+        peekStackIds = stackIds.slice(0, topNint);
+        message = ["LOG", "$PLAYER_N", " looked at the top ", topNstr, " cards of ", groupName, "."]
       } else {
         topNint = parseInt(topNstr) || 0;
         peekStackIds = stackIds.slice(0, topNint);

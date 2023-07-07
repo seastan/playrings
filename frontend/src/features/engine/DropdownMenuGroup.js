@@ -7,6 +7,8 @@ import { useSelector } from "react-redux";
 import { useGameL10n } from "./hooks/useGameL10n";
 import { useGameDefinition } from "./hooks/useGameDefinition";
 import { usePlayerIList } from "./hooks/usePlayerIList";
+import { useBrowseTopN } from "./hooks/useBrowseTopN";
+import { dragnActionLists } from "./functions/dragnActionLists";
 
 export const DropdownMenuGroup = React.memo(({
   mouseX,
@@ -23,6 +25,8 @@ export const DropdownMenuGroup = React.memo(({
   const menuGroup = dropdownMenu.group;
   const gameDef = useGameDefinition();
   const group = useSelector(state => state?.gameUi?.game?.groupById?.[menuGroup.id]);
+  const browseTopN = useBrowseTopN();
+
   console.log("Rendering DMGroup", group)
   const DropdownMoveTo = (props) => {
     return (
@@ -64,6 +68,11 @@ export const DropdownMenuGroup = React.memo(({
     ["LOG", "$PLAYER_N", " shuffled ", group.name]
   ]
 
+  const handleLookAtClick = (dropdownOptions) => {
+    browseTopN(menuGroup.id, dropdownOptions.topN);
+  }
+  
+
   return (
     <div 
       className="dropdown" 
@@ -84,11 +93,11 @@ export const DropdownMenuGroup = React.memo(({
           })}
           {menuGroup.id === playerN+"Hand" ? <DropdownItem action="makeVisible" clickCallback={handleDropdownClick}>{gameL10n("Make visible/hidden")}</DropdownItem> : null}
           
-          <DropdownItem action="lookAt" topN="None" clickCallback={handleDropdownClick}>{gameL10n("Browse")}</DropdownItem>
-          <DropdownItem action="lookAt" topN="5" clickCallback={handleDropdownClick}>{gameL10n("Look at top 5")}</DropdownItem>
-          <DropdownItem action="lookAt" topN="10" clickCallback={handleDropdownClick}>{gameL10n("Look at top 10")}</DropdownItem>
-          <DropdownItem action="lookAt" topN="X" clickCallback={handleDropdownClick}>{gameL10n("Look at top X")}</DropdownItem>
-          <DropdownItem action="chooseRandom" clickCallback={handleDropdownClick}>{gameL10n("Choose Random")}</DropdownItem>
+          <DropdownItem topN="None" clickCallback={handleLookAtClick}>{gameL10n("Browse")}</DropdownItem>
+          <DropdownItem topN="5" clickCallback={handleLookAtClick}>{gameL10n("Look at top 5")}</DropdownItem>
+          <DropdownItem topN="10" clickCallback={handleLookAtClick}>{gameL10n("Look at top 10")}</DropdownItem>
+          <DropdownItem topN="X" clickCallback={handleLookAtClick}>{gameL10n("Look at top X")}</DropdownItem>
+          <DropdownItem action={dragnActionLists.chooseRandom(menuGroup.id)} clickCallback={handleDropdownClick}>{gameL10n("Choose Random")}</DropdownItem>
           <DropdownItem action="dealX" side="B" clickCallback={handleDropdownClick}>{gameL10n("Deal top X facedown")}</DropdownItem>
           <DropdownItem
             rightIcon={<FontAwesomeIcon icon={faChevronRight}/>}

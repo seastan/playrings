@@ -327,7 +327,7 @@ defmodule DragnCardsGame.Evaluate do
           "RANDOM_INT" ->
             mn = evaluate(game, Enum.at(code,1), trace ++ ["RANDOM_INT min"])
             mx = evaluate(game, Enum.at(code,2), trace ++ ["RANDOM_INT max"])
-            Enum.random(mn, mx)
+            :rand.uniform(mx - mn + 1) + mn - 1
 
           "OBJ_GET_VAL" ->
             map = evaluate(game, Enum.at(code,1), trace ++ ["OBJ_GET_VAL map"])
@@ -389,6 +389,10 @@ defmodule DragnCardsGame.Evaluate do
             path = evaluate(game, Enum.at(code, 1), trace ++ ["SET path"])
             value = evaluate(game, Enum.at(code, 2), trace ++ ["SET value"])
             put_by_path(game, path, value, trace ++ ["SET put_by_path"])
+
+          "TARGET" ->
+            card_id = evaluate(game, Enum.at(code, 1), trace ++ ["TARGET card_id"])
+            evaluate(game, ["SET", "/cardById/" <> card_id <> "/targeting/$PLAYER_N", true], trace ++ ["TARGET set"])
 
           "UPDATE_ROOM_NAME" ->
             name = evaluate(game, Enum.at(code, 1), trace ++ ["UPDATE_ROOM_NAME name"])
