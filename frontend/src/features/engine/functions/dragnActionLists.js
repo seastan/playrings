@@ -82,6 +82,13 @@ export const dragnActionLists = {
     deleteCard: (card) => ([
       ["LOG", "$PLAYER_N", " deleted ", ["FACEUP_NAME_FROM_CARD_ID", card.id], "."],
       ["DELETE_CARD", card.id]
+    ]),
+    chooseRandom: (groupId) => ([
+      ["DEFINE", "$RANDOM_IDX", ["RANDOM_INT", 0, ["SUBTRACT", ["LENGTH", "$GAME.groupById." + groupId + ".stackIds"], 1]]],
+      ["DEFINE", "$STACK_ID", "$GAME.groupById." + groupId + ".stackIds.[$RANDOM_IDX]"],
+      ["DEFINE", "$CARD_ID", "$GAME.stackById.$STACK_ID.cardIds.[0]"],
+      ["TARGET", "$CARD_ID"],
+      ["LOG", "$PLAYER_N", " chose a random card from ", "$GAME.groupById." + groupId + ".label", "."]
     ])
 }
   
