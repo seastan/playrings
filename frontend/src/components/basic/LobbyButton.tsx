@@ -15,7 +15,7 @@ export const LobbyButton: React.FC<Props> = ({
   // bg-gray-300
   const classes = cx(
     className,
-    "border cursor-pointer rounded-lg hover:bg-white hover:text-black h-full w-full",
+    "cursor-pointer rounded-lg bg-gray-600-30 hover:bg-red-600-30 h-full w-full",
     "flex items-center justify-center text-white no-underline select-none"
   );
   return (

@@ -16,6 +16,7 @@ export const DragContainer = React.memo(({}) => {
   console.log("Rendering DragContainer");
   const dispatch = useDispatch();
   const doActionList = useDoActionList();
+  const keypressShift = useSelector(state => state?.playerUi?.keypress?.Shift);
   const playerData = useSelector(state => state?.gameUi?.game?.playerData);
   const touchMode = useSelector(state => state?.playerUi?.touchMode);
   //const archerContainerRef = React.createRef();
@@ -85,7 +86,7 @@ export const DragContainer = React.memo(({}) => {
 
       dispatch(setStackIds(newOrigGroup));
       dispatch(setCardIds(newDestStack));
-      doActionList(["MOVE_STACK", origStackId, destGroupId, dest.index, true, false])
+      doActionList(["MOVE_STACK", origStackId, destGroupId, dest.index, {"combine": true}])
     }
 
     // Dropped nowhere
@@ -113,7 +114,7 @@ export const DragContainer = React.memo(({}) => {
       // dispatch(setValues({updates: updates}));
       doActionList([
         ["LOG", "$PLAYER_N", " moved ", ["FACEUP_NAME_FROM_STACK_ID", origStackId], " from ", "$GAME.groupById."+origGroupId+".label", " to ", "$GAME.groupById."+destGroupId+".label", "."],
-        ["MOVE_STACK", origStackId, destGroupId, dest.index, false, destGroupId === origGroupId]
+        ["MOVE_STACK", origStackId, destGroupId, dest.index]
       ])
       dispatch(setGroupById(newGroupById));
     }
