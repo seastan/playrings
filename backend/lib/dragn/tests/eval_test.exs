@@ -219,9 +219,8 @@ defmodule MyTest do
               dest_group_id = evaluate(game, Enum.at(code, 2))
               dest_stack_index = evaluate(game, Enum.at(code, 3))
               dest_card_index = evaluate(game, Enum.at(code, 4))
-              combine = if argc == 5 do evaluate(game, Enum.at(code, 5)) else nil end
-              preserve_state = if argc == 6 do evaluate(game, Enum.at(code, 6)) else nil end
-              GameUI.move_card(game, card_id, dest_group_id, dest_stack_index, dest_card_index, combine, preserve_state)
+              options = if argc == 5 do evaluate(game, Enum.at(code, 5)) else nil end
+              GameUI.move_card(game, card_id, dest_group_id, dest_stack_index, dest_card_index, options)
             else
               game
             end
@@ -233,7 +232,7 @@ defmodule MyTest do
             card_id = evaluate(game, Enum.at(code, 1))
             dest_card_id = evaluate(game, Enum.at(code, 2))
             dest_card = game["cardById"][dest_card_id]
-            GameUI.move_card(game, card_id, dest_card["groupId"], dest_card["stackIndex"], -1, true, false)
+            GameUI.move_card(game, card_id, dest_card["groupId"], dest_card["stackIndex"], -1, %{"combine" => true})
           "DRAW_CARD" ->
             argc = Enum.count(code) - 1
             num = if argc == 0 do 1 else evaluate(game, Enum.at(code, 1)) end
@@ -244,8 +243,8 @@ defmodule MyTest do
             stack_id = evaluate(game, Enum.at(code, 1))
             dest_group_id = evaluate(game, Enum.at(code, 2))
             dest_stack_index = evaluate(game, Enum.at(code, 3))
-            combine = if argc == 4 do evaluate(game, Enum.at(code, 4)) else nil end
-            GameUI.move_stack(game, stack_id, dest_group_id, dest_stack_index, combine)
+            options = if argc == 4 do evaluate(game, Enum.at(code, 4)) else nil end
+            GameUI.move_stack(game, stack_id, dest_group_id, dest_stack_index, options)
           "DISCARD_STACK" ->
             stack_id = evaluate(game, Enum.at(code, 1))
             stack = game["stackById"][stack_id]

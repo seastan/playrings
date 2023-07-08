@@ -22,7 +22,7 @@ export const PluginsTable = ({ plugins, setSelectedPlugin}) => {
     </div>
   }
 
-  const trClass = "relative m-2 h-full w-full flex items-center text-white no-underline select-none"
+  const trClass = "relative m-2 h-full w-full flex items-center text-white no-underline select-none rounded-lg w-full bg-gray-600-30 hover:bg-red-600-30"
 
   return (
     <div className="w-full" style={{minHeight: "600px"}}>
@@ -40,7 +40,6 @@ export const PluginsTable = ({ plugins, setSelectedPlugin}) => {
             {plugins?.map((plugin, pluginIndex) => {
               return(
                 <tr className={trClass} onClick={() => setSelectedPlugin(plugin)}>
-                  <div className={"absolute rounded-lg w-full h-full opacity-50  hover:bg-gray-600 " + ((pluginIndex % 2 === 0) ? " bg-gray-800" : " bg-gray-900")}></div>
                   <div className="relative m-4">
                     <div className="text-xl inline">{plugin.name}</div>
                     <a 

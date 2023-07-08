@@ -29,7 +29,17 @@ module.exports = {
         "black-50": "rgba(0,0,0,0.5)",
         "black-40": "rgba(0,0,0,0.4)",
         "blue-400-50": "rgba(99,179,237,0.5)",
-        "yellow-950": "#271605"
+        "yellow-950": "#271605",
+        'gray-600-10': 'rgba(75, 85, 99, 0.1)',  // bg-gray-600 with 10% opacity
+        'gray-600-20': 'rgba(75, 85, 99, 0.2)',  // bg-gray-600 with 20% opacity
+        'gray-600-30': 'rgba(75, 85, 99, 0.3)',  // bg-gray-600 with 30% opacity
+        'gray-600-40': 'rgba(75, 85, 99, 0.4)',  // bg-gray-600 with 40% opacity
+        'gray-600-50': 'rgba(75, 85, 99, 0.5)',  // bg-gray-600 with 50% opacity
+        'red-600-10': 'rgba(220, 38, 38, 0.1)',  // bg-red-600 with 10% opacity
+        'red-600-20': 'rgba(220, 38, 38, 0.2)',  // bg-red-600 with 20% opacity
+        'red-600-30': 'rgba(220, 38, 38, 0.3)',  // bg-red-600 with 30% opacity
+        'red-600-40': 'rgba(220, 38, 38, 0.4)',  // bg-red-600 with 40% opacity
+        'red-600-50': 'rgba(220, 38, 38, 0.5)',  // bg-red-600 with 50% opacity
       },
       spacing: {
         "72": "18rem",

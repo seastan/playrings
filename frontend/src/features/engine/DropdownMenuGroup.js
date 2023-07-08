@@ -98,7 +98,6 @@ export const DropdownMenuGroup = React.memo(({
           <DropdownItem topN="10" clickCallback={handleLookAtClick}>{gameL10n("Look at top 10")}</DropdownItem>
           <DropdownItem topN="X" clickCallback={handleLookAtClick}>{gameL10n("Look at top X")}</DropdownItem>
           <DropdownItem action={dragnActionLists.chooseRandom(menuGroup.id)} clickCallback={handleDropdownClick}>{gameL10n("Choose Random")}</DropdownItem>
-          <DropdownItem action="dealX" side="B" clickCallback={handleDropdownClick}>{gameL10n("Deal top X facedown")}</DropdownItem>
           <DropdownItem
             rightIcon={<FontAwesomeIcon icon={faChevronRight}/>}
             goToMenu="setVisibility"

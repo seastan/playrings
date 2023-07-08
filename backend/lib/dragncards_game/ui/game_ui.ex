@@ -216,11 +216,11 @@ defmodule DragnCardsGame.GameUI do
   end
 
   # Move a card
-  def move_card(game, card_id, dest_group_id, dest_stack_index, dest_card_index, combine \\ false) do
+  def move_card(game, card_id, dest_group_id, dest_stack_index, dest_card_index, options \\ false) do
     # Get position of card
     {orig_group_id, _orig_stack_index, _orig_card_index} = gsc(game, card_id)
     # Perpare destination stack
-    game = if combine do
+    game = if options["combine"] do
       game
     else
       new_stack = Stack.empty_stack()
@@ -232,16 +232,21 @@ defmodule DragnCardsGame.GameUI do
     game
     |> remove_from_stack(card_id)
     |> add_to_stack(dest_stack["id"], card_id, dest_card_index)
-    |> update_card_state(card_id, orig_group_id)
+    |> update_card_state(card_id, orig_group_id, options)
   end
 
   # Update a card state
   # Modify the card orientation/tokens based on where it is now
-  def update_card_state(game, card_id, orig_group_id \\ nil) do
+  def update_card_state(game, card_id, orig_group_id \\ nil, move_options \\ nil) do
     {dest_group_id, dest_stack_index, dest_card_index} = gsc(game, card_id)
     orig_group = get_group(game, orig_group_id)
     dest_group = get_group(game, dest_group_id)
     old_card = get_card(game, card_id)
+    allow_flip = if move_options != nil and move_options["allowFlip"] == false do
+      false
+    else
+      true
+    end
 
     parent_card = get_card_by_group_id_stack_index_card_index(game, [dest_group_id, dest_stack_index, 0])
 
@@ -251,7 +256,10 @@ defmodule DragnCardsGame.GameUI do
     game = Evaluate.evaluate(game, ["SET", "/cardById/" <> card_id <> "/stackParentCardId", parent_card["id"]], ["update_card_state cardId:#{card_id} stackParentCardId:#{parent_card["id"]}"])
 
     # If card gets moved to a facedown pile, or gets flipped up, erase peeking
-    game = if dest_group["onCardEnter"]["currentSide"] == "B" or (old_card["currentSide"] == "B" and dest_group["onCardEnter"]["currentSide"] == "A") do
+    moving_to_facedown = dest_group["onCardEnter"]["currentSide"] == "B"
+    will_flip = old_card["currentSide"] == "B" and dest_group["onCardEnter"]["currentSide"] == "A" and allow_flip
+
+    game = if moving_to_facedown or will_flip do
       Evaluate.evaluate(game, ["SET", "/cardById/" <> card_id <> "/peeking", %{}], ["update_card_state cardId:#{card_id} peeking:empty"])
     else
       game
@@ -261,7 +269,11 @@ defmodule DragnCardsGame.GameUI do
     game = Enum.reduce(dest_group["onCardEnter"], game, fn({key, val}, acc) ->
       if orig_group["onCardEnter"][key] != dest_group["onCardEnter"][key] do
         # IO.puts("updating card state on enter: " <> key <> " " <> inspect(val))
-        Evaluate.evaluate(acc, ["SET", "/cardById/" <> card_id <> "/" <> key, val], ["update_card_state cardId:#{card_id} #{key}:#{inspect(val)}"])
+        if key == "currentSide" and allow_flip == false do
+          acc
+        else
+          Evaluate.evaluate(acc, ["SET", "/cardById/" <> card_id <> "/" <> key, val], ["update_card_state cardId:#{card_id} #{key}:#{inspect(val)}"])
+        end
       else
         acc
       end
@@ -356,14 +368,14 @@ defmodule DragnCardsGame.GameUI do
     update_card_ids(game, stack_id, new_card_ids)
   end
 
-  def update_stack_state(game, stack_id, orig_group_id) do
+  def update_stack_state(game, stack_id, orig_group_id, move_options) do
     # Update cards in stack one at a time in reverse order
     # This is so that when the stack is removed from play,
     # order is preserved as cards are detached
     dest_group = get_group_by_stack_id(game, stack_id)
     card_ids = get_card_ids(game, stack_id)
     game = Enum.reduce(card_ids, game, fn(card_id, acc) ->
-      update_card_state(acc, card_id, orig_group_id)
+      update_card_state(acc, card_id, orig_group_id, move_options)
     end)
     # If a stack is out of play, we need to split it up
     if Enum.count(card_ids)>1 && not dest_group["canHaveAttachments"] do
@@ -380,12 +392,12 @@ defmodule DragnCardsGame.GameUI do
   def detach(game, card_id) do
     # Get position of card and move it next to the initial stack
     {group_id, stack_index, _card_index} = gsc(game, card_id)
-    move_card(game, card_id, group_id, stack_index + 1, 0, false)
+    move_card(game, card_id, group_id, stack_index + 1, 0)
   end
 
-  def move_stack(game, stack_id, dest_group_id, dest_stack_index, combine \\ false) do
+  def move_stack(game, stack_id, dest_group_id, dest_stack_index, options \\ nil) do
     if stack_id == nil do
-      game
+      raise "Cannot move nil stack to #{dest_group_id} #{dest_stack_index}"
     else
       # Get list of card ids in stack
       card_ids = get_card_ids(game, stack_id)
@@ -399,22 +411,29 @@ defmodule DragnCardsGame.GameUI do
       # If destination is negative, count backward from the end
       dest_stack_index = if dest_stack_index < 0 do
         loop_index = Enum.count(GameUI.get_stack_ids(game, dest_group_id)) + dest_stack_index
-        if combine do
+        IO.puts("Loop index: #{loop_index}")
+        IO.inspect(options)
+        IO.inspect(get_in(options, ["combine"]))
+        IO.puts("here")
+        x = if get_in(options, ["combine"]) do
           loop_index
         else
           loop_index + 1
         end
+        IO.puts("Loop index: #{x}")
+        x
       else
         dest_stack_index
       end
+      IO.puts("Moving stack: #{card_side_a_names} #{dest_group_id} #{dest_stack_index}")
       # If attaching to same group at higher index, dest_index will end up being 1 less
-      dest_stack_index = if orig_group_id == dest_group_id and combine and orig_stack_index < dest_stack_index do dest_stack_index - 1 else dest_stack_index end
+      dest_stack_index = if orig_group_id == dest_group_id and options["combine"] and orig_stack_index < dest_stack_index do dest_stack_index - 1 else dest_stack_index end
       # Delete stack id from old group
       old_orig_stack_ids = get_stack_ids(game, orig_group_id)
       new_orig_stack_ids = List.delete_at(old_orig_stack_ids, orig_stack_index)
       game = update_stack_ids(game, orig_group_id, new_orig_stack_ids)
       # Add to new position
-      if combine do
+      if options["combine"] do
         # Get existing destination stack
         dest_stack = get_stack_by_index(game, dest_group_id, dest_stack_index)
         dest_stack_id = dest_stack["id"]
@@ -425,18 +444,18 @@ defmodule DragnCardsGame.GameUI do
         game = update_card_ids(game, dest_stack_id, new_dest_card_ids)
         # Delete original stack
         game = delete_stack_from_stack_by_id(game, stack_id)
-        update_stack_state(game, dest_stack_id, orig_group_id)
+        update_stack_state(game, dest_stack_id, orig_group_id, options)
       else
         # Update destination group stack ids
         old_dest_stack_ids = get_stack_ids(game, dest_group_id)
         new_dest_stack_ids = List.insert_at(old_dest_stack_ids, dest_stack_index, stack_id)
         update_stack_ids(game, dest_group_id, new_dest_stack_ids)
-        |> update_stack_state(stack_id, orig_group_id)
+        |> update_stack_state(stack_id, orig_group_id, options)
       end
     end
   end
 
-  def move_stacks(game, orig_group_id, dest_group_id, top_n, position) do
+  def move_stacks(game, orig_group_id, dest_group_id, top_n, position, options \\ nil) do
     orig_stack_ids = get_stack_ids(game, orig_group_id)
     # Moving stacks to the top or the bottom of the new group?
     top_n = if top_n == -1 do Enum.count(orig_stack_ids) else top_n end
@@ -444,7 +463,7 @@ defmodule DragnCardsGame.GameUI do
     # Move stacks 1 at a time
     game = Enum.reduce(Enum.with_index(orig_stack_ids), game, fn({stack_id, index}, acc) ->
       if index < top_n do
-        move_stack(acc, stack_id, dest_group_id, dest_stack_index)
+        move_stack(acc, stack_id, dest_group_id, dest_stack_index, options)
       else
         acc
       end
@@ -788,7 +807,7 @@ defmodule DragnCardsGame.GameUI do
     |> update_stack(new_stack)
     |> update_card(new_card)
     |> implement_card_automations(game_def, new_card)
-    |> update_card_state(new_card["id"], nil)
+    |> update_card_state(new_card["id"], nil, nil)
     |> Evaluate.evaluate(["SET", "/loadedCardIds", ["LIST"] ++ game["loadedCardIds"] ++ [new_card["id"]]], ["create_card_in_group"])
 
   end

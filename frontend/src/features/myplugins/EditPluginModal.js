@@ -287,7 +287,7 @@ export const EditPluginModal = ({ plugin, closeModal, doFetchHash}) => {
           </Button>
           </div>
           </div> 
-          <Button disabled={!changesMade || !validCardDb || !validGameDef} isSubmit={changesMade} className="mt-4">
+          <Button disabled={!changesMade || !validGameDef || (!plugin && !validCardDb)} isSubmit={changesMade} className="mt-4">
           {plugin ? siteL10n("Update Plugin") : siteL10n("Create Plugin")}
           </Button>
           {changesMade && <div className="alert alert-info mt-4">{siteL10n("You have unsaved changes.")}</div>}

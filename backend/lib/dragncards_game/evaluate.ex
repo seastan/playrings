@@ -196,7 +196,8 @@ defmodule DragnCardsGame.Evaluate do
     # IO.puts("evaluate 1")
     # IO.inspect(code)
     # IO.inspect(trace)
-    #Logger.debug("evaluate #{inspect(code)} #{inspect(trace)}")
+    # Logger.debug("evaluate #{inspect(code)} #{inspect(trace)}")
+
 
     if is_list(code) && Enum.count(code) > 0 do
 
@@ -226,8 +227,6 @@ defmodule DragnCardsGame.Evaluate do
           "DEFINE" ->
             var_name = Enum.at(code, 1)
             value = evaluate(game, Enum.at(code, 2), trace ++ ["DEFINE #{var_name}"])
-            #IO.puts("DEFINE #{var_name}")
-            #IO.inspect(value)
             put_in(game, ["variables", var_name], value)
 
           "POINTER" ->
@@ -347,6 +346,21 @@ defmodule DragnCardsGame.Evaluate do
                   acc["sides"][acc["currentSide"]]
                 pathi == "stackParentCard" ->
                   game["cardById"][acc["stackParentCardId"]]
+                pathi == "parentCardIds" ->
+                  # Make sure there is a stackIds key
+                  if Map.has_key?(acc, "stackIds") do
+                    # Get the stackIds
+                    stack_ids = acc["stackIds"]
+                    # Return a list of the parent card ids
+                    Enum.map(stack_ids, fn(stack_id) ->
+                      # Get the stack
+                      stack = game["stackById"][stack_id]
+                      # Get the parent card id
+                      Enum.at(stack["cardIds"], 0)
+                    end)
+                  else
+                    raise "Tried to access parentCardIds on a non-group object."
+                  end
                 Map.has_key?(acc, pathi) ->
                   Map.get(acc, evaluate(game, pathi, trace ++ ["OBJ_GET_BY_PATH key #{index}"]))
                 true ->
@@ -472,9 +486,9 @@ defmodule DragnCardsGame.Evaluate do
               dest_group_id = evaluate(game, Enum.at(code, 2), trace ++ ["MOVE_CARD dest_group_id"])
               dest_stack_index = evaluate(game, Enum.at(code, 3), trace ++ ["MOVE_CARD dest_stack_index"])
               dest_card_index = if argc >= 4 do evaluate(game, Enum.at(code, 4), trace ++ ["MOVE_CARD dest_stack_index"]) else 0 end
-              combine = if argc >= 5 do evaluate(game, Enum.at(code, 5), trace ++ ["MOVE_CARD combine"]) else false end
+              options = if argc >= 5 do evaluate(game, Enum.at(code, 5), trace ++ ["MOVE_CARD options"]) else nil end
               #try do
-                GameUI.move_card(game, card_id, dest_group_id, dest_stack_index, dest_card_index, combine)
+                GameUI.move_card(game, card_id, dest_group_id, dest_stack_index, dest_card_index, options)
               # rescue
               #   e ->
               #     raise("Failed to move card #{card_id} to dest_group_id:#{dest_group_id} dest_stack_index:#{dest_stack_index} dest_card_index:#{dest_card_index} combine:#{combine}. " <> inspect(e) <> inspect(trace))
@@ -520,7 +534,7 @@ defmodule DragnCardsGame.Evaluate do
             dest_card_id = evaluate(game, Enum.at(code, 2), trace ++ ["ATTACH_CARD dest_card_id"])
             dest_card = game["cardById"][dest_card_id]
             try do
-              GameUI.move_card(game, card_id, dest_card["groupId"], dest_card["stackIndex"], -1, true)
+              GameUI.move_card(game, card_id, dest_card["groupId"], dest_card["stackIndex"], -1, %{"combine" => true})
             rescue
               e ->
                 raise("Failed to attach card #{card_id} to dest_card_id:#{dest_card_id}. " <> inspect(e) <> inspect(trace))
@@ -542,12 +556,12 @@ defmodule DragnCardsGame.Evaluate do
             stack_id = evaluate(game, Enum.at(code, 1), trace ++ ["MOVE_STACK stack_id"])
             dest_group_id = evaluate(game, Enum.at(code, 2), trace ++ ["MOVE_STACK dest_group_id"])
             dest_stack_index = evaluate(game, Enum.at(code, 3), trace ++ ["MOVE_STACK dest_stack_index"])
-            combine = if argc >= 4 do evaluate(game, Enum.at(code, 4), trace ++ ["MOVE_STACK combine"] ) else nil end
+            options = if argc >= 4 do evaluate(game, Enum.at(code, 4), trace ++ ["MOVE_STACK options"] ) else nil end
             try do
-              GameUI.move_stack(game, stack_id, dest_group_id, dest_stack_index, combine)
+              GameUI.move_stack(game, stack_id, dest_group_id, dest_stack_index, options)
             rescue
               e ->
-                raise("Failed to move stack #{stack_id} to dest_group_id:#{dest_group_id} dest_stack_index:#{dest_stack_index} combine:#{combine}. " <> inspect(e) <> inspect(trace))
+                raise("Failed to move stack #{stack_id} to dest_group_id:#{dest_group_id} dest_stack_index:#{dest_stack_index}. " <> inspect(e) <> inspect(trace))
             end
 
           "DISCARD_STACK" ->
@@ -559,12 +573,14 @@ defmodule DragnCardsGame.Evaluate do
             end)
 
           "MOVE_STACKS" ->
+            argc = Enum.count(code) - 1
             orig_group_id = evaluate(game, Enum.at(code, 1), trace ++ ["MOVE_STACKS orig_group_id"])
             dest_group_id = evaluate(game, Enum.at(code, 2), trace ++ ["MOVE_STACKS dest_group_id"])
             top_n = evaluate(game, Enum.at(code, 3), trace ++ ["MOVE_STACKS top_n"])
             position = evaluate(game, Enum.at(code, 4), trace ++ ["MOVE_STACKS position"])
+            options = if argc >= 5 do evaluate(game, Enum.at(code, 4), trace ++ ["MOVE_STACKS options"] ) else nil end
             try do
-              GameUI.move_stacks(game, orig_group_id, dest_group_id, top_n, position)
+              GameUI.move_stacks(game, orig_group_id, dest_group_id, top_n, position, options)
             rescue
               e ->
                 raise("Failed to move top #{top_n} stacks from #{orig_group_id} to #{dest_group_id}:#{position}." <> inspect(e) <> inspect(trace))
@@ -638,79 +654,99 @@ defmodule DragnCardsGame.Evaluate do
             raise "Command #{Enum.at(code,0)} not recognized in #{inspect(code)}"
         end
       end
-    else # value
-      trace = trace ++ [code]
-      cond do
-        code == "$PLAYER_N" ->
-          game["playerUi"]["playerN"]
+    else # mot a list
+      if false and is_map(code) do # map
+        # Construct a new map where each key is the same and each value is the result of evaluating the original value
+        code |> Map.new(fn {k, v} -> {k, evaluate(game, v, trace ++ [k])} end)
+      else # value
+        trace = trace ++ [code]
 
-        code == "$GAME" ->
-          game
+        # variable
+        cond do
+          is_binary(code) and String.starts_with?(code, "$") and String.contains?(code, ".") ->
+            split = String.split(code, ".")
+            obj = evaluate(game, Enum.at(split, 0), trace)
+            path = ["LIST"] ++ Enum.slice(split, 1, Enum.count(split))
+            evaluate(game, ["OBJ_GET_BY_PATH", obj, path], trace)
 
-        code == "$GAME_PATH" ->
-          []
+          is_binary(code) and String.starts_with?(code, "$") ->
+            if Map.has_key?(game, "variables") && Map.has_key?(game["variables"], code) do
+              game["variables"][code]
+            else
+              case code do
+                "$PLAYER_N" ->
+                  game["playerUi"]["playerN"]
 
-        code == "$GROUP_BY_ID" ->
-          game["groupById"]
+                "$PLAYER_ORDER" ->
+                  # Call evaluate(game, ["NEXT_PLAYER", acc]) numPlayers times, starting with the current player, and put the results in a list
+                  num_players = game["numPlayers"]
+                  IO.puts "num_players: #{inspect(num_players)}"
+                  first_player = game["firstPlayer"]
+                  IO.puts "first_player: #{inspect(first_player)}"
+                  {player_order, _} = Enum.reduce(0..num_players-1, {[], first_player}, fn _, {acc, player_i} ->
+                    IO.puts "player_i: #{inspect(player_i)}"
+                    IO.puts "acc: #{inspect(acc)}"
+                    next_player = evaluate(game, ["NEXT_PLAYER", player_i], trace ++ ["$PLAYER_ORDER"])
+                    {acc ++ [player_i], next_player}
+                  end)
+                  player_order
 
-        code == "$STACK_BY_ID" ->
-          game["stackById"]
+                "$GAME" ->
+                  game
 
-        code == "$CARD_BY_ID" ->
-          game["cardById"]
+                "$GROUP_BY_ID" ->
+                  game["groupById"]
 
-        code == "$CARD_BY_ID_PATH" ->
-          ["cardById"]
+                "$STACK_BY_ID" ->
+                  game["stackById"]
 
-        code == "$PLAYER_DATA" ->
-          game["playerData"]
+                "$CARD_BY_ID" ->
+                  game["cardById"]
 
-        code == "$PLAYER_DATA_PATH" ->
-          ["playerData"]
+                "$CARD_BY_ID_PATH" ->
+                  ["cardById"]
 
-        code == "$ACTIVE_CARD_PATH" ->
-          ["cardById", game["playerUi"]["activeCardId"]]
+                "$PLAYER_DATA" ->
+                  game["playerData"]
 
-        code == "$ACTIVE_FACE_PATH" ->
-          active_card = evaluate(game, "$ACTIVE_CARD", trace)
-          evaluate(game, "$ACTIVE_CARD_PATH", trace) ++ ["sides", active_card["currentSide"]]
+                "$PLAYER_DATA_PATH" ->
+                  ["playerData"]
 
-        code == "$ACTIVE_TOKENS_PATH" ->
-          evaluate(game, "$ACTIVE_CARD_PATH", trace) ++ ["tokens"]
+                "$ACTIVE_CARD_PATH" ->
+                  ["cardById", game["playerUi"]["activeCardId"]]
 
-        code == "$ACTIVE_CARD" ->
-          get_in(game, evaluate(game, "$ACTIVE_CARD_PATH", trace))
+                "$ACTIVE_FACE_PATH" ->
+                  active_card = evaluate(game, "$ACTIVE_CARD", trace)
+                  evaluate(game, "$ACTIVE_CARD_PATH", trace) ++ ["sides", active_card["currentSide"]]
 
-        code == "$ACTIVE_CARD_ID" ->
-          evaluate(game, "$ACTIVE_CARD.id", trace)
+                "$ACTIVE_TOKENS_PATH" ->
+                  evaluate(game, "$ACTIVE_CARD_PATH", trace) ++ ["tokens"]
 
-        code == "$ACTIVE_FACE" ->
-          get_in(game, evaluate(game, "$ACTIVE_FACE_PATH", trace))
+                "$ACTIVE_CARD" ->
+                  get_in(game, evaluate(game, "$ACTIVE_CARD_PATH", trace))
 
-        code == "$ACTIVE_TOKENS" ->
-          get_in(game, evaluate(game, "$ACTIVE_TOKENS_PATH", trace))
+                "$ACTIVE_CARD_ID" ->
+                  evaluate(game, "$ACTIVE_CARD.id", trace)
 
-        is_binary(code) and String.starts_with?(code, "$") and String.contains?(code, ".") ->
-          split = String.split(code, ".")
-          obj = evaluate(game, Enum.at(split, 0), trace)
-          path = ["LIST"] ++ Enum.slice(split, 1, Enum.count(split))
-          evaluate(game, ["OBJ_GET_BY_PATH", obj, path], trace)
+                "$ACTIVE_FACE" ->
+                  get_in(game, evaluate(game, "$ACTIVE_FACE_PATH", trace))
 
-        is_binary(code) and String.starts_with?(code, "$") ->
-          if Map.has_key?(game, "variables") && Map.has_key?(game["variables"], code) do
-            game["variables"][code]
-          else
-            # Join trace together with a comma
-            raise "Variable #{code} not found. " <> inspect(trace)
-          end
+                "$ACTIVE_TOKENS" ->
+                  get_in(game, evaluate(game, "$ACTIVE_TOKENS_PATH", trace))
 
-        is_binary(code) and String.starts_with?(code, "/") ->
-          split = String.split(code, "/")
-          path = ["LIST"] ++ Enum.slice(split, 1, Enum.count(split))
-          List.flatten(evaluate(game, path, trace))
+                _ ->
+                  raise "Variable #{code} is undefined. " <> inspect(trace)
+              end
+            end
 
-        true ->
-          code
+          is_binary(code) and String.starts_with?(code, "/") ->
+            split = String.split(code, "/")
+            path = ["LIST"] ++ Enum.slice(split, 1, Enum.count(split))
+            List.flatten(evaluate(game, path, trace))
+
+          true ->
+            code
+        end
       end
     end
   end
