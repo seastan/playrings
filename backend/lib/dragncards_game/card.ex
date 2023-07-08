@@ -31,10 +31,11 @@ defmodule DragnCardsGame.Card do
       "arrows" => %{},
       "tokens" => Tokens.new(),
 
-      "sides"=> %{
-        "A"=>CardFace.card_face_from_card_face_details(card_details["A"], game_def),
-        "B"=>CardFace.card_face_from_card_face_details(card_details["B"], game_def),
-      }
+      # loop over the sides in card_details
+      # and add them to the card
+      "sides" => Enum.reduce(card_details, %{}, fn({side,val}, acc) ->
+        put_in(acc[side], CardFace.card_face_from_card_face_details(card_details[side], game_def))
+      end)
     }
     card = Enum.reduce(game_def["cardProperties"], base, fn({key,val}, acc) ->
       put_in(acc[key], val["default"])

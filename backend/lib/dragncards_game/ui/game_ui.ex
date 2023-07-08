@@ -411,17 +411,11 @@ defmodule DragnCardsGame.GameUI do
       # If destination is negative, count backward from the end
       dest_stack_index = if dest_stack_index < 0 do
         loop_index = Enum.count(GameUI.get_stack_ids(game, dest_group_id)) + dest_stack_index
-        IO.puts("Loop index: #{loop_index}")
-        IO.inspect(options)
-        IO.inspect(get_in(options, ["combine"]))
-        IO.puts("here")
-        x = if get_in(options, ["combine"]) do
+        if get_in(options, ["combine"]) do
           loop_index
         else
           loop_index + 1
         end
-        IO.puts("Loop index: #{x}")
-        x
       else
         dest_stack_index
       end
