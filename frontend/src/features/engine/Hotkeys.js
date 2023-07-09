@@ -37,6 +37,7 @@ const col2Class = "w-2/3";
 const processLabel = (label) => {
   const tokList = [];
   var currentTok = "";
+  console.log("processLabel", label)
   const len = label.length;
   for (var i=0; i<len; i++) {
     if (i > len - 6) {
@@ -57,8 +58,7 @@ const processLabel = (label) => {
   return tokList;
 }
 
-export const HotkeyTable = React.memo(({hotkeyList}) => {
-  const gameL10n = useGameL10n();
+export const HotkeyTable = React.memo(({hotkeyList, l10n}) => {
   const siteL10n = useSiteL10n();
   if (hotkeyList) return(
     <table className="table-fixed rounded-lg w-full mb-6">
@@ -68,7 +68,7 @@ export const HotkeyTable = React.memo(({hotkeyList}) => {
       </tr>
       {hotkeyList.map((el, elIndex) => {
       const keys = el.key.split("+")
-      const labelList = processLabel(gameL10n(el.label));
+      const labelList = processLabel(l10n(el.label));
       return (
         <tr className={elIndex % 2 == 0 ? "bg-gray-500" : "bg-gray-600"}>
           <td className="p-1 text-center">
@@ -95,6 +95,7 @@ export const HotkeyTable = React.memo(({hotkeyList}) => {
 export const Hotkeys = React.memo(({}) => {
   const dispatch = useDispatch();
   const gameDef = useGameDefinition();
+  const gameL10n = useGameL10n();
   const siteL10n = useSiteL10n();
   const showWindow = useSelector(state => state?.playerUi?.showHotkeys);
   const tabPressed = useSelector(state => state?.playerUi?.keypress?.Tab);
@@ -107,18 +108,18 @@ export const Hotkeys = React.memo(({}) => {
           <div className="w-1/3 float-left p-3">
             <h2 className="mb-2">{siteL10n("tokens")}</h2>
             {siteL10n("hoverOverTopBottom")}
-            <HotkeyTable hotkeyList={gameDef?.hotkeys?.token}/>
+            <HotkeyTable hotkeyList={gameDef?.hotkeys?.token} l10n={gameL10n}/>
           </div>
           <div className="w-1/3 float-left p-3">
             <h2 className="mb-2">{siteL10n("cardHotkeys")}</h2>
             {siteL10n("hoverOverACard")}
-            <HotkeyTable hotkeyList={gameDef?.hotkeys?.card}/>
+            <HotkeyTable hotkeyList={gameDef?.hotkeys?.card} l10n={gameL10n}/>
           </div>
           <div className="w-1/3 float-left p-3">
             <h2 className="mb-2">{siteL10n("gameHotkeys")}</h2>
-            <HotkeyTable hotkeyList={gameDef?.hotkeys?.game}/>
+            <HotkeyTable hotkeyList={gameDef?.hotkeys?.game} l10n={gameL10n}/>
             <h2 className="mb-2">{siteL10n("dragnHotkeys")}</h2>
-            <HotkeyTable hotkeyList={dragnHotkeys}/>
+            <HotkeyTable hotkeyList={dragnHotkeys} l10n={siteL10n}/>
           </div>
         </div>
       </div>

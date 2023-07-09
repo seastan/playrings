@@ -23,9 +23,19 @@ export const dragnActionLists = {
         ]
       ]
     ),
-    targetCard: (cardId) => ([
-      ["SET", "/cardById/" + cardId + "/targeting/$PLAYER_N", true],
-      ["LOG", "$PLAYER_N", " targeted ", ["FACEUP_NAME_FROM_CARD_ID", cardId], "."]
+    targetCard: () => ([
+      ["COND",
+        ["NOT", "$ACTIVE_CARD.targeting.$PLAYER_N"],
+        [
+          ["SET", "/cardById/$ACTIVE_CARD_ID/targeting/$PLAYER_N", true],
+          ["LOG", "$PLAYER_N", " targeted ", "$ACTIVE_CARD.currentFace.name", "."]
+        ],
+        true,
+        [
+          ["SET", "/cardById/$ACTIVE_CARD_ID/targeting/$PLAYER_N", false],
+          ["LOG", "$PLAYER_N", " untargeted ", "$ACTIVE_CARD.currentFace.name", "."]
+        ]
+      ]
     ]),
     setStep: (stepInfo, stepIndex) => ([
       ["SET", "/stepIndex", stepIndex],

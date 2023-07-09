@@ -281,25 +281,30 @@ defmodule DragnCardsGame.CustomPluginTest do
     assert length(res["groupById"]["sharedStagingArea"]["stackIds"]) == num_in_staging + 2
     assert GameUI.get_card_by_group_id_stack_index_card_index(res, ["sharedStagingArea", -1, 0])["currentSide"] == "B"
 
-
     # Move some enemies into engaged area
-    card = Evaluate.evaluate(game, ["ONE_CARD", "$CARD", ["EQUAL", "$CARD.sides.A.name", "King Spider"]])
-    res = Evaluate.evaluate(res, ["MOVE_CARD", card["id"], "player1Engaged", 0])
+    res = game
     card = Evaluate.evaluate(res, ["ONE_CARD", "$CARD", ["EQUAL", "$CARD.sides.A.name", "Ungoliant's Spawn"]])
+    res = Evaluate.evaluate(res, ["MOVE_CARD", card["id"], "player1Engaged", 0])
+    card = Evaluate.evaluate(res, ["ONE_CARD", "$CARD", ["EQUAL", "$CARD.sides.A.name", "King Spider"]])
     res = Evaluate.evaluate(res, ["MOVE_CARD", card["id"], "player1Engaged", 0])
 
     assert length(res["groupById"]["player1Engaged"]["stackIds"]) == 2
 
+    IO.puts("Testing dealShadow")
+
     # Deal shadows
     # Get card on top, make sure it's dealt to the spawn
-    top_card = GameUI.get_card_by_group_id_stack_index_card_index(res, ["sharedEncounterDeck", 0, 0])
+    first_card = GameUI.get_card_by_group_id_stack_index_card_index(res, ["sharedEncounterDeck", 0, 0])
+    second_card = GameUI.get_card_by_group_id_stack_index_card_index(res, ["sharedEncounterDeck", 1, 0])
+    third_card = GameUI.get_card_by_group_id_stack_index_card_index(res, ["sharedEncounterDeck", 2, 0])
     res = Evaluate.evaluate(res, game_def["actionLists"]["dealShadows"])
-    ungoliant_shadow_card = GameUI.get_card_by_group_id_stack_index_card_index(res, ["player1Engaged", 1, 1])
-    assert ungoliant_shadow_card["id"] == top_card["id"]
+
+    stack_ids = res["groupById"]["player1Engaged"]["stackIds"]
+    ungoliant_card = Evaluate.evaluate(res, ["ONE_CARD", "$CARD", ["EQUAL", "$CARD.sides.A.name", "Ungoliant's Spawn"]])
+    ungoliant_shadow_card = GameUI.get_card_by_group_id_stack_index_card_index(res, [ungoliant_card["groupId"], ungoliant_card["stackIndex"], ungoliant_card["cardIndex"] + 1])
+    assert ungoliant_shadow_card["id"] == first_card["id"]
     assert ungoliant_shadow_card["currentSide"] == "B"
-    assert ungoliant_shadow_card["rotation"] == 30
-
-
+    assert ungoliant_shadow_card["rotation"] == -30
 
   end
 end
