@@ -950,12 +950,6 @@ defmodule DragnCardsGame.GameUI do
 
     game = shuffle_changed_decks(game, old_game, game_def)
 
-    if game_def["automation"]["postLoadActionList"] != nil do
-      Evaluate.evaluate_with_timeout(game, game_def["automation"]["postLoadActionList"], ["postLoadActionList"], 5000)
-    else
-      game
-    end
-
     # # Check if we should load the first quest card
     # main_quest_stack_ids = get_stack_ids(game, "sharedMainQuest")
     # IO.puts("load_cards 2a")

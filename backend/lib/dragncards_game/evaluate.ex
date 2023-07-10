@@ -519,15 +519,16 @@ defmodule DragnCardsGame.Evaluate do
 
           "LOAD_CARDS" ->
             load_list = evaluate(game, Enum.at(code, 1), trace ++ ["LOAD_CARDS load_list"])
+            game_def = Plugins.get_game_def(game["options"]["pluginId"])
             # If load_list is a string, it's a preBuiltDeckId - get the list from game_def
             load_list = if is_binary(load_list) do
               load_list_id = load_list
-              game_def = Plugins.get_game_def(game["options"]["pluginId"])
               get_in(game_def, ["preBuiltDecks", load_list_id, "cards"])
             else
               load_list
             end
-            try do
+            # Load cards
+            game = try do
               GameUI.load_cards(game, evaluate(game, "$PLAYER_N", trace), load_list)
             rescue
               e ->
@@ -536,6 +537,12 @@ defmodule DragnCardsGame.Evaluate do
                 exception = exception |> String.split("\n") |> Enum.map(fn(row) -> if String.length(row) > 200 do String.slice(row, 0, 200) <> "..." else row end end) |> Enum.join("\n")
 
                 raise("Failed to load cards. " <> exception <> inspect(trace))
+            end
+            # Run postLoadActionList if it exists
+            if game_def["automation"]["postLoadActionList"] do
+              evaluate(game, game_def["automation"]["postLoadActionList"], trace ++ ["LOAD_CARDS postLoadActionList"])
+            else
+              game
             end
 
           "DELETE_CARD" ->
@@ -551,8 +558,6 @@ defmodule DragnCardsGame.Evaluate do
             card_id = evaluate(game, Enum.at(code, 1), trace ++ ["ATTACH_CARD card_id"])
             dest_card_id = evaluate(game, Enum.at(code, 2), trace ++ ["ATTACH_CARD dest_card_id"])
             dest_card = game["cardById"][dest_card_id]
-            IO.puts("attach dest card")
-            IO.inspect(dest_card)
             try do
               GameUI.move_card(game, card_id, dest_card["groupId"], dest_card["stackIndex"], -1, %{"combine" => true})
             rescue
@@ -563,7 +568,7 @@ defmodule DragnCardsGame.Evaluate do
           "DRAW_CARD" ->
             argc = Enum.count(code) - 1
             num = if argc == 0 do 1 else evaluate(game, Enum.at(code, 1), trace ++ ["DRAW_CARD num"]) end
-            player_n = game["playerUi"]["playerN"]
+            player_n = evaluate(game, "$PLAYER_N", trace ++ ["DRAW_CARD player_n"])
             try do
               GameUI.move_stacks(game, player_n <> "Deck", player_n <> "Hand", num, "bottom")
             rescue

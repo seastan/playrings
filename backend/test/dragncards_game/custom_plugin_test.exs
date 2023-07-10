@@ -15,6 +15,7 @@ defmodule DragnCardsGame.CustomPluginTest do
   use DragnCardsWeb.ConnCase
 
   # Create aliases for the different modules used in this file
+  alias ElixirSense.Providers.Eval
   alias DragnCards.{Plugins, Plugins.Plugin, Repo}
   alias DragnCards.Users.User
   alias DragnCardsGame.{GameUI, Game, Evaluate}
@@ -178,16 +179,14 @@ defmodule DragnCardsGame.CustomPluginTest do
     # Load some decks into the game
     game = Evaluate.evaluate(game, ["LOAD_CARDS", "Q01.1"]) # Passage through Mirkwood
     game = Evaluate.evaluate(game, ["LOAD_CARDS", "coreLeadership"]) # Leadership core set deck
+    assert length(game["groupById"]["player1Hand"]["stackIds"]) == 6
+    assert length(game["groupById"]["player1Deck"]["stackIds"]) == 24
+    assert game["playerData"]["player1"]["threat"] == 29
 
     # Get one of the cards
     aragorn_card_db_id = "51223bd0-ffd1-11df-a976-0801200c9001"
     aragorn_card = Evaluate.evaluate(game, ["ONE_CARD", "$CARD", ["EQUAL", "$CARD.databaseId", aragorn_card_db_id]])
     aragorn_card_id = aragorn_card["id"]
-
-    Enum.reduce(game["loadedCardIds"], nil, fn(id, acc) ->
-      IO.inspect(game["cardById"][id]["databaseId"])
-      acc
-    end)
 
     # Make it active
     game = put_in(game["playerUi"]["activeCardId"], aragorn_card_id)
@@ -281,30 +280,49 @@ defmodule DragnCardsGame.CustomPluginTest do
     assert length(res["groupById"]["sharedStagingArea"]["stackIds"]) == num_in_staging + 2
     assert GameUI.get_card_by_group_id_stack_index_card_index(res, ["sharedStagingArea", -1, 0])["currentSide"] == "B"
 
-    # Move some enemies into engaged area
+    # 2 player game. Move some enemies into engaged area
     res = game
+    res = Evaluate.evaluate(res, ["SET", "/numPlayers", 2])
+    res = Evaluate.evaluate(res, [["DEFINE", "$PLAYER_N", "player2"], ["LOAD_CARDS", "coreLeadership"]])
+    #assert length(res["groupById"]["player2Hand"]["stackIds"]) == 6
+    assert length(res["groupById"]["player2Deck"]["stackIds"]) == 24
     card = Evaluate.evaluate(res, ["ONE_CARD", "$CARD", ["EQUAL", "$CARD.sides.A.name", "Ungoliant's Spawn"]])
-    res = Evaluate.evaluate(res, ["MOVE_CARD", card["id"], "player1Engaged", 0])
+    res = Evaluate.evaluate(res, ["MOVE_CARD", card["id"], "player1Engaged", -1])
+    card = Evaluate.evaluate(res, ["ONE_CARD", "$CARD", ["EQUAL", "$CARD.sides.A.name", "East Bight Patrol"]])
+    res = Evaluate.evaluate(res, ["MOVE_CARD", card["id"], "player2Engaged", -1])
+    card = Evaluate.evaluate(res, ["ONE_CARD", "$CARD", ["EQUAL", "$CARD.sides.A.name", "Black Forest Bats"]])
+    res = Evaluate.evaluate(res, ["MOVE_CARD", card["id"], "player1Engaged", -1])
     card = Evaluate.evaluate(res, ["ONE_CARD", "$CARD", ["EQUAL", "$CARD.sides.A.name", "King Spider"]])
-    res = Evaluate.evaluate(res, ["MOVE_CARD", card["id"], "player1Engaged", 0])
-
+    res = Evaluate.evaluate(res, ["MOVE_CARD", card["id"], "player2Engaged", -1])
     assert length(res["groupById"]["player1Engaged"]["stackIds"]) == 2
 
     IO.puts("Testing dealShadow")
 
     # Deal shadows
-    # Get card on top, make sure it's dealt to the spawn
-    first_card = GameUI.get_card_by_group_id_stack_index_card_index(res, ["sharedEncounterDeck", 0, 0])
-    second_card = GameUI.get_card_by_group_id_stack_index_card_index(res, ["sharedEncounterDeck", 1, 0])
-    third_card = GameUI.get_card_by_group_id_stack_index_card_index(res, ["sharedEncounterDeck", 2, 0])
+
+    ecard1 = GameUI.get_card_by_group_id_stack_index_card_index(res, ["sharedEncounterDeck", 0, 0])
+    ecard2 = GameUI.get_card_by_group_id_stack_index_card_index(res, ["sharedEncounterDeck", 1, 0])
+    ecard3 = GameUI.get_card_by_group_id_stack_index_card_index(res, ["sharedEncounterDeck", 2, 0])
+    ecard4 = GameUI.get_card_by_group_id_stack_index_card_index(res, ["sharedEncounterDeck", 3, 0])
+
     res = Evaluate.evaluate(res, game_def["actionLists"]["dealShadows"])
 
-    stack_ids = res["groupById"]["player1Engaged"]["stackIds"]
-    ungoliant_card = Evaluate.evaluate(res, ["ONE_CARD", "$CARD", ["EQUAL", "$CARD.sides.A.name", "Ungoliant's Spawn"]])
-    ungoliant_shadow_card = GameUI.get_card_by_group_id_stack_index_card_index(res, [ungoliant_card["groupId"], ungoliant_card["stackIndex"], ungoliant_card["cardIndex"] + 1])
-    assert ungoliant_shadow_card["id"] == first_card["id"]
-    assert ungoliant_shadow_card["currentSide"] == "B"
-    assert ungoliant_shadow_card["rotation"] == -30
+    scard1 = GameUI.get_card_by_group_id_stack_index_card_index(res, ["player1Engaged", 0, 1])
+    scard2 = GameUI.get_card_by_group_id_stack_index_card_index(res, ["player1Engaged", 1, 1])
+    scard3 = GameUI.get_card_by_group_id_stack_index_card_index(res, ["player2Engaged", 1, 1])
+    scard4 = GameUI.get_card_by_group_id_stack_index_card_index(res, ["player2Engaged", 0, 1])
+
+    assert ecard1["id"] == scard1["id"]
+    assert ecard2["id"] == scard2["id"]
+    assert ecard3["id"] == scard3["id"]
+    assert ecard4["id"] == scard4["id"]
+
+    # Discard shadows
+    res = Evaluate.evaluate(res, game_def["actionLists"]["discardShadows"])
+    assert res["cardById"][scard1["id"]]["groupId"] == "sharedEncounterDiscard"
+    assert res["cardById"][scard2["id"]]["groupId"] == "sharedEncounterDiscard"
+    assert res["cardById"][scard3["id"]]["groupId"] == "sharedEncounterDiscard"
+    assert res["cardById"][scard4["id"]]["groupId"] == "sharedEncounterDiscard"
 
   end
 end
