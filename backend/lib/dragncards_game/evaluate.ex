@@ -356,7 +356,7 @@ defmodule DragnCardsGame.Evaluate do
                     acc["sides"]
                   end
                   if sides[current_side] == nil do
-                    raise "Tried to access side #{current_side} on an object with sides #{inspect(Map.keys(sides))}."
+                    raise "Tried to access side #{current_side} on an object with sides #{inspect(Map.keys(sides))}. #{inspect(trace)}"
                   else
                     sides[current_side]
                   end
@@ -377,6 +377,8 @@ defmodule DragnCardsGame.Evaluate do
                   else
                     raise "Tried to access parentCardIds on a non-group object."
                   end
+                acc == nil ->
+                  nil
                 Map.has_key?(acc, pathi) ->
                   Map.get(acc, evaluate(game, pathi, trace ++ ["OBJ_GET_BY_PATH key #{index}"]))
                 true ->

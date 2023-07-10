@@ -238,7 +238,7 @@ defmodule DragnCardsGame.McPluginTest do
 
 
     # Ant-Man
-    card = Evaluate.evaluate(res, ["ONE_CARD", "$CARD", ["EQUAL", "$CARD.sides.A.name", "Ant-Man"]])
+    card = Evaluate.evaluate(res, ["ONE_CARD", "$CARD", ["EQUAL", "$CARD.sides.C.name", "Ant-Man"]])
     card_id = card["id"]
     assert res["cardById"][card_id]["currentSide"] == "B"
 
@@ -246,11 +246,11 @@ defmodule DragnCardsGame.McPluginTest do
     res = put_in(res["playerUi"]["activeCardId"], card_id)
 
     # Toggle third side
-    res = Evaluate.evaluate(res, game_def["actionLists"]["toggleThirdSide"])
+    res = Evaluate.evaluate(res, game_def["actionLists"]["setSideC"])
     assert res["cardById"][card_id]["currentSide"] == "C"
 
     # Toggle third side
-    res = Evaluate.evaluate(res, game_def["actionLists"]["toggleThirdSide"])
+    res = Evaluate.evaluate(res, game_def["actionLists"]["setSideB"])
     assert res["cardById"][card_id]["currentSide"] == "B"
   end
 end
