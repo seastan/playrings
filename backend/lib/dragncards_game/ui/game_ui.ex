@@ -195,12 +195,16 @@ defmodule DragnCardsGame.GameUI do
   # Updaters                                                 #
   ############################################################
 
-  def update_group(game, new_group) do
-    Evaluate.evaluate(game, ["SET", "/groupById" <> "/" <> new_group["id"], new_group])
-  end
-
   def update_stack_ids(game, group_id, new_stack_ids) do
-    Evaluate.evaluate(game, ["SET", "/groupById/" <> group_id <> "/stackIds", ["LIST"] ++ new_stack_ids])
+    game = Evaluate.evaluate(game, ["SET", "/groupById/" <> group_id <> "/stackIds", ["LIST"] ++ new_stack_ids], ["update_stack_ids group_id:#{group_id}"])
+    # Update the indices of all cards in these stacks
+    Enum.reduce(Enum.with_index(new_stack_ids), game, fn({stack_id, stack_index}, acc) ->
+      stack = get_stack(game, stack_id)
+      Enum.reduce(Enum.with_index(stack["cardIds"]), acc, fn({card_id, card_index}, acc2) ->
+        Evaluate.evaluate(acc2, ["SET", "/cardById/" <> card_id <> "/stackIndex", stack_index], ["update_stack_ids stack_index:#{stack_index}"])
+        |> Evaluate.evaluate(["SET", "/cardById/" <> card_id <> "/cardIndex", card_index], ["update_stack_ids card_index:#{card_index}"])
+      end)
+    end)
   end
 
   def update_stack(game, new_stack) do
@@ -815,11 +819,10 @@ defmodule DragnCardsGame.GameUI do
     # |> Map.put("stackIndex", group_size)
     # |> Map.put("cardIndex", 0)
 
-
     game
-    |> insert_stack_in_group(group_id, new_stack["id"], group_size)
-    |> update_stack(new_stack)
     |> update_card(new_card)
+    |> update_stack(new_stack)
+    |> insert_stack_in_group(group_id, new_stack["id"], group_size)
     |> implement_card_automations(game_def, new_card)
     |> update_card_state(new_card["id"], nil, nil)
     |> Evaluate.evaluate(["SET", "/loadedCardIds", ["LIST"] ++ game["loadedCardIds"] ++ [new_card["id"]]], ["create_card_in_group"])
