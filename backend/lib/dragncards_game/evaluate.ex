@@ -548,7 +548,7 @@ defmodule DragnCardsGame.Evaluate do
           "DELETE_CARD" ->
             card_id = evaluate(game, Enum.at(code, 1), trace ++ ["DELETE_CARD card_id"])
             try do
-              GameUI.delete_card(card_id)
+              GameUI.delete_card(game, card_id)
             rescue
               e ->
                 raise("Failed to delete card #{card_id}. " <> inspect(e) <> inspect(trace))

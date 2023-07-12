@@ -21,7 +21,7 @@ defmodule DragnCardsWeb.ChatChannel do
   def handle_in(
         "message",
         %{"message" => message_text},
-        %{assigns: %{room_slug: room_slug, user_id: user_id}} = socket
+        %{assigns: %{room_slug: _room_slug, user_id: user_id}} = socket
       ) do
     message = ChatMessage.new(message_text, user_id)
 

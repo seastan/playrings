@@ -3,7 +3,6 @@ defmodule DragnCardsGame.PlayerInfo do
   Represents a player.
   """
   require Logger
-  alias DragnCardsGame.PlayerInfo
   alias DragnCards.Users
 
   @type t :: Map.t()

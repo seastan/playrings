@@ -24,7 +24,8 @@ defmodule DragnCards.Application do
       {Periodic,
        run: &DragnCardsGame.GameRegistry.cleanup/0,
        initial_delay: :timer.seconds(1),
-       every: :timer.minutes(5)}
+       every: :timer.minutes(5)},
+       {Phoenix.PubSub, [name: DragnCards.PubSub, adapter: Phoenix.PubSub.PG2]}
       # Starts a worker by calling: DragnCards.Worker.start_link(arg)
       # {DragnCards.Worker, arg},
     ]

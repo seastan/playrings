@@ -39,10 +39,10 @@ defmodule DragnCardsWeb.MyPluginsController do
   #def create(conn, %{"user" => user}) do
   def create(conn, %{"plugin" => plugin_params}) do
     case Plugins.create_plugin(plugin_params) do
-      {:ok, struct} ->
+      {:ok, _struct} ->
         conn
         |> json(%{success: %{message: "Plugin created successfully"}})
-      {:error, changeset} ->
+      {:error, _changeset} ->
         conn
         |> json(%{error: %{message: "Plugin creation failed"}})
     end
@@ -53,17 +53,11 @@ defmodule DragnCardsWeb.MyPluginsController do
   @spec update(Conn.t(), map()) :: Conn.t()
   def update(conn, %{"plugin" => plugin_params}) do
     plugin = Plugins.get_plugin!(plugin_params["id"])
-    updates = %{
-      "game_def" => plugin_params["game_def"] || plugin.game_def,
-      "card_db" => plugin_params["card_db"] || plugin.card_db,
-      "public" => plugin_params["public"],
-      "version" => plugin.version + 1
-    }
     case Plugins.update_plugin(plugin, plugin_params) do
-      {:ok, struct} ->
+      {:ok, _struct} ->
         conn
         |> json(%{success: %{message: "Plugin updated successfully"}})
-      {:error, changeset} ->
+      {:error, _changeset} ->
         conn
         |> json(%{error: %{message: "Plugin update failed"}})
       end
@@ -77,8 +71,7 @@ defmodule DragnCardsWeb.MyPluginsController do
     plugin = Repo.one(from p in Plugin, select: [:id], where: p.id == ^plugin_id)
     plugin_id = plugin.id
     user_id = user.id
-    user_alias = user.alias
-    {rows_deleted, _} = from(x in Plugin, where: x.id == ^plugin_id and x.author_id == ^user_id) |> Repo.delete_all
+    from(x in Plugin, where: x.id == ^plugin_id and x.author_id == ^user_id) |> Repo.delete_all
     conn
     |> json(%{success: %{message: "Updated settings"}})
   end

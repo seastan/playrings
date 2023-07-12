@@ -6,7 +6,7 @@ defmodule DragnCardsGame.GameUI do
 
   require Logger
   alias DragnCardsGame.GameVariables
-  alias DragnCardsGame.{Game, GameUI, GameUISeat, Groups, Stack, Card, CardFace, PlayerInfo, Evaluate, GameVariables}
+  alias DragnCardsGame.{Game, GameUI, Stack, Card, PlayerInfo, Evaluate, GameVariables}
 
   alias DragnCards.{Repo, Replay, Plugins}
   alias DragnCards.Rooms.Room
@@ -796,28 +796,14 @@ defmodule DragnCardsGame.GameUI do
   end
 
   def reset_game(game) do
-    Game.new(game["options"])
+    Game.new(game["roomSlug"], game["options"])
   end
 
   def create_card_in_group(game, game_def, group_id, load_list_item) do
     group_size = Enum.count(get_stack_ids(game, group_id))
     # Can't insert a card directly into a group need to make a stack first
     new_card = Card.card_from_card_details(load_list_item["cardDetails"], game_def, load_list_item["databaseId"], group_id)
-    new_card_id = new_card["id"]
     new_stack = Stack.stack_from_card(new_card)
-
-    # IO.puts("create_card_in_group 1")
-    # game = game
-    # |> Evaluate.evaluate(["SET", "/cardById/" <> new_card_id <> "/groupId", group_id], ["create_card_in_group"])
-    # |> Evaluate.evaluate(["SET", "/cardById/" <> new_card_id <> "/stackId", new_stack["id"]], ["create_card_in_group"])
-    # |> Evaluate.evaluate(["SET", "/cardById/" <> new_card_id <> "/stackIndex", group_size], ["create_card_in_group"])
-    # |> Evaluate.evaluate(["SET", "/cardById/" <> new_card_id <> "/cardIndex", 0], ["create_card_in_group"])
-    # IO.puts("create_card_in_group 2")
-    # new_card = new_card
-    # |> Map.put("groupId", group_id)
-    # |> Map.put("stackId", new_stack["id"])
-    # |> Map.put("stackIndex", group_size)
-    # |> Map.put("cardIndex", 0)
 
     game
     |> update_card(new_card)
@@ -951,7 +937,7 @@ defmodule DragnCardsGame.GameUI do
 
     game = Evaluate.evaluate(game, ["LOG", "$PLAYER_N", " loaded cards."])
 
-    game = shuffle_changed_decks(game, old_game, game_def)
+    shuffle_changed_decks(game, old_game, game_def)
 
     # # Check if we should load the first quest card
     # main_quest_stack_ids = get_stack_ids(game, "sharedMainQuest")

@@ -15,10 +15,9 @@ defmodule DragnCardsGame.CustomPluginTest do
   use DragnCardsWeb.ConnCase
 
   # Create aliases for the different modules used in this file
-  alias ElixirSense.Providers.Eval
-  alias DragnCards.{Plugins, Plugins.Plugin, Repo}
+  alias DragnCards.{Plugins, Repo}
   alias DragnCards.Users.User
-  alias DragnCardsGame.{GameUI, Game, Evaluate}
+  alias DragnCardsGame.{GameUI, Evaluate}
   alias Jason
 
   # Import Ecto.Query for database related operations
@@ -60,21 +59,20 @@ defmodule DragnCardsGame.CustomPluginTest do
         confirm_time = DateTime.utc_now()
 
         # Update the user's email confirmed time in the database
-        output =
-          from(p in User,
-            where: p.id == ^user.id,
-            update: [set: [email_confirmed_at: ^confirm_time]]
-          )
-          |> Repo.update_all([])
-          |> case do
-            {1, nil} ->
-              # If the update was successful, print a confirmation message
-              IO.puts("Email Confirmed for user!")
+        from(p in User,
+          where: p.id == ^user.id,
+          update: [set: [email_confirmed_at: ^confirm_time]]
+        )
+        |> Repo.update_all([])
+        |> case do
+          {1, nil} ->
+            # If the update was successful, print a confirmation message
+            IO.puts("Email Confirmed for user!")
 
-            _ ->
-              # If the update was not successful, print a failure message
-              IO.puts("Email NOT Confirmed for user!")
-          end
+          _ ->
+            # If the update was not successful, print a failure message
+            IO.puts("Email NOT Confirmed for user!")
+        end
 
       {:error, changeset} ->
         # If the user creation failed, print and inspect the errors
@@ -174,7 +172,7 @@ defmodule DragnCardsGame.CustomPluginTest do
 
   # end
 
-  test "Card Hotkeys", %{user: user, game: game, game_def: game_def} do
+  test "Card Hotkeys", %{user: _user, game: game, game_def: game_def} do
 
     # Load some decks into the game
     game = Evaluate.evaluate(game, ["LOAD_CARDS", "Q01.1"]) # Passage through Mirkwood
@@ -222,7 +220,7 @@ defmodule DragnCardsGame.CustomPluginTest do
     # mulligan
     IO.puts("Testing mulligan")
     res = Evaluate.evaluate(game, game_def["actionLists"]["mulligan"])
-    assert length(game["groupById"]["player1Hand"]["stackIds"]) == 6
+    assert length(res["groupById"]["player1Hand"]["stackIds"]) == 6
 
     # newRound
     IO.puts("Testing newRound")
@@ -343,7 +341,7 @@ defmodule DragnCardsGame.CustomPluginTest do
 
   # 4 player game
   @tag :four_player
-  test "4 player game", %{user: user, game: game, game_def: game_def} do
+  test "4 player game", %{user: _user, game: game, game_def: _game_def} do
 
     # Load some decks into the game
     playerNs = ["player1", "player2", "player3", "player4"]

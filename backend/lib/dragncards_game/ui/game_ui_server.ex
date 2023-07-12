@@ -6,8 +6,7 @@ defmodule DragnCardsGame.GameUIServer do
   @timeout :timer.minutes(60)
 
   require Logger
-  alias DragnCardsGame.{Game, Card, GameUI, GameRegistry, Groups, User, Stack, Tokens, PlayerInfo}
-  alias DragnCards.Users
+  alias DragnCardsGame.{GameUI, GameRegistry, User, PlayerInfo}
 
   def is_player(gameui, user_id) do
     ids = gameui["playerInfo"]
@@ -106,7 +105,7 @@ defmodule DragnCardsGame.GameUIServer do
   close_room/2: Shut down the GenServer.
   """
   @spec close_room(String.t(), integer) :: GameUI.t()
-  def close_room(game_name, user_id) do
+  def close_room(game_name, _user_id) do
     GenServer.call(via_tuple(game_name), {:close_room})
   end
 
@@ -173,7 +172,7 @@ defmodule DragnCardsGame.GameUIServer do
       # IO.puts("gameui_json")
       # IO.inspect(gameui_json)
       # {status, gameui} = Jason.decode(gameui_json)
-      gameui = put_in(gameui["game"]["last_action"], action)
+      put_in(gameui["game"]["last_action"], action)
     #rescue
     #  exception ->
     #    stack_trace = __STACKTRACE__
@@ -186,8 +185,8 @@ defmodule DragnCardsGame.GameUIServer do
   def handle_call({:step_through, options}, _from, gameui) do
     Logger.debug("handle step_through")
     try do
-      gameui = GameUI.step_through(gameui, options)
-      gameui = put_in(gameui["error"], false)
+      GameUI.step_through(gameui, options)
+      |> put_in(["error"], false)
     rescue
       e in RuntimeError ->
         IO.inspect(e)
@@ -196,11 +195,10 @@ defmodule DragnCardsGame.GameUIServer do
     |> save_and_reply()
   end
 
-  def handle_call({:set_game_def, user_id, game_def}, _from, gameui) do
-    Logger.debug("handle step_through")
+  def handle_call({:set_game_def, user_id, _game_def}, _from, gameui) do
     try do
-      gameui = GameUI.new(gameui, user_id, gameui["options"])
-      gameui = put_in(gameui["error"], false)
+      GameUI.new(gameui, user_id, gameui["options"])
+      |> put_in(["error"], false)
     rescue
       e in RuntimeError ->
         IO.inspect(e)
@@ -209,9 +207,9 @@ defmodule DragnCardsGame.GameUIServer do
     |> save_and_reply()
   end
 
-  def handle_call({:set_seat, user_id, player_i, new_user_id}, _from, gameui) do
+  def handle_call({:set_seat, _user_id, player_i, new_user_id}, _from, gameui) do
     try do
-      gameui = put_in(gameui["playerInfo"][player_i],PlayerInfo.new(new_user_id))
+      put_in(gameui["playerInfo"][player_i],PlayerInfo.new(new_user_id))
     rescue
       e in RuntimeError ->
         IO.inspect(e)
@@ -230,8 +228,18 @@ defmodule DragnCardsGame.GameUIServer do
     gameui |> save_and_reply()
   end
 
+  def handle_call({:leave, _user_id, pid}, _from, gameui) do
+    Map.delete(gameui, ["sockets", pid_to_string(pid)])
+    |> save_and_reply()
+  end
+
   def handle_info(:close_room, state) do
     {:stop, :normal, state}
+  end
+
+  # When timing out, the order is handle_info(:timeout, _) -> terminate({:shutdown, :timeout}, _)
+  def handle_info(:timeout, state) do
+    {:stop, {:shutdown, :timeout}, state}
   end
 
   defp reply(new_gameui) do
@@ -258,16 +266,6 @@ defmodule DragnCardsGame.GameUIServer do
   # GenServer timeout be? (Games with winners expire quickly)
   defp timeout(_state) do
     @timeout
-  end
-
-  def handle_call({:leave, user_id, pid}, _from, gameui) do
-    Map.delete(gameui, ["sockets", pid_to_string(pid)])
-    |> save_and_reply()
-  end
-
-  # When timing out, the order is handle_info(:timeout, _) -> terminate({:shutdown, :timeout}, _)
-  def handle_info(:timeout, state) do
-    {:stop, {:shutdown, :timeout}, state}
   end
 
   def terminate({:shutdown, :timeout}, state) do

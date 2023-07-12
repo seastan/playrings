@@ -1,6 +1,6 @@
 
 defmodule DragnCardsUtil.TsvProcess do
-  def process_rows(game_def, rows) do
+  def process_rows(_game_def, rows) do
 
     header0 = List.first(rows)
     # trim off the \r and \n

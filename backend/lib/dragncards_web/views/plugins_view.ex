@@ -1,6 +1,5 @@
 defmodule DragnCardsWeb.PluginsView do
   use DragnCardsWeb, :view
-  alias DragnCardsWeb.PluginsView
 
   def render("index.json", %{plugins: plugins}) do
     %{data: Enum.map(plugins, fn plugin ->

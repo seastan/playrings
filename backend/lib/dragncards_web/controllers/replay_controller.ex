@@ -36,10 +36,10 @@ defmodule DragnCardsWeb.ReplayController do
     r = Repo.get!(Replay, replay["id"])
     c = Ecto.Changeset.change(r, updates)
     case Repo.update(c) do
-      {:ok, struct}       -> # Updated with success
+      {:ok, _struct}       -> # Updated with success
         conn
         |> json(%{success: %{message: "Deleted replay"}})
-      {:error, changeset} -> # Something went wrong
+      {:error, _changeset} -> # Something went wrong
         conn
         |> json(%{success: %{message: "Failed to delete replay"}})
     end

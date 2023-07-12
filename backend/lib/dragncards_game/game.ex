@@ -17,7 +17,7 @@
   def load(room_slug, options) do
     game = if options["replayId"] != nil and options["replayId"] != "" do
       gameid = options["replayId"]
-      query = Ecto.Query.from(e in Replay,
+      query = from(e in Replay,
         where: e.uuid == ^gameid,
         order_by: [desc: e.inserted_at],
         limit: 1)
