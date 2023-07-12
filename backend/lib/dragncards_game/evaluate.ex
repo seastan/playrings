@@ -582,12 +582,13 @@ defmodule DragnCardsGame.Evaluate do
             dest_group_id = evaluate(game, Enum.at(code, 2), trace ++ ["MOVE_STACK dest_group_id"])
             dest_stack_index = evaluate(game, Enum.at(code, 3), trace ++ ["MOVE_STACK dest_stack_index"])
             options = if argc >= 4 do evaluate(game, Enum.at(code, 4), trace ++ ["MOVE_STACK options"] ) else nil end
-            try do
+            IO.inspect(options)
+            #try do
               GameUI.move_stack(game, stack_id, dest_group_id, dest_stack_index, options)
-            rescue
-              e ->
-                raise("Failed to move stack #{stack_id} to dest_group_id:#{dest_group_id} dest_stack_index:#{dest_stack_index}. " <> inspect(e) <> inspect(trace))
-            end
+            #rescue
+            #  e ->
+            #    raise("Failed to move stack #{stack_id} to dest_group_id:#{dest_group_id} dest_stack_index:#{dest_stack_index}. " <> inspect(e) <> inspect(trace))
+            #end
 
           "DISCARD_STACK" ->
             stack_id = evaluate(game, Enum.at(code, 1), trace ++ ["DISCARD_STACK stack_id"])

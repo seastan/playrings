@@ -2,7 +2,7 @@
 export const dragnActionLists = {
     setRotation: (deg) => (
       [
-        ["SET", "/$ACTIVE_CARD_PATH/rotation", deg],
+        ["SET", "/cardById/$ACTIVE_CARD_ID/rotation", deg],
         ["LOG", "$PLAYER_N", " set rotation of ", "$ACTIVE_FACE.name", " to ", deg, "."]
       ]
     ),

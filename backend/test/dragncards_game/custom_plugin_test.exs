@@ -15,6 +15,7 @@ defmodule DragnCardsGame.CustomPluginTest do
   use DragnCardsWeb.ConnCase
 
   # Create aliases for the different modules used in this file
+  alias ElixirSense.Providers.Eval
   alias DragnCards.{Plugins, Repo}
   alias DragnCards.Users.User
   alias DragnCardsGame.{GameUI, Evaluate}
@@ -392,4 +393,19 @@ defmodule DragnCardsGame.CustomPluginTest do
   end
 
 
+  # Moving cards
+  @tag :moving_cards
+  test "moving cards", %{user: _user, game: game, game_def: _game_def} do
+
+    # Load some decks into the game
+    game = Evaluate.evaluate(game, ["LOAD_CARDS", "Q01.1"]) # Passage through Mirkwood
+    game = Evaluate.evaluate(game, ["LOAD_CARDS", "coreLeadership"]) # Leadership core set deck
+    assert length(game["groupById"]["player1Hand"]["stackIds"]) == 6
+    assert length(game["groupById"]["player1Deck"]["stackIds"]) == 24
+
+    # Get a stackId
+    stackId = Enum.at(game["groupById"]["player1Hand"]["stackIds"], 2)
+    Evaluate.evaluate(game, ["MOVE_STACK", stackId, "player1Hand", 0])
+
+  end
 end

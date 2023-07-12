@@ -429,7 +429,6 @@ defmodule DragnCardsGame.GameUI do
       cards = Enum.map(card_ids, fn(card_id) -> get_card(game, card_id) end)
       # Get list of card side A name
       card_side_a_names = Enum.map(cards, fn(card) -> card["sides"]["A"]["name"] end)
-      IO.puts("Moving stack: #{card_side_a_names} #{dest_group_id} #{dest_stack_index}")
       orig_group_id = get_group_by_stack_id(game, stack_id)["id"]
       orig_stack_index = get_stack_index_by_stack_id(game, stack_id)
       # If destination is negative, count backward from the end
@@ -445,7 +444,7 @@ defmodule DragnCardsGame.GameUI do
       end
       IO.puts("Moving stack: #{card_side_a_names} #{dest_group_id} #{dest_stack_index}")
       # If attaching to same group at higher index, dest_index will end up being 1 less
-      dest_stack_index = if orig_group_id == dest_group_id and options["combine"] and orig_stack_index < dest_stack_index do dest_stack_index - 1 else dest_stack_index end
+      dest_stack_index = if orig_group_id == dest_group_id and options["combine"] == true and orig_stack_index < dest_stack_index do dest_stack_index - 1 else dest_stack_index end
       # Delete stack id from old group
       old_orig_stack_ids = get_stack_ids(game, orig_group_id)
       new_orig_stack_ids = List.delete_at(old_orig_stack_ids, orig_stack_index)
