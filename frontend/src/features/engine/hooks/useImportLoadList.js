@@ -6,7 +6,7 @@ export const useImportLoadList = () => {
   const loadList = (list) => {
     console.log("loadList", list)
     // Load the cards
-    doActionList(["LOAD_CARDS", ["LIST"] + list])
+    doActionList(["LOAD_CARDS", ["LIST"].concat(list)])
 
   };
 
