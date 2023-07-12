@@ -226,6 +226,56 @@ defmodule DragnCardsGame.McPluginTest do
 
   end
 
+  test "player setup", %{user: user, game: game, game_def: game_def} do
+    res = Evaluate.evaluate(game, ["LOAD_CARDS", "Captain America"])
+
+    assert res["playerData"]["player1"]["handSize"] == 6
+    assert res["playerData"]["player1"]["hitPoints"] == 11
+    assert length(res["groupById"]["player1Hand"]["stackIds"])
+  end
+
+  test "scenario setup", %{user: user, game: game, game_def: game_def} do
+    res = Evaluate.evaluate(game, ["LOAD_CARDS", "Rhino"])
+
+    assert res["villainHitPoints"] == 14
+
+    stacks = res["groupById"]["sharedVillain"]["stackIds"]
+    assert length(stacks) == 1
+    card_id = hd(res["stackById"][hd(stacks)]["cardIds"])
+    assert res["cardById"][card_id]["sides"]["A"]["stage"] == "I"
+
+    stacks = res["groupById"]["sharedVillainDeck"]["stackIds"]
+    assert length(stacks) == 1
+    card_id = hd(res["stackById"][hd(stacks)]["cardIds"])
+    assert res["cardById"][card_id]["sides"]["A"]["stage"] == "II"
+
+    stacks = res["groupById"]["sharedVillainDiscard"]["stackIds"]
+    assert length(stacks) == 1
+    card_id = hd(res["stackById"][hd(stacks)]["cardIds"])
+    assert res["cardById"][card_id]["sides"]["A"]["stage"] == "III"
+  end
+
+  test "discard villain card", %{user: user, game: game, game_def: game_def} do
+    res = Evaluate.evaluate(game, ["LOAD_CARDS", "Rhino"])
+
+    stacks = res["groupById"]["sharedVillain"]["stackIds"]
+    card_id = hd(res["stackById"][hd(stacks)]["cardIds"])
+    res = put_in(res["playerUi"]["activeCardId"], card_id)
+
+    res = Evaluate.evaluate(res, game_def["actionLists"]["discardCard"])
+
+    stacks = res["groupById"]["sharedVillain"]["stackIds"]
+    assert length(stacks) == 1
+    card_id = hd(res["stackById"][hd(stacks)]["cardIds"])
+    assert res["cardById"][card_id]["sides"]["A"]["stage"] == "II"
+
+    stacks = res["groupById"]["sharedVillainDeck"]["stackIds"]
+    assert length(stacks) == 0
+
+    stacks = res["groupById"]["sharedVillainDiscard"]["stackIds"]
+    assert length(stacks) == 2
+  end
+
   test "3-sided cards", %{user: _user, game: game, game_def: game_def} do
 
     # Load some decks into the game
