@@ -234,7 +234,7 @@ defmodule DragnCardsGame.McPluginTest do
     assert length(res["groupById"]["player1Hand"]["stackIds"])
   end
 
-  test "scenario setup", %{user: user, game: game, game_def: game_def} do
+  test "scenario setup (standard)", %{user: user, game: game, game_def: game_def} do
     res = Evaluate.evaluate(game, ["LOAD_CARDS", "Rhino"])
 
     assert res["villainHitPoints"] == 14
@@ -253,6 +253,28 @@ defmodule DragnCardsGame.McPluginTest do
     assert length(stacks) == 1
     card_id = hd(res["stackById"][hd(stacks)]["cardIds"])
     assert res["cardById"][card_id]["sides"]["A"]["stage"] == "III"
+  end
+
+  test "scenario setup (expert)", %{user: user, game: game, game_def: game_def} do
+    res = Evaluate.evaluate(game, game_def["actionLists"]["setExpertMode"])
+    res = Evaluate.evaluate(res, ["LOAD_CARDS", "Rhino"])
+
+    assert res["villainHitPoints"] == 15
+
+    stacks = res["groupById"]["sharedVillain"]["stackIds"]
+    assert length(stacks) == 1
+    card_id = hd(res["stackById"][hd(stacks)]["cardIds"])
+    assert res["cardById"][card_id]["sides"]["A"]["stage"] == "II"
+
+    stacks = res["groupById"]["sharedVillainDeck"]["stackIds"]
+    assert length(stacks) == 1
+    card_id = hd(res["stackById"][hd(stacks)]["cardIds"])
+    assert res["cardById"][card_id]["sides"]["A"]["stage"] == "III"
+
+    stacks = res["groupById"]["sharedVillainDiscard"]["stackIds"]
+    assert length(stacks) == 1
+    card_id = hd(res["stackById"][hd(stacks)]["cardIds"])
+    assert res["cardById"][card_id]["sides"]["A"]["stage"] == "I"
   end
 
   test "discard villain card", %{user: user, game: game, game_def: game_def} do
