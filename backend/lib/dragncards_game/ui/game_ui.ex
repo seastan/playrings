@@ -221,6 +221,10 @@ defmodule DragnCardsGame.GameUI do
 
   # Move a card
   def move_card(game, card_id, dest_group_id, dest_stack_index, dest_card_index, options \\ false) do
+    # Check if dest_group_id is a key in game["groupById"]
+    if dest_group_id not in Map.keys(game["groupById"]) do
+      raise "Group not found: #{dest_group_id}"
+    end
     # Get position of card
     {orig_group_id, _orig_stack_index, _orig_card_index} = gsc(game, card_id)
     # Perpare destination stack
@@ -420,55 +424,55 @@ defmodule DragnCardsGame.GameUI do
   end
 
   def move_stack(game, stack_id, dest_group_id, dest_stack_index, options \\ nil) do
-    if stack_id == nil do
-      raise "Cannot move nil stack to #{dest_group_id} #{dest_stack_index}"
+    if dest_group_id not in Map.keys(game["groupById"]) do
+      raise "Group not found: #{dest_group_id}"
+    end
+
+    # Get list of card ids in stack
+    card_ids = get_card_ids(game, stack_id)
+    # Get list of cards
+    cards = Enum.map(card_ids, fn(card_id) -> get_card(game, card_id) end)
+    # Get list of card side A name
+    card_side_a_names = Enum.map(cards, fn(card) -> card["sides"]["A"]["name"] end)
+    orig_group_id = get_group_by_stack_id(game, stack_id)["id"]
+    orig_stack_index = get_stack_index_by_stack_id(game, stack_id)
+    # If destination is negative, count backward from the end
+    dest_stack_index = if dest_stack_index < 0 do
+      loop_index = Enum.count(GameUI.get_stack_ids(game, dest_group_id)) + dest_stack_index
+      if get_in(options, ["combine"]) do
+        loop_index
+      else
+        loop_index + 1
+      end
     else
-      # Get list of card ids in stack
-      card_ids = get_card_ids(game, stack_id)
-      # Get list of cards
-      cards = Enum.map(card_ids, fn(card_id) -> get_card(game, card_id) end)
-      # Get list of card side A name
-      card_side_a_names = Enum.map(cards, fn(card) -> card["sides"]["A"]["name"] end)
-      orig_group_id = get_group_by_stack_id(game, stack_id)["id"]
-      orig_stack_index = get_stack_index_by_stack_id(game, stack_id)
-      # If destination is negative, count backward from the end
-      dest_stack_index = if dest_stack_index < 0 do
-        loop_index = Enum.count(GameUI.get_stack_ids(game, dest_group_id)) + dest_stack_index
-        if get_in(options, ["combine"]) do
-          loop_index
-        else
-          loop_index + 1
-        end
-      else
-        dest_stack_index
-      end
-      IO.puts("Moving stack: #{card_side_a_names} #{dest_group_id} #{dest_stack_index}")
-      # If attaching to same group at higher index, dest_index will end up being 1 less
-      dest_stack_index = if orig_group_id == dest_group_id and options["combine"] == true and orig_stack_index < dest_stack_index do dest_stack_index - 1 else dest_stack_index end
-      # Delete stack id from old group
-      old_orig_stack_ids = get_stack_ids(game, orig_group_id)
-      new_orig_stack_ids = List.delete_at(old_orig_stack_ids, orig_stack_index)
-      game = update_stack_ids(game, orig_group_id, new_orig_stack_ids)
-      # Add to new position
-      if options["combine"] do
-        # Get existing destination stack
-        dest_stack = get_stack_by_index(game, dest_group_id, dest_stack_index)
-        dest_stack_id = dest_stack["id"]
-        # Update card ids of destination stack
-        old_orig_card_ids = get_card_ids(game, stack_id)
-        old_dest_card_ids = get_card_ids(game, dest_stack["id"])
-        new_dest_card_ids = old_dest_card_ids ++ old_orig_card_ids
-        game = update_card_ids(game, dest_stack_id, new_dest_card_ids)
-        # Delete original stack
-        game = delete_stack_from_stack_by_id(game, stack_id)
-        update_stack_state(game, dest_stack_id, orig_group_id, options)
-      else
-        # Update destination group stack ids
-        old_dest_stack_ids = get_stack_ids(game, dest_group_id)
-        new_dest_stack_ids = List.insert_at(old_dest_stack_ids, dest_stack_index, stack_id)
-        update_stack_ids(game, dest_group_id, new_dest_stack_ids)
-        |> update_stack_state(stack_id, orig_group_id, options)
-      end
+      dest_stack_index
+    end
+    IO.puts("Moving stack: #{card_side_a_names} #{dest_group_id} #{dest_stack_index}")
+    # If attaching to same group at higher index, dest_index will end up being 1 less
+    dest_stack_index = if orig_group_id == dest_group_id and options["combine"] == true and orig_stack_index < dest_stack_index do dest_stack_index - 1 else dest_stack_index end
+    # Delete stack id from old group
+    old_orig_stack_ids = get_stack_ids(game, orig_group_id)
+    new_orig_stack_ids = List.delete_at(old_orig_stack_ids, orig_stack_index)
+    game = update_stack_ids(game, orig_group_id, new_orig_stack_ids)
+    # Add to new position
+    if options["combine"] do
+      # Get existing destination stack
+      dest_stack = get_stack_by_index(game, dest_group_id, dest_stack_index)
+      dest_stack_id = dest_stack["id"]
+      # Update card ids of destination stack
+      old_orig_card_ids = get_card_ids(game, stack_id)
+      old_dest_card_ids = get_card_ids(game, dest_stack["id"])
+      new_dest_card_ids = old_dest_card_ids ++ old_orig_card_ids
+      game = update_card_ids(game, dest_stack_id, new_dest_card_ids)
+      # Delete original stack
+      game = delete_stack_from_stack_by_id(game, stack_id)
+      update_stack_state(game, dest_stack_id, orig_group_id, options)
+    else
+      # Update destination group stack ids
+      old_dest_stack_ids = get_stack_ids(game, dest_group_id)
+      new_dest_stack_ids = List.insert_at(old_dest_stack_ids, dest_stack_index, stack_id)
+      update_stack_ids(game, dest_group_id, new_dest_stack_ids)
+      |> update_stack_state(stack_id, orig_group_id, options)
     end
   end
 

@@ -402,10 +402,50 @@ defmodule DragnCardsGame.CustomPluginTest do
     game = Evaluate.evaluate(game, ["LOAD_CARDS", "coreLeadership"]) # Leadership core set deck
     assert length(game["groupById"]["player1Hand"]["stackIds"]) == 6
     assert length(game["groupById"]["player1Deck"]["stackIds"]) == 24
+    assert length(game["groupById"]["sharedMainQuest"]["stackIds"]) == 1
+
+    card_id_1 = Evaluate.evaluate(game, ["GET_CARD_ID", "sharedMainQuest", 0, 0])
+    IO.inspect(game["cardById"][card_id_1])
 
     # Get a stackId
     stackId = Enum.at(game["groupById"]["player1Hand"]["stackIds"], 2)
     Evaluate.evaluate(game, ["MOVE_STACK", stackId, "player1Hand", 0])
+
+  end
+
+  # Discard cards
+  @tag :discard_cards
+  test "discard cards", %{user: _user, game: game, game_def: _game_def} do
+
+    # Load some decks into the game
+    game = Evaluate.evaluate(game, ["LOAD_CARDS", "Q01.1"]) # Passage through Mirkwood
+    game = Evaluate.evaluate(game, ["LOAD_CARDS", "coreLeadership"]) # Leadership core set deck
+    assert length(game["groupById"]["player1Hand"]["stackIds"]) == 6
+    assert length(game["groupById"]["player1Deck"]["stackIds"]) == 24
+    assert length(game["groupById"]["sharedMainQuest"]["stackIds"]) == 1
+
+    # Attach a player card and an encounter card to a hero
+    card_id_1 = Evaluate.evaluate(game, ["GET_CARD_ID", "sharedEncounterDeck", 0, 0])
+    card_id_2 = Evaluate.evaluate(game, ["GET_CARD_ID", "player1Deck", 0, 0])
+    card_id_3 = Evaluate.evaluate(game, ["GET_CARD_ID", "player1Deck", 1, 0])
+
+    game = Evaluate.evaluate(game, ["MOVE_CARD", card_id_1, "player1Play1", 0, 1, %{"combine" => true}])
+    game = Evaluate.evaluate(game, ["MOVE_CARD", card_id_2, "player1Play1", 0, 1, %{"combine" => true}])
+
+    # Verify that the stack has 3 cards
+    parent_card_id = Evaluate.evaluate(game, ["GET_CARD_ID", "player1Play1", 0, 0])
+    stack_ids = game["groupById"]["player1Play1"]["stackIds"]
+    stack_id_0 = Enum.at(stack_ids, 0)
+    card_ids = game["stackById"][stack_id_0]["cardIds"]
+
+    assert length(card_ids) == 3
+
+    # Discard the stack
+    game = Evaluate.evaluate(game, [["DEFINE", "$ACTIVE_CARD_ID", parent_card_id], ["ACTION_LIST", "discardCard"]])
+
+    assert length(game["groupById"]["player1Discard"]["stackIds"]) == 2
+    assert length(game["groupById"]["sharedEncounterDiscard"]["stackIds"]) == 1
+    IO.inspect(game["messages"])
 
   end
 end
