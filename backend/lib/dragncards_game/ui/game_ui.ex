@@ -88,7 +88,13 @@ defmodule DragnCardsGame.GameUI do
   end
 
   def get_stack(game, stack_id) do
-    game["stackById"][stack_id]
+    if stack_id == nil do
+      raise "stack_id is nil"
+    end
+    case game["stackById"][stack_id] do
+      nil -> raise "Stack not found: #{stack_id}"
+      stack -> stack
+    end
   end
 
   def get_card_ids(game, stack_id) do
@@ -430,6 +436,11 @@ defmodule DragnCardsGame.GameUI do
 
     # Get list of card ids in stack
     card_ids = get_card_ids(game, stack_id)
+
+    if card_ids == [] do
+      raise "Stack is empty: #{stack_id}"
+    end
+
     # Get list of cards
     cards = Enum.map(card_ids, fn(card_id) -> get_card(game, card_id) end)
     # Get list of card side A name
