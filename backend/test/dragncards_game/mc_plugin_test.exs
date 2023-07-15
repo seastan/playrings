@@ -235,24 +235,20 @@ defmodule DragnCardsGame.McPluginTest do
   end
 
   test "scenario setup (standard)", %{user: user, game: game, game_def: game_def} do
-    res = Evaluate.evaluate(game, ["LOAD_CARDS", "Rhino"])
+    res = Evaluate.evaluate(game, ["LOAD_CARDS", "Brotherhood of Badoon"])
 
-    assert res["villainHitPoints"] == 14
+    assert res["villainHitPoints"] == 13
 
-    stacks = res["groupById"]["sharedVillain"]["stackIds"]
-    assert length(stacks) == 1
+    stacks = res["groupById"]["sharedMainScheme"]["stackIds"]
     card_id = hd(res["stackById"][hd(stacks)]["cardIds"])
-    assert res["cardById"][card_id]["sides"]["A"]["stage"] == "I"
+    assert res["cardById"][card_id]["tokens"]["threat"] == 2
 
-    stacks = res["groupById"]["sharedVillainDeck"]["stackIds"]
-    assert length(stacks) == 1
-    card_id = hd(res["stackById"][hd(stacks)]["cardIds"])
-    assert res["cardById"][card_id]["sides"]["A"]["stage"] == "II"
-
-    stacks = res["groupById"]["sharedVillainDiscard"]["stackIds"]
-    assert length(stacks) == 1
-    card_id = hd(res["stackById"][hd(stacks)]["cardIds"])
-    assert res["cardById"][card_id]["sides"]["A"]["stage"] == "III"
+    Enum.each %{"sharedMainScheme" => "1A", "sharedVillain" => "I", "sharedVillainDeck" => "II", "sharedVillainDiscard" => "III"}, fn {group, stage} ->
+      stacks = res["groupById"][group]["stackIds"]
+      assert length(stacks) == 1
+      card_id = hd(res["stackById"][hd(stacks)]["cardIds"])
+      assert res["cardById"][card_id]["sides"]["A"]["stage"] == stage
+    end
   end
 
   test "scenario setup (expert)", %{user: user, game: game, game_def: game_def} do
@@ -261,20 +257,51 @@ defmodule DragnCardsGame.McPluginTest do
 
     assert res["villainHitPoints"] == 15
 
+    Enum.each %{"sharedVillain" => "II", "sharedVillainDeck" => "III", "sharedVillainDiscard" => "I"}, fn {group, stage} ->
+      stacks = res["groupById"][group]["stackIds"]
+      assert length(stacks) == 1
+      card_id = hd(res["stackById"][hd(stacks)]["cardIds"])
+      assert res["cardById"][card_id]["sides"]["A"]["stage"] == stage
+    end
+  end
+
+  test "scenario setup (standard): double sided villain, single stage", %{user: user, game: game, game_def: game_def} do
+    res = Evaluate.evaluate(game, ["LOAD_CARDS", "Escape the Museum"])
+
+    assert res["villainHitPoints"] == 8
+
     stacks = res["groupById"]["sharedVillain"]["stackIds"]
     assert length(stacks) == 1
     card_id = hd(res["stackById"][hd(stacks)]["cardIds"])
-    assert res["cardById"][card_id]["sides"]["A"]["stage"] == "II"
+    assert res["cardById"][card_id]["sides"]["A"]["stage"] == "A1"
 
     stacks = res["groupById"]["sharedVillainDeck"]["stackIds"]
-    assert length(stacks) == 1
-    card_id = hd(res["stackById"][hd(stacks)]["cardIds"])
-    assert res["cardById"][card_id]["sides"]["A"]["stage"] == "III"
+    assert length(stacks) == 0
 
     stacks = res["groupById"]["sharedVillainDiscard"]["stackIds"]
     assert length(stacks) == 1
     card_id = hd(res["stackById"][hd(stacks)]["cardIds"])
-    assert res["cardById"][card_id]["sides"]["A"]["stage"] == "I"
+    assert res["cardById"][card_id]["sides"]["A"]["stage"] == "B1"
+  end
+
+  test "scenario setup (expert): double sided villain, single stage", %{user: user, game: game, game_def: game_def} do
+    res = Evaluate.evaluate(game, game_def["actionLists"]["setExpertMode"])
+    res = Evaluate.evaluate(res, ["LOAD_CARDS", "Escape the Museum"])
+
+    assert res["villainHitPoints"] == 10
+
+    stacks = res["groupById"]["sharedVillain"]["stackIds"]
+    assert length(stacks) == 1
+    card_id = hd(res["stackById"][hd(stacks)]["cardIds"])
+    assert res["cardById"][card_id]["sides"]["A"]["stage"] == "B1"
+
+    stacks = res["groupById"]["sharedVillainDeck"]["stackIds"]
+    assert length(stacks) == 0
+
+    stacks = res["groupById"]["sharedVillainDiscard"]["stackIds"]
+    assert length(stacks) == 1
+    card_id = hd(res["stackById"][hd(stacks)]["cardIds"])
+    assert res["cardById"][card_id]["sides"]["A"]["stage"] == "A1"
   end
 
   test "discard villain card", %{user: user, game: game, game_def: game_def} do
@@ -296,6 +323,29 @@ defmodule DragnCardsGame.McPluginTest do
 
     stacks = res["groupById"]["sharedVillainDiscard"]["stackIds"]
     assert length(stacks) == 2
+  end
+
+  test "discard main scheme card", %{user: user, game: game, game_def: game_def} do
+    res = Evaluate.evaluate(game, ["LOAD_CARDS", "Brotherhood of Badoon"])
+
+    stacks = res["groupById"]["sharedMainScheme"]["stackIds"]
+    card_id = hd(res["stackById"][hd(stacks)]["cardIds"])
+    res = put_in(res["playerUi"]["activeCardId"], card_id)
+
+    res = Evaluate.evaluate(res, game_def["actionLists"]["discardCard"])
+
+    stacks = res["groupById"]["sharedMainScheme"]["stackIds"]
+    assert length(stacks) == 1
+    card_id = hd(res["stackById"][hd(stacks)]["cardIds"])
+    card = res["cardById"][card_id]
+    assert card["sides"]["A"]["stage"] == "2A"
+    assert card["tokens"]["threat"] == 4
+
+    stacks = res["groupById"]["sharedMainSchemeDeck"]["stackIds"]
+    assert length(stacks) == 0
+
+    stacks = res["groupById"]["sharedVillainDiscard"]["stackIds"]
+    assert length(stacks) == 1
   end
 
   test "3-sided cards", %{user: _user, game: game, game_def: game_def} do
@@ -372,4 +422,24 @@ defmodule DragnCardsGame.McPluginTest do
     assert length(game["groupById"]["sharedEncounterDeck"]["stackIds"]) == encounter_deck_size
 
   end
+
+  test "empty encounter deck", %{user: user, game: game, game_def: game_def} do
+    res = Evaluate.evaluate(game, ["LOAD_CARDS", "Rhino"])
+
+    encounter_deck_stacks = res["groupById"]["sharedEncounterDeck"]["stackIds"]
+
+    # empty encounter deck
+    res = Enum.reduce(encounter_deck_stacks, res, fn(x, acc) ->
+      Evaluate.evaluate(acc, [["DEFINE", "$ACTIVE_CARD_ID", ["GET_CARD_ID", "sharedEncounterDeck", 0, 0]], ["ACTION_LIST", "discardCard"]])
+    end)
+
+    assert length(res["groupById"]["sharedEncounterDeck"]["stackIds"]) == length(encounter_deck_stacks) - 1
+
+    stacks = res["groupById"]["sharedMainSchemeDeck"]["stackIds"]
+    stack = hd(stacks)
+    card_id = hd(res["stackById"][stack]["cardIds"])
+    card = res["cardById"][card_id]
+    assert card["tokens"]["acceleration"] == 1
+  end
+
 end
