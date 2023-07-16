@@ -46,6 +46,7 @@ export const DragContainer = React.memo(({}) => {
     const origStackCardIds = origStack.cardIds;
     const topOfOrigStackCardId = origStackCardIds[0];
     const topOfOrigStackCard = game.cardById[topOfOrigStackCardId];
+    const allowFlip = keypressShift ? false : true;
     var destGroup = null;
     dispatch(setDraggingFromGroupId(null));
 
@@ -84,9 +85,9 @@ export const DragContainer = React.memo(({}) => {
       // const updates = [["cardById",topOfOrigStackCardId,"currentSide", "A"]];
       // dispatch(setValues({updates: updates}));
 
-      dispatch(setStackIds(newOrigGroup));
+      //dispatch(setStackIds(newOrigGroup)); // This results is a jitter because the cardIndex is still 0 so it's briefly placed in the paren't spot
       dispatch(setCardIds(newDestStack));
-      doActionList(["MOVE_STACK", origStackId, destGroupId, dest.index, {"combine": true}])
+      doActionList(["MOVE_STACK", origStackId, destGroupId, dest.index, {"combine": true, "allowFlip": allowFlip}])
     }
 
     // Dropped nowhere
@@ -114,7 +115,7 @@ export const DragContainer = React.memo(({}) => {
       // dispatch(setValues({updates: updates}));
       doActionList([
         ["LOG", "$PLAYER_N", " moved ", ["FACEUP_NAME_FROM_STACK_ID", origStackId], " from ", "$GAME.groupById."+origGroupId+".label", " to ", "$GAME.groupById."+destGroupId+".label", "."],
-        ["MOVE_STACK", origStackId, destGroupId, dest.index]
+        ["MOVE_STACK", origStackId, destGroupId, dest.index, {"allowFlip": allowFlip}]
       ])
       dispatch(setGroupById(newGroupById));
     }

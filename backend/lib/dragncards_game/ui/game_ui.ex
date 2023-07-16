@@ -226,7 +226,7 @@ defmodule DragnCardsGame.GameUI do
   end
 
   # Move a card
-  def move_card(game, card_id, dest_group_id, dest_stack_index, dest_card_index, options \\ false) do
+  def move_card(game, card_id, dest_group_id, dest_stack_index, dest_card_index, options \\ nil) do
     # Check if dest_group_id is a key in game["groupById"]
     if dest_group_id not in Map.keys(game["groupById"]) do
       raise "Group not found: #{dest_group_id}"
@@ -234,7 +234,7 @@ defmodule DragnCardsGame.GameUI do
     # Get position of card
     {orig_group_id, _orig_stack_index, _orig_card_index} = gsc(game, card_id)
     # Pepare destination stack
-    game = if options["combine"] do
+    game = if get_in(options, ["combine"]) do
       game
     else
       new_stack = Stack.empty_stack()
