@@ -4,6 +4,7 @@
   In early stages of the app, it only represents a
   some toy game used to test everything around it.
   """
+  require Logger
   import Ecto.Query
   alias DragnCardsGame.{Groups, Game, PlayerData, GameVariables}
   alias DragnCards.{Repo, Replay, Plugins}
@@ -36,7 +37,7 @@
   """
   @spec new(String.t(), Map.t()) :: Game.t()
   def new(room_slug, options) do
-    IO.puts("game new 1")
+    Logger.debug("Making new Game")
     game_def = Plugins.get_game_def(options["pluginId"])
     default_layout_info = Enum.at(game_def["layoutMenu"],0)
     layout_id = default_layout_info["layoutId"]
@@ -61,7 +62,7 @@
       "automation" => if get_in(game_def, ["automation", "gameRules"]) do %{"_game_" => %{"rules" => game_def["automation"]["gameRules"]}} else %{} end,
       "messages" => [] # These messages will be delivered to the GameUi parent, which will then relay them to chat
     }
-    IO.puts("game new 2")
+    Logger.debug("Made new Game")
     # Add player data
     player_data = %{}
     player_data = Enum.reduce(1..game_def["maxPlayers"], player_data, fn(n, acc) ->

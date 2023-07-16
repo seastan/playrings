@@ -17,7 +17,6 @@ defmodule DragnCardsGame.PlayerData do
     }
     # Add custom properties
     Enum.reduce(game_def["playerProperties"], base, fn({key,val}, acc) ->
-      Logger.info("key: #{inspect(key)} val: #{inspect(val)}")
       put_in(acc[key], val["default"])
     end)
   end

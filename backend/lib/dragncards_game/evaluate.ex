@@ -498,7 +498,7 @@ defmodule DragnCardsGame.Evaluate do
             end)
 
           "MOVE_CARD" ->
-            IO.puts("MOVE_CARD " <> inspect(code))
+            Logger.debug("MOVE_CARD " <> inspect(code))
             argc = Enum.count(code) - 1
             card_id = evaluate(game, Enum.at(code, 1), trace ++ ["MOVE_CARD card_id"])
             if card_id do
@@ -602,15 +602,10 @@ defmodule DragnCardsGame.Evaluate do
             argc = Enum.count(code) - 1
             orig_group_id = evaluate(game, Enum.at(code, 1), trace ++ ["MOVE_STACKS orig_group_id"])
             dest_group_id = evaluate(game, Enum.at(code, 2), trace ++ ["MOVE_STACKS dest_group_id"])
-            top_n = evaluate(game, Enum.at(code, 3), trace ++ ["MOVE_STACKS top_n"])
-            position = evaluate(game, Enum.at(code, 4), trace ++ ["MOVE_STACKS position"])
+            top_n = if argc >= 3 do evaluate(game, Enum.at(code, 3), trace ++ ["MOVE_STACKS top_n"]) else length(game["groupById"][orig_group_id]["stackIds"]) end
+            position = if argc >= 4 do evaluate(game, Enum.at(code, 4), trace ++ ["MOVE_STACKS position"]) else "shuffle" end
             options = if argc >= 5 do evaluate(game, Enum.at(code, 4), trace ++ ["MOVE_STACKS options"] ) else nil end
-            try do
-              GameUI.move_stacks(game, orig_group_id, dest_group_id, top_n, position, options)
-            rescue
-              e ->
-                raise("Failed to move top #{top_n} stacks from #{orig_group_id} to #{dest_group_id}:#{position}." <> inspect(e) <> inspect(trace))
-            end
+            GameUI.move_stacks(game, orig_group_id, dest_group_id, top_n, position, options)
 
           "SHUFFLE_GROUP" ->
             group_id = evaluate(game, Enum.at(code, 1), trace ++ ["SHUFFLE_GROUP group_id"])

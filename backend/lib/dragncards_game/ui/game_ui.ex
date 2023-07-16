@@ -15,7 +15,7 @@ defmodule DragnCardsGame.GameUI do
 
   @spec new(String.t(), integer(), Map.t()) :: GameUI.t()
   def new(room_slug, user_id, %{} = options) do
-    IO.puts("gameui new 1")
+    Logger.debug("Making new GameUI")
     gameui = %{
       "game" => Game.load(room_slug, options),
       "roomSlug" => room_slug,
@@ -34,7 +34,7 @@ defmodule DragnCardsGame.GameUI do
       "loadedCardIds" => [],
       "logMessages" => [] # These game messages will be delivered to chat
     }
-    IO.puts("gameui new 2")
+    Logger.debug("Made new GameUI")
     gameui
   end
 
@@ -233,7 +233,7 @@ defmodule DragnCardsGame.GameUI do
     end
     # Get position of card
     {orig_group_id, _orig_stack_index, _orig_card_index} = gsc(game, card_id)
-    # Perpare destination stack
+    # Pepare destination stack
     game = if options["combine"] do
       game
     else
@@ -339,8 +339,7 @@ defmodule DragnCardsGame.GameUI do
   end
 
   # Removes a card from a stack, but it stays in cardById
-  def remove_from_stack(game, card_id) do
-    stack_id = get_stack_by_card_id(game, card_id)["id"]
+  def remove_from_stack(game, card_id, stack_id) do
     old_card_ids = get_card_ids(game, stack_id)
     card_index = get_card_index_by_card_id(game, card_id)
     new_card_ids = List.delete_at(old_card_ids, card_index)
@@ -349,6 +348,11 @@ defmodule DragnCardsGame.GameUI do
     else
       update_card_ids(game, stack_id, new_card_ids)
     end
+  end
+
+  def remove_from_stack(game, card_id) do
+    stack_id = get_stack_by_card_id(game, card_id)["id"]
+    remove_from_stack(game, card_id, stack_id)
   end
 
   def refresh_stack_indices_in_group(game, group_id) do
@@ -437,10 +441,6 @@ defmodule DragnCardsGame.GameUI do
     # Get list of card ids in stack
     card_ids = get_card_ids(game, stack_id)
 
-    if card_ids == [] do
-      raise "Stack is empty: #{stack_id}"
-    end
-
     # Get list of cards
     cards = Enum.map(card_ids, fn(card_id) -> get_card(game, card_id) end)
     # Get list of card side A name
@@ -458,7 +458,7 @@ defmodule DragnCardsGame.GameUI do
     else
       dest_stack_index
     end
-    IO.puts("Moving stack: #{card_side_a_names} #{dest_group_id} #{dest_stack_index}")
+    Logger.debug("Moving stack: #{card_side_a_names} #{dest_group_id} #{dest_stack_index}")
     # If attaching to same group at higher index, dest_index will end up being 1 less
     dest_stack_index = if orig_group_id == dest_group_id and options["combine"] == true and orig_stack_index < dest_stack_index do dest_stack_index - 1 else dest_stack_index end
     # Delete stack id from old group
