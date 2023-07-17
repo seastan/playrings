@@ -7,6 +7,7 @@ import { useBrowseTopN } from "./hooks/useBrowseTopN";
 import { setDropdownMenu } from "../store/playerUiSlice";
 import { useGameL10n } from "./hooks/useGameL10n";
 import { useGameDefinition } from "./hooks/useGameDefinition";
+import { useDoActionList } from "./hooks/useDoActionList";
 
 export const Group = React.memo(({
   groupId,
@@ -19,6 +20,12 @@ export const Group = React.memo(({
   const group = useSelector(state => state?.gameUi?.game?.groupById?.[groupId]);
   const playerN = useSelector(state => state?.playerUi?.playerN);
   const browseTopN = useBrowseTopN();
+  const doActionList = useDoActionList();
+  // Print a warning to the console if the group is not found
+  if (!group) {
+    doActionList(["LOG", "Error: Tried to display an unknown group: ", groupId]);
+    return null;
+  }
 
   const handleEyeClick = (event) => {
     event.stopPropagation();

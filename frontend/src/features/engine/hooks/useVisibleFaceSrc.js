@@ -4,7 +4,6 @@ import { useGameDefinition } from "./useGameDefinition";
 import { usePlugin } from "./usePlugin";
 import { useVisibleFace } from "./useVisibleFace";
 import { useVisibleSide } from "./useVisibleSide";
-import { sr } from "date-fns/locale";
 
 export const useVisibleFaceSrc = (cardId) => {
     const user = useProfile();
@@ -37,8 +36,8 @@ export const useVisibleFaceSrc = (cardId) => {
             // Just a suffix. Let's see if we have a prefix for this language.
             const srcDefault = gameDef?.imageUrlPrefix?.Default ? gameDef?.imageUrlPrefix?.Default + srcBase : null;
             const srcLanguage = gameDef?.imageUrlPrefix?.[user?.language] ? gameDef?.imageUrlPrefix?.[user?.language] + srcBase : null;
-            console.log("useVisibleFaceSrc", {srcBase, srcDefault, srcLanguage, gameDef})
-            return {src: srcLanguage, default: srcDefault }
+            if (srcLanguage) return {src: srcLanguage, default: srcDefault}
+            else return {src: srcDefault, default: srcDefault }
         }
     }
 }

@@ -155,6 +155,11 @@ defmodule DragnCardsGame.Evaluate do
   def message_list_to_string(game, statements, trace) do
     Enum.reduce(Enum.with_index(statements), "", fn({statement, index}, acc) ->
       str_statement = inspect(evaluate(game, statement, trace ++ ["statement #{index}"]))
+      str_statement = if statement == "$PLAYER_N" do
+        "{#{str_statement}}"
+      else
+        str_statement
+      end
       acc <> String.replace(str_statement,"\"","")
     end)
   end
