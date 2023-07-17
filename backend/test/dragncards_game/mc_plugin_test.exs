@@ -226,6 +226,128 @@ defmodule DragnCardsGame.McPluginTest do
 
   end
 
+  test "player setup", %{user: user, game: game, game_def: game_def} do
+    res = Evaluate.evaluate(game, ["LOAD_CARDS", "Captain America"])
+
+    assert res["playerData"]["player1"]["handSize"] == 6
+    assert res["playerData"]["player1"]["hitPoints"] == 11
+    assert length(res["groupById"]["player1Hand"]["stackIds"])
+  end
+
+  test "scenario setup (standard)", %{user: user, game: game, game_def: game_def} do
+    res = Evaluate.evaluate(game, ["LOAD_CARDS", "Brotherhood of Badoon"])
+
+    assert res["villainHitPoints"] == 13
+
+    stacks = res["groupById"]["sharedMainScheme"]["stackIds"]
+    card_id = hd(res["stackById"][hd(stacks)]["cardIds"])
+    assert res["cardById"][card_id]["tokens"]["threat"] == 2
+
+    Enum.each %{"sharedMainScheme" => "1A", "sharedVillain" => "I", "sharedVillainDeck" => "II", "sharedVillainDiscard" => "III"}, fn {group, stage} ->
+      stacks = res["groupById"][group]["stackIds"]
+      assert length(stacks) == 1
+      card_id = hd(res["stackById"][hd(stacks)]["cardIds"])
+      assert res["cardById"][card_id]["sides"]["A"]["stage"] == stage
+    end
+  end
+
+  test "scenario setup (expert)", %{user: user, game: game, game_def: game_def} do
+    res = Evaluate.evaluate(game, game_def["actionLists"]["setExpertMode"])
+    res = Evaluate.evaluate(res, ["LOAD_CARDS", "Rhino"])
+
+    assert res["villainHitPoints"] == 15
+
+    Enum.each %{"sharedVillain" => "II", "sharedVillainDeck" => "III", "sharedVillainDiscard" => "I"}, fn {group, stage} ->
+      stacks = res["groupById"][group]["stackIds"]
+      assert length(stacks) == 1
+      card_id = hd(res["stackById"][hd(stacks)]["cardIds"])
+      assert res["cardById"][card_id]["sides"]["A"]["stage"] == stage
+    end
+  end
+
+  test "scenario setup (standard): double sided villain, single stage", %{user: user, game: game, game_def: game_def} do
+    res = Evaluate.evaluate(game, ["LOAD_CARDS", "Escape the Museum"])
+
+    assert res["villainHitPoints"] == 8
+
+    stacks = res["groupById"]["sharedVillain"]["stackIds"]
+    assert length(stacks) == 1
+    card_id = hd(res["stackById"][hd(stacks)]["cardIds"])
+    assert res["cardById"][card_id]["sides"]["A"]["stage"] == "A1"
+
+    stacks = res["groupById"]["sharedVillainDeck"]["stackIds"]
+    assert length(stacks) == 0
+
+    stacks = res["groupById"]["sharedVillainDiscard"]["stackIds"]
+    assert length(stacks) == 1
+    card_id = hd(res["stackById"][hd(stacks)]["cardIds"])
+    assert res["cardById"][card_id]["sides"]["A"]["stage"] == "B1"
+  end
+
+  test "scenario setup (expert): double sided villain, single stage", %{user: user, game: game, game_def: game_def} do
+    res = Evaluate.evaluate(game, game_def["actionLists"]["setExpertMode"])
+    res = Evaluate.evaluate(res, ["LOAD_CARDS", "Escape the Museum"])
+
+    assert res["villainHitPoints"] == 10
+
+    stacks = res["groupById"]["sharedVillain"]["stackIds"]
+    assert length(stacks) == 1
+    card_id = hd(res["stackById"][hd(stacks)]["cardIds"])
+    assert res["cardById"][card_id]["sides"]["A"]["stage"] == "B1"
+
+    stacks = res["groupById"]["sharedVillainDeck"]["stackIds"]
+    assert length(stacks) == 0
+
+    stacks = res["groupById"]["sharedVillainDiscard"]["stackIds"]
+    assert length(stacks) == 1
+    card_id = hd(res["stackById"][hd(stacks)]["cardIds"])
+    assert res["cardById"][card_id]["sides"]["A"]["stage"] == "A1"
+  end
+
+  test "discard villain card", %{user: user, game: game, game_def: game_def} do
+    res = Evaluate.evaluate(game, ["LOAD_CARDS", "Rhino"])
+
+    stacks = res["groupById"]["sharedVillain"]["stackIds"]
+    card_id = hd(res["stackById"][hd(stacks)]["cardIds"])
+    res = put_in(res["playerUi"]["activeCardId"], card_id)
+
+    res = Evaluate.evaluate(res, game_def["actionLists"]["discardCard"])
+
+    stacks = res["groupById"]["sharedVillain"]["stackIds"]
+    assert length(stacks) == 1
+    card_id = hd(res["stackById"][hd(stacks)]["cardIds"])
+    assert res["cardById"][card_id]["sides"]["A"]["stage"] == "II"
+
+    stacks = res["groupById"]["sharedVillainDeck"]["stackIds"]
+    assert length(stacks) == 0
+
+    stacks = res["groupById"]["sharedVillainDiscard"]["stackIds"]
+    assert length(stacks) == 2
+  end
+
+  test "discard main scheme card", %{user: user, game: game, game_def: game_def} do
+    res = Evaluate.evaluate(game, ["LOAD_CARDS", "Brotherhood of Badoon"])
+
+    stacks = res["groupById"]["sharedMainScheme"]["stackIds"]
+    card_id = hd(res["stackById"][hd(stacks)]["cardIds"])
+    res = put_in(res["playerUi"]["activeCardId"], card_id)
+
+    res = Evaluate.evaluate(res, game_def["actionLists"]["discardCard"])
+
+    stacks = res["groupById"]["sharedMainScheme"]["stackIds"]
+    assert length(stacks) == 1
+    card_id = hd(res["stackById"][hd(stacks)]["cardIds"])
+    card = res["cardById"][card_id]
+    assert card["sides"]["A"]["stage"] == "2A"
+    assert card["tokens"]["threat"] == 4
+
+    stacks = res["groupById"]["sharedMainSchemeDeck"]["stackIds"]
+    assert length(stacks) == 0
+
+    stacks = res["groupById"]["sharedVillainDiscard"]["stackIds"]
+    assert length(stacks) == 1
+  end
+
   test "3-sided cards", %{user: _user, game: game, game_def: game_def} do
 
     # Load some decks into the game
@@ -253,7 +375,7 @@ defmodule DragnCardsGame.McPluginTest do
   end
 
   @tag :reshuffle_when_empty
-  test "Reshuffle when empty", %{user: _user, game: game, game_def: _game_def} do
+  test "Reshuffle encounter deck when empty", %{user: _user, game: game, game_def: _game_def} do
 
     # Load some decks into the game
     game = Evaluate.evaluate(game, ["LOAD_CARDS", "Rhino"])
@@ -280,7 +402,7 @@ defmodule DragnCardsGame.McPluginTest do
 
 
   @tag :reshuffle_after_discard
-  test "Reshuffle after_discard", %{user: _user, game: game, game_def: _game_def} do
+  test "Reshuffle encounter deck after_discard", %{user: _user, game: game, game_def: _game_def} do
 
     # Load some decks into the game
     game = Evaluate.evaluate(game, ["LOAD_CARDS", "Rhino"])
@@ -300,4 +422,5 @@ defmodule DragnCardsGame.McPluginTest do
     assert length(game["groupById"]["sharedEncounterDeck"]["stackIds"]) == encounter_deck_size
 
   end
+
 end
