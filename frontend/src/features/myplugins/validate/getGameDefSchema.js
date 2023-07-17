@@ -1020,6 +1020,12 @@ export const getGameDefSchema = (gameDef) => {
             }
           }
         }
+      },
+      "imageUrlPrefix": {
+        "_type_": "object",
+        "_itemSchema_": {
+          "_type_": "string"
+        }
       }
     });
   }

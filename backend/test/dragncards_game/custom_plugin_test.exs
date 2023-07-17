@@ -478,6 +478,15 @@ defmodule DragnCardsGame.CustomPluginTest do
     card_ids = game["stackById"][stack_id_0]["cardIds"]
     assert length(card_ids) == 2
 
+  end
+
+  # Load Specific card
+  @tag :load_specific
+  test "load_specific", %{user: _user, game: game, game_def: _game_def} do
+
+    # Load some specific cards
+    game = Evaluate.evaluate(game, ["LOAD_CARDS", ["LIST", %{"databaseId" => "da365fcc-385e-4824-901a-30381b769561", "loadGroupId" => "player1Deck", "quantity" => 1}]])
+    assert length(game["groupById"]["player1Deck"]["stackIds"]) == 1
 
   end
 end
