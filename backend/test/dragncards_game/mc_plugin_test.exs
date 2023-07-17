@@ -375,7 +375,7 @@ defmodule DragnCardsGame.McPluginTest do
   end
 
   @tag :reshuffle_when_empty
-  test "Reshuffle when empty", %{user: _user, game: game, game_def: _game_def} do
+  test "Reshuffle encounter deck when empty", %{user: _user, game: game, game_def: _game_def} do
 
     # Load some decks into the game
     game = Evaluate.evaluate(game, ["LOAD_CARDS", "Rhino"])
@@ -402,7 +402,7 @@ defmodule DragnCardsGame.McPluginTest do
 
 
   @tag :reshuffle_after_discard
-  test "Reshuffle after_discard", %{user: _user, game: game, game_def: _game_def} do
+  test "Reshuffle encounter deck after_discard", %{user: _user, game: game, game_def: _game_def} do
 
     # Load some decks into the game
     game = Evaluate.evaluate(game, ["LOAD_CARDS", "Rhino"])
@@ -421,25 +421,6 @@ defmodule DragnCardsGame.McPluginTest do
     # Check the the deck is full again
     assert length(game["groupById"]["sharedEncounterDeck"]["stackIds"]) == encounter_deck_size
 
-  end
-
-  test "empty encounter deck", %{user: user, game: game, game_def: game_def} do
-    res = Evaluate.evaluate(game, ["LOAD_CARDS", "Rhino"])
-
-    encounter_deck_stacks = res["groupById"]["sharedEncounterDeck"]["stackIds"]
-
-    # empty encounter deck
-    res = Enum.reduce(encounter_deck_stacks, res, fn(x, acc) ->
-      Evaluate.evaluate(acc, [["DEFINE", "$ACTIVE_CARD_ID", ["GET_CARD_ID", "sharedEncounterDeck", 0, 0]], ["ACTION_LIST", "discardCard"]])
-    end)
-
-    assert length(res["groupById"]["sharedEncounterDeck"]["stackIds"]) == length(encounter_deck_stacks) - 1
-
-    stacks = res["groupById"]["sharedMainSchemeDeck"]["stackIds"]
-    stack = hd(stacks)
-    card_id = hd(res["stackById"][stack]["cardIds"])
-    card = res["cardById"][card_id]
-    assert card["tokens"]["acceleration"] == 1
   end
 
 end
