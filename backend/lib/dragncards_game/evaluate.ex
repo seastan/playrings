@@ -11,7 +11,12 @@ defmodule DragnCardsGame.Evaluate do
     # IO.inspect(path)
     # IO.inspect(val_new)
     # IO.puts("val_new 2")
-    path_minus_key = Enum.slice(path, 0, Enum.count(path)-1)
+    path_minus_key = try do
+      Enum.slice(path, 0, Enum.count(path)-1)
+    rescue
+      _ ->
+        raise "Tried to set a value (#{val_new}) at a nonexistent path: #{inspect(path)}. #{inspect(trace)}"
+    end
     key = Enum.at(path, -1)
     # IO.puts("path_minus_key 1")
     # IO.inspect(path_minus_key)

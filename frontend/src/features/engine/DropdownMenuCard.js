@@ -17,6 +17,7 @@ import { deepUpdate } from "../store/updateValues";
 import { useVisibleSide } from "./hooks/useVisibleSide";
 import { useVisibleFace } from "./hooks/useVisibleFace";
 import { setActiveCardId, setDropdownMenu, setShowModal } from "../store/playerUiSlice";
+import { usePlayerIList } from "./hooks/usePlayerIList";
 
 export const DropdownMenuCard = React.memo(({
   mouseX,
@@ -41,6 +42,9 @@ export const DropdownMenuCard = React.memo(({
   const visibleSide = useVisibleSide(menuCardId);
   const visibleFace = useVisibleFace(menuCardId);
   const evaluateCondition = useEvaluateCondition();
+  const playerIList = usePlayerIList();
+
+  console.log("Rendering DropdownMenuCard ",playerIList)
 
   const setAltArt = async () => {
     if (user.supporter_level < 5000) {
@@ -165,6 +169,12 @@ export const DropdownMenuCard = React.memo(({
             clickCallback={handleDropdownClick}>
             {l10n("moveTo")}
           </DropdownItem>
+          <DropdownItem
+            rightIcon={<FontAwesomeIcon icon={faChevronRight}/>}
+            goToMenu="showTo"
+            clickCallback={handleDropdownClick}>
+            {l10n("showTo")}
+          </DropdownItem>
           {menuCard?.inPlay && 
             <DropdownItem
               rightIcon={<FontAwesomeIcon icon={faChevronRight}/>}
@@ -203,6 +213,32 @@ export const DropdownMenuCard = React.memo(({
                 goToMenu={"moveTo"+groupId}
                 clickCallback={handleDropdownClick}>
                 {gameL10n(gameDef?.groups?.[groupId]?.label)}
+              </DropdownItem>
+            )
+          })}
+        </div>}
+        
+        {activeMenu === "showTo" &&
+        <div className="menu">
+          <GoBack goToMenu="main" clickCallback={handleDropdownClick}/>
+          <DropdownItem
+            action={dragnActionLists.togglePeeking(menuCard, "All", playerIList)}
+            clickCallback={handleDropdownClick}>
+            {l10n("All")}
+          </DropdownItem>
+          <DropdownItem
+            action={dragnActionLists.togglePeeking(menuCard, "None", playerIList)}
+            clickCallback={handleDropdownClick}>
+            {l10n("None")}
+          </DropdownItem>
+          {playerIList?.map((playerI, index) => {
+            return (
+              <DropdownItem
+                key={index}
+                rightIcon={menuCard?.peeking?.[playerI] ? <FontAwesomeIcon icon={faCheck}/> : null}
+                action={dragnActionLists.togglePeeking(menuCard, playerI, playerIList)}
+                clickCallback={handleDropdownClick}>
+                {playerI}
               </DropdownItem>
             )
           })}
