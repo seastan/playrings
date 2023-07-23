@@ -725,31 +725,34 @@ export const LAYOUTINFO = {
     },
     {
       regions: [
-        {id: "player1Engaged", width: "25%"},
-        {id: "player2Engaged", width: "24%"},
-        {id: "player3Engaged", width: "24%"},
-        {id: "sharedExtra1", width: "27%"},
+        {id: "player1Engaged", width: "26%"},
+        {id: "player2Engaged", width: "25%", hideTitle: true},
+        {id: "player3Engaged", width: "25%", hideTitle: true},
+        {id: "sharedExtra1", width: "24%"},
       ]
     },
     {
       regions: [
-        {id: "player1Play1", width: "65%"},
-        {id: "player1Event", width: "8%"},
-        {id: "sharedExtra2", width: "27%"},
+        {id: "player1Play1", width: "26%"},
+        {id: "player2Play1", width: "25%"},
+        {id: "player3Play1", width: "25%"},
+        {id: "sharedExtra2", width: "24%"},
       ]
     },
     {
       regions: [
-        {id: "player2Play1", width: "65%"},
-        {id: "player2Event", width: "8%"},
-        {id: "sharedExtra3", width: "27%"},
+        {id: "player1Play2", width: "26%"},
+        {id: "player2Play2", width: "25%"},
+        {id: "player3Play2", width: "25%"},
+        {id: "sharedExtra3", width: "24%"},
       ]
     },
     {
       regions: [
-        {id: "player3Play1", width: "65%"},
-        {id: "player3Event", width: "8%"},
-        {id: "sharedExtra4", width: "27%"},
+        {id: "player1Play3", width: "26%"},
+        {id: "player2Play3", width: "25%"},
+        {id: "player3Play3", width: "25%"},
+        {id: "sharedExtra4", width: "24%"},
       ]
     },
     {
