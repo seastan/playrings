@@ -157,7 +157,7 @@ export const Browse = React.memo(({}) => {
       const stackId = stackIds[stackIndex];
       const card = parentCards[stackIndex]?.sides?.A;
       const isCardMatching = properties.some((prop) =>
-        card[prop].toLowerCase().includes(searchForText.toLowerCase())
+        card?.[prop]?.toLowerCase().includes(searchForText.toLowerCase())
       );
       const isPeekingOrCurrentSideA = (
         parentCards[stackIndex].peeking[playerN] || 

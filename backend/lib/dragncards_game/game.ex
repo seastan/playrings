@@ -52,7 +52,7 @@
       "layoutId" => layout_id,
       "layoutVariants" => game_def["layouts"][layout_id]["defaultVariants"] || %{},
       "firstPlayer" => "player1",
-      "stepIndex" => 0,
+      "stepId" => Enum.at(game_def["steps"],0)["id"],
       "steps" => game_def["steps"],
       "groupById" => Groups.new(game_def["groups"]),
       "stackById" => %{},

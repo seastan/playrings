@@ -159,13 +159,14 @@ defmodule DragnCardsGame.Evaluate do
 
   def message_list_to_string(game, statements, trace) do
     Enum.reduce(Enum.with_index(statements), "", fn({statement, index}, acc) ->
-      str_statement = inspect(evaluate(game, statement, trace ++ ["statement #{index}"]))
-      str_statement = if statement == "$PLAYER_N" do
+      eval_statement = evaluate(game, statement, trace ++ ["statement #{index}"])
+      str_statement = inspect(eval_statement) |> String.replace("\"","")
+      str_statement = if Enum.member?(Map.keys(game["playerData"]), str_statement) do
         "{#{str_statement}}"
       else
         str_statement
       end
-      acc <> String.replace(str_statement,"\"","")
+      acc <> str_statement
     end)
   end
 
@@ -222,7 +223,14 @@ defmodule DragnCardsGame.Evaluate do
 
         case Enum.at(code,0) do
           "PREV" ->
-            evaluate(game["prev_game"], Enum.at(code, 1), trace ++ ["PREV"])
+            prev_game = game["prev_game"]
+            prev_game = prev_game
+            |> Map.put("variables", game["variables"])
+            |> put_in(["variables", "$TARGET"], game["prev_game"]["variables"]["$TARGET"])
+            |> put_in(["variables", "$TARGET_ID"], game["prev_game"]["variables"]["$TARGET_ID"])
+            |> put_in(["variables", "$THIS"], game["prev_game"]["variables"]["$THIS"])
+            |> put_in(["variables", "$THIS_ID"], game["prev_game"]["variables"]["$THIS_ID"])
+            evaluate(prev_game, Enum.at(code, 1), trace ++ ["PREV"])
 
           "LOG_DEV" ->
             IO.puts("LOG_DEV:")
@@ -238,6 +246,10 @@ defmodule DragnCardsGame.Evaluate do
             var_name = Enum.at(code, 1)
             value = evaluate(game, Enum.at(code, 2), trace ++ ["DEFINE #{var_name}"])
             put_in(game, ["variables", var_name], value)
+
+          "DEFINED" ->
+            var_name = Enum.at(code, 1)
+            Map.has_key?(game["variables"], var_name) and game["variables"][var_name] != nil
 
           "POINTER" ->
             Enum.at(code, 1)

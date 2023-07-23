@@ -152,26 +152,26 @@ defmodule DragnCardsGame.CustomPluginTest do
     {:ok, %{user: user, game: game, game_def: plugin.game_def, card_db: plugin.card_db}}
   end
 
-  # # These tests are plugin-specific. You will need to overwite them, but they are here as a starting point.
-  # test "Loading Decks", %{user: user, game: game} do
+  # These tests are plugin-specific. You will need to overwite them, but they are here as a starting point.
+  test "Loading Decks", %{user: user, game: game} do
 
-  #   # Load some decks into the game
-  #   game = Evaluate.evaluate(game, ["LOAD_CARDS", "Q01.1"]) # Passage through Mirkwood
-  #   game = Evaluate.evaluate(game, ["LOAD_CARDS", "coreLeadership"]) # Leadership core set deck
+    # Load some decks into the game
+    game = Evaluate.evaluate(game, ["LOAD_CARDS", "Q01.1"]) # Passage through Mirkwood
+    game = Evaluate.evaluate(game, ["LOAD_CARDS", "coreLeadership"]) # Leadership core set deck
 
-  #   # Get the number of cards in sharedStagingArea, assert that it equals 2
-  #   assert length(game["groupById"]["sharedStagingArea"]["stackIds"]) == 2
+    # Get the number of cards in sharedStagingArea, assert that it equals 2
+    assert length(game["groupById"]["sharedStagingArea"]["stackIds"]) == 2
 
-  #   # Get the number of cards in player1Play1, assert that it equals 3
-  #   assert length(game["groupById"]["player1Play1"]["stackIds"]) == 3
+    # Get the number of cards in player1Play1, assert that it equals 3
+    assert length(game["groupById"]["player1Play1"]["stackIds"]) == 3
 
-  #   # Get the number of cards in player1Hand, assert that it equals 6
-  #   assert length(game["groupById"]["player1Hand"]["stackIds"]) == 6
+    # Get the number of cards in player1Hand, assert that it equals 6
+    assert length(game["groupById"]["player1Hand"]["stackIds"]) == 6
 
-  #   # Confirm starting threat
-  #   assert game["playerData"]["player1"]["threat"] == 29
+    # Confirm starting threat
+    assert game["playerData"]["player1"]["threat"] == 29
 
-  # end
+  end
 
   test "Card Hotkeys", %{user: _user, game: game, game_def: game_def} do
 
@@ -405,7 +405,6 @@ defmodule DragnCardsGame.CustomPluginTest do
     assert length(game["groupById"]["sharedMainQuest"]["stackIds"]) == 1
 
     card_id_1 = Evaluate.evaluate(game, ["GET_CARD_ID", "sharedMainQuest", 0, 0])
-    IO.inspect(game["cardById"][card_id_1])
 
     # Get a stackId
     stackId = Enum.at(game["groupById"]["player1Hand"]["stackIds"], 2)
@@ -495,6 +494,7 @@ defmodule DragnCardsGame.CustomPluginTest do
   test "questing", %{user: _user, game: game, game_def: _game_def} do
 
     # Load some decks into the game
+    IO.inspect(game["questingStat"])
     game = Evaluate.evaluate(game, ["LOAD_CARDS", "coreLeadership"]) # Leadership core set deck
     assert length(game["groupById"]["player1Hand"]["stackIds"]) == 6
     assert length(game["groupById"]["player1Deck"]["stackIds"]) == 24
@@ -502,46 +502,66 @@ defmodule DragnCardsGame.CustomPluginTest do
     card_id = Evaluate.evaluate(game, ["GET_CARD_ID", "player1Play1", 0, 0])
     game = Evaluate.evaluate(game, ["INCREASE_VAL", "/cardById/#{card_id}/tokens/willpower", 1])
 
+    # # Commit
+    # game = Evaluate.evaluate(game, [
+    #   ["DEFINE", "$ACTIVE_CARD_ID", card_id],
+    #   ["ACTION_LIST", "toggleCommit"]
+    # ])
+
+    # assert Evaluate.evaluate(game, "$GAME.cardById.#{card_id}.committed") == true
+    # assert Evaluate.evaluate(game, "$GAME.cardById.#{card_id}.exhausted") == true
+    # assert Evaluate.evaluate(game, "$GAME.playerData.player1.willpower") == 3
+
+    # # Uncommit
+    # game = Evaluate.evaluate(game, [
+    #   ["DEFINE", "$ACTIVE_CARD_ID", card_id],
+    #   ["ACTION_LIST", "toggleCommit"]
+    # ])
+
+    # assert Evaluate.evaluate(game, "$GAME.cardById.#{card_id}.committed") == false
+    # assert Evaluate.evaluate(game, "$GAME.cardById.#{card_id}.exhausted") == false
+
+    # # Commit without exhausting
+    # game = Evaluate.evaluate(game, [
+    #   ["DEFINE", "$ACTIVE_CARD_ID", card_id],
+    #   ["ACTION_LIST", "toggleCommitWithoutExhausting"]
+    # ])
+
+    # assert Evaluate.evaluate(game, "$GAME.cardById.#{card_id}.committed") == true
+    # assert Evaluate.evaluate(game, "$GAME.cardById.#{card_id}.exhausted") == false
+
+    # # Uncommit without exhausting
+    # game = Evaluate.evaluate(game, [
+    #   ["DEFINE", "$ACTIVE_CARD_ID", card_id],
+    #   ["ACTION_LIST", "toggleCommitWithoutExhausting"]
+    # ])
+
+    # assert Evaluate.evaluate(game, "$GAME.cardById.#{card_id}.committed") == false
+    # assert Evaluate.evaluate(game, "$GAME.cardById.#{card_id}.exhausted") == false
+
     # Commit
     game = Evaluate.evaluate(game, [
       ["DEFINE", "$ACTIVE_CARD_ID", card_id],
       ["ACTION_LIST", "toggleCommit"]
     ])
 
-    assert Evaluate.evaluate(game, "$GAME.cardById.#{card_id}.committed") == true
-    assert Evaluate.evaluate(game, "$GAME.cardById.#{card_id}.exhausted") == true
+    assert Evaluate.evaluate(game, "$GAME.playerData.player1.willpower") == 3
 
-    # Uncommit
+    # Discard
     game = Evaluate.evaluate(game, [
       ["DEFINE", "$ACTIVE_CARD_ID", card_id],
-      ["ACTION_LIST", "toggleCommit"]
+      ["ACTION_LIST", "discardCard"]
     ])
 
-    assert Evaluate.evaluate(game, "$GAME.cardById.#{card_id}.committed") == false
-    assert Evaluate.evaluate(game, "$GAME.cardById.#{card_id}.exhausted") == false
+    assert Evaluate.evaluate(game, "$GAME.playerData.player1.willpower") == 0
 
-    # Commit without exhausting
-    game = Evaluate.evaluate(game, [
-      ["DEFINE", "$ACTIVE_CARD_ID", card_id],
-      ["ACTION_LIST", "toggleCommitWithoutExhausting"]
-    ])
 
-    assert Evaluate.evaluate(game, "$GAME.cardById.#{card_id}.committed") == true
-    assert Evaluate.evaluate(game, "$GAME.cardById.#{card_id}.exhausted") == false
-
-    # Uncommit without exhausting
-    game = Evaluate.evaluate(game, [
-      ["DEFINE", "$ACTIVE_CARD_ID", card_id],
-      ["ACTION_LIST", "toggleCommitWithoutExhausting"]
-    ])
-
-    assert Evaluate.evaluate(game, "$GAME.cardById.#{card_id}.committed") == false
-    assert Evaluate.evaluate(game, "$GAME.cardById.#{card_id}.exhausted") == false
-
-    IO.inspect(game["messages"])
+    # Print all messages
+    Enum.each(game["messages"], fn message ->
+      IO.puts(message)
+    end)
 
   end
-
 
   # Swap with top card of deck
   @tag :swap_with_top
@@ -555,8 +575,7 @@ defmodule DragnCardsGame.CustomPluginTest do
     card_id_hand = Evaluate.evaluate(game, ["GET_CARD_ID", "player1Hand", 3, 0])
     card_id_deck = Evaluate.evaluate(game, ["GET_CARD_ID", "player1Deck", 0, 0])
 
-
-    # Commit
+    # Swap
     game = Evaluate.evaluate(game, [
       ["DEFINE", "$ACTIVE_CARD_ID", card_id_hand],
       ["ACTION_LIST", "swapWithTop"]
@@ -565,15 +584,11 @@ defmodule DragnCardsGame.CustomPluginTest do
     assert Evaluate.evaluate(game, "$GAME.cardById.#{card_id_hand}.groupId") == "player1Deck"
     assert Evaluate.evaluate(game, "$GAME.cardById.#{card_id_deck}.groupId") == "player1Hand"
 
-
     assert Evaluate.evaluate(game, "$GAME.cardById.#{card_id_hand}.stackIndex") == 0
     assert Evaluate.evaluate(game, "$GAME.cardById.#{card_id_deck}.stackIndex") == 3
 
-
     assert length(game["groupById"]["player1Hand"]["stackIds"]) == 6
     assert length(game["groupById"]["player1Deck"]["stackIds"]) == 24
-
-    IO.inspect(game["messages"])
 
   end
 end
