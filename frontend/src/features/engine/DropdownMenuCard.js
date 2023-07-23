@@ -272,7 +272,8 @@ export const DropdownMenuCard = React.memo(({
         if (visible) return(
           <div className="menu">
             <GoBack goToMenu="toggleTrigger" clickCallback={handleDropdownClick}/>
-            {gameDef?.steps?.map((stepInfo, _stepIndex) => {
+            {gameDef?.stepOrder?.map((stepId, _stepIndex) => {
+              const stepInfo = gameDef?.steps?.[stepId];
               if (stepInfo.phaseId === phaseInfo.phaseId) return(
                 <DropdownItem
                   rightIcon={visibleFace?.triggers?.[stepInfo.stepId] ? <FontAwesomeIcon icon={faCheck}/> : null}

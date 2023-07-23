@@ -38,9 +38,9 @@ export const dragnActionLists = {
       ]
     ]
   ]),
-  setStep: (stepInfo, stepIndex) => ([
-    ["SET", "/stepIndex", stepIndex],
-    ["LOG", "$PLAYER_N", " set the round step to ", stepInfo.text, "."]
+  setStep: (stepId, stepInfo) => ([
+    ["SET", "/stepId", stepId],
+    ["LOG", "$PLAYER_N", " set the round step to ", stepInfo?.label, "."]
   ]),
   moveCardToTop: (cardId, destGroupId, label) => ([
     ["MOVE_CARD", cardId, destGroupId, 0],

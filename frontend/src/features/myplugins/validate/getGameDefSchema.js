@@ -758,14 +758,10 @@ export const getGameDefSchema = (gameDef) => {
         }
       },
       "phases": {
-        "_type_": "array",
+        "_type_": "object",
         "_itemSchema_": {
           "_type_": "object",
           "_strictKeys_": true,
-          "phaseId": {
-            "_type_": "string",
-            "_required_": true,
-          },
           "label": {
             "_type_": "label",
             "_required_": true,
@@ -774,6 +770,13 @@ export const getGameDefSchema = (gameDef) => {
             "_type_": "string",
             "_required_": true,
           },
+        }
+      },
+      "phaseOrder": {
+        "_type_": "array",
+        "_itemSchema_": {
+          "_type_": "string",
+          "_memberOf_": mytypeof(gameDef?.phases) === "object" ? Object.keys(gameDef.phases) : [],
         }
       },
       "playerProperties": {
@@ -889,22 +892,26 @@ export const getGameDefSchema = (gameDef) => {
         }
       },
       "steps": {
-        "_type_": "array",
+        "_type_": "object",
         "_itemSchema_": {
           "_type_": "object",
           "_strictKeys_": true,
-          "stepId": {
-            "_type_": "string",
-            "_required_": true
-          },
           "phaseId": {
             "_type_": "string",
             "_required_": true,
+            "_memberOf_": mytypeof(gameDef?.phases) === "object" ? Object.keys(gameDef.phases) : [],
           },
           "label": {
             "_type_": "label",
             "_required_": true,
           },
+        }
+      },
+      "stepOrder": {
+        "_type_": "array",
+        "_itemSchema_": {
+          "_type_": "string",
+          "_memberOf_": mytypeof(gameDef?.steps) === "object" ? Object.keys(gameDef.steps) : [],
         }
       },
       "tokens": {

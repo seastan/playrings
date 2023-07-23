@@ -18,7 +18,7 @@ export const MessageLine = ({ message }) => {
   for (var playerI of playerIList) {
     // Replace all occurances of {playerN} with the player's alias
     processedText = processedText.replace(new RegExp(`{${playerI}}`, 'g'), playerInfo?.[playerI]?.alias);
-    processedText = processedText.replace(/id:([a-zA-Z0-9_]+)/g, function(match, p1) {
+    processedText = processedText.replace(/id:([a-zA-Z0-9_\-]+(\.[a-zA-Z0-9_\-]+)*)/g, function(match, p1) {
       console.log("getting label",match,p1,gameDef?.labels?.[language]?.[p1])
       return gameDef?.labels?.[p1]?.[language] || p1;
     });

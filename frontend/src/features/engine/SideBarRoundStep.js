@@ -42,27 +42,22 @@ export const ReminderButton = React.memo(({
 })
 
 export const SideBarRoundStep = React.memo(({
-  stepInfo,
+  stepId,
   triggerCardIds
 }) => {
   const gameL10n = useGameL10n();
   const gameDef = useGameDefinition();
-  const stepId = stepInfo?.stepId;
-  const currentStepIndex = useSelector(state => state?.gameUi?.game?.stepIndex);
-  const currentStepId = gameDef?.steps?.[currentStepIndex]?.stepId;
+  const currentStepId = useSelector(state => state?.gameUi?.game?.stepId);
   const playerN = useSelector(state => state?.playerUi?.playerN)
+  const stepInfo = gameDef?.steps?.[stepId];
   const [hovering, setHovering] = useState(null);
   const isRoundStep = (currentStepId === stepId);
   const doActionList = useDoActionList();
 
-  console.log("Rendering SideBarRoundStep", stepInfo, triggerCardIds);
+  console.log("Rendering SideBarRoundStep", stepId, triggerCardIds);
   const handleButtonClick = () => {
     if (!playerN) return;
-    var stepIndex = 0;
-    gameDef.steps.forEach((stepInfoI, index) => {
-      if (stepInfoI.stepId == stepId) stepIndex = index;
-    });
-    doActionList(dragnActionLists.setStep(stepInfo, stepIndex));
+    doActionList(dragnActionLists.setStep(stepId, gameDef.steps?.[stepId]));
   }
 
   return (
@@ -77,7 +72,7 @@ export const SideBarRoundStep = React.memo(({
       onMouseEnter={() => setHovering(stepId)}
       onMouseLeave={() => setHovering(null)}>
       <div className="flex justify-center" style={{width:"3vh"}}/>
-      <div className={`flex h-full items-center justify-center ${isRoundStep ? "bg-red-800" : "bg-gray-500"} ${stepInfo.actions ? "underline" : ""}`} style={{width:"3vh"}}>
+      <div className={`flex h-full items-center justify-center ${isRoundStep ? "bg-red-800" : "bg-gray-500"}`} style={{width:"3vh"}}>
         {stepId}
       </div>
       {triggerCardIds?.length > 0 &&

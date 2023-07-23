@@ -224,7 +224,6 @@ defmodule DragnCardsGame.Evaluate do
         case Enum.at(code,0) do
           "PREV" ->
             prev_game = game["prev_game"]
-            prev_game = prev_game
             |> Map.put("variables", game["variables"])
             |> put_in(["variables", "$TARGET"], game["prev_game"]["variables"]["$TARGET"])
             |> put_in(["variables", "$TARGET_ID"], game["prev_game"]["variables"]["$TARGET_ID"])

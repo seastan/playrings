@@ -39,6 +39,7 @@
   def new(room_slug, options) do
     Logger.debug("Making new Game")
     game_def = Plugins.get_game_def(options["pluginId"])
+    IO.inspect(game_def["phases"])
     default_layout_info = Enum.at(game_def["layoutMenu"],0)
     layout_id = default_layout_info["layoutId"]
     base = %{
@@ -52,8 +53,11 @@
       "layoutId" => layout_id,
       "layoutVariants" => game_def["layouts"][layout_id]["defaultVariants"] || %{},
       "firstPlayer" => "player1",
-      "stepId" => Enum.at(game_def["steps"],0)["id"],
+      "stepId" => Enum.at(game_def["stepOrder"],0),
       "steps" => game_def["steps"],
+      "stepOrder" => game_def["stepOrder"],
+      "phases" => game_def["phases"],
+      "phaseOrder" => game_def["phaseOrder"],
       "groupById" => Groups.new(game_def["groups"]),
       "stackById" => %{},
       "cardById"  => %{},
