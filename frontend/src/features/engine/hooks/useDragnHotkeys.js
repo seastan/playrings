@@ -17,9 +17,7 @@ export const dragnHotkeys = [
     {"key": "Shift+ArrowLeft", "actionList": "undoMany", "label": "id:undoManyActions"},
     {"key": "Shift+ArrowRight", "actionList": "redoMany", "label": "id:redoManyActions"},
     {"key": "ArrowUp", "actionList": "prevStep", "label": "id:moveToPreviousGameStep"},
-    {"key": "ArrowDown", "actionList": "nextStep", "label": "id:moveToNextGameStep"},
-    {"key": "Shift+ArrowUp", "actionList": "prevPhase", "label": "id:moveToPreviousPhase"},
-    {"key": "Shift+ArrowDown", "actionList": "nextPhase", "label": "id:moveToNextPhase"}
+    {"key": "ArrowDown", "actionList": "nextStep", "label": "id:moveToNextGameStep"}
   ]
   
   export const useDoDragnHotkey = () => {
@@ -54,9 +52,9 @@ export const dragnHotkeys = [
                 ["DEFINE", "$OLD_STEP_INDEX", ["GET_INDEX", "$GAME.stepOrder", "$GAME.stepId"]],
                 ["COND",
                   ["EQUAL", "$OLD_STEP_INDEX", 0],
-                  ["DEFINE", "$NEW_STEP_INDEX", ["MINUS", ["LENGTH", "$GAME.stepOrder"], 1]],
+                  ["DEFINE", "$NEW_STEP_INDEX", ["SUBTRACT", ["LENGTH", "$GAME.stepOrder"], 1]],
                   true,
-                  ["DEFINE", "$NEW_STEP_INDEX", ["MINUS", "$OLD_STEP_INDEX", 1]]
+                  ["DEFINE", "$NEW_STEP_INDEX", ["SUBTRACT", "$OLD_STEP_INDEX", 1]]
                 ],
                 ["DEFINE", "$STEP_ID", "$GAME.stepOrder.[$NEW_STEP_INDEX]"],
                 ["SET", "/stepId", "$STEP_ID"],
@@ -66,10 +64,10 @@ export const dragnHotkeys = [
           return doActionList([
               ["DEFINE", "$OLD_STEP_INDEX", ["GET_INDEX", "$GAME.stepOrder", "$GAME.stepId"]],
               ["COND",
-                ["EQUAL", "$OLD_STEP_INDEX", ["MINUS", ["LENGTH", "$GAME.stepOrder"], 1]],
+                ["EQUAL", "$OLD_STEP_INDEX", ["SUBTRACT", ["LENGTH", "$GAME.stepOrder"], 1]],
                 ["DEFINE", "$NEW_STEP_INDEX", 0],
                 true,
-                ["DEFINE", "$NEW_STEP_INDEX", ["PLUS", "$OLD_STEP_INDEX", 1]]
+                ["DEFINE", "$NEW_STEP_INDEX", ["ADD", "$OLD_STEP_INDEX", 1]]
               ],
               ["DEFINE", "$STEP_ID", "$GAME.stepOrder.[$NEW_STEP_INDEX]"],
               ["SET", "/stepId", "$STEP_ID"],
