@@ -248,33 +248,33 @@ export const DropdownMenuCard = React.memo(({
           DropdownMoveTo(menuCard?.deckGroupId,handleDropdownClick)
         }
 
-        {/* {gameDef?.cardMenu?.moveToGroupIds?.map((groupId, index) => {
+        {gameDef?.cardMenu?.moveToGroupIds?.map((groupId, _index) => {
           if (activeMenu === "moveTo"+groupId) return(
-            <DropdownMoveTo key={index} destGroupId={groupId}/>
+            DropdownMoveTo(groupId,handleDropdownClick)
           )
-        })} */}
+        })}
 
         {activeMenu === "toggleTrigger" &&
         <div className="menu">
           <GoBack goToMenu="main" clickCallback={handleDropdownClick}/>
-          {gameDef?.phases?.map((phaseInfo, _phaseIndex) => (
+          {gameDef?.phaseOrder?.map((phaseId, _phaseIndex) => (
             <DropdownItem
               rightIcon={<FontAwesomeIcon icon={faChevronRight}/>}
-              goToMenu={phaseInfo.phaseId+"ToggleTrigger"}
+              goToMenu={phaseId+"ToggleTrigger"}
               clickCallback={handleDropdownClick}>
-              {gameL10n(phaseInfo.label)}
+              {gameL10n(gameDef?.phases?.[phaseId].label)}
             </DropdownItem>
           ))}
         </div>}
 
-      {gameDef?.phases?.map((phaseInfo, _phaseIndex) => {
-        const visible = activeMenu === phaseInfo.phaseId+"ToggleTrigger"
+      {gameDef?.phaseOrder?.map((phaseId, _phaseIndex) => {
+        const visible = activeMenu === phaseId+"ToggleTrigger"
         if (visible) return(
           <div className="menu">
             <GoBack goToMenu="toggleTrigger" clickCallback={handleDropdownClick}/>
             {gameDef?.stepOrder?.map((stepId, _stepIndex) => {
               const stepInfo = gameDef?.steps?.[stepId];
-              if (stepInfo.phaseId === phaseInfo.phaseId) return(
+              if (stepInfo.phaseId === phaseId) return(
                 <DropdownItem
                   rightIcon={visibleFace?.triggers?.[stepInfo.stepId] ? <FontAwesomeIcon icon={faCheck}/> : null}
                   action={dragnActionLists.toggleTrigger(stepInfo.stepId)}
