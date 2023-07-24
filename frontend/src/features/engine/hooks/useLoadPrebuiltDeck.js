@@ -1,14 +1,14 @@
-import { useImportLoadList } from './useImportLoadList';
 import { useGameDefinition } from './useGameDefinition';
+import { useDoActionList } from './useDoActionList';
 
 export const useLoadPrebuiltDeck = () => {
-    const importLoadList = useImportLoadList();
     const gameDef = useGameDefinition();
+    const doActionList = useDoActionList();
 
     return (deckId) => {
         const deck = gameDef.preBuiltDecks[deckId];
         if (deck) {
-            importLoadList(deck.cards);
+            doActionList(["LOAD_CARDS", deckId])
         } else {
             alert("Deck not found");
         }
