@@ -205,7 +205,7 @@ export const DropdownMenuCard = React.memo(({
             clickCallback={handleDropdownClick}>
             {l10n("deckOfOrigin")}
           </DropdownItem>
-          {gameDef?.cardMenu?.moveToGroupIds.map((groupId, index) => {
+          {gameDef?.cardMenu?.moveToGroupIds?.map((groupId, index) => {
             return (
               <DropdownItem
                 key={index}

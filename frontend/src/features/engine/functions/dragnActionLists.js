@@ -42,6 +42,17 @@ export const dragnActionLists = {
     ["SET", "/stepId", stepId],
     ["LOG", "$PLAYER_N", " set the round step to ", stepInfo?.label, "."]
   ]),
+  moveAllStacksTo: (origGroupId, destGroupId, numStacks, position) => ([
+    ["MOVE_STACKS", origGroupId, destGroupId, numStacks, position],
+    ["COND",
+      ["EQUAL", position, "top"],
+      ["LOG", "$PLAYER_N", " moved all cards (", numStacks, ") from ", "$GAME.groupById." + origGroupId + ".label", " to top of ", "$GAME.groupById." + destGroupId + ".label", "."],
+      ["EQUAL", position, "bottom"],
+      ["LOG", "$PLAYER_N", " moved (", numStacks, ") from ", "$GAME.groupById." + origGroupId + ".label", " to bottom of ", "$GAME.groupById." + destGroupId + ".label", "."],
+      true,
+      ["LOG", "$PLAYER_N", " shuffled all cards (", numStacks, ") from ", "$GAME.groupById." + origGroupId + ".label", " into ", "$GAME.groupById." + destGroupId + ".label", "."]
+    ]
+  ]),
   moveCardToTop: (cardId, destGroupId, label) => ([
     ["MOVE_CARD", cardId, destGroupId, 0],
     ["LOG", "$PLAYER_N", " moved ", ["FACEUP_NAME_FROM_CARD_ID", cardId], " to top of ", label, "."]

@@ -449,7 +449,11 @@ export const getGameDefSchema = (gameDef) => {
         "_strictKeys_": true,
         "moveToGroupIds": {
           "_type_": "array",
-          "_required_": true,
+          "_itemSchema_": {
+            "_type_": "string",
+            "_memberOf_": mytypeof(gameDef?.groups) === "object" ? Object.keys(gameDef.groups) : [],
+            "_memberOfPath_": "gameDef.groups",
+          }
         },
         "options": {
           "_type_": "array",

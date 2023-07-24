@@ -25,6 +25,7 @@ export const DropdownMenuGroup = React.memo(({
   const menuGroup = dropdownMenu.group;
   const gameDef = useGameDefinition();
   const group = useSelector(state => state?.gameUi?.game?.groupById?.[menuGroup.id]);
+  const numStacks = group?.stackIds?.length || 0;
   const browseTopN = useBrowseTopN();
 
   console.log("Rendering DMGroup", group)
@@ -34,25 +35,19 @@ export const DropdownMenuGroup = React.memo(({
         <GoBack goToMenu="moveTo" clickCallback={handleDropdownClick}/>
         <DropdownItem
           leftIcon={<FontAwesomeIcon icon={faArrowUp}/>}
-          action="moveStacks"
-          destGroupId={props.destGroupId}
-          position="top"
+          action={dragnActionLists.moveAllStacksTo(menuGroup.id, props.destGroupId, numStacks, "top")}
           clickCallback={handleDropdownClick}>
           {gameL10n("Top")}
         </DropdownItem>
         <DropdownItem
           leftIcon={<FontAwesomeIcon icon={faRandom}/>}
-          action="moveStacks"
-          destGroupId={props.destGroupId}
-          position="shuffle"
+          action={dragnActionLists.moveAllStacksTo(menuGroup.id, props.destGroupId, numStacks, "shuffle")}
           clickCallback={handleDropdownClick}>
           {gameL10n("Shuffle in")}
         </DropdownItem>
         <DropdownItem
           leftIcon={<FontAwesomeIcon icon={faArrowDown}/>}
-          action="moveStacks"
-          destGroupId={props.destGroupId}
-          position="bottom"
+          action={dragnActionLists.moveAllStacksTo(menuGroup.id, props.destGroupId, numStacks, "bottom")}
           clickCallback={handleDropdownClick}>
           {gameL10n("Bottom")}
         </DropdownItem>
@@ -127,12 +122,12 @@ export const DropdownMenuGroup = React.memo(({
               clickCallback={handleDropdownClick}>
               {gameL10n("My Deck")}
             </DropdownItem>
-            {gameDef.moveToGroupIds.map((moveToGroupId, _moveToGroupIndex) => (
+            {gameDef.groupMenu?.moveToGroupIds?.map((moveToGroupId, _moveToGroupIndex) => (
               <DropdownItem
                 rightIcon={<FontAwesomeIcon icon={faChevronRight}/>}
                 goToMenu={"moveTo"+moveToGroupId}
                 clickCallback={handleDropdownClick}>
-                {gameL10n(gameDef?.groups?.[moveToGroupId]?.name)}
+                {gameL10n(gameDef?.groups?.[moveToGroupId]?.label)}
               </DropdownItem>
               ))}
         </div>
@@ -169,7 +164,7 @@ export const DropdownMenuGroup = React.memo(({
         }
         {activeMenu === "moveToMy" &&
         <DropdownMoveTo destGroupId={playerN+"Deck"}/>}
-        {gameDef?.groupMenu?.moveToGroupIds.map((moveToGroupId, _moveToGroupIndex) => (
+        {gameDef?.groupMenu?.moveToGroupIds?.map((moveToGroupId, _moveToGroupIndex) => (
           (activeMenu === "moveTo" + moveToGroupId) && <DropdownMoveTo destGroupId={moveToGroupId}/>
         ))}
     </div>
