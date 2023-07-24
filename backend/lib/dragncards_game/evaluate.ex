@@ -139,6 +139,7 @@ defmodule DragnCardsGame.Evaluate do
   end
 
   def path_matches_listenpaths?(path, listenpaths, game_new, trace) do
+
     if Enum.any?(listenpaths, fn(listenpath) -> path_matches_listenpath?(path, listenpath, game_new, trace ++ ["path_matches_listenpath", Jason.encode!(listenpath)]) end) do
       true
     else
@@ -300,6 +301,12 @@ defmodule DragnCardsGame.Evaluate do
               evaluate(game, statement, trace ++ ["OR index #{index}"])
             end)
 
+          "TRUE" ->
+            true
+
+          "FALSE" ->
+            false
+
           "EQUAL" ->
             evaluate(game, Enum.at(code,1), trace ++ ["EQUAL left"]) == evaluate(game, Enum.at(code,2), trace ++ ["EQUAL right"])
 
@@ -325,7 +332,13 @@ defmodule DragnCardsGame.Evaluate do
             evaluate(game, Enum.at(code,1), trace ++ ["JOIN_STRING_left"]) <> evaluate(game, Enum.at(code,2), trace ++ ["JOIN_STRING_right"])
 
           "IN_STRING" ->
-            String.contains?(evaluate(game, Enum.at(code,1), trace ++ ["IN_STRING container"]), evaluate(game, Enum.at(code,2), trace ++ ["IN_STRING substring"]))
+            container = evaluate(game, Enum.at(code,1), trace ++ ["IN_STRING container"])
+            containee = evaluate(game, Enum.at(code,2), trace ++ ["IN_STRING containee"])
+            if container == nil or containee == nil do
+              false
+            else
+              String.contains?(container, containee)
+            end
 
           "IN_LIST" ->
             list = evaluate(game, Enum.at(code,1), trace ++ ["IN_LIST list"]) || []

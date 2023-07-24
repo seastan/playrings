@@ -64,7 +64,7 @@ export const SpawnExistingCardModal = React.memo(({}) => {
         <h1 className="mb-2">{gameL10n("Spawn card")}</h1>
         <div><span className="text-white">Load group: </span>
           <select className="form-control mb-1" style={{width:"35%"}} id={"loadGroupId"} name={"loadGroupId"} onChange={(event) => handleGroupIdChange(event)}>
-            {gameDef?.spawnExistingCardModal?.spawnGroupIds.map((groupId,_groupIndex) => (
+            {gameDef?.spawnExistingCardModal?.loadGroupIds?.map((groupId,_groupIndex) => (
               <option value={groupId}>{gameL10n(gameDef?.groups?.[groupId]?.label)}</option>
             ))}
           </select>

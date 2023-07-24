@@ -290,7 +290,7 @@ defmodule DragnCardsGame.GameUI do
     end)
 
     # If card gets moved to a facedown pile, or gets flipped up, erase peeking
-    moving_to_facedown = dest_group["onCardEnter"]["currentSide"] == "B"
+    moving_to_facedown = dest_group["onCardEnter"]["currentSide"] == "B" and orig_group_id != dest_group_id
     will_flip = old_card["currentSide"] == "B" and dest_group["onCardEnter"]["currentSide"] == "A" and allow_flip
 
     game = if moving_to_facedown or will_flip do

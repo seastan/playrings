@@ -1,8 +1,8 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from 'react-redux';
 import RoomGame from "./RoomGame";
 import useProfile from "../../hooks/useProfile";
-import { setPlayerN } from "../store/playerUiSlice";
+import { setObservingPlayerN, setPlayerN } from "../store/playerUiSlice";
 import BroadcastContext from "../../contexts/BroadcastContext";
 import { usePlugin } from "./hooks/usePlugin";
 import { PluginProvider } from "../../contexts/PluginContext";
@@ -27,9 +27,12 @@ export const RoomProviders = ({ gameBroadcast, chatBroadcast }) => {
   const playerN = getPlayerN(playerInfo, myUser?.id);
   const gameDef = useGameDefinition();
   const pluginId = usePlugin()?.id;
+  const [playerNSet, setPlayerNSet] = useState(false);
 
   useEffect(() => {
     dispatch(setPlayerN(playerN));
+    dispatch(setObservingPlayerN(playerN));
+    setPlayerNSet(true);
   }, [playerN])
 
   const gameBackgroundUrl = gameDef?.backgroundUrl;
@@ -49,7 +52,7 @@ export const RoomProviders = ({ gameBroadcast, chatBroadcast }) => {
           backgroundPositionY: "50%",
         }}>
         <BroadcastContext.Provider value={{gameBroadcast, chatBroadcast}}>
-          <RoomGame/>
+          {playerNSet && <RoomGame/>}
         </BroadcastContext.Provider>
       </div>
   );
