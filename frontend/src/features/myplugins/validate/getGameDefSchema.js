@@ -855,6 +855,9 @@ export const getGameDefSchema = (gameDef) => {
                 "_memberOfPath_": "gameDef.groups",
               }
             }
+          },
+          "postLoadActionList": {
+            "_type_": "actionList",
           }
         }
       },

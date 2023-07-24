@@ -544,15 +544,23 @@ defmodule DragnCardsGame.Evaluate do
             end
 
           "LOAD_CARDS" ->
-            load_list = evaluate(game, Enum.at(code, 1), trace ++ ["LOAD_CARDS load_list"])
+            load_list_or_id = evaluate(game, Enum.at(code, 1), trace ++ ["LOAD_CARDS load_list"])
             game_def = Plugins.get_game_def(game["options"]["pluginId"])
-            # If load_list is a string, it's a preBuiltDeckId - get the list from game_def
-            load_list = if is_binary(load_list) do
-              load_list_id = load_list
-              get_in(game_def, ["preBuiltDecks", load_list_id, "cards"])
+
+            # Set the load_list_id
+            load_list_id = if is_list(load_list_or_id) do
+              nil
             else
-              load_list
+              load_list_or_id
             end
+
+            # Set the load_list
+            load_list = if is_list(load_list_or_id) do
+              load_list_or_id
+            else
+              get_in(game_def, ["preBuiltDecks", load_list_id, "cards"])
+            end
+
             # Load cards
             game = try do
               GameUI.load_cards(game, evaluate(game, "$PLAYER_N", trace), load_list)
@@ -564,9 +572,17 @@ defmodule DragnCardsGame.Evaluate do
 
                 raise("Failed to load cards. " <> exception <> inspect(trace))
             end
+
+            # Run deck's postLoadActionList if it exists
+            game = if load_list_id && game_def["preBuiltDecks"][load_list_id]["postLoadActionList"] do
+              evaluate(game, ["ACTION_LIST", game_def["preBuiltDecks"][load_list_id]["postLoadActionList"]], trace ++ ["LOAD_CARDS deck postLoadActionList"])
+            else
+              game
+            end
+
             # Run postLoadActionList if it exists
             if game_def["automation"]["postLoadActionList"] do
-              evaluate(game, game_def["automation"]["postLoadActionList"], trace ++ ["LOAD_CARDS postLoadActionList"])
+              evaluate(game, game_def["automation"]["postLoadActionList"], trace ++ ["LOAD_CARDS game postLoadActionList"])
             else
               game
             end
