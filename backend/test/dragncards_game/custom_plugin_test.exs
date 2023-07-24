@@ -173,6 +173,20 @@ defmodule DragnCardsGame.CustomPluginTest do
 
   end
 
+  @tag :basics
+  test "Basics", %{user: _user, game: game, game_def: game_def} do
+    # Load some decks into the game
+    game = Evaluate.evaluate(game, ["LOAD_CARDS", "Q01.1"]) # Passage through Mirkwood
+
+    # Check DEFINED command
+    assert Evaluate.evaluate(game, ["DEFINED", "$PLAYER_N"]) == true
+    assert Evaluate.evaluate(game, ["DEFINED", "$PLAYER_N2"]) == false
+    assert Evaluate.evaluate(game, [["DEFINE", "$PLAYER_N", nil], ["DEFINED", "$PLAYER_N"]]) == false
+
+  end
+
+
+  @tag :card_hotkeys
   test "Card Hotkeys", %{user: _user, game: game, game_def: game_def} do
 
     # Load some decks into the game

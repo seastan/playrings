@@ -248,7 +248,12 @@ defmodule DragnCardsGame.Evaluate do
 
           "DEFINED" ->
             var_name = Enum.at(code, 1)
-            Map.has_key?(game["variables"], var_name) and game["variables"][var_name] != nil
+            try do
+              result = evaluate(game, var_name, trace ++ ["DEFINED #{var_name}"])
+              result != nil
+            rescue
+              _ -> false
+            end
 
           "POINTER" ->
             Enum.at(code, 1)
