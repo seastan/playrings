@@ -1,7 +1,6 @@
 defmodule DragnCardsWeb.API.V1.AlertController do
   use DragnCardsWeb, :controller
-  alias DragnCards.{Alerts, Repo}
-  alias DragnCards.Users.User
+  alias DragnCards.{Alerts}
   alias Plug.Conn
 
   # In postgres, ust the following command to manually set an alert, which rooms check on newround to see if there is a recent one.any()

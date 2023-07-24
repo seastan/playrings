@@ -3,14 +3,13 @@ defmodule DragnCardsWeb.RoomChannel do
   This channel will handle individual game rooms.
   """
   use DragnCardsWeb, :channel
-  alias DragnCardsGame.{Card, GameUIServer, GameUI}
+  alias DragnCardsGame.{GameUIServer}
   alias DragnCardsChat.{ChatMessage}
 
   require Logger
 
 
-  def join("room:" <> room_slug, _payload, %{assigns: %{user_id: user_id}} = socket) do
-    state = GameUIServer.state(room_slug)
+  def join("room:" <> room_slug, _payload, %{assigns: %{user_id: _user_id}} = socket) do
 
     socket =
       socket
@@ -37,7 +36,7 @@ defmodule DragnCardsWeb.RoomChannel do
     %{
       "action" => action,
       "options" => options,
-      "timestamp" => timestamp,
+      "timestamp" => _timestamp,
     },
     %{assigns: %{room_slug: room_slug, user_id: user_id}} = socket
   ) do
@@ -67,7 +66,7 @@ defmodule DragnCardsWeb.RoomChannel do
     %{
       "player_i" => player_i,
       "new_user_id" => new_user_id,
-      "timestamp" => timestamp,
+      "timestamp" => _timestamp,
     },
     %{assigns: %{room_slug: room_slug, user_id: user_id}} = socket
   ) do
@@ -124,7 +123,7 @@ defmodule DragnCardsWeb.RoomChannel do
     DragnCardsWeb.Endpoint.broadcast!("room:" <> room_slug, "ask_for_update", payload)
   end
 
-  def terminate({:normal, _payload}, socket) do
+  def terminate({:normal, _payload}, _socket) do
     # Closed normally. Do nothing.
     {:ok}
   end
@@ -141,15 +140,12 @@ defmodule DragnCardsWeb.RoomChannel do
     on_terminate(socket)
   end
 
-  defp on_terminate(%{assigns: %{room_slug: room_slug, user_id: user_id}, channel_pid: pid} = socket) do
-    state = GameUIServer.leave(room_slug, user_id, pid)
+  defp on_terminate(%{assigns: %{room_slug: room_slug, user_id: user_id}, channel_pid: _pid} = socket) do
     notify(socket, room_slug, user_id)
   end
 
 
-  defp notify_quiet(socket, room_slug, user_id) do
-
-    gameui = GameUIServer.state(room_slug)
+  defp notify_quiet(socket, _room_slug, user_id) do
 
     # Send a phx_reply event to everyone to ask for an update. Include the messages from the current update
     payload = %{
@@ -180,7 +176,7 @@ defmodule DragnCardsWeb.RoomChannel do
 
   # This is what part of the state gets sent to the client.
   # It can be used to transform or hide it before they get it.
-  defp client_state(socket, state) do
+  defp client_state(_socket, state) do
     state
   end
 end

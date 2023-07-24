@@ -220,6 +220,9 @@ export const siteL10n = {
   },
   "noDefinedPreBuiltDecks": {
     "English": "No pre-built decks have beend defined for this game."
+  },
+  "showTo": {
+    "English": "Show To"
   }
 
 

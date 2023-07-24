@@ -5319,7 +5319,7 @@
           ["EQUAL", "$ACTIVE_CARD.currentSide", "A"],
           [
             ["LOG", "$PLAYER_N", " flipped ", "$ACTIVE_FACE.name", " facedown."],
-            ["SET", "/$ACTIVE_CARD_PATH/currentSide", "B"]
+            ["SET", "/cardById/$ACTIVE_CARD_ID/currentSide", "B"]
           ],
           true,
           [

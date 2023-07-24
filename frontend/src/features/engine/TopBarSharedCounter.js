@@ -27,7 +27,7 @@ export const TopBarSharedCounter = React.memo(({
 
   const handleValueChange = (event) => {
     const newValue = event.target.value;
-    setValue(newValue);
+    setValue(Number(newValue));
     // Set up a delayed broadcast to update the game state that interrupts itself if the button is clicked again shortly after.
     if (delayBroadcast) clearTimeout(delayBroadcast);
     delayBroadcast = setTimeout(function() {
@@ -48,7 +48,7 @@ export const TopBarSharedCounter = React.memo(({
         <img className="h-full ml-1" src={imageUrl}></img>
         <input 
           className="h-full w-1/2 float-left text-center bg-transparent" 
-          value={value}
+          value={value ? value : 0}
           onChange={handleValueChange}
           type="number" min="0" step="1"
           disabled={playerN ? false : true}

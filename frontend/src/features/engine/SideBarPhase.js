@@ -5,15 +5,15 @@ import { useGameDefinition } from "./hooks/useGameDefinition";
 import { SideBarRoundStep } from "./SideBarRoundStep";
 
 export const SideBarPhase = React.memo(({
-  phaseInfo,
+  phaseId,
   triggerMap,
 }) => {
   const gameL10n = useGameL10n();
   const gameDef = useGameDefinition();
-  const currentStepIndex = useSelector(state => state?.gameUi?.game?.stepIndex);
-  const currentPhaseId = gameDef?.steps?.[currentStepIndex]?.phaseId;
-  const phaseId = phaseInfo.phaseId;
-  console.log("Rendering SideBarPhase", phaseId);
+  const currentStepId = useSelector(state => state?.gameUi?.game?.stepId);
+  const currentPhaseId = useSelector(state => state?.gameUi?.game?.steps?.[currentStepId]?.phaseId);
+  const phaseInfo = useSelector(state => state?.gameUi?.game?.phases?.[phaseId]);
+  console.log("Rendering SideBarPhase", {currentStepId, currentPhaseId, phaseId, phaseInfo});
   const isPhase = phaseId === currentPhaseId;
   return (
     <div 
@@ -27,13 +27,14 @@ export const SideBarPhase = React.memo(({
         </div>
       </div>
       <div className="w-full h-full flex flex-col float-left">
-        {gameDef?.steps?.map((stepInfo, _stepIndex) => {
+        {gameDef?.stepOrder?.map((stepId, _stepIndex) => {
+          const stepInfo = gameDef?.steps?.[stepId];
           if (stepInfo?.phaseId == phaseId)
             return (
               <SideBarRoundStep
                 key={stepInfo.stepId}
-                stepInfo={stepInfo}
-                triggerCardIds={triggerMap?.[stepInfo.stepId]}/>
+                stepId={stepId}
+                triggerCardIds={triggerMap?.[stepId]}/>
             )
         })}
       </div>

@@ -10,23 +10,23 @@ var delayBroadcast;
 
 export const useAddToken = () => {
     const gameDef = useGameDefinition();  
-    const [tokenDict, setTokenDict] = useState(defaultdict({}, 0));
+    const [tokenDict, setTokenDict] = useState({});
     const doActionList = useDoActionList();
     const dispatch = useDispatch();
     const activeCardId = useSelector(state => state?.playerUi?.activeCardId);
     const currentTokens = useSelector(state => state?.gameUi?.game?.cardById?.[activeCardId]?.tokens);
-    console.log("currentTokens", activeCardId, currentTokens)
 
-    const resolveTokenDict = () => {
-        for (const [tokenType, value] of Object.entries(tokenDict)) {
-            const actionList = [
-                ["INCREASE_VAL", "/$ACTIVE_CARD_PATH/tokens/" + tokenType, value],
-                ["LOG", "$PLAYER_N", value >= 0 ? " added " : " removed ", 
-                    Math.abs(value), " ", gameDef?.tokens?.[tokenType]?.name, " tokens to ", 
-                    "$ACTIVE_FACE.name", "."]
-            ]
-            doActionList(actionList);
+    const resolveTokenDict = (tempTokenDict) => {
+        const actionList = [];
+        for (const [cardId, cardTokenDict] of Object.entries(tempTokenDict)) {
+            for (const [tokenType, value] of Object.entries(cardTokenDict)) {
+                actionList.push(["INCREASE_VAL", "/cardById/" + cardId + "/tokens/" + tokenType, value])
+                actionList.push(["LOG", "$PLAYER_N", value >= 0 ? " added " : " removed ", 
+                        Math.abs(value), " ", gameDef?.tokens?.[tokenType]?.label, value === 1 ? " token" : " tokens", " to ", 
+                        ["FACEUP_NAME_FROM_CARD_ID", cardId], "."])
+            }
         }
+        doActionList(actionList);
     }
 
     return (tokenType, amount) => {
@@ -36,14 +36,21 @@ export const useAddToken = () => {
         if (newVal < 0 && !gameDef?.tokens?.[tokenType]?.canBeNegative) {
             return
         }
-        
-        tokenDict[tokenType] += adjustedAmount;
-        const newTokenDict = {...tokenDict};
-        setTokenDict(defaultdict(newTokenDict, 0));
+
+        var tempTokenDict = {}
+        if (tokenDict?.[activeCardId]?.[tokenType] !== undefined) {
+            tempTokenDict = {...tokenDict, [activeCardId]: {...tokenDict[activeCardId], [tokenType]: tokenDict[activeCardId][tokenType] + adjustedAmount}};
+        } else if (tokenDict?.[activeCardId] !== undefined) {
+            tempTokenDict = {...tokenDict, [activeCardId]: {...tokenDict[activeCardId], [tokenType]: adjustedAmount}};
+        } else {
+            tempTokenDict = {...tokenDict, [activeCardId]: {[tokenType]: adjustedAmount}};
+        }
+
+        setTokenDict({...tempTokenDict});
         if (delayBroadcast) clearTimeout(delayBroadcast);
         delayBroadcast = setTimeout(() => {
-            resolveTokenDict(newTokenDict, doActionList);
-            setTokenDict(defaultdict({}, 0));
+            resolveTokenDict(tempTokenDict);
+            setTokenDict({});
         }, 400);
         const updates = [["game", "cardById", activeCardId, "tokens", tokenType, newVal]];
         dispatch(setValues({updates: updates}));

@@ -6,7 +6,7 @@ defmodule DragnCardsGame.GameUI do
 
   require Logger
   alias DragnCardsGame.GameVariables
-  alias DragnCardsGame.{Game, GameUI, GameUISeat, Groups, Stack, Card, CardFace, PlayerInfo, Evaluate, GameVariables}
+  alias DragnCardsGame.{Game, GameUI, Stack, Card, PlayerInfo, Evaluate, GameVariables}
 
   alias DragnCards.{Repo, Replay, Plugins}
   alias DragnCards.Rooms.Room
@@ -15,7 +15,7 @@ defmodule DragnCardsGame.GameUI do
 
   @spec new(String.t(), integer(), Map.t()) :: GameUI.t()
   def new(room_slug, user_id, %{} = options) do
-    IO.puts("gameui new 1")
+    Logger.debug("Making new GameUI")
     gameui = %{
       "game" => Game.load(room_slug, options),
       "roomSlug" => room_slug,
@@ -34,7 +34,7 @@ defmodule DragnCardsGame.GameUI do
       "loadedCardIds" => [],
       "logMessages" => [] # These game messages will be delivered to chat
     }
-    IO.puts("gameui new 2")
+    Logger.debug("Made new GameUI")
     gameui
   end
 
@@ -88,7 +88,13 @@ defmodule DragnCardsGame.GameUI do
   end
 
   def get_stack(game, stack_id) do
-    game["stackById"][stack_id]
+    if stack_id == nil do
+      raise "stack_id is nil"
+    end
+    case game["stackById"][stack_id] do
+      nil -> raise "Stack not found: #{stack_id}"
+      stack -> stack
+    end
   end
 
   def get_card_ids(game, stack_id) do
@@ -195,12 +201,16 @@ defmodule DragnCardsGame.GameUI do
   # Updaters                                                 #
   ############################################################
 
-  def update_group(game, new_group) do
-    Evaluate.evaluate(game, ["SET", "/groupById" <> "/" <> new_group["id"], new_group])
-  end
-
   def update_stack_ids(game, group_id, new_stack_ids) do
-    Evaluate.evaluate(game, ["SET", "/groupById/" <> group_id <> "/stackIds", ["LIST"] ++ new_stack_ids])
+    game = Evaluate.evaluate(game, ["SET", "/groupById/" <> group_id <> "/stackIds", ["LIST"] ++ new_stack_ids], ["update_stack_ids group_id:#{group_id}"])
+    # Update the indices of all cards in these stacks
+    Enum.reduce(Enum.with_index(new_stack_ids), game, fn({stack_id, stack_index}, acc) ->
+      stack = get_stack(game, stack_id)
+      Enum.reduce(Enum.with_index(stack["cardIds"]), acc, fn({card_id, card_index}, acc2) ->
+        Evaluate.evaluate(acc2, ["SET", "/cardById/" <> card_id <> "/stackIndex", stack_index], ["update_stack_ids stack_index:#{stack_index}"])
+        |> Evaluate.evaluate(["SET", "/cardById/" <> card_id <> "/cardIndex", card_index], ["update_stack_ids card_index:#{card_index}"])
+      end)
+    end)
   end
 
   def update_stack(game, new_stack) do
@@ -216,11 +226,15 @@ defmodule DragnCardsGame.GameUI do
   end
 
   # Move a card
-  def move_card(game, card_id, dest_group_id, dest_stack_index, dest_card_index, options \\ false) do
+  def move_card(game, card_id, dest_group_id, dest_stack_index, dest_card_index, options \\ nil) do
+    # Check if dest_group_id is a key in game["groupById"]
+    if dest_group_id not in Map.keys(game["groupById"]) do
+      raise "Group not found: #{dest_group_id}"
+    end
     # Get position of card
     {orig_group_id, _orig_stack_index, _orig_card_index} = gsc(game, card_id)
-    # Perpare destination stack
-    game = if options["combine"] do
+    # Pepare destination stack
+    game = if get_in(options, ["combine"]) do
       game
     else
       new_stack = Stack.empty_stack()
@@ -254,6 +268,26 @@ defmodule DragnCardsGame.GameUI do
     game = Evaluate.evaluate(game, ["SET", "/cardById/" <> card_id <> "/stackIndex", dest_stack_index], ["update_card_state cardId:#{card_id} stackIndex:#{dest_stack_index}"])
     game = Evaluate.evaluate(game, ["SET", "/cardById/" <> card_id <> "/cardIndex", dest_card_index], ["update_card_state cardId:#{card_id} cardIndex:#{dest_card_index}"])
     game = Evaluate.evaluate(game, ["SET", "/cardById/" <> card_id <> "/stackParentCardId", parent_card["id"]], ["update_card_state cardId:#{card_id} stackParentCardId:#{parent_card["id"]}"])
+
+    # Update stackIndex and cardIndex of every card in the orig/dest group
+    game = if orig_group_id != nil do
+      Enum.reduce(Enum.with_index(orig_group["stackIds"]), game, fn({stack_id, stack_index}, acc) ->
+        stack = get_stack(game, stack_id)
+        Enum.reduce(Enum.with_index(stack["cardIds"]), acc, fn({card_id, card_index}, acc2) ->
+          Evaluate.evaluate(acc2, ["SET", "/cardById/" <> card_id <> "/stackIndex", stack_index], ["update_card_state orig_group stack_index:#{stack_index}"])
+          |> Evaluate.evaluate(["SET", "/cardById/" <> card_id <> "/cardIndex", card_index], ["update_card_state orig_group card_index:#{card_index}"])
+        end)
+      end)
+    else
+      game
+    end
+    game = Enum.reduce(Enum.with_index(dest_group["stackIds"]), game, fn({stack_id, stack_index}, acc) ->
+      stack = get_stack(game, stack_id)
+      Enum.reduce(Enum.with_index(stack["cardIds"]), acc, fn({card_id, card_index}, acc2) ->
+        Evaluate.evaluate(acc2, ["SET", "/cardById/" <> card_id <> "/stackIndex", stack_index], ["update_card_state dest_group stack_index:#{stack_index}"])
+        |> Evaluate.evaluate(["SET", "/cardById/" <> card_id <> "/cardIndex", card_index], ["update_card_state dest_group card_index:#{card_index}"])
+      end)
+    end)
 
     # If card gets moved to a facedown pile, or gets flipped up, erase peeking
     moving_to_facedown = dest_group["onCardEnter"]["currentSide"] == "B"
@@ -305,8 +339,7 @@ defmodule DragnCardsGame.GameUI do
   end
 
   # Removes a card from a stack, but it stays in cardById
-  def remove_from_stack(game, card_id) do
-    stack_id = get_stack_by_card_id(game, card_id)["id"]
+  def remove_from_stack(game, card_id, stack_id) do
     old_card_ids = get_card_ids(game, stack_id)
     card_index = get_card_index_by_card_id(game, card_id)
     new_card_ids = List.delete_at(old_card_ids, card_index)
@@ -315,6 +348,11 @@ defmodule DragnCardsGame.GameUI do
     else
       update_card_ids(game, stack_id, new_card_ids)
     end
+  end
+
+  def remove_from_stack(game, card_id) do
+    stack_id = get_stack_by_card_id(game, card_id)["id"]
+    remove_from_stack(game, card_id, stack_id)
   end
 
   def refresh_stack_indices_in_group(game, group_id) do
@@ -396,56 +434,56 @@ defmodule DragnCardsGame.GameUI do
   end
 
   def move_stack(game, stack_id, dest_group_id, dest_stack_index, options \\ nil) do
-    if stack_id == nil do
-      raise "Cannot move nil stack to #{dest_group_id} #{dest_stack_index}"
+    if dest_group_id not in Map.keys(game["groupById"]) do
+      raise "Group not found: #{dest_group_id}"
+    end
+
+    # Get list of card ids in stack
+    card_ids = get_card_ids(game, stack_id)
+
+    # Get list of cards
+    cards = Enum.map(card_ids, fn(card_id) -> get_card(game, card_id) end)
+    # Get list of card side A name
+    card_side_a_names = Enum.map(cards, fn(card) -> card["sides"]["A"]["name"] end)
+    orig_group_id = get_group_by_stack_id(game, stack_id)["id"]
+    orig_stack_index = get_stack_index_by_stack_id(game, stack_id)
+    # If destination is negative, count backward from the end
+    dest_stack_index = if dest_stack_index < 0 do
+      loop_index = Enum.count(GameUI.get_stack_ids(game, dest_group_id)) + dest_stack_index
+      if get_in(options, ["combine"]) do
+        loop_index
+      else
+        loop_index + 1
+      end
     else
-      # Get list of card ids in stack
-      card_ids = get_card_ids(game, stack_id)
-      # Get list of cards
-      cards = Enum.map(card_ids, fn(card_id) -> get_card(game, card_id) end)
-      # Get list of card side A name
-      card_side_a_names = Enum.map(cards, fn(card) -> card["sides"]["A"]["name"] end)
-      IO.puts("Moving stack: #{card_side_a_names} #{dest_group_id} #{dest_stack_index}")
-      orig_group_id = get_group_by_stack_id(game, stack_id)["id"]
-      orig_stack_index = get_stack_index_by_stack_id(game, stack_id)
-      # If destination is negative, count backward from the end
-      dest_stack_index = if dest_stack_index < 0 do
-        loop_index = Enum.count(GameUI.get_stack_ids(game, dest_group_id)) + dest_stack_index
-        if get_in(options, ["combine"]) do
-          loop_index
-        else
-          loop_index + 1
-        end
-      else
-        dest_stack_index
-      end
-      IO.puts("Moving stack: #{card_side_a_names} #{dest_group_id} #{dest_stack_index}")
-      # If attaching to same group at higher index, dest_index will end up being 1 less
-      dest_stack_index = if orig_group_id == dest_group_id and options["combine"] and orig_stack_index < dest_stack_index do dest_stack_index - 1 else dest_stack_index end
-      # Delete stack id from old group
-      old_orig_stack_ids = get_stack_ids(game, orig_group_id)
-      new_orig_stack_ids = List.delete_at(old_orig_stack_ids, orig_stack_index)
-      game = update_stack_ids(game, orig_group_id, new_orig_stack_ids)
-      # Add to new position
-      if options["combine"] do
-        # Get existing destination stack
-        dest_stack = get_stack_by_index(game, dest_group_id, dest_stack_index)
-        dest_stack_id = dest_stack["id"]
-        # Update card ids of destination stack
-        old_orig_card_ids = get_card_ids(game, stack_id)
-        old_dest_card_ids = get_card_ids(game, dest_stack["id"])
-        new_dest_card_ids = old_dest_card_ids ++ old_orig_card_ids
-        game = update_card_ids(game, dest_stack_id, new_dest_card_ids)
-        # Delete original stack
-        game = delete_stack_from_stack_by_id(game, stack_id)
-        update_stack_state(game, dest_stack_id, orig_group_id, options)
-      else
-        # Update destination group stack ids
-        old_dest_stack_ids = get_stack_ids(game, dest_group_id)
-        new_dest_stack_ids = List.insert_at(old_dest_stack_ids, dest_stack_index, stack_id)
-        update_stack_ids(game, dest_group_id, new_dest_stack_ids)
-        |> update_stack_state(stack_id, orig_group_id, options)
-      end
+      dest_stack_index
+    end
+    Logger.debug("Moving stack: #{card_side_a_names} #{dest_group_id} #{dest_stack_index}")
+    # If attaching to same group at higher index, dest_index will end up being 1 less
+    dest_stack_index = if orig_group_id == dest_group_id and options["combine"] == true and orig_stack_index < dest_stack_index do dest_stack_index - 1 else dest_stack_index end
+    # Delete stack id from old group
+    old_orig_stack_ids = get_stack_ids(game, orig_group_id)
+    new_orig_stack_ids = List.delete_at(old_orig_stack_ids, orig_stack_index)
+    game = update_stack_ids(game, orig_group_id, new_orig_stack_ids)
+    # Add to new position
+    if options["combine"] do
+      # Get existing destination stack
+      dest_stack = get_stack_by_index(game, dest_group_id, dest_stack_index)
+      dest_stack_id = dest_stack["id"]
+      # Update card ids of destination stack
+      old_orig_card_ids = get_card_ids(game, stack_id)
+      old_dest_card_ids = get_card_ids(game, dest_stack["id"])
+      new_dest_card_ids = old_dest_card_ids ++ old_orig_card_ids
+      game = update_card_ids(game, dest_stack_id, new_dest_card_ids)
+      # Delete original stack
+      game = delete_stack_from_stack_by_id(game, stack_id)
+      update_stack_state(game, dest_stack_id, orig_group_id, options)
+    else
+      # Update destination group stack ids
+      old_dest_stack_ids = get_stack_ids(game, dest_group_id)
+      new_dest_stack_ids = List.insert_at(old_dest_stack_ids, dest_stack_index, stack_id)
+      update_stack_ids(game, dest_group_id, new_dest_stack_ids)
+      |> update_stack_state(stack_id, orig_group_id, options)
     end
   end
 
@@ -772,34 +810,19 @@ defmodule DragnCardsGame.GameUI do
   end
 
   def reset_game(game) do
-    Game.new(game["options"])
+    Game.new(game["roomSlug"], game["options"])
   end
 
   def create_card_in_group(game, game_def, group_id, load_list_item) do
     group_size = Enum.count(get_stack_ids(game, group_id))
     # Can't insert a card directly into a group need to make a stack first
     new_card = Card.card_from_card_details(load_list_item["cardDetails"], game_def, load_list_item["databaseId"], group_id)
-    new_card_id = new_card["id"]
     new_stack = Stack.stack_from_card(new_card)
 
-    # IO.puts("create_card_in_group 1")
-    # game = game
-    # |> Evaluate.evaluate(["SET", "/cardById/" <> new_card_id <> "/groupId", group_id], ["create_card_in_group"])
-    # |> Evaluate.evaluate(["SET", "/cardById/" <> new_card_id <> "/stackId", new_stack["id"]], ["create_card_in_group"])
-    # |> Evaluate.evaluate(["SET", "/cardById/" <> new_card_id <> "/stackIndex", group_size], ["create_card_in_group"])
-    # |> Evaluate.evaluate(["SET", "/cardById/" <> new_card_id <> "/cardIndex", 0], ["create_card_in_group"])
-    # IO.puts("create_card_in_group 2")
-    # new_card = new_card
-    # |> Map.put("groupId", group_id)
-    # |> Map.put("stackId", new_stack["id"])
-    # |> Map.put("stackIndex", group_size)
-    # |> Map.put("cardIndex", 0)
-
-
     game
-    |> insert_stack_in_group(group_id, new_stack["id"], group_size)
-    |> update_stack(new_stack)
     |> update_card(new_card)
+    |> update_stack(new_stack)
+    |> insert_stack_in_group(group_id, new_stack["id"], group_size)
     |> implement_card_automations(game_def, new_card)
     |> update_card_state(new_card["id"], nil, nil)
     |> Evaluate.evaluate(["SET", "/loadedCardIds", ["LIST"] ++ game["loadedCardIds"] ++ [new_card["id"]]], ["create_card_in_group"])
@@ -928,13 +951,7 @@ defmodule DragnCardsGame.GameUI do
 
     game = Evaluate.evaluate(game, ["LOG", "$PLAYER_N", " loaded cards."])
 
-    game = shuffle_changed_decks(game, old_game, game_def)
-
-    if game_def["automation"]["postLoadActionList"] != nil do
-      Evaluate.evaluate_with_timeout(game, game_def["automation"]["postLoadActionList"], ["postLoadActionList"], 5000)
-    else
-      game
-    end
+    shuffle_changed_decks(game, old_game, game_def)
 
     # # Check if we should load the first quest card
     # main_quest_stack_ids = get_stack_ids(game, "sharedMainQuest")

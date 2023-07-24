@@ -1,4 +1,4 @@
-use Mix.Config
+import Config
 
 config :dragncards, :pow,
   user: DragnCards.Users.User,

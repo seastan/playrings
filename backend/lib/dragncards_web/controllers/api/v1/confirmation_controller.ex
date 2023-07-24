@@ -16,7 +16,7 @@ defmodule DragnCardsWeb.API.V1.ConfirmationController do
       {:ok, conn} ->
         user = conn.assigns.confirm_email_user
         confirm_time = DateTime.utc_now
-        output = from(p in User, where: p.id == ^user.id, update: [set: [email_confirmed_at: ^confirm_time]])
+        from(p in User, where: p.id == ^user.id, update: [set: [email_confirmed_at: ^confirm_time]])
         |> Repo.update_all([])
         |> case do
           {1, nil} ->

@@ -2,7 +2,6 @@ defmodule DragnCardsGame.Groups do
   @moduledoc """
 
   """
-  alias DragnCardsGame.{Groups}
 
   @type t :: Map.t()
 

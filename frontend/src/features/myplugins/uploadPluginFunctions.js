@@ -58,8 +58,6 @@ for (var i = 1; i < jsonList.length; i++) {
 return json0;
 }
 
-
-
 export const stringTo2DArray = (inputString) => {
     // Split the input string into tokens using the tab character
     const tokens = inputString.split('\t');
@@ -103,73 +101,73 @@ export const stringTo2DArray = (inputString) => {
 export const processArrayOfRows = (inputs, plugin, arrayOfRows) => {
 
     const gameDef = plugin?.gameDef || inputs.gameDef;
-    const header0 = arrayOfRows[0][0];
-    if (!header0.includes("databaseId")) throw new Error("Missing databaseId column.")
-    if (!header0.includes("name")) throw new Error("Missing name column.")
-    if (!header0.includes("imageUrl")) throw new Error("Missing imageUrl column.")
-    if (!header0.includes("cardBack")) throw new Error("Missing cardBack column.")
-    if (!header0.includes("type")) throw new Error("Missing type column.")
-    const header0Str = JSON.stringify(header0);
     const cardDb = {};
     var multiSidedDbId = "";
     var multiSidedFace = "A";
     for (var rows of arrayOfRows) {
-        const headerStr = JSON.stringify(rows[0]);
-        if (headerStr !== header0Str) throw new Error("File headers do not match.")
-        for (var i=1; i<rows.length; i++) {
-            const row = rows[i];
-            const face = {};
-            for (var j=0; j<header0.length; j++) {
-                const colName = header0[j].replace(/\r$/, '');
-                face[colName] = row[j].replace(/\r$/, '');
-            }
-            const dbId = face.databaseId;
-            // Is this a multi-side of a previous card?
-            if (dbId === multiSidedDbId) {
-              // If database_id is not in db, raise an error
-              if (!cardDb[dbId]) throw new Error(`databaseId ${dbId} not found in cardDb`)
-              cardDb[dbId][multiSidedFace] = face;
-              if (multiSidedFace === "B") {
-                multiSidedFace = "C";
-              } else if (multiSidedFace === "C") {
-                multiSidedFace = "D";
-              } else if (multiSidedFace === "D") {
-                multiSidedFace = "E";
-              } else if (multiSidedFace === "E") {
-                multiSidedFace = "F";
-              } else if (multiSidedFace === "F") {
-                multiSidedFace = "G";
-              } else if (multiSidedFace === "G") {
-                multiSidedFace = "H";
-              } else if (multiSidedFace === "H") {
-                multiSidedFace = "I";
-              } else {
-                throw new Error(`Too many sides for databaseId ${dbId}`)
-              }
-            } else {
-              const faceA = face;
-              var faceB = {};
-              for (var key of header0) {
-                  faceB[key] = null;
-              }
-              if (faceA.cardBack !== "multi_sided") {
-                if (!gameDef?.cardBacks || !Object.keys(gameDef.cardBacks).includes(faceA.cardBack)) throw new Error(`cardBack for ${faceA.name} (${faceA.cardBack}) not found in gameDef.cardBacks`)
-              }
-              faceB["name"] = faceA.cardBack;
-              cardDb[faceA.databaseId] = {
-                  "A": faceA,
-                  "B": faceB
-              }
-              if (faceA.cardBack === "multi_sided") {
-                multiSidedDbId = faceA.databaseId;
-                multiSidedFace = "B";
-              } else {
-                multiSidedDbId = "";
-                multiSidedFace = "A";
-              }
-            }
-          
+      const header0 = rows[0];
+      if (!header0.includes("databaseId")) throw new Error("Missing databaseId column.")
+      if (!header0.includes("name")) throw new Error("Missing name column.")
+      if (!header0.includes("imageUrl")) throw new Error("Missing imageUrl column.")
+      if (!header0.includes("cardBack")) throw new Error("Missing cardBack column.")
+      if (!header0.includes("type")) throw new Error("Missing type column.")
+      const header0Str = JSON.stringify(header0);
+      const headerStr = JSON.stringify(rows[0]);
+      if (headerStr !== header0Str) throw new Error("File headers do not match.")
+      for (var i=1; i<rows.length; i++) {
+        const row = rows[i];
+        const face = {};
+        for (var j=0; j<header0.length; j++) {
+            const colName = header0[j].replace(/\r$/, '');
+            face[colName] = row[j].replace(/\r$/, '');
         }
+        const dbId = face.databaseId;
+        // Is this a multi-side of a previous card?
+        if (dbId === multiSidedDbId) {
+          // If database_id is not in db, raise an error
+          if (!cardDb[dbId]) throw new Error(`databaseId ${dbId} not found in cardDb`)
+          cardDb[dbId][multiSidedFace] = face;
+          if (multiSidedFace === "B") {
+            multiSidedFace = "C";
+          } else if (multiSidedFace === "C") {
+            multiSidedFace = "D";
+          } else if (multiSidedFace === "D") {
+            multiSidedFace = "E";
+          } else if (multiSidedFace === "E") {
+            multiSidedFace = "F";
+          } else if (multiSidedFace === "F") {
+            multiSidedFace = "G";
+          } else if (multiSidedFace === "G") {
+            multiSidedFace = "H";
+          } else if (multiSidedFace === "H") {
+            multiSidedFace = "I";
+          } else {
+            throw new Error(`Too many sides for databaseId ${dbId}`)
+          }
+        } else {
+          const faceA = face;
+          var faceB = {};
+          for (var key of header0) {
+              faceB[key] = null;
+          }
+          if (faceA.cardBack !== "multi_sided") {
+            if (!gameDef?.cardBacks || !Object.keys(gameDef.cardBacks).includes(faceA.cardBack)) throw new Error(`cardBack for ${faceA.name} (${faceA.cardBack}) not found in gameDef.cardBacks`)
+          }
+          faceB["name"] = faceA.cardBack;
+          cardDb[faceA.databaseId] = {
+              "A": faceA,
+              "B": faceB
+          }
+          if (faceA.cardBack === "multi_sided") {
+            multiSidedDbId = faceA.databaseId;
+            multiSidedFace = "B";
+          } else {
+            multiSidedDbId = "";
+            multiSidedFace = "A";
+          }
+        }
+        
+      }
     }
     return cardDb;
 }

@@ -17,6 +17,7 @@ import { deepUpdate } from "../store/updateValues";
 import { useVisibleSide } from "./hooks/useVisibleSide";
 import { useVisibleFace } from "./hooks/useVisibleFace";
 import { setActiveCardId, setDropdownMenu, setShowModal } from "../store/playerUiSlice";
+import { usePlayerIList } from "./hooks/usePlayerIList";
 
 export const DropdownMenuCard = React.memo(({
   mouseX,
@@ -41,6 +42,9 @@ export const DropdownMenuCard = React.memo(({
   const visibleSide = useVisibleSide(menuCardId);
   const visibleFace = useVisibleFace(menuCardId);
   const evaluateCondition = useEvaluateCondition();
+  const playerIList = usePlayerIList();
+
+  console.log("Rendering DropdownMenuCard ",playerIList)
 
   const setAltArt = async () => {
     if (user.supporter_level < 5000) {
@@ -165,6 +169,12 @@ export const DropdownMenuCard = React.memo(({
             clickCallback={handleDropdownClick}>
             {l10n("moveTo")}
           </DropdownItem>
+          <DropdownItem
+            rightIcon={<FontAwesomeIcon icon={faChevronRight}/>}
+            goToMenu="showTo"
+            clickCallback={handleDropdownClick}>
+            {l10n("showTo")}
+          </DropdownItem>
           {menuCard?.inPlay && 
             <DropdownItem
               rightIcon={<FontAwesomeIcon icon={faChevronRight}/>}
@@ -195,7 +205,7 @@ export const DropdownMenuCard = React.memo(({
             clickCallback={handleDropdownClick}>
             {l10n("deckOfOrigin")}
           </DropdownItem>
-          {gameDef?.cardMenu?.moveToGroupIds.map((groupId, index) => {
+          {gameDef?.cardMenu?.moveToGroupIds?.map((groupId, index) => {
             return (
               <DropdownItem
                 key={index}
@@ -207,37 +217,64 @@ export const DropdownMenuCard = React.memo(({
             )
           })}
         </div>}
+        
+        {activeMenu === "showTo" &&
+        <div className="menu">
+          <GoBack goToMenu="main" clickCallback={handleDropdownClick}/>
+          <DropdownItem
+            action={dragnActionLists.togglePeeking(menuCard, "All", playerIList)}
+            clickCallback={handleDropdownClick}>
+            {l10n("All")}
+          </DropdownItem>
+          <DropdownItem
+            action={dragnActionLists.togglePeeking(menuCard, "None", playerIList)}
+            clickCallback={handleDropdownClick}>
+            {l10n("None")}
+          </DropdownItem>
+          {playerIList?.map((playerI, index) => {
+            return (
+              <DropdownItem
+                key={index}
+                rightIcon={menuCard?.peeking?.[playerI] ? <FontAwesomeIcon icon={faCheck}/> : null}
+                action={dragnActionLists.togglePeeking(menuCard, playerI, playerIList)}
+                clickCallback={handleDropdownClick}>
+                {playerI}
+              </DropdownItem>
+            )
+          })}
+        </div>}
 
         {activeMenu === "moveTo"+menuCard?.deckGroupId &&
           DropdownMoveTo(menuCard?.deckGroupId,handleDropdownClick)
         }
 
-        {/* {gameDef?.cardMenu?.moveToGroupIds?.map((groupId, index) => {
+        {gameDef?.cardMenu?.moveToGroupIds?.map((groupId, _index) => {
           if (activeMenu === "moveTo"+groupId) return(
-            <DropdownMoveTo key={index} destGroupId={groupId}/>
+            DropdownMoveTo(groupId,handleDropdownClick)
           )
-        })} */}
+        })}
 
         {activeMenu === "toggleTrigger" &&
         <div className="menu">
           <GoBack goToMenu="main" clickCallback={handleDropdownClick}/>
-          {gameDef?.phases?.map((phaseInfo, _phaseIndex) => (
+          {gameDef?.phaseOrder?.map((phaseId, _phaseIndex) => (
             <DropdownItem
               rightIcon={<FontAwesomeIcon icon={faChevronRight}/>}
-              goToMenu={phaseInfo.phaseId+"ToggleTrigger"}
+              goToMenu={phaseId+"ToggleTrigger"}
               clickCallback={handleDropdownClick}>
-              {gameL10n(phaseInfo.label)}
+              {gameL10n(gameDef?.phases?.[phaseId].label)}
             </DropdownItem>
           ))}
         </div>}
 
-      {gameDef?.phases?.map((phaseInfo, _phaseIndex) => {
-        const visible = activeMenu === phaseInfo.phaseId+"ToggleTrigger"
+      {gameDef?.phaseOrder?.map((phaseId, _phaseIndex) => {
+        const visible = activeMenu === phaseId+"ToggleTrigger"
         if (visible) return(
           <div className="menu">
             <GoBack goToMenu="toggleTrigger" clickCallback={handleDropdownClick}/>
-            {gameDef?.steps?.map((stepInfo, _stepIndex) => {
-              if (stepInfo.phaseId === phaseInfo.phaseId) return(
+            {gameDef?.stepOrder?.map((stepId, _stepIndex) => {
+              const stepInfo = gameDef?.steps?.[stepId];
+              if (stepInfo.phaseId === phaseId) return(
                 <DropdownItem
                   rightIcon={visibleFace?.triggers?.[stepInfo.stepId] ? <FontAwesomeIcon icon={faCheck}/> : null}
                   action={dragnActionLists.toggleTrigger(stepInfo.stepId)}

@@ -34,10 +34,11 @@ defmodule DragnCardsGame.Card do
       # loop over the sides in card_details
       # and add them to the card
       "sides" => Enum.reduce(card_details, %{}, fn({side,val}, acc) ->
-        put_in(acc[side], CardFace.card_face_from_card_face_details(card_details[side], game_def))
+        put_in(acc[side], CardFace.card_face_from_card_face_details(val, game_def))
       end)
     }
-    card = Enum.reduce(game_def["cardProperties"], base, fn({key,val}, acc) ->
+    # loop over the cardProperties in game_def
+    Enum.reduce(game_def["cardProperties"], base, fn({key,val}, acc) ->
       put_in(acc[key], val["default"])
     end)
   end

@@ -39,7 +39,7 @@ defmodule DragnCards.Rooms.Room do
       _ ->
         if changeset.errors != [] do
           Logger.error("Room changeset errors")
-          Enum.reduce(changeset.errors, nil, fn(acc, err) ->
+          Enum.reduce(changeset.errors, nil, fn(_acc, err) ->
             Logger.error(err)
           end)
         end

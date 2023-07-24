@@ -62,10 +62,9 @@ defmodule DragnCardsGame.CardFace do
     if my_string == nil do
       %{}
     else
-      result = Jason.decode!(my_string)
-      case result do
-        map -> map
-        _ -> %{}
+      case Jason.decode(my_string) do
+        {:ok, map} -> map
+        _ -> raise "Couldn't convert string #{my_string} to map"
       end
     end
   end
@@ -75,10 +74,9 @@ defmodule DragnCardsGame.CardFace do
     if my_string == nil do
       []
     else
-      result = Jason.decode!(my_string)
-      case result do
-        list -> list
-        _ -> []
+      case Jason.decode(my_string) do
+        {:ok, list} -> list
+        _ -> raise "Couldn't convert string #{my_string} to list"
       end
     end
   end

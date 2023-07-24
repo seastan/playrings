@@ -1,11 +1,9 @@
 defmodule DragnCardsWeb.API.V1.GameController do
   use DragnCardsWeb, :controller
-  import Ecto.Query
 
   require Logger
 
   alias DragnCards.{Rooms, Users}
-  alias DragnCards.Rooms.Room
   alias DragnCardsUtil.{NameGenerator}
   alias DragnCardsGame.GameUISupervisor
 

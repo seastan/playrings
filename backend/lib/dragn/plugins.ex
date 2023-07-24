@@ -48,7 +48,7 @@ defmodule DragnCards.Plugins do
     select: {
       p.game_def
     }
-    result = case Repo.one(query) do
+    case Repo.one(query) do
       nil -> nil
       query_result -> elem(query_result, 0)
     end
@@ -60,7 +60,7 @@ defmodule DragnCards.Plugins do
     select: {
       p.card_db
     }
-    result = case Repo.one(query) do
+    case Repo.one(query) do
       nil -> nil
       query_result -> elem(query_result, 0)
     end

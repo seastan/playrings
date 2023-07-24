@@ -12,7 +12,7 @@ export const useDoActionList = () => {
         // executes the corresponding action list in the game definition, or it can
         // take a list, which it interprests as a custom action list and executes it.
         const isList = Array.isArray(idOrList);
-        const state = store.getState();
+
         var actionList = null;
         if (isList) {
             actionList = idOrList;

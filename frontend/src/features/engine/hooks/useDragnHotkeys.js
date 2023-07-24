@@ -2,21 +2,22 @@ import { useContext } from "react";
 import BroadcastContext from "../../../contexts/BroadcastContext";
 import store from "../../../store";
 import { useDoActionList } from "./useDoActionList";
+import { dragnActionLists } from "../functions/dragnActionLists";
 
 export const dragnHotkeys = [
-    {"key": "Shift+P", "actionList": "saveGame", "label": "saveGame"},
-    {"key": "Shift+W", "actionList": "drawArrow", "label": "startStopDrawingArrow"},
-    {"key": "Escape", "actionList": "clearTargets", "label": "clearTargetsArrows"},
-    {"key": "Ctrl+Z", "actionList": "undo", "label": "undoOneAction"},
-    {"key": "Ctrl+Y", "actionList": "redo", "label": "redoOneAction"},
-    {"key": "ArrowLeft", "actionList": "undo", "label": "undoOneAction"},
-    {"key": "ArrowRight", "actionList": "redo", "label": "redoOneAction"},
-    {"key": "Shift+ArrowLeft", "actionList": "undoMany", "label": "undoManyActions"},
-    {"key": "Shift+ArrowRight", "actionList": "redoMany", "label": "redoManyActions"},
-    {"key": "ArrowUp", "actionList": "prevStep", "label": "moveToPreviousGameStep"},
-    {"key": "ArrowDown", "actionList": "nextStep", "label": "moveToNextGameStep"},
-    {"key": "Shift+ArrowUp", "actionList": "prevPhase", "label": "moveToPreviousPhase"},
-    {"key": "Shift+ArrowDown", "actionList": "nextPhase", "label": "moveToNextPhase"}
+    {"key": "T", "actionList": "targetCard", "label": "id:targetCard"},
+    {"key": "Shift+W", "actionList": "drawArrow", "label": "id:startStopDrawingArrow"},
+    {"key": "Shift+P", "actionList": "saveGame", "label": "id:saveGame"},
+    {"key": "Shift+W", "actionList": "drawArrow", "label": "id:startStopDrawingArrow"},
+    {"key": "Escape", "actionList": "clearTargets", "label": "id:clearTargetsArrows"},
+    {"key": "Ctrl+Z", "actionList": "undo", "label": "id:undoOneAction"},
+    {"key": "Ctrl+Y", "actionList": "redo", "label": "id:redoOneAction"},
+    {"key": "ArrowLeft", "actionList": "undo", "label": "id:undoOneAction"},
+    {"key": "ArrowRight", "actionList": "redo", "label": "id:redoOneAction"},
+    {"key": "Shift+ArrowLeft", "actionList": "undoMany", "label": "id:undoManyActions"},
+    {"key": "Shift+ArrowRight", "actionList": "redoMany", "label": "id:redoManyActions"},
+    {"key": "ArrowUp", "actionList": "prevStep", "label": "id:moveToPreviousGameStep"},
+    {"key": "ArrowDown", "actionList": "nextStep", "label": "id:moveToNextGameStep"}
   ]
   
   export const useDoDragnHotkey = () => {
@@ -24,6 +25,8 @@ export const dragnHotkeys = [
     const {gameBroadcast} = useContext(BroadcastContext);
     return (actionList) => {
       switch (actionList) {
+        case "targetCard":
+          return doActionList(dragnActionLists.targetCard());
         case "saveGame":
           return gameBroadcast("game_action", {action: "save_replay", options: {player_ui: store.getState().playerUi}});
         case "clearTargets":
@@ -46,26 +49,29 @@ export const dragnHotkeys = [
             return gameBroadcast("step_through", {options: {size: "round", direction: "redo"}});
         case "prevStep": 
             return doActionList([
-                ["DECREASE_VAL", "/stepIndex", 1],
+                ["DEFINE", "$OLD_STEP_INDEX", ["GET_INDEX", "$GAME.stepOrder", "$GAME.stepId"]],
                 ["COND",
-                ["LESS_THAN", "$GAME.stepIndex", 0],
-                ["SET", "/stepIndex", ["MINUS", ["LENGTH", "$GAME.gameDef.steps"], 1]]
+                  ["EQUAL", "$OLD_STEP_INDEX", 0],
+                  ["DEFINE", "$NEW_STEP_INDEX", ["SUBTRACT", ["LENGTH", "$GAME.stepOrder"], 1]],
+                  true,
+                  ["DEFINE", "$NEW_STEP_INDEX", ["SUBTRACT", "$OLD_STEP_INDEX", 1]]
                 ],
-                ["DEFINE", "$STEP_INDEX", "$GAME.stepIndex"],
-                ["DEFINE", "$STEP", "$GAME.gameDef.steps.[$STEP_INDEX]"],
-                ["LOG", "$PLAYER_N", " set the round step to ", "$STEP.text", "."]
+                ["DEFINE", "$STEP_ID", "$GAME.stepOrder.[$NEW_STEP_INDEX]"],
+                ["SET", "/stepId", "$STEP_ID"],
+                ["LOG", "$PLAYER_N", " set the round step to ", "$GAME.steps.$STEP_ID.label", "."]
             ])
         case "nextStep":
-            return doActionList([
-                ["INCREASE_VAL", "/stepIndex", 1],
-                    ["COND",
-                    ["EQUAL", "$GAME.stepIndex", ["LENGTH", "$GAME.gameDef.steps"],
-                    ["SET", "/stepIndex", 0]
-                    ]
-                ],
-                ["DEFINE", "$STEP_INDEX", "$GAME.stepIndex"],
-                ["DEFINE", "$STEP", "$GAME.gameDef.steps.[$STEP_INDEX]"],
-                ["LOG", "$PLAYER_N", " set the round step to ", "$STEP.text", "."]
+          return doActionList([
+              ["DEFINE", "$OLD_STEP_INDEX", ["GET_INDEX", "$GAME.stepOrder", "$GAME.stepId"]],
+              ["COND",
+                ["EQUAL", "$OLD_STEP_INDEX", ["SUBTRACT", ["LENGTH", "$GAME.stepOrder"], 1]],
+                ["DEFINE", "$NEW_STEP_INDEX", 0],
+                true,
+                ["DEFINE", "$NEW_STEP_INDEX", ["ADD", "$OLD_STEP_INDEX", 1]]
+              ],
+              ["DEFINE", "$STEP_ID", "$GAME.stepOrder.[$NEW_STEP_INDEX]"],
+              ["SET", "/stepId", "$STEP_ID"],
+              ["LOG", "$PLAYER_N", " set the round step to ", "$GAME.steps.$STEP_ID.label", "."]
           ])
         case "drawArrow":
             return doActionList([

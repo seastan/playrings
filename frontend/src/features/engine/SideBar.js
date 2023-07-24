@@ -31,8 +31,8 @@ export const SideBar = React.memo(({}) => {
   return(
     <div className="bg-gray-500" style={{width:"6vh", zIndex: 1e4}}>
       <div className="h-full">
-        {gameDef?.phases?.map((phaseInfo, phaseIndex) => {
-          return(<SideBarPhase key={phaseIndex} phaseInfo={phaseInfo} triggerMap={triggerMap}/>)
+        {gameDef?.phaseOrder?.map((phaseId, phaseIndex) => {
+          return(<SideBarPhase key={phaseIndex} phaseId={phaseId} triggerMap={triggerMap}/>)
       })}
       </div>
     </div>

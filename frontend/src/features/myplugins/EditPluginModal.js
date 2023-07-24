@@ -65,6 +65,7 @@ export const EditPluginModal = ({ plugin, closeModal, doFetchHash}) => {
           game_def: inputs.gameDef,
           card_db: inputs.cardDb,
           public: inputs.public || false,
+          version: 1,
         }
       }
       res = await axios.post("/be/api/myplugins", updateData, authOptions);
@@ -77,6 +78,7 @@ export const EditPluginModal = ({ plugin, closeModal, doFetchHash}) => {
           game_def: inputs.gameDef,
           card_db: inputs.cardDb,
           public: inputs.public || false,
+          version: plugin.version + 1,
         }
       };
       res = await axios.patch("/be/api/myplugins/"+plugin.id, updateData, authOptions);

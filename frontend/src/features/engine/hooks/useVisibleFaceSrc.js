@@ -15,30 +15,29 @@ export const useVisibleFaceSrc = (cardId) => {
 
     if (!visibleFace) return null;
 
-    var src = visibleFace.imageUrl;
-
     const altArt = user?.plugin_settings?.[plugin?.id]?.alt_art?.[databaseId]?.[visibleSide];
     const altBack = user?.plugin_settings?.[plugin?.id]?.alt_art?.[visibleFace.name];
-    const defaultArt = visibleFace.imageUrl;
-    const defaultBack = gameDef?.cardBacks?.[visibleFace.name]?.imageUrl;
-    if (visibleFace.name == "Fatty Bolger") {
-        console.log("cardArt Fatty", {altArt, altBack, defaultArt, defaultBack})
-        console.log("cardArt Fatty", user?.plugin_settings, 
-            user,
-            user?.plugin_settings,
-            user?.plugin_settings?.[plugin?.id], 
-            user?.plugin_settings?.[plugin?.id]?.alt_art, 
-            user?.plugin_settings?.[plugin?.id]?.alt_art?.[databaseId],
-            user?.plugin_settings?.[plugin?.id]?.alt_art?.[databaseId]?.[visibleSide])
-    }
 
-    var src = altArt || altBack || defaultArt || defaultBack; 
+    if (altArt) return { src: altArt, default: null };
+    if (altBack) return { src: altBack, default: null };
 
-    const language = user?.language || "English";
-    const srcLanguage = src.replace('/English/','/'+language+'/');
-    
-    return {
-        src: srcLanguage,
-        default: src
+    const srcBase = visibleFace.imageUrl;
+
+
+    if (!srcBase) {
+        // No url, so must be a card back
+        return {src: gameDef?.cardBacks?.[visibleFace.name]?.imageUrl, default: null }
+    } else {
+        // Card has a url. Let's see if it's a full url or just a suffix
+        if (srcBase.startsWith('http')) {
+            // Full url. Nothing to do here.
+            return {src: srcBase, default: null }
+        } else {
+            // Just a suffix. Let's see if we have a prefix for this language.
+            const srcDefault = gameDef?.imageUrlPrefix?.Default ? gameDef?.imageUrlPrefix?.Default + srcBase : null;
+            const srcLanguage = gameDef?.imageUrlPrefix?.[user?.language] ? gameDef?.imageUrlPrefix?.[user?.language] + srcBase : null;
+            if (srcLanguage) return {src: srcLanguage, default: srcDefault}
+            else return {src: srcDefault, default: srcDefault }
+        }
     }
 }
