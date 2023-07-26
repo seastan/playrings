@@ -27,8 +27,8 @@ config :dragncards, DragnCardsWeb.Endpoint,
   #   "//172.22.2.32:31232",
   #   "//172.22.2.33:31232"
   # ],
-  front_end_email_confirm_url: "http://dragncards.com/confirm-email/{token}",
-  front_end_reset_password_url: "http://dragncards.com/reset-password/{token}"
+  front_end_email_confirm_url: "http://beta.dragncards.com/confirm-email/{token}",
+  front_end_reset_password_url: "http://beta.dragncards.com/reset-password/{token}"
 
 # Do not print debug messages in production
 config :logger, level: :info

@@ -14,6 +14,7 @@ import { PeekingSymbol } from "./PeekingSymbol";
 
 export const Card = React.memo(({
     cardId,
+    cardIndexFromGui,
     offset,
     isDragging,
 }) => { 
@@ -24,7 +25,7 @@ export const Card = React.memo(({
     const cardTokens = useSelector(state => state?.gameUi?.game?.cardById[cardId]?.tokens);
     const dropdownMenuVisible = useSelector(state => state?.playerUi?.dropdownMenu?.visible);
     const cardVisibleFace = useVisibleFace(cardId);
-    const cardStyle = useCardStyle(cardId, isDragging);
+    const cardStyle = useCardStyle(cardId, cardIndexFromGui, isDragging);
     const isActive = useSelector(state => {return state?.playerUi?.activeCardId === cardId});
 
     if (!cardCurrentSide) return;
@@ -42,17 +43,10 @@ export const Card = React.memo(({
     }
     // FIXME: display error if height and width still not defined?
 
-    const destroyed = currentFace.hitPoints > 0 && cardTokens.damage >= currentFace.hitPoints + cardTokens.hitPoints;
-    const explored = currentFace.questPoints > 0 && cardTokens.progress >= currentFace.questPoints + cardTokens.hitPoints;
-
-    var className = "";
-    if (isActive) className = "shadow-yellow";
-    if (destroyed) className = "shadow-red";
-    if (explored) className = "shadow-green";
     return (
         <div id={cardId}>
             <div 
-                className={className}
+                className={isActive ? "shadow-yellow" : null}
                 key={cardId}
                 style={cardStyle}
                 onMouseLeave={event => handleMouseLeave(event)}
@@ -74,9 +68,7 @@ export const Card = React.memo(({
                     cardId={cardId}
                     isActive={isActive}/>
                 <Tokens
-                    cardName={currentFace.name}
                     cardId={cardId}
-                    cardType={cardVisibleFace.type}
                     isActive={isActive}
                     aspectRatio={width/height}/>
 

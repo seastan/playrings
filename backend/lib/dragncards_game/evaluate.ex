@@ -185,7 +185,7 @@ defmodule DragnCardsGame.Evaluate do
   end
 
 
-  def evaluate_with_timeout(game, code, trace, timeout_ms \\ 2000) do
+  def evaluate_with_timeout(game, code, trace, timeout_ms \\ 5000) do
     task = Task.async(fn ->
       try do
         evaluate(game, code, trace)

@@ -6,17 +6,16 @@ import { useCardZIndex } from "./hooks/useCardZIndex";
 
 export const Tokens = React.memo(({ 
     cardId,
-    cardName,
-    cardType,
     isActive,
     aspectRatio,
-    side,
  }) => {
     const spacePressed = useSelector(state => state?.playerUi?.keypress?.Space);
     const showButtons = isActive && spacePressed;
     const gameDef = useGameDefinition();
-    const tokenTypes = gameDef.cardTypes?.[cardType]?.tokens || gameDef.cardTypes?._Other?.tokens || [];
+    const sideAType = useSelector(state => state?.gameUi?.game?.cardById?.[cardId]?.sides?.A?.type);
+    const tokenTypes = gameDef.cardTypes?.[sideAType]?.tokens || [];
     const zIndex = useCardZIndex(cardId);
+    console.log("Rendering Tokens",cardId,showButtons)
     return(
         <div className="absolute" style={{width:'100%', height:'100%'}}>
             {tokenTypes.map((tokenType, tokenIndex) => {
@@ -24,8 +23,7 @@ export const Tokens = React.memo(({
                     <Token 
                         key={tokenIndex}
                         tokenType={tokenType} 
-                        cardId={cardId} 
-                        cardName={cardName} 
+                        cardId={cardId}
                         zIndex={zIndex} 
                         aspectRatio={aspectRatio}  
                         showButtons={showButtons}/>
