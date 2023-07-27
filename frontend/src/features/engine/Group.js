@@ -38,7 +38,7 @@ export const Group = React.memo(({
     const dropdownMenu = {
         type: "group",
         group: group,
-        title: group.name,
+        title: gameL10n(group.label),
     }
     console.log("dispatch setDropdownMenu", dropdownMenu)
     if (playerN) dispatch(setDropdownMenu(dropdownMenu));
