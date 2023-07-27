@@ -45,6 +45,7 @@ export const Room = ({ slug }) => {
 
     // } else 
     if (event == "ask_for_update" && payload.messages) {
+      console.log("ask_for_update", payload.messages)
       setMessages(payload.messages)
     }
 
