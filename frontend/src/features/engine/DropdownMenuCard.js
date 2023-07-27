@@ -126,7 +126,7 @@ export const DropdownMenuCard = React.memo(({
   }
 
   const left = mouseX < (window.innerWidth/2)  ? mouseX + 10 : mouseX -310;
-  const top = mouseY < (window.innerHeight/2) ? mouseY : mouseY -150;
+  const top = mouseY < (window.innerHeight/2) ? mouseY : mouseY -350;
 
   return (
     <div 
@@ -152,7 +152,6 @@ export const DropdownMenuCard = React.memo(({
             clickCallback={handleDropdownClick}>
               {l10n("delete")}
           </DropdownItem>
-          {(visibleSide === "B" && !menuCard?.peeking[playerN]) ? <DropdownItem action="peek" clickCallback={handleDropdownClick}>{l10n("Peek")}</DropdownItem> : null}
           {gameDef?.cardMenu?.options?.map((menuItem, _itemIndex) => {
             if (menuItem?.showIf && !evaluateCondition(menuItem.showIf)) return;
             return ( 
