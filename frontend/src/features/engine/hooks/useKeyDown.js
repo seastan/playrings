@@ -6,6 +6,9 @@ import { useAddToken } from './useAddToken';
 import { useDoActionList } from './useDoActionList';
 import { dragnHotkeys, useDoDragnHotkey } from './useDragnHotkeys';
 import { useGameDefinition } from './useGameDefinition';
+import { useActiveCardId } from './useActiveCardId';
+import { useSendLocalMessage } from './useSendLocalMessage';
+import { usePlayerN } from './usePlayerN';
 
 
 export const useKeyDown = () => {
@@ -15,14 +18,21 @@ export const useKeyDown = () => {
     const keypressShift = useSelector(state => state?.playerUi?.keypress?.Shift);
     const keypressAlt = useSelector(state => state?.playerUi?.keypress?.Alt);
     const mouseTopBottom = useSelector(state => state?.playerUi?.mouseTopBottom);
+    const playerN = usePlayerN();
+    const activeCardId = useActiveCardId();
     const {gameBroadcast, chatBroadcast} = useContext(BroadcastContext);
     const doActionList = useDoActionList();
     const doDragnHotkey = useDoDragnHotkey()
     const addToken = useAddToken();
+    const sendLocalMessage = useSendLocalMessage();
     console.log("gameb render keydown 1", gameBroadcast)
 
     return (event) => {
         event.preventDefault();
+        if (!playerN) {
+            sendLocalMessage("You must be logged in and seated at the table to use hotkeys.");   
+            return;
+        }
         const k = event.key;
         const unix_sec = Math.floor(Date.now() / 1000);
         if (k === "Alt") dispatch(setKeypress({"Alt": unix_sec}));
@@ -42,6 +52,10 @@ export const useKeyDown = () => {
 
         for (var keyObj of gameDef?.hotkeys.token) {
             if (keyMatch(keyObj.key, dictKey)) {
+                if (!activeCardId) {
+                    sendLocalMessage(`You must hover over a card to use the "${dictKey}" hotkey.`);
+                    return;
+                }
                 addToken(keyObj.tokenType, mouseTopBottom === "top" ? 1 : -1);
                 return;
             }
@@ -56,6 +70,10 @@ export const useKeyDown = () => {
         }
         for (var keyObj of gameDef?.hotkeys.card) {
             if (keyMatch(keyObj.key, dictKey)) {
+                if (!activeCardId) {
+                    sendLocalMessage(`You must hover over a card to use the "${dictKey}" hotkey.`);
+                    return;
+                }
                 doActionList(keyObj.actionList)
                 console.log("keydown action ",keyObj.actionList, gameDef.actionLists[keyObj.actionList])
                 return;
@@ -68,6 +86,9 @@ export const useKeyDown = () => {
                 return;
             }
         }
+
+        sendLocalMessage(`No hotkey found for "${dictKey}".`)
+
         //if (Object.keys(defaultHotkeys["card"]).includes(dictKey)) doActionList("_custom",defaultActionLists[defaultHotkeys["card"][dictKey]]);
         //else if (Object.keys(defaultHotkeys["ui"]).includes(dictKey)) doActionList("_custom",defaultActionLists[defaultHotkeys["ui"][dictKey]]);
         //else if (Object.keys(defaultHotkeys["game"]).includes(dictKey)) doActionList("_custom",defaultActionLists[defaultHotkeys["game"][dictKey]]);

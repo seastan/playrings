@@ -158,28 +158,36 @@ defmodule DragnCardsGame.GameUIServer do
 
   def handle_call({:game_action, user_id, action, options}, _from, gameui) do
     Logger.debug("handle game_action #{user_id} #{action}")
-    #try do
-      gameui = GameUI.game_action(gameui, user_id, action, options)
-      gameui = put_in(gameui["error"], false)
-      # IO.puts("pypid")
-      # pypid = gameui["pypid"] |> :erlang.list_to_pid()
-      # #IO.inspect(gameui["pypid"])
-      # IO.puts("+==================================================================+")
-      # IO.inspect(Jason.encode(gameui))
-      # {status, gameui_json} = Jason.encode(gameui)
-      # plugin_action = gameui["pluginId"]
-      # gameui_json = :python.call(pypid, :lotrlcg_action, :increase_threat, [gameui_json])
-      # IO.puts("gameui_json")
-      # IO.inspect(gameui_json)
-      # {status, gameui} = Jason.decode(gameui_json)
-      gameui = put_in(gameui["game"]["last_action"], action)
+    gameui = case Application.get_env(:dragncards, :env_mode) do
+      :prod ->
+        try do
+          gameui = GameUI.game_action(gameui, user_id, action, options)
+          gameui = put_in(gameui["error"], false)
+          # IO.puts("pypid")
+          # pypid = gameui["pypid"] |> :erlang.list_to_pid()
+          # #IO.inspect(gameui["pypid"])
+          # IO.puts("+==================================================================+")
+          # IO.inspect(Jason.encode(gameui))
+          # {status, gameui_json} = Jason.encode(gameui)
+          # plugin_action = gameui["pluginId"]
+          # gameui_json = :python.call(pypid, :lotrlcg_action, :increase_threat, [gameui_json])
+          # IO.puts("gameui_json")
+          # IO.inspect(gameui_json)
+          # {status, gameui} = Jason.decode(gameui_json)
+          put_in(gameui["game"]["last_action"], action)
 
-    #rescue
-    #  exception ->
-    #    stack_trace = __STACKTRACE__
-    #    Logger.error("Error in #{action}: #{inspect exception}, stack trace: #{inspect stack_trace}")
-    #    put_in(gameui["logMessages"], ["ERROR: " <> inspect(stack_trace)])
-    #end
+        rescue
+          exception ->
+            stack_trace = __STACKTRACE__
+            Logger.error("Error in #{action}: #{inspect exception}, stack trace: #{inspect stack_trace}")
+            put_in(gameui["logMessages"], ["Error: " <> inspect(stack_trace)])
+        end
+      _ ->
+        gameui = GameUI.game_action(gameui, user_id, action, options)
+        gameui = put_in(gameui["error"], false)
+        put_in(gameui["game"]["last_action"], action)
+    end
+
     gameui
     |> save_and_reply()
   end

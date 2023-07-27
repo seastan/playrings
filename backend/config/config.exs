@@ -7,6 +7,8 @@
 # General application configuration
 import Config
 
+config :dragncards, :env_mode, :default
+
 config :dragncards,
   ecto_repos: [DragnCards.Repo]
 
