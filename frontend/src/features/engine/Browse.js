@@ -13,9 +13,9 @@ import { useDoActionList } from "./hooks/useDoActionList";
 import { useLayout } from "./hooks/useLayout";
 import { getParentCardsInGroup } from "./functions/common";
 
-const isNormalInteger = (str) => {
-  var n = Math.floor(Number(str));
-  return n !== Infinity && String(n) === str && n >= 0;
+const isNormalInteger = (val) => {
+  var n = Math.floor(Number(val));
+  return n !== Infinity && n === val && n >= 0;
 }
 
 export const Browse = React.memo(({}) => {
@@ -50,7 +50,7 @@ export const Browse = React.memo(({}) => {
   }, [])
 
   if (!group) return;
-  console.log("Rendering Browse", groupId, region)
+  console.log("Rendering Browse", groupId, region, browseGroupTopN)
 
   const handleBarsClick = (event) => {
     event.stopPropagation();
@@ -84,15 +84,15 @@ export const Browse = React.memo(({}) => {
 
   const closeAndShuffle = () => {
     const actionList = [
+      ["LOG", "$PLAYER_N", " closed ", gameL10n(group.label)+"."],
       ["FOR_EACH_VAL", "$STACK_ID", `$GROUP_BY_ID.${groupId}.stackIds`,
         [
           ["DEFINE", "$CARD_ID", "$STACK_BY_ID.$STACK_ID.cardIds.[0]"],
           ["SET", "/cardById/$CARD_ID/peeking/" + playerN, false]
         ]
       ],
-      ["SHUFFLE_GROUP", groupId],
-      ["LOG", "$PLAYER_N", " closed ", gameL10n(group.label)+"."],
       ["LOG", "$PLAYER_N", " shuffled ", gameL10n(group.label)+"."],
+      ["SHUFFLE_GROUP", groupId]
     ];
     doActionList(actionList);
     if (group?.onCardEnter?.currentSide === "B") stopPeekingTopCard();
@@ -100,14 +100,13 @@ export const Browse = React.memo(({}) => {
 
   const closeAndOrder = () => {
     const actionList = [
+      ["LOG", "$PLAYER_N", " closed ", gameL10n(group.label)+"."],
       ["FOR_EACH_VAL", "$STACK_ID", `$GROUP_BY_ID.${groupId}.stackIds`,
         [
           ["DEFINE", "$CARD_ID", "$STACK_BY_ID.$STACK_ID.cardIds.[0]"],
           ["SET", "/cardById/$CARD_ID/peeking", playerN, false]
         ]
-      ],
-      ["SHUFFLE_GROUP", groupId],
-      ["LOG", "$PLAYER_N", " closed ", gameL10n(group.label)+"."],
+      ]
     ];
     doActionList(actionList);
     if (group?.onCardEnter?.currentSide === "B") stopPeekingTopCard();
@@ -132,6 +131,7 @@ export const Browse = React.memo(({}) => {
   // If browseGroupTopN not set, or equal to "All" or "None", show all stacks
   var browseGroupTopNint = isNormalInteger(browseGroupTopN) ? parseInt(browseGroupTopN) : numStacks;
   var filteredStackIndices = [...Array(browseGroupTopNint).keys()];
+  
   // Filter by selected card type
   if (searchForProperty === "Other") {
       filteredStackIndices = filteredStackIndices.filter((stackIndex) => {

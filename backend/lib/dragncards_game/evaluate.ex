@@ -3,8 +3,9 @@ defmodule DragnCardsGame.Evaluate do
   Module that defines and evaluates the LISP-like language used to modify the game state.
   """
   require Logger
-  alias DragnCardsGame.{GameUI}
+  alias DragnCardsGame.{Game, GameUI}
   alias DragnCards.{Rooms, Plugins}
+
 
   def put_by_path(game_old, path, val_new, trace) do
     # IO.puts("val_new 1")

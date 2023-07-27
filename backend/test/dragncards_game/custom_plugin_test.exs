@@ -53,8 +53,8 @@ defmodule DragnCardsGame.CustomPluginTest do
     case Repo.insert(changeset) do
       {:ok, user} ->
         # If the user was inserted successfully, print and inspect the user
-        IO.puts("User created successfully!")
-        IO.inspect(user)
+        #IO.puts("User created successfully!")
+        #IO.inspect(user)
 
         # Confirm the user's email by setting the confirmation time
         confirm_time = DateTime.utc_now()
@@ -100,7 +100,7 @@ defmodule DragnCardsGame.CustomPluginTest do
 
     # Process each .tsv file and merge them into a card_db
     card_db = Enum.reduce(filenames, %{}, fn(filename, acc) ->
-      IO.puts("Processing #{filename}")
+      #IO.puts("Processing #{filename}")
       rows = File.stream!(filename)
       |> Stream.map(&String.split(&1, "\t"))
       |> Enum.to_list()

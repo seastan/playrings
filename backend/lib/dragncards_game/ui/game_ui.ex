@@ -546,10 +546,16 @@ defmodule DragnCardsGame.GameUI do
 
     set_last_room_update(gameui)
 
-    gameui
+    gameui = gameui
     |> put_in(["game"], game_new)
+
+    gameui = gameui
     |> update_log(game_new["messages"])
+
+    gameui = gameui
     |> add_delta(game_old)
+
+    gameui
   end
 
   def resolve_action_type(game, type, options, player_n, user_id) do
@@ -590,7 +596,7 @@ defmodule DragnCardsGame.GameUI do
       ds = [d | ds]
       put_in(gameui["deltas"], ds)
     else
-      game
+      gameui
     end
   end
 

@@ -93,9 +93,6 @@ defmodule DragnCardsGame.CardFace do
           case Regex.compile(regex_string, "i") do
             {:ok, regex} ->
               if String.match?(search_string |> String.downcase(), regex) do
-                IO.puts("Regex match found for")
-                IO.inspect(regex)
-                IO.puts("in #{search_string}")
                 Map.put(acc, step_id, true)
               else
                 acc

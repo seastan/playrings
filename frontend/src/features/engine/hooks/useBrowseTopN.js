@@ -3,11 +3,9 @@ import { useGameL10n } from "./useGameL10n";
 import store from "../../../store";
 import { setBrowseGroupId, setBrowseGroupTopN } from "../../store/playerUiSlice";
 import { useDoActionList } from "./useDoActionList";
-import { useGameDefinition } from "./useGameDefinition";
 import { usePlayerN } from "./usePlayerN";
 
 export const useBrowseTopN = () => {
-    const gameDef = useGameDefinition();
     const doActionList = useDoActionList();
     const dispatch = useDispatch();
     const playerN = usePlayerN();
@@ -17,7 +15,7 @@ export const useBrowseTopN = () => {
       const group = state?.gameUi?.game?.groupById?.[groupId];
       const stackIds = group["stackIds"];
       const numStacks = stackIds.length;
-      const groupName = gameL10n(gameDef.groups[groupId].label);
+      const groupName = gameL10n(group.label);
       var peekStackIds = [];
       var topNint = 0;
       // Set peeking based on topNstr
@@ -36,24 +34,30 @@ export const useBrowseTopN = () => {
         // Get integer input from the browser
         var topNprompt = window.prompt("How many cards do you want to look at?", "");
         topNint = parseInt(topNprompt) || 0;
+        if (topNint > numStacks) {
+          alert(`You tried to look at ${topNint} cards, but there are only ${numStacks} cards in ${groupName}.`)
+          topNint = numStacks;
+        }
+        if (topNint < 0) topNint = 0;
         peekStackIds = stackIds.slice(0, topNint);
-        message = ["LOG", "$PLAYER_N", " looked at the top ", topNstr, " cards of ", groupName, "."]
+        message = ["LOG", "$PLAYER_N", " looked at the top ", topNint, " cards of ", groupName, "."]
       } else {
         topNint = parseInt(topNstr) || 0;
+        if (topNint > numStacks) topNint = numStacks;
+        if (topNint < 0) topNint = 0;
         peekStackIds = stackIds.slice(0, topNint);
         message = ["LOG", "$PLAYER_N", " looked at the top ", topNstr, " cards of ", groupName, "."]
       }
       dispatch(setBrowseGroupId(group.id));
-      dispatch(setBrowseGroupTopN(topNstr));
+      dispatch(setBrowseGroupTopN(topNint));
       const actionList = [
+        message,
         ["FOR_EACH_START_STOP_STEP", "$i", 0, topNint, 1,
           [
-            ["DEFINE", "$STACK_ID", `$GROUP_BY_ID.${group.id}.stackIds.[$i]`],
-            ["DEFINE", "$CARD_ID", "$STACK_BY_ID.$STACK_ID.cardIds.[0]"],
-            ["SET", "/cardById/$CARD_ID/peeking/" + playerN, true]
+            ["DEFINE", "$CARD_ID", `$GAME.groupById.${group.id}.parentCardIds.[$i]`],
+            ["SET", "/cardById/$CARD_ID/peeking/" + playerN, visibility]
           ]
-        ],
-        message
+        ]
       ];
       doActionList(actionList);
     }

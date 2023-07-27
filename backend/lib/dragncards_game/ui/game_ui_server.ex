@@ -6,7 +6,7 @@ defmodule DragnCardsGame.GameUIServer do
   @timeout :timer.minutes(60)
 
   require Logger
-  alias DragnCardsGame.{GameUI, GameRegistry, User, PlayerInfo}
+  alias DragnCardsGame.{Game, GameUI, GameRegistry, User, PlayerInfo}
 
   def is_player(gameui, user_id) do
     ids = gameui["playerInfo"]
@@ -172,13 +172,15 @@ defmodule DragnCardsGame.GameUIServer do
       # IO.puts("gameui_json")
       # IO.inspect(gameui_json)
       # {status, gameui} = Jason.decode(gameui_json)
-      put_in(gameui["game"]["last_action"], action)
+      gameui = put_in(gameui["game"]["last_action"], action)
+
     #rescue
     #  exception ->
     #    stack_trace = __STACKTRACE__
     #    Logger.error("Error in #{action}: #{inspect exception}, stack trace: #{inspect stack_trace}")
     #    put_in(gameui["logMessages"], ["ERROR: " <> inspect(stack_trace)])
     #end
+    gameui
     |> save_and_reply()
   end
 
