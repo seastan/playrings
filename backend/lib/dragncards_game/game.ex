@@ -39,7 +39,6 @@
   def new(room_slug, options) do
     Logger.debug("Making new Game")
     game_def = Plugins.get_game_def(options["pluginId"])
-    IO.inspect(game_def["phases"])
     default_layout_info = Enum.at(game_def["layoutMenu"],0)
     layout_id = default_layout_info["layoutId"]
     base = %{
@@ -80,5 +79,12 @@
     end)
   end
 
+  def is_healthy(game) do
+    if get_in(game,["cardById"]) == nil do
+      IO.puts("Game is NOT healthy")
+    else
+      IO.puts("Game is healthy")
+    end
+  end
 
 end

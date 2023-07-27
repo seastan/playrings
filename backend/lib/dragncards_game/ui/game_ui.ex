@@ -290,7 +290,7 @@ defmodule DragnCardsGame.GameUI do
     end)
 
     # If card gets moved to a facedown pile, or gets flipped up, erase peeking
-    moving_to_facedown = dest_group["onCardEnter"]["currentSide"] == "B"
+    moving_to_facedown = dest_group["onCardEnter"]["currentSide"] == "B" and orig_group_id != dest_group_id
     will_flip = old_card["currentSide"] == "B" and dest_group["onCardEnter"]["currentSide"] == "A" and allow_flip
 
     game = if moving_to_facedown or will_flip do
@@ -546,10 +546,16 @@ defmodule DragnCardsGame.GameUI do
 
     set_last_room_update(gameui)
 
-    gameui
+    gameui = gameui
     |> put_in(["game"], game_new)
+
+    gameui = gameui
     |> update_log(game_new["messages"])
+
+    gameui = gameui
     |> add_delta(game_old)
+
+    gameui
   end
 
   def resolve_action_type(game, type, options, player_n, user_id) do
@@ -590,7 +596,7 @@ defmodule DragnCardsGame.GameUI do
       ds = [d | ds]
       put_in(gameui["deltas"], ds)
     else
-      game
+      gameui
     end
   end
 

@@ -13,13 +13,13 @@ export const dragnActionLists = {
       ["COND",
         "$ACTIVE_FACE.triggers.$STEP_ID",
         [
-          ["SET", "/$ACTIVE_FACE_PATH/triggers/" + stepId, false],
-          ["LOG", "$PLAYER_N", " removed ", stepId, " trigger to ", "$ACTIVE_FACE.name", "."]
+          ["LOG", "$PLAYER_N", " removed ", stepId, " trigger to ", "$ACTIVE_FACE.name", "."],
+          ["SET", "/$ACTIVE_FACE_PATH/triggers/" + stepId, false]
         ],
         true,
         [
-          ["SET", "/$ACTIVE_FACE_PATH/triggers/" + stepId, true],
-          ["LOG", "$PLAYER_N", " added ", stepId, " trigger to ", "$ACTIVE_FACE.name", "."]
+          ["LOG", "$PLAYER_N", " added ", stepId, " trigger to ", "$ACTIVE_FACE.name", "."],
+          ["SET", "/$ACTIVE_FACE_PATH/triggers/" + stepId, true]
         ]
       ]
     ]
@@ -28,13 +28,13 @@ export const dragnActionLists = {
     ["COND",
       ["NOT", "$ACTIVE_CARD.targeting.$PLAYER_N"],
       [
-        ["SET", "/cardById/$ACTIVE_CARD_ID/targeting/$PLAYER_N", true],
-        ["LOG", "$PLAYER_N", " targeted ", "$ACTIVE_CARD.currentFace.name", "."]
+        ["LOG", "$PLAYER_N", " targeted ", "$ACTIVE_CARD.currentFace.name", "."],
+        ["SET", "/cardById/$ACTIVE_CARD_ID/targeting/$PLAYER_N", true]
       ],
       true,
       [
-        ["SET", "/cardById/$ACTIVE_CARD_ID/targeting/$PLAYER_N", false],
-        ["LOG", "$PLAYER_N", " untargeted ", "$ACTIVE_CARD.currentFace.name", "."]
+        ["LOG", "$PLAYER_N", " untargeted ", "$ACTIVE_CARD.currentFace.name", "."],
+        ["SET", "/cardById/$ACTIVE_CARD_ID/targeting/$PLAYER_N", false]
       ]
     ]
   ]),
@@ -43,7 +43,6 @@ export const dragnActionLists = {
     ["LOG", "$PLAYER_N", " set the round step to ", stepInfo?.label, "."]
   ]),
   moveAllStacksTo: (origGroupId, destGroupId, numStacks, position) => ([
-    ["MOVE_STACKS", origGroupId, destGroupId, numStacks, position],
     ["COND",
       ["EQUAL", position, "top"],
       ["LOG", "$PLAYER_N", " moved all cards (", numStacks, ") from ", "$GAME.groupById." + origGroupId + ".label", " to top of ", "$GAME.groupById." + destGroupId + ".label", "."],
@@ -51,53 +50,54 @@ export const dragnActionLists = {
       ["LOG", "$PLAYER_N", " moved (", numStacks, ") from ", "$GAME.groupById." + origGroupId + ".label", " to bottom of ", "$GAME.groupById." + destGroupId + ".label", "."],
       true,
       ["LOG", "$PLAYER_N", " shuffled all cards (", numStacks, ") from ", "$GAME.groupById." + origGroupId + ".label", " into ", "$GAME.groupById." + destGroupId + ".label", "."]
-    ]
+    ],
+    ["MOVE_STACKS", origGroupId, destGroupId, numStacks, position]
   ]),
   moveCardToTop: (cardId, destGroupId, label) => ([
-    ["MOVE_CARD", cardId, destGroupId, 0],
     ["LOG", "$PLAYER_N", " moved ", ["FACEUP_NAME_FROM_CARD_ID", cardId], " to top of ", label, "."]
+    ["MOVE_CARD", cardId, destGroupId, 0]
   ]),
   moveCardToShuffled: (cardId, destGroupId, label) => ([
+    ["LOG", "$PLAYER_N", " shuffled ", ["FACEUP_NAME_FROM_CARD_ID", cardId], " into ", label, "."],
     ["MOVE_CARD", cardId, destGroupId, 0],
-    ["SHUFFLE_GROUP", destGroupId],
-    ["LOG", "$PLAYER_N", " shuffled ", ["FACEUP_NAME_FROM_CARD_ID", cardId], " into ", label, "."]
+    ["SHUFFLE_GROUP", destGroupId]
   ]),
   moveCardToBottom: (cardId, destGroupId, label) => ([
-    ["MOVE_CARD", cardId, destGroupId, -1],
-    ["LOG", "$PLAYER_N", " moved ", ["FACEUP_NAME_FROM_CARD_ID", cardId], " to bottom of ", label, "."]
+    ["LOG", "$PLAYER_N", " moved ", ["FACEUP_NAME_FROM_CARD_ID", cardId], " to bottom of ", label, "."],
+    ["MOVE_CARD", cardId, destGroupId, -1]
   ]),
   moveCardToTopX: (cardId, destGroupId, label) => ([
+    ["LOG", "$PLAYER_N", " shuffled ", ["FACEUP_NAME_FROM_CARD_ID", cardId], " into the top ", "$VAL", " cards of ", label, "."],
     ["INPUT", "integer", "$VAL", "Shuffle into top:", 5],
     ["MOVE_CARD", cardId, destGroupId, 0],
-    ["SHUFFLE_TOP_X", destGroupId, "$VAL"],
-    ["LOG", "$PLAYER_N", " shuffled ", ["FACEUP_NAME_FROM_CARD_ID", cardId], " into the top ", "$VAL", " cards of ", label, "."]
+    ["SHUFFLE_TOP_X", destGroupId, "$VAL"]
   ]),
   moveCardToBottomX: (cardId, destGroupId, label) => ([
+    ["LOG", "$PLAYER_N", " shuffled ", ["FACEUP_NAME_FROM_CARD_ID", cardId], " into the bottom ", "$VAL", " cards of ", label, "."],
     ["INPUT", "integer", "$VAL", "Shuffle into bottom:", 5],
     ["MOVE_CARD", cardId, destGroupId, -1],
-    ["SHUFFLE_BOTTOM_X", destGroupId, "$VAL"],
-    ["LOG", "$PLAYER_N", " shuffled ", ["FACEUP_NAME_FROM_CARD_ID", cardId], " into the bottom ", "$VAL", " cards of ", label, "."]
+    ["SHUFFLE_BOTTOM_X", destGroupId, "$VAL"]
   ]),
   detach: (card) => ([
     ["COND",
       ["GREATER_THAN", card.cardIndex, 0],
       [
-        ["MOVE_CARD", card.id, card.groupId, card.stackIndex + 1, 0],
-        ["LOG", "$PLAYER_N", " detached ", ["FACEUP_NAME_FROM_CARD_ID", card.id], "."]
+        ["LOG", "$PLAYER_N", " detached ", ["FACEUP_NAME_FROM_CARD_ID", card.id], "."],
+        ["MOVE_CARD", card.id, card.groupId, card.stackIndex + 1, 0]
       ]
     ]
   ]),
   flipCard: (card) => ([
     ["COND",
-      ["EQUAL", card.currentSide, "A"],
+      ["EQUAL", "$ACTIVE_CARD.currentSide", "A"],
       [
-        ["LOG", "$PLAYER_N", " flipped ", ["FACEUP_NAME_FROM_CARD_ID", card.id], " facedown."],
+        ["LOG", "$PLAYER_N", " flipped ", "$ACTIVE_CARD.sides.A.name", " facedown."],
         ["SET", "/cardById/" + card.id + "/currentSide", "B"]
       ],
       true,
       [
-        ["SET", "/cardById/" + card.id + "/currentSide", "A"],
-        ["LOG", "$PLAYER_N", " flipped ", ["FACEUP_NAME_FROM_CARD_ID", card.id], " faceup."]
+        ["LOG", "$PLAYER_N", " flipped ", "$ACTIVE_CARD.sides.A.name", " faceup."],
+        ["SET", "/cardById/" + card.id + "/currentSide", "A"]
       ]
     ]
   ]),
@@ -106,11 +106,11 @@ export const dragnActionLists = {
     ["DELETE_CARD", card.id]
   ]),
   chooseRandom: (groupId) => ([
+    ["LOG", "$PLAYER_N", " chose a random card from ", "$GAME.groupById." + groupId + ".label", "."],
     ["DEFINE", "$RANDOM_IDX", ["RANDOM_INT", 0, ["SUBTRACT", ["LENGTH", "$GAME.groupById." + groupId + ".stackIds"], 1]]],
     ["DEFINE", "$STACK_ID", "$GAME.groupById." + groupId + ".stackIds.[$RANDOM_IDX]"],
     ["DEFINE", "$CARD_ID", "$GAME.stackById.$STACK_ID.cardIds.[0]"],
-    ["TARGET", "$CARD_ID"],
-    ["LOG", "$PLAYER_N", " chose a random card from ", "$GAME.groupById." + groupId + ".label", "."]
+    ["TARGET", "$CARD_ID"]
   ]),
   togglePeeking: (card, val, playerIList) => {
     if (val === "All") {
@@ -121,21 +121,22 @@ export const dragnActionLists = {
       }
       , {});
       return ([
-        ["SET", "/cardById/" + card.id + "/peeking", peeking],
-        ["LOG", "$PLAYER_N", " set ", ["FACEUP_NAME_FROM_CARD_ID", card.id], " to be peeked at by all players."]
+        ["LOG", "$PLAYER_N", " set ", ["FACEUP_NAME_FROM_CARD_ID", card.id], " to be peeked at by all players."],
+        ["SET", "/cardById/" + card.id + "/peeking", peeking]
       ])
     } else if (val === "None") {
       return ([
-        ["SET", "/cardById/" + card.id + "/peeking", {}],
-        ["LOG", "$PLAYER_N", " set ", ["FACEUP_NAME_FROM_CARD_ID", card.id], " to not be peeked at by any players."]
+        ["LOG", "$PLAYER_N", " set ", ["FACEUP_NAME_FROM_CARD_ID", card.id], " to not be peeked at by any players."],
+        ["SET", "/cardById/" + card.id + "/peeking", {}]
       ])
     } else {
       const peeking = {...card.peeking, [val]: !card.peeking[val]};
       return ([
-        ["SET", "/cardById/" + card.id + "/peeking", peeking],
         card.peeking[val]
           ? ["LOG", "$PLAYER_N", " set ", ["FACEUP_NAME_FROM_CARD_ID", card.id], " to not be peeked at by {", val, "}."]
           : ["LOG", "$PLAYER_N", " set ", ["FACEUP_NAME_FROM_CARD_ID", card.id], " to be peeked at by {", val + "}", "."]
+        ,
+        ["SET", "/cardById/" + card.id + "/peeking", peeking]
       ])
     }
   }

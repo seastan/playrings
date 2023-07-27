@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { TableLayout } from "./TableLayout";
 import { GiantCard } from "./GiantCard";
 import { TopBar } from "./TopBar";
@@ -20,9 +20,10 @@ import BroadcastContext from "../../contexts/BroadcastContext";
 import { DeckbuilderModal } from "./DeckbuilderModal";
 import { PatreonModal } from "../support/PatreonModal";
 import DeveloperModal from "./DeveloperModal";
+import { usePlayerN } from "./hooks/usePlayerN";
+import { pl } from "date-fns/locale";
 
 export const Table = React.memo(() => {
-  const {gameBroadcast, chatBroadcast} = useContext(BroadcastContext);
   const dispatch = useDispatch();
   const tooltipIds = useSelector(state => state?.playerUi?.tooltipIds);
   const touchMode = useSelector(state => state?.playerUi?.touchMode);
@@ -34,7 +35,8 @@ export const Table = React.memo(() => {
   const myUserId = useProfile()?.id;
   const createdBy = useSelector(state => state.gameUi?.createdBy);
   const isHost = myUserId === createdBy;
-  console.log('Rendering Table', showModal);
+  const playerN = usePlayerN();
+  console.log('Rendering Table 1', playerN);
 
 
   const handleTableClick = (event) => {

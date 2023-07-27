@@ -53,8 +53,8 @@ defmodule DragnCardsGame.CustomPluginTest do
     case Repo.insert(changeset) do
       {:ok, user} ->
         # If the user was inserted successfully, print and inspect the user
-        IO.puts("User created successfully!")
-        IO.inspect(user)
+        #IO.puts("User created successfully!")
+        #IO.inspect(user)
 
         # Confirm the user's email by setting the confirmation time
         confirm_time = DateTime.utc_now()
@@ -100,7 +100,7 @@ defmodule DragnCardsGame.CustomPluginTest do
 
     # Process each .tsv file and merge them into a card_db
     card_db = Enum.reduce(filenames, %{}, fn(filename, acc) ->
-      IO.puts("Processing #{filename}")
+      #IO.puts("Processing #{filename}")
       rows = File.stream!(filename)
       |> Stream.map(&String.split(&1, "\t"))
       |> Enum.to_list()
@@ -178,7 +178,7 @@ defmodule DragnCardsGame.CustomPluginTest do
     # Load some decks into the game
     game = Evaluate.evaluate(game, ["LOAD_CARDS", "Q01.1"]) # Passage through Mirkwood
 
-    # Check DEFINED command
+    # Check DEFINE/DEFINED command
     assert Evaluate.evaluate(game, ["DEFINED", "$PLAYER_N"]) == true
     assert Evaluate.evaluate(game, ["DEFINED", "$PLAYER_N2"]) == false
     assert Evaluate.evaluate(game, [["DEFINE", "$PLAYER_N", nil], ["DEFINED", "$PLAYER_N"]]) == false
@@ -503,6 +503,266 @@ defmodule DragnCardsGame.CustomPluginTest do
 
   end
 
+  # Celeborn
+  @tag :celeborn
+  test "Celeborn", %{user: _user, game: game, game_def: _game_def} do
+
+    # Load Celeborn
+    game = Evaluate.evaluate(game, ["LOAD_CARDS", ["LIST", %{"databaseId" => "4c4cccd3-576a-41f1-8b6c-ba11b4cc3d4b", "loadGroupId" => "player1Play1", "quantity" => 1}]])
+    assert length(game["groupById"]["player1Play1"]["stackIds"]) == 1
+
+    # Load Naith Guide
+    game = Evaluate.evaluate(game, ["LOAD_CARDS", ["LIST", %{"databaseId" => "dad6e885-d535-4100-bd9f-4726ea7c7465", "loadGroupId" => "player1Hand", "quantity" => 1}]])
+    assert length(game["groupById"]["player1Hand"]["stackIds"]) == 1
+
+    # Move Naith Guide to the table
+    naith_card_id = Evaluate.evaluate(game, ["GET_CARD_ID", "player1Hand", 0, 0])
+    game = Evaluate.evaluate(game, ["MOVE_CARD", naith_card_id, "player1Play1", 1, 0])
+    assert length(game["groupById"]["player1Play1"]["stackIds"]) == 2
+    assert game["cardById"][naith_card_id]["tokens"]["willpower"] == 1
+    assert game["cardById"][naith_card_id]["tokens"]["attack"] == 1
+    assert game["cardById"][naith_card_id]["tokens"]["defense"] == 1
+
+    # Load Itilien Lookout
+    game = Evaluate.evaluate(game, ["LOAD_CARDS", ["LIST", %{"databaseId" => "86edf661-e3d8-4372-9325-f2d2d5ac354a", "loadGroupId" => "player1Hand", "quantity" => 1}]])
+    assert length(game["groupById"]["player1Hand"]["stackIds"]) == 1
+
+    # Move Itilien Lookout
+    lookout_card_id = Evaluate.evaluate(game, ["GET_CARD_ID", "player1Hand", 0, 0])
+    game = Evaluate.evaluate(game, ["MOVE_CARD", lookout_card_id, "player1Play1", 1, 0])
+    assert length(game["groupById"]["player1Play1"]["stackIds"]) == 3
+    assert game["cardById"][lookout_card_id]["tokens"]["willpower"] == nil
+    assert game["cardById"][lookout_card_id]["tokens"]["attack"] == nil
+    assert game["cardById"][lookout_card_id]["tokens"]["defense"] == nil
+
+    # New Round
+    game = Evaluate.evaluate(game, ["ACTION_LIST", "newRound"])
+    assert game["cardById"][naith_card_id]["tokens"]["willpower"] == 0
+    assert game["cardById"][naith_card_id]["tokens"]["attack"] == 0
+    assert game["cardById"][naith_card_id]["tokens"]["defense"] == 0
+
+    # New Round
+    game = Evaluate.evaluate(game, ["ACTION_LIST", "newRound"])
+
+
+    # Print all messages
+    Enum.each(game["messages"], fn message ->
+      IO.puts(message)
+    end)
+
+  end
+
+  # Dain
+  @tag :dain
+  test "Dain", %{user: _user, game: game, game_def: _game_def} do
+
+    # Load Dain
+    game = Evaluate.evaluate(game, ["LOAD_CARDS", ["LIST", %{"databaseId" => "51223bd0-ffd1-11df-a976-0801206c9005", "loadGroupId" => "player1Play1", "quantity" => 1}]])
+    assert length(game["groupById"]["player1Play1"]["stackIds"]) == 1
+    dain_card_id = Evaluate.evaluate(game, ["GET_CARD_ID", "player1Play1", 0, 0])
+    assert game["cardById"][dain_card_id]["tokens"]["willpower"] == 1
+    assert game["cardById"][dain_card_id]["tokens"]["attack"] == 1
+
+    # Load dwarf ally
+    game = Evaluate.evaluate(game, ["LOAD_CARDS", ["LIST", %{"databaseId" => "51223bd0-ffd1-11df-a976-0801207c9085", "loadGroupId" => "player1Hand", "quantity" => 1}]])
+    assert length(game["groupById"]["player1Hand"]["stackIds"]) == 1
+
+    # Move ally to the table
+    dwarf_card_id = Evaluate.evaluate(game, ["GET_CARD_ID", "player1Hand", 0, 0])
+    game = Evaluate.evaluate(game, ["MOVE_CARD", dwarf_card_id, "player1Play1", 1, 0])
+    assert length(game["groupById"]["player1Play1"]["stackIds"]) == 2
+    assert game["cardById"][dwarf_card_id]["tokens"]["willpower"] == 1
+    assert game["cardById"][dwarf_card_id]["tokens"]["attack"] == 1
+
+    # Load Itilien Lookout
+    game = Evaluate.evaluate(game, ["LOAD_CARDS", ["LIST", %{"databaseId" => "86edf661-e3d8-4372-9325-f2d2d5ac354a", "loadGroupId" => "player1Hand", "quantity" => 1}]])
+    assert length(game["groupById"]["player1Hand"]["stackIds"]) == 1
+
+    # Move Itilien Lookout
+    lookout_card_id = Evaluate.evaluate(game, ["GET_CARD_ID", "player1Hand", 0, 0])
+    game = Evaluate.evaluate(game, ["MOVE_CARD", lookout_card_id, "player1Play1", 1, 0])
+    assert length(game["groupById"]["player1Play1"]["stackIds"]) == 3
+    assert game["cardById"][lookout_card_id]["tokens"]["willpower"] == nil
+    assert game["cardById"][lookout_card_id]["tokens"]["attack"] == nil
+    assert game["cardById"][lookout_card_id]["tokens"]["defense"] == nil
+
+    # Exhaust Dain
+    assert game["cardById"][dain_card_id]["exhausted"] == false
+    game = Evaluate.evaluate(game, [["DEFINE", "$ACTIVE_CARD_ID", dain_card_id], ["ACTION_LIST", "toggleExhaust"]])
+    assert game["cardById"][dain_card_id]["exhausted"] == true
+    assert game["cardById"][dwarf_card_id]["tokens"]["willpower"] == 0
+    assert game["cardById"][dwarf_card_id]["tokens"]["attack"] == 0
+
+    # Ready Dain
+    assert game["cardById"][dain_card_id]["exhausted"] == true
+    game = Evaluate.evaluate(game, [["DEFINE", "$ACTIVE_CARD_ID", dain_card_id], ["ACTION_LIST", "toggleExhaust"]])
+    assert game["cardById"][dain_card_id]["exhausted"] == false
+    assert game["cardById"][dwarf_card_id]["tokens"]["willpower"] == 1
+    assert game["cardById"][dwarf_card_id]["tokens"]["attack"] == 1
+
+    # Flip Dain
+    assert game["cardById"][dain_card_id]["currentSide"] == "A"
+    game = Evaluate.evaluate(game, [["DEFINE", "$ACTIVE_CARD_ID", dain_card_id], ["ACTION_LIST", "flipCard"]])
+    assert game["cardById"][dain_card_id]["currentSide"] == "B"
+    assert game["cardById"][dwarf_card_id]["tokens"]["willpower"] == 0
+    assert game["cardById"][dwarf_card_id]["tokens"]["attack"] == 0
+
+    # Flip Dain
+    assert game["cardById"][dain_card_id]["currentSide"] == "B"
+    game = Evaluate.evaluate(game, [["DEFINE", "$ACTIVE_CARD_ID", dain_card_id], ["ACTION_LIST", "flipCard"]])
+    assert game["cardById"][dain_card_id]["currentSide"] == "A"
+    assert game["cardById"][dwarf_card_id]["tokens"]["willpower"] == 1
+    assert game["cardById"][dwarf_card_id]["tokens"]["attack"] == 1
+
+    # Discard Dain
+    game = Evaluate.evaluate(game, [["DEFINE", "$ACTIVE_CARD_ID", dain_card_id], ["ACTION_LIST", "discardCard"]])
+    assert game["cardById"][dwarf_card_id]["tokens"]["willpower"] == 0
+    assert game["cardById"][dwarf_card_id]["tokens"]["attack"] == 0
+
+
+
+
+    # Print all messages
+    Enum.each(game["messages"], fn message ->
+      IO.puts(message)
+    end)
+
+  end
+
+
+  # Outlands
+  @tag :outlands
+  test "Outlands", %{user: _user, game: game, game_def: _game_def} do
+
+    # Load Ethir 1
+    game = Evaluate.evaluate(game, ["LOAD_CARDS", ["LIST", %{"databaseId" => "1c149f93-9e3b-42fa-878c-80b29563a283", "loadGroupId" => "player1Hand", "quantity" => 1}]])
+    assert length(game["groupById"]["player1Hand"]["stackIds"]) == 1
+
+    # Move ally to the table
+    ethir_1_card_id = Evaluate.evaluate(game, ["GET_CARD_ID", "player1Hand", 0, 0])
+    game = Evaluate.evaluate(game, ["MOVE_CARD", ethir_1_card_id, "player1Play1", 0, 0])
+    assert length(game["groupById"]["player1Play1"]["stackIds"]) == 1
+    assert game["cardById"][ethir_1_card_id]["tokens"]["willpower"] == 1
+
+    # Load Ethir 2
+    game = Evaluate.evaluate(game, ["LOAD_CARDS", ["LIST", %{"databaseId" => "1c149f93-9e3b-42fa-878c-80b29563a283", "loadGroupId" => "player1Hand", "quantity" => 1}]])
+    assert length(game["groupById"]["player1Hand"]["stackIds"]) == 1
+
+    # Move ally to the table
+    ethir_2_card_id = Evaluate.evaluate(game, ["GET_CARD_ID", "player1Hand", 0, 0])
+    game = Evaluate.evaluate(game, ["MOVE_CARD", ethir_2_card_id, "player1Play1", 0, 0])
+    assert length(game["groupById"]["player1Play1"]["stackIds"]) == 2
+    assert game["cardById"][ethir_1_card_id]["tokens"]["willpower"] == 2
+    assert game["cardById"][ethir_2_card_id]["tokens"]["willpower"] == 2
+
+    # Load Lossarnach 1
+    game = Evaluate.evaluate(game, ["LOAD_CARDS", ["LIST", %{"databaseId" => "2e84d805-365c-47ea-9c4f-e3f75daeb9a6", "loadGroupId" => "player1Hand", "quantity" => 1}]])
+    assert length(game["groupById"]["player1Hand"]["stackIds"]) == 1
+
+    # Move ally to the table
+    lossarnach_1_card_id = Evaluate.evaluate(game, ["GET_CARD_ID", "player1Hand", 0, 0])
+    game = Evaluate.evaluate(game, ["MOVE_CARD", lossarnach_1_card_id, "player1Play1", 0, 0])
+    assert length(game["groupById"]["player1Play1"]["stackIds"]) == 3
+    assert game["cardById"][ethir_1_card_id]["tokens"]["willpower"] == 2
+    assert game["cardById"][ethir_2_card_id]["tokens"]["willpower"] == 2
+    assert game["cardById"][lossarnach_1_card_id]["tokens"]["willpower"] == 2
+    assert game["cardById"][ethir_1_card_id]["tokens"]["defense"] == 1
+    assert game["cardById"][ethir_2_card_id]["tokens"]["defense"] == 1
+    assert game["cardById"][lossarnach_1_card_id]["tokens"]["defense"] == 1
+
+    # Load Knight 1
+    game = Evaluate.evaluate(game, ["LOAD_CARDS", ["LIST", %{"databaseId" => "c00844d6-1c3c-4e8c-a46c-8de15b8408df", "loadGroupId" => "player1Hand", "quantity" => 1}]])
+    assert length(game["groupById"]["player1Hand"]["stackIds"]) == 1
+
+    # Move ally to the table
+    knight_1_card_id = Evaluate.evaluate(game, ["GET_CARD_ID", "player1Hand", 0, 0])
+    game = Evaluate.evaluate(game, ["MOVE_CARD", knight_1_card_id, "player1Play1", 0, 0])
+    assert length(game["groupById"]["player1Play1"]["stackIds"]) == 4
+    assert game["cardById"][ethir_1_card_id]["tokens"]["willpower"] == 2
+    assert game["cardById"][ethir_2_card_id]["tokens"]["willpower"] == 2
+    assert game["cardById"][lossarnach_1_card_id]["tokens"]["willpower"] == 2
+    assert game["cardById"][knight_1_card_id]["tokens"]["willpower"] == 2
+    assert game["cardById"][ethir_1_card_id]["tokens"]["defense"] == 1
+    assert game["cardById"][ethir_2_card_id]["tokens"]["defense"] == 1
+    assert game["cardById"][lossarnach_1_card_id]["tokens"]["defense"] == 1
+    assert game["cardById"][knight_1_card_id]["tokens"]["defense"] == 1
+    assert game["cardById"][ethir_1_card_id]["tokens"]["attack"] == 1
+    assert game["cardById"][ethir_2_card_id]["tokens"]["attack"] == 1
+    assert game["cardById"][lossarnach_1_card_id]["tokens"]["attack"] == 1
+    assert game["cardById"][knight_1_card_id]["tokens"]["attack"] == 1
+
+    # Load Anfalas 1
+    game = Evaluate.evaluate(game, ["LOAD_CARDS", ["LIST", %{"databaseId" => "4cb4741d-c9d8-4d62-ab4f-50fa80c59fbb", "loadGroupId" => "player1Hand", "quantity" => 1}]])
+    assert length(game["groupById"]["player1Hand"]["stackIds"]) == 1
+
+    # Move ally to the table
+    anfalas_1_card_id = Evaluate.evaluate(game, ["GET_CARD_ID", "player1Hand", 0, 0])
+    game = Evaluate.evaluate(game, ["MOVE_CARD", anfalas_1_card_id, "player1Play1", 0, 0])
+    assert length(game["groupById"]["player1Play1"]["stackIds"]) == 5
+    assert game["cardById"][ethir_1_card_id]["tokens"]["hitPoints"] == 1
+    assert game["cardById"][ethir_2_card_id]["tokens"]["hitPoints"] == 1
+    assert game["cardById"][lossarnach_1_card_id]["tokens"]["hitPoints"] == 1
+    assert game["cardById"][knight_1_card_id]["tokens"]["hitPoints"] == 1
+    assert game["cardById"][anfalas_1_card_id]["tokens"]["hitPoints"] == 1
+
+    # Flip Ethir 2 facedown
+    assert game["cardById"][ethir_2_card_id]["currentSide"] == "A"
+    game = Evaluate.evaluate(game, [["DEFINE", "$ACTIVE_CARD_ID", ethir_2_card_id], ["ACTION_LIST", "flipCard"]])
+    assert game["cardById"][ethir_2_card_id]["currentSide"] == "B"
+    assert game["cardById"][ethir_1_card_id]["tokens"]["willpower"] == 1
+    assert game["cardById"][ethir_2_card_id]["tokens"]["willpower"] == 1
+    assert game["cardById"][lossarnach_1_card_id]["tokens"]["willpower"] == 1
+
+    # Flip Ethir 2 facedown
+    game = Evaluate.evaluate(game, [["DEFINE", "$ACTIVE_CARD_ID", ethir_2_card_id], ["ACTION_LIST", "flipCard"]])
+    assert game["cardById"][ethir_2_card_id]["currentSide"] == "A"
+    assert game["cardById"][ethir_1_card_id]["tokens"]["willpower"] == 2
+    assert game["cardById"][ethir_2_card_id]["tokens"]["willpower"] == 2
+    assert game["cardById"][lossarnach_1_card_id]["tokens"]["willpower"] == 2
+
+
+    # Print all messages
+    Enum.each(game["messages"], fn message ->
+      IO.puts(message)
+    end)
+
+  end
+
+  # Border color
+  @tag :border_color
+  test "Border Color", %{user: _user, game: game, game_def: _game_def} do
+
+    # Load Dain
+    game = Evaluate.evaluate(game, ["LOAD_CARDS", ["LIST", %{"databaseId" => "51223bd0-ffd1-11df-a976-0801206c9005", "loadGroupId" => "player1Play1", "quantity" => 1}]])
+    assert length(game["groupById"]["player1Play1"]["stackIds"]) == 1
+    dain_card_id = Evaluate.evaluate(game, ["GET_CARD_ID", "player1Play1", 0, 0])
+
+    # Damage Dain
+    game = Evaluate.evaluate(game, ["INCREASE_VAL", "/cardById/#{dain_card_id}/tokens/damage", 1])
+    game = Evaluate.evaluate(game, ["INCREASE_VAL", "/cardById/#{dain_card_id}/tokens/damage", 1])
+    game = Evaluate.evaluate(game, ["INCREASE_VAL", "/cardById/#{dain_card_id}/tokens/damage", 1])
+    game = Evaluate.evaluate(game, ["INCREASE_VAL", "/cardById/#{dain_card_id}/tokens/damage", 1])
+    game = Evaluate.evaluate(game, ["INCREASE_VAL", "/cardById/#{dain_card_id}/tokens/damage", 1])
+    assert game["cardById"][dain_card_id]["borderColor"] == "red"
+
+    # Give Dain some hit points
+    game = Evaluate.evaluate(game, ["INCREASE_VAL", "/cardById/#{dain_card_id}/tokens/hitPoints", 1])
+    game = Evaluate.evaluate(game, ["INCREASE_VAL", "/cardById/#{dain_card_id}/tokens/hitPoints", 1])
+    assert game["cardById"][dain_card_id]["borderColor"] == nil
+
+    # Dmage him again
+    game = Evaluate.evaluate(game, ["INCREASE_VAL", "/cardById/#{dain_card_id}/tokens/damage", 1])
+    assert game["cardById"][dain_card_id]["borderColor"] == nil
+    game = Evaluate.evaluate(game, ["INCREASE_VAL", "/cardById/#{dain_card_id}/tokens/damage", 1])
+    assert game["cardById"][dain_card_id]["borderColor"] == "red"
+
+    # Print all messages
+    Enum.each(game["messages"], fn message ->
+      IO.puts(message)
+    end)
+
+  end
+
   # Questing
   @tag :questing
   test "questing", %{user: _user, game: game, game_def: _game_def} do
@@ -516,42 +776,42 @@ defmodule DragnCardsGame.CustomPluginTest do
     card_id = Evaluate.evaluate(game, ["GET_CARD_ID", "player1Play1", 0, 0])
     game = Evaluate.evaluate(game, ["INCREASE_VAL", "/cardById/#{card_id}/tokens/willpower", 1])
 
-    # # Commit
-    # game = Evaluate.evaluate(game, [
-    #   ["DEFINE", "$ACTIVE_CARD_ID", card_id],
-    #   ["ACTION_LIST", "toggleCommit"]
-    # ])
+    # Commit
+    game = Evaluate.evaluate(game, [
+      ["DEFINE", "$ACTIVE_CARD_ID", card_id],
+      ["ACTION_LIST", "toggleCommit"]
+    ])
 
-    # assert Evaluate.evaluate(game, "$GAME.cardById.#{card_id}.committed") == true
-    # assert Evaluate.evaluate(game, "$GAME.cardById.#{card_id}.exhausted") == true
-    # assert Evaluate.evaluate(game, "$GAME.playerData.player1.willpower") == 3
+    assert Evaluate.evaluate(game, "$GAME.cardById.#{card_id}.committed") == true
+    assert Evaluate.evaluate(game, "$GAME.cardById.#{card_id}.exhausted") == true
+    assert Evaluate.evaluate(game, "$GAME.playerData.player1.willpower") == 3
 
-    # # Uncommit
-    # game = Evaluate.evaluate(game, [
-    #   ["DEFINE", "$ACTIVE_CARD_ID", card_id],
-    #   ["ACTION_LIST", "toggleCommit"]
-    # ])
+    # Uncommit
+    game = Evaluate.evaluate(game, [
+      ["DEFINE", "$ACTIVE_CARD_ID", card_id],
+      ["ACTION_LIST", "toggleCommit"]
+    ])
 
-    # assert Evaluate.evaluate(game, "$GAME.cardById.#{card_id}.committed") == false
-    # assert Evaluate.evaluate(game, "$GAME.cardById.#{card_id}.exhausted") == false
+    assert Evaluate.evaluate(game, "$GAME.cardById.#{card_id}.committed") == false
+    assert Evaluate.evaluate(game, "$GAME.cardById.#{card_id}.exhausted") == false
 
-    # # Commit without exhausting
-    # game = Evaluate.evaluate(game, [
-    #   ["DEFINE", "$ACTIVE_CARD_ID", card_id],
-    #   ["ACTION_LIST", "toggleCommitWithoutExhausting"]
-    # ])
+    # Commit without exhausting
+    game = Evaluate.evaluate(game, [
+      ["DEFINE", "$ACTIVE_CARD_ID", card_id],
+      ["ACTION_LIST", "toggleCommitWithoutExhausting"]
+    ])
 
-    # assert Evaluate.evaluate(game, "$GAME.cardById.#{card_id}.committed") == true
-    # assert Evaluate.evaluate(game, "$GAME.cardById.#{card_id}.exhausted") == false
+    assert Evaluate.evaluate(game, "$GAME.cardById.#{card_id}.committed") == true
+    assert Evaluate.evaluate(game, "$GAME.cardById.#{card_id}.exhausted") == false
 
-    # # Uncommit without exhausting
-    # game = Evaluate.evaluate(game, [
-    #   ["DEFINE", "$ACTIVE_CARD_ID", card_id],
-    #   ["ACTION_LIST", "toggleCommitWithoutExhausting"]
-    # ])
+    # Uncommit without exhausting
+    game = Evaluate.evaluate(game, [
+      ["DEFINE", "$ACTIVE_CARD_ID", card_id],
+      ["ACTION_LIST", "toggleCommitWithoutExhausting"]
+    ])
 
-    # assert Evaluate.evaluate(game, "$GAME.cardById.#{card_id}.committed") == false
-    # assert Evaluate.evaluate(game, "$GAME.cardById.#{card_id}.exhausted") == false
+    assert Evaluate.evaluate(game, "$GAME.cardById.#{card_id}.committed") == false
+    assert Evaluate.evaluate(game, "$GAME.cardById.#{card_id}.exhausted") == false
 
     # Commit
     game = Evaluate.evaluate(game, [
@@ -568,7 +828,6 @@ defmodule DragnCardsGame.CustomPluginTest do
     ])
 
     assert Evaluate.evaluate(game, "$GAME.playerData.player1.willpower") == 0
-
 
     # Print all messages
     Enum.each(game["messages"], fn message ->

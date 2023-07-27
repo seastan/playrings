@@ -85,7 +85,7 @@ export const DragContainer = React.memo(({}) => {
       // const updates = [["cardById",topOfOrigStackCardId,"currentSide", "A"]];
       // dispatch(setValues({updates: updates}));
 
-      //dispatch(setStackIds(newOrigGroup)); // This results is a jitter because the cardIndex is still 0 so it's briefly placed in the paren't spot
+      dispatch(setStackIds(newOrigGroup)); // This results is a jitter because the cardIndex is still 0 so it's briefly placed in the parent spot
       dispatch(setCardIds(newDestStack));
       doActionList(["MOVE_STACK", origStackId, destGroupId, dest.index, {"combine": true, "allowFlip": allowFlip}])
     }

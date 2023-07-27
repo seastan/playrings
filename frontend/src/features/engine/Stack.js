@@ -107,7 +107,8 @@ export const Stack = React.memo(({
                 <Card
                   key={cardId}
                   offset={offsets[cardIndex]}
-                  cardId={cardId} 
+                  cardId={cardId}
+                  cardIndexFromGui={cardIndex}
                   isDragging={(cardIndex === cardIds.length - 1) ? dragSnapshot.isDragging : false}/>
               )
           })}
