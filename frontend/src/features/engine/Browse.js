@@ -88,7 +88,7 @@ export const Browse = React.memo(({}) => {
       ["FOR_EACH_VAL", "$STACK_ID", `$GROUP_BY_ID.${groupId}.stackIds`,
         [
           ["DEFINE", "$CARD_ID", "$STACK_BY_ID.$STACK_ID.cardIds.[0]"],
-          ["SET", "/cardById/$CARD_ID/peeking/" + playerN, false]
+          ["SET", "/cardById/$CARD_ID/peeking/$PLAYER_N", false]
         ]
       ],
       ["LOG", "$PLAYER_N", " shuffled ", gameL10n(group.label)+"."],
@@ -104,7 +104,7 @@ export const Browse = React.memo(({}) => {
       ["FOR_EACH_VAL", "$STACK_ID", `$GROUP_BY_ID.${groupId}.stackIds`,
         [
           ["DEFINE", "$CARD_ID", "$STACK_BY_ID.$STACK_ID.cardIds.[0]"],
-          ["SET", "/cardById/$CARD_ID/peeking", playerN, false]
+          ["SET", "/cardById/$CARD_ID/peeking/$PLAYER_N", false]
         ]
       ]
     ];

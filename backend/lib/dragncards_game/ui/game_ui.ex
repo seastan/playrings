@@ -539,9 +539,17 @@ defmodule DragnCardsGame.GameUI do
 
     game_new = game_old
       |> put_in(["playerUi"], options["player_ui"])
+
+    game_new = game_new
       |> put_in(["messages"], [])
+
+    game_new = game_new
       |> resolve_action_type(action, options, player_n, user_id)
+
+    game_new = game_new
       |> Map.delete("playerUi")
+
+    game_new = game_new
       |> put_in(["variables"], GameVariables.default())
 
     set_last_room_update(gameui)
@@ -588,7 +596,7 @@ defmodule DragnCardsGame.GameUI do
     gameui = put_in(gameui["replayStep"], new_step)
     gameui = put_in(gameui["replayLength"], new_step)
     d = get_delta(prev_game, game)
-    if d do
+    gameui = if d do
       # add timestamp to delta
       timestamp = System.system_time(:millisecond)
       d = put_in(d["unix_ms"], "#{timestamp}")
@@ -598,6 +606,7 @@ defmodule DragnCardsGame.GameUI do
     else
       gameui
     end
+    gameui
   end
 
   def step(gameui, direction) do
