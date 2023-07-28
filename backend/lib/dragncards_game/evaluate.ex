@@ -31,8 +31,13 @@ defmodule DragnCardsGame.Evaluate do
           nil ->
             raise("Tried to set a key (#{key}) at a nonexistent path: #{inspect(path_minus_key)}")
 
-          _val_old ->
-            put_in(game_old, path, val_new)
+          val_old ->
+            # Check if val_old is a map
+            if is_map(val_old) do
+              put_in(game_old, path, val_new)
+            else
+              raise("Tried to set a key (#{key}) at a path that does not point to a map: #{inspect(path_minus_key)} = #{inspect(val_old)}")
+            end
         end
       end
 

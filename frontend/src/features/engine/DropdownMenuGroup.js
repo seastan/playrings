@@ -3,12 +3,13 @@ import { faArrowUp, faArrowDown, faRandom, faChevronRight, faCheck } from "@fort
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { DropdownItem, GoBack } from "./DropdownMenuHelpers";
 import "../../css/custom-dropdown.css";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useGameL10n } from "./hooks/useGameL10n";
 import { useGameDefinition } from "./hooks/useGameDefinition";
 import { usePlayerIList } from "./hooks/usePlayerIList";
 import { useBrowseTopN } from "./hooks/useBrowseTopN";
 import { dragnActionLists } from "./functions/dragnActionLists";
+import { setDropdownMenu } from "../store/playerUiSlice";
 
 export const DropdownMenuGroup = React.memo(({
   mouseX,
@@ -19,6 +20,7 @@ export const DropdownMenuGroup = React.memo(({
   activeMenu,
 }) => {
   const gameL10n = useGameL10n();
+  const dispatch = useDispatch();
   const dropdownMenu = useSelector(state => state?.playerUi?.dropdownMenu);
   const playerN = useSelector(state => state?.playerUi?.playerN);
   const playerIList = usePlayerIList();
@@ -65,6 +67,7 @@ export const DropdownMenuGroup = React.memo(({
 
   const handleLookAtClick = (dropdownOptions) => {
     browseTopN(menuGroup.id, dropdownOptions.topN);
+    dispatch(setDropdownMenu(null));
   }
   
 
