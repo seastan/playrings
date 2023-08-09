@@ -391,7 +391,7 @@ defmodule DragnCardsGame.Evaluate do
                   Enum.at(acc, int)
                 pathi == "currentFace" ->
                   current_side = if acc["currentSide"] == nil do
-                    raise "Tried to access currentSide on a non-card object."
+                    raise "Tried to access currentFace on an object where currentSide is null."
                   else
                     acc["currentSide"]
                   end
