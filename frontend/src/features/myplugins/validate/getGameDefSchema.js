@@ -472,18 +472,49 @@ export const getGameDefSchema = (gameDef) => {
           }
         }
       },
+      "groupTypes": {
+        "_type_": "object",
+        "_itemSchema_": {
+          "_type_": "object",
+          "label": {
+            "_type_": "label",
+          },
+          "tableLabel": {
+            "_type_": "label",
+          },
+          "canHaveAttachments": {
+            "_type_": "boolean",
+          },
+          "shuffleOnLoad": {
+            "_type_": "boolean",
+          },
+          "onCardEnter": {
+            "_type_": "object",
+            "_itemSchema_": {
+              "_type_": "any",
+            }
+          },
+          "_itemSchema_": {
+            "_type_": "any",
+          }
+        }
+      },
       "groups": {
         "_type_": "object",
         "_required_": true,
         "_itemSchema_": {
           "_type_": "object",
+          "groupType": {
+            "_type_": "string",
+            "_memberOf_": mytypeof(gameDef?.groupTypes) === "object" ? Object.keys(gameDef.groupTypes) : [],
+            "_memberOfPath_": "gameDef.groupTypes",
+          },
           "label": {
             "_type_": "label",
             "_required_": true,
           },
           "tableLabel": {
             "_type_": "label",
-            "_required_": true,
           },
           "canHaveAttachments": {
             "_type_": "boolean",

@@ -313,9 +313,7 @@ defmodule DragnCardsGame.GameUI do
       end
     end)
 
-    # If card has inPlay == false, reset tokens
-    new_card = get_card(game, card_id)
-    if old_card["inPlay"] == true and new_card["inPlay"] == false do
+    if orig_group["canHaveTokens"] != false and dest_group["canHaveTokens"] == false do
       Evaluate.evaluate(game, ["SET", "/cardById/" <> card_id <> "/tokens", %{}], ["update_card_state cardId:#{card_id} tokens:empty"])
     else
       game

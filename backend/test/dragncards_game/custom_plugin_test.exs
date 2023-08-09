@@ -152,6 +152,7 @@ defmodule DragnCardsGame.CustomPluginTest do
     {:ok, %{user: user, game: game, game_def: plugin.game_def, card_db: plugin.card_db}}
   end
 
+  @tag :loading
   # These tests are plugin-specific. You will need to overwite them, but they are here as a starting point.
   test "Loading Decks", %{user: user, game: game} do
 
@@ -170,6 +171,11 @@ defmodule DragnCardsGame.CustomPluginTest do
 
     # Confirm starting threat
     assert game["playerData"]["player1"]["threat"] == 29
+
+    # Load deck again
+    game = Evaluate.evaluate(game, ["LOAD_CARDS", "coreLeadership"]) # Leadership core set deck
+    assert game["playerData"]["player1"]["threat"] == 29
+
 
   end
 
