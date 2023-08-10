@@ -87,7 +87,10 @@ export const DragContainer = React.memo(({}) => {
 
       dispatch(setStackIds(newOrigGroup)); // This results is a jitter because the cardIndex is still 0 so it's briefly placed in the parent spot
       dispatch(setCardIds(newDestStack));
-      doActionList(["MOVE_STACK", origStackId, destGroupId, dest.index, {"combine": true, "allowFlip": allowFlip}])
+      doActionList([
+        ["LOG", "$PLAYER_N", " attached ", ["FACEUP_NAME_FROM_STACK_ID", origStackId], " from ", "$GAME.groupById."+origGroupId+".label", " to ", ["FACEUP_NAME_FROM_STACK_ID", destStackId], "."],
+        ["MOVE_STACK", origStackId, destGroupId, dest.index, {"combine": true, "allowFlip": allowFlip}]
+      ])
     }
 
     // Dropped nowhere

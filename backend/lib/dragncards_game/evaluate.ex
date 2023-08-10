@@ -804,6 +804,20 @@ defmodule DragnCardsGame.Evaluate do
                 "$ACTIVE_TOKENS" ->
                   evaluate(game, "$ACTIVE_CARD.tokens", trace)
 
+                "$ACTIVE_GROUP" ->
+                  cond do
+                    get_in(game, ["playerUi", "dropdownMenu", "group"]) ->
+                      get_in(game, ["playerUi", "dropdownMenu", "group"])
+                    get_in(game, ["playerUi", "activeCardId"]) ->
+                      group_id = evaluate(game, "$ACTIVE_CARD.groupId", trace ++ ["$ACTIVE_GROUP"])
+                      game["groupById"][group_id]
+                    true ->
+                      raise "$ACTIVE_GROUP is undefined"
+                  end
+
+                "$ACTIVE_GROUP_ID" ->
+                  evaluate(game, "$ACTIVE_GROUP", trace ++ ["$ACTIVE_GROUP"])["id"]
+
                 _ ->
                   raise "Variable #{code} is undefined. " <> inspect(trace)
               end

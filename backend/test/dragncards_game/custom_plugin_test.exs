@@ -890,6 +890,78 @@ defmodule DragnCardsGame.CustomPluginTest do
 
   end
 
+
+
+  # Shuffle discard into deck
+  @tag :shuffle_discard_into_deck
+  test "shuffle_discard_into_deck", %{user: _user, game: game, game_def: _game_def} do
+    # Load some decks into the game
+    game = Evaluate.evaluate(game, ["LOAD_CARDS", "Q01.1"]) # Passage through Mirkwood
+    game = Evaluate.evaluate(game, ["LOAD_CARDS", "coreLeadership"]) # Leadership core set deck
+    assert length(game["groupById"]["player1Hand"]["stackIds"]) == 6
+    assert length(game["groupById"]["player1Deck"]["stackIds"]) == 24
+    assert length(game["groupById"]["sharedEncounterDeck"]["stackIds"]) == 34
+
+    # Discard
+    card_id = Evaluate.evaluate(game, ["GET_CARD_ID", "sharedEncounterDeck", 0, 0])
+    game = Evaluate.evaluate(game, [
+      ["DEFINE", "$ACTIVE_CARD_ID", card_id],
+      ["ACTION_LIST", "discardCard"]
+    ])
+
+    card_id = Evaluate.evaluate(game, ["GET_CARD_ID", "sharedEncounterDeck", 0, 0])
+    game = Evaluate.evaluate(game, [
+      ["DEFINE", "$ACTIVE_CARD_ID", card_id],
+      ["ACTION_LIST", "discardCard"]
+    ])
+    card_id = Evaluate.evaluate(game, ["GET_CARD_ID", "sharedEncounterDeck", 0, 0])
+    game = Evaluate.evaluate(game, [
+      ["DEFINE", "$ACTIVE_CARD_ID", card_id],
+      ["ACTION_LIST", "discardCard"]
+    ])
+    assert length(game["groupById"]["sharedEncounterDeck"]["stackIds"]) == 31
+
+    # Shuffle back
+    card_id = Evaluate.evaluate(game, ["GET_CARD_ID", "sharedEncounterDiscard", 0, 0])
+    game = Evaluate.evaluate(game, [
+      ["DEFINE", "$ACTIVE_CARD_ID", card_id],
+      ["ACTION_LIST", "shuffleGroupIntoDeck"]
+    ])
+    assert length(game["groupById"]["sharedEncounterDeck"]["stackIds"]) == 34
+
+    # Repeat for player deck
+    card_id = Evaluate.evaluate(game, ["GET_CARD_ID", "player1Deck", 0, 0])
+    game = Evaluate.evaluate(game, [
+      ["DEFINE", "$ACTIVE_CARD_ID", card_id],
+      ["ACTION_LIST", "discardCard"]
+    ])
+    card_id = Evaluate.evaluate(game, ["GET_CARD_ID", "player1Deck", 0, 0])
+    game = Evaluate.evaluate(game, [
+      ["DEFINE", "$ACTIVE_CARD_ID", card_id],
+      ["ACTION_LIST", "discardCard"]
+    ])
+    card_id = Evaluate.evaluate(game, ["GET_CARD_ID", "player1Deck", 0, 0])
+    game = Evaluate.evaluate(game, [
+      ["DEFINE", "$ACTIVE_CARD_ID", card_id],
+      ["ACTION_LIST", "discardCard"]
+    ])
+    assert length(game["groupById"]["player1Deck"]["stackIds"]) == 21
+
+    # Shuffle back
+    card_id = Evaluate.evaluate(game, ["GET_CARD_ID", "player1Discard", 0, 0])
+    game = Evaluate.evaluate(game, [
+      ["DEFINE", "$ACTIVE_CARD_ID", card_id],
+      ["ACTION_LIST", "shuffleGroupIntoDeck"]
+    ])
+    assert length(game["groupById"]["player1Deck"]["stackIds"]) == 24
+
+    # Print all messages
+    Enum.each(game["messages"], fn message ->
+      IO.puts(message)
+    end)
+
+  end
+
   # Swap with top card of deck
   @tag :swap_with_top
   test "swap_with_top", %{user: _user, game: game, game_def: _game_def} do
