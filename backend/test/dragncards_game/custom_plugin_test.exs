@@ -410,6 +410,20 @@ defmodule DragnCardsGame.CustomPluginTest do
     # Check that card 2 is refreshed
     assert Evaluate.evaluate(game, "$GAME.cardById." <> card_id_2 <> ".exhausted") == false
 
+    # Calculate score
+    card_id = Evaluate.evaluate(game, ["GET_CARD_ID", "player1Play1", 0, 0])
+    game = Evaluate.evaluate(game, [["DEFINE", "$ACTIVE_CARD_ID", card_id], ["ACTION_LIST", "discardCard"]])
+    card_id = Evaluate.evaluate(game, ["GET_CARD_ID", "player2Play1", 0, 0])
+    card = Evaluate.evaluate(game, ["ONE_CARD", "$CARD", ["EQUAL", "$CARD.sides.A.name", "Chieftan Ufthak"]])
+    game = Evaluate.evaluate(game, [["DEFINE", "$ACTIVE_CARD_ID", card["id"]], ["ACTION_LIST", "addToVictoryDisplay"]])
+    game = Evaluate.evaluate(game, ["SET", "/cardById/" <> card_id <> "/tokens/damage", 3])
+    game = Evaluate.evaluate(game, ["ACTION_LIST", "calculateScore"])
+
+    # Print all messages
+    Enum.each(game["messages"], fn message ->
+      IO.puts(message)
+    end)
+
   end
 
 
