@@ -24,4 +24,4 @@ config :dragncards, DragnCardsWeb.Endpoint,
   front_end_reset_password_url: "http://localhost:3000/reset-password/{token}"
 
 # Print only warnings and errors during test
-config :logger, level: :warn
+config :logger, level: :debug

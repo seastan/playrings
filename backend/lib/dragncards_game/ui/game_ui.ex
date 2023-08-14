@@ -214,7 +214,10 @@ defmodule DragnCardsGame.GameUI do
   end
 
   def update_stack(game, new_stack) do
-    Evaluate.evaluate(game, ["SET", "/stackById" <> "/" <> new_stack["id"], new_stack])
+    Logger.debug("update_stack 1")
+    game = Evaluate.evaluate(game, ["SET", "/stackById" <> "/" <> new_stack["id"], new_stack])
+    Logger.debug("update_stack 2")
+    game
   end
 
   def update_card_ids(game, stack_id, new_card_ids) do
@@ -222,6 +225,7 @@ defmodule DragnCardsGame.GameUI do
   end
 
   def update_card(game, new_card) do
+    Logger.debug("update_card 1")
     Evaluate.evaluate(game, ["SET", "/cardById" <> "/" <> new_card["id"], new_card])
   end
 
@@ -252,6 +256,7 @@ defmodule DragnCardsGame.GameUI do
   # Update a card state
   # Modify the card orientation/tokens based on where it is now
   def update_card_state(game, card_id, orig_group_id \\ nil, move_options \\ nil) do
+    Logger.debug("update_card_state 1")
     {dest_group_id, dest_stack_index, dest_card_index} = gsc(game, card_id)
     orig_group = get_group(game, orig_group_id)
     dest_group = get_group(game, dest_group_id)
@@ -521,6 +526,7 @@ defmodule DragnCardsGame.GameUI do
   end
 
   def insert_stack_in_group(game, group_id, stack_id, index) do
+    Logger.debug("insert_stack_in_group 1")
     old_stack_ids = get_stack_ids(game, group_id)
     new_stack_ids = List.insert_at(old_stack_ids, index, stack_id)
     update_stack_ids(game, group_id, new_stack_ids)
@@ -770,19 +776,45 @@ defmodule DragnCardsGame.GameUI do
   def save_replay(game, user_id) do
     game_uuid = game["id"]
     game_def = Plugins.get_game_def(game["options"]["pluginId"])
+    save_description = get_in(game_def, ["saveGame", "description"])
+    save_metadata = get_in(game_def, ["saveGame", "metadata"])
+
+    IO.puts("updates 0")
+    IO.inspect(save_description)
+    IO.inspect(save_metadata)
+    IO.inspect(Evaluate.evaluate(game, save_description, ["save_replay"]))
+    IO.inspect(Evaluate.evaluate(game, ["PROCESS_MAP", save_metadata], ["save_replay"]))
+    IO.puts("updates 1")
     updates = %{
       rounds: game["roundNumber"],
       num_players: game["numPlayers"],
       game_json: game,
-      description: Evaluate.evaluate(game, game_def["saveDescription"], ["save_replay"])
+      description: if save_description == nil do nil else Evaluate.evaluate(game, save_description, ["save_replay"]) end,
+      metadata: if save_metadata == nil do nil else Evaluate.evaluate(game, ["PROCESS_MAP", save_metadata], ["save_replay"]) end,
     }
+    IO.puts("updates 1")
+    IO.inspect(updates[:description])
+    IO.inspect(updates[:metadata])
+    IO.puts("updates 2")
 
-    case Repo.get_by(Replay, [user_id: user_id, uuid: game_uuid]) do
+    result = case Repo.get_by(Replay, [user_id: user_id, uuid: game_uuid]) do
       nil  -> %Replay{user_id: user_id, uuid: game_uuid} # Replay not found, we build one
       replay -> replay  # Replay exists, let's use it
     end
     |> Replay.changeset(updates)
     |> Repo.insert_or_update
+
+    # Check if it worked
+    case result do
+      {:ok, _struct} ->
+        IO.puts("Insert or update was successful!")
+
+      {:error, changeset} ->
+        IO.puts("An error occurred:")
+        IO.inspect(changeset.errors) # Print the errors
+    end
+
+    IO.puts("updates 4")
 
     Evaluate.evaluate(game, ["LOG", "$PLAYER_N", " saved the game."], [])
   end
@@ -831,7 +863,7 @@ defmodule DragnCardsGame.GameUI do
     # Can't insert a card directly into a group need to make a stack first
     new_card = Card.card_from_card_details(load_list_item["cardDetails"], game_def, load_list_item["databaseId"], group_id)
     new_stack = Stack.stack_from_card(new_card)
-
+    Logger.debug("create_card_in_group 1")
     game
     |> update_card(new_card)
     |> update_stack(new_stack)
@@ -843,6 +875,7 @@ defmodule DragnCardsGame.GameUI do
   end
 
   def implement_card_automations(game, game_def, card) do
+    Logger.debug("implement_card_automations 1")
     card_automation = game_def["automation"]["cards"][card["databaseId"]]
     if card_automation == nil do
       game
@@ -925,7 +958,6 @@ defmodule DragnCardsGame.GameUI do
     if load_list == nil do
       raise "load_list is nil"
     end
-
     Logger.debug("load_cards 1")
     game_def = Plugins.get_game_def(game["options"]["pluginId"])
     Logger.debug("load_cards 2")

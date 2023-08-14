@@ -16,7 +16,7 @@ defmodule DragnCardsGame.CustomPluginTest do
 
   # Create aliases for the different modules used in this file
   alias ElixirSense.Providers.Eval
-  alias DragnCards.{Plugins, Repo}
+  alias DragnCards.{Repo, Replay, Plugins}
   alias DragnCards.Users.User
   alias DragnCardsGame.{GameUI, Evaluate}
   alias Jason
@@ -175,6 +175,29 @@ defmodule DragnCardsGame.CustomPluginTest do
     # Load deck again
     game = Evaluate.evaluate(game, ["LOAD_CARDS", "coreLeadership"]) # Leadership core set deck
     assert game["playerData"]["player1"]["threat"] == 29
+
+
+  end
+
+  @tag :save_game
+  test "save_game", %{user: user, game: game, game_def: game_def} do
+    # Load some decks into the game
+    game = Evaluate.evaluate(game, ["LOAD_CARDS", "Q01.1"]) # Passage through Mirkwood
+    #game = Evaluate.evaluate(game, ["LOAD_CARDS", "coreLeadership"]) # Leadership core set deck
+
+    # Save
+    GameUI.save_replay(game, user.id)
+
+    # Get saved game
+    replay = Repo.get_by(Replay, [user_id: user.id, uuid: game["id"]])
+
+    IO.inspect(replay.description)
+
+    # Get full list of replay uuids
+    result = Repo.all(from r in Replay, select: r.uuid)
+
+    assert length(result) == 1
+    assert Enum.at(result, 0) == game["id"]
 
 
   end

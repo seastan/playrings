@@ -35,7 +35,7 @@ export const GiantCard = React.memo(({}) => {
 
   if (activeCardId && !touchAction) {
     var height = visibleFace.height >= visibleFace.width ? "70vh" : "50vh";
-    if (user?.language === "English_HD") height = visibleFace.height >= visibleFace.width ? "90vh" : "70vh";
+    //if (user?.language === "English_HD") height = visibleFace.height >= visibleFace.width ? "90vh" : "70vh";
     return (
       <img 
         className="absolute"
