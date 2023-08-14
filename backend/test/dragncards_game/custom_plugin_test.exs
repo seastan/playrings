@@ -1027,5 +1027,10 @@ defmodule DragnCardsGame.CustomPluginTest do
     assert length(game["groupById"]["player1Hand"]["stackIds"]) == 6
     assert length(game["groupById"]["player1Deck"]["stackIds"]) == 24
 
+    # Print all messages
+    Enum.each(game["messages"], fn message ->
+      IO.puts(message)
+    end)
+
   end
 end

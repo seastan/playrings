@@ -892,6 +892,19 @@ export const getGameDefSchema = (gameDef) => {
           }
         }
       },
+      "saveGame": {
+        "_type_": "object",
+        "_strictKeys_": true,
+        "description": {
+          "_type_": "actionList",
+        },
+        "metadata": {
+          "_type_": "object",
+          "_itemSchema_": {
+            "_type_": "any",
+          }
+        },
+      },
       "spawnExistingCardModal": {
         "_type_": "object",
         "_required_": true,

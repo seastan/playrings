@@ -38,6 +38,12 @@ export const dragnActionLists = {
       ]
     ]
   ]),
+  clearTargets: () => ([
+    ["LOG", "$ALIAS_N", " cleared all  targets and arrows."],
+    ["FOR_EACH_KEY_VAL", "$CARD_ID", "$CARD", "$GAME.cardById", [
+      ["SET", "/cardById/$CARD_ID/targeting/$PLAYER_N", false]
+    ]]
+  ]),
   setStep: (stepId, stepInfo) => ([
     ["SET", "/stepId", stepId],
     ["LOG", "$ALIAS_N", " set the round step to ", stepInfo?.label, "."]

@@ -30,15 +30,7 @@ export const dragnHotkeys = [
         case "saveGame":
           return gameBroadcast("game_action", {action: "save_replay", options: {player_ui: store.getState().playerUi}});
         case "clearTargets":
-            return doActionList([
-            ["FOR_EACH_KEY_VAL", "$CARD_ID", "$CARD", "$CARD_BY_ID",
-              [
-                ["SET", "/cardById/$CARD_ID/targeting/$PLAYER_N", false],
-                ["SET", "/cardById/$CARD_ID/arrows/$PLAYER_N", null]
-              ]
-            ],
-            ["LOG", "$ALIAS_N", " cleared their targets and arrows."]
-          ])
+            return doActionList(dragnActionLists.clearTargets());
         case "undo":
             return gameBroadcast("step_through", {options: {size: "single", direction: "undo"}});
         case "redo":

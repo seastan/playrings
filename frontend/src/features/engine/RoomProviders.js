@@ -31,7 +31,7 @@ export const RoomProviders = ({ gameBroadcast, chatBroadcast }) => {
 
   useEffect(() => {
     dispatch(setPlayerN(playerN));
-    dispatch(setObservingPlayerN(playerN));
+    if (playerN) dispatch(setObservingPlayerN(playerN)); // For a spectator (where playerN is null), leave as the default value
     setPlayerNSet(true);
   }, [playerN])
 
