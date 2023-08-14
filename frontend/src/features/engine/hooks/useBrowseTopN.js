@@ -24,12 +24,12 @@ export const useBrowseTopN = () => {
       if (topNstr === "All") {
         topNint = numStacks;
         peekStackIds = stackIds;
-        message = ["LOG", "$PLAYER_N", " looked at ", groupName, "."];
+        message = ["LOG", "$ALIAS_N", " looked at ", groupName, "."];
       } else if (topNstr === "None") {
         topNint = numStacks; 
         peekStackIds = [];
         visibility = false;
-        message = ["LOG", "$PLAYER_N", " stopped looking at ", groupName, "."];
+        message = ["LOG", "$ALIAS_N", " stopped looking at ", groupName, "."];
       } else if (topNstr === "X") {
         // Get integer input from the browser
         var topNprompt = window.prompt("How many cards do you want to look at?", "");
@@ -40,13 +40,13 @@ export const useBrowseTopN = () => {
         }
         if (topNint < 0) topNint = 0;
         peekStackIds = stackIds.slice(0, topNint);
-        message = ["LOG", "$PLAYER_N", " looked at the top ", topNint, " cards of ", groupName, "."]
+        message = ["LOG", "$ALIAS_N", " looked at the top ", topNint, " cards of ", groupName, "."]
       } else {
         topNint = parseInt(topNstr) || 0;
         if (topNint > numStacks) topNint = numStacks;
         if (topNint < 0) topNint = 0;
         peekStackIds = stackIds.slice(0, topNint);
-        message = ["LOG", "$PLAYER_N", " looked at the top ", topNstr, " cards of ", groupName, "."]
+        message = ["LOG", "$ALIAS_N", " looked at the top ", topNstr, " cards of ", groupName, "."]
       }
       dispatch(setBrowseGroupId(group.id));
       dispatch(setBrowseGroupTopN(topNint));

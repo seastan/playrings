@@ -780,7 +780,8 @@ defmodule DragnCardsGame.Evaluate do
                 end
 
               "$ALIAS_N" ->
-                evaluate(game, "{{{$PLAYER_N}}}", trace ++ ["$ALIAS_N"])
+                player_n = evaluate(game, "$PLAYER_N", trace ++ ["$ALIAS_N"])
+                get_in(game, ["playerInfo", player_n, "alias"])
 
               "$PLAYER_ORDER" ->
                 # Call evaluate(game, ["NEXT_PLAYER", acc]) numPlayers times, starting with the current player, and put the results in a list

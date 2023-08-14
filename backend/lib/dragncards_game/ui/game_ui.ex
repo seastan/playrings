@@ -543,6 +543,7 @@ defmodule DragnCardsGame.GameUI do
 
     game_new = game_old
       |> put_in(["playerUi"], options["player_ui"])
+      |> put_in(["playerInfo"], gameui["playerInfo"])
 
     game_new = game_new
       |> put_in(["messages"], [])
@@ -552,6 +553,7 @@ defmodule DragnCardsGame.GameUI do
 
     game_new = game_new
       |> Map.delete("playerUi")
+      |> Map.delete("playerInfo")
 
     game_new = game_new
       |> put_in(["variables"], GameVariables.default())
@@ -816,7 +818,7 @@ defmodule DragnCardsGame.GameUI do
 
     IO.puts("updates 4")
 
-    Evaluate.evaluate(game, ["LOG", "$PLAYER_N", " saved the game."], [])
+    Evaluate.evaluate(game, ["LOG", "$ALIAS_N", " saved the game."], [])
   end
 
   def set_last_room_update(gameui) do
@@ -927,7 +929,7 @@ defmodule DragnCardsGame.GameUI do
       # Check if the number of stacks in the deck has changed, and if so, we shuffle
       if group["shuffleOnLoad"] && length(old_stack_ids) != length(new_stack_ids) do
         acc = shuffle_group(acc, group_id)
-        Evaluate.evaluate(acc, ["LOG", "$PLAYER_N", " shuffled ", l10n(acc, game_def, group["label"]), "."], [])
+        Evaluate.evaluate(acc, ["LOG", "$ALIAS_N", " shuffled ", l10n(acc, game_def, group["label"]), "."], [])
       else
         acc
       end

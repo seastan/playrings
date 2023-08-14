@@ -35,7 +35,7 @@ export const TopBarSharedCounter = React.memo(({
       setPreviousValue(newValue);
       const listOfActions = [
         ["SET", "/" + gameProperty, newValue],
-        ["LOG", "$PLAYER_N", totalDelta >= 0 ? " increased " : " decreased ", gameL10n(label), " by ", Math.abs(totalDelta), "."]
+        ["LOG", "$ALIAS_N", totalDelta >= 0 ? " increased " : " decreased ", gameL10n(label), " by ", Math.abs(totalDelta), "."]
       ];
       doActionList(listOfActions);
       setInputFocus();

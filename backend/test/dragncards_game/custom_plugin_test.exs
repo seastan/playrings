@@ -148,6 +148,9 @@ defmodule DragnCardsGame.CustomPluginTest do
     # Update the game state with the player UI
     game = game |> put_in(["playerUi"], player_ui)
 
+    # Update the game state with the player info
+    game = game |> put_in(["playerInfo"], gameui["playerInfo"])
+
     # Return the setup data to be used in tests
     {:ok, %{user: user, game: game, game_def: plugin.game_def, card_db: plugin.card_db}}
   end
@@ -200,6 +203,14 @@ defmodule DragnCardsGame.CustomPluginTest do
     assert Enum.at(result, 0) == game["id"]
 
 
+    # Print all messages
+    Enum.each(game["messages"], fn message ->
+      IO.puts(message)
+    end)
+
+    IO.puts("playerinfo c")
+    IO.inspect(game["playerInfo"])
+    IO.puts("playerinfo d")
   end
 
   @tag :basics
@@ -236,38 +247,32 @@ defmodule DragnCardsGame.CustomPluginTest do
     # Test out hotkeys
 
     # flipCard
-    IO.puts("Testing flipCard")
     res = Evaluate.evaluate(game, game_def["actionLists"]["flipCard"])
     assert res["cardById"][aragorn_card_id]["currentSide"] == "B"
     res = Evaluate.evaluate(res, game_def["actionLists"]["flipCard"])
     assert res["cardById"][aragorn_card_id]["currentSide"] == "A"
 
     # drawCard
-    IO.puts("Testing drawCard")
     res = Evaluate.evaluate(game, game_def["actionLists"]["drawCard"])
     assert length(res["groupById"]["player1Hand"]["stackIds"]) == 7
 
     # revealEncounterFaceup
-    IO.puts("Testing revealEncounterFaceup")
     res = Evaluate.evaluate(game, game_def["actionLists"]["revealEncounterFaceup"])
     assert length(res["groupById"]["sharedStagingArea"]["stackIds"]) == 3
     card = GameUI.get_card_by_group_id_stack_index_card_index(res, ["sharedStagingArea", 2, 0])
     assert card["currentSide"] == "A"
 
     # revealEncounterFacedown
-    IO.puts("Testing revealEncounterFacedown")
     res = Evaluate.evaluate(game, game_def["actionLists"]["revealEncounterFacedown"])
     assert length(res["groupById"]["sharedStagingArea"]["stackIds"]) == 3
     card = GameUI.get_card_by_group_id_stack_index_card_index(res, ["sharedStagingArea", 2, 0])
     assert card["currentSide"] == "B"
 
     # mulligan
-    IO.puts("Testing mulligan")
     res = Evaluate.evaluate(game, game_def["actionLists"]["mulligan"])
     assert length(res["groupById"]["player1Hand"]["stackIds"]) == 6
 
     # newRound
-    IO.puts("Testing newRound")
     res = Evaluate.evaluate(game, game_def["actionLists"]["newRound"])
     assert length(res["groupById"]["player1Hand"]["stackIds"]) == 7
     assert GameUI.get_card_by_group_id_stack_index_card_index(res, ["player1Play1", 0, 0])["tokens"]["resource"] == 1
@@ -279,7 +284,6 @@ defmodule DragnCardsGame.CustomPluginTest do
     # Increase cards drawn
     res = Evaluate.evaluate(res, ["SET", "/playerData/player1/cardsDrawn", 4])
 
-    IO.puts("Testing newRound again")
     res = Evaluate.evaluate(res, game_def["actionLists"]["newRound"])
     assert length(res["groupById"]["player1Hand"]["stackIds"]) == 11
     assert GameUI.get_card_by_group_id_stack_index_card_index(res, ["player1Play1", 0, 0])["tokens"]["resource"] == 2
@@ -289,13 +293,11 @@ defmodule DragnCardsGame.CustomPluginTest do
     assert res["roundNumber"] == 2
 
     # Exhaust a card
-    IO.puts("Testing toggleExhaust")
     res = Evaluate.evaluate(game, game_def["actionLists"]["toggleExhaust"])
     assert Evaluate.evaluate(res, "$GAME.cardById.#{aragorn_card_id}.exhausted") == true
     assert Evaluate.evaluate(res, "$GAME.cardById.#{aragorn_card_id}.rotation") == 90
 
     # Refresh
-    IO.puts("Testing refresh")
     res = Evaluate.evaluate(game, game_def["actionLists"]["refresh"])
     assert Evaluate.evaluate(res, "$GAME.cardById.#{aragorn_card_id}.exhausted") == false
     assert Evaluate.evaluate(res, "$GAME.cardById.#{aragorn_card_id}.rotation") == 0
@@ -340,7 +342,6 @@ defmodule DragnCardsGame.CustomPluginTest do
     assert length(res["groupById"]["player1Engaged"]["stackIds"]) == 2
 
     # Deal shadows
-    IO.puts("Testing dealShadows")
 
     ecard1 = GameUI.get_card_by_group_id_stack_index_card_index(res, ["sharedEncounterDeck", 0, 0])
     ecard2 = GameUI.get_card_by_group_id_stack_index_card_index(res, ["sharedEncounterDeck", 1, 0])

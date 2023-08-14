@@ -37,7 +37,7 @@ export const dragnHotkeys = [
                 ["SET", "/cardById/$CARD_ID/arrows/$PLAYER_N", null]
               ]
             ],
-            ["LOG", "$PLAYER_N", " cleared their targets and arrows."]
+            ["LOG", "$ALIAS_N", " cleared their targets and arrows."]
           ])
         case "undo":
             return gameBroadcast("step_through", {options: {size: "single", direction: "undo"}});
@@ -49,7 +49,7 @@ export const dragnHotkeys = [
             return gameBroadcast("step_through", {options: {size: "round", direction: "redo"}});
         case "prevStep": 
             return doActionList([
-                ["LOG", "$PLAYER_N", " set the round step to ", "$GAME.steps.$STEP_ID.label", "."],
+                ["LOG", "$ALIAS_N", " set the round step to ", "$GAME.steps.$STEP_ID.label", "."],
                 ["DEFINE", "$OLD_STEP_INDEX", ["GET_INDEX", "$GAME.stepOrder", "$GAME.stepId"]],
                 ["COND",
                   ["EQUAL", "$OLD_STEP_INDEX", 0],
@@ -62,7 +62,7 @@ export const dragnHotkeys = [
             ])
         case "nextStep":
           return doActionList([
-              ["LOG", "$PLAYER_N", " set the round step to ", "$GAME.steps.$STEP_ID.label", "."],
+              ["LOG", "$ALIAS_N", " set the round step to ", "$GAME.steps.$STEP_ID.label", "."],
               ["DEFINE", "$OLD_STEP_INDEX", ["GET_INDEX", "$GAME.stepOrder", "$GAME.stepId"]],
               ["COND",
                 ["EQUAL", "$OLD_STEP_INDEX", ["SUBTRACT", ["LENGTH", "$GAME.stepOrder"], 1]],
@@ -79,12 +79,12 @@ export const dragnHotkeys = [
                 ["COND",
                   ["EQUAL", "$FROM_CARD_ID", null],
                   [
-                    ["LOG", "$PLAYER_N", " is drawing an arrow from ", "$ACTIVE_CARD.currentFace.name", "."],
+                    ["LOG", "$ALIAS_N", " is drawing an arrow from ", "$ACTIVE_CARD.currentFace.name", "."],
                     ["SET", "/playerData/$PLAYER_N/drawingArrowFrom", "$ACTIVE_CARD_ID"]
                   ],
                   ["IN_LIST", "$GAME.cardById.$FROM_CARD_ID.arrows.$PLAYER_N", "$ACTIVE_CARD_ID"],
                   [
-                    ["LOG", "$PLAYER_N", " removed an arrow to ", "$ACTIVE_CARD.currentFace.name", "."],
+                    ["LOG", "$ALIAS_N", " removed an arrow to ", "$ACTIVE_CARD.currentFace.name", "."],
                     ["SET", "/cardById/$FROM_CARD_ID/arrows/$PLAYER_N", 
                       ["REMOVE_FROM_LIST_BY_VALUE", "$GAME.cardById.$FROM_CARD_ID.arrows.$PLAYER_N", "$ACTIVE_CARD_ID"]
                     ],
@@ -92,7 +92,7 @@ export const dragnHotkeys = [
                   ],
                   true,
                   [
-                    ["LOG", "$PLAYER_N", " drew an arrow to ", "$ACTIVE_CARD.currentFace.name", "."],
+                    ["LOG", "$ALIAS_N", " drew an arrow to ", "$ACTIVE_CARD.currentFace.name", "."],
                     ["SET", "/cardById/$FROM_CARD_ID/arrows/$PLAYER_N", ["APPEND", "$GAME.cardById.$FROM_CARD_ID.arrows.$PLAYER_N", "$ACTIVE_CARD_ID"]],
                     ["SET", "/playerData/$PLAYER_N/drawingArrowFrom", null]
                   ]

@@ -5280,37 +5280,37 @@
           ]
         ],
         ["DRAW_CARD", "$GAME.cardsPerRound.$PLAYER_N"],
-        ["LOG", "$PLAYER_N", " performed their draw step."],
+        ["LOG", "$ALIAS_N", " performed their draw step."],
         ["COND",
           ["EQUAL", "$PLAYER_N", "player1"],
           [
             ["SET", "/firstPlayer", ["NEXT_PLAYER", "$GAME.firstPlayer"]],
             ["INCREASE_VAL", "/roundNumber", 1],
-            ["LOG", "$PLAYER_N", " moved the first player token and increased the round number."]
+            ["LOG", "$ALIAS_N", " moved the first player token and increased the round number."]
           ]
         ]
       ],
       "pass": [
-        ["LOG", "$PLAYER_N", " passes."]
+        ["LOG", "$ALIAS_N", " passes."]
       ],
       "drawCard": [
         ["DRAW_CARD"]
       ],
       "zeroTokens": [
         ["SET", "$ACTIVE_TOKENS_PATH", {}],
-        ["LOG", "$PLAYER_N", " removed all tokens from ", "$ACTIVE_FACE.name", "."]
+        ["LOG", "$ALIAS_N", " removed all tokens from ", "$ACTIVE_FACE.name", "."]
       ],
       "toggleRotate": [
         ["COND",
           ["AND", ["EQUAL", "$ACTIVE_CARD.rotation", 90], "$ACTIVE_CARD.inPlay"],
           [
             ["SET", "/cardById/$ACTIVE_CARD_ID/rotation", 0],
-            ["LOG", "$PLAYER_N", " rotated ", "$ACTIVE_FACE.name", "."]
+            ["LOG", "$ALIAS_N", " rotated ", "$ACTIVE_FACE.name", "."]
           ],
           ["AND", ["EQUAL", "$ACTIVE_CARD.rotation", 0], "$ACTIVE_CARD.inPlay"],
           [
             ["SET", "/cardById/$ACTIVE_CARD_ID/rotation", 90],
-            ["LOG", "$PLAYER_N", " rotated ", "$ACTIVE_FACE.name", "."]
+            ["LOG", "$ALIAS_N", " rotated ", "$ACTIVE_FACE.name", "."]
           ]
         ]
       ],
@@ -5318,19 +5318,19 @@
         ["COND",
           ["EQUAL", "$ACTIVE_CARD.currentSide", "A"],
           [
-            ["LOG", "$PLAYER_N", " flipped ", "$ACTIVE_FACE.name", " facedown."],
+            ["LOG", "$ALIAS_N", " flipped ", "$ACTIVE_FACE.name", " facedown."],
             ["SET", "/cardById/$ACTIVE_CARD_ID/currentSide", "B"]
           ],
           true,
           [
             ["SET", "/cardById/$ACTIVE_CARD_ID/currentSide", "A"],
-            ["LOG", "$PLAYER_N", " flipped ", "$ACTIVE_FACE.name", " faceup."]
+            ["LOG", "$ALIAS_N", " flipped ", "$ACTIVE_FACE.name", " faceup."]
           ]
         ]
       ],
       "targetCard": [
         ["SET", "/cardById/$ACTIVE_CARD_ID/targeting/$PLAYER_N", true],
-        ["LOG", "$PLAYER_N", " targeted ", "$ACTIVE_FACE.name", "."]
+        ["LOG", "$ALIAS_N", " targeted ", "$ACTIVE_FACE.name", "."]
       ],
       "addToScoringArea": [
         ["COND",
@@ -5343,10 +5343,10 @@
       "cycleCard": [
         ["COND",
           ["EQUAL", "$ACTIVE_CARD.cycleGroupId", null],
-          ["LOG", "$PLAYER_N", " failed to cycle ", "$ACTIVE_FACE.name", " because it is not associated with a cycle pile. Please drag the card instead."],
+          ["LOG", "$ALIAS_N", " failed to cycle ", "$ACTIVE_FACE.name", " because it is not associated with a cycle pile. Please drag the card instead."],
           true,
           [
-            ["LOG", "$PLAYER_N", " cycled ", "$ACTIVE_FACE.name", "."],
+            ["LOG", "$ALIAS_N", " cycled ", "$ACTIVE_FACE.name", "."],
             ["MOVE_CARD", "$ACTIVE_CARD_ID", "$ACTIVE_CARD.cycleGroupId", 0, 0]
           ]
         ]
@@ -5354,10 +5354,10 @@
       "eliminateCard": [
         ["COND",
           ["EQUAL", "$ACTIVE_CARD.eliminateGroupId", null],
-          ["LOG", "$PLAYER_N", " failed to eliminate ", "$ACTIVE_FACE.name", " because it is not associated with an eliminated pile. Please drag the card instead."],
+          ["LOG", "$ALIAS_N", " failed to eliminate ", "$ACTIVE_FACE.name", " because it is not associated with an eliminated pile. Please drag the card instead."],
           true,
           [
-            ["LOG", "$PLAYER_N", " eliminated ", "$ACTIVE_FACE.name", "."],
+            ["LOG", "$ALIAS_N", " eliminated ", "$ACTIVE_FACE.name", "."],
             ["MOVE_CARD", "$ACTIVE_CARD_ID", "$ACTIVE_CARD.eliminateGroupId", 0, 0]
           ]
         ]
@@ -5367,7 +5367,7 @@
           ["GREATER_THAN", "$ACTIVE_CARD.cardIndex", 0],
           [
             ["MOVE_CARD", "$ACTIVE_CARD_ID", "$ACTIVE_CARD.groupId", ["ADD", "$ACTIVE_CARD.stackIndex", 1], 0],
-            ["LOG", "$PLAYER_N", " detached ", "$ACTIVE_FACE.name", "."]
+            ["LOG", "$ALIAS_N", " detached ", "$ACTIVE_FACE.name", "."]
           ]
         ]
       ],
@@ -5377,12 +5377,12 @@
         ["COND",
           ["EQUAL", "$ACTIVE_CARD.peeking.$PLAYER_N", true],
           [
-            ["LOG", "$PLAYER_N", " stopped peeking at a card in ", "$GROUP_NAME"],
+            ["LOG", "$ALIAS_N", " stopped peeking at a card in ", "$GROUP_NAME"],
             ["SET", "/cardById/$ACTIVE_CARD_ID/peeking/$PLAYER_N", false]
           ],
           true,
           [
-            ["LOG", "$PLAYER_N", " started peeking at a card in ", "$GROUP_NAME"],
+            ["LOG", "$ALIAS_N", " started peeking at a card in ", "$GROUP_NAME"],
             ["SET", "/cardById/$ACTIVE_CARD_ID/peeking/$PLAYER_N", true]
           ]
         ]
@@ -5401,10 +5401,10 @@
             ]
           ]
         ],
-        ["LOG", "$PLAYER_N", " shuffled the cards in ", "$ORIG_GROUP.name", " into their corresponding decks."]
+        ["LOG", "$ALIAS_N", " shuffled the cards in ", "$ORIG_GROUP.name", " into their corresponding decks."]
       ],
       "deleteCard": [
-        ["LOG", "$PLAYER_N", " deleted ", "$ACTIVE_FACE.name", "."],
+        ["LOG", "$ALIAS_N", " deleted ", "$ACTIVE_FACE.name", "."],
         ["DELETE", "$ACTIVE_CARD_ID"]
       ],
       "layoutPath1": [

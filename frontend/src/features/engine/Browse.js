@@ -84,14 +84,14 @@ export const Browse = React.memo(({}) => {
 
   const closeAndShuffle = () => {
     const actionList = [
-      ["LOG", "$PLAYER_N", " closed ", gameL10n(group.label)+"."],
+      ["LOG", "$ALIAS_N", " closed ", gameL10n(group.label)+"."],
       ["FOR_EACH_VAL", "$STACK_ID", `$GROUP_BY_ID.${groupId}.stackIds`,
         [
           ["DEFINE", "$CARD_ID", "$STACK_BY_ID.$STACK_ID.cardIds.[0]"],
           ["SET", "/cardById/$CARD_ID/peeking/$PLAYER_N", false]
         ]
       ],
-      ["LOG", "$PLAYER_N", " shuffled ", gameL10n(group.label)+"."],
+      ["LOG", "$ALIAS_N", " shuffled ", gameL10n(group.label)+"."],
       ["SHUFFLE_GROUP", groupId]
     ];
     doActionList(actionList);
@@ -100,7 +100,7 @@ export const Browse = React.memo(({}) => {
 
   const closeAndOrder = () => {
     const actionList = [
-      ["LOG", "$PLAYER_N", " closed ", gameL10n(group.label)+"."],
+      ["LOG", "$ALIAS_N", " closed ", gameL10n(group.label)+"."],
       ["FOR_EACH_VAL", "$STACK_ID", `$GROUP_BY_ID.${groupId}.stackIds`,
         [
           ["DEFINE", "$CARD_ID", "$STACK_BY_ID.$STACK_ID.cardIds.[0]"],
@@ -114,7 +114,7 @@ export const Browse = React.memo(({}) => {
 
   const closeAndPeeking = () => {
     const actionList = [
-      ["LOG", "$PLAYER_N", " is still peeking at ", gameL10n(group.label)+"."],
+      ["LOG", "$ALIAS_N", " is still peeking at ", gameL10n(group.label)+"."],
     ];
     doActionList(actionList);
   }

@@ -54,7 +54,7 @@ export const TopBarMenu = React.memo(({}) => {
       gameBroadcast("game_action", {action: "save_replay", options: {}});
       // Reset game
       gameBroadcast("game_action", {action: "reset_game", options: {}});
-      doActionList(["LOG", "$PLAYER_N", " reset the game."]);
+      doActionList(["LOG", "$ALIAS_N", " reset the game."]);
     } else if (data.action === "close_room") {
       // Mark status
       doActionList(data.actionList);
@@ -62,7 +62,7 @@ export const TopBarMenu = React.memo(({}) => {
       gameBroadcast("game_action", {action: "save_replay", options: {}});
       // Close room
       history.push("/profile");
-      doActionList(["LOG", "$PLAYER_N", " closed the room."]);
+      doActionList(["LOG", "$ALIAS_N", " closed the room."]);
       gameBroadcast("close_room", {});
     } else if (data.action === "load_deck") {
       loadFileDeck();
@@ -76,7 +76,7 @@ export const TopBarMenu = React.memo(({}) => {
             ["DELETE_CARD", "$CARD_ID"]
           ]
         ]],
-        ["LOG", "$PLAYER_N", " deleted all their cards."]
+        ["LOG", "$ALIAS_N", " deleted all their cards."]
       ]
       doActionList(actionList);
     } else if (data.action === "unload_shared_cards") {
@@ -87,19 +87,19 @@ export const TopBarMenu = React.memo(({}) => {
             ["DELETE_CARD", "$CARD_ID"]
           ]
         ]],
-        ["LOG", "$PLAYER_N", " deleted all shared cards."]
+        ["LOG", "$ALIAS_N", " deleted all shared cards."]
       ]
       doActionList(actionList);
     } else if (data.action === "random_coin") {
       const result = getRandomIntInclusive(0,1);
-      if (result) doActionList(["LOG", "$PLAYER_N", " flipped heads."]);
-      else doActionList(["LOG", "$PLAYER_N", " flipped tails."]);
+      if (result) doActionList(["LOG", "$ALIAS_N", " flipped heads."]);
+      else doActionList(["LOG", "$ALIAS_N", " flipped tails."]);
     } else if (data.action === "random_number") {
       const max = parseInt(prompt("Random number between 1 and...",randomNumBetween));
       if (max>=1) {
         dispatch(setRandomNumBetween(max))
         const result = getRandomIntInclusive(1,max);
-        doActionList(["LOG", "$PLAYER_N", " chose a random number (1-"+max+"): "+result]);
+        doActionList(["LOG", "$ALIAS_N", " chose a random number (1-"+max+"): "+result]);
       }
     } else if (data.action === "adjust_card_size") {
       const num = parseInt(prompt("Adjust the apparent card size for yourself only (10-1000):",Math.round(zoomFactor*100)));
@@ -154,7 +154,7 @@ export const TopBarMenu = React.memo(({}) => {
         const gameObj = JSON.parse(event.target.result);
         if (gameObj) {
           //dispatch(setGame(gameObj));
-          doActionList(["LOG", "$PLAYER_N", " uploaded a game."])
+          doActionList(["LOG", "$ALIAS_N", " uploaded a game."])
           gameBroadcast("game_action", {action: "set_game", options: {game: gameObj}})
         }
       } catch(e) {
