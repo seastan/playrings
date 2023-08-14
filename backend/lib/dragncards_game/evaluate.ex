@@ -168,11 +168,6 @@ defmodule DragnCardsGame.Evaluate do
     Enum.reduce(Enum.with_index(statements), "", fn({statement, index}, acc) ->
       eval_statement = evaluate(game, statement, trace ++ ["statement #{index}"])
       str_statement = inspect(eval_statement) |> String.replace("\"","")
-      str_statement = if Enum.member?(Map.keys(game["playerData"]), str_statement) do
-        "{#{str_statement}}"
-      else
-        str_statement
-      end
       acc <> str_statement
     end)
   end
@@ -293,7 +288,8 @@ defmodule DragnCardsGame.Evaluate do
             if list do Enum.at(list, index) else nil end
 
           "LENGTH" ->
-            Enum.count(evaluate(game, Enum.at(code,1), trace ++ ["LENGTH"]))
+            value = evaluate(game, Enum.at(code, 1), trace ++ ["LENGTH"])
+            if is_binary(value) do String.length(value) else Enum.count(value) end
 
           "AND" ->
             statements = Enum.slice(code, 1, Enum.count(code) - 1)
@@ -333,6 +329,12 @@ defmodule DragnCardsGame.Evaluate do
 
           "NOT" ->
             !evaluate(game, Enum.at(code,1), trace ++ ["NOT"])
+
+          "SUBSTRING" ->
+            string = evaluate(game, Enum.at(code,1), trace ++ ["SUBSTRING string"])
+            start = evaluate(game, Enum.at(code,2), trace ++ ["SUBSTRING start"])
+            length = evaluate(game, Enum.at(code,3), trace ++ ["SUBSTRING length"])
+            String.slice(string, start..start+length-1)
 
           "JOIN_STRING" ->
             evaluate(game, Enum.at(code,1), trace ++ ["JOIN_STRING_left"]) <> evaluate(game, Enum.at(code,2), trace ++ ["JOIN_STRING_right"])
@@ -391,7 +393,7 @@ defmodule DragnCardsGame.Evaluate do
                   Enum.at(acc, int)
                 pathi == "currentFace" ->
                   current_side = if acc["currentSide"] == nil do
-                    raise "Tried to access currentSide on a non-card object."
+                    raise "Tried to access currentFace on an object where currentSide is null."
                   else
                     acc["currentSide"]
                   end
@@ -711,6 +713,15 @@ defmodule DragnCardsGame.Evaluate do
             end)
             one_card
 
+          "PROCESS_MAP" ->
+            map = evaluate(game, Enum.at(code, 1), trace ++ ["PROCESS_MAP map"])
+            map = Enum.reduce(map, %{}, fn({k, v}, acc) ->
+              k = evaluate(game, k, trace ++ ["PROCESS_MAP key"])
+              v = evaluate(game, v, trace ++ ["PROCESS_MAP value"])
+              put_in(acc, [k], v)
+            end)
+            map
+
           "ACTION_LIST" ->
             argc = Enum.count(code) - 1
             action_list_id = evaluate(game, Enum.at(code, 1), trace ++ ["ACTION_LIST action_list_id"])
@@ -736,87 +747,109 @@ defmodule DragnCardsGame.Evaluate do
             raise "Command #{Enum.at(code,0)} not recognized in #{inspect(code)}"
         end
       end
-    else # mot a list
-      if false and is_map(code) do # map
-        # Construct a new map where each key is the same and each value is the result of evaluating the original value
-        code |> Map.new(fn {k, v} -> {k, evaluate(game, v, trace ++ [k])} end)
-      else # value
-        trace = trace ++ [code]
+    else # not a list
+      trace = trace ++ [code]
 
-        # variable
-        cond do
-          is_binary(code) and String.starts_with?(code, "$") and String.contains?(code, ".") ->
-            split = String.split(code, ".")
-            obj = evaluate(game, Enum.at(split, 0), trace)
-            path = ["LIST"] ++ Enum.slice(split, 1, Enum.count(split))
-            evaluate(game, ["OBJ_GET_BY_PATH", obj, path], trace)
+      # Replace {{}} in strings with evaluated code
+      code = if is_binary(code) do
+        Regex.replace(~r/\{\{(.+?)\}\}/, code, fn _, match ->
+          evaluate(game, match, trace ++ ["{{}}"])
+        end)
+      else
+        code
+      end
 
-          is_binary(code) and String.starts_with?(code, "$") ->
-            if Map.has_key?(game, "variables") && Map.has_key?(game["variables"], code) do
-              game["variables"][code]
-            else
-              case code do
-                "$PLAYER_N" ->
-                  if game["playerUi"]["playerN"] == nil do
-                    raise "$PLAYER_N is undefined"
-                  else
-                    game["playerUi"]["playerN"]
-                  end
+      # variable
+      cond do
+        is_binary(code) and String.starts_with?(code, "$") and String.contains?(code, ".") ->
+          split = String.split(code, ".")
+          obj = evaluate(game, Enum.at(split, 0), trace)
+          path = ["LIST"] ++ Enum.slice(split, 1, Enum.count(split))
+          evaluate(game, ["OBJ_GET_BY_PATH", obj, path], trace)
 
-                "$PLAYER_ORDER" ->
-                  # Call evaluate(game, ["NEXT_PLAYER", acc]) numPlayers times, starting with the current player, and put the results in a list
-                  num_players = game["numPlayers"]
-                  first_player = game["firstPlayer"]
-                  {player_order, _} = Enum.reduce(0..num_players-1, {[], first_player}, fn _, {acc, player_i} ->
-                    next_player = evaluate(game, ["NEXT_PLAYER", player_i], trace ++ ["$PLAYER_ORDER"])
-                    {acc ++ [player_i], next_player}
-                  end)
-                  player_order
+        is_binary(code) and String.starts_with?(code, "$") ->
+          if Map.has_key?(game, "variables") && Map.has_key?(game["variables"], code) do
+            game["variables"][code]
+          else
+            case code do
+              "$PLAYER_N" ->
+                if game["playerUi"]["playerN"] == nil do
+                  raise "$PLAYER_N is undefined"
+                else
+                  game["playerUi"]["playerN"]
+                end
 
-                "$GAME" ->
-                  game
+              "$ALIAS_N" ->
+                player_n = evaluate(game, "$PLAYER_N", trace ++ ["$ALIAS_N"])
+                get_in(game, ["playerInfo", player_n, "alias"])
 
-                "$GROUP_BY_ID" ->
-                  game["groupById"]
+              "$PLAYER_ORDER" ->
+                # Call evaluate(game, ["NEXT_PLAYER", acc]) numPlayers times, starting with the current player, and put the results in a list
+                num_players = game["numPlayers"]
+                first_player = game["firstPlayer"]
+                {player_order, _} = Enum.reduce(0..num_players-1, {[], first_player}, fn _, {acc, player_i} ->
+                  next_player = evaluate(game, ["NEXT_PLAYER", player_i], trace ++ ["$PLAYER_ORDER"])
+                  {acc ++ [player_i], next_player}
+                end)
+                player_order
 
-                "$STACK_BY_ID" ->
-                  game["stackById"]
+              "$GAME" ->
+                game
 
-                "$CARD_BY_ID" ->
-                  game["cardById"]
+              "$GROUP_BY_ID" ->
+                game["groupById"]
 
-                "$PLAYER_DATA" ->
-                  game["playerData"]
+              "$STACK_BY_ID" ->
+                game["stackById"]
 
-                "$ACTIVE_CARD" ->
-                  evaluate(game, "$GAME.cardById.$ACTIVE_CARD_ID", trace)
+              "$CARD_BY_ID" ->
+                game["cardById"]
 
-                "$ACTIVE_CARD_ID" ->
-                  if game["playerUi"]["activeCardId"] == nil do
-                    raise "$ACTIVE_CARD_ID is undefined"
-                  else
-                    game["playerUi"]["activeCardId"]
-                  end
+              "$PLAYER_DATA" ->
+                game["playerData"]
 
-                "$ACTIVE_FACE" ->
-                  evaluate(game, "$ACTIVE_CARD.currentFace", trace)
+              "$ACTIVE_CARD" ->
+                evaluate(game, "$GAME.cardById.$ACTIVE_CARD_ID", trace)
 
-                "$ACTIVE_TOKENS" ->
-                  evaluate(game, "$ACTIVE_CARD.tokens", trace)
+              "$ACTIVE_CARD_ID" ->
+                if game["playerUi"]["activeCardId"] == nil do
+                  raise "$ACTIVE_CARD_ID is undefined"
+                else
+                  game["playerUi"]["activeCardId"]
+                end
 
-                _ ->
-                  raise "Variable #{code} is undefined. " <> inspect(trace)
-              end
+              "$ACTIVE_FACE" ->
+                evaluate(game, "$ACTIVE_CARD.currentFace", trace)
+
+              "$ACTIVE_TOKENS" ->
+                evaluate(game, "$ACTIVE_CARD.tokens", trace)
+
+              "$ACTIVE_GROUP" ->
+                cond do
+                  get_in(game, ["playerUi", "dropdownMenu", "group"]) ->
+                    get_in(game, ["playerUi", "dropdownMenu", "group"])
+                  get_in(game, ["playerUi", "activeCardId"]) ->
+                    group_id = evaluate(game, "$ACTIVE_CARD.groupId", trace ++ ["$ACTIVE_GROUP"])
+                    game["groupById"][group_id]
+                  true ->
+                    raise "$ACTIVE_GROUP is undefined"
+                end
+
+              "$ACTIVE_GROUP_ID" ->
+                evaluate(game, "$ACTIVE_GROUP", trace ++ ["$ACTIVE_GROUP"])["id"]
+
+              _ ->
+                raise "Variable #{code} is undefined. " <> inspect(trace)
             end
+          end
 
-          is_binary(code) and String.starts_with?(code, "/") ->
-            split = String.split(code, "/")
-            path = ["LIST"] ++ Enum.slice(split, 1, Enum.count(split))
-            List.flatten(evaluate(game, path, trace))
+        is_binary(code) and String.starts_with?(code, "/") ->
+          split = String.split(code, "/")
+          path = ["LIST"] ++ Enum.slice(split, 1, Enum.count(split))
+          List.flatten(evaluate(game, path, trace))
 
-          true ->
-            code
-        end
+        true ->
+          code
       end
     end
   end

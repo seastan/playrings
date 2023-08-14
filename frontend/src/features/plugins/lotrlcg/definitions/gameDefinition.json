@@ -3136,7 +3136,7 @@
           ],
           [
             ["INCREASE_VAL", "cardById", "$CARD_ID", "tokens", "resource", 1],
-            ["LOG", "$PLAYER_N", " added 1 resource token to ", ["FACEUP_NAME_FROM_CARD_ID", "$CARD_ID"], "."]
+            ["LOG", "$ALIAS_N", " added 1 resource token to ", ["FACEUP_NAME_FROM_CARD_ID", "$CARD_ID"], "."]
           ]
         ],
         ["COND",
@@ -3151,14 +3151,14 @@
           ],
           [
             ["INCREASE_VAL", "cardById", "$CARD_ID", "tokens", "resource", "$CARD.extraResources"],
-            ["LOG", "$PLAYER_N", " added ", ["OBJ_GET_VAL", "$CARD", "extraResources"]," extra resource token(s) to ", ["FACEUP_NAME_FROM_CARD_ID", "$CARD_ID"]]
+            ["LOG", "$ALIAS_N", " added ", ["OBJ_GET_VAL", "$CARD", "extraResources"]," extra resource token(s) to ", ["FACEUP_NAME_FROM_CARD_ID", "$CARD_ID"]]
           ]
         ]
       ]],
       ["FOR_EACH_START_STOP_STEP", "$i", 0, "$GAME.playerData.player1.cardsDrawn", 1,
         [
           ["MOVE_CARD", ["GET_CARD_ID", ["JOIN_STRING", "$PLAYER_N", "Deck"], 0, 0], ["JOIN_STRING", "$PLAYER_N", "Hand"], 0, 0],
-          ["LOG", "$PLAYER_N", " drew 1 card."]
+          ["LOG", "$ALIAS_N", " drew 1 card."]
         ]
       ],
       ["SET", "playerData", "$PLAYER_N", "willpower", 0],
@@ -3189,15 +3189,15 @@
       ]],
       ["ACTION_LIST", "increaseThreat"],
       ["SET", "playerData", "$PLAYER_N", "refreshed", true],
-      ["LOG", "$PLAYER_N", " refeshed."]
+      ["LOG", "$ALIAS_N", " refeshed."]
     ],
     "addDamage": [
       ["INCREASE_VAL", "cardById", "$ACTIVE_CARD_ID", "tokens", "damage", 1],
-      ["LOG", "$PLAYER_N", " added 1 damage token to ", "$ACTIVE_FACE.name", "."]
+      ["LOG", "$ALIAS_N", " added 1 damage token to ", "$ACTIVE_FACE.name", "."]
     ],
     "addProgress": [
       ["INCREASE_VAL", "cardById", "$ACTIVE_CARD_ID", "tokens", "progress", 1],
-      ["LOG", "$PLAYER_N", " added 1 progress token to ", "$ACTIVE_FACE.name", "."]
+      ["LOG", "$ALIAS_N", " added 1 progress token to ", "$ACTIVE_FACE.name", "."]
     ],
     "revealEncounterFaceup": [
       ["DEFINE", "$REVEAL_FACEDOWN", false],
@@ -3222,23 +3222,23 @@
           ["EQUAL", "$GAME.phaseId", "Quest"],
           [
             ["MOVE_STACKS", "sharedEncounterDiscard", "sharedEncounterDeck", ["LENGTH", "$GAME.groupById.sharedEncounterDiscard.stackIds"], "shuffle"],
-            ["LOG", "$PLAYER_N"," shuffled the encounter discard pile into the encounter deck."]
+            ["LOG", "$ALIAS_N"," shuffled the encounter discard pile into the encounter deck."]
           ],
           true,
-          ["LOG", "$PLAYER_N", "tried to reveal a card, but the encounter deck is empty and it's not the quest phase."]
+          ["LOG", "$ALIAS_N", "tried to reveal a card, but the encounter deck is empty and it's not the quest phase."]
         ],
         true,
         [
           ["DEFINE", "$STACK_ID", ["AT_INDEX", "$GAME.groupById.sharedEncounterDeck.stackIds", 0]],
           ["MOVE_STACK", "$STACK_ID", "sharedStaging", -1, false, "$REVEAL_FACEDOWN"],
-          ["LOG", "$PLAYER_N", " revealed ", ["FACEUP_NAME_FROM_STACK_ID", "$STACK_ID"]]
+          ["LOG", "$ALIAS_N", " revealed ", ["FACEUP_NAME_FROM_STACK_ID", "$STACK_ID"]]
         ]
       ],
       ["COND",
         ["EQUAL", ["LENGTH", "$GAME.groupById.sharedEncounterDeck.stackIds"], 0],
         [
           ["MOVE_STACKS", "sharedEncounterDiscard", "sharedEncounterDeck", ["LENGTH", "$GAME.groupById.sharedEncounterDiscard.stackIds"], "shuffle"],
-          ["LOG", "$PLAYER_N"," shuffled the encounter discard pile into the encounter deck."]
+          ["LOG", "$ALIAS_N"," shuffled the encounter discard pile into the encounter deck."]
         ],
         true,
         "$GAME"
@@ -3247,12 +3247,12 @@
     "revealSecondary": [
       ["COND",
         ["EQUAL", ["LENGTH", "$GAME.groupById.sharedEncounterDeck2.stackIds"], 0],
-        ["LOG", "$PLAYER_N", " tried to reveal a card from the second encounter deck, but it's empty."],
+        ["LOG", "$ALIAS_N", " tried to reveal a card from the second encounter deck, but it's empty."],
         true,
         [
           ["DEFINE", "$STACK_ID", ["AT_INDEX", "$GAME.groupById.sharedEncounterDeck2.stackIds", 0]],
           ["MOVE_STACK", "$STACK_ID", "sharedStaging", -1, false, "$REVEAL_FACEDOWN"],
-          ["LOG", "$PLAYER_N", " revealed ", ["FACEUP_NAME_FROM_STACK_ID", "$STACK_ID"]]
+          ["LOG", "$ALIAS_N", " revealed ", ["FACEUP_NAME_FROM_STACK_ID", "$STACK_ID"]]
         ]
       ]
     ],
@@ -3265,7 +3265,7 @@
         ["AND", ["EQUAL", "$GAME.playerUi.playerN", "player1"], ["NOT_EQUAL", "$STEP_INDEX", "$GAME.stepIndex"]],
         [
           ["SET", "stepIndex", "$STEP_INDEX"],
-          ["LOG", "$PLAYER_N", " set the round step to ", "$GAME.gameDef.steps[$STEP_INDEX].text", "."]
+          ["LOG", "$ALIAS_N", " set the round step to ", "$GAME.gameDef.steps[$STEP_INDEX].text", "."]
         ],
         true,
         "$GAME"
@@ -3283,7 +3283,7 @@
                 ["COND",
                   ["EQUAL", ["LENGTH", "$GAME.groupById.sharedEncounterDeck.stackIds"], 0],
                   [
-                    ["LOG", "$PLAYER_N", " tried to deal a shadow card but the encounter deck is empty."],
+                    ["LOG", "$ALIAS_N", " tried to deal a shadow card but the encounter deck is empty."],
                     ["LOG_DEV", "tried to deal shadow but couldn't"]
                   ],
                   true,
@@ -3292,7 +3292,7 @@
                     ["ATTACH_CARD", "$SHADOW_CARD_ID", "$CARD_ID"],
                     ["SET", "cardById", "$SHADOW_CARD_ID", "rotation", -30],
                     ["SET", "cardById", "$SHADOW_CARD_ID", "currentSide", "B"],
-                    ["LOG", "$PLAYER_N", " dealt a shadow card to ", ["FACEUP_NAME_FROM_CARD_ID", "$CARD_ID"], "."]
+                    ["LOG", "$ALIAS_N", " dealt a shadow card to ", ["FACEUP_NAME_FROM_CARD_ID", "$CARD_ID"], "."]
                   ]
                 ],
                 true,
@@ -3325,7 +3325,7 @@
       ],
       ["DEFINE", "$STEP_INDEX", "$GAME.stepIndex"],
       ["DEFINE", "$STEP", "$GAME.gameDef.steps.[$STEP_INDEX]"],
-      ["LOG", "$PLAYER_N", " set the round step to ", "$STEP.text", "."]
+      ["LOG", "$ALIAS_N", " set the round step to ", "$STEP.text", "."]
     ],
     "prevStep": [
       ["DECREASE_VAL", "stepIndex", 1],
@@ -3335,7 +3335,7 @@
       ],
       ["DEFINE", "$STEP_INDEX", "$GAME.stepIndex"],
       ["DEFINE", "$STEP", "$GAME.gameDef.steps.[$STEP_INDEX]"],
-      ["LOG", "$PLAYER_N", " set the round step to ", "$STEP.text", "."]
+      ["LOG", "$ALIAS_N", " set the round step to ", "$STEP.text", "."]
     ],
     "mulligan": [
       ["DEFINE", "$HAND_GROUP_ID", ["JOIN_STRING", "$PLAYER_N", "Hand"]],
@@ -3348,35 +3348,35 @@
       ["FOR_EACH_KEY_VAL", "$CARD_ID", "$CARD", "$CARD_BY_ID",
         ["SET", "cardById", "$CARD_ID", "targeting", "$PLAYER_N", false]
       ],
-      ["LOG", "$PLAYER_N", " cleared their targets."]
+      ["LOG", "$ALIAS_N", " cleared their targets."]
     ],
     "increaseThreat": [
       ["INCREASE_VAL", "playerData", "$PLAYER_N", "threat", 1],
-      ["LOG", "$PLAYER_N", " increased their threat by 1."]
+      ["LOG", "$ALIAS_N", " increased their threat by 1."]
     ],
     "increaseThreatAll": [
       ["FOR_EACH_KEY_VAL", "$PLAYER_I", "$PLAYER_I_DATA", "$GAME.playerData",
         ["INCREASE_VAL", "playerData", "$PLAYER_I", "threat", 1]
       ],
-      ["LOG", "$PLAYER_N", " increased each player's threat by 1."]
+      ["LOG", "$ALIAS_N", " increased each player's threat by 1."]
     ],
     "decreaseThreat": [
       ["INCREASE_VAL", "playerData", "$PLAYER_N", "threat", -1],
-      ["LOG", "$PLAYER_N", " decreased their threat by 1."]
+      ["LOG", "$ALIAS_N", " decreased their threat by 1."]
     ],
     "decreaseThreatAll": [
       ["FOR_EACH_KEY_VAL", "$PLAYER_I", "$PLAYER_I_DATA", "$GAME.playerData",
         ["INCREASE_VAL", "playerData", "$PLAYER_I", "threat", -1]
       ],
-      ["LOG", "$PLAYER_N", " increased each player's threat by 1."]
+      ["LOG", "$ALIAS_N", " increased each player's threat by 1."]
     ],
     "drawNextSeat": [
       ["ACTION_LIST", "drawCard", null, ["NEXT_PLAYER", "$PLAYER_N"]],
-      ["LOG", "$PLAYER_N", " drew 1 card."]
+      ["LOG", "$ALIAS_N", " drew 1 card."]
     ],
     "zeroTokens": [
       ["SET", "$ACTIVE_TOKENS_PATH", {}],
-      ["LOG", "$PLAYER_N", " removed all tokens from ", "$ACTIVE_FACE.name", "."]
+      ["LOG", "$ALIAS_N", " removed all tokens from ", "$ACTIVE_FACE.name", "."]
     ],
     "toggleExhaust": [
       ["COND",
@@ -3384,13 +3384,13 @@
         [
           ["SET", "$ACTIVE_CARD_PATH", "rotation", 0],
           ["SET", "$ACTIVE_CARD_PATH", "exhausted", false],
-          ["LOG", "$PLAYER_N", " readied ", "$ACTIVE_FACE.name", "."]
+          ["LOG", "$ALIAS_N", " readied ", "$ACTIVE_FACE.name", "."]
         ],
         ["AND", ["EQUAL", "$ACTIVE_CARD.rotation", 0], "$ACTIVE_CARD.inPlay"],
         [
           ["SET", "$ACTIVE_CARD_PATH", "rotation", 90],
           ["SET", "$ACTIVE_CARD_PATH", "exhausted", true],
-          ["LOG", "$PLAYER_N", " exhausted ", "$ACTIVE_FACE.name", "."]
+          ["LOG", "$ALIAS_N", " exhausted ", "$ACTIVE_FACE.name", "."]
         ]
       ]
     ],
@@ -3398,13 +3398,13 @@
       ["COND",
         ["EQUAL", "$ACTIVE_CARD.currentSide", "A"],
         [
-          ["LOG", "$PLAYER_N", " flipped ", "$ACTIVE_FACE.name", " facedown."],
+          ["LOG", "$ALIAS_N", " flipped ", "$ACTIVE_FACE.name", " facedown."],
           ["SET", "$ACTIVE_CARD_PATH", "currentSide", "B"]
         ],
         true,
         [
           ["SET", "$ACTIVE_CARD_PATH", "currentSide", "A"],
-          ["LOG", "$PLAYER_N", " flipped ", "$ACTIVE_FACE.name", " faceup."]
+          ["LOG", "$ALIAS_N", " flipped ", "$ACTIVE_FACE.name", " faceup."]
         ]
       ]
     ],
@@ -3414,7 +3414,7 @@
         ["AND", ["EQUAL", "$GAME.playerUi.playerN", "player1"], ["NOT_EQUAL", "$STEP_INDEX", "$GAME.stepIndex"]],
         [
           ["SET", "stepIndex", "$STEP_INDEX"],
-          ["LOG", "$PLAYER_N", " set the round step to ", "$GAME.gameDef.steps[$STEP_INDEX].text", "."]
+          ["LOG", "$ALIAS_N", " set the round step to ", "$GAME.gameDef.steps[$STEP_INDEX].text", "."]
         ]
       ],
       ["COND",
@@ -3440,7 +3440,7 @@
         ["AND", ["EQUAL", "$GAME.playerUi.playerN", "player1"], ["NOT_EQUAL", "$STEP_INDEX", "$GAME.stepIndex"]],
         [
           ["SET", "stepIndex", "$STEP_INDEX"],
-          ["LOG", "$PLAYER_N", " set the round step to ", "$GAME.gameDef.steps[$STEP_INDEX].text", "."]
+          ["LOG", "$ALIAS_N", " set the round step to ", "$GAME.gameDef.steps[$STEP_INDEX].text", "."]
         ]
       ],
       ["COND",
@@ -3461,25 +3461,25 @@
         "$ACTIVE_CARD.inPlay",
         ["COND",
           ["EQUAL", ["LENGTH", "$GAME.groupById.sharedEncounterDeck.stackIds"], 0],
-          ["LOG", "$PLAYER_N", " tried to deal a shadow card but the encounter deck is empty."],
+          ["LOG", "$ALIAS_N", " tried to deal a shadow card but the encounter deck is empty."],
           true,
           [
             ["DEFINE", "$SHADOW_CARD_ID", ["GET_CARD_ID", "sharedEncounterDeck", 0, 0]],
             ["ATTACH_CARD", "$SHADOW_CARD_ID", "$ACTIVE_CARD_ID"],
             ["SET", "cardById", "$SHADOW_CARD_ID", "rotation", -30],
             ["SET", "cardById", "$SHADOW_CARD_ID", "currentSide", "B"],
-            ["LOG", "$PLAYER_N", " dealt a shadow card to ", "$ACTIVE_FACE.name", "."]
+            ["LOG", "$ALIAS_N", " dealt a shadow card to ", "$ACTIVE_FACE.name", "."]
           ]
         ]
       ]
     ],
     "targetCard": [
       ["SET", "$ACTIVE_CARD_PATH", "targeting", "$PLAYER_N", true],
-      ["LOG", "$PLAYER_N", " targeted ", "$ACTIVE_FACE.name", "."]
+      ["LOG", "$ALIAS_N", " targeted ", "$ACTIVE_FACE.name", "."]
     ],
     "addToVictoryDisplay": [
       ["MOVE_CARD", "$ACTIVE_CARD_ID", "sharedVictory", 0, 0],
-      ["LOG", "$PLAYER_N", " added ", "$ACTIVE_FACE.name", " to the victory display."]
+      ["LOG", "$ALIAS_N", " added ", "$ACTIVE_FACE.name", " to the victory display."]
     ],
     "discardCard": [
       ["LOG_DEV", "HEREXYZ0"],
@@ -3500,13 +3500,13 @@
               ["LOG_DEV", "$CARD"],
               ["COND",
                 ["EQUAL", "$CARD.discardGroupId", null],
-                ["LOG", "$PLAYER_N", " failed to discard ", ["FACEUP_NAME_FROM_CARD_ID", "$CARD_ID"], " because it is not associated with a discard pile. Please drag the card instead."],
+                ["LOG", "$ALIAS_N", " failed to discard ", ["FACEUP_NAME_FROM_CARD_ID", "$CARD_ID"], " because it is not associated with a discard pile. Please drag the card instead."],
                 true,
                 [
                   ["LOG_DEV", "HERE2"],
                   ["LOG_DEV", "$CARD.discardGroupId"],
                   ["DEFINE", "$CURRENT_SIDE", "$CARD.currentSide"],
-                  ["LOG", "$PLAYER_N", " discarded ", "$CARD.sides.$CURRENT_SIDE.name", "."],
+                  ["LOG", "$ALIAS_N", " discarded ", "$CARD.sides.$CURRENT_SIDE.name", "."],
                   ["MOVE_CARD", "$CARD_ID", "$CARD.discardGroupId", 0, 0]
                 ]
               ]
@@ -3519,10 +3519,10 @@
         ["LOG_DEV", "$ACTIVE_CARD"],
         ["COND",
           ["EQUAL", "$ACTIVE_CARD.discardGroupId", null],
-          ["LOG", "$PLAYER_N", " failed to discard ", "$ACTIVE_FACE.name", " because it is not associated with a discard pile. Please drag the card instead."],
+          ["LOG", "$ALIAS_N", " failed to discard ", "$ACTIVE_FACE.name", " because it is not associated with a discard pile. Please drag the card instead."],
           true,
           [
-            ["LOG", "$PLAYER_N", " discarded ", "$ACTIVE_FACE.name", "."],
+            ["LOG", "$ALIAS_N", " discarded ", "$ACTIVE_FACE.name", "."],
             ["MOVE_CARD", "$CARD_ID", "$CARD.discardGroupId", 0, 0]
           ]
         ]
@@ -3533,14 +3533,14 @@
       ["MOVE_CARD", "$ACTIVE_CARD_ID", "$ACTIVE_CARD.deckGroupId", 0, 0],
       ["DEFINE", "$GROUP_ID", "$ACTIVE_CARD.deckGroupId"],
       ["SHUFFLE_GROUP", "$GROUP_ID"],
-      ["LOG", "$PLAYER_N", " shuffled ", "$ACTIVE_FACE.name", " into ", "$GAME.groupById.$GROUP_ID.name", "."]
+      ["LOG", "$ALIAS_N", " shuffled ", "$ACTIVE_FACE.name", " into ", "$GAME.groupById.$GROUP_ID.name", "."]
     ],
     "detach": [
       ["COND",
         ["GREATER_THAN", "$ACTIVE_CARD.cardIndex", 0],
         [
           ["MOVE_CARD", "$ACTIVE_CARD_ID", "$ACTIVE_CARD.groupId", ["ADD", "$ACTIVE_CARD.stackIndex", 1], 0],
-          ["LOG", "$PLAYER_N", " detached ", "$ACTIVE_FACE.name", "."]
+          ["LOG", "$ALIAS_N", " detached ", "$ACTIVE_FACE.name", "."]
         ]
       ]
     ],
@@ -3567,7 +3567,7 @@
       ["DEFINE", "$ACTIVE_CARD_INDEX", "$ACTIVE_CARD.cardIndex"],
       ["MOVE_CARD", "$ACTIVE_CARD_ID", "$TOP_CARD.deckGroupId", "$TOP_CARD.stackIndex", "$TOP_CARD.cardIndex"],
       ["MOVE_CARD", "$TOP_CARD_ID", "$ORIG_GROUP_ID", "$ACTIVE_STACK_INDEX", "$ACTIVE_CARD_INDEX", ["GREATER_THAN", "$ACTIVE_CARD_INDEX", 0]],
-      ["LOG", "$PLAYER_N", " swapped ", ["FACEUP_NAME_FROM_CARD_ID", "$ACTIVE_CARD_ID"], " with the top card of ", "$GAME.groupById.$DECK_GROUP_ID.name", "."]
+      ["LOG", "$ALIAS_N", " swapped ", ["FACEUP_NAME_FROM_CARD_ID", "$ACTIVE_CARD_ID"], " with the top card of ", "$GAME.groupById.$DECK_GROUP_ID.name", "."]
     ],
     "moveToBack": [
       ["MOVE_CARD", "$ACTIVE_CARD_ID", "$ACTIVE_CARD.groupId", "$ACTIVE_CARD.stackIndex", -1, true]
@@ -3575,19 +3575,19 @@
     "setCardsDrawn": [
       ["INPUT", "integer", "$VAL", "Set the number of cards drawn during resource phase:", 1],
       ["SET", "playerData", "$PLAYER_N", "cardsDrawn", "$VAL"],
-      ["LOG", "$PLAYER_N", " set number of cards drawn during the Resource Phase to ", "$VAL", "."]
+      ["LOG", "$ALIAS_N", " set number of cards drawn during the Resource Phase to ", "$VAL", "."]
     ],
     "setQuestNormal": [
       ["SET", "questingStat", "willpower"],
-      ["LOG", "$PLAYER_N", " set the questing type to Normal."]
+      ["LOG", "$ALIAS_N", " set the questing type to Normal."]
     ],
     "setQuestBattle": [
       ["SET", "questingStat", "attack"],
-      ["LOG", "$PLAYER_N", " set the questing type to Battle."]
+      ["LOG", "$ALIAS_N", " set the questing type to Battle."]
     ],
     "setQuestSiege": [
       ["SET", "questingStat", "attack"],
-      ["LOG", "$PLAYER_N", " set the questing type to Siege."]
+      ["LOG", "$ALIAS_N", " set the questing type to Siege."]
     ],
     "setupEscapeFromMountGram": [
       ["CONFIRM", "This function will set up each player's capture deck, add 2 resources to each hero, draw new starting hands of 3 cards, and set new threat levels. Before running this function, each player should flip each hero they control that is not their starting hero facedown. Continue?"],
@@ -3669,12 +3669,12 @@
       ["COND",
         ["EQUAL", "$ACTIVE_CARD.peeking.$PLAYER_N", true],
         [
-          ["LOG", "$PLAYER_N", " stopped peeking at a card in ", "$GROUP_NAME"],
+          ["LOG", "$ALIAS_N", " stopped peeking at a card in ", "$GROUP_NAME"],
           ["SET", "$ACTIVE_CARD_PATH", "peeking", "$PLAYER_N", false]
         ],
         true,
         [
-          ["LOG", "$PLAYER_N", " started peeking at a card in ", "$GROUP_NAME"],
+          ["LOG", "$ALIAS_N", " started peeking at a card in ", "$GROUP_NAME"],
           ["SET", "$ACTIVE_CARD_PATH", "peeking", "$PLAYER_N", true]
         ]
       ]
@@ -3683,18 +3683,18 @@
       ["COND",
         ["EQUAL", "$ACTIVE_CARD.locked", true],
         [
-          ["LOG", "$PLAYER_N", " unlocked ", "$ACTIVE_FACE.name", "."],
+          ["LOG", "$ALIAS_N", " unlocked ", "$ACTIVE_FACE.name", "."],
           ["SET", "$ACTIVE_CARD_PATH", "locked", false]
         ],
         true,
         [
           ["SET", "$ACTIVE_CARD_PATH", "locked", true],
-          ["LOG", "$PLAYER_N", " locked ", "$ACTIVE_FACE.name", "."]
+          ["LOG", "$ALIAS_N", " locked ", "$ACTIVE_FACE.name", "."]
         ]
       ]
     ],
     "deleteCard": [
-      ["LOG", "$PLAYER_N", " deleted ", "$ACTIVE_FACE.name", "."],
+      ["LOG", "$ALIAS_N", " deleted ", "$ACTIVE_FACE.name", "."],
       ["DELETE", "$ACTIVE_CARD_ID"]
     ]
   },

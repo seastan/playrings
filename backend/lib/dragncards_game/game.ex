@@ -57,7 +57,7 @@
       "stepOrder" => game_def["stepOrder"],
       "phases" => game_def["phases"],
       "phaseOrder" => game_def["phaseOrder"],
-      "groupById" => Groups.new(game_def["groups"]),
+      "groupById" => Groups.new(game_def),
       "stackById" => %{},
       "cardById"  => %{},
       "imageUrlPrefix" => game_def["imageUrlPrefix"],

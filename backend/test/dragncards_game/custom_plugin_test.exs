@@ -16,7 +16,7 @@ defmodule DragnCardsGame.CustomPluginTest do
 
   # Create aliases for the different modules used in this file
   alias ElixirSense.Providers.Eval
-  alias DragnCards.{Plugins, Repo}
+  alias DragnCards.{Repo, Replay, Plugins}
   alias DragnCards.Users.User
   alias DragnCardsGame.{GameUI, Evaluate}
   alias Jason
@@ -148,10 +148,14 @@ defmodule DragnCardsGame.CustomPluginTest do
     # Update the game state with the player UI
     game = game |> put_in(["playerUi"], player_ui)
 
+    # Update the game state with the player info
+    game = game |> put_in(["playerInfo"], gameui["playerInfo"])
+
     # Return the setup data to be used in tests
     {:ok, %{user: user, game: game, game_def: plugin.game_def, card_db: plugin.card_db}}
   end
 
+  @tag :loading
   # These tests are plugin-specific. You will need to overwite them, but they are here as a starting point.
   test "Loading Decks", %{user: user, game: game} do
 
@@ -171,6 +175,42 @@ defmodule DragnCardsGame.CustomPluginTest do
     # Confirm starting threat
     assert game["playerData"]["player1"]["threat"] == 29
 
+    # Load deck again
+    game = Evaluate.evaluate(game, ["LOAD_CARDS", "coreLeadership"]) # Leadership core set deck
+    assert game["playerData"]["player1"]["threat"] == 29
+
+
+  end
+
+  @tag :save_game
+  test "save_game", %{user: user, game: game, game_def: game_def} do
+    # Load some decks into the game
+    game = Evaluate.evaluate(game, ["LOAD_CARDS", "Q01.1"]) # Passage through Mirkwood
+    #game = Evaluate.evaluate(game, ["LOAD_CARDS", "coreLeadership"]) # Leadership core set deck
+
+    # Save
+    GameUI.save_replay(game, user.id)
+
+    # Get saved game
+    replay = Repo.get_by(Replay, [user_id: user.id, uuid: game["id"]])
+
+    IO.inspect(replay.description)
+
+    # Get full list of replay uuids
+    result = Repo.all(from r in Replay, select: r.uuid)
+
+    assert length(result) == 1
+    assert Enum.at(result, 0) == game["id"]
+
+
+    # Print all messages
+    Enum.each(game["messages"], fn message ->
+      IO.puts(message)
+    end)
+
+    IO.puts("playerinfo c")
+    IO.inspect(game["playerInfo"])
+    IO.puts("playerinfo d")
   end
 
   @tag :basics
@@ -207,38 +247,32 @@ defmodule DragnCardsGame.CustomPluginTest do
     # Test out hotkeys
 
     # flipCard
-    IO.puts("Testing flipCard")
     res = Evaluate.evaluate(game, game_def["actionLists"]["flipCard"])
     assert res["cardById"][aragorn_card_id]["currentSide"] == "B"
     res = Evaluate.evaluate(res, game_def["actionLists"]["flipCard"])
     assert res["cardById"][aragorn_card_id]["currentSide"] == "A"
 
     # drawCard
-    IO.puts("Testing drawCard")
     res = Evaluate.evaluate(game, game_def["actionLists"]["drawCard"])
     assert length(res["groupById"]["player1Hand"]["stackIds"]) == 7
 
     # revealEncounterFaceup
-    IO.puts("Testing revealEncounterFaceup")
     res = Evaluate.evaluate(game, game_def["actionLists"]["revealEncounterFaceup"])
     assert length(res["groupById"]["sharedStagingArea"]["stackIds"]) == 3
     card = GameUI.get_card_by_group_id_stack_index_card_index(res, ["sharedStagingArea", 2, 0])
     assert card["currentSide"] == "A"
 
     # revealEncounterFacedown
-    IO.puts("Testing revealEncounterFacedown")
     res = Evaluate.evaluate(game, game_def["actionLists"]["revealEncounterFacedown"])
     assert length(res["groupById"]["sharedStagingArea"]["stackIds"]) == 3
     card = GameUI.get_card_by_group_id_stack_index_card_index(res, ["sharedStagingArea", 2, 0])
     assert card["currentSide"] == "B"
 
     # mulligan
-    IO.puts("Testing mulligan")
     res = Evaluate.evaluate(game, game_def["actionLists"]["mulligan"])
     assert length(res["groupById"]["player1Hand"]["stackIds"]) == 6
 
     # newRound
-    IO.puts("Testing newRound")
     res = Evaluate.evaluate(game, game_def["actionLists"]["newRound"])
     assert length(res["groupById"]["player1Hand"]["stackIds"]) == 7
     assert GameUI.get_card_by_group_id_stack_index_card_index(res, ["player1Play1", 0, 0])["tokens"]["resource"] == 1
@@ -250,7 +284,6 @@ defmodule DragnCardsGame.CustomPluginTest do
     # Increase cards drawn
     res = Evaluate.evaluate(res, ["SET", "/playerData/player1/cardsDrawn", 4])
 
-    IO.puts("Testing newRound again")
     res = Evaluate.evaluate(res, game_def["actionLists"]["newRound"])
     assert length(res["groupById"]["player1Hand"]["stackIds"]) == 11
     assert GameUI.get_card_by_group_id_stack_index_card_index(res, ["player1Play1", 0, 0])["tokens"]["resource"] == 2
@@ -260,13 +293,11 @@ defmodule DragnCardsGame.CustomPluginTest do
     assert res["roundNumber"] == 2
 
     # Exhaust a card
-    IO.puts("Testing toggleExhaust")
     res = Evaluate.evaluate(game, game_def["actionLists"]["toggleExhaust"])
     assert Evaluate.evaluate(res, "$GAME.cardById.#{aragorn_card_id}.exhausted") == true
     assert Evaluate.evaluate(res, "$GAME.cardById.#{aragorn_card_id}.rotation") == 90
 
     # Refresh
-    IO.puts("Testing refresh")
     res = Evaluate.evaluate(game, game_def["actionLists"]["refresh"])
     assert Evaluate.evaluate(res, "$GAME.cardById.#{aragorn_card_id}.exhausted") == false
     assert Evaluate.evaluate(res, "$GAME.cardById.#{aragorn_card_id}.rotation") == 0
@@ -311,7 +342,6 @@ defmodule DragnCardsGame.CustomPluginTest do
     assert length(res["groupById"]["player1Engaged"]["stackIds"]) == 2
 
     # Deal shadows
-    IO.puts("Testing dealShadows")
 
     ecard1 = GameUI.get_card_by_group_id_stack_index_card_index(res, ["sharedEncounterDeck", 0, 0])
     ecard2 = GameUI.get_card_by_group_id_stack_index_card_index(res, ["sharedEncounterDeck", 1, 0])
@@ -403,6 +433,20 @@ defmodule DragnCardsGame.CustomPluginTest do
 
     # Check that card 2 is refreshed
     assert Evaluate.evaluate(game, "$GAME.cardById." <> card_id_2 <> ".exhausted") == false
+
+    # Calculate score
+    card_id = Evaluate.evaluate(game, ["GET_CARD_ID", "player1Play1", 0, 0])
+    game = Evaluate.evaluate(game, [["DEFINE", "$ACTIVE_CARD_ID", card_id], ["ACTION_LIST", "discardCard"]])
+    card_id = Evaluate.evaluate(game, ["GET_CARD_ID", "player2Play1", 0, 0])
+    card = Evaluate.evaluate(game, ["ONE_CARD", "$CARD", ["EQUAL", "$CARD.sides.A.name", "Chieftan Ufthak"]])
+    game = Evaluate.evaluate(game, [["DEFINE", "$ACTIVE_CARD_ID", card["id"]], ["ACTION_LIST", "addToVictoryDisplay"]])
+    game = Evaluate.evaluate(game, ["SET", "/cardById/" <> card_id <> "/tokens/damage", 3])
+    game = Evaluate.evaluate(game, ["ACTION_LIST", "calculateScore"])
+
+    # Print all messages
+    Enum.each(game["messages"], fn message ->
+      IO.puts(message)
+    end)
 
   end
 
@@ -763,12 +807,60 @@ defmodule DragnCardsGame.CustomPluginTest do
 
   end
 
+  # Staging threat
+  @tag :staging_threat
+  test "staging_threat", %{user: _user, game: game, game_def: _game_def} do
+
+    # Load some decks into the game
+    game = Evaluate.evaluate(game, ["LOAD_CARDS", "Q01.1"]) # Passage through Mirkwood
+    game = Evaluate.evaluate(game, ["LOAD_CARDS", "coreLeadership"]) # Leadership core set deck
+
+
+    assert length(game["groupById"]["player1Hand"]["stackIds"]) == 6
+    assert length(game["groupById"]["player1Deck"]["stackIds"]) == 24
+    assert game["stagingThreat"] == 3
+    assert game["questProgress"] == -3
+
+    card_id = Evaluate.evaluate(game, ["GET_CARD_ID", "player1Play1", 0, 0])
+    game = Evaluate.evaluate(game, ["INCREASE_VAL", "/cardById/#{card_id}/tokens/willpower", 1])
+
+    # Commit Aragorn
+    game = Evaluate.evaluate(game, [
+      ["DEFINE", "$ACTIVE_CARD_ID", card_id],
+      ["ACTION_LIST", "toggleCommit"]
+    ])
+
+    assert game["stagingThreat"] == 3
+    assert game["questProgress"] == 0
+
+    game = Evaluate.evaluate(game, ["INCREASE_VAL", "/cardById/#{card_id}/tokens/willpower", 1])
+
+    assert game["stagingThreat"] == 3
+    assert game["questProgress"] == 1
+
+    # Discard
+    game = Evaluate.evaluate(game, [
+      ["DEFINE", "$ACTIVE_CARD_ID", card_id],
+      ["ACTION_LIST", "discardCard"]
+    ])
+
+    assert game["stagingThreat"] == 3
+    assert game["questProgress"] == -3
+
+
+    # Print all messages
+    Enum.each(game["messages"], fn message ->
+      IO.puts(message)
+    end)
+  end
+
+
+
   # Questing
   @tag :questing
   test "questing", %{user: _user, game: game, game_def: _game_def} do
 
     # Load some decks into the game
-    IO.inspect(game["questingStat"])
     game = Evaluate.evaluate(game, ["LOAD_CARDS", "coreLeadership"]) # Leadership core set deck
     assert length(game["groupById"]["player1Hand"]["stackIds"]) == 6
     assert length(game["groupById"]["player1Deck"]["stackIds"]) == 24
@@ -836,6 +928,78 @@ defmodule DragnCardsGame.CustomPluginTest do
 
   end
 
+
+
+  # Shuffle discard into deck
+  @tag :shuffle_discard_into_deck
+  test "shuffle_discard_into_deck", %{user: _user, game: game, game_def: _game_def} do
+    # Load some decks into the game
+    game = Evaluate.evaluate(game, ["LOAD_CARDS", "Q01.1"]) # Passage through Mirkwood
+    game = Evaluate.evaluate(game, ["LOAD_CARDS", "coreLeadership"]) # Leadership core set deck
+    assert length(game["groupById"]["player1Hand"]["stackIds"]) == 6
+    assert length(game["groupById"]["player1Deck"]["stackIds"]) == 24
+    assert length(game["groupById"]["sharedEncounterDeck"]["stackIds"]) == 34
+
+    # Discard
+    card_id = Evaluate.evaluate(game, ["GET_CARD_ID", "sharedEncounterDeck", 0, 0])
+    game = Evaluate.evaluate(game, [
+      ["DEFINE", "$ACTIVE_CARD_ID", card_id],
+      ["ACTION_LIST", "discardCard"]
+    ])
+
+    card_id = Evaluate.evaluate(game, ["GET_CARD_ID", "sharedEncounterDeck", 0, 0])
+    game = Evaluate.evaluate(game, [
+      ["DEFINE", "$ACTIVE_CARD_ID", card_id],
+      ["ACTION_LIST", "discardCard"]
+    ])
+    card_id = Evaluate.evaluate(game, ["GET_CARD_ID", "sharedEncounterDeck", 0, 0])
+    game = Evaluate.evaluate(game, [
+      ["DEFINE", "$ACTIVE_CARD_ID", card_id],
+      ["ACTION_LIST", "discardCard"]
+    ])
+    assert length(game["groupById"]["sharedEncounterDeck"]["stackIds"]) == 31
+
+    # Shuffle back
+    card_id = Evaluate.evaluate(game, ["GET_CARD_ID", "sharedEncounterDiscard", 0, 0])
+    game = Evaluate.evaluate(game, [
+      ["DEFINE", "$ACTIVE_CARD_ID", card_id],
+      ["ACTION_LIST", "shuffleGroupIntoDeck"]
+    ])
+    assert length(game["groupById"]["sharedEncounterDeck"]["stackIds"]) == 34
+
+    # Repeat for player deck
+    card_id = Evaluate.evaluate(game, ["GET_CARD_ID", "player1Deck", 0, 0])
+    game = Evaluate.evaluate(game, [
+      ["DEFINE", "$ACTIVE_CARD_ID", card_id],
+      ["ACTION_LIST", "discardCard"]
+    ])
+    card_id = Evaluate.evaluate(game, ["GET_CARD_ID", "player1Deck", 0, 0])
+    game = Evaluate.evaluate(game, [
+      ["DEFINE", "$ACTIVE_CARD_ID", card_id],
+      ["ACTION_LIST", "discardCard"]
+    ])
+    card_id = Evaluate.evaluate(game, ["GET_CARD_ID", "player1Deck", 0, 0])
+    game = Evaluate.evaluate(game, [
+      ["DEFINE", "$ACTIVE_CARD_ID", card_id],
+      ["ACTION_LIST", "discardCard"]
+    ])
+    assert length(game["groupById"]["player1Deck"]["stackIds"]) == 21
+
+    # Shuffle back
+    card_id = Evaluate.evaluate(game, ["GET_CARD_ID", "player1Discard", 0, 0])
+    game = Evaluate.evaluate(game, [
+      ["DEFINE", "$ACTIVE_CARD_ID", card_id],
+      ["ACTION_LIST", "shuffleGroupIntoDeck"]
+    ])
+    assert length(game["groupById"]["player1Deck"]["stackIds"]) == 24
+
+    # Print all messages
+    Enum.each(game["messages"], fn message ->
+      IO.puts(message)
+    end)
+
+  end
+
   # Swap with top card of deck
   @tag :swap_with_top
   test "swap_with_top", %{user: _user, game: game, game_def: _game_def} do
@@ -862,6 +1026,11 @@ defmodule DragnCardsGame.CustomPluginTest do
 
     assert length(game["groupById"]["player1Hand"]["stackIds"]) == 6
     assert length(game["groupById"]["player1Deck"]["stackIds"]) == 24
+
+    # Print all messages
+    Enum.each(game["messages"], fn message ->
+      IO.puts(message)
+    end)
 
   end
 end

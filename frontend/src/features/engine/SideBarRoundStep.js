@@ -20,7 +20,9 @@ export const ReminderButton = React.memo(({
     if (!playerN) return;
     doActionList(dragnActionLists.clearTargets());
     for (var cardId of triggerCardIds) {
-      doActionList(dragnActionLists.targetCard(cardId));
+      var actionList = [["DEFINE", "$ACTIVE_CARD_ID", cardId]];
+      actionList = actionList.concat(dragnActionLists.targetCard(cardId));
+      doActionList(actionList);
     }
   }  
   const handleStartHover = () => {

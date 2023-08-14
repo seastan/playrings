@@ -33,7 +33,7 @@ export const DropdownMenuFirstPlayer = React.memo(({
             const playerI = "player" + (i + 1);
             const actionList = [
               ["SET", "/firstPlayer", playerI],
-              ["LOG", "$PLAYER_N", " set the first player to ", playerI, "."]
+              ["LOG", "$ALIAS_N", " set the first player to ", playerI, "."]
             ]
             return <DropdownItem action={actionList} title={title} clickCallback={handleDropdownClick}>{title}</DropdownItem>
           })}

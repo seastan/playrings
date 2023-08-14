@@ -52,7 +52,7 @@ const importViaUrlRingsDb = async (importLoadList, doActionList, playerN) => {
 
 
 export const loadRingsDb = (importLoadList, doActionList, playerN, ringsDbDomain, ringsDbType, ringsDbId) => {
-  doActionList(["LOG", "$PLAYER_N", " is importing a deck from RingsDB."]);
+  doActionList(["LOG", "$ALIAS_N", " is importing a deck from RingsDB."]);
   const urlBase = ringsDbDomain === "test" ? "https://www.test.ringsdb.com/api/" : "https://www.ringsdb.com/api/"
   const url = ringsDbType === "decklist" ? urlBase+"public/decklist/"+ringsDbId+".json" : urlBase+"oauth2/deck/load/"+ringsDbId;
   console.log("Fetching ", url);
@@ -148,7 +148,7 @@ const importViaUrlMarvelCdb = async (importLoadList, doActionList, playerN, card
 
 
 export const loadMarvelCdb = (importLoadList, doActionList, playerN, dbDomain, dbType, dbId, cardDb) => {
-  doActionList(["LOG", "$PLAYER_N", " is importing a deck from MarvelCDB."]);
+  doActionList(["LOG", "$ALIAS_N", " is importing a deck from MarvelCDB."]);
 
   // Generate a mapping from marcelcdbId to databaseId
   const marvelcdbIdTodatabaseId = {};

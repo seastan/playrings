@@ -8,21 +8,20 @@ export const SideBar = React.memo(({}) => {
   const cardById = useSelector(state => state?.gameUi?.game?.cardById);
   const [triggerMap, setTriggerMap] = useState({})
   useEffect(() => {
-      const newTriggerMap = {...triggerMap};
+      const newTriggerMap = {};
       if (cardById) {
-          for (const [cardId, card] of Object.entries(cardById)) {
-              if (!card.inPlay) continue;
-              for (const [stepId, val] of Object.entries(card?.sides?.[card.currentSide]?.triggers)) {
-                console.log("newtriggermap 2", newTriggerMap, stepId, val)
-                if (val === true) {
-                  if (newTriggerMap?.[stepId]) {
-                    newTriggerMap[stepId].push(cardId);
-                  } else {
-                    newTriggerMap[stepId] = [cardId];
-                  }
-                }
+        for (const [cardId, card] of Object.entries(cardById)) {
+          if (!card.inPlay) continue;
+          for (const [stepId, val] of Object.entries(card?.sides?.[card.currentSide]?.triggers)) {
+            if (val === true) {
+              if (newTriggerMap?.[stepId]) {
+                newTriggerMap[stepId].push(cardId);
+              } else {
+                newTriggerMap[stepId] = [cardId];
               }
+            }
           }
+        }
       }
       console.log("newtriggermap", newTriggerMap)
       setTriggerMap(newTriggerMap);

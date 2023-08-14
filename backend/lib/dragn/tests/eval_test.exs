@@ -792,7 +792,7 @@ actions = %{
         ],
         [
           ["INCREASE_VAL", "cardById", "$CARD_ID", "tokens", "resource", 1],
-          ["LOG", "$PLAYER_N", " added 1 resource token to ", ["OBJ_GET_VAL", "$CARD", "sides", ["OBJ_GET_VAL", "$CARD", "currentSide"], "name"], "."],
+          ["LOG", "$ALIAS_N", " added 1 resource token to ", ["OBJ_GET_VAL", "$CARD", "sides", ["OBJ_GET_VAL", "$CARD", "currentSide"], "name"], "."],
         ],
         true,
         "$GAME"
@@ -810,7 +810,7 @@ actions = %{
         ],
         [
           ["SET", "cardById", "$CARD_ID", "tokens", "resource", 1], #["OBJ_GET_VAL", "$CARD", "extraResources"]],
-          ["LOG", "$PLAYER_N", " added ", ["OBJ_GET_VAL", "$CARD", "extraResources"]," extra resource token(s) to ", ["OBJ_GET_VAL", "$CARD", "sides", ["OBJ_GET_VAL", "$CARD", "currentSide"], "type"]]
+          ["LOG", "$ALIAS_N", " added ", ["OBJ_GET_VAL", "$CARD", "extraResources"]," extra resource token(s) to ", ["OBJ_GET_VAL", "$CARD", "sides", ["OBJ_GET_VAL", "$CARD", "currentSide"], "type"]]
         ],
         true,
         "$GAME"
@@ -819,7 +819,7 @@ actions = %{
     ["FOR_EACH_START_STOP_STEP", "$i", 0, "$GAME.playerData.player1.cardsDrawn", 1,
       [
         ["MOVE_CARD", ["GET_CARD_ID", ["JOIN_STRING", "$PLAYER_N", "Deck"], 0, 0], ["JOIN_STRING", "$PLAYER_N", "Hand"], 0, 0],
-        ["LOG", "$PLAYER_N", " drew 1 card."]
+        ["LOG", "$ALIAS_N", " drew 1 card."]
       ]
     ],
     ["SET", "playerData", "$PLAYER_N", "willpower", 0],
@@ -878,23 +878,23 @@ actions = %{
         ["EQUAL", "$GAME.phaseId", "Quest"],
         [
           ["MOVE_STACKS", "sharedEncounterDiscard", "sharedEncounterDeck", ["LENGTH", "$GAME.groupById.sharedEncounterDiscard.stackIds"], "shuffle"],
-          ["LOG", "$PLAYER_N"," shuffled the encounter discard pile into the encounter deck."]
+          ["LOG", "$ALIAS_N"," shuffled the encounter discard pile into the encounter deck."]
         ],
         true,
-        ["LOG", "$PLAYER_N", "tried to reveal a card, but the encounter deck is empty and it's not the quest phase."]
+        ["LOG", "$ALIAS_N", "tried to reveal a card, but the encounter deck is empty and it's not the quest phase."]
       ],
       true,
       [
         ["DEFINE", "$STACK_ID", ["AT_INDEX", "$GAME.groupById.sharedEncounterDeck.stackIds", 0]],
         ["MOVE_STACK", "$STACK_ID", "sharedStaging", -1, false, "$REVEAL_FACEDOWN"],
-        ["LOG", "$PLAYER_N", " revealed ", ["FACEUP_NAME_FROM_STACK_ID", "$STACK_ID"]]
+        ["LOG", "$ALIAS_N", " revealed ", ["FACEUP_NAME_FROM_STACK_ID", "$STACK_ID"]]
       ]
     ],
     ["COND",
       ["EQUAL", ["LENGTH", "$GAME.groupById.sharedEncounterDeck.stackIds"], 0],
       [
         ["MOVE_STACKS", "sharedEncounterDiscard", "sharedEncounterDeck", ["LENGTH", "$GAME.groupById.sharedEncounterDiscard.stackIds"], "shuffle"],
-        ["LOG", "$PLAYER_N"," shuffled the encounter discard pile into the encounter deck."]
+        ["LOG", "$ALIAS_N"," shuffled the encounter discard pile into the encounter deck."]
       ],
       true,
       "$GAME"
@@ -903,12 +903,12 @@ actions = %{
   "revealSecondary" => [
     ["COND",
       ["EQUAL", ["LENGTH", "$GAME.groupById.sharedEncounterDeck2.stackIds"], 0],
-      ["LOG", "$PLAYER_N", " tried to reveal a card from the second encounter deck, but it's empty."],
+      ["LOG", "$ALIAS_N", " tried to reveal a card from the second encounter deck, but it's empty."],
       true,
       [
         ["DEFINE", "$STACK_ID", ["AT_INDEX", "$GAME.groupById.sharedEncounterDeck2.stackIds", 0]],
         ["MOVE_STACK", "$STACK_ID", "sharedStaging", -1, false, "$REVEAL_FACEDOWN"],
-        ["LOG", "$PLAYER_N", " revealed ", ["FACEUP_NAME_FROM_STACK_ID", "$STACK_ID"]]
+        ["LOG", "$ALIAS_N", " revealed ", ["FACEUP_NAME_FROM_STACK_ID", "$STACK_ID"]]
       ]
     ]
   ],
@@ -921,7 +921,7 @@ actions = %{
       ["AND", ["EQUAL", "$GAME.playerUi.playerN", "player1"], ["NOT_EQUAL", "$STEP_ID", "$GAME.stepId"]],
       [
         ["SET", "stepId", "$STEP_ID"],
-        ["LOG", "$PLAYER_N", " set the round step to ", "$GAME.gameDef.steps.$STEP_ID.text", "."]
+        ["LOG", "$ALIAS_N", " set the round step to ", "$GAME.gameDef.steps.$STEP_ID.text", "."]
       ],
       true,
       "$GAME"
@@ -939,7 +939,7 @@ actions = %{
               ["COND",
                 ["EQUAL", ["LENGTH", "$GAME.groupById.sharedEncounterDeck.stackIds"], 0],
                 [
-                  ["LOG", "$PLAYER_N", " tried to deal a shadow card but the encounter deck is empty."],
+                  ["LOG", "$ALIAS_N", " tried to deal a shadow card but the encounter deck is empty."],
                   ["LOG_DEV", "tried to deal shadow but couldn't"],
                 ],
                 true,
@@ -948,7 +948,7 @@ actions = %{
                   ["ATTACH_CARD", "$SHADOW_CARD_ID", "$CARD_ID"],
                   ["SET", "cardById", "$SHADOW_CARD_ID", "rotation", -30],
                   ["SET", "cardById", "$SHADOW_CARD_ID", "currentSide", "B"],
-                  ["LOG", "$PLAYER_N", " dealt a shadow card to ", ["FACEUP_NAME_FROM_CARD_ID", "$CARD_ID"], "."]
+                  ["LOG", "$ALIAS_N", " dealt a shadow card to ", ["FACEUP_NAME_FROM_CARD_ID", "$CARD_ID"], "."]
                 ]
               ],
               true,
@@ -985,7 +985,7 @@ actions = %{
     ],
     ["DEFINE", "$STEP_ID", "$GAME.stepId"],
     ["DEFINE", "$STEP", "$GAME.gameDef.steps.$STEP_ID"],
-    ["LOG", "$PLAYER_N", " set the round step to ", "$STEP.text", "."]
+    ["LOG", "$ALIAS_N", " set the round step to ", "$STEP.text", "."]
   ],
   "prev_step" => [
     ["COND",
@@ -998,7 +998,7 @@ actions = %{
     ],
     ["DEFINE", "$STEP_ID", "$GAME.stepId"],
     ["DEFINE", "$STEP", "$GAME.gameDef.steps.$STEP_ID"],
-    ["LOG", "$PLAYER_N", " set the round step to ", "$STEP.text", "."]
+    ["LOG", "$ALIAS_N", " set the round step to ", "$STEP.text", "."]
   ],
   "mulligan" => [
     ["DEFINE", "$HAND_GROUP_ID", ["JOIN_STRING", "$PLAYER_N", "Hand"]],
@@ -1080,7 +1080,7 @@ actions = %{
       ["AND", ["EQUAL", "$GAME.playerUi.playerN", "player1"], ["NOT_EQUAL", "$STEP_ID", "$GAME.stepId"]],
       [
         ["SET", "stepId", "$STEP_ID"],
-        ["LOG", "$PLAYER_N", " set the round step to ", "$GAME.gameDef.steps.$STEP_ID.text", "."]
+        ["LOG", "$ALIAS_N", " set the round step to ", "$GAME.gameDef.steps.$STEP_ID.text", "."]
       ],
       true,
       "$GAME"
@@ -1110,7 +1110,7 @@ actions = %{
       ["AND", ["EQUAL", "$GAME.playerUi.playerN", "player1"], ["NOT_EQUAL", "$STEP_ID", "$GAME.stepId"]],
       [
         ["SET", "stepId", "$STEP_ID"],
-        ["LOG", "$PLAYER_N", " set the round step to ", "$GAME.gameDef.steps.$STEP_ID.text", "."]
+        ["LOG", "$ALIAS_N", " set the round step to ", "$GAME.gameDef.steps.$STEP_ID.text", "."]
       ],
       true,
       "$GAME"
@@ -1135,14 +1135,14 @@ actions = %{
       "$CARD.inPlay",
       ["COND",
         ["EQUAL", ["LENGTH", "$GAME.groupById.sharedEncounterDeck.stackIds"], 0],
-        ["LOG", "$PLAYER_N", " tried to deal a shadow card but the encounter deck is empty."],
+        ["LOG", "$ALIAS_N", " tried to deal a shadow card but the encounter deck is empty."],
         true,
         [
           ["DEFINE", "$SHADOW_CARD_ID", ["GET_CARD_ID", "sharedEncounterDeck", 0, 0]],
           ["ATTACH_CARD", "$SHADOW_CARD_ID", "$ACTIVE_CARD_ID"],
           ["SET", "cardById", "$SHADOW_CARD_ID", "rotation", -30],
           ["SET", "cardById", "$SHADOW_CARD_ID", "currentSide", "B"],
-          ["LOG", "$PLAYER_N", " dealt a shadow card to ", "$ACTIVE_FACE.name", "."]
+          ["LOG", "$ALIAS_N", " dealt a shadow card to ", "$ACTIVE_FACE.name", "."]
         ]
       ],
       true,
@@ -1151,7 +1151,7 @@ actions = %{
   ],
   "target_card" => [
     ["SET", "playerData", "targeting", "$PLAYER_N", "$ACTIVE_CARD_ID", true],
-    ["LOG", "$PLAYER_N", " targeted ", "$ACTIVE_FACE.name", "."]
+    ["LOG", "$ALIAS_N", " targeted ", "$ACTIVE_FACE.name", "."]
   ],
   "victory" => [
     ["MOVE_CARD", "$ACTIVE_CARD_ID", "sharedVictory", 0, 0]
@@ -1166,7 +1166,7 @@ actions = %{
           [
             ["DEFINE", "$CARD", "$GAME.cardById.$CARD_ID"],
             ["DEFINE", "$CURRENT_SIDE", "$CARD.currentSide"],
-            ["LOG", "$PLAYER_N", " discarded ", "$CARD.sides.$CURRENT_SIDE.name", "."],
+            ["LOG", "$ALIAS_N", " discarded ", "$CARD.sides.$CURRENT_SIDE.name", "."],
             ["DISCARD", "$CARD_ID"],
           ]
         ]
@@ -1174,7 +1174,7 @@ actions = %{
       true,
       [
         ["DEFINE", "$CURRENT_SIDE", "$ACTIVE_CARD.currentSide"],
-        ["LOG", "$PLAYER_N", " discarded ", "$ACTIVE_CARD.sides.$CURRENT_SIDE.name", "."],
+        ["LOG", "$ALIAS_N", " discarded ", "$ACTIVE_CARD.sides.$CURRENT_SIDE.name", "."],
         ["DISCARD_CARD", "$ACTIVE_CARD_ID"],
       ]
     ]
@@ -1183,14 +1183,14 @@ actions = %{
     ["MOVE_CARD", "$ACTIVE_CARD_ID", "$ACTIVE_CARD.deckGroupId", 0, 0],
     ["DEFINE", "$GROUP_ID", "$ACTIVE_CARD.deckGroupId"],
     ["SHUFFLE_GROUP", "$GROUP_ID"],
-    ["LOG", "$PLAYER_N", " shuffled ", "$GAME.groupById.$GROUP_ID.name", "."]
+    ["LOG", "$ALIAS_N", " shuffled ", "$GAME.groupById.$GROUP_ID.name", "."]
   ],
   "detach" => [
     ["COND",
       ["GREATER_THAN", "$ACTIVE_CARD.cardIndex", 0],
       [
         ["MOVE_CARD", "$ACTIVE_CARD_ID", "$ACTIVE_CARD.groupId", ["ADD", "$ACTIVE_CARD.stackIndex", 1], 0],
-        ["LOG", "$PLAYER_N", " detached ", "$ACTIVE_FACE.name", "."]
+        ["LOG", "$ALIAS_N", " detached ", "$ACTIVE_FACE.name", "."]
       ],
       true,
       "$GAME"
