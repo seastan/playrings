@@ -168,11 +168,6 @@ defmodule DragnCardsGame.Evaluate do
     Enum.reduce(Enum.with_index(statements), "", fn({statement, index}, acc) ->
       eval_statement = evaluate(game, statement, trace ++ ["statement #{index}"])
       str_statement = inspect(eval_statement) |> String.replace("\"","")
-      str_statement = if Enum.member?(Map.keys(game["playerData"]), str_statement) do
-        "{#{str_statement}}"
-      else
-        str_statement
-      end
       acc <> str_statement
     end)
   end
@@ -783,6 +778,9 @@ defmodule DragnCardsGame.Evaluate do
                 else
                   game["playerUi"]["playerN"]
                 end
+
+              "$ALIAS_N" ->
+                evaluate(game, "{{{$PLAYER_N}}}", trace ++ ["$ALIAS_N"])
 
               "$PLAYER_ORDER" ->
                 # Call evaluate(game, ["NEXT_PLAYER", acc]) numPlayers times, starting with the current player, and put the results in a list
