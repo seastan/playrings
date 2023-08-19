@@ -46,9 +46,7 @@ export const Lobby = () => {
       if (url.includes("replay")) {
         var splitUrl = url.split( '/' );
         const newroomIndex = splitUrl.findIndex((e) => e === "newroom")
-        setReplayId(splitUrl[newroomIndex + 2])
-        if (splitUrl[newroomIndex + 3] && splitUrl[newroomIndex + 3] === "shuffle") setLoadShuffle(true);
-        else setLoadShuffle(false);
+        setReplayId(splitUrl[newroomIndex + 2]);
       }
       setShowModal("createRoom");
     }

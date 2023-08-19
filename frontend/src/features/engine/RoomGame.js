@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from 'react-redux';
-import { setKeypress } from "../store/playerUiSlice";
+import { setKeypressAlt, setKeypressControl, setKeypressShift, setKeypressSpace, setKeypressTab } from "../store/playerUiSlice";
 import { DragContainer } from "./DragContainer";
 import { useKeyDown } from "./hooks/useKeyDown";
 
@@ -15,11 +15,11 @@ const RoomGame = React.memo(({}) => {
     
     const onKeyUp = (event) => {
       const k = event.key;
-      if (k === "Alt") dispatch(setKeypress({"Alt": 0}));
-      if (k === " ") dispatch(setKeypress({"Space": 0}));
-      if (k === "Control") dispatch(setKeypress({"Control": 0}));
-      if (k === "Shift") dispatch(setKeypress({"Shift": 0}));
-      if (k === "Tab") dispatch(setKeypress({"Tab": 0}));
+      if (k === "Alt") dispatch(setKeypressAlt(0));
+      if (k === " ") dispatch(setKeypressSpace(0));
+      if (k === "Control") dispatch(setKeypressControl(0));
+      if (k === "Shift") dispatch(setKeypressShift(0));
+      if (k === "Tab") dispatch(setKeypressTab(0));
     }
 
     if (!typing) {

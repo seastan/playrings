@@ -12,7 +12,6 @@ defmodule DragnCardsGame.PlayerInfo do
   """
   @spec new(integer) :: Map.t()
   def new(user_id) do
-    Logger.debug("playerinfo new")
     if user_id == nil do nil else
       user = Users.get_user(user_id)
       if user == nil do nil else

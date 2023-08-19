@@ -38,6 +38,27 @@ defmodule DragnCards.Plugins do
     Repo.all(query)
   end
 
+  def get_plugin_info(id) do
+    query = from p in Plugin,
+    join: u in User,
+    on: [id: p.author_id],
+    order_by: [desc: :version],
+    where: [public: true, id: ^id],
+    select: {
+      p.author_id,
+      u.alias,
+      p.id,
+      p.name,
+      p.version,
+      p.num_favorites,
+      p.public,
+      p.updated_at,
+      p.game_def["announcements"],
+      p.game_def["tutorialUrl"]
+    }
+    Repo.one(query)
+  end
+
   def list_plugins do
     Repo.all(Plugin)
   end

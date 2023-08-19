@@ -186,7 +186,7 @@ defmodule DragnCardsGame.CustomPluginTest do
   test "save_game", %{user: user, game: game, game_def: game_def} do
     # Load some decks into the game
     game = Evaluate.evaluate(game, ["LOAD_CARDS", "Q01.1"]) # Passage through Mirkwood
-    #game = Evaluate.evaluate(game, ["LOAD_CARDS", "coreLeadership"]) # Leadership core set deck
+    game = Evaluate.evaluate(game, ["LOAD_CARDS", "coreLeadership"]) # Leadership core set deck
 
     # Save
     GameUI.save_replay(game, user.id)
@@ -208,9 +208,6 @@ defmodule DragnCardsGame.CustomPluginTest do
       IO.puts(message)
     end)
 
-    IO.puts("playerinfo c")
-    IO.inspect(game["playerInfo"])
-    IO.puts("playerinfo d")
   end
 
   @tag :basics

@@ -778,26 +778,12 @@ defmodule DragnCardsGame.GameUI do
   def save_replay(game, user_id) do
     game_uuid = game["id"]
     game_def = Plugins.get_game_def(game["options"]["pluginId"])
-    save_description = get_in(game_def, ["saveGame", "description"])
     save_metadata = get_in(game_def, ["saveGame", "metadata"])
 
-    IO.puts("updates 0")
-    IO.inspect(save_description)
-    IO.inspect(save_metadata)
-    IO.inspect(Evaluate.evaluate(game, save_description, ["save_replay"]))
-    IO.inspect(Evaluate.evaluate(game, ["PROCESS_MAP", save_metadata], ["save_replay"]))
-    IO.puts("updates 1")
     updates = %{
-      rounds: game["roundNumber"],
-      num_players: game["numPlayers"],
       game_json: game,
-      description: if save_description == nil do nil else Evaluate.evaluate(game, save_description, ["save_replay"]) end,
       metadata: if save_metadata == nil do nil else Evaluate.evaluate(game, ["PROCESS_MAP", save_metadata], ["save_replay"]) end,
     }
-    IO.puts("updates 1")
-    IO.inspect(updates[:description])
-    IO.inspect(updates[:metadata])
-    IO.puts("updates 2")
 
     result = case Repo.get_by(Replay, [user_id: user_id, uuid: game_uuid]) do
       nil  -> %Replay{user_id: user_id, uuid: game_uuid} # Replay not found, we build one

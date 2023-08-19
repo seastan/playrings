@@ -10,6 +10,7 @@ export const dragnHotkeys = [
     {"key": "Shift+P", "actionList": "saveGame", "label": "id:saveGame"},
     {"key": "Shift+W", "actionList": "drawArrow", "label": "id:startStopDrawingArrow"},
     {"key": "Escape", "actionList": "clearTargets", "label": "id:clearTargetsArrows"},
+    {"key": "Ctrl+S", "actionList": "saveGame", "label": "id:saveGame"},
     {"key": "Ctrl+Z", "actionList": "undo", "label": "id:undoOneAction"},
     {"key": "Ctrl+Y", "actionList": "redo", "label": "id:redoOneAction"},
     {"key": "ArrowLeft", "actionList": "undo", "label": "id:undoOneAction"},
