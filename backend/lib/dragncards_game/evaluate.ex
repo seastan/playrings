@@ -582,6 +582,20 @@ defmodule DragnCardsGame.Evaluate do
               get_in(game_def, ["preBuiltDecks", load_list_id, "cards"])
             end
 
+            # Run postLoadActionList if it exists
+            game = if game_def["automation"]["preLoadActionList"] do
+              evaluate(game, game_def["automation"]["preLoadActionList"], trace ++ ["LOAD_CARDS game preLoadActionList"])
+            else
+              game
+            end
+
+            # Run deck's postLoadActionList if it exists
+            game = if load_list_id && game_def["preBuiltDecks"][load_list_id]["preLoadActionList"] do
+              evaluate(game, ["ACTION_LIST", game_def["preBuiltDecks"][load_list_id]["preLoadActionList"]], trace ++ ["LOAD_CARDS deck preLoadActionList"])
+            else
+              game
+            end
+
             # Load cards
             game = try do
               GameUI.load_cards(game, evaluate(game, "$PLAYER_N", trace), load_list)

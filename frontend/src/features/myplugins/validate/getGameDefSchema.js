@@ -45,6 +45,9 @@ export const getGameDefSchema = (gameDef) => {
         "postLoadActionList": {
           "_type_": "actionList",
         },
+        "preLoadActionList": {
+          "_type_": "actionList",
+        },
         "gameRules": {
           "_type_": "array",
           "_required_": false,
@@ -886,6 +889,9 @@ export const getGameDefSchema = (gameDef) => {
                 "_memberOfPath_": "gameDef.groups",
               }
             }
+          },
+          "preLoadActionList": {
+            "_type_": "actionList",
           },
           "postLoadActionList": {
             "_type_": "actionList",

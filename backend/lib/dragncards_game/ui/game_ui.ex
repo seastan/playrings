@@ -828,9 +828,6 @@ defmodule DragnCardsGame.GameUI do
   def step_through(gameui, options) do
     size = options["size"]
     direction = options["direction"]
-    IO.puts("step_through 1")
-    IO.inspect(Enum.count(gameui["deltas"]))
-    IO.puts("step_through 2")
 
     cond do
       size == "single" ->
