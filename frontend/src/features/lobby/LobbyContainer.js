@@ -12,9 +12,8 @@ import { LobbyButton } from "../../components/basic/LobbyButton";
 import { TermsOfServiceModal } from "./TermsOfServiceModal";
 import { PluginLobby } from "./PluginLobby";
 import { Footer } from "./Footer";
-import LobbyContainer from "./LobbyContainer";
 
-export const Lobby = () => {
+export const LobbyContainer = ({ children }) => {
   const isLoggedIn = useIsLoggedIn();
   const [showModal, setShowModal] = useState(null);
   const [showTermsOfService, setShowTermsOfService] = useState(false);
@@ -57,9 +56,64 @@ export const Lobby = () => {
   console.log("pluginslist",plugins);
 
   return (
-      <LobbyContainer>
-        <PluginsTable plugins={plugins} setSelectedPlugin={setSelectedPlugin}/>
-      </LobbyContainer>
+      <div 
+        className="w-full overflow-y-scroll overflow-x-hidden" 
+        style={{fontFamily:"Roboto", height: "97vh", 
+        background: `url(${process.env.PUBLIC_URL + '/images/other/background.jpg'}) no-repeat center center fixed`,
+        backgroundSize: 'cover',
+        WebkitBackgroundSize: 'cover',
+        MozBackgroundSize: 'cover',
+        OBackgroundSize: 'cover',
+        backgroundColor: `rgba(50,50,50,0.95)`,
+        backgroundBlendMode: 'overlay'
+      }}>
+        <div className="mt-4 mx-auto w-full p-2" style={{maxWidth: "600px"}}>
+          <div style={{height: "200px"}}>
+            <div className="w-1/2 h-full float-left">
+              <div className="w-full h-full flex items-center justify-center">
+                <img 
+                  className="" 
+                  style={{height: "200px"}} 
+                  src={process.env.PUBLIC_URL + '/logosvg.svg'}/>
+              </div>
+            </div>
+            <div className="w-1/2 h-full float-right">
+              <div className="w-full h-1/3 p-2">
+                <LobbyButton onClick={() => setShowModal("patreon")}>
+                  Patreon
+                </LobbyButton>
+              </div>
+              <div className="w-full h-1/3 p-2">
+                <LobbyButton onClick={() => window.open('https://discord.gg/7BQv5ethUm', '_blank')}>
+                  Discord
+                </LobbyButton>
+              </div>
+              <div className="w-full h-1/3 p-2">
+                <LobbyButton onClick={() => window.open('https://github.com/seastan/DragnCards', '_blank')}>
+                  GitHub
+                </LobbyButton>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="mx-auto w-full p-2" style={{maxWidth: "600px"}}>
+            {children}
+        </div>
+
+        <Footer setShowTermsOfService={setShowTermsOfService}/>
+
+        <TermsOfServiceModal
+          isOpen={showTermsOfService}
+          closeModal={() => setShowTermsOfService(false)}
+        />
+        
+        <PatreonModal
+          isOpen={showModal === "patreon"}
+          isLoggedIn={isLoggedIn}
+          closeModal={() => setShowModal(null)}
+        />
+      </div>
   );
 };
-export default Lobby;
+export default LobbyContainer;

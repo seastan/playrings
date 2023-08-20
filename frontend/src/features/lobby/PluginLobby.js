@@ -11,6 +11,9 @@ import { PatreonModal } from "../support/PatreonModal";
 import { LobbyButton } from "../../components/basic/LobbyButton";
 import { TermsOfServiceModal } from "./TermsOfServiceModal";
 import { Footer } from "./Footer";
+import LobbyContainer from "./LobbyContainer";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 
 export const PluginLobby = () => {
   const isLoggedIn = useIsLoggedIn();
@@ -33,6 +36,7 @@ export const PluginLobby = () => {
     "/be/api/plugins/info/"+pluginId,
     null
   );
+
   console.log("Rendering Lobby", ringsDbInfo)
   useEffect(() => {
     const url = window.location.href;
@@ -74,10 +78,21 @@ export const PluginLobby = () => {
   }
 
   return (
-    <>
-      <div className="text-white text-xl">
-        {plugin?.name} by {plugin?.author_alias}
+    <LobbyContainer>
+
+      <div className="flex items-center text-white text-xl">
+        <div className="mr-2" style={{width: "50px", height: "50px"}}>
+          <LobbyButton onClick={()=>history.push("/lobby")}>
+            <FontAwesomeIcon icon={faArrowLeft} />
+          </LobbyButton>
+        </div>
+        <div>
+          {plugin?.name}
+          <div className="text-xs">by {plugin?.author_alias}</div>
+        </div>
       </div>
+
+
       <div className="flex justify-center w-full" style={{maxWidth: "600px"}}>
         <div className="w-full h-24 py-2 text-3xl">
           <LobbyButton disabled={!plugin?.tutorialUrl} onClick={() => window.open(plugin?.tutorialUrl, '_blank')}>
@@ -108,7 +123,7 @@ export const PluginLobby = () => {
         closeModal={() => setShowModal(null)}
         plugin={plugin}
       />
-    </>
+    </LobbyContainer>
   );
 };
 export default PluginLobby;
