@@ -1,27 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { useHistory } from "react-router-dom";
-import CreateRoomModal from "./CreateRoomModal";
-import LobbyTable from "./LobbyTable";
 import useDataApi from "../../hooks/useDataApi";
-import useProfile from "../../hooks/useProfile";
-import useIsLoggedIn from "../../hooks/useIsLoggedIn";
-import { Announcements } from "./Announcements";
 import { PluginsTable } from "./PluginsTable";
-import { PatreonModal } from "../support/PatreonModal";
-import { LobbyButton } from "../../components/basic/LobbyButton";
-import { TermsOfServiceModal } from "./TermsOfServiceModal";
-import { PluginLobby } from "./PluginLobby";
-import { Footer } from "./Footer";
 import LobbyContainer from "./LobbyContainer";
 
 export const Lobby = () => {
-  const isLoggedIn = useIsLoggedIn();
-  const [showModal, setShowModal] = useState(null);
-  const [showTermsOfService, setShowTermsOfService] = useState(false);
   const [replayId, setReplayId] = useState("");
   const [ringsDbInfo, setRingsDbInfo] = useState([null,null,null,null]);
-  const [loadShuffle, setLoadShuffle] = useState(false);
-  const [selectedPlugin, setSelectedPlugin] = useState(null);
   const apiPlugins = useDataApi(
     "/be/api/plugins",
     null
