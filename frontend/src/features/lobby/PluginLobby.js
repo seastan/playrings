@@ -16,14 +16,11 @@ export const PluginLobby = () => {
   const myUser = useProfile();
   const history = useHistory();
   const [showModal, setShowModal] = useState(null);
-  const [showTermsOfService, setShowTermsOfService] = useState(false);
-  const [replayId, setReplayId] = useState("");
+  const [replayUuid, setReplayUuid] = useState(null);
   const [ringsDbInfo, setRingsDbInfo] = useState([null,null,null,null]);
-  const [loadShuffle, setLoadShuffle] = useState(false);
-  const [selectedPlugin, setSelectedPlugin] = useState(null);
 
   const url = window.location.href;
-  var splitUrl = url.split( '/' );
+  const splitUrl = url.split( '/' );
   const pluginIndex = splitUrl.findIndex((e) => e === "plugin")
   const pluginStr = splitUrl[pluginIndex + 1];
   const pluginId = parseInt(pluginStr);
@@ -33,32 +30,36 @@ export const PluginLobby = () => {
     null
   );
 
-  console.log("Rendering Lobby", ringsDbInfo)
+  console.log("Rendering PluginLobby", splitUrl)
   useEffect(() => {
     const url = window.location.href;
-    if (url.includes("newroom")) {
-      if (url.includes("ringsdb") || url.includes("test")) {
-        var splitUrl = url.split( '/' );
-        const newroomIndex = splitUrl.findIndex((e) => e === "newroom")
-        const ringsDbDomain = splitUrl[newroomIndex + 1]
-        const newRingsDbInfo = [null, null, null, null];
-        var deckIndex = 0;
-        for (var i = newroomIndex + 2; i<splitUrl.length-1; i += 2 ) {
-          const ringsDbType = splitUrl[i];
-          const ringsDbId = splitUrl[i+1];
-          newRingsDbInfo[deckIndex] = {id: ringsDbId, type: ringsDbType, domain: ringsDbDomain};
-          deckIndex = deckIndex + 1;
-        }
-        setRingsDbInfo(newRingsDbInfo);
-      }
-      if (url.includes("replay")) {
-        var splitUrl = url.split( '/' );
-        const newroomIndex = splitUrl.findIndex((e) => e === "newroom")
-        setReplayId(splitUrl[newroomIndex + 2]);
-      }
+    if (url.includes("/load/")) {
+      const loadIndex = splitUrl.findIndex((e) => e === "load")
+      setReplayUuid(splitUrl[loadIndex + 1]);
       setShowModal("createRoom");
     }
   }, []);
+
+    //   if (url.includes("ringsdb") || url.includes("test")) {
+    //     var splitUrl = url.split( '/' );
+    //     const newroomIndex = splitUrl.findIndex((e) => e === "newroom")
+    //     const ringsDbDomain = splitUrl[newroomIndex + 1]
+    //     const newRingsDbInfo = [null, null, null, null];
+    //     var deckIndex = 0;
+    //     for (var i = newroomIndex + 2; i<splitUrl.length-1; i += 2 ) {
+    //       const ringsDbType = splitUrl[i];
+    //       const ringsDbId = splitUrl[i+1];
+    //       newRingsDbInfo[deckIndex] = {id: ringsDbId, type: ringsDbType, domain: ringsDbDomain};
+    //       deckIndex = deckIndex + 1;
+    //     }
+    //     setRingsDbInfo(newRingsDbInfo);
+    //   }
+    //   if (url.includes("replay")) {
+    //     var splitUrl = url.split( '/' );
+    //     const newroomIndex = splitUrl.findIndex((e) => e === "newroom")
+    //   }
+    //   setShowModal("createRoom");
+    // }
 
   const plugin = apiPlugins?.data?.data;
   console.log("pluginslist",plugin);
@@ -117,6 +118,7 @@ export const PluginLobby = () => {
         isOpen={showModal === "createRoom"}
         isLoggedIn={isLoggedIn}
         closeModal={() => setShowModal(null)}
+        replayUuid={replayUuid}
         plugin={plugin}
       />
     </LobbyContainer>

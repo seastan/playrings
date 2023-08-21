@@ -23,7 +23,7 @@ export const Profile: React.FC<Props> = () => {
   const user = useProfile();
   const history = useHistory();
   const [showModal, setShowModal] = useState(false);
-  const [shareReplayId, setShareReplayId] = useState("");
+  const [shareReplayUrl, setShareReplayUrl] = useState("");
   const [deletedIndices, setDeletedIndices] = useState<Array<number>>([]); 
   var [wins, losses, incompletes] = [0, 0, 0];
   const { data, isLoading, isError, doFetchUrl, doFetchHash, setData } = useDataApi<any>(
@@ -42,11 +42,11 @@ export const Profile: React.FC<Props> = () => {
   const insertedRelative = formatDistanceToNow(insertedDate, {
     addSuffix: true,
   });
-  const openReplay = (uuid: any) => {
-    history.push("/newroom/replay/"+uuid);
+  const openReplay = (pluginId: number, uuid: any) => {
+    history.push("/plugin/"+pluginId+"/load/"+uuid);
   }
-  const shareReplay = (uuid: any) => {
-    setShareReplayId(uuid);
+  const shareReplay = (pluginId: number, uuid: any) => {
+    setShareReplayUrl("/plugin/"+pluginId+"/load/"+uuid);
     setShowModal(true);
   }
   const deleteReplay = async(replay: any, index: number, numPlayers: number) => {
@@ -75,12 +75,13 @@ export const Profile: React.FC<Props> = () => {
       if (replay.deleted_by && replay.deleted_by.includes(user.id)) continue;
       const numPlayers = replay.num_players;
       const uuid = replay.uuid;
+      const pluginId = replay.plugin_id;
       const replayId = replay.id;
       const index = i;
       const replayRow = {...replay, 
         options: <div>
-          <Button onClick={() => openReplay(uuid)} isPrimary className="mx-2 mt-2">Load</Button>
-          <Button onClick={() => shareReplay(uuid)} isPrimary className="mx-2 mt-2">Share</Button>
+          <Button onClick={() => openReplay(pluginId, uuid)} isPrimary className="mx-2 mt-2">Load</Button>
+          <Button onClick={() => shareReplay(pluginId, uuid)} isPrimary className="mx-2 mt-2">Share</Button>
           <Button onClick={() => deleteReplay(replay, index, numPlayers)} className="mx-2 mt-2">Delete</Button>
         </div>,
         metadata: <div>
@@ -171,7 +172,7 @@ export const Profile: React.FC<Props> = () => {
       <ShareGameModal
         isOpen={showModal}
         closeModal={() => setShowModal(false)}
-        shareReplayId={shareReplayId}
+        shareReplayUrl={shareReplayUrl}
       />
     </div>
   );

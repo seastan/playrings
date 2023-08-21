@@ -197,10 +197,12 @@ defmodule DragnCardsGame.CustomPluginTest do
     IO.inspect(replay.description)
 
     # Get full list of replay uuids
-    result = Repo.all(from r in Replay, select: r.uuid)
+    results = Repo.all(from r in Replay, select: r.uuid)
+    uuid = Enum.at(results, 0)
+    result_one = Repo.one(from r in Replay, where: r.uuid == ^uuid)
 
-    assert length(result) == 1
-    assert Enum.at(result, 0) == game["id"]
+    assert length(results) == 1
+    assert uuid == game["id"]
 
 
     # Print all messages

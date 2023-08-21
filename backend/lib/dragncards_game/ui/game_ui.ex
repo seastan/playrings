@@ -783,6 +783,7 @@ defmodule DragnCardsGame.GameUI do
     updates = %{
       game_json: game,
       metadata: if save_metadata == nil do nil else Evaluate.evaluate(game, ["PROCESS_MAP", save_metadata], ["save_replay"]) end,
+      plugin_id: game["pluginId"],
     }
 
     result = case Repo.get_by(Replay, [user_id: user_id, uuid: game_uuid]) do
