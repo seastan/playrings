@@ -176,7 +176,7 @@ export const loadMarvelCdb = (importLoadList, doActionList, playerN, dbDomain, d
     var loadList = [];
     if (itentityCode && marvelcdbIdTodatabaseId[itentityCode]) {
       const databaseId = marvelcdbIdTodatabaseId[itentityCode];
-      loadList.push({'databaseId': databaseId, 'quantity': 1, 'loadGroupId': playerN+"Identity"});
+      loadList.push({'databaseId': databaseId, 'quantity': 1, 'loadGroupId': playerN+"Play1"});
     } else {
       alert("Encountered missing or unknown card ID for identity")
     }
