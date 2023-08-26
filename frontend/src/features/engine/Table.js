@@ -22,6 +22,7 @@ import { PatreonModal } from "../support/PatreonModal";
 import DeveloperModal from "./DeveloperModal";
 import { usePlayerN } from "./hooks/usePlayerN";
 import { pl } from "date-fns/locale";
+import { usePreloadCardImages } from "../../hooks/usePreloadCardImages";
 
 export const Table = React.memo(() => {
   const dispatch = useDispatch();
@@ -36,6 +37,7 @@ export const Table = React.memo(() => {
   const createdBy = useSelector(state => state.gameUi?.createdBy);
   const isHost = myUserId === createdBy;
   const playerN = usePlayerN();
+  usePreloadCardImages();
   console.log('Rendering Table 1', playerN);
 
 
@@ -48,6 +50,7 @@ export const Table = React.memo(() => {
 
   //if (!loaded && isHost) onLoad(options, redoStepsExist, gameBroadcast, chatBroadcast, dispatch);
 
+  // Handle mouse events
   useEffect(() => {
     const handleMouseDown = (event) => {
       dispatch(setMouseXY({
@@ -60,6 +63,7 @@ export const Table = React.memo(() => {
       document.removeEventListener('mousedown', handleMouseDown);
     }
   })
+
 
   return (
     <div className="h-full flex" style={{fontSize: "1.7vh"}}
