@@ -150,6 +150,7 @@ defmodule DragnCardsGame.McPluginTest do
     {:ok, %{user: user, game: game, game_def: plugin.game_def, card_db: plugin.card_db}}
   end
 
+  @tag :loading_decks
   # These tests are plugin-specific. You will need to overwite them, but they are here as a starting point.
   test "Loading Decks", %{user: _user, game: game, game_def: game_def} do
 
@@ -157,8 +158,7 @@ defmodule DragnCardsGame.McPluginTest do
     res = Evaluate.evaluate(game, ["LOAD_CARDS", "Phoenix"])
 
     # Check that the deck was loaded
-    assert length(res["groupById"]["player1Play1"]["stackIds"]) == 1
-    assert length(res["groupById"]["player1Play1"]["stackIds"]) == 1
+    assert length(res["groupById"]["player1Play1"]["stackIds"]) == 2
 
     # Check hand size limit
     assert res["playerData"]["player1"]["handSize"] == 6
@@ -423,4 +423,232 @@ defmodule DragnCardsGame.McPluginTest do
 
   end
 
+  @tag :reshuffle_player_deck
+  test "Reshuffle player deck", %{user: _user, game: game, game_def: _game_def} do
+    res = Evaluate.evaluate(game, ["LOAD_CARDS", "Spider-Man"])
+    res = Evaluate.evaluate(res, ["LOAD_CARDS", "Rhino"])
+
+    # Get number of encounter cards
+    deck_size = length(res["groupById"]["player1Deck"]["stackIds"])
+
+    # Discard cards until the deck is empty
+    res = Enum.reduce(res["groupById"]["player1Deck"]["stackIds"], res, fn(_stack_id, acc) ->
+      Evaluate.evaluate(acc, [
+        ["DEFINE", "$ACTIVE_CARD_ID", ["GET_CARD_ID", "player1Deck", 0, 0]],
+        ["ACTION_LIST", "discardCard"]
+      ])
+    end)
+
+    # Check the the deck is full again
+    assert length(res["groupById"]["player1Deck"]["stackIds"]) == deck_size
+
+    assert length(res["groupById"]["player1Engaged"]["stackIds"]) == 1
+  end
+
+  @tag :draw_full_hand
+  test "Draws Full Hand Even if Deck Needs to be Shuffled", %{user: _user, game: game, game_def: game_def} do
+    res = Evaluate.evaluate(game, ["LOAD_CARDS", "Spider-Man"])
+    res = Evaluate.evaluate(res, ["LOAD_CARDS", "Rhino"])
+
+    deck_size = length(res["groupById"]["player1Deck"]["stackIds"])
+
+    # Discard cards until the deck is empty
+    res = Enum.reduce(res["groupById"]["player1Deck"]["stackIds"], res, fn(_stack_id, acc) ->
+      Evaluate.evaluate(acc, [
+        ["COND",
+          ["GREATER_THAN", ["LENGTH", "$GAME.groupById.player1Deck.stackIds"], 3],
+          [
+            ["DEFINE", "$ACTIVE_CARD_ID", ["GET_CARD_ID", "player1Deck", 0, 0]],
+            ["ACTION_LIST", "discardCard"]
+          ]
+        ]
+      ])
+    end)
+
+    res = Enum.reduce(res["groupById"]["player1Hand"]["stackIds"], res, fn(_stack_id, acc) ->
+      Evaluate.evaluate(acc, [
+        ["COND",
+          ["GREATER_THAN", ["LENGTH", "$GAME.groupById.player1Hand.stackIds"], 1],
+          [
+            ["DEFINE", "$ACTIVE_CARD_ID", ["GET_CARD_ID", "player1Hand", 0, 0]],
+            ["ACTION_LIST", "discardCard"]
+          ]
+        ]
+      ])
+    end)
+
+    res = Evaluate.evaluate(res, game_def["actionLists"]["playerEndPhase"])
+
+    # Check the player has a full hand
+    assert length(res["groupById"]["player1Hand"]["stackIds"]) == res["playerData"]["player1"]["handSize"]
+    # Check the the deck is full again
+    assert length(res["groupById"]["player1Deck"]["stackIds"]) == deck_size
+  end
+
+  @tag :side_quest_starting_threat
+  test "Side Quest spawns with starting threat", %{user: _user, game: game, game_def: _game_def} do
+    # Get Breakin' & Takin'
+    card_db_id = "89399b59-bb97-5eef-81f5-7bf8c8194b15"
+    res = Evaluate.evaluate(game, ["LOAD_CARDS", ["LIST", %{"databaseId" => card_db_id, "loadGroupId" => "sharedSideSchemes", "quantity" => 1}]])
+
+    card = Evaluate.evaluate(res, ["ONE_CARD", "$CARD", ["EQUAL", "$CARD.databaseId", card_db_id]])
+    card_id = card["id"]
+    assert res["cardById"][card_id]["tokens"]["threat"] == 2
+
+    # Get Light at the End
+    card_db_id = "de9f3efd-51ca-51e0-a354-9241b482c1b8"
+    res = Evaluate.evaluate(game, ["LOAD_CARDS", ["LIST", %{"databaseId" => card_db_id, "loadGroupId" => "sharedSideSchemes", "quantity" => 1}]])
+    card = Evaluate.evaluate(res, ["ONE_CARD", "$CARD", ["EQUAL", "$CARD.databaseId", card_db_id]])
+    card_id = card["id"]
+    assert res["cardById"][card_id]["tokens"]["threat"] == 20
+  end
+
+  @tag :player_end_phase
+  test "Player End Phase", %{user: _user, game: game, game_def: game_def} do
+    res = Evaluate.evaluate(game, ["LOAD_CARDS", "Rhino"])
+    res = Evaluate.evaluate(res, ["LOAD_CARDS", "Captain America"])
+
+    # get Captain America Card
+    hero_card_db_id = "64dfc6fe-1e66-5cef-b68d-2fd8e8b0d80d"
+    hero_card = Evaluate.evaluate(res, ["ONE_CARD", "$CARD", ["EQUAL", "$CARD.databaseId", hero_card_db_id]])
+    # flip and exhaust Hero Card
+    res = put_in(res["playerUi"]["activeCardId"], hero_card["id"])
+    res = Evaluate.evaluate(res, game_def["actionLists"]["flipCard"])
+    res = Evaluate.evaluate(res, game_def["actionLists"]["toggleExhaust"])
+    # discard cards in hand
+    res = Enum.reduce([0, 1, 2], res, fn(_, acc) ->
+      Evaluate.evaluate(acc, [
+        ["DEFINE", "$ACTIVE_CARD_ID", ["GET_CARD_ID", "player1Hand", 0, 0]],
+        ["ACTION_LIST", "discardCard"]
+      ])
+    end)
+
+    # Get Main Scheme Card
+    main_scheme_card_db_id = "53f44777-cf8a-565d-bd34-6c9657c47bce"
+    main_scheme_card = Evaluate.evaluate(res, ["ONE_CARD", "$CARD", ["EQUAL", "$CARD.databaseId", main_scheme_card_db_id]])
+    # Add Acceleration Token
+    res = Evaluate.evaluate(res, ["INCREASE_VAL", "/cardById/#{main_scheme_card["id"]}/tokens/acceleration", 1])
+    # Add Threat
+    res = Evaluate.evaluate(res, ["INCREASE_VAL", "/cardById/#{main_scheme_card["id"]}/tokens/threat", 2])
+
+    # Trigger end of player phase
+    res = Evaluate.evaluate(res, game_def["actionLists"]["playerEndPhase"])
+
+    # check draw up to hand size
+    assert length(res["groupById"]["player1Hand"]["stackIds"]) == 5
+
+    # check exhausted cards are readied
+    assert res["cardById"][hero_card["id"]]["rotation"] == 0
+
+    # check acceleration threat has been placed
+    assert res["cardById"][main_scheme_card["id"]]["tokens"]["threat"] == 4
+  end
+
+  @tag :villain_encounter_phase
+  test "Villain Encounter Phase", %{user: _user, game: game, game_def: game_def} do
+    res = Evaluate.evaluate(game, ["LOAD_CARDS", "Rhino"])
+    res = Evaluate.evaluate(res, ["LOAD_CARDS", "Spider-Man"])
+
+    res = Evaluate.evaluate(res, game_def["actionLists"]["villainEncounterPhase"])
+
+    assert length(res["groupById"]["player1Engaged"]["stackIds"]) == 1
+  end
+
+  @tag :draw_boost
+  test "Draw Boost Card", %{user: _user, game: game, game_def: game_def} do
+    res = Evaluate.evaluate(game, ["LOAD_CARDS", "Rhino"])
+
+    res = Evaluate.evaluate(res, game_def["actionLists"]["drawBoost"])
+    card = Evaluate.evaluate(res, [
+      ["DEFINE", "$CARD_ID", ["GET_CARD_ID", "player1Engaged", 0, 0]],
+      ["ONE_CARD", "$CARD", ["EQUAL", "$CARD.id", "$CARD_ID"]]
+    ])
+
+    assert card["currentSide"] == "B"
+    assert card["rotation"] == -30
+  end
+
+  @tag :side_scheme_boost
+  test "Side Scheme as Boost Card", %{user: _user, game: game, game_def: game_def} do
+    # Get Breakin' & Takin'
+    card_db_id = "89399b59-bb97-5eef-81f5-7bf8c8194b15"
+    res = Evaluate.evaluate(game, ["LOAD_CARDS", ["LIST", %{"databaseId" => card_db_id, "loadGroupId" => "sharedEncounterDeck", "quantity" => 2}]])
+
+    res = Evaluate.evaluate(res, game_def["actionLists"]["drawBoost"])
+    card = Evaluate.evaluate(res, ["ONE_CARD", "$CARD", ["EQUAL", "$CARD.databaseId", card_db_id]])
+    card_id = card["id"]
+
+    assert !res["cardById"][card_id]["tokens"]["threat"]
+  end
+
+  @tag :side_scheme_encounter_threat
+  test "Side Scheme Drawn as Encounter Card Doesn't Get Threat Until Flipped", %{user: _user, game: game, game_def: game_def} do
+    # Get Breakin' & Takin'
+    card_db_id = "89399b59-bb97-5eef-81f5-7bf8c8194b15"
+    res = Evaluate.evaluate(game, ["LOAD_CARDS", ["LIST", %{"databaseId" => card_db_id, "loadGroupId" => "sharedEncounterDeck", "quantity" => 2}]])
+
+    res = Evaluate.evaluate(res, game_def["actionLists"]["revealEncounterFaceup"])
+    card = Evaluate.evaluate(res, ["ONE_CARD", "$CARD", ["EQUAL", "$CARD.databaseId", card_db_id]])
+    card_id = card["id"]
+
+    assert !res["cardById"][card_id]["tokens"]["threat"]
+  end
+
+  @tag :magog_standard
+  test "Double Sided A/B Villain Standard (MaGog)", %{user: _user, game: game, game_def: game_def} do
+    res = Evaluate.evaluate(game, ["LOAD_CARDS", "MaGog"])
+    card_id = "4e8aa2b5-0752-53fc-9f52-ec75312c00f3"
+    magog = Evaluate.evaluate(res, ["ONE_CARD", "$CARD", ["EQUAL", "$CARD.databaseId", card_id]])
+
+    assert magog["currentSide"] == "A"
+  end
+
+  @tag :magog_expert
+  test "Double Sided A/B Villain Expert (MaGog)", %{user: _user, game: game, game_def: game_def} do
+    res = Evaluate.evaluate(game, game_def["actionLists"]["setExpertMode"])
+    res = Evaluate.evaluate(res, ["LOAD_CARDS", "MaGog"])
+    card_id = "4e8aa2b5-0752-53fc-9f52-ec75312c00f3"
+    magog = Evaluate.evaluate(res, ["ONE_CARD", "$CARD", ["EQUAL", "$CARD.databaseId", card_id]])
+
+    assert magog["currentSide"] == "B"
+  end
+
+  @tag :shadows_of_the_past
+  test "Shadows of the Past Action", %{user: _user, game: game, game_def: game_def} do
+    res = Evaluate.evaluate(game, ["LOAD_CARDS", "Captain America"])
+    res = Evaluate.evaluate(res, game_def["actionLists"]["shadowsOfThePast"])
+
+    assert length(res["groupById"]["player1NemesisSet"]["stackIds"]) == 0
+    assert length(res["groupById"]["player1Engaged"]["stackIds"]) == 1
+    assert length(res["groupById"]["sharedSideSchemes"]["stackIds"]) == 1
+    # already has obligation card in the encounter deck
+    assert length(res["groupById"]["sharedEncounterDeck"]["stackIds"]) == 4
+  end
+
+  @tag :shadows_of_the_past_venom
+  test "Shadows of the Past deals out multiple minions", %{user: _user, game: game, game_def: game_def} do
+    res = Evaluate.evaluate(game, ["LOAD_CARDS", "Venom (Hero)"])
+    res = Evaluate.evaluate(res, game_def["actionLists"]["shadowsOfThePast"])
+
+    assert length(res["groupById"]["player1NemesisSet"]["stackIds"]) == 0
+    assert length(res["groupById"]["player1Engaged"]["stackIds"]) == 4
+    assert length(res["groupById"]["sharedSideSchemes"]["stackIds"]) == 1
+    # already has obligation card in the encounter deck
+    assert length(res["groupById"]["sharedEncounterDeck"]["stackIds"]) == 1
+  end
+
+  @tag :invocation_deck
+  test "Invocation Deck", %{user: _user, game: game, game_def: game_def} do
+    res = Evaluate.evaluate(game, ["LOAD_CARDS", "Doctor Strange"])
+
+    assert length(res["groupById"]["player1Deck2"]["stackIds"]) == 5
+  end
+
+  @tag :weather_deck
+  test "Weather Deck", %{user: _user, game: game, game_def: game_def} do
+    res = Evaluate.evaluate(game, ["LOAD_CARDS", "Storm"])
+
+    # 4 weather cards + 1 identity card
+    assert length(res["groupById"]["player1Play1"]["stackIds"]) == 5
+  end
 end
