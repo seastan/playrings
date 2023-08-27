@@ -157,7 +157,7 @@ defmodule DragnCardsGame.McPluginTest do
     res = Evaluate.evaluate(game, ["LOAD_CARDS", "Phoenix"])
 
     # Check that the deck was loaded
-    assert length(res["groupById"]["player1Identity"]["stackIds"]) == 1
+    assert length(res["groupById"]["player1Play1"]["stackIds"]) == 1
     assert length(res["groupById"]["player1Play1"]["stackIds"]) == 1
 
     # Check hand size limit

@@ -35,6 +35,7 @@ defmodule DragnCardsGame.CustomPluginTest do
   # NOTE: You shouldn't have to edit this setup block for your plugin.
   # It will create a test user and a test game for you to use in your tests.
   setup do
+
     # User attributes for creating a test user
     user_attrs = %{
       alias: "dev_user",

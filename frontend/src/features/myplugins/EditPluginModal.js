@@ -35,6 +35,7 @@ export const EditPluginModal = ({ plugin, closeModal, doFetchHash}) => {
   const [validGameDef, setValidGameDef] = useState(false);
   const [validCardDb, setValidCardDb] = useState(false);
   const [errorMessagesGameDef, setErrorMessagesGameDef] = useState([]);
+  const [warningMessagesGameDef, setWarningMessagesGameDef] = useState([]);
   const [errorMessageCardDb, setErrorMessageCardDb] = useState("");
 
   const [successMessageGameDef, setSuccessMessageGameDef] = useState("");
@@ -136,6 +137,9 @@ export const EditPluginModal = ({ plugin, closeModal, doFetchHash}) => {
           
           setErrorMessagesGameDef(errors)
           setValidGameDef(false);
+        }
+        if (plugin && mergedJSONs.pluginName !== plugin.name) {
+          setWarningMessagesGameDef([`Warning: Plugin name mismatch between existing definition (${plugin.name}) and uploaded definition (${mergedJSONs.pluginName}). Confirm that you are editing the appropriate plugin.`])
         }
       } catch (error) {
         setErrorMessagesGameDef(["Invalid JSON file(s)"]);
@@ -252,6 +256,11 @@ export const EditPluginModal = ({ plugin, closeModal, doFetchHash}) => {
           </Button>
           {successMessageGameDef && (
             <div className="alert alert-info mt-1 text-xs p-1 pl-3">{successMessageGameDef}</div>
+          )}
+          {warningMessagesGameDef.length > 0 && (
+            warningMessagesGameDef.map((message, i) => (
+              <div index={i} className="alert alert-warning mt-1 text-xs p-1 pl-3">{message}</div>
+            ))
           )}
           {errorMessagesGameDef.length > 0 && (
             errorMessagesGameDef.map((message, i) => (
