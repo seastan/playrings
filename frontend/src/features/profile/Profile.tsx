@@ -12,14 +12,7 @@ import axios from "axios";
 
 const columns = [
   {name: "uuid", label: "UUID", options: { filter: false, display: false }},
-  {name: "encounter", label: "Encounter", options: { filter: false, sort: true }},
-  {name: "rounds", label: "Rounds", options: { filter: false, sort: false }},
-  {name: "outcome", label: "Outcome", options: { filter: true, sort: false }},
-  {name: "num_players", label: "Players", options: { filter: true, sort: false }},
-  {name: "player1_heroes", label: "Player 1", options: { filter: false, sort: false }},
-  {name: "player2_heroes", label: "Player 2", options: { filter: false, sort: false }},
-  {name: "player3_heroes", label: "Player 3", options: { filter: false, sort: false }},
-  {name: "player4_heroes", label: "Player 4", options: { filter: false, sort: false }},
+  {name: "metadata", label: "Metadata", options: { filter: false, sort: true }},
   {name: "updated_at", label: "Date", options: { filter: false, sort: true }},
   {name: "options", label: "Options", options: { filter: false, sort: true }},
  ]; //, sortDirection: "asc" as const
@@ -30,14 +23,14 @@ export const Profile: React.FC<Props> = () => {
   const user = useProfile();
   const history = useHistory();
   const [showModal, setShowModal] = useState(false);
-  const [shareReplayId, setShareReplayId] = useState("");
+  const [shareReplayUrl, setShareReplayUrl] = useState("");
   const [deletedIndices, setDeletedIndices] = useState<Array<number>>([]); 
   var [wins, losses, incompletes] = [0, 0, 0];
-  console.log('Rendering Profile');
   const { data, isLoading, isError, doFetchUrl, doFetchHash, setData } = useDataApi<any>(
     "/be/api/replays/"+user?.id,
     null
   );
+  console.log('Rendering Profile', data);
   useEffect(() => {
     doFetchUrl("/be/api/replays/"+user?.id);
   }, [user]);
@@ -49,11 +42,11 @@ export const Profile: React.FC<Props> = () => {
   const insertedRelative = formatDistanceToNow(insertedDate, {
     addSuffix: true,
   });
-  const openReplay = (uuid: any) => {
-    history.push("/newroom/replay/"+uuid);
+  const openReplay = (pluginId: number, uuid: any) => {
+    history.push("/plugin/"+pluginId+"/load/"+uuid);
   }
-  const shareReplay = (uuid: any) => {
-    setShareReplayId(uuid);
+  const shareReplay = (pluginId: number, uuid: any) => {
+    setShareReplayUrl("/plugin/"+pluginId+"/load/"+uuid);
     setShowModal(true);
   }
   const deleteReplay = async(replay: any, index: number, numPlayers: number) => {
@@ -82,13 +75,21 @@ export const Profile: React.FC<Props> = () => {
       if (replay.deleted_by && replay.deleted_by.includes(user.id)) continue;
       const numPlayers = replay.num_players;
       const uuid = replay.uuid;
+      const pluginId = replay.plugin_id;
       const replayId = replay.id;
       const index = i;
       const replayRow = {...replay, 
         options: <div>
-          <Button onClick={() => openReplay(uuid)} isPrimary className="mx-2 mt-2">Load</Button>
-          <Button onClick={() => shareReplay(uuid)} isPrimary className="mx-2 mt-2">Share</Button>
+          <Button onClick={() => openReplay(pluginId, uuid)} isPrimary className="mx-2 mt-2">Load</Button>
+          <Button onClick={() => shareReplay(pluginId, uuid)} isPrimary className="mx-2 mt-2">Share</Button>
           <Button onClick={() => deleteReplay(replay, index, numPlayers)} className="mx-2 mt-2">Delete</Button>
+        </div>,
+        metadata: <div>
+          {Object.keys(replay?.metadata ? replay.metadata : {}).map((key, index) => {
+            return(
+              <div key={index}><b>{key}:</b> {replay?.metadata?.[key]}</div>
+            )
+        })}
         </div>
       }
       if (replay.outcome === "victory") wins++;
@@ -171,7 +172,7 @@ export const Profile: React.FC<Props> = () => {
       <ShareGameModal
         isOpen={showModal}
         closeModal={() => setShowModal(false)}
-        shareReplayId={shareReplayId}
+        shareReplayUrl={shareReplayUrl}
       />
     </div>
   );

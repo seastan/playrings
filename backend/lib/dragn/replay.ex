@@ -10,13 +10,14 @@ defmodule DragnCards.Replay do
     field :description, :string
     field :outcome, :string
     field :metadata, :map
+    field :plugin_id, :integer
 
     timestamps()
   end
 
   def changeset(replay, params \\ %{}) do
     replay
-    |> cast(params, [:user_id, :uuid, :deleted_by, :game_json, :description, :outcome, :metadata])
+    |> cast(params, [:user_id, :uuid, :deleted_by, :game_json, :description, :outcome, :metadata, :plugin_id])
   end
 
 end

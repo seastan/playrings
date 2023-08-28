@@ -15,7 +15,7 @@ const columns = [
   {name: "status", label: "Status", options: { filter: true, sort: true }},
  ];
 
-export const LobbyTable = ({ selectedPlugin }) => {
+export const LobbyTable = ({ plugin }) => {
   const myUser = useProfile();
   const currentUnixTime = Math.floor(Date.now() / 1000);
   const options = {
@@ -55,13 +55,13 @@ export const LobbyTable = ({ selectedPlugin }) => {
     for (var i=0; i<rooms.length; i++) {
     //for (var replay of replayData) {
       var room = rooms[i];
-      console.log("Room 1", {room, selectedPlugin})
+      console.log("Room 1", {room, selectedPlugin: plugin})
       const elapsedSeconds = (room.last_update ? currentUnixTime - room.last_update : Number.MAX_SAFE_INTEGER);
       const status = (elapsedSeconds < 60 ? "Active" : "Idle");
       if (status === "Active") activeRooms++;
       if (status === "Active" && room.privacy_type !== "public") activePrivate++;
-      if (room.plugin_id !== selectedPlugin.id) continue;
-      console.log("Room 2", {room, selectedPlugin})
+      if (room.plugin_id !== plugin.id) continue;
+      console.log("Room 2", {room, selectedPlugin: plugin})
       // Currently there is no "admin" user field so I am usering supporter_level === 100 as a hack
       if (room.privacy_type === "public" || myUser?.id === room.created_by || myUser?.admin) {
         filteredRooms.push({

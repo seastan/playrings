@@ -1,7 +1,7 @@
 import { useContext } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import BroadcastContext from '../../../contexts/BroadcastContext';
-import { setKeypress } from '../../store/playerUiSlice';
+import { setKeypress, setKeypressAlt, setKeypressControl, setKeypressShift, setKeypressSpace, setKeypressTab } from '../../store/playerUiSlice';
 import { useAddToken } from './useAddToken';
 import { useDoActionList } from './useDoActionList';
 import { dragnHotkeys, useDoDragnHotkey } from './useDragnHotkeys';
@@ -14,9 +14,11 @@ import { usePlayerN } from './usePlayerN';
 export const useKeyDown = () => {
     const gameDef = useGameDefinition();
     const dispatch = useDispatch();
-    const keypressControl = useSelector(state => state?.playerUi?.keypress?.Control);
-    const keypressShift = useSelector(state => state?.playerUi?.keypress?.Shift);
-    const keypressAlt = useSelector(state => state?.playerUi?.keypress?.Alt);
+    
+    const keypress = useSelector(state => state?.playerUi?.keypress);
+    const keypressControl = keypress?.Control;
+    const keypressShift = keypress?.Shift;
+    const keypressAlt = keypress?.Alt;
     const mouseTopBottom = useSelector(state => state?.playerUi?.mouseTopBottom);
     const playerN = usePlayerN();
     const activeCardId = useActiveCardId();
@@ -35,11 +37,11 @@ export const useKeyDown = () => {
         }
         const k = event.key;
         const unix_sec = Math.floor(Date.now() / 1000);
-        if (k === "Alt") dispatch(setKeypress({"Alt": unix_sec}));
-        if (k === " ") dispatch(setKeypress({"Space": unix_sec}));
-        if (k === "Control") dispatch(setKeypress({"Control": unix_sec}));
-        if (k === "Shift") dispatch(setKeypress({"Shift": unix_sec}));
-        if (k === "Tab") dispatch(setKeypress({"Tab": unix_sec}));
+        if (k === "Alt") dispatch(setKeypressAlt(unix_sec));
+        if (k === " ") dispatch(setKeypressSpace(unix_sec));
+        if (k === "Control") dispatch(setKeypressControl(unix_sec));
+        if (k === "Shift") dispatch(setKeypressShift(unix_sec));
+        if (k === "Tab") dispatch(setKeypressTab(unix_sec));
         if (["Alt", " ", "Control", "Shift", "Tab"].includes(k)) return;
 
         var dictKey = k.length === 1 ? k.toUpperCase() : k;
@@ -49,6 +51,7 @@ export const useKeyDown = () => {
         if (keypressShift) dictKey = "Shift+" + dictKey;
         if (keypressControl) dictKey = "Ctrl+" + dictKey;
         if (keypressAlt) dictKey = "Alt+" + dictKey;
+        console.log("keypressdict", {keypressShift, keypressControl, keypressAlt, dictKey})
 
         for (var keyObj of gameDef?.hotkeys.token) {
             if (keyMatch(keyObj.key, dictKey)) {

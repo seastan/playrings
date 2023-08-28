@@ -16,10 +16,12 @@
   """
   @spec load(String.t(), Map.t()) :: Game.t()
   def load(room_slug, options) do
-    game = if options["replayId"] != nil and options["replayId"] != "" do
-      gameid = options["replayId"]
+    Logger.debug("Loading Game")
+    Logger.debug("Options: #{inspect(options)}")
+    game = if options["replayUuid"] != nil do
+      replay_uuid = options["replayUuid"]
       query = from(e in Replay,
-        where: e.uuid == ^gameid,
+        where: e.uuid == ^replay_uuid,
         order_by: [desc: e.inserted_at],
         limit: 1)
       replay = Repo.one(query)

@@ -19,6 +19,7 @@ export const CreateRoomModal = ({
   isOpen, 
   isLoggedIn, 
   closeModal, 
+  replayUuid,
   plugin,
 }) => {
   const [isError, setIsError] = useState(false);
@@ -35,7 +36,7 @@ export const CreateRoomModal = ({
   
   const [privacyType, setPrivacyType] = useState(options[0]);
 
-  console.log("Rendering CreateRoomModal")
+  console.log("Rendering CreateRoomModal", {isOpen, isLoggedIn, closeModal, replayUuid, plugin})
 
   const createRoom = async () => {
     const data = { 
@@ -47,7 +48,7 @@ export const CreateRoomModal = ({
       game_options: {
         plugin_id: plugin.id,
         plugin_version: plugin.version,
-//        replay_id: replayId,
+        replay_uuid: replayUuid,
 //        ringsdb_info: ringsDbInfo,
 //        load_shuffle: loadShuffle,
       }

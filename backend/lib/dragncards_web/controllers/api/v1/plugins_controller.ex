@@ -28,4 +28,19 @@ defmodule DragnCardsWeb.PluginsController do
     render(conn, "single.json", plugin: plugin)
   end
 
+  def get_plugin_info(conn, params) do
+    IO.puts("get_plugin 1")
+    IO.inspect(params)
+    {plugin_id, ""} = Integer.parse(params["plugin_id"])
+    IO.puts("get_plugin 2")
+    IO.inspect(plugin_id)
+    plugin = Plugins.get_plugin_info(plugin_id)
+    IO.puts("get_plugin 3")
+    IO.inspect(plugin)
+    render(conn, "single_info.json", plugin: plugin)
+
+    #plugins = Plugins.list_plugins_info()
+    #render(conn, "index.json", plugins: plugins)
+  end
+
 end

@@ -35,6 +35,7 @@ defmodule DragnCardsGame.CustomPluginTest do
   # NOTE: You shouldn't have to edit this setup block for your plugin.
   # It will create a test user and a test game for you to use in your tests.
   setup do
+
     # User attributes for creating a test user
     user_attrs = %{
       alias: "dev_user",
@@ -186,7 +187,7 @@ defmodule DragnCardsGame.CustomPluginTest do
   test "save_game", %{user: user, game: game, game_def: game_def} do
     # Load some decks into the game
     game = Evaluate.evaluate(game, ["LOAD_CARDS", "Q01.1"]) # Passage through Mirkwood
-    #game = Evaluate.evaluate(game, ["LOAD_CARDS", "coreLeadership"]) # Leadership core set deck
+    game = Evaluate.evaluate(game, ["LOAD_CARDS", "coreLeadership"]) # Leadership core set deck
 
     # Save
     GameUI.save_replay(game, user.id)
@@ -197,10 +198,12 @@ defmodule DragnCardsGame.CustomPluginTest do
     IO.inspect(replay.description)
 
     # Get full list of replay uuids
-    result = Repo.all(from r in Replay, select: r.uuid)
+    results = Repo.all(from r in Replay, select: r.uuid)
+    uuid = Enum.at(results, 0)
+    result_one = Repo.one(from r in Replay, where: r.uuid == ^uuid)
 
-    assert length(result) == 1
-    assert Enum.at(result, 0) == game["id"]
+    assert length(results) == 1
+    assert uuid == game["id"]
 
 
     # Print all messages
@@ -208,15 +211,12 @@ defmodule DragnCardsGame.CustomPluginTest do
       IO.puts(message)
     end)
 
-    IO.puts("playerinfo c")
-    IO.inspect(game["playerInfo"])
-    IO.puts("playerinfo d")
   end
 
   @tag :basics
   test "Basics", %{user: _user, game: game, game_def: game_def} do
     # Load some decks into the game
-    game = Evaluate.evaluate(game, ["LOAD_CARDS", "Q01.1"]) # Passage through Mirkwood
+    game = Evaluate.evaluate(game, ["LOAD_CARDS", "N0B.01"]) # Quest
 
     # Check DEFINE/DEFINED command
     assert Evaluate.evaluate(game, ["DEFINED", "$PLAYER_N"]) == true

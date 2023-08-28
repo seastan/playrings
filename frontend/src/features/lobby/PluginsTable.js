@@ -6,9 +6,11 @@ import { faStar as faStarO } from "@fortawesome/free-regular-svg-icons";
 import { faChevronRight, faStar as faStarS } from "@fortawesome/free-solid-svg-icons";
 import moment from "moment";
 import { useSiteL10n } from "../../hooks/useSiteL10n";
+import { useHistory } from "react-router-dom";
 
 export const PluginsTable = ({ plugins, setSelectedPlugin}) => {
   const siteL10n = useSiteL10n();
+  const history = useHistory();
   const [starHoverIndex, setStarHoverIndex] = useState(null);
   console.log("plugins 1", plugins)
   const toggleFavorite = () => null;
@@ -18,7 +20,8 @@ export const PluginsTable = ({ plugins, setSelectedPlugin}) => {
     const pluginTemp = {...plugins[i]};
     plugins[i]["options"] =  <div>
       <Button onClick={() => toggleFavorite(pluginTemp.plugin_id)} isPrimary className="mx-2 mt-2">Favorite</Button>
-      <Button onClick={() => setSelectedPlugin(pluginTemp)} isPrimary className="mx-2 mt-2">Play</Button>
+      
+      <Button onClick={() => history.push("/plugin/"+pluginTemp.plugin_id)} isPrimary className="mx-2 mt-2">Play</Button>
     </div>
   }
 
@@ -39,7 +42,7 @@ export const PluginsTable = ({ plugins, setSelectedPlugin}) => {
             <table className="w-full">
             {plugins?.map((plugin, pluginIndex) => {
               return(
-                <tr className={trClass} onClick={() => setSelectedPlugin(plugin)}>
+                <tr className={trClass} onClick={() => history.push("/plugin/"+plugin.id)}>
                   <div className="relative m-4">
                     <div className="text-xl inline">{plugin.name}</div>
                     <a 

@@ -15,9 +15,8 @@ defmodule DragnCardsWeb.API.V1.GameController do
     user = Users.get_user(user_id)
     options = %{
       "privacyType" => params["room"]["privacy_type"],
-      "replayId" => params["game_options"]["replay_id"],
+      "replayUuid" => params["game_options"]["replay_uuid"],
       "ringsDbInfo" => params["game_options"]["ringsdb_info"],
-      "loadShuffle" => params["game_options"]["load_shuffle"],
       "pluginId" => params["game_options"]["plugin_id"],
       "pluginVersion" => params["game_options"]["plugin_version"],
     }

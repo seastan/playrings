@@ -186,7 +186,7 @@ defmodule DragnCardsGame.Evaluate do
   end
 
 
-  def evaluate_with_timeout(game, code, trace, timeout_ms \\ 5000) do
+  def evaluate_with_timeout(game, code, trace, timeout_ms \\ 10000) do
     task = Task.async(fn ->
       try do
         evaluate(game, code, trace)
@@ -580,6 +580,20 @@ defmodule DragnCardsGame.Evaluate do
               load_list_or_id
             else
               get_in(game_def, ["preBuiltDecks", load_list_id, "cards"])
+            end
+
+            # Run postLoadActionList if it exists
+            game = if game_def["automation"]["preLoadActionList"] do
+              evaluate(game, game_def["automation"]["preLoadActionList"], trace ++ ["LOAD_CARDS game preLoadActionList"])
+            else
+              game
+            end
+
+            # Run deck's postLoadActionList if it exists
+            game = if load_list_id && game_def["preBuiltDecks"][load_list_id]["preLoadActionList"] do
+              evaluate(game, ["ACTION_LIST", game_def["preBuiltDecks"][load_list_id]["preLoadActionList"]], trace ++ ["LOAD_CARDS deck preLoadActionList"])
+            else
+              game
             end
 
             # Load cards

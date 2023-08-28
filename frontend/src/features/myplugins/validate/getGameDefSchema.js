@@ -45,6 +45,9 @@ export const getGameDefSchema = (gameDef) => {
         "postLoadActionList": {
           "_type_": "actionList",
         },
+        "preLoadActionList": {
+          "_type_": "actionList",
+        },
         "gameRules": {
           "_type_": "array",
           "_required_": false,
@@ -887,6 +890,9 @@ export const getGameDefSchema = (gameDef) => {
               }
             }
           },
+          "preLoadActionList": {
+            "_type_": "actionList",
+          },
           "postLoadActionList": {
             "_type_": "actionList",
           }
@@ -895,9 +901,6 @@ export const getGameDefSchema = (gameDef) => {
       "saveGame": {
         "_type_": "object",
         "_strictKeys_": true,
-        "description": {
-          "_type_": "actionList",
-        },
         "metadata": {
           "_type_": "object",
           "_itemSchema_": {

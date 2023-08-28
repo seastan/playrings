@@ -14,11 +14,10 @@ defmodule DragnCardsWeb.ReplayView do
 
   def render("replay.json", %{replay: replay}) do
     %{
-      id: replay.id,
       uuid: replay.uuid,
       deleted_by: replay.deleted_by,
-      outcome: replay.outcome,
-      description: replay.description,
+      metadata: replay.metadata,
+      plugin_id: replay.plugin_id,
       #game_json: replay.game_json,
       updated_at: String.slice(NaiveDateTime.to_string(replay.updated_at), 0..15),
     }
