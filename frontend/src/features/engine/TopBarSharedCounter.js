@@ -26,8 +26,8 @@ export const TopBarSharedCounter = React.memo(({
   }, [stateValue])
 
   const handleValueChange = (event) => {
-    const newValue = event.target.value;
-    setValue(Number(newValue));
+    const newValue = Number(event.target.value);
+    setValue(newValue);
     // Set up a delayed broadcast to update the game state that interrupts itself if the button is clicked again shortly after.
     if (delayBroadcast) clearTimeout(delayBroadcast);
     delayBroadcast = setTimeout(function() {

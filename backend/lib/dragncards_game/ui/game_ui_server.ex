@@ -49,7 +49,7 @@ defmodule DragnCardsGame.GameUIServer do
   def state(game_name) do
     case gameui_pid(game_name) do
       nil -> nil
-      _ -> GenServer.call(via_tuple(game_name), :state)
+      _ -> GenServer.call(via_tuple(game_name), :state, 10_000)
     end
   end
 
@@ -66,7 +66,7 @@ defmodule DragnCardsGame.GameUIServer do
   """
   @spec game_action(String.t(), integer, String.t(), Map.t()) :: GameUI.t()
   def game_action(game_name, user_id, action, options) do
-    game_exists?(game_name) && GenServer.call(via_tuple(game_name), {:game_action, user_id, action, options})
+    game_exists?(game_name) && GenServer.call(via_tuple(game_name), {:game_action, user_id, action, options}, 30_000)
   end
 
   @doc """
