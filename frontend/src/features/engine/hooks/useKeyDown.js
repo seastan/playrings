@@ -1,7 +1,7 @@
 import { useContext } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import BroadcastContext from '../../../contexts/BroadcastContext';
-import { setKeypress, setKeypressAlt, setKeypressControl, setKeypressShift, setKeypressSpace, setKeypressTab } from '../../store/playerUiSlice';
+import { setKeypress, setKeypressAlt, setKeypressControl, setKeypressShift, setKeypressSpace, setKeypressTab, setPreHotkeyActiveCardGroupId } from '../../store/playerUiSlice';
 import { useAddToken } from './useAddToken';
 import { useDoActionList } from './useDoActionList';
 import { dragnHotkeys, useDoDragnHotkey } from './useDragnHotkeys';
@@ -22,6 +22,7 @@ export const useKeyDown = () => {
     const mouseTopBottom = useSelector(state => state?.playerUi?.mouseTopBottom);
     const playerN = usePlayerN();
     const activeCardId = useActiveCardId();
+    const activeCardGroupId = useSelector(state => state?.gameUi?.game?.cardById?.[activeCardId]?.groupId);
     const {gameBroadcast, chatBroadcast} = useContext(BroadcastContext);
     const doActionList = useDoActionList();
     const doDragnHotkey = useDoDragnHotkey()
@@ -78,6 +79,7 @@ export const useKeyDown = () => {
                     return;
                 }
                 doActionList(keyObj.actionList)
+                dispatch(setPreHotkeyActiveCardGroupId(activeCardGroupId));
                 console.log("keydown action ",keyObj.actionList, gameDef.actionLists[keyObj.actionList])
                 return;
             }

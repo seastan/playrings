@@ -16,6 +16,7 @@ const initialState = {
   typing: false,
   zoomFactor: 1.0,
   activeCardId: null,
+  preHotkeyActiveCardGroupId: null,
   observingPlayerN: "player1",
   dropdownMenu: null,
   showModal: null,
@@ -82,6 +83,9 @@ const playerUiSlice = createSlice({
     },
     setActiveCardId: (state, { payload }) => {
       state.activeCardId = payload;
+    },
+    setPreHotkeyActiveCardGroupId: (state, { payload }) => {
+      state.preHotkeyActiveCardGroupId = payload;
     },
     setScreenLeftRight: (state, { payload }) => {
       state.screenLeftRight = payload;
@@ -156,6 +160,7 @@ export const {
   setTyping,
   setZoomFactor,
   setActiveCardId,
+  setPreHotkeyActiveCardGroupId,
   setScreenLeftRight,
   setObservingPlayerN,
   setDropdownMenu,

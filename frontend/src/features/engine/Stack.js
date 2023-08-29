@@ -8,6 +8,7 @@ import store from "../../store";
 import NaturalDragAnimation from 'natural-drag-animation-rbdnd';
 import { useLayout } from "./hooks/useLayout";
 import { ATTACHMENT_OFFSET } from "./functions/common";
+import { useGameDefinition } from "./hooks/useGameDefinition";
 
 export const StackContainer = styled.div`
   position: relative;
@@ -28,6 +29,7 @@ export const Stack = React.memo(({
   numStacks,
   hidden
 }) => {
+  const gameDef = useGameDefinition();
   const stack = useSelector(state => state?.gameUi?.game?.stackById[stackId]);
   const touchMode = useSelector(state => state?.playerUi?.touchMode);
   const zoomFactor = useSelector(state => state?.playerUi?.zoomFactor);
@@ -38,7 +40,6 @@ export const Stack = React.memo(({
   const [isMousedOver, setIsMousedOver] = useState(false);
   console.log('Rendering Stack ', {stackIndex, region, hidden, layout});
   var spacingFactor = touchMode ? 1.5 : 1;
-  if (groupId.includes("Extra")) spacingFactor = 0;
   const { height, width } = useWindowDimensions();
   const aspectRatio = width/height;
   if (!stack) return null;
@@ -51,7 +52,13 @@ export const Stack = React.memo(({
   for (var i = 1; i<cardIds.length; i++) {
     const cardiId = cardIds[i];
     const cardi = store.getState().gameUi.game.cardById[cardiId];
-    if (cardi.attachmentDirection && cardi.attachmentDirection === -1) {
+    if (cardi.attachmentDirection === -1) {
+      leftOffsets++;
+      offsets.push(-leftOffsets);
+    } else if (cardi.attachmentDirection === 1) {
+      rightOffsets++;
+      offsets.push(rightOffsets);
+    } else if (gameDef?.defaultAttachmentDirection === "left") {
       leftOffsets++;
       offsets.push(-leftOffsets);
     } else {

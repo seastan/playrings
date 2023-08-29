@@ -25,6 +25,9 @@ export const getGameDefSchema = (gameDef) => {
       "backgroundUrl": {
         "_type_": "string",
       },
+      "defaultAttachmentDirection": {
+        "_type_": "string",
+      },
       "actionLists": {
         "_type_": "object",
         "_itemSchema_": {

@@ -5,9 +5,11 @@ import {useMessages, useSetMessages} from '../../contexts/MessagesContext';
 import useChannel from "../../hooks/useChannel";
 import { applyDelta, setGameUi } from "../store/gameUiSlice";
 import useProfile from "../../hooks/useProfile";
-import { resetPlayerUi } from "../store/playerUiSlice";
+import { resetPlayerUi, setActiveCardId, setPreHotkeyActiveCardGroupId } from "../store/playerUiSlice";
 import { usePlugin } from "./hooks/usePlugin";
 import { PluginProvider } from "../../contexts/PluginContext";
+import { useActiveCardId } from "./hooks/useActiveCardId";
+import store from "../../store";
 
 var delayBroadcast;
 
@@ -58,8 +60,19 @@ export const Room = ({ slug }) => {
       }
       // Simulate high ping/lag;
       //delayBroadcast = setTimeout(function() {
-        console.log("dispatching to game", game_ui)
-        dispatch(setGameUi(game_ui));
+      console.log("dispatching to game", game_ui)
+      dispatch(setGameUi(game_ui));
+
+      // If the active card's group has changed due to a hotkey, reset the active card id
+      const state = store.getState();
+      const activeCardId = state?.playerUi?.activeCardId;
+      const preHotkeyActiveCardGroupId = state?.playerUi?.preHotkeyActiveCardGroupId;
+      const activeCardGroupId = state?.gameUi?.game?.cardById[activeCardId]?.groupId;
+      if (preHotkeyActiveCardGroupId !== null && preHotkeyActiveCardGroupId !== activeCardGroupId) {
+        dispatch(setActiveCardId(null));
+        dispatch(setPreHotkeyActiveCardGroupId(null));
+      }
+        
       //}, 5000);
     // } else if (event === "new_state" && payload.response.game_ui != null) {
     //   // Update store with the full state received

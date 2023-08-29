@@ -18,20 +18,20 @@ export const GiantCard = React.memo(({}) => {
   const visibleFaceSrc = useVisibleFaceSrc(activeCardId);
   console.log("Rendering GiantCard", visibleFace, visibleFaceSrc);
 
-  useEffect(() => {
+  // useEffect(() => {
   
-    // Check if activeCardId is not null
-    if (activeCardId !== null) {
-      // Check if activeCardGroupId has changed from its previous value
-      if (activeCardGroupId !== prevActiveCardGroupIdRef.current && prevActiveCardGroupIdRef.current) {
-        // Dispatch the action to set activeCardId to null
-        dispatch(setActiveCardId(null));
-      }
-    }
+  //   // Check if activeCardId is not null
+  //   if (activeCardId !== null) {
+  //     // Check if activeCardGroupId has changed from its previous value
+  //     if (activeCardGroupId !== prevActiveCardGroupIdRef.current && prevActiveCardGroupIdRef.current) {
+  //       // Dispatch the action to set activeCardId to null
+  //       dispatch(setActiveCardId(null));
+  //     }
+  //   }
 
-    // Update the ref with the current value of activeCardGroupId
-    prevActiveCardGroupIdRef.current = activeCardGroupId;
-  }, [activeCardId, activeCardGroupId, dispatch]);
+  //   // Update the ref with the current value of activeCardGroupId
+  //   prevActiveCardGroupIdRef.current = activeCardGroupId;
+  // }, [activeCardId, activeCardGroupId, dispatch]);
 
   if (activeCardId && !touchAction) {
     var height = visibleFace.height >= visibleFace.width ? "70vh" : "50vh";
