@@ -25,7 +25,7 @@ export const Card = React.memo(({
     const cardTokens = useSelector(state => state?.gameUi?.game?.cardById[cardId]?.tokens);
     const dropdownMenuVisible = useSelector(state => state?.playerUi?.dropdownMenu?.visible);
     const cardVisibleFace = useVisibleFace(cardId);
-    const cardStyle = useCardStyle(cardId, cardIndexFromGui, isDragging);
+    const cardStyle = useCardStyle(cardId, cardIndexFromGui, isDragging, offset);
     const isActive = useSelector(state => {return state?.playerUi?.activeCardId === cardId});
 
     if (!cardCurrentSide) return;

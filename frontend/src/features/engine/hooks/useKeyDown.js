@@ -1,7 +1,7 @@
 import { useContext } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import BroadcastContext from '../../../contexts/BroadcastContext';
-import { setKeypress, setKeypressAlt, setKeypressControl, setKeypressShift, setKeypressSpace, setKeypressTab } from '../../store/playerUiSlice';
+import { setKeypress, setKeypressAlt, setKeypressControl, setKeypressShift, setKeypressSpace, setKeypressTab, setPreHotkeyActiveCardGroupId } from '../../store/playerUiSlice';
 import { useAddToken } from './useAddToken';
 import { useDoActionList } from './useDoActionList';
 import { dragnHotkeys, useDoDragnHotkey } from './useDragnHotkeys';
@@ -22,6 +22,7 @@ export const useKeyDown = () => {
     const mouseTopBottom = useSelector(state => state?.playerUi?.mouseTopBottom);
     const playerN = usePlayerN();
     const activeCardId = useActiveCardId();
+    const activeCardGroupId = useSelector(state => state?.gameUi?.game?.cardById?.[activeCardId]?.groupId);
     const {gameBroadcast, chatBroadcast} = useContext(BroadcastContext);
     const doActionList = useDoActionList();
     const doDragnHotkey = useDoDragnHotkey()
@@ -48,9 +49,15 @@ export const useKeyDown = () => {
         //if ((unix_sec - keypressShift) < 30) dictKey = "Shift+"+dictKey;
         //if ((unix_sec - keypressControl) < 30) dictKey = "Ctrl+"+dictKey;
         //if ((unix_sec - keypressAlt) < 30) dictKey = "Alt+"+dictKey;
-        if (keypressShift) dictKey = "Shift+" + dictKey;
-        if (keypressControl) dictKey = "Ctrl+" + dictKey;
-        if (keypressAlt) dictKey = "Alt+" + dictKey;
+        if (Math.abs(keypressShift-unix_sec) < 5) {
+            dictKey = "Shift+" + dictKey;
+        }
+        if (Math.abs(keypressControl-unix_sec) < 5) {
+            dictKey = "Ctrl+" + dictKey;
+        }
+        if (Math.abs(keypressAlt-unix_sec) < 5) {
+            dictKey = "Alt+" + dictKey;
+        } 
         console.log("keypressdict", {keypressShift, keypressControl, keypressAlt, dictKey})
 
         for (var keyObj of gameDef?.hotkeys.token) {
@@ -78,6 +85,7 @@ export const useKeyDown = () => {
                     return;
                 }
                 doActionList(keyObj.actionList)
+                dispatch(setPreHotkeyActiveCardGroupId(activeCardGroupId));
                 console.log("keydown action ",keyObj.actionList, gameDef.actionLists[keyObj.actionList])
                 return;
             }
@@ -116,10 +124,7 @@ export const useKeyDown = () => {
 }
 
 const keyMatch = (key1, key2) => {
-    console.log("keymatch 1", key1, key2)
     if (key1 === key2) return true;
-    console.log("keymatch 2", key1.split('+').sort().join('+'), key2.split('+').sort().join('+'))
     if (key1.split('+').sort().join('+') === key2.split('+').sort().join('+')) return true;
-    console.log("keymatch 3")
     return false;
 }

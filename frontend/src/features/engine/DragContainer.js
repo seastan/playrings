@@ -6,7 +6,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { setStackIds, setCardIds, setGroupById } from "../store/gameUiSlice";
 import { reorderGroupStackIds } from "./Reorder";
 import store from "../../store";
-import { setDraggingFromGroupId, setTouchAction } from "../store/playerUiSlice";
+import { setActiveCardId, setDraggingFromGroupId, setTouchAction } from "../store/playerUiSlice";
 import { Table } from "./Table";
 import { useDoActionList } from "./hooks/useDoActionList";
 import { ArcherContainer } from 'react-archer';

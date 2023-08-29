@@ -5,6 +5,7 @@ defmodule DragnCardsGame.GameUI do
 
 
   require Logger
+  alias ElixirSense.Log
   alias DragnCardsGame.GameVariables
   alias DragnCardsGame.{Game, GameUI, Stack, Card, PlayerInfo, Evaluate, GameVariables}
 
@@ -202,15 +203,16 @@ defmodule DragnCardsGame.GameUI do
   ############################################################
 
   def update_stack_ids(game, group_id, new_stack_ids) do
-    game = Evaluate.evaluate(game, ["SET", "/groupById/" <> group_id <> "/stackIds", ["LIST"] ++ new_stack_ids], ["update_stack_ids group_id:#{group_id}"])
-    # Update the indices of all cards in these stacks
-    Enum.reduce(Enum.with_index(new_stack_ids), game, fn({stack_id, stack_index}, acc) ->
-      stack = get_stack(game, stack_id)
-      Enum.reduce(Enum.with_index(stack["cardIds"]), acc, fn({card_id, card_index}, acc2) ->
-        Evaluate.evaluate(acc2, ["SET", "/cardById/" <> card_id <> "/stackIndex", stack_index], ["update_stack_ids stack_index:#{stack_index}"])
-        |> Evaluate.evaluate(["SET", "/cardById/" <> card_id <> "/cardIndex", card_index], ["update_stack_ids card_index:#{card_index}"])
-      end)
-    end)
+    Evaluate.evaluate(game, ["SET", "/groupById/" <> group_id <> "/stackIds", ["LIST"] ++ new_stack_ids], ["update_stack_ids group_id:#{group_id}"])
+    # Update the indices of all cards in these stacks - This turned out to be very slow, becuase each SET triggered the loop through automations. Now we do this all at once before we push to clients, but we don't trigger automation for it.
+    # I think I need to to have some kind of flag to see if any of the automations rely on stackIndex or cardIndex
+    # Enum.reduce(Enum.with_index(new_stack_ids), game, fn({stack_id, stack_index}, acc) ->
+    #   stack = get_stack(game, stack_id)
+    #   Enum.reduce(Enum.with_index(stack["cardIds"]), acc, fn({card_id, card_index}, acc2) ->
+    #     Evaluate.evaluate(acc2, ["SET", "/cardById/" <> card_id <> "/stackIndex", stack_index], ["update_stack_ids stack_index:#{stack_index}"])
+    #     |> Evaluate.evaluate(["SET", "/cardById/" <> card_id <> "/cardIndex", card_index], ["update_stack_ids card_index:#{card_index}"])
+    #   end)
+    # end)
   end
 
   def update_stack(game, new_stack) do
@@ -266,43 +268,47 @@ defmodule DragnCardsGame.GameUI do
     else
       true
     end
-
+    Logger.debug("update_card_state 2")
     parent_card = get_card_by_group_id_stack_index_card_index(game, [dest_group_id, dest_stack_index, 0])
 
     game = Evaluate.evaluate(game, ["SET", "/cardById/" <> card_id <> "/groupId", dest_group_id], ["update_card_state cardId:#{card_id} groupId:#{dest_group_id}"])
     game = Evaluate.evaluate(game, ["SET", "/cardById/" <> card_id <> "/stackIndex", dest_stack_index], ["update_card_state cardId:#{card_id} stackIndex:#{dest_stack_index}"])
     game = Evaluate.evaluate(game, ["SET", "/cardById/" <> card_id <> "/cardIndex", dest_card_index], ["update_card_state cardId:#{card_id} cardIndex:#{dest_card_index}"])
     game = Evaluate.evaluate(game, ["SET", "/cardById/" <> card_id <> "/stackParentCardId", parent_card["id"]], ["update_card_state cardId:#{card_id} stackParentCardId:#{parent_card["id"]}"])
-
-    # Update stackIndex and cardIndex of every card in the orig/dest group
-    game = if orig_group_id != nil do
-      Enum.reduce(Enum.with_index(orig_group["stackIds"]), game, fn({stack_id, stack_index}, acc) ->
-        stack = get_stack(game, stack_id)
-        Enum.reduce(Enum.with_index(stack["cardIds"]), acc, fn({card_id, card_index}, acc2) ->
-          Evaluate.evaluate(acc2, ["SET", "/cardById/" <> card_id <> "/stackIndex", stack_index], ["update_card_state orig_group stack_index:#{stack_index}"])
-          |> Evaluate.evaluate(["SET", "/cardById/" <> card_id <> "/cardIndex", card_index], ["update_card_state orig_group card_index:#{card_index}"])
-        end)
-      end)
-    else
-      game
-    end
-    game = Enum.reduce(Enum.with_index(dest_group["stackIds"]), game, fn({stack_id, stack_index}, acc) ->
-      stack = get_stack(game, stack_id)
-      Enum.reduce(Enum.with_index(stack["cardIds"]), acc, fn({card_id, card_index}, acc2) ->
-        Evaluate.evaluate(acc2, ["SET", "/cardById/" <> card_id <> "/stackIndex", stack_index], ["update_card_state dest_group stack_index:#{stack_index}"])
-        |> Evaluate.evaluate(["SET", "/cardById/" <> card_id <> "/cardIndex", card_index], ["update_card_state dest_group card_index:#{card_index}"])
-      end)
-    end)
-
+    Logger.debug("update_card_state 3")
+    # Update stackIndex and cardIndex of every card in the orig/dest group- This turned out to be very slow, becuase each SET triggered the loop through automations. Now we do this all at once before we push to clients, but we don't trigger automation for it.
+    # I think I need to to have some kind of flag to see if any of the automations rely on stackIndex or cardIndex
+    # game = if orig_group_id != nil do
+    #   Enum.reduce(Enum.with_index(orig_group["stackIds"]), game, fn({stack_id, stack_index}, acc) ->
+    #     stack = get_stack(game, stack_id)
+    #     Enum.reduce(Enum.with_index(stack["cardIds"]), acc, fn({card_id, card_index}, acc2) ->
+    #       Evaluate.evaluate(acc2, ["SET", "/cardById/" <> card_id <> "/stackIndex", stack_index], ["update_card_state orig_group stack_index:#{stack_index}"])
+    #       |> Evaluate.evaluate(["SET", "/cardById/" <> card_id <> "/cardIndex", card_index], ["update_card_state orig_group card_index:#{card_index}"])
+    #     end)
+    #   end)
+    # else
+    #   game
+    # end
+    Logger.debug("update_card_state 4")
+    # game = Enum.reduce(Enum.with_index(dest_group["stackIds"]), game, fn({stack_id, stack_index}, acc) ->
+    #   stack = get_stack(game, stack_id)
+    #   Enum.reduce(Enum.with_index(stack["cardIds"]), acc, fn({card_id, card_index}, acc2) ->
+    #     Evaluate.evaluate(acc2, ["SET", "/cardById/" <> card_id <> "/stackIndex", stack_index], ["update_card_state dest_group stack_index:#{stack_index}"])
+    #     |> Evaluate.evaluate(["SET", "/cardById/" <> card_id <> "/cardIndex", card_index], ["update_card_state dest_group card_index:#{card_index}"])
+    #   end)
+    # end)
+    Logger.debug("update_card_state 5")
     # If card gets moved to a facedown pile, or gets flipped up, erase peeking
     moving_to_facedown = dest_group["onCardEnter"]["currentSide"] == "B" and orig_group_id != dest_group_id
     will_flip = old_card["currentSide"] == "B" and dest_group["onCardEnter"]["currentSide"] == "A" and allow_flip
 
+    Logger.debug("update_card_state 6")
     game = if moving_to_facedown or will_flip do
       Evaluate.evaluate(game, ["SET", "/cardById/" <> card_id <> "/peeking", %{}], ["update_card_state cardId:#{card_id} peeking:empty"])
     else
       game
     end
+    Logger.debug("update_card_state 7")
 
     # Assign the group's onCardEnter values
     game = Enum.reduce(dest_group["onCardEnter"], game, fn({key, val}, acc) ->
@@ -317,12 +323,16 @@ defmodule DragnCardsGame.GameUI do
         acc
       end
     end)
+    Logger.debug("update_card_state 8")
 
-    if orig_group["canHaveTokens"] != false and dest_group["canHaveTokens"] == false do
+    game = if orig_group["canHaveTokens"] != false and dest_group["canHaveTokens"] == false do
       Evaluate.evaluate(game, ["SET", "/cardById/" <> card_id <> "/tokens", %{}], ["update_card_state cardId:#{card_id} tokens:empty"])
     else
       game
     end
+    Logger.debug("update_card_state 9")
+
+    game
 
   end
 
@@ -558,6 +568,9 @@ defmodule DragnCardsGame.GameUI do
     game_new = game_new
       |> put_in(["variables"], GameVariables.default())
 
+    game_new = game_new
+      |> assign_stack_and_card_indices()
+
     set_last_room_update(gameui)
 
     gameui = gameui
@@ -587,6 +600,24 @@ defmodule DragnCardsGame.GameUI do
       _ ->
         game
     end
+  end
+
+  def assign_stack_and_card_indices(game) do
+    group_ids = Map.keys(game["groupById"])
+    card_by_id = game["cardById"]
+    card_by_id = Enum.reduce(group_ids, card_by_id, fn(group_id, acc) ->
+      stack_ids = get_stack_ids(game, group_id)
+      Enum.reduce(Enum.with_index(stack_ids), acc, fn({stack_id, stack_index}, acc2) ->
+        card_ids = get_card_ids(game, stack_id)
+        Enum.reduce(Enum.with_index(card_ids), acc2, fn({card_id, card_index}, acc3) ->
+          card = get_card(game, card_id)
+          |> put_in(["stackIndex"], stack_index)
+          |> put_in(["cardIndex"], card_index)
+          acc3 |> put_in([card_id], card)
+        end)
+      end)
+    end)
+    game |> put_in(["cardById"], card_by_id)
   end
 
   def update_log(gameui, messages) do

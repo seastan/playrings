@@ -24,7 +24,7 @@ export const TopBarUserCounter = React.memo(({
   const playerIAlias = useSelector(state => state?.gameUi?.playerInfo?.[playerI]?.alias);
 
   const handleValueChange = (event) => {
-    const newValue = event.target.value;
+    const newValue = Number(event.target.value);
     setValue(newValue);
     // Set up a delayed broadcast to update the game state that interrupts itself if the button is clicked again shortly after.
     if (delayBroadcast) clearTimeout(delayBroadcast);

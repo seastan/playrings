@@ -6,7 +6,7 @@ import { useCardZIndex } from './useCardZIndex';
 import { useGameDefinition } from './useGameDefinition';
 import { useVisibleFace } from './useVisibleFace';
 
-export const useCardStyle = (cardId, cardIndexFromGui, isDragging) => {
+export const useCardStyle = (cardId, cardIndexFromGui, isDragging, offset) => {
     const gameDef = useGameDefinition();
     const cardRotation = useCardProp(cardId, "rotation");
     const cardIndex = cardIndexFromGui;
@@ -29,7 +29,7 @@ export const useCardStyle = (cardId, cardIndexFromGui, isDragging) => {
         position: "absolute",
         height: `${cardScaleFactor*height}vh`,
         width: `${cardScaleFactor*width}vh`,
-        left: `${ATTACHMENT_OFFSET*cardIndex}vh`,
+        left: `${ATTACHMENT_OFFSET*offset}vh`,
         top: "50%",
         borderRadius: '0.6vh',
         transform: `translate(0%, -50%) rotate(${cardRotation}deg)`,
