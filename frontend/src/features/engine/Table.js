@@ -65,6 +65,7 @@ export const Table = React.memo(() => {
   })
 
 
+
   return (
     <div className="h-full flex" style={{fontSize: "1.7vh"}}
       //onTouchStart={(event) => handleTableClick(event)} onMouseUp={(event) => handleTableClick(event)}
