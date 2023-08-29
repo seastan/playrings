@@ -1021,8 +1021,8 @@ defmodule DragnCardsGame.CustomPluginTest do
     assert Evaluate.evaluate(game, "$GAME.cardById.#{card_id_hand}.groupId") == "player1Deck"
     assert Evaluate.evaluate(game, "$GAME.cardById.#{card_id_deck}.groupId") == "player1Hand"
 
-    assert Evaluate.evaluate(game, "$GAME.cardById.#{card_id_hand}.stackIndex") == 0
-    assert Evaluate.evaluate(game, "$GAME.cardById.#{card_id_deck}.stackIndex") == 3
+    #assert Evaluate.evaluate(game, "$GAME.cardById.#{card_id_hand}.stackIndex") == 0 -- No longer works because we only refresh the stack index when sending to frontend
+    #assert Evaluate.evaluate(game, "$GAME.cardById.#{card_id_deck}.stackIndex") == 3
 
     assert length(game["groupById"]["player1Hand"]["stackIds"]) == 6
     assert length(game["groupById"]["player1Deck"]["stackIds"]) == 24
