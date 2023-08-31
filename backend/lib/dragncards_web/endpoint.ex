@@ -30,7 +30,7 @@ defmodule DragnCardsWeb.Endpoint do
     parsers: [:urlencoded, :multipart, :json],
     pass: ["*/*"],
     json_decoder: Phoenix.json_library(),
-    length: 10_000
+    length: 80_000_000
 
   plug Plug.MethodOverride
   plug Plug.Head
