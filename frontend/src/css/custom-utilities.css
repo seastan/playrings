@@ -274,3 +274,14 @@ padding: 0;
 .CodeMirror-scroll {
   @apply h-full;
 }
+
+
+.fade-transition {
+  transition: opacity 0.2s ease-in-out;
+}
+.my-hidden {
+  opacity: 0;
+}
+.my-visible {
+  opacity: 1;
+}

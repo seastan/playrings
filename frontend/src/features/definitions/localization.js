@@ -14,8 +14,11 @@ export const siteL10n = {
   "taken": {
     "English": "Taken"
   },
+  "logIn": {
+    "English": "Log In"
+  },
   "getUp": {
-    "English": "GetUp"
+    "English": "Get Up"
   },
   "menu": {
     "English": "Menu"

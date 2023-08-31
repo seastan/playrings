@@ -81,7 +81,7 @@ export const SideBarRoundStep = React.memo(({
         <ReminderButton
           triggerCardIds={triggerCardIds}/>
       }
-      <div className={`flex flex-1 h-full items-center justify-center ${isRoundStep ? "bg-red-800" : "bg-gray-500"} ${hovering ? "block" : "hidden"}`} >
+      <div className={`flex flex-1 h-full items-center justify-center rounded-tr-lg rounded-br-lg ${isRoundStep ? "bg-red-800" : "bg-gray-500"} ${hovering ? "block" : "hidden"}`} >
         <div>{gameL10n(stepInfo.label)}</div>
       </div>
     </div>
