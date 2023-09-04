@@ -47,7 +47,7 @@ export const PileImage = React.memo(({
   if (region.type !== "pile") return null;
   // Calculate the card to show based on whether the card being dragged came from this group or another group
   const getCardToShow = (groupSize, isDraggingOver, isDraggingFrom) => {
-    if (groupSize > 0) {
+    if (groupSize > 0 && !isDraggingFrom) {
       // && isDraggingOver && !isDraggingFrom) {
       return card0; // The card is being dragged from another group onto this one, so show the top card
     } else if (groupSize>1 && isDraggingFrom) {

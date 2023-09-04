@@ -111,6 +111,7 @@ export const loadRingsDb = (importLoadList, doActionList, playerN, ringsDbDomain
       )
     })
     Promise.all(fetches).then(function() {
+      console.log("loadList 1", loadList)
       importLoadList(loadList);
     });
   })

@@ -18,6 +18,9 @@ export const PeekingSymbol = React.memo(({
 
     return (
         (cardCurrentSide === "B" && cardVisibleSide === "A" && !defaultPeeking) ? 
-        <FontAwesomeIcon className="absolute top-0 right-0 text-2xl" icon={faEye}/> : null
+        <div className="absolute top-0 right-0 flex justify-center items-center bg-gray-300 opacity-60 rounded-lg p-1" style={{"width": "25px", "height": "25px"}}>
+            <FontAwesomeIcon className="absolute text-lg" icon={faEye}/> 
+        </div>
+        : null
     )
 })

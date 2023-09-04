@@ -195,8 +195,6 @@ defmodule DragnCardsGame.CustomPluginTest do
     # Get saved game
     replay = Repo.get_by(Replay, [user_id: user.id, uuid: game["id"]])
 
-    IO.inspect(replay.description)
-
     # Get full list of replay uuids
     results = Repo.all(from r in Replay, select: r.uuid)
     uuid = Enum.at(results, 0)
@@ -520,7 +518,6 @@ defmodule DragnCardsGame.CustomPluginTest do
     card_id = Evaluate.evaluate(game, ["GET_CARD_ID", "sharedMainQuest", 0, 0])
     game = Evaluate.evaluate(game, [["DEFINE", "$ACTIVE_CARD_ID", card_id], ["ACTION_LIST", "discardCard"]])
     assert length(game["groupById"]["sharedMainQuest"]["stackIds"]) == 0
-    IO.inspect(game["messages"])
 
     # Discard just one card from the stack
     game = game_with_stack

@@ -185,6 +185,10 @@ defmodule DragnCardsGame.Evaluate do
     end
   end
 
+  def card_match?(game, var_name, card, condition, trace) do
+    game = evaluate(game, ["DEFINE", var_name, card], trace ++ ["DEFINE var_name"])
+    evaluate(game, condition, trace ++ ["card_match?"])
+  end
 
   def evaluate_with_timeout(game, code, trace, timeout_ms \\ 35_000) do
     task = Task.async(fn ->
@@ -582,14 +586,14 @@ defmodule DragnCardsGame.Evaluate do
               get_in(game_def, ["preBuiltDecks", load_list_id, "cards"])
             end
 
-            # Run postLoadActionList if it exists
+            # Run preLoadActionList if it exists
             game = if game_def["automation"]["preLoadActionList"] do
-              evaluate(game, game_def["automation"]["preLoadActionList"], trace ++ ["LOAD_CARDS game preLoadActionList"])
+              evaluate(game, ["ACTION_LIST", game_def["automation"]["preLoadActionList"]], trace ++ ["LOAD_CARDS game preLoadActionList"])
             else
               game
             end
 
-            # Run deck's postLoadActionList if it exists
+            # Run deck's preLoadActionList if it exists
             game = if load_list_id && game_def["preBuiltDecks"][load_list_id]["preLoadActionList"] do
               evaluate(game, ["ACTION_LIST", game_def["preBuiltDecks"][load_list_id]["preLoadActionList"]], trace ++ ["LOAD_CARDS deck preLoadActionList"])
             else
@@ -617,7 +621,7 @@ defmodule DragnCardsGame.Evaluate do
 
             # Run postLoadActionList if it exists
             if game_def["automation"]["postLoadActionList"] do
-              evaluate(game, game_def["automation"]["postLoadActionList"], trace ++ ["LOAD_CARDS game postLoadActionList"])
+              evaluate(game, ["ACTION_LIST", game_def["automation"]["postLoadActionList"]], trace ++ ["LOAD_CARDS game postLoadActionList"])
             else
               game
             end
@@ -721,11 +725,25 @@ defmodule DragnCardsGame.Evaluate do
 
           "ONE_CARD" ->
             var_name = Enum.at(code, 1)
+            condition = Enum.at(code, 2)
             one_card = Enum.find(Map.values(game["cardById"]), fn(card) ->
-              game = evaluate(game, ["DEFINE", var_name, card], trace ++ ["ONE_CARD"])
-              evaluate(game, Enum.at(code, 2), trace ++ ["ONE_CARD condition"])
+              card_match?(game, var_name, card, condition, trace)
             end)
             one_card
+
+          "ALL_CARDS" ->
+            var_name = Enum.at(code, 1)
+            condition = Enum.at(code, 2)
+            all_cards = Enum.filter(Map.values(game["cardById"]), fn(card) ->
+              card_match?(game, var_name, card, condition, trace)
+            end)
+            all_cards
+
+          "COUNT_CARDS" ->
+            var_name = Enum.at(code, 1)
+            condition = Enum.at(code, 2)
+            list = evaluate(game, ["ALL_CARDS", var_name, condition], trace ++ ["COUNT_CARDS condition"])
+            Enum.count(list)
 
           "PROCESS_MAP" ->
             map = evaluate(game, Enum.at(code, 1), trace ++ ["PROCESS_MAP map"])
@@ -737,26 +755,18 @@ defmodule DragnCardsGame.Evaluate do
             map
 
           "ACTION_LIST" ->
-            argc = Enum.count(code) - 1
-            action_list_id = evaluate(game, Enum.at(code, 1), trace ++ ["ACTION_LIST action_list_id"])
-            game_def = Plugins.get_game_def(game["options"]["pluginId"])
-            action_list = game_def["actionLists"][action_list_id]
-            case argc do
-              1 ->
-                evaluate(game, action_list, trace ++ ["ACTION_LIST #{action_list_id}"])
-              2 ->
-                active_card_id = evaluate(game, Enum.at(code, 2), trace ++ ["ACTION_LIST active_card_id"])
-                game = put_in(game, ["playerUi", "activeCardId"], active_card_id)
-                evaluate(game, action_list, trace ++ ["ACTION_LIST #{action_list_id} active_card_id #{active_card_id}"])
-              3 ->
-                active_card_id = evaluate(game, Enum.at(code, 2), trace ++ ["ACTION_LIST active_card_id"])
-                player_n = evaluate(game, Enum.at(code, 3), trace ++ ["ACTION_LIST player_n"])
-                game = put_in(game, ["playerUi", "activeCardId"], active_card_id)
-                game = put_in(game, ["playerUi", "playerN"], player_n)
-                evaluate(game, action_list, trace ++ ["ACTION_LIST #{action_list_id} active_card_id #{active_card_id} player_n #{player_n}"])
-              _ ->
-                game
+
+            action_list_or_id = Enum.at(code, 1)
+
+            # Set the load_list_id
+            action_list = if is_list(action_list_or_id) do
+              action_list_or_id
+            else
+              action_list_id = evaluate(game, Enum.at(code, 1), trace ++ ["ACTION_LIST action_list_id"])
+              game_def = Plugins.get_game_def(game["options"]["pluginId"])
+              game_def["actionLists"][action_list_id]
             end
+            evaluate(game, action_list, trace ++ ["ACTION_LIST"])
           _ ->
             raise "Command #{Enum.at(code,0)} not recognized in #{inspect(code)}"
         end

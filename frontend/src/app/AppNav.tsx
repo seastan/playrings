@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import cx from "classnames";
 import useAuth from "../hooks/useAuth";
 import ProfileLink from "../features/auth/ProfileLink";
@@ -10,6 +10,7 @@ interface Props {}
 
 export const AppNav: React.FC<Props> = () => {
   const { authToken, logOut } = useAuth();
+  const history = useHistory();
   const user = useProfile();
   //const { height, width } = useWindowDimensions();
   const headerLinkClass =
@@ -19,14 +20,9 @@ export const AppNav: React.FC<Props> = () => {
   // alert(aspectRatio)
   // if (aspectRatio > 2) return null;
   return (
-    <header className="bg-gray-700 flex justify-between items-center px-4" style={{height:"3vh",fontFamily:"Roboto", }}>
+    <header className="bg-gray-700 flex justify-between items-center px-4" style={{height:"3vh",fontFamily:"Roboto", fontSize: "2vh"}}>
       <div className="flex items-center justify-between p-0 h-full">
-        <div className="h-full">
-          <Link
-            to="/"
-            className="text-white no-underline h-full top-0"
-            style={{fontSize: "2vh"}}
-          >
+        <div className="h-full flex text-white justify-center cursor-pointer" onClick={() => history.push("/")}>
             {/*
             <img
               className="h-8 rounded"
@@ -34,13 +30,11 @@ export const AppNav: React.FC<Props> = () => {
               alt="Logo "
             />
                 */}
-            Dragn <img className="mb-1" style={{display:"inline", height: "2vh"}} src={process.env.PUBLIC_URL + '/logosvg.svg'}/> Cards
-          </Link>
+            Dragn <img className="mt-0.5 mx-0.5" style={{display:"inline", height: "2vh"}} src={process.env.PUBLIC_URL + '/logosvg.svg'}/> Cards
         </div>
       </div>
       <div
         className="flex"
-        style={{fontSize: "2vh"}}
       >
         {authToken && (
           <Link to={"/myplugins/"+user?.id} className={headerLinkClass}>

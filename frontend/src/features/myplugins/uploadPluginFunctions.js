@@ -114,6 +114,7 @@ export const processArrayOfRows = (inputs, plugin, arrayOfRows) => {
       const header0Str = JSON.stringify(header0);
       const headerStr = JSON.stringify(rows[0]);
       if (headerStr !== header0Str) throw new Error("File headers do not match.")
+      console.log("Processing file with headers: ", header0)
       for (var i=1; i<rows.length; i++) {
         const row = rows[i];
         const face = {};
@@ -158,6 +159,7 @@ export const processArrayOfRows = (inputs, plugin, arrayOfRows) => {
               "A": faceA,
               "B": faceB
           }
+          console.log("Adding card to cardDb: ", cardDb[faceA.databaseId])
           if (faceA.cardBack === "multi_sided") {
             multiSidedDbId = faceA.databaseId;
             multiSidedFace = "B";
