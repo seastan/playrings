@@ -731,19 +731,13 @@ defmodule DragnCardsGame.Evaluate do
             end)
             one_card
 
-          "ALL_CARDS" ->
+          "FILTER_CARDS" ->
             var_name = Enum.at(code, 1)
             condition = Enum.at(code, 2)
             all_cards = Enum.filter(Map.values(game["cardById"]), fn(card) ->
               card_match?(game, var_name, card, condition, trace)
             end)
             all_cards
-
-          "COUNT_CARDS" ->
-            var_name = Enum.at(code, 1)
-            condition = Enum.at(code, 2)
-            list = evaluate(game, ["ALL_CARDS", var_name, condition], trace ++ ["COUNT_CARDS condition"])
-            Enum.count(list)
 
           "PROCESS_MAP" ->
             map = evaluate(game, Enum.at(code, 1), trace ++ ["PROCESS_MAP map"])

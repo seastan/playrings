@@ -224,6 +224,15 @@ defmodule DragnCardsGame.CustomPluginTest do
   end
 
 
+  @tag :filter_cards
+  test "filter_cards", %{user: _user, game: game, game_def: game_def} do
+    # Load some decks into the game
+    game = Evaluate.evaluate(game, ["LOAD_CARDS", "N0B.01"]) # Quest
+    filtered_cards  = Evaluate.evaluate(game, ["FILTER_CARDS", "$CARD", ["EQUAL", "$CARD.sides.A.type", "Enemy"]])
+    assert length(filtered_cards) == 8
+
+  end
+
   @tag :card_hotkeys
   test "Card Hotkeys", %{user: _user, game: game, game_def: game_def} do
 
@@ -818,31 +827,37 @@ defmodule DragnCardsGame.CustomPluginTest do
     assert game["stagingThreat"] == 3
     assert game["questProgress"] == -3
 
-    card_id = Evaluate.evaluate(game, ["GET_CARD_ID", "player1Play1", 0, 0])
-    game = Evaluate.evaluate(game, ["INCREASE_VAL", "/cardById/#{card_id}/tokens/willpower", 1])
+    aragorn_card_id = Evaluate.evaluate(game, ["GET_CARD_ID", "player1Play1", 0, 0])
+    game = Evaluate.evaluate(game, ["INCREASE_VAL", "/cardById/#{aragorn_card_id}/tokens/willpower", 1])
 
     # Commit Aragorn
     game = Evaluate.evaluate(game, [
-      ["DEFINE", "$ACTIVE_CARD_ID", card_id],
+      ["DEFINE", "$ACTIVE_CARD_ID", aragorn_card_id],
       ["ACTION_LIST", "toggleCommit"]
     ])
 
     assert game["stagingThreat"] == 3
     assert game["questProgress"] == 0
 
-    game = Evaluate.evaluate(game, ["INCREASE_VAL", "/cardById/#{card_id}/tokens/willpower", 1])
+    game = Evaluate.evaluate(game, ["INCREASE_VAL", "/cardById/#{aragorn_card_id}/tokens/willpower", 1])
 
     assert game["stagingThreat"] == 3
     assert game["questProgress"] == 1
 
+    staging_card_id = Evaluate.evaluate(game, ["GET_CARD_ID", "sharedStagingArea", 0, 0])
+    game = Evaluate.evaluate(game, ["INCREASE_VAL", "/cardById/#{staging_card_id}/tokens/threat", 1])
+
+    assert game["stagingThreat"] == 4
+    assert game["questProgress"] == 0
+
     # Discard
     game = Evaluate.evaluate(game, [
-      ["DEFINE", "$ACTIVE_CARD_ID", card_id],
+      ["DEFINE", "$ACTIVE_CARD_ID", aragorn_card_id],
       ["ACTION_LIST", "discardCard"]
     ])
 
-    assert game["stagingThreat"] == 3
-    assert game["questProgress"] == -3
+    assert game["stagingThreat"] == 4
+    assert game["questProgress"] == -4
 
 
     # Print all messages
