@@ -600,6 +600,9 @@ defmodule DragnCardsGame.Evaluate do
               game
             end
 
+
+            prev_loaded_card_ids = game["loadedCardIds"]
+
             # Load cards
             game = try do
               GameUI.load_cards(game, evaluate(game, "$PLAYER_N", trace), load_list)
@@ -620,11 +623,14 @@ defmodule DragnCardsGame.Evaluate do
             end
 
             # Run postLoadActionList if it exists
-            if game_def["automation"]["postLoadActionList"] do
+            game = if game_def["automation"]["postLoadActionList"] do
               evaluate(game, ["ACTION_LIST", game_def["automation"]["postLoadActionList"]], trace ++ ["LOAD_CARDS game postLoadActionList"])
             else
               game
             end
+
+            # Restore prev_loaded_card_ids
+            put_in(game, ["loadedCardIds"], prev_loaded_card_ids)
 
           "DELETE_CARD" ->
             card_id = evaluate(game, Enum.at(code, 1), trace ++ ["DELETE_CARD card_id"])
