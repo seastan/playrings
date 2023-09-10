@@ -22,11 +22,11 @@ export const useBrowseTopN = () => {
       var visibility = true;
       var message = ""
       if (topNstr === "All") {
-        topNint = numStacks;
+        topNint = -1;
         peekStackIds = stackIds;
         message = ["LOG", "$ALIAS_N", " looked at ", groupName, "."];
       } else if (topNstr === "None") {
-        topNint = numStacks; 
+        topNint = -1; 
         peekStackIds = [];
         visibility = false;
         message = ["LOG", "$ALIAS_N", " stopped looking at ", groupName, "."];
