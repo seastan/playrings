@@ -11,7 +11,7 @@ import BroadcastContext from "../../contexts/BroadcastContext";
 import { useGameDefinition } from "./hooks/useGameDefinition";
 import { useDoActionList } from "./hooks/useDoActionList";
 import { useLayout } from "./hooks/useLayout";
-import { getParentCardsInGroup } from "./functions/common";
+import { convertToPercentage, getParentCardsInGroup } from "./functions/common";
 
 const isNormalInteger = (val) => {
   var n = Math.floor(Number(val));
@@ -29,7 +29,7 @@ export const Browse = React.memo(({}) => {
   const group = useSelector(state => state?.gameUi?.game?.groupById?.[groupId]);
   const layout = useLayout();
   var region = layout?.browse;
-  const browseWidth = region.width;
+  const browseWidth = convertToPercentage(region.width);
   const regionWidthInt = parseInt(browseWidth.substring(0, browseWidth.length - 1))
   region = {...region, groupId: groupId, width: `${regionWidthInt*0.7}%`}
   const game = useSelector(state => state?.gameUi?.game);
@@ -169,15 +169,34 @@ export const Browse = React.memo(({}) => {
   }
 
   return(
-    <div className="absolute bg-gray-700 w-full" style={{left: region.left, width: browseWidth, top: region.top, height: region.height, zIndex: 1e6}}>
+    <div className="absolute bg-gray-700 w-full" 
+      style={{
+        left: convertToPercentage(region.left), 
+        width: browseWidth, 
+        top: convertToPercentage(region.top), 
+        height: convertToPercentage(region.height), 
+        zIndex: 1e3
+      }}>
       <strong className="absolute bg-gray-600 w-full text-gray-300 flex justify-center items-center" style={{top:"-20px", height: "20px"}}>
         <FontAwesomeIcon onClick={(event) => handleBarsClick(event)}  className="cursor-pointer hover:text-white" icon={faBars}/>
         <span className="px-2">{gameL10n(gameDef.groups[group.id].label)}</span>
-        <span className="absolute left-0">(Top)</span>
       </strong>
       
 
-      <div className="h-full float-left " style={{width: "75%"}}>
+      <div className="h-full float-left " style={{width: "75%"}}>        
+        <div
+          className="relative h-full float-left select-none text-gray-300"
+          style={{width:"17px"}}>
+            <div className="relative w-full h-full">
+            {region.hideTitle ? null :
+              <span 
+                className="absolute pb-2 overflow-hidden" 
+                style={{fontSize: "1.5vh", top: "50%", left: "50%", transform: `translate(-50%, -70%) rotate(90deg)`, whiteSpace: "nowrap"}}>
+                 (Top)
+              </span>
+            }
+            </div>
+        </div>
         <Stacks
           gameBroadcast={gameBroadcast}
           chatBroadcast={chatBroadcast}
@@ -234,7 +253,7 @@ export const Browse = React.memo(({}) => {
         }
       </div>
 
-      <div className="absolute h-full float-left p-3 select-none" style={{left: "90%", width: "10%"}}>
+      <div className="absolute h-full float-left p-1 select-none" style={{left: "90%", width: "10%"}}>
         <div className="h-1/4 w-full text-white text-center">
           <div className="h-full float-left w-full p-0.5">
             <div className="h-full w-full">   

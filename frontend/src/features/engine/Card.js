@@ -44,8 +44,8 @@ export const Card = React.memo(({
     // FIXME: display error if height and width still not defined?
 
     return (
-        <div id={cardId}>
             <div 
+                id={cardId}
                 className={isActive ? "shadow-yellow" : null}
                 key={cardId}
                 style={cardStyle}
@@ -75,6 +75,5 @@ export const Card = React.memo(({
                 <CardArrows cardId={cardId}/>
                 
             </div>
-        </div>
     )
 })

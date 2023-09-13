@@ -52,7 +52,7 @@ export const useBrowseTopN = () => {
       dispatch(setBrowseGroupTopN(topNint));
       const actionList = [
         message,
-        ["FOR_EACH_START_STOP_STEP", "$i", 0, topNint, 1,
+        ["FOR_EACH_START_STOP_STEP", "$i", 0, topNint == -1 ? stackIds.length : topNint, 1,
           [
             ["DEFINE", "$CARD_ID", `$GAME.groupById.${group.id}.parentCardIds.[$i]`],
             ["SET", "/cardById/$CARD_ID/peeking/$PLAYER_N", visibility]
