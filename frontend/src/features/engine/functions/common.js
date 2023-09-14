@@ -10,6 +10,32 @@ export const defaultdict = (defaultObj, defaultVal) => {
   });
 }
 
+export const convertToPercentage = (input) => {
+  // Check if the input already includes a percentage sign
+  if (input.endsWith('%')) {
+    return input;
+  }
+
+  // Check if the input includes a slash, indicating it's a fraction
+  const fractionRegex = /^(\d+)\/(\d+)$/;
+  const match = input.match(fractionRegex);
+  
+  if (match) {
+    const numerator = parseFloat(match[1]);
+    const denominator = parseFloat(match[2]);
+
+    if (denominator === 0) {
+      return '0%';  // Avoid division by zero
+    }
+
+    const percentage = (numerator / denominator) * 100;
+    return `${percentage}%`;
+  }
+
+  // If the input is neither a fraction nor a percentage parse it and add a percent
+  return `${parseFloat(input)}%`;
+}
+
 export const getRandomIntInclusive = (min, max) => {
   min = Math.ceil(min);
   max = Math.floor(max);

@@ -22,11 +22,11 @@ export const useBrowseTopN = () => {
       var visibility = true;
       var message = ""
       if (topNstr === "All") {
-        topNint = numStacks;
+        topNint = -1;
         peekStackIds = stackIds;
         message = ["LOG", "$ALIAS_N", " looked at ", groupName, "."];
       } else if (topNstr === "None") {
-        topNint = numStacks; 
+        topNint = -1; 
         peekStackIds = [];
         visibility = false;
         message = ["LOG", "$ALIAS_N", " stopped looking at ", groupName, "."];
@@ -52,7 +52,7 @@ export const useBrowseTopN = () => {
       dispatch(setBrowseGroupTopN(topNint));
       const actionList = [
         message,
-        ["FOR_EACH_START_STOP_STEP", "$i", 0, topNint, 1,
+        ["FOR_EACH_START_STOP_STEP", "$i", 0, topNint == -1 ? stackIds.length : topNint, 1,
           [
             ["DEFINE", "$CARD_ID", `$GAME.groupById.${group.id}.parentCardIds.[$i]`],
             ["SET", "/cardById/$CARD_ID/peeking/$PLAYER_N", visibility]
