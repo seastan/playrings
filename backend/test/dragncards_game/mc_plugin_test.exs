@@ -234,6 +234,7 @@ defmodule DragnCardsGame.McPluginTest do
     assert length(res["groupById"]["player1Hand"]["stackIds"])
   end
 
+  @tag :scenario_setup_standard
   test "scenario setup (standard)", %{user: user, game: game, game_def: game_def} do
     res = Evaluate.evaluate(game, ["LOAD_CARDS", "Brotherhood of Badoon"])
 
@@ -284,6 +285,7 @@ defmodule DragnCardsGame.McPluginTest do
     assert res["cardById"][card_id]["sides"]["A"]["stage"] == "B1"
   end
 
+  @tag :double_sided_villain_expert
   test "scenario setup (expert): double sided villain, single stage", %{user: user, game: game, game_def: game_def} do
     res = Evaluate.evaluate(game, game_def["actionLists"]["setExpertMode"])
     res = Evaluate.evaluate(res, ["LOAD_CARDS", "Escape the Museum"])
@@ -325,6 +327,7 @@ defmodule DragnCardsGame.McPluginTest do
     assert length(stacks) == 2
   end
 
+  @tag :discard_main_scheme
   test "discard main scheme card", %{user: user, game: game, game_def: game_def} do
     res = Evaluate.evaluate(game, ["LOAD_CARDS", "Brotherhood of Badoon"])
 
@@ -344,7 +347,7 @@ defmodule DragnCardsGame.McPluginTest do
     stacks = res["groupById"]["sharedMainSchemeDeck"]["stackIds"]
     assert length(stacks) == 0
 
-    stacks = res["groupById"]["sharedVillainDiscard"]["stackIds"]
+    stacks = res["groupById"]["sharedMainSchemeDiscard"]["stackIds"]
     assert length(stacks) == 1
   end
 
@@ -489,7 +492,7 @@ defmodule DragnCardsGame.McPluginTest do
   test "Side Quest spawns with starting threat", %{user: _user, game: game, game_def: _game_def} do
     # Get Breakin' & Takin'
     card_db_id = "89399b59-bb97-5eef-81f5-7bf8c8194b15"
-    res = Evaluate.evaluate(game, ["LOAD_CARDS", ["LIST", %{"databaseId" => card_db_id, "loadGroupId" => "sharedSideSchemes", "quantity" => 1}]])
+    res = Evaluate.evaluate(game, ["LOAD_CARDS", ["LIST", %{"databaseId" => card_db_id, "loadGroupId" => "sharedVillain", "quantity" => 1}]])
 
     card = Evaluate.evaluate(res, ["ONE_CARD", "$CARD", ["EQUAL", "$CARD.databaseId", card_db_id]])
     card_id = card["id"]
@@ -497,7 +500,7 @@ defmodule DragnCardsGame.McPluginTest do
 
     # Get Light at the End
     card_db_id = "de9f3efd-51ca-51e0-a354-9241b482c1b8"
-    res = Evaluate.evaluate(game, ["LOAD_CARDS", ["LIST", %{"databaseId" => card_db_id, "loadGroupId" => "sharedSideSchemes", "quantity" => 1}]])
+    res = Evaluate.evaluate(game, ["LOAD_CARDS", ["LIST", %{"databaseId" => card_db_id, "loadGroupId" => "sharedVillain", "quantity" => 1}]])
     card = Evaluate.evaluate(res, ["ONE_CARD", "$CARD", ["EQUAL", "$CARD.databaseId", card_db_id]])
     card_id = card["id"]
     assert res["cardById"][card_id]["tokens"]["threat"] == 20
@@ -620,7 +623,7 @@ defmodule DragnCardsGame.McPluginTest do
 
     assert length(res["groupById"]["player1NemesisSet"]["stackIds"]) == 0
     assert length(res["groupById"]["player1Engaged"]["stackIds"]) == 1
-    assert length(res["groupById"]["sharedSideSchemes"]["stackIds"]) == 1
+    assert length(res["groupById"]["sharedVillain"]["stackIds"]) == 1
     # already has obligation card in the encounter deck
     assert length(res["groupById"]["sharedEncounterDeck"]["stackIds"]) == 4
   end
@@ -632,7 +635,7 @@ defmodule DragnCardsGame.McPluginTest do
 
     assert length(res["groupById"]["player1NemesisSet"]["stackIds"]) == 0
     assert length(res["groupById"]["player1Engaged"]["stackIds"]) == 4
-    assert length(res["groupById"]["sharedSideSchemes"]["stackIds"]) == 1
+    assert length(res["groupById"]["sharedVillain"]["stackIds"]) == 1
     # already has obligation card in the encounter deck
     assert length(res["groupById"]["sharedEncounterDeck"]["stackIds"]) == 1
   end
@@ -650,5 +653,33 @@ defmodule DragnCardsGame.McPluginTest do
 
     # 4 weather cards + 1 identity card
     assert length(res["groupById"]["player1Play1"]["stackIds"]) == 5
+  end
+
+  @tag :player_permanent
+  test "Player Permanent Cards", %{user: _user, game: game, game_def: game_def} do
+    res = Evaluate.evaluate(game, ["LOAD_CARDS", "Vision"])
+
+    assert length(res["groupById"]["player1Play1"]["stackIds"]) == 2
+  end
+
+  @tag :campaign_permanent
+  test "Campaign Permanent Cards", %{user: _user, game: game, game_def: game_def} do
+    res = Evaluate.evaluate(game, ["LOAD_CARDS", "Campaign - S.H.I.E.L.D. Tech"])
+
+    assert length(res["groupById"]["player1Play1"]["stackIds"]) == 0
+  end
+
+  @tag :multiple_double_sided_villains
+  test "Multiple Double Sided Villains", %{user: _user, game: game, game_def: game_def} do
+    res = Evaluate.evaluate(game, ["LOAD_CARDS", "Morlock Siege"])
+
+    assert length(res["groupById"]["sharedVillain"]["stackIds"]) == 1
+  end
+
+  @tag :scenario_required_modulars
+  test "Scenario Required Modulars", %{user: _user, game: game, game_def: game_def} do
+    res = Evaluate.evaluate(game, ["LOAD_CARDS", "Infiltrate the Museum"])
+
+    assert length(res["groupById"]["sharedEncounterDeck"]["stackIds"]) == 18
   end
 end
