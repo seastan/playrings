@@ -160,7 +160,13 @@ defmodule DragnCardsWeb.RoomChannel do
 
     gameui = GameUIServer.state(room_slug)
 
-    messages = Enum.map(gameui["logMessages"], fn(message_text) ->
+    log_messages = if gameui["logMessages"] == nil do
+      []
+    else
+      gameui["logMessages"]
+    end
+
+    messages = Enum.map(log_messages, fn(message_text) ->
       ChatMessage.new(message_text, -1)
     end)
 
