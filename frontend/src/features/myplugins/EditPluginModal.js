@@ -36,7 +36,7 @@ export const EditPluginModal = ({ plugin, closeModal, doFetchHash}) => {
   const [validCardDb, setValidCardDb] = useState(false);
   const [errorMessagesGameDef, setErrorMessagesGameDef] = useState([]);
   const [warningMessagesGameDef, setWarningMessagesGameDef] = useState([]);
-  const [errorMessageCardDb, setErrorMessageCardDb] = useState("");
+  const [errorMessageCardDb, setErrorMessageCardDb] = useState([]);
 
   const [successMessageGameDef, setSuccessMessageGameDef] = useState("");
   const [successMessageCardDb, setSuccessMessageCardDb] = useState("");
@@ -165,6 +165,7 @@ export const EditPluginModal = ({ plugin, closeModal, doFetchHash}) => {
     // Trigger Promises
     Promise.all(readers).then((tsvList) => {
       console.log("unmerged",tsvList);
+      const errors = []
       const arrayOfRows = []; // Each element is a 2D array representing a tsv file
       for (var tsvString of tsvList) { 
         console.log("tsvString", tsvString)
@@ -176,18 +177,18 @@ export const EditPluginModal = ({ plugin, closeModal, doFetchHash}) => {
           console.log("err",err)
           var message = "Error";
           if (err.message.includes("data does not include separator")) message += ": Invalid file format. Make sure the data is tab-separated."
-          setErrorMessageCardDb(message);
+          setErrorMessageCardDb([message]);
           return;
         }
       }
       try {
-        const cardDb = processArrayOfRows(inputs, plugin, arrayOfRows);
+        const cardDb = processArrayOfRows(inputs, plugin, arrayOfRows, errors);
         setSuccessMessageCardDb(`Card database uploaded successfully: ${Object.keys(cardDb).length} cards.`);
-        setErrorMessageCardDb("");
+        setErrorMessageCardDb(errors);
         setValidCardDb(true);
         setInputs({...inputs, cardDb: cardDb});
       } catch(err) {
-        setErrorMessageCardDb("Error: "+err.message);
+        setErrorMessageCardDb([err.message]);
       }
     });
     inputFileGameDef.current.value = "";
@@ -280,8 +281,10 @@ export const EditPluginModal = ({ plugin, closeModal, doFetchHash}) => {
           {successMessageCardDb && (
             <div className="alert alert-info mt-1 text-xs p-1 pl-3">{successMessageCardDb}</div>
           )}
-          {errorMessageCardDb && (
-            <div className="alert alert-danger mt-1 text-xs p-1 pl-3">{errorMessageCardDb}</div>
+          {errorMessageCardDb.length > 0 && (
+            errorMessageCardDb.map((message, i) => (
+              <div index={i} className="alert alert-danger mt-1 text-xs p-1 pl-3">{message}</div>
+            ))
           )}
           <label className="block text-sm font-bold mb-2 mt-4 text-white">
           {siteL10n("Visibility")}

@@ -98,7 +98,7 @@ export const stringTo2DArray = (inputString) => {
   }
 
 
-export const processArrayOfRows = (inputs, plugin, arrayOfRows) => {
+export const processArrayOfRows = (inputs, plugin, arrayOfRows, errors) => {
 
     const gameDef = plugin?.gameDef || inputs.gameDef;
     const cardDb = {};
@@ -121,6 +121,14 @@ export const processArrayOfRows = (inputs, plugin, arrayOfRows) => {
         for (var j=0; j<header0.length; j++) {
             const colName = header0[j].replace(/\r$/, '');
             face[colName] = row[j].replace(/\r$/, '');
+        }
+        // If face.type is missing, add an error
+        if (!face["type"] || face["type"] === "") {
+          errors.push(`Missing type for ${face.name}`)
+        }
+        // If face.type is not in gameDef.cardTypes, add an error
+        if (face["type"] && !Object.keys(gameDef?.cardTypes).includes(face["type"])) {
+          errors.push(`type ${face.type} for ${face.name} not found in gameDef.cardTypes`)
         }
         const dbId = face.databaseId;
         // Is this a multi-side of a previous card?

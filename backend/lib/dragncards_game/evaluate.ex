@@ -768,7 +768,7 @@ defmodule DragnCardsGame.Evaluate do
             end
             evaluate(game, action_list, trace ++ ["ACTION_LIST"])
           _ ->
-            raise "Command #{Enum.at(code,0)} not recognized in #{inspect(code)}"
+            raise "Command #{inspect(Enum.at(code,0))} not recognized in #{inspect(code)}"
         end
       end
     else # not a list
