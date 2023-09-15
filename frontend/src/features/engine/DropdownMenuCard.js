@@ -47,7 +47,7 @@ export const DropdownMenuCard = React.memo(({
   console.log("Rendering DropdownMenuCard ",playerIList)
 
   const setAltArt = async () => {
-    if (user.supporter_level < 5000) {
+    if (user.supporter_level < 5) {
       dispatch(setShowModal("patreon"))
       dispatch(setDropdownMenu(null));
       dispatch(setActiveCardId(null));

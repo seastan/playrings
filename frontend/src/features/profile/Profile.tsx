@@ -25,13 +25,14 @@ export const Profile: React.FC<Props> = () => {
   const [showModal, setShowModal] = useState(false);
   const [shareReplayUrl, setShareReplayUrl] = useState("");
   const [deletedIndices, setDeletedIndices] = useState<Array<number>>([]); 
-  var [wins, losses, incompletes] = [0, 0, 0];
   const { data, isLoading, isError, doFetchUrl, doFetchHash, setData } = useDataApi<any>(
-    "/be/api/replays/"+user?.id,
+    user?.id ? "/be/api/replays/"+user.id : "",
     null
   );
   console.log('Rendering Profile', data);
   useEffect(() => {
+    if (user?.id == null) return;
+    if (user?.id == undefined) return;
     doFetchUrl("/be/api/replays/"+user?.id);
   }, [user]);
   if (user == null) {
@@ -92,9 +93,6 @@ export const Profile: React.FC<Props> = () => {
         })}
         </div>
       }
-      if (replay.outcome === "victory") wins++;
-      else if (replay.outcome === "defeat") losses++;
-      else incompletes++;
       if (!deletedIndices.includes(i)) nonDeletedData.push(replayRow);
     }
     if (user.supporter_level < 3) 
@@ -102,7 +100,6 @@ export const Profile: React.FC<Props> = () => {
     else
       filteredData = nonDeletedData;
   }
-  const winRate = wins + losses === 0 ? 0 : Math.round(wins/(wins+losses)*100)
   return (
     <div className="w-full h-full overflow-y-scroll">
       <Container>
@@ -142,13 +139,6 @@ export const Profile: React.FC<Props> = () => {
               <a className="text-white no-underline" href="https://www.patreon.com/dragncards">Unlock all saved games</a>
             </Button>
           }
-          <h1 className="font-semibold mb-2 mt-4 text-black">Stats</h1>
-          <table>
-            <tr>Wins: {wins}</tr>
-            <tr>Losses: {losses}</tr>
-            <tr>Incomplete: {incompletes}</tr>
-            <tr>Win rate: {winRate}%</tr>
-          </table>
         </div>
       </Container>
       

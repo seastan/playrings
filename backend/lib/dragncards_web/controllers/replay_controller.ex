@@ -12,6 +12,9 @@ defmodule DragnCardsWeb.ReplayController do
   def index(conn, params) do
     user_id = params["user_id"]
     # Faster to gather all columns except game_json
+    IO.puts("ReplayController index 1")
+    IO.inspect(params)
+    IO.puts("ReplayController index 2")
     query = from Replay, order_by: [desc: :updated_at], where: [user_id: ^user_id], select: [:deleted_by, :uuid, :updated_at, :inserted_at, :user_id, :metadata, :plugin_id]
     #query = from(r in Replay, order_by: [desc: :updated_at], where: r.user == ^user_id)
     replays = Repo.all(query)
