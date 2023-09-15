@@ -16,6 +16,16 @@ import { DeckbuilderMyDecks } from "./DeckbuilderMyDecks";
 import useDataApi from "../../hooks/useDataApi";
 
 const CardImage = ({url, top, height, leftSide}) => {
+  const gameDef = useGameDefinition();
+  const user = useProfile();
+  var srcDefault = url;
+  var srcLanguage = null;
+  if (!srcDefault.startsWith('http')) {
+      // Just a suffix. Let's see if we have a prefix for this language.
+      const srcBase = srcDefault;
+      srcDefault = gameDef?.imageUrlPrefix?.Default ? gameDef?.imageUrlPrefix?.Default + srcBase : null;
+      srcLanguage = gameDef?.imageUrlPrefix?.[user?.language] ? gameDef?.imageUrlPrefix?.[user?.language] + srcBase : null;
+  }
   const style = {
     top,
     height,
@@ -35,8 +45,8 @@ const CardImage = ({url, top, height, leftSide}) => {
   return (
     <img 
       className="fixed"
-      src={url} 
-      onError={(_e)=>{}}
+      src={srcLanguage || srcDefault} 
+      onError={(e)=>{e.target.onerror = null; e.target.src=srcDefault}}
       style={style}
     />
   );

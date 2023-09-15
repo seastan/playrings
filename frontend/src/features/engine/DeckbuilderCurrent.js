@@ -11,6 +11,7 @@ import { RotatingLines } from "react-loader-spinner";
 import { keyClass } from "./functions/common";
 import { keyStyle } from "./functions/common";
 import { useGameL10n } from "./hooks/useGameL10n";
+import { useImportLoadList } from "./hooks/useImportLoadList";
 
 export const DeckbuilderCurrent = React.memo(({currentGroupId, setCurrentGroupId, numChanges, setNumChanges, doFetchHash, setHoverCardDetails, modifyDeckList, currentDeck, setCurrentDeck}) => {
   const gameDef = useGameDefinition();
@@ -20,6 +21,7 @@ export const DeckbuilderCurrent = React.memo(({currentGroupId, setCurrentGroupId
   const authOptions = useAuthOptions();
   const deckbuilder = gameDef.deckbuilder;
   const spawnGroups = deckbuilder.spawnGroups;
+  const importLoadList = useImportLoadList();
   const gameL10n = useGameL10n();
   const cardDb = usePlugin()?.card_db || {};
 
@@ -58,7 +60,7 @@ export const DeckbuilderCurrent = React.memo(({currentGroupId, setCurrentGroupId
       loadListItem.loadGroupId = loadListItem.loadGroupId.replace("playerN", playerN)
     }
     console.log("playing 2", currentDeck.load_list);
-    gameBroadcast("game_action", {action: "load_cards", options: {load_list: currentDeck.load_list}});
+    importLoadList(currentDeck.load_list)
     //dispatch(setShowModal(null))
   }
 
