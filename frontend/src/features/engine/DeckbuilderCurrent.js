@@ -55,12 +55,15 @@ export const DeckbuilderCurrent = React.memo(({currentGroupId, setCurrentGroupId
   const playCurrentDeck = async() => {
   //  const detailedLoadList = [];
     console.log("playing 1", currentDeck.load_list);
-    for (var loadListItem of currentDeck.load_list) {
-      loadListItem.cardDetails = cardDb[loadListItem.databaseId];
-      loadListItem.loadGroupId = loadListItem.loadGroupId.replace("playerN", playerN)
-    }
+    const formattedLoadList = currentDeck.load_list.map((loadListItem) => {
+      return({
+        databaseId: loadListItem.databaseId,
+        quantity: loadListItem.quantity,
+        loadGroupId: loadListItem.loadGroupId.replace("playerN", playerN)
+      })
+    })
     console.log("playing 2", currentDeck.load_list);
-    importLoadList(currentDeck.load_list)
+    importLoadList(formattedLoadList)
     //dispatch(setShowModal(null))
   }
 
