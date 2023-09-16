@@ -10,7 +10,7 @@ async function axiosRetry(
   try {
     console.log("pluginTrace axiosRetry try 1", url)
     const an_axios = axios.create({
-      timeout: 8000, 
+      timeout: delay, 
     });
     const result = await an_axios(url, options);
 

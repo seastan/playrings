@@ -98,7 +98,12 @@ defmodule DragnCardsGame.GameUIServer do
   """
   @spec add_player_to_room(String.t(), integer, pid()) :: GameUI.t()
   def add_player_to_room(game_name, user_id, pid) do
-    GenServer.call(via_tuple(game_name), {:add_player_to_room, user_id, pid})
+    case GenServer.whereis(via_tuple(game_name)) do
+      nil ->
+        {:error, :not_found}
+      pid ->
+        GenServer.call(pid, {:add_player_to_room, user_id, pid})
+    end
   end
 
   @doc """
