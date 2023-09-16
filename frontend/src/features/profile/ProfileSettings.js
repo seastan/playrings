@@ -13,10 +13,8 @@ export const ProfileSettings = () => {
   const user = useProfile();
   const authOptions = useAuthOptions();
   const history = useHistory();
-  const required_support_level = 5;
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
-  const [showResolutionMessage, setShowResolutionMessage] = useState(false);
   const { inputs, handleSubmit, handleInputChange, setInputs } = useForm(async () => {
     var valid = true;
     [inputs.background_url, inputs.player_back_url, inputs.encounter_back_url].forEach((str) => {
@@ -73,11 +71,6 @@ export const ProfileSettings = () => {
   if (user == null) {
     return null;
   }
-  console.log('Rendering ProfileSettings');
-  if (inputs.language === "English_HD" && user.supporter_level < 5 && user.language !== "English_HD") {
-    setInputs({...inputs, language: user.language || ""})
-    setShowResolutionMessage(true);
-  }
 
 
   const PatreonButton = ({patreonClientId, amount, redirectURI}) => {
@@ -101,13 +94,10 @@ export const ProfileSettings = () => {
   return (
     <Container>
       <div className="bg-gray-100 p-4 rounded max-w-xl shadow">
-      <h1 className="font-semibold mb-4 text-black">Settings</h1>
+      <h1 className="font-semibold mb-4 text-black">Language</h1>
       <form action="POST" onSubmit={handleSubmit}>
         <fieldset>
           <div className="mb-4">
-            <label className="block text-sm font-bold mb-2">
-              Card Images
-            </label>
             <select 
               name="language"
               className="form-control w-full"
@@ -122,12 +112,6 @@ export const ProfileSettings = () => {
               <Button isSubmit isPrimary className="mx-2">
                 Update
               </Button>
-            {user.supporter_level < required_support_level &&
-              <Button isPrimary className="mx-2">
-                <img className="inline-block mr-2" style={{height: "20px", width: "20px"}} src="https://upload.wikimedia.org/wikipedia/commons/9/94/Patreon_logo.svg"/>
-                <a className="text-white no-underline" href="https://www.patreon.com/dragncards">Unlock all</a>
-              </Button> 
-            }
           </div>
         </fieldset>
       </form>
@@ -139,7 +123,7 @@ export const ProfileSettings = () => {
       )}
       </div>
 
-      <PatreonButton patreonClientId={"MUANs_lS4yBmji1txII2sV6NJ3X1JEp5OSzPVr_rkU02jz3S2jTubjoMOSPK5Jul"} amount={1000} redirectURI={"https://www.dragncards.com/auth/patreon/callback"}/>
+      {/* <PatreonButton patreonClientId={"MUANs_lS4yBmji1txII2sV6NJ3X1JEp5OSzPVr_rkU02jz3S2jTubjoMOSPK5Jul"} amount={1000} redirectURI={"https://www.dragncards.com/auth/patreon/callback"}/> */}
 
     </Container>
 

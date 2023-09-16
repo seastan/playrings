@@ -76,6 +76,7 @@ export const EditPluginModal = ({ plugin, closeModal, doFetchHash}) => {
       const updateData = {
         plugin: {
           id: plugin.id,
+          name: inputs.gameDef.pluginName,
           game_def: inputs.gameDef,
           card_db: inputs.cardDb,
           public: inputs.public || false,
