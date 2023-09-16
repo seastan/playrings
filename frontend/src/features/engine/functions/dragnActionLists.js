@@ -60,7 +60,7 @@ export const dragnActionLists = {
     ["MOVE_STACKS", origGroupId, destGroupId, numStacks, position]
   ]),
   moveCardToTop: (cardId, destGroupId, label) => ([
-    ["LOG", "$ALIAS_N", " moved ", ["FACEUP_NAME_FROM_CARD_ID", cardId], " to top of ", label, "."]
+    ["LOG", "$ALIAS_N", " moved ", ["FACEUP_NAME_FROM_CARD_ID", cardId], " to top of ", label, "."],
     ["MOVE_CARD", cardId, destGroupId, 0]
   ]),
   moveCardToShuffled: (cardId, destGroupId, label) => ([
