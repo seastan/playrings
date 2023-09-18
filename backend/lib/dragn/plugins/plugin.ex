@@ -2,7 +2,7 @@ defmodule DragnCards.Plugins.Plugin do
   use Ecto.Schema
   import Ecto.Changeset
 
-  @derive {Jason.Encoder, only: [:id, :game_def, :card_db]}
+  @derive {Jason.Encoder, only: [:id, :game_def, :card_db, :version]}
 
   schema "plugins" do
     field :card_db, :map

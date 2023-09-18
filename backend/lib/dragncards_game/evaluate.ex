@@ -3,7 +3,7 @@ defmodule DragnCardsGame.Evaluate do
   Module that defines and evaluates the LISP-like language used to modify the game state.
   """
   require Logger
-  alias DragnCardsGame.{Game, GameUI}
+  alias DragnCardsGame.{GameUI}
   alias DragnCards.{Rooms, Plugins}
 
 

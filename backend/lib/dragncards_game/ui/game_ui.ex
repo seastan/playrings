@@ -5,7 +5,6 @@ defmodule DragnCardsGame.GameUI do
 
 
   require Logger
-  alias ElixirSense.Log
   alias DragnCardsGame.GameVariables
   alias DragnCardsGame.{Game, GameUI, Stack, Card, PlayerInfo, Evaluate, GameVariables}
 

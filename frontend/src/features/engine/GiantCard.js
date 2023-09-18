@@ -32,6 +32,7 @@ export const GiantCard = React.memo(({}) => {
   //   // Update the ref with the current value of activeCardGroupId
   //   prevActiveCardGroupIdRef.current = activeCardGroupId;
   // }, [activeCardId, activeCardGroupId, dispatch]);
+  if (!visibleFace) return(null);
 
   if (activeCardId && !touchAction) {
     var height = visibleFace.height >= visibleFace.width ? "70vh" : "50vh";

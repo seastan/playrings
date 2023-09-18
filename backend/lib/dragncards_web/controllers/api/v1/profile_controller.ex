@@ -8,6 +8,7 @@ defmodule DragnCardsWeb.API.V1.ProfileController do
   @spec index(Conn.t(), map()) :: Conn.t()
   def index(conn, _params) do
     user = Pow.Plug.current_user(conn)
+    IO.puts("profile_controller index 1")
 
     case user do
       nil ->
