@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
+import { set } from "date-fns";
 
 async function axiosRetry(
   url: string,
@@ -31,39 +32,53 @@ async function axiosRetry(
   }
 }
 
-
-const useDataApi = <T extends any>(initialUrl: string, initialData: T) => {
+const useDataApi = <T extends any>(
+  initialUrl: string,
+  initialData: T,
+  initialFetch: boolean = true // Added this line
+) => {
   const [data, setData] = useState(initialData);
-  const [url, setUrl] = useState(initialUrl); // Mechanism to refetch by changing url
-  const [hash, setHash] = useState<any>(null); // Mechanism to refrech same url, by changing hash
+  const [url, setUrl] = useState(initialUrl);
+  const [hash, setHash] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isError, setIsError] = useState(false);
+  const [initialized, setInitialized] = useState(false);
+
   useEffect(() => {
     const fetchData = async () => {
+      if (!initialized && !initialFetch) {
+        setInitialized(true);
+        return; // Skip fetch if initialFetch is false
+      }
+
       setIsError(false);
       setIsLoading(true);
+
       try {
         const retries = 4;
-        const initialDelay = 1000; 
+        const initialDelay = 1000;
         console.log("pluginTrace useDataApi 1", url)
         const result = await axiosRetry(url, {}, retries, initialDelay);
         console.log("pluginTrace useDataApi 2", result)
-        //const result = await axios(url, {timeout: 2000});
         setData(result.data);
       } catch (error) {
         setIsError(true);
       }
+      
       setIsLoading(false);
+      setInitialized(true);
     };
+
     fetchData();
-  }, [url, hash]);
+  }, [url, hash, initialFetch]); // Added initialFetch dependency
+
   return {
     data,
     isLoading,
     isError,
     doFetchUrl: setUrl,
     doFetchHash: setHash,
-    setData, // Override what was fetched by the API (For example, websocket updates)
+    setData,
   };
 };
 

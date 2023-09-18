@@ -62,7 +62,7 @@ export const DropdownMenuGroup = React.memo(({
 
   const actionListShuffle = [
     ["SHUFFLE_GROUP", menuGroup.id],
-    ["LOG", "$ALIAS_N", " shuffled ", group.name]
+    ["LOG", "$ALIAS_N", " shuffled ", group.label]
   ]
 
   const handleLookAtClick = (dropdownOptions) => {

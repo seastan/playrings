@@ -27,7 +27,7 @@ export const RoomProviders = ({ gameBroadcast, chatBroadcast }) => {
   const playerN = getPlayerN(playerInfo, myUser?.id);
   const gameDef = useGameDefinition();
   const pluginId = usePlugin()?.id;
-  const [playerNSet, setPlayerNSet] = useState(false);
+  const [playerNSet, setPlayerNSet] = useState(true);
 
   useEffect(() => {
     dispatch(setPlayerN(playerN));
@@ -42,7 +42,10 @@ export const RoomProviders = ({ gameBroadcast, chatBroadcast }) => {
   if (gameBackgroundUrl && gameBackgroundUrl !== "") backgroundUrl = gameBackgroundUrl;
   if (userBackgroundUrl && userBackgroundUrl !== "") backgroundUrl = userBackgroundUrl;
 
+  console.log("Rendering RoomProviders h");
+
   return (
+    
       <div className="background"
         style={{
           height: "97vh",

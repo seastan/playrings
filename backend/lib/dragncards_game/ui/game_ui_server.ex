@@ -6,7 +6,7 @@ defmodule DragnCardsGame.GameUIServer do
   @timeout :timer.minutes(60)
 
   require Logger
-  alias DragnCardsGame.{Game, GameUI, GameRegistry, User, PlayerInfo}
+  alias DragnCardsGame.{GameUI, GameRegistry, User, PlayerInfo}
 
   def is_player(gameui, user_id) do
     ids = gameui["playerInfo"]
@@ -97,7 +97,7 @@ defmodule DragnCardsGame.GameUIServer do
   add_player_to_room/2: Add a player to the room.
   """
   @spec add_player_to_room(String.t(), integer, pid()) :: GameUI.t()
-  def add_player_to_room(game_name, user_id, pid) do
+  def add_player_to_room(game_name, user_id, _pid) do
     case GenServer.whereis(via_tuple(game_name)) do
       nil ->
         {:error, :not_found}
@@ -149,7 +149,7 @@ defmodule DragnCardsGame.GameUIServer do
     # IO.puts("game_ui_server init")
     # IO.inspect(:code.priv_dir(:dragncards))
     # gameui = put_in(gameui["pypid"], :erlang.pid_to_list(pypid))
-    gr = GameRegistry.add(gameui["roomSlug"], gameui)
+    GameRegistry.add(gameui["roomSlug"], gameui)
     #GameRegistry.add(gameui["roomName"]<>"-pypid", pypid)
     {:ok, gameui, timeout(gameui)}
   end
