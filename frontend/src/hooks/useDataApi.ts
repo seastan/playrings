@@ -16,6 +16,15 @@ async function axiosRetry(
     const result = await an_axios(url, options);
 
     console.log("pluginTrace axiosRetry try 2", url, result)
+    
+    // Calculate the size of the received data
+    const dataSize = new TextEncoder().encode(JSON.stringify(result.data)).length;
+    console.log(`Received data size: ${dataSize} bytes`);
+    // const dataSize = new TextEncoder().encode(JSON.stringify(result.data.compressed_data)).length;
+    // console.log(`Received data size: ${dataSize} bytes`);
+    // const dataSize2 = new TextEncoder().encode(JSON.stringify(result.data.original_data)).length;
+    // console.log(`Received data size: ${dataSize2} bytes`);
+    
     return result;
   } catch (error) {
     console.log("pluginTrace axiosRetry catch 1", url, error)
