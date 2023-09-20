@@ -713,6 +713,8 @@ export const getGameDefSchema = (gameDef) => {
               "groupId": {
                 "_type_": "string",
                 "_required_": true,
+                "_memberOf_": mytypeof(gameDef?.groups) === "object" ? [...Object.keys(gameDef.groups), ...Object.keys(gameDef.groups).map(item => item.replace('player1', 'playerN'))] : [],
+                "_memberOfPath_": "gameDef.groups",
               },
               "type": {
                 "_type_": "string",

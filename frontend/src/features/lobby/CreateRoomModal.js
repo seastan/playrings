@@ -7,12 +7,6 @@ import Button from "../../components/basic/Button";
 import useProfile from "../../hooks/useProfile";
 import { PleaseLogIn } from "./PleaseLogIn";
 
-const options = [
-  { value: 'public', label: 'Public' },
-  { value: 'private', label: 'Private' },
-  { value: 'playtest', label: 'Playtest' },
-]
-
 ReactModal.setAppElement("#root");
 
 export const CreateRoomModal = ({ 
@@ -33,22 +27,22 @@ export const CreateRoomModal = ({
     { value: 'private', label: 'Private' },
   ]
   if (myUser?.playtester) options.push({ value: 'playtest', label: 'Playtest' });
-  
-  const [privacyType, setPrivacyType] = useState(options[0]);
 
   console.log("Rendering CreateRoomModal", {isOpen, isLoggedIn, closeModal, replayUuid, plugin})
 
-  const createRoom = async () => {
+  const createRoom = async (privacyType) => {
     const data = { 
       room: { 
         name: "", 
         user: myUserID, 
-        privacy_type: privacyType.value,
+        privacy_type: privacyType,
       },
       game_options: {
         plugin_id: plugin.id,
         plugin_version: plugin.version,
+        plugin_name: plugin.name,
         replay_uuid: replayUuid,
+
 //        ringsdb_info: ringsDbInfo,
 //        load_shuffle: loadShuffle,
       }
@@ -68,10 +62,6 @@ export const CreateRoomModal = ({
       setIsLoading(false);
       setIsError(true);
     }
-  };
-
-  const handlePrivacyChange = (selectedOption) => {
-    setPrivacyType(selectedOption);
   };
 
   if (roomSlugCreated != null) {
@@ -97,13 +87,11 @@ export const CreateRoomModal = ({
       <h1 className="mb-2">Create Room</h1>
       {isLoggedIn ?
         <div className="mb-4">
-          <Select         
-            value={privacyType}
-            onChange={handlePrivacyChange}
-            options={options} />
-          
-          <Button onClick={createRoom} className="mt-2" disabled={isLoading}>
-            Create
+          <Button onClick={() => createRoom("public")} className="mt-2" disabled={isLoading}>
+            Public
+          </Button>
+          <Button onClick={() => createRoom("private")} className="mt-2" disabled={isLoading}>
+            Private
           </Button>
           <Button isCancel onClick={closeModal} className="mt-2">
             Cancel

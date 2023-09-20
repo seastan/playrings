@@ -9,19 +9,25 @@ export const PluginContext = createContext();
 
 export const decompressPluginData = (data) => {
   // Step 1: Decode the Base64 string
-  const decodedData = atob(data);
-  
-  // Step 2: Convert the decoded string to Uint8Array
-  const charData = decodedData.split('').map((x) => x.charCodeAt(0));
-  const binData = new Uint8Array(charData);
-  
-  // Step 3: Decompress the data using pako
-  const decompressedData = pako.inflate(binData, { to: 'string' });
-  
-  // Step 4: Parse JSON
-  const pluginData = JSON.parse(decompressedData);
+  console.log('decompressPluginData', data)
+  try {
+    const decodedData = atob(data);
+    
+    // Step 2: Convert the decoded string to Uint8Array
+    const charData = decodedData.split('').map((x) => x.charCodeAt(0));
+    const binData = new Uint8Array(charData);
+    
+    // Step 3: Decompress the data using pako
+    const decompressedData = pako.inflate(binData, { to: 'string' });
+    
+    // Step 4: Parse JSON
+    const pluginData = JSON.parse(decompressedData);
 
-  return pluginData;
+    return pluginData;
+  } catch (e) {
+    console.warn('Failed to decompress plugin data:', e);
+    return null;
+  }
 }
 
 

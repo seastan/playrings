@@ -948,6 +948,8 @@ defmodule DragnCardsGame.CustomPluginTest do
     # Load some decks into the game
     game = Evaluate.evaluate(game, ["LOAD_CARDS", "Q01.1"]) # Passage through Mirkwood
     game = Evaluate.evaluate(game, ["LOAD_CARDS", "coreLeadership"]) # Leadership core set deck
+    game = Evaluate.evaluate(game, ["RESET_INDEX"])
+
     assert length(game["groupById"]["player1Hand"]["stackIds"]) == 6
     assert length(game["groupById"]["player1Deck"]["stackIds"]) == 24
     assert length(game["groupById"]["sharedEncounterDeck"]["stackIds"]) == 34
@@ -981,6 +983,7 @@ defmodule DragnCardsGame.CustomPluginTest do
 
     # Repeat for player deck
     card_id = Evaluate.evaluate(game, ["GET_CARD_ID", "player1Deck", 0, 0])
+    IO.puts(card_id)
     game = Evaluate.evaluate(game, [
       ["DEFINE", "$ACTIVE_CARD_ID", card_id],
       ["ACTION_LIST", "discardCard"]

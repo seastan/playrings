@@ -133,17 +133,17 @@ defmodule DragnCardsGame.GameUIServer do
     gameui =
       case :ets.lookup(:game_uis, game_name) do
         [] ->
-          IO.puts("gameuiserver init 1")
+          Logger.debug("gameuiserver init 1")
           gameui = GameUI.new(game_name, user.id, options)
           :ets.insert(:game_uis, {game_name, gameui})
 
-          IO.puts("gameuiserver init 2")
+          Logger.debug("gameuiserver init 2")
           gameui
 
         [{^game_name, gameui}] ->
           gameui
       end
-    IO.puts("game_ui_server init")
+    Logger.debug("game_ui_server init")
     # path = [:code.priv_dir(:dragncards), "python", "lotrlcg"] |> Path.join()
     # {:ok, pypid} = :python.start([{:python_path, to_charlist(path)}, {:python, 'python3'}])
     # IO.puts("game_ui_server init")
@@ -178,10 +178,11 @@ defmodule DragnCardsGame.GameUIServer do
           # {status, gameui} = Jason.decode(gameui_json)
           put_in(gameui["game"]["last_action"], action)
 
+
         rescue
           exception ->
             stack_trace = __STACKTRACE__
-            Logger.error("Error in #{action}: #{inspect exception}, stack trace: #{inspect stack_trace}")
+            Logger.error("in #{gameui["game"]["pluginName"]}\naction: #{action}\noptions: #{inspect options}\nexception: #{inspect exception}\nstack trace: #{inspect stack_trace}")
             put_in(gameui["logMessages"], ["Error: " <> inspect(stack_trace)])
         end
       _ ->
