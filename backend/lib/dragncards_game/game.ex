@@ -49,6 +49,7 @@
       "roomName" => room_slug,
       "pluginId" => options["pluginId"],
       "pluginVersion" => options["pluginVersion"],
+      "pluginName" => options["pluginName"],
       "numPlayers" => default_layout_info["numPlayers"],
       "roundNumber" => 0,
       "layoutId" => layout_id,

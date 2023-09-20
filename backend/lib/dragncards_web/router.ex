@@ -1,18 +1,3 @@
-defmodule DragnCardsWeb.LogIncomingRequest do
-  @behaviour Plug
-
-  @impl true
-  def init(opts), do: opts
-
-  @impl true
-  def call(conn, _opts) do
-    IO.puts("Received request at #{DateTime.utc_now()} for #{conn.request_path}")
-    conn
-  end
-end
-
-
-
 defmodule DragnCardsWeb.Router do
   use DragnCardsWeb, :router
 
@@ -26,7 +11,6 @@ defmodule DragnCardsWeb.Router do
   end
 
   pipeline :api do
-    plug DragnCardsWeb.LogIncomingRequest
     plug(:accepts, ["json"])
     plug(DragnCardsWeb.APIAuthPlug, otp_app: :dragncards)
   end

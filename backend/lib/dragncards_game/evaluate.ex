@@ -669,7 +669,6 @@ defmodule DragnCardsGame.Evaluate do
             dest_group_id = evaluate(game, Enum.at(code, 2), trace ++ ["MOVE_STACK dest_group_id"])
             dest_stack_index = evaluate(game, Enum.at(code, 3), trace ++ ["MOVE_STACK dest_stack_index"])
             options = if argc >= 4 do evaluate(game, Enum.at(code, 4), trace ++ ["MOVE_STACK options"] ) else nil end
-            IO.inspect(options)
             #try do
               GameUI.move_stack(game, stack_id, dest_group_id, dest_stack_index, options)
             #rescue
@@ -728,6 +727,18 @@ defmodule DragnCardsGame.Evaluate do
             card = game["cardById"][card_id]
             face = card["sides"][card["currentSide"]]
             face["name"]
+
+          "RESET_INDEX" ->
+            Enum.reduce(game["groupById"], game, fn({_group_id, group}, acc) ->
+              Enum.reduce(Enum.with_index(group["stackIds"]), acc, fn({stack_id, stack_index}, acc1) ->
+                stack = GameUI.get_stack(acc1, stack_id)
+                Enum.reduce(Enum.with_index(stack["cardIds"]), acc1, fn({card_id, card_index}, acc2) ->
+                  acc2
+                  |> evaluate(["SET", "/cardById/" <> card_id <> "/stackIndex", stack_index], ["update_card_state orig_group stack_index:#{stack_index}"])
+                  |> evaluate(["SET", "/cardById/" <> card_id <> "/cardIndex", card_index], ["update_card_state orig_group card_index:#{card_index}"])
+                end)
+              end)
+            end)
 
           "ONE_CARD" ->
             var_name = Enum.at(code, 1)

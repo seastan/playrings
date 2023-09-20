@@ -8,7 +8,6 @@ defmodule DragnCardsWeb.API.V1.ProfileController do
   @spec index(Conn.t(), map()) :: Conn.t()
   def index(conn, _params) do
     user = Pow.Plug.current_user(conn)
-    IO.puts("profile_controller index 1")
 
     case user do
       nil ->
@@ -24,11 +23,7 @@ defmodule DragnCardsWeb.API.V1.ProfileController do
   # Show: Look up the public profile of another user.
   @spec show(Conn.t(), map()) :: Conn.t()
   def show(conn, %{"id" => user_id}) do
-    IO.puts("profile_controller show 1")
-    IO.inspect("user_id #{user_id}")
     user = Users.get_user(user_id)
-    IO.puts("profile_controller show 2")
-    IO.inspect(user)
 
     case user do
       nil ->

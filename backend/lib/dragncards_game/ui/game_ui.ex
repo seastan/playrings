@@ -312,7 +312,6 @@ defmodule DragnCardsGame.GameUI do
     # Assign the group's onCardEnter values
     game = Enum.reduce(dest_group["onCardEnter"], game, fn({key, val}, acc) ->
       if orig_group["onCardEnter"][key] != dest_group["onCardEnter"][key] do
-        # IO.puts("updating card state on enter: " <> key <> " " <> inspect(val))
         if key == "currentSide" and allow_flip == false do
           acc
         else
@@ -726,10 +725,6 @@ defmodule DragnCardsGame.GameUI do
   end
 
   def apply_delta(map, delta, direction) do
-    # IO.puts("applying delta 1")
-    # IO.inspect(delta)
-    # IO.inspect(direction)
-    # IO.puts("applying delta 2")
     if is_map(map) and is_map(delta) do
       delta = Map.delete(delta, "unix_ms")
       # Loop over keys in delta and apply the changes to the map
@@ -826,14 +821,12 @@ defmodule DragnCardsGame.GameUI do
     # Check if it worked
     case result do
       {:ok, _struct} ->
-        IO.puts("Insert or update was successful!")
+        Logger.debug("Insert or update was successful!")
 
       {:error, changeset} ->
-        IO.puts("An error occurred:")
-        IO.inspect(changeset.errors) # Print the errors
+        Logger.debug("An error occurred:")
+        Logger.debug(inspect(changeset.errors)) # Print the errors
     end
-
-    IO.puts("updates 4")
 
     Evaluate.evaluate(game, ["LOG", "$ALIAS_N", " saved the game."], [])
   end
@@ -1014,76 +1007,6 @@ defmodule DragnCardsGame.GameUI do
 
     shuffle_changed_decks(game, old_game, game_def)
 
-    # # Check if we should load the first quest card
-    # main_quest_stack_ids = get_stack_ids(game, "sharedMainQuest")
-    # IO.puts("load_cards 2a")
-    # quest_deck_stack_ids = get_stack_ids(game, "sharedQuestDeck")
-    # IO.puts("load_cards 2b")
-    # game = if Enum.count(quest_deck_stack_ids)>0 && Enum.count(main_quest_stack_ids)==0 do
-    #   IO.puts("load_cards 2c")
-    #   # Dump nightmare/campaign cards into staging
-    #   game = Enum.reduce_while(quest_deck_stack_ids, game, fn(stack_id, acc) ->
-    #     card = get_top_card_of_stack(acc, stack_id)
-    #     IO.puts("load_cards 2d")
-    #     card_type = card["sides"]["A"]["type"]
-    #     IO.puts("load_cards 2e")
-    #     IO.inspect(card_type)
-    #     case card_type do
-    #       "Nightmare" ->
-    #         {:cont, move_stack(acc, stack_id, "sharedStaging", 0)}
-    #       "Campaign" ->
-    #         {:cont, move_stack(acc, stack_id, "sharedStaging", 0)}
-    #       "Quest" ->
-    #         {:halt, move_stack(acc, stack_id, "sharedMainQuest", 0)}
-    #       _ ->
-    #         {:cont, acc}
-    #     end
-    #   end)
-    # else
-    #   game
-    # end
-
-    # IO.puts("load_cards 3")
-
-    # # Update encounter name
-    # game = put_in(game["roomTitle"], get_encounter_name(game))
-
-
-    # IO.puts("load_cards 4")
-    # # Calculate threat cost
-    # threat = Enum.reduce(load_list, 0, fn(r, acc) ->
-    #   sideA = r["cardRow"]["sides"]["A"]
-    #   if sideA["type"] == "Hero" && r["groupId"] == player_n<>"Play1" && game["roundNumber"] == 0 do
-    #     acc + CardFace.convert_to_integer(sideA["cost"])*r["quantity"]
-    #   else
-    #     acc
-    #   end
-    # end)
-    # IO.puts("load_cards 5")
-    # # Add to starting threat
-    # current_threat = game["playerData"][player_n]["threat"]
-    # game = put_in(game["playerData"][player_n]["threat"], current_threat + threat)
-
-    # IO.puts("load_cards 6")
-    # # If deck size has increased from 0, assume it is at start of game and a draw of 6 is needed
-    # round_number = game["roundNumber"]
-    # round_step = game["stepId"]
-    # deck_size_after = Enum.count(get_stack_ids(game, player_n_deck_id))
-
-    # IO.puts("load_cards 7")
-    # # Shuffle decks with new cards
-    # game = shuffle_changed_decks(old_game, game)
-
-    # IO.puts("load_cards 8")
-    # # Check if a hand needs to be drawn
-    # game = if round_number == 0 && round_step == "0.0" && deck_size_before == 0 && deck_size_after > 6 do
-    #   Enum.reduce(1..6, game, fn(i, acc) ->
-    #     stack_ids = get_stack_ids(acc, player_n_deck_id)
-    #     acc = move_stack(acc, Enum.at(stack_ids, 0), player_n<>"Hand", -1)
-    #   end)
-    # else
-    #   game
-    # end
   end
 
 end
