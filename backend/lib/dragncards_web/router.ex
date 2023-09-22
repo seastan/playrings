@@ -48,7 +48,9 @@ defmodule DragnCardsWeb.Router do
   end
 
   scope "/api/v1", DragnCardsWeb.API.V1, as: :api_v1 do
+    IO.puts("router.ex: api_v1 1")
     pipe_through(:api)
+    IO.puts("router.ex: api_v1 2")
 
     # Sign up / Sign In
     resources("/registration", RegistrationController, singleton: true, only: [:create])
@@ -66,6 +68,9 @@ defmodule DragnCardsWeb.Router do
     post("/profile/update_alt_art", ProfileController, :update_alt_art)
     get("/profile/:id", ProfileController, :show)
 
+    # reCAPTCHA verification
+    post("/recaptcha/verify", RecaptchaController, :verify)
+
     # Admin Contact
     get("/admin_contact", AdminContactController, :index)
 
@@ -81,11 +86,13 @@ defmodule DragnCardsWeb.Router do
 
     # Alerts
     get("/alerts", AlertController, :show)
+
   end
 
-  scope "/api/v1", DragnCardsWeb.API.V1, as: :api_v1 do
-    pipe_through([:api, :api_protected])
+  # scope "/api/v1", DragnCardsWeb.API.V1, as: :api_v1 do
+  #   pipe_through([:api, :api_protected])
 
-    # Your protected API endpoints here
-  end
+  #   # Your protected API endpoints here
+  # end
+
 end

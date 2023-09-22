@@ -9,6 +9,7 @@ import Button from "../../components/basic/Button";
 import ShareGameModal from "./ShareGameModal";
 import { parseISO, format, formatDistanceToNow } from "date-fns";
 import axios from "axios";
+import RecaptchaForm from "./RecaptchaForm";
 
 const columns = [
   {name: "uuid", label: "UUID", options: { filter: false, display: false }},
@@ -117,6 +118,7 @@ export const Profile: React.FC<Props> = () => {
             {user.email_confirmed_at == null && "No."}
             {user.email_confirmed_at != null && "Yes."}
           </div>
+          {user.email_confirmed_at == null && <RecaptchaForm/>}
           <div>
             <span className="font-semibold">Patreon supporter level</span>: {user.supporter_level ? user.supporter_level : 0}
           </div>

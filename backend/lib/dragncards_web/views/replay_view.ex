@@ -3,8 +3,6 @@ defmodule DragnCardsWeb.ReplayView do
   alias DragnCardsWeb.ReplayView
 
   def render("index.json", %{replays: replays}) do
-    IO.puts("replays.......................")
-    IO.inspect(replays)
     %{data: render_many(replays, ReplayView, "replay.json")}
   end
 

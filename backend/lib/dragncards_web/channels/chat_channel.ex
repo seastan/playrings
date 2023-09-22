@@ -31,8 +31,6 @@ defmodule DragnCardsWeb.ChatChannel do
       socket
       |> assign(:new_message, message)
 
-    IO.puts("00000000000000000000000000000000000000000000000 chat message")
-
     notify(socket)
     # use noreply - Notify will send them a reply
     {:noreply, socket}

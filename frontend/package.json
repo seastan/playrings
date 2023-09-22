@@ -65,6 +65,7 @@
     "react-dropdown": "^1.9.2",
     "react-emotion": "^10.0.0",
     "react-fast-compare": "^3.2.0",
+    "react-google-recaptcha": "^3.1.0",
     "react-hook-form": "^6.15.7",
     "react-icons": "^3.9.0",
     "react-loader-spinner": "^5.3.4",

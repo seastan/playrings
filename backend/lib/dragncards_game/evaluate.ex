@@ -196,14 +196,14 @@ defmodule DragnCardsGame.Evaluate do
         evaluate(game, code, trace)
       rescue
         e in RuntimeError ->
-          evaluate(game, ["ERROR", "Error: #{e.message}"], trace)
+          evaluate(game, ["ERROR", e.message], trace)
       end
     end)
 
     case Task.yield(task, timeout_ms) do
       nil ->
         Task.shutdown(task, :brutal_kill)
-        evaluate(game, ["ERROR", "Error: Action timed out."], trace)
+        evaluate(game, ["ERROR", "Action timed out."], trace)
       {:ok, result} ->
         result
     end
