@@ -1,6 +1,17 @@
 {:ok, _} = Application.ensure_all_started(:dragncards)
 
-defmodule DragnCardsGame.UpdatePluginForExistingUserScript do
+defmodule Mix.Tasks.UpdatePlugin do
+  use Mix.Task
+  @shortdoc "Updates the plugin for an existing user"
+
+  def run(_args) do
+    Mix.Task.run("app.start", [])
+    DragnCardsGame.UpdatePluginScript.run()
+  end
+end
+
+
+defmodule DragnCardsGame.UpdatePluginScript do
   alias DragnCards.{Repo, Plugins, Plugins.Plugin}
   alias DragnCards.Users.User
   alias Ecto.Multi
@@ -13,7 +24,6 @@ defmodule DragnCardsGame.UpdatePluginForExistingUserScript do
   defp get_existing_user(user_alias) do
     # Get all users
     all = Repo.all(from u in User, select: u.alias)
-    IO.inspect(all)
     case Repo.get_by(User, alias: user_alias) do
       nil -> {:error, "User not found"}
       user -> {:ok, user}
@@ -60,11 +70,13 @@ defmodule DragnCardsGame.UpdatePluginForExistingUserScript do
               # Plugin parameters for creation
               updated_params = %{
                 "game_def" => game_def,
-                "card_db" => card_db
+                "card_db" => card_db,
+                "version" => plugin.version + 1
               }
               IO.puts("Found plugin: #{plugin.name}")
               # updated_params = prepare_plugin(user, plugin)
-              Plugins.update_plugin(plugin, updated_params)
+              {_, res} = Plugins.update_plugin(plugin, updated_params)
+              IO.puts("Updated plugin. Version: #{res.version}")
 
             {:error, reason} ->
               IO.puts("Failed to find plugin. Reason: #{reason}")
@@ -76,5 +88,3 @@ defmodule DragnCardsGame.UpdatePluginForExistingUserScript do
     end)
   end
 end
-
-DragnCardsGame.UpdatePluginForExistingUserScript.run()
