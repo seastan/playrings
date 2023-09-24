@@ -1,4 +1,4 @@
-{:ok, _} = Application.ensure_all_started(:dragncards)
+#{:ok, _} = Application.ensure_all_started(:dragncards)
 
 defmodule Mix.Tasks.UpdatePlugin do
   use Mix.Task
