@@ -1048,4 +1048,35 @@ defmodule DragnCardsGame.CustomPluginTest do
     end)
 
   end
+
+
+  # Swap with top card of deck
+  @tag :while_loop
+  test "while_loop", %{user: _user, game: game, game_def: _game_def} do
+
+    # Load some decks into the game
+    game = Evaluate.evaluate(game, ["LOAD_CARDS", "Q01.1"]) # Passage through Mirkwood
+    game = Evaluate.evaluate(game, ["LOAD_CARDS", "coreLeadership"]) # Leadership core set deck
+    assert length(game["groupById"]["player1Hand"]["stackIds"]) == 6
+    assert length(game["groupById"]["player1Deck"]["stackIds"]) == 24
+
+    game = Evaluate.evaluate(game, [
+      ["WHILE",
+        [
+          ["NOT_EQUAL", "$GAME.groupById.sharedEncounterDeck.parentCards.[0].sides.A.type", "Enemy"]
+        ],
+        [
+          ["DEFINE", "$ACTIVE_CARD_ID", "$GAME.groupById.sharedEncounterDeck.parentCardIds.[0]"],
+          ["ACTION_LIST", "discardCard"]
+        ]
+      ]
+    ])
+
+    assert Evaluate.evaluate(game, "$GAME.groupById.sharedEncounterDeck.parentCards.[0].sides.A.type") == "Enemy"
+
+    # Print all messages
+    Enum.each(game["messages"], fn message ->
+      IO.puts(message)
+    end)
+  end
 end

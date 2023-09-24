@@ -185,6 +185,15 @@ defmodule DragnCardsGame.Evaluate do
     end
   end
 
+  def while_loop(game, condition, action_list, trace, index) do
+    if evaluate(game, condition, trace ++ ["WHILE condition"]) == true do
+      game = evaluate(game, action_list, trace ++ ["WHILE index #{index}"])
+      while_loop(game, condition, action_list, trace, index + 1)
+    else
+      game
+    end
+  end
+
   def card_match?(game, var_name, card, condition, trace) do
     game = evaluate(game, ["DEFINE", var_name, card], trace ++ ["DEFINE var_name"])
     evaluate(game, condition, trace ++ ["card_match?"])
@@ -210,12 +219,15 @@ defmodule DragnCardsGame.Evaluate do
   end
 
   def evaluate(game, code, trace \\ []) do
-    # IO.puts("evaluate 1")
-    # IO.inspect(code)
-    # IO.inspect(trace)
-    # Logger.debug("evaluate #{inspect(code)} #{inspect(trace)}")
+    try do
+      evaluate_inner(game, code, trace)
+    rescue
+      e in RuntimeError ->
+        evaluate(game, ["ERROR", e.message], trace)
+    end
+  end
 
-
+  def evaluate_inner(game, code, trace) do
     if is_list(code) && Enum.count(code) > 0 do
 
       if is_list(Enum.at(code, 0)) do
@@ -244,7 +256,7 @@ defmodule DragnCardsGame.Evaluate do
             game
 
           "ERROR" ->
-            Logger.error(Enum.at(code, 1))
+            Logger.error("in #{game["pluginName"]}\n#{Enum.at(code, 1)}")
             evaluate(game, ["LOG", Enum.at(code, 1)], trace ++ ["ERROR"])
 
           "DEFINE" ->
@@ -428,6 +440,22 @@ defmodule DragnCardsGame.Evaluate do
                   else
                     raise "Tried to access parentCardIds on a non-group object."
                   end
+                pathi == "parentCards" ->
+                  # Make sure there is a stackIds key
+                  if Map.has_key?(acc, "stackIds") do
+                    # Get the stackIds
+                    stack_ids = acc["stackIds"]
+                    # Return a list of the parent card ids
+                    Enum.map(stack_ids, fn(stack_id) ->
+                      # Get the stack
+                      stack = game["stackById"][stack_id]
+                      # Get the parent card id
+                      card_id = Enum.at(stack["cardIds"], 0)
+                      game["cardById"][card_id]
+                    end)
+                  else
+                    raise "Tried to access parentCards on a non-group object."
+                  end
                 acc == nil ->
                   nil
                 Map.has_key?(acc, pathi) ->
@@ -509,6 +537,11 @@ defmodule DragnCardsGame.Evaluate do
             statements = Enum.slice(code, 1, Enum.count(code))
             message = message_list_to_string(game, statements, trace ++ ["LOG message_list_to_string"])
             put_in(game["messages"], game["messages"] ++ [message])
+
+          "WHILE" ->
+            condition = Enum.at(code, 1)
+            action_list = Enum.at(code, 2)
+            while_loop(game, condition, action_list, trace, 0)
 
           "FOR_EACH_START_STOP_STEP" ->
             var_name = Enum.at(code, 1)
