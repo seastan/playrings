@@ -4,7 +4,7 @@ import useProfile from "../../hooks/useProfile";
 import useDataApi from "../../hooks/useDataApi";
 import { parseISO, format, formatDistanceToNow, set } from "date-fns";
 import axios from "axios";
-import { EditPluginModal } from "./EditPluginModal";
+import { EditPluginModal } from "./editplugin/EditPluginModal";
 import * as moment from 'moment';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEdit, faTrash } from "@fortawesome/free-solid-svg-icons";
