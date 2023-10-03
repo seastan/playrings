@@ -194,7 +194,7 @@ defmodule DragnCardsGame.McPluginTest do
     assert length(res["groupById"]["sharedEncounterDeck"]["stackIds"]) == 15
 
     # Reveal encounter card
-    res = Evaluate.evaluate(res, game_def["actionLists"]["revealEncounterFaceup"])
+    res = Evaluate.evaluate(res, game_def["actionLists"]["dealEncounterFacedown"])
     assert length(res["groupById"]["player1Engaged"]["stackIds"]) == 1
     assert length(res["groupById"]["sharedEncounterDeck"]["stackIds"]) == 14
 
@@ -252,6 +252,7 @@ defmodule DragnCardsGame.McPluginTest do
     end
   end
 
+  @tag :scenario_setup_expert
   test "scenario setup (expert)", %{user: user, game: game, game_def: game_def} do
     res = Evaluate.evaluate(game, game_def["actionLists"]["setExpertMode"])
     res = Evaluate.evaluate(res, ["LOAD_CARDS", "Rhino"])
@@ -260,7 +261,11 @@ defmodule DragnCardsGame.McPluginTest do
 
     Enum.each %{"sharedVillain" => "II", "sharedVillainDeck" => "III", "sharedVillainDiscard" => "I"}, fn {group, stage} ->
       stacks = res["groupById"][group]["stackIds"]
-      assert length(stacks) == 1
+      if group == "sharedVillain" do
+        assert length(stacks) == 2
+      else
+        assert length(stacks) == 1
+      end
       card_id = hd(res["stackById"][hd(stacks)]["cardIds"])
       assert res["cardById"][card_id]["sides"]["A"]["stage"] == stage
     end
@@ -388,9 +393,9 @@ defmodule DragnCardsGame.McPluginTest do
 
     # Reveal and discard cards until the deck is empty
     game = Enum.reduce(game["groupById"]["sharedEncounterDeck"]["stackIds"], game, fn(_stack_id, acc) ->
-      acc = Evaluate.evaluate(acc, ["ACTION_LIST", "revealEncounterFacedown"])
+      acc = Evaluate.evaluate(acc, ["ACTION_LIST", "dealEncounterFacedown"])
       Evaluate.evaluate(acc, [
-        ["DEFINE", "$ACTIVE_CARD_ID", ["GET_CARD_ID", "player1Engaged", 0, 0]],
+        ["DEFINE", "$DISCARD_CARD_ID", ["GET_CARD_ID", "player1Engaged", 0, 0]],
         ["ACTION_LIST", "discardCard"]
       ])
     end)
@@ -416,7 +421,7 @@ defmodule DragnCardsGame.McPluginTest do
     # Discard cards until the deck is empty
     game = Enum.reduce(game["groupById"]["sharedEncounterDeck"]["stackIds"], game, fn(_stack_id, acc) ->
       Evaluate.evaluate(acc, [
-        ["DEFINE", "$ACTIVE_CARD_ID", ["GET_CARD_ID", "sharedEncounterDeck", 0, 0]],
+        ["DEFINE", "$DISCARD_CARD_ID", ["GET_CARD_ID", "sharedEncounterDeck", 0, 0]],
         ["ACTION_LIST", "discardCard"]
       ])
     end)
@@ -437,7 +442,7 @@ defmodule DragnCardsGame.McPluginTest do
     # Discard cards until the deck is empty
     res = Enum.reduce(res["groupById"]["player1Deck"]["stackIds"], res, fn(_stack_id, acc) ->
       Evaluate.evaluate(acc, [
-        ["DEFINE", "$ACTIVE_CARD_ID", ["GET_CARD_ID", "player1Deck", 0, 0]],
+        ["DEFINE", "$DISCARD_CARD_ID", ["GET_CARD_ID", "player1Deck", 0, 0]],
         ["ACTION_LIST", "discardCard"]
       ])
     end)
@@ -461,7 +466,7 @@ defmodule DragnCardsGame.McPluginTest do
         ["COND",
           ["GREATER_THAN", ["LENGTH", "$GAME.groupById.player1Deck.stackIds"], 3],
           [
-            ["DEFINE", "$ACTIVE_CARD_ID", ["GET_CARD_ID", "player1Deck", 0, 0]],
+            ["DEFINE", "$DISCARD_CARD_ID", ["GET_CARD_ID", "player1Deck", 0, 0]],
             ["ACTION_LIST", "discardCard"]
           ]
         ]
@@ -473,7 +478,7 @@ defmodule DragnCardsGame.McPluginTest do
         ["COND",
           ["GREATER_THAN", ["LENGTH", "$GAME.groupById.player1Hand.stackIds"], 1],
           [
-            ["DEFINE", "$ACTIVE_CARD_ID", ["GET_CARD_ID", "player1Hand", 0, 0]],
+            ["DEFINE", "$DISCARD_CARD_ID", ["GET_CARD_ID", "player1Hand", 0, 0]],
             ["ACTION_LIST", "discardCard"]
           ]
         ]
@@ -575,11 +580,14 @@ defmodule DragnCardsGame.McPluginTest do
   test "Side Scheme as Boost Card", %{user: _user, game: game, game_def: game_def} do
     # Get Breakin' & Takin'
     card_db_id = "89399b59-bb97-5eef-81f5-7bf8c8194b15"
-    res = Evaluate.evaluate(game, ["LOAD_CARDS", ["LIST", %{"databaseId" => card_db_id, "loadGroupId" => "sharedEncounterDeck", "quantity" => 2}]])
+    # Get Ivory Horn
+    card2_db_id = "16f27f91-8904-5ecd-9985-1a23dc866d1c"
+    res = Evaluate.evaluate(game, ["LOAD_CARDS", ["LIST", %{"databaseId" => card_db_id, "loadGroupId" => "sharedEncounterDeck", "quantity" => 1}, %{"databaseId" => card2_db_id, "loadGroupId" => "sharedEncounterDeck", "quantity" => 1}]])
 
-    res = Evaluate.evaluate(res, game_def["actionLists"]["drawBoost"])
     card = Evaluate.evaluate(res, ["ONE_CARD", "$CARD", ["EQUAL", "$CARD.databaseId", card_db_id]])
     card_id = card["id"]
+    res = Evaluate.evaluate(res, ["MOVE_CARD", card_id, "sharedEncounterDeck", 0])
+    res = Evaluate.evaluate(res, game_def["actionLists"]["drawBoost"])
 
     assert !res["cardById"][card_id]["tokens"]["threat"]
   end
@@ -588,12 +596,16 @@ defmodule DragnCardsGame.McPluginTest do
   test "Side Scheme Drawn as Encounter Card Doesn't Get Threat Until Flipped", %{user: _user, game: game, game_def: game_def} do
     # Get Breakin' & Takin'
     card_db_id = "89399b59-bb97-5eef-81f5-7bf8c8194b15"
-    res = Evaluate.evaluate(game, ["LOAD_CARDS", ["LIST", %{"databaseId" => card_db_id, "loadGroupId" => "sharedEncounterDeck", "quantity" => 2}]])
+    # Get Ivory Horn
+    card2_db_id = "16f27f91-8904-5ecd-9985-1a23dc866d1c"
+    res = Evaluate.evaluate(game, ["LOAD_CARDS", ["LIST", %{"databaseId" => card_db_id, "loadGroupId" => "sharedEncounterDeck", "quantity" => 1}, %{"databaseId" => card2_db_id, "loadGroupId" => "sharedEncounterDeck", "quantity" => 1}]])
 
-    res = Evaluate.evaluate(res, game_def["actionLists"]["revealEncounterFaceup"])
     card = Evaluate.evaluate(res, ["ONE_CARD", "$CARD", ["EQUAL", "$CARD.databaseId", card_db_id]])
     card_id = card["id"]
+    res = Evaluate.evaluate(res, ["MOVE_CARD", card_id, "sharedEncounterDeck", 0])
+    res = Evaluate.evaluate(res, game_def["actionLists"]["dealEncounterFacedown"])
 
+    assert res["cardById"][card_id]["groupId"] == "player1Engaged"
     assert !res["cardById"][card_id]["tokens"]["threat"]
   end
 
@@ -681,5 +693,38 @@ defmodule DragnCardsGame.McPluginTest do
     res = Evaluate.evaluate(game, ["LOAD_CARDS", "Infiltrate the Museum"])
 
     assert length(res["groupById"]["sharedEncounterDeck"]["stackIds"]) == 18
+  end
+
+  @tag :remove_all_tokens_leaves_play
+  test "Removes All Toknes when Card Leaves Play", %{user: _user, game: game, game_def: game_def} do
+    # Get Breakin' & Takin'
+    card_db_id = "89399b59-bb97-5eef-81f5-7bf8c8194b15"
+    # Get Ivory Horn
+    card2_db_id = "16f27f91-8904-5ecd-9985-1a23dc866d1c"
+    res = Evaluate.evaluate(game, ["LOAD_CARDS", ["LIST", %{"databaseId" => card_db_id, "loadGroupId" => "sharedEncounterDeck", "quantity" => 1}, %{"databaseId" => card2_db_id, "loadGroupId" => "sharedEncounterDeck", "quantity" => 2}]])
+
+    card = Evaluate.evaluate(res, ["ONE_CARD", "$CARD", ["EQUAL", "$CARD.databaseId", card_db_id]])
+    card_id = card["id"]
+    res = Evaluate.evaluate(res, ["MOVE_CARD", card_id, "player1Engaged", 0])
+    res = Evaluate.evaluate(res, ["INCREASE_VAL", "/cardById/#{card_id}/tokens/threat", 2])
+
+    res = put_in(res["playerUi"]["activeCardId"], card_id)
+    res = Evaluate.evaluate(res, game_def["actionLists"]["discardCard"])
+
+    assert !res["cardById"][card_id]["tokens"]["threat"]
+  end
+
+  @tag :discard_minion
+  test "Discard Minion", %{user: _user, game: game, game_def: game_def} do
+    res = Evaluate.evaluate(game, ["LOAD_CARDS", "Rhino"])
+
+    res = Evaluate.evaluate(res, [
+      ["DEFINE", "$GROUP_ID", "player1Engaged"],
+      ["ACTION_LIST", "discardMinion"]
+    ])
+
+    IO.puts res
+    #IO.puts length(res["groupById"]["sharedEncounterDeck"]["parentCardIds"])
+    assert length(res["groupById"]["player1Engaged"]["stackIds"]) == 1
   end
 end
