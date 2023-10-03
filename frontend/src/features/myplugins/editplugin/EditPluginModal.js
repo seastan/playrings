@@ -11,7 +11,7 @@ import { mergeJSONs, processArrayOfRows, readFileAsText, stringTo2DArray } from 
 import { validateSchema } from "../validate/validateGameDef";
 import { getGameDefSchema } from "../validate/getGameDefSchema";
 import useProfile from "../../../hooks/useProfile";
-import AutocompleteInput from "./AutocompleteInput";
+import PrivateAccess from "./PrivateAccess";
 
 ReactModal.setAppElement("#root");
 
@@ -308,7 +308,7 @@ export const EditPluginModal = ({ plugin, closeModal, doFetchHash}) => {
               <label className="block text-sm font-bold mb-2 mt-4 text-white">
               {siteL10n("Private Access")}
               </label>
-              <AutocompleteInput/>
+              <PrivateAccess pluginId={plugin ? plugin.id : -1}/>
             </>
           )}
           <Button disabled={!changesMade || !validGameDef || (!plugin && !validCardDb)} isSubmit={changesMade} className="mt-4">

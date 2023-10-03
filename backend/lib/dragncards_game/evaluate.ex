@@ -267,7 +267,7 @@ defmodule DragnCardsGame.Evaluate do
           "DEFINED" ->
             var_name = Enum.at(code, 1)
             try do
-              result = evaluate(game, var_name, trace ++ ["DEFINED #{var_name}"])
+              result = evaluate_inner(game, var_name, trace ++ ["DEFINED #{var_name}"])
               result != nil
             rescue
               _ -> false

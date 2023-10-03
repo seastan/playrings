@@ -72,4 +72,5 @@ defmodule DragnCardsWeb.API.V1.ProfileController do
         |> json(%{error: %{message: "Failed to update user's plugin settings", changeset: changeset}})
     end
   end
+
 end
