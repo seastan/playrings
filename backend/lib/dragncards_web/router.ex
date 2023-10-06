@@ -48,9 +48,7 @@ defmodule DragnCardsWeb.Router do
   end
 
   scope "/api/v1", DragnCardsWeb.API.V1, as: :api_v1 do
-    IO.puts("router.ex: api_v1 1")
     pipe_through(:api)
-    IO.puts("router.ex: api_v1 2")
 
     # Sign up / Sign In
     resources("/registration", RegistrationController, singleton: true, only: [:create])
@@ -61,6 +59,9 @@ defmodule DragnCardsWeb.Router do
     resources("/confirm-email", ConfirmationController, only: [:show])
     post("/reset-password", ResetPasswordController, :create)
     post("/reset-password/update", ResetPasswordController, :update)
+
+    # User data
+    get("/users/plugin_permission/:plugin_id", UsersController, :fetch_plugin_permission)
 
     # Profile
     get("/profile", ProfileController, :index)

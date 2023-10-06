@@ -1,16 +1,17 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import axios from "axios";
 import ReactModal from "react-modal";
-import Button from "../../components/basic/Button";
-import { useSiteL10n } from "../../hooks/useSiteL10n";
-import useForm from "../../hooks/useForm";
-import useAuth from "../../hooks/useAuth";
+import Button from "../../../components/basic/Button";
+import { useSiteL10n } from "../../../hooks/useSiteL10n";
+import useForm from "../../../hooks/useForm";
+import useAuth from "../../../hooks/useAuth";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheck } from "@fortawesome/free-solid-svg-icons";
-import { mergeJSONs, processArrayOfRows, readFileAsText, stringTo2DArray } from "./uploadPluginFunctions";
-import { validateSchema } from "./validate/validateGameDef";
-import { getGameDefSchema } from "./validate/getGameDefSchema";
-import useProfile from "../../hooks/useProfile";
+import { mergeJSONs, processArrayOfRows, readFileAsText, stringTo2DArray } from "../uploadPluginFunctions";
+import { validateSchema } from "../validate/validateGameDef";
+import { getGameDefSchema } from "../validate/getGameDefSchema";
+import useProfile from "../../../hooks/useProfile";
+import PrivateAccess from "./PrivateAccess";
 
 ReactModal.setAppElement("#root");
 
@@ -292,16 +293,24 @@ export const EditPluginModal = ({ plugin, closeModal, doFetchHash}) => {
           </label>
           <div className="w-full">
             <div className="p-1 float-left w-1/2">
-          <Button isPrimary={inputs.public} onClick={() => setInputs({...inputs, public: true})}>
-            {inputs.public && <FontAwesomeIcon className="" icon={faCheck}/>} {siteL10n("Public")}
-          </Button>
-          </div>
-          <div className="p-1 float-left w-1/2">
-          <Button isPrimary={!inputs.public}  onClick={() => setInputs({...inputs, public: false})}>
-            {!inputs.public && <FontAwesomeIcon className="" icon={faCheck}/>} {siteL10n("Private")}
-          </Button>
-          </div>
+              <Button isPrimary={inputs.public} onClick={() => setInputs({...inputs, public: true})}>
+                {inputs.public && <FontAwesomeIcon className="" icon={faCheck}/>} {siteL10n("Public")}
+              </Button>
+            </div>
+            <div className="p-1 float-left w-1/2">
+              <Button isPrimary={!inputs.public}  onClick={() => setInputs({...inputs, public: false})}>
+                {!inputs.public && <FontAwesomeIcon className="" icon={faCheck}/>} {siteL10n("Private")}
+              </Button>
+            </div>
           </div> 
+          {!inputs.public && (
+            <>
+              <label className="block text-sm font-bold mb-2 mt-4 text-white">
+              {siteL10n("Private Access")}
+              </label>
+              <PrivateAccess pluginId={plugin ? plugin.id : -1}/>
+            </>
+          )}
           <Button disabled={!changesMade || !validGameDef || (!plugin && !validCardDb)} isSubmit={changesMade} className="mt-4">
           {plugin ? siteL10n("Update Plugin") : siteL10n("Create Plugin")}
           </Button>

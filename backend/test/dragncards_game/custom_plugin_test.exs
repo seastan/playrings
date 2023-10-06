@@ -1062,9 +1062,7 @@ defmodule DragnCardsGame.CustomPluginTest do
 
     game = Evaluate.evaluate(game, [
       ["WHILE",
-        [
-          ["NOT_EQUAL", "$GAME.groupById.sharedEncounterDeck.parentCards.[0].sides.A.type", "Enemy"]
-        ],
+        ["NOT_EQUAL", "$GAME.groupById.sharedEncounterDeck.parentCards.[0].sides.A.type", "Enemy"],
         [
           ["DEFINE", "$ACTIVE_CARD_ID", "$GAME.groupById.sharedEncounterDeck.parentCardIds.[0]"],
           ["ACTION_LIST", "discardCard"]
