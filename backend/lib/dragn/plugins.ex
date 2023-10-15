@@ -6,7 +6,7 @@ defmodule DragnCards.Plugins do
   import Ecto.Query, warn: false
   alias DragnCards.Repo
 
-  alias DragnCards.{Plugins.Plugin, Users.User}
+  alias DragnCards.{Plugins.Plugin, Users.User, UserPluginPermission}
 
   @doc """
   Returns the list of plugins.
@@ -24,8 +24,10 @@ defmodule DragnCards.Plugins do
     query = from p in Plugin,
     join: u in User,
     on: [id: p.author_id],
+    left_join: upp in UserPluginPermission,
+    on: upp.private_access == p.id and upp.user_id == ^user_id,
     order_by: [desc: :version],
-    where: p.public == true or p.author_id == ^user_id,
+    where: p.public == true or p.author_id == ^user_id or not is_nil(upp.id),
     select: {
       p.author_id,
       u.alias,

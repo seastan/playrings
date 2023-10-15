@@ -65,7 +65,7 @@ export const Lobby = () => {
             onClick={() => togglePluginsType("public")}
           >
             <span style={{ 
-              borderBottom: pluginsType === "public" ? "3px solid rgb(153, 27, 27)" : "none"
+              borderBottom: pluginsType === "public" ? "3px solid rgba(153, 27, 27, 0.7)" : "none"
             }}>
             Public Plugins
             </span>
@@ -75,7 +75,7 @@ export const Lobby = () => {
             onClick={() => togglePluginsType("private")}
           >
             <span style={{ 
-              borderBottom: pluginsType === "private" ? "3px solid rgb(153, 27, 27)" : "none"
+              borderBottom: pluginsType === "private" ? "3px solid rgba(153, 27, 27, 0.7)" : "none"
             }}>
             Private Plugins
             </span>
