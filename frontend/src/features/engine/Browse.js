@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { Stacks } from "./Stacks";
 import { useBrowseTopN } from "./hooks/useBrowseTopN";
 import { setValues } from "../store/gameUiSlice";
-import { faBars, faChevronCircleDown } from "@fortawesome/free-solid-svg-icons";
+import { faBars } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { setBrowseGroupId, setDropdownMenu, setTyping } from "../store/playerUiSlice";
 import { useGameL10n } from "./hooks/useGameL10n";
@@ -12,7 +12,6 @@ import { useGameDefinition } from "./hooks/useGameDefinition";
 import { useDoActionList } from "./hooks/useDoActionList";
 import { useLayout } from "./hooks/useLayout";
 import { convertToPercentage, getParentCardsInGroup } from "./functions/common";
-import { ca } from "date-fns/locale";
 
 const isNormalInteger = (val) => {
   var n = Math.floor(Number(val));
