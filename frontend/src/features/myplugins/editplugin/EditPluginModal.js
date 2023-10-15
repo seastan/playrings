@@ -11,7 +11,6 @@ import { mergeJSONs, processArrayOfRows, readFileAsText, stringTo2DArray } from 
 import { validateSchema } from "../validate/validateGameDef";
 import { getGameDefSchema } from "../validate/getGameDefSchema";
 import useProfile from "../../../hooks/useProfile";
-import PrivateAccess from "./PrivateAccess";
 
 ReactModal.setAppElement("#root");
 
@@ -73,16 +72,17 @@ export const EditPluginModal = ({ plugin, closeModal, doFetchHash}) => {
       res = await axios.post("/be/api/myplugins", updateData, authOptions);
 
     } else {
+      const newPlugin = {
+        id: plugin.id,
+        version: plugin.version + 1,
+        public: inputs.public,
+      }
+      if (inputs.gameDef) newPlugin.game_def = inputs.gameDef;
+      if (inputs.gameDef?.pluginName) newPlugin.name = inputs.gameDef.pluginName;
+      if (inputs.cardDb) newPlugin.card_db = inputs.cardDb;
 
       const updateData = {
-        plugin: {
-          id: plugin.id,
-          name: inputs.gameDef.pluginName,
-          game_def: inputs.gameDef,
-          card_db: inputs.cardDb,
-          public: inputs.public || false,
-          version: plugin.version + 1,
-        }
+        plugin: newPlugin
       };
       res = await axios.patch("/be/api/myplugins/"+plugin.id, updateData, authOptions);
     }
@@ -90,7 +90,7 @@ export const EditPluginModal = ({ plugin, closeModal, doFetchHash}) => {
     if (
       res.status === 200
     ) {
-      doFetchHash();
+      doFetchHash((new Date()).toISOString());
       setSuccessMessage("Plugin updated.");
       setErrorMessage("");
       setLoadingMessage("");
@@ -214,8 +214,10 @@ export const EditPluginModal = ({ plugin, closeModal, doFetchHash}) => {
     downloadAnchorNode.remove();
   }
 
-  const changesMade = plugin ? ((inputs.public !== plugin.public) || inputs.gameDef || inputs.cardDb) : (inputs.gameDef || inputs.cardDb);
-  
+  var changesMade = plugin ? ((inputs.public !== plugin.public) || inputs.gameDef || inputs.cardDb) : (inputs.gameDef || inputs.cardDb);
+
+  const canSubmit = changesMade && errorMessagesGameDef.length === 0 && errorMessageCardDb.length === 0;
+
   return (
     <ReactModal
       closeTimeoutMS={200}
@@ -303,15 +305,7 @@ export const EditPluginModal = ({ plugin, closeModal, doFetchHash}) => {
               </Button>
             </div>
           </div> 
-          {!inputs.public && (
-            <>
-              <label className="block text-sm font-bold mb-2 mt-4 text-white">
-              {siteL10n("Private Access")}
-              </label>
-              <PrivateAccess pluginId={plugin ? plugin.id : -1}/>
-            </>
-          )}
-          <Button disabled={!changesMade || !validGameDef || (!plugin && !validCardDb)} isSubmit={changesMade} className="mt-4">
+          <Button disabled={!canSubmit} isSubmit={canSubmit} className="mt-4">
           {plugin ? siteL10n("Update Plugin") : siteL10n("Create Plugin")}
           </Button>
           {changesMade && <div className="alert alert-info mt-4">{siteL10n("You have unsaved changes.")}</div>}

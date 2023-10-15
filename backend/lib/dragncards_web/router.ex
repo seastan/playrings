@@ -62,6 +62,9 @@ defmodule DragnCardsWeb.Router do
 
     # User data
     get("/users/plugin_permission/:plugin_id", UsersController, :fetch_plugin_permission)
+    post("/users/plugin_permission/:plugin_id/:user_id", UsersController, :add_plugin_permission)
+    delete("/users/plugin_permission/:plugin_id/:user_id", UsersController, :remove_plugin_permission)
+    get("/users/all", UsersController, :fetch_all)
 
     # Profile
     get("/profile", ProfileController, :index)

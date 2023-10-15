@@ -7,16 +7,17 @@ import axios from "axios";
 import { EditPluginModal } from "./editplugin/EditPluginModal";
 import * as moment from 'moment';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEdit, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { faEdit, faShare, faTrash, faUserPlus } from "@fortawesome/free-solid-svg-icons";
 import { NewPluginModal } from "./NewPluginModal";
 import { useSiteL10n } from "../../hooks/useSiteL10n";
 import useAuth from "../../hooks/useAuth";
 import { LobbyButton } from "../../components/basic/LobbyButton";
+import SharePluginModal from "./editplugin/SharePluginModal";
 
 //const lobbyButtonClass = 
 const iconButtonClass = "cursor-pointer hover:bg-white hover:text-black h-full w-full m-2 rounded flex items-center justify-center text-white no-underline select-none"
 
-const MyPluginEntry = ({plugin, setSelectedPlugin, setShowEditModal, index}) => {
+const MyPluginEntry = ({plugin, setSelectedPlugin, setShowEditModal, setShowShareModal, index}) => {
   const siteL10n = useSiteL10n();
   const { authToken, renewToken, setAuthAndRenewToken } = useAuth();
   const authOptions = useMemo(
@@ -32,6 +33,10 @@ const MyPluginEntry = ({plugin, setSelectedPlugin, setShowEditModal, index}) => 
     setSelectedPlugin(plugin);
     setShowEditModal(true);
   }
+  const handleShareClick = () => {
+    setSelectedPlugin(plugin);
+    setShowShareModal(true);
+  }
   const handleDeleteClick = () => {
     const conf = window.confirm(siteL10n("Are you sure you want to delete your plugin?")+" ("+plugin.name+")");
     if (conf) {
@@ -43,9 +48,14 @@ const MyPluginEntry = ({plugin, setSelectedPlugin, setShowEditModal, index}) => 
       <h1>{plugin.name}</h1>
       <div className="text-xs">Last update: {moment.utc(plugin.updated_at).local().format("YYYY-MM-DD HH:mm:ss")}</div>
       <div className={plugin.public ? "text-xs text-green-500" : "text-xs text-red-500" }>{plugin.public ? "Public" : "Private"}</div>
-      <div className="absolute top-0" style={{height: "30px", width: "30px", right: "45px"}}>
+      <div className="absolute top-0" style={{height: "30px", width: "30px", right: "75px"}}>
         <a className={iconButtonClass} target="_blank" onClick={() => handleEditClick()}>
           <FontAwesomeIcon className="" icon={faEdit}/>
+        </a>
+      </div>
+      <div className="absolute top-0" style={{height: "30px", width: "30px", right: "45px"}}>
+        <a className={iconButtonClass} target="_blank" onClick={() => handleShareClick()}>
+          <FontAwesomeIcon className="" icon={faUserPlus}/>
         </a>
       </div>
       <div className="absolute top-0" style={{height: "30px", width: "30px", right: "15px"}}>
@@ -62,6 +72,7 @@ export const MyPlugins = () => {
   const user = useProfile();
   const history = useHistory();
   const [showEditModal, setShowEditModal] = useState(false);
+  const [showShareModal, setShowShareModal] = useState(false);
   const [selectedPlugin, setSelectedPlugin] = useState(null);
   const [deletedIndices, setDeletedIndices] = useState([]); 
   const [_, forceUpdate] = useReducer((x) => x + 1, 0);
@@ -102,6 +113,7 @@ export const MyPlugins = () => {
             plugin={plugin}
             setSelectedPlugin={setSelectedPlugin}
             setShowEditModal={setShowEditModal}
+            setShowShareModal={setShowShareModal}
             index={index}
           />)
       })}
@@ -117,6 +129,13 @@ export const MyPlugins = () => {
             plugin={null}
             closeModal={() => {setShowEditModal(false); setSelectedPlugin(null)}}
             doFetchHash={doFetchHash}
+          />
+        : null
+      }
+      {showShareModal ?
+          <SharePluginModal
+            plugin={selectedPlugin}
+            closeModal={() => {setShowShareModal(false); setSelectedPlugin(null)}}
           />
         : null
       }
