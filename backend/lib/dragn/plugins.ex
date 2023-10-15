@@ -17,12 +17,15 @@ defmodule DragnCards.Plugins do
       [%Plugin{}, ...]
   """
 
-  def list_plugins_info do
+  def list_plugins_info(user_id) do
+    IO.puts("list_plugins_info 0")
+    IO.inspect(user_id)
+    IO.puts("list_plugins_info 1")
     query = from p in Plugin,
     join: u in User,
     on: [id: p.author_id],
     order_by: [desc: :version],
-    where: [public: true],
+    where: p.public == true or p.author_id == ^user_id,
     select: {
       p.author_id,
       u.alias,

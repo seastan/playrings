@@ -14,9 +14,34 @@ defmodule DragnCardsWeb.PluginsController do
   action_fallback DragnCardsWeb.FallbackController
 
   def index(conn, _params) do
-    plugins = Plugins.list_plugins_info()
+    IO.puts("PluginsController index 1 ---------------------------------------------------------------")
+    IO.inspect(conn)
+    IO.puts("PluginsController index 2 ---------------------------------------------------------------")
+    IO.inspect(_params)
+    IO.puts("PluginsController index 3 ---------------------------------------------------------------")
+    user = Pow.Plug.current_user(conn)
+    user_id = if user != nil do
+      user.id
+    else
+      0
+    end
+    plugins = Plugins.list_plugins_info(0)
+    IO.puts("plugins 0")
+    IO.inspect(plugins)
+    IO.puts("plugins 1")
     render(conn, "index.json", plugins: plugins)
     #json(conn, %{plugins: nil})
+  end
+
+  def get_visible_plugins(conn, %{"user_id" => user_id}) do
+    IO.puts("get_visible_plugins 1")
+    IO.inspect(user_id)
+    IO.puts("get_visible_plugins 2")
+    plugins = Plugins.list_plugins_info(user_id)
+    IO.puts("get_visible_plugins 3")
+    IO.inspect(plugins)
+    IO.puts("get_visible_plugins 4")
+    render(conn, "index.json", plugins: plugins)
   end
 
   @spec show(Conn.t(), map()) :: Conn.t()

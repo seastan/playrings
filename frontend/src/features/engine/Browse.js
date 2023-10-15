@@ -80,6 +80,8 @@ export const Browse = React.memo(({}) => {
       else if (option === "peeking") closeAndPeeking();
     }
     dispatch(setBrowseGroupId(null));
+    setSearchForText('');
+    setSearchForProperty('All');
   }
 
   const closeAndShuffle = () => {
