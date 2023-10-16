@@ -14,14 +14,38 @@ defmodule DragnCardsWeb.PluginsController do
   action_fallback DragnCardsWeb.FallbackController
 
   def index(conn, _params) do
-    plugins = Plugins.list_plugins_info()
+    user = Pow.Plug.current_user(conn)
+    user_id = if user != nil do
+      user.id
+    else
+      0
+    end
+    plugins = Plugins.list_plugins_info(0)
     render(conn, "index.json", plugins: plugins)
     #json(conn, %{plugins: nil})
+  end
+
+  def get_visible_plugins(conn, %{"user_id" => user_id}) do
+    plugins = Plugins.list_plugins_info(user_id)
+    render(conn, "index.json", plugins: plugins)
   end
 
   @spec show(Conn.t(), map()) :: Conn.t()
   def show(conn, %{"plugin_id" => _plugin_id}) do
     conn
+  end
+
+  def get_visible_plugin(conn, %{"user_id" => user_id, "plugin_id" => plugin_id}) do
+    #{plugin_id, ""} = Integer.parse(params["plugin_id"])
+    case Plugins.get_plugin_info(plugin_id, user_id) do
+      nil ->
+        conn
+        |> put_status(404)
+        |> json(%{error: %{code: 404, message: "Not Found"}})
+      plugin ->
+        render(conn, "single_info.json", plugin: plugin)
+    end
+
   end
 
   def get_plugin(conn, params) do
@@ -64,13 +88,13 @@ defmodule DragnCardsWeb.PluginsController do
   #   |> send_resp(200, json_response)
   # end
 
-  def get_plugin_info(conn, params) do
-    {plugin_id, ""} = Integer.parse(params["plugin_id"])
-    plugin = Plugins.get_plugin_info(plugin_id)
-    render(conn, "single_info.json", plugin: plugin)
+  # def get_plugin_info(conn, params) do
+  #   {plugin_id, ""} = Integer.parse(params["plugin_id"])
+  #   plugin = Plugins.get_plugin_info(plugin_id)
+  #   render(conn, "single_info.json", plugin: plugin)
 
-    #plugins = Plugins.list_plugins_info()
-    #render(conn, "index.json", plugins: plugins)
-  end
+  #   #plugins = Plugins.list_plugins_info()
+  #   #render(conn, "index.json", plugins: plugins)
+  # end
 
 end

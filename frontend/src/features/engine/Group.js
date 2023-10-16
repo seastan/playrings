@@ -18,7 +18,9 @@ export const Group = React.memo(({
   const gameL10n = useGameL10n();
   const gameDef = useGameDefinition();
   const group = useSelector(state => state?.gameUi?.game?.groupById?.[groupId]);
+  const isPile = region.type === "pile";
   const playerN = useSelector(state => state?.playerUi?.playerN);
+  const iconsVisible = isPile && playerN;
   const browseTopN = useBrowseTopN();
   const doActionList = useDoActionList();
   // Print a warning to the console if the group is not found
@@ -51,21 +53,29 @@ export const Group = React.memo(({
     <div className="h-full w-full">
       
         <div
-          className="relative h-full float-left select-none text-gray-500"
+          className="relative h-full float-left select-none text-gray-400"
           style={{width:"17px"}}>
             <div className="relative w-full h-full">
             {region.hideTitle ? null :
               <span 
-                className="absolute mt-1 overflow-hidden" 
-                style={{fontSize: "1.5vh", top: "50%", left: "50%", transform: `translate(-50%, -70%) rotate(90deg)`, whiteSpace: "nowrap"}}>
-                {playerN && <FontAwesomeIcon onClick={(event) => handleEyeClick(event)}  className="hover:text-white mr-2" style={{transform: `rotate(-90deg)`}} icon={faEye}/>}
-                {playerN && <FontAwesomeIcon onClick={(event) => handleBarsClick(event)}  className="hover:text-white mr-2" style={{transform: `rotate(-90deg)`}} icon={faBars}/>}
-                  {gameL10n(tablename) + (region.type === "pile" ? " ("+numStacks+")" : "")}
+                className="absolute mt-1 px-1 overflow-hidden rounded bg-gray-600-70" 
+                style={{fontSize: "1.5vh", top: "50%", left: "50%", transform: `translate(${iconsVisible ? "-30%" : "-40%"}, -70%) rotate(90deg)`, whiteSpace: "nowrap", zIndex: 2e3}}>
+                  {iconsVisible &&
+                    <div className="text-gray-300 w-full flex items-center justify-center" >
+                      <div style={{fontSize: "2vh"}}>
+                        <FontAwesomeIcon onClick={(event) => handleEyeClick(event)}  className="hover:text-white mx-2 -rotate-90" icon={faEye}/>
+                        <FontAwesomeIcon onClick={(event) => handleBarsClick(event)}  className="hover:text-white mx-2 -rotate-90" icon={faBars}/>
+                      </div>
+                    </div>
+                  }
+                  <div className="w-full flex items-center justify-center" >
+                  {gameL10n(tablename) + (isPile ? " ("+numStacks+")" : "")}
+                  </div>
               </span>
+              
             }
             </div>
         </div>
-      
       <Stacks
         groupId={group.id}
         region={region}

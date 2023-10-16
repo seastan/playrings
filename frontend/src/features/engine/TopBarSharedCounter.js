@@ -22,7 +22,8 @@ export const TopBarSharedCounter = React.memo(({
   const [inputRef, setInputFocus] = useFocus();
 
   useEffect(() => {
-    setValue(stateValue)
+    setValue(stateValue);
+    setPreviousValue(stateValue);
   }, [stateValue])
 
   const handleValueChange = (event) => {

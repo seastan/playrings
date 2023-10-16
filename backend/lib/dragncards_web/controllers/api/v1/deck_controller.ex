@@ -70,7 +70,7 @@ defmodule DragnCardsWeb.API.V1.DeckController do
     case Decks.delete_deck(deck) do
       {:ok, _deck} ->
         conn
-        |> json(%{success: %{message: "Deck saved successfully"}})
+        |> json(%{success: %{message: "Deck deleted successfully"}})
       {:error, _} ->
         conn
         |> json(%{failed: %{message: "Failed to delete deck"}})

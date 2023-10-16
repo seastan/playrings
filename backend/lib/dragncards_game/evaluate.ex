@@ -842,7 +842,7 @@ defmodule DragnCardsGame.Evaluate do
             case code do
               "$PLAYER_N" ->
                 if game["playerUi"]["playerN"] == nil do
-                  raise "$PLAYER_N is undefined"
+                  raise "Variable $PLAYER_N is undefined."
                 else
                   game["playerUi"]["playerN"]
                 end
@@ -881,7 +881,7 @@ defmodule DragnCardsGame.Evaluate do
 
               "$ACTIVE_CARD_ID" ->
                 if game["playerUi"]["activeCardId"] == nil do
-                  raise "$ACTIVE_CARD_ID is undefined"
+                  raise "Variable $ACTIVE_CARD_ID is undefined."
                 else
                   game["playerUi"]["activeCardId"]
                 end
@@ -900,7 +900,7 @@ defmodule DragnCardsGame.Evaluate do
                     group_id = evaluate(game, "$ACTIVE_CARD.groupId", trace ++ ["$ACTIVE_GROUP"])
                     game["groupById"][group_id]
                   true ->
-                    raise "$ACTIVE_GROUP is undefined"
+                    raise "Variable $ACTIVE_GROUP is undefined."
                 end
 
               "$ACTIVE_GROUP_ID" ->

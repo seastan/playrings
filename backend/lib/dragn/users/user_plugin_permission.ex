@@ -1,6 +1,8 @@
 defmodule DragnCards.UserPluginPermission do
   use Ecto.Schema
   import Ecto.Changeset
+  alias DragnCards.UserPluginPermission
+  alias DragnCards.Repo
 
   @derive {Jason.Encoder, only: [:user_id, :private_access]}
 
@@ -19,4 +21,36 @@ defmodule DragnCards.UserPluginPermission do
     |> foreign_key_constraint(:user_id)
     |> foreign_key_constraint(:private_access)
   end
+
+  def create_user_plugin_permission(user_id, plugin_id) do
+    changeset = UserPluginPermission.changeset(%UserPluginPermission{}, %{user_id: user_id, private_access: plugin_id})
+    case Repo.insert(changeset) do
+      {:ok, _struct} ->
+        {:ok, "Successfully added"}
+
+      {:error, _changeset} ->
+        {:error, "Failed to add permissions"}
+    end
+  end
+
+  def delete_user_plugin_permission(user_id, plugin_id) do
+
+    user_plugin_permission = Repo.get_by(UserPluginPermission, user_id: user_id, private_access: plugin_id)
+
+    case user_plugin_permission do
+      nil ->
+        IO.puts("Record not found")
+        {:error, :not_found}
+
+      record ->
+        case Repo.delete(record) do
+          {:ok, _struct} ->
+            {:ok,"Successfully deleted" }
+
+          {:error, _changeset} ->
+            {:error, "Failed to remove permissions"}
+        end
+    end
+  end
+
 end

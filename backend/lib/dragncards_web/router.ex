@@ -42,7 +42,9 @@ defmodule DragnCardsWeb.Router do
     resources("/myplugins", MyPluginsController)
 
     # All plugins
-    get("/plugins/info/:plugin_id", PluginsController, :get_plugin_info)
+    #get("/plugins/info/:plugin_id", PluginsController, :get_plugin_info)
+    get("/plugins/visible/:plugin_id/:user_id", PluginsController, :get_visible_plugin)
+    get("/plugins/visible/:user_id", PluginsController, :get_visible_plugins)
     get("/plugins/:plugin_id", PluginsController, :get_plugin)
     get("/plugins", PluginsController, :index)
   end
@@ -62,6 +64,9 @@ defmodule DragnCardsWeb.Router do
 
     # User data
     get("/users/plugin_permission/:plugin_id", UsersController, :fetch_plugin_permission)
+    post("/users/plugin_permission/:plugin_id/:user_id", UsersController, :add_plugin_permission)
+    delete("/users/plugin_permission/:plugin_id/:user_id", UsersController, :remove_plugin_permission)
+    get("/users/all", UsersController, :fetch_all)
 
     # Profile
     get("/profile", ProfileController, :index)

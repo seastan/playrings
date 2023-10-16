@@ -6,7 +6,7 @@ defmodule DragnCards.Plugins do
   import Ecto.Query, warn: false
   alias DragnCards.Repo
 
-  alias DragnCards.{Plugins.Plugin, Users.User}
+  alias DragnCards.{Plugins.Plugin, Users.User, UserPluginPermission}
 
   @doc """
   Returns the list of plugins.
@@ -17,12 +17,17 @@ defmodule DragnCards.Plugins do
       [%Plugin{}, ...]
   """
 
-  def list_plugins_info do
+  def list_plugins_info(user_id) do
+    IO.puts("list_plugins_info 0")
+    IO.inspect(user_id)
+    IO.puts("list_plugins_info 1")
     query = from p in Plugin,
     join: u in User,
     on: [id: p.author_id],
+    left_join: upp in UserPluginPermission,
+    on: upp.private_access == p.id and upp.user_id == ^user_id,
     order_by: [desc: :version],
-    where: [public: true],
+    where: p.public == true or p.author_id == ^user_id or not is_nil(upp.id),
     select: {
       p.author_id,
       u.alias,
@@ -38,12 +43,14 @@ defmodule DragnCards.Plugins do
     Repo.all(query)
   end
 
-  def get_plugin_info(id) do
+  def get_plugin_info(id, user_id) do
     query = from p in Plugin,
     join: u in User,
     on: [id: p.author_id],
+    left_join: upp in UserPluginPermission,
+    on: upp.private_access == p.id and upp.user_id == ^user_id,
     order_by: [desc: :version],
-    where: [public: true, id: ^id],
+    where: p.id == ^id and (p.public == true or p.author_id == ^user_id or not is_nil(upp.id)),
     select: {
       p.author_id,
       u.alias,

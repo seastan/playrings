@@ -80,6 +80,8 @@ export const Browse = React.memo(({}) => {
       else if (option === "peeking") closeAndPeeking();
     }
     dispatch(setBrowseGroupId(null));
+    setSearchForText('');
+    setSearchForProperty('All');
   }
 
   const closeAndShuffle = () => {
@@ -215,7 +217,7 @@ export const Browse = React.memo(({}) => {
               id="numFaceup"
               className="form-control w-full bg-gray-900 text-white border-0 h-full px-1 py-0"
               onChange={handleSelectClick}>
-              <option value="" disabled selected>{gameL10n("Turn faceup...")}</option>
+              <option value="" disabled selected>{gameL10n("Peek at...")}</option>
               <option value="None">{gameL10n("None")}</option>
               <option value="All">{gameL10n("All")}</option>
               <option value="5">{gameL10n("Top 5")}</option>
@@ -237,7 +239,7 @@ export const Browse = React.memo(({}) => {
         </div>
         {pairedFilterButtons.map((row, rowIndex) => {
           return(
-            <div className="h-1/5 w-full text-white text-center">
+            <div className="w-full text-white text-center" style={{height: `calc(100% / ${pairedFilterButtons.length+1})`}}>
               {row.map((item, itemIndex) => {
                 return(
                   <div className="h-full float-left w-1/2 p-0.5">

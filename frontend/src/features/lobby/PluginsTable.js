@@ -8,7 +8,7 @@ import moment from "moment";
 import { useSiteL10n } from "../../hooks/useSiteL10n";
 import { useHistory } from "react-router-dom";
 
-export const PluginsTable = ({ plugins, setSelectedPlugin}) => {
+export const PluginsTable = ({ plugins }) => {
   const siteL10n = useSiteL10n();
   const history = useHistory();
   const [starHoverIndex, setStarHoverIndex] = useState(null);
@@ -28,8 +28,6 @@ export const PluginsTable = ({ plugins, setSelectedPlugin}) => {
   const trClass = "relative m-2 h-full w-full flex items-center text-white no-underline select-none rounded-lg w-full bg-gray-600-30 hover:bg-red-600-30"
 
   return (
-    <div className="w-full" style={{minHeight: "600px"}}>
-      <div className="text-center text-white text-2xl mb-2">Public Plugins</div>
         <div className="w-full">
           {plugins == null ?      
             <div className="flex justify-center">
@@ -45,7 +43,7 @@ export const PluginsTable = ({ plugins, setSelectedPlugin}) => {
                 <tr className={trClass} onClick={() => history.push("/plugin/"+plugin.id)}>
                   <div className="relative m-4">
                     <div className="text-xl inline">{plugin.name}</div>
-                    <a 
+                    {/* <a 
                       className={"text-white text-lg pl-2"} 
                       target="_blank">
                       <FontAwesomeIcon 
@@ -54,7 +52,7 @@ export const PluginsTable = ({ plugins, setSelectedPlugin}) => {
                         onMouseEnter={() => {setStarHoverIndex(pluginIndex)}}
                         onMouseLeave={() => {setStarHoverIndex(null)}}/>
                     </a>
-                    <div className="inline">({plugin.num_favorites})</div>
+                    <div className="inline">({plugin.num_favorites})</div> */}
                     <div className="text-xs">{siteL10n("Last update:") + " " + moment.utc(plugin.updated_at).local().format("YYYY-MM-DD HH:mm:ss")}</div>
                     <div className="text-xs">{siteL10n("Author:") + " " + plugin.author_alias}</div>
                   </div>
@@ -71,7 +69,6 @@ export const PluginsTable = ({ plugins, setSelectedPlugin}) => {
           <div>
         </div>
       </div>
-    </div>
   );
 };
 export default PluginsTable;
