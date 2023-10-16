@@ -10,13 +10,18 @@ import { LobbyButton } from "../../components/basic/LobbyButton";
 import LobbyContainer from "./LobbyContainer";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
+import { set } from "date-fns";
+import axios from "axios";
+
 
 export const PluginLobby = () => {
   const isLoggedIn = useIsLoggedIn();
-  const myUser = useProfile();
+  const user = useProfile();
   const history = useHistory();
+  const [plugin, setPlugin] = useState(null);
   const [showModal, setShowModal] = useState(null);
   const [replayUuid, setReplayUuid] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
   const [ringsDbInfo, setRingsDbInfo] = useState([null,null,null,null]);
 
   const url = window.location.href;
@@ -25,10 +30,23 @@ export const PluginLobby = () => {
   const pluginStr = splitUrl[pluginIndex + 1];
   const pluginId = parseInt(pluginStr);
 
-  const apiPlugins = useDataApi(
-    "/be/api/plugins/info/"+pluginId,
-    null
-  );
+  const getPlugin = async () => {
+    console.log("PluginLobby 0")
+    try {
+      const res = await axios.get(`/be/api/plugins/visible/${pluginId}/${user?.id ? user.id : 0}`);
+      console.log("PluginLobby res", res);
+      setPlugin(res.data.data);
+    } catch (err) {
+      console.log("PluginLobby err", err);
+    }
+    setIsLoading(false);
+
+  }
+
+  // If user.id changes, reset plugins list
+  useEffect(() => {
+    if (user?.id) getPlugin();
+  }, [user]);
 
   console.log("Rendering PluginLobby", splitUrl)
   useEffect(() => {
@@ -39,6 +57,8 @@ export const PluginLobby = () => {
       setShowModal("createRoom");
     }
   }, []);
+
+
 
     //   if (url.includes("ringsdb") || url.includes("test")) {
     //     var splitUrl = url.split( '/' );
@@ -61,13 +81,12 @@ export const PluginLobby = () => {
     //   setShowModal("createRoom");
     // }
 
-  const plugin = apiPlugins?.data?.data;
-  console.log("pluginslist",plugin);
-  if (!plugin) return null;
+  if (isLoading) return null;
+  if (!isLoading && !plugin) return <div className="text-white">Plugin either does not exist or you do not have the necessary permissions to view it.</div>;
   
   const handleCreateRoomClick = () => {
     if (isLoggedIn) {
-      if (myUser?.email_confirmed_at) setShowModal("createRoom");
+      if (user?.email_confirmed_at) setShowModal("createRoom");
       else alert("You must confirm your email before you can start a game.")
     } else {
       history.push("/login")
