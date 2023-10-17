@@ -131,7 +131,8 @@ defmodule DragnCardsGame.CustomPluginTest do
       "privacyType" => "public",
       "pluginId" => plugin.id,
       "pluginVersion" => plugin.version,
-      "language" => "English"
+      "language" => "English",
+      "pluginName" => plugin.name,
     }
 
     # Create a new game UI with options
@@ -1077,4 +1078,35 @@ defmodule DragnCardsGame.CustomPluginTest do
       IO.puts(message)
     end)
   end
+
+  # Functions
+  @tag :functions
+  test "functions", %{user: _user, game: game, game_def: _game_def} do
+
+    game = Evaluate.evaluate(game, ["FUNCTION", "MY_ADD", "$A", "$B", ["ADD", "$A", "$B"]])
+    assert Evaluate.evaluate(game, ["MY_ADD", 1, 2]) == 3
+
+    game = Evaluate.evaluate(game, ["LOAD_CARDS", "coreLeadership"]) # Leadership core set deck
+    game = Evaluate.evaluate(game, ["FUNCTION", "MOVE_TOP_N_CARDS_OF_GROUP_TO_BOTTOM", "$N", "$GROUP_ID", ["MOVE_STACKS", "$GROUP_ID", "$GROUP_ID", "$N", "bottom"]])
+    top_3 = Evaluate.evaluate(game, "$GAME.groupById.player1Deck.parentCardIds") |> Enum.slice(0, 3)
+    game = Evaluate.evaluate(game, ["MOVE_TOP_N_CARDS_OF_GROUP_TO_BOTTOM", 3, "player1Deck"])
+    bottom_3 = Evaluate.evaluate(game, "$GAME.groupById.player1Deck.parentCardIds") |> Enum.slice(-3, 3)
+    assert top_3 == bottom_3
+
+  end
+
+  # Pointers
+  @tag :pointers
+  test "pointers", %{user: _user, game: game, game_def: _game_def} do
+
+    game = Evaluate.evaluate(game, ["DEFINE", "$LAZY_ADD", ["POINTER", ["ADD", "$A", "$B"]]])
+    game = Evaluate.evaluate(game, ["DEFINE", "$A", 1])
+    game = Evaluate.evaluate(game, ["DEFINE", "$B", 2])
+    assert Evaluate.evaluate(game, ["ACTION_LIST", "$LAZY_ADD"]) == 3
+
+    game = Evaluate.evaluate(game, ["DEFINE", "$A", 2])
+    assert Evaluate.evaluate(game, ["ACTION_LIST", "$LAZY_ADD"]) == 4
+
+  end
+
 end
