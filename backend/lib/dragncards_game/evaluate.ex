@@ -238,8 +238,8 @@ defmodule DragnCardsGame.Evaluate do
 
       else
         #IO.inspect(code)
-
-        case Enum.at(code,0) do
+        function_name = Enum.at(code, 0)
+        case function_name do
           "PREV" ->
             prev_game = game["prev_game"]
             |> Map.put("variables", game["variables"])
@@ -260,9 +260,15 @@ defmodule DragnCardsGame.Evaluate do
             evaluate(game, ["LOG", Enum.at(code, 1)], trace ++ ["ERROR"])
 
           "DEFINE" ->
+            # Evaluate the value and assign it to the var name
             var_name = Enum.at(code, 1)
-            value = evaluate(game, Enum.at(code, 2), trace ++ ["DEFINE #{var_name}"])
-            put_in(game, ["variables", var_name], value)
+            # if var_name does not start with $, raise an error
+            if String.starts_with?(var_name, "$") do
+              value = evaluate(game, Enum.at(code, 2), trace ++ ["DEFINE #{var_name}"])
+              put_in(game, ["variables", var_name], value)
+            else
+              raise "Tried to define variable '#{var_name}' but it does not start with $."
+            end
 
           "DEFINED" ->
             var_name = Enum.at(code, 1)
@@ -271,6 +277,17 @@ defmodule DragnCardsGame.Evaluate do
               result != nil
             rescue
               _ -> false
+            end
+
+          "FUNCTION" ->
+            new_func_name = Enum.at(code, 1)
+            # if func_name is not all caps, raise an error
+            if String.upcase(new_func_name) == new_func_name do
+              new_func_args = Enum.slice(code, 2, Enum.count(code) - 3)
+              new_func_code = Enum.at(code, -1)
+              put_in(game, ["functions", new_func_name], %{"args" => new_func_args, "code" => new_func_code})
+            else
+              raise "Tried to define function '#{new_func_name}' but it is not all caps."
             end
 
           "POINTER" ->
@@ -803,16 +820,52 @@ defmodule DragnCardsGame.Evaluate do
             action_list_or_id = Enum.at(code, 1)
 
             # Set the load_list_id
-            action_list = if is_list(action_list_or_id) do
-              action_list_or_id
-            else
-              action_list_id = evaluate(game, Enum.at(code, 1), trace ++ ["ACTION_LIST action_list_id"])
-              game_def = Plugins.get_game_def(game["options"]["pluginId"])
-              game_def["actionLists"][action_list_id]
+            action_list = cond do
+              is_list(action_list_or_id) ->
+                action_list_or_id
+              String.starts_with?(action_list_or_id, "$") ->
+                evaluate_inner(game, action_list_or_id, trace ++ ["ACTION_LIST variable"])
+              true ->
+                action_list_id = evaluate(game, Enum.at(code, 1), trace ++ ["ACTION_LIST action_list_id"])
+                game_def = Plugins.get_game_def(game["options"]["pluginId"])
+                game_def["actionLists"][action_list_id]
             end
             evaluate(game, action_list, trace ++ ["ACTION_LIST"])
+
+          # NONE OF THE ABOVE #
           _ ->
-            raise "Command #{inspect(Enum.at(code,0))} not recognized in #{inspect(code)}"
+            # Check if function_name is in game["functions"]
+            if Map.has_key?(game["functions"], function_name) do
+              # Get the function
+              func = game["functions"][function_name]
+              func_args = func["args"]
+              func_code = func["code"]
+              # get input args
+              input_args = Enum.slice(code, 1, Enum.count(code))
+              # Make sure the number of input args matches the number of function args
+              if Enum.count(input_args) != Enum.count(func_args) do
+                raise "Function #{function_name} expects #{Enum.count(func_args)} arguments, but got #{Enum.count(input_args)}."
+              end
+              # Call DEFINE on each of the function args
+              current_scope_index = game["currentScopeIndex"] || 0
+              new_scope_index = current_scope_index + 1
+              game = put_in(game, ["currentScopeIndex"], new_scope_index)
+              game = Enum.reduce(Enum.with_index(func_args), game, fn({arg, index}, acc) ->
+                evaluate(acc, ["DEFINE", "#{arg}-#{new_scope_index}", Enum.at(input_args, index)], trace ++ ["DEFINE function arg #{arg}"])
+              end)
+              # Evaluate the function
+              result = evaluate(game, func_code, trace)
+              # If the result is a game, delete all defined variables
+              if is_map(result) and Map.has_key?(result, "variables") do
+                Enum.reduce(func_args, result, fn(arg, acc) ->
+                  put_in(acc, ["variables"], Map.delete(acc["variables"], "#{arg}-#{new_scope_index}"))
+                end)
+              else
+                result
+              end
+            else
+              raise "Function #{inspect(Enum.at(code,0))} not recognized in #{inspect(code)}"
+            end
         end
       end
     else # not a list
@@ -829,86 +882,96 @@ defmodule DragnCardsGame.Evaluate do
 
       # variable
       cond do
+        # It's a variable that is being deeply accessed, split it up and evaluate the path by parts
         is_binary(code) and String.starts_with?(code, "$") and String.contains?(code, ".") ->
           split = String.split(code, ".")
           obj = evaluate(game, Enum.at(split, 0), trace)
           path = ["LIST"] ++ Enum.slice(split, 1, Enum.count(split))
           evaluate(game, ["OBJ_GET_BY_PATH", obj, path], trace)
 
+        # It's a regular variable
         is_binary(code) and String.starts_with?(code, "$") ->
-          if Map.has_key?(game, "variables") && Map.has_key?(game["variables"], code) do
-            game["variables"][code]
-          else
-            case code do
-              "$PLAYER_N" ->
-                if game["playerUi"]["playerN"] == nil do
-                  raise "Variable $PLAYER_N is undefined."
-                else
-                  game["playerUi"]["playerN"]
-                end
+          current_scope_index = game["currentScopeIndex"] || 0
+          var_with_scope = "#{code}-#{current_scope_index}"
+          cond do
+            # User-defined variable
+            Map.has_key?(game, "variables") && Map.has_key?(game["variables"], code) ->
+              game["variables"][code]
+            # Function-defined variable
+            Map.has_key?(game["variables"], var_with_scope) ->
+              game["variables"][var_with_scope]
+            # Built-in variable
+            true ->
+              case code do
+                "$PLAYER_N" ->
+                  if game["playerUi"]["playerN"] == nil do
+                    raise "Variable $PLAYER_N is undefined."
+                  else
+                    game["playerUi"]["playerN"]
+                  end
 
-              "$ALIAS_N" ->
-                player_n = evaluate(game, "$PLAYER_N", trace ++ ["$ALIAS_N"])
-                get_in(game, ["playerInfo", player_n, "alias"])
+                "$ALIAS_N" ->
+                  player_n = evaluate(game, "$PLAYER_N", trace ++ ["$ALIAS_N"])
+                  get_in(game, ["playerInfo", player_n, "alias"])
 
-              "$PLAYER_ORDER" ->
-                # Call evaluate(game, ["NEXT_PLAYER", acc]) numPlayers times, starting with the current player, and put the results in a list
-                num_players = game["numPlayers"]
-                first_player = game["firstPlayer"]
-                {player_order, _} = Enum.reduce(0..num_players-1, {[], first_player}, fn _, {acc, player_i} ->
-                  next_player = evaluate(game, ["NEXT_PLAYER", player_i], trace ++ ["$PLAYER_ORDER"])
-                  {acc ++ [player_i], next_player}
-                end)
-                player_order
+                "$PLAYER_ORDER" ->
+                  # Call evaluate(game, ["NEXT_PLAYER", acc]) numPlayers times, starting with the current player, and put the results in a list
+                  num_players = game["numPlayers"]
+                  first_player = game["firstPlayer"]
+                  {player_order, _} = Enum.reduce(0..num_players-1, {[], first_player}, fn _, {acc, player_i} ->
+                    next_player = evaluate(game, ["NEXT_PLAYER", player_i], trace ++ ["$PLAYER_ORDER"])
+                    {acc ++ [player_i], next_player}
+                  end)
+                  player_order
 
-              "$GAME" ->
-                game
+                "$GAME" ->
+                  game
 
-              "$GROUP_BY_ID" ->
-                game["groupById"]
+                "$GROUP_BY_ID" ->
+                  game["groupById"]
 
-              "$STACK_BY_ID" ->
-                game["stackById"]
+                "$STACK_BY_ID" ->
+                  game["stackById"]
 
-              "$CARD_BY_ID" ->
-                game["cardById"]
+                "$CARD_BY_ID" ->
+                  game["cardById"]
 
-              "$PLAYER_DATA" ->
-                game["playerData"]
+                "$PLAYER_DATA" ->
+                  game["playerData"]
 
-              "$ACTIVE_CARD" ->
-                evaluate(game, "$GAME.cardById.$ACTIVE_CARD_ID", trace)
+                "$ACTIVE_CARD" ->
+                  evaluate(game, "$GAME.cardById.$ACTIVE_CARD_ID", trace)
 
-              "$ACTIVE_CARD_ID" ->
-                if game["playerUi"]["activeCardId"] == nil do
-                  raise "Variable $ACTIVE_CARD_ID is undefined."
-                else
-                  game["playerUi"]["activeCardId"]
-                end
+                "$ACTIVE_CARD_ID" ->
+                  if game["playerUi"]["activeCardId"] == nil do
+                    raise "Variable $ACTIVE_CARD_ID is undefined."
+                  else
+                    game["playerUi"]["activeCardId"]
+                  end
 
-              "$ACTIVE_FACE" ->
-                evaluate(game, "$ACTIVE_CARD.currentFace", trace)
+                "$ACTIVE_FACE" ->
+                  evaluate(game, "$ACTIVE_CARD.currentFace", trace)
 
-              "$ACTIVE_TOKENS" ->
-                evaluate(game, "$ACTIVE_CARD.tokens", trace)
+                "$ACTIVE_TOKENS" ->
+                  evaluate(game, "$ACTIVE_CARD.tokens", trace)
 
-              "$ACTIVE_GROUP" ->
-                cond do
-                  get_in(game, ["playerUi", "dropdownMenu", "group"]) ->
-                    get_in(game, ["playerUi", "dropdownMenu", "group"])
-                  get_in(game, ["playerUi", "activeCardId"]) ->
-                    group_id = evaluate(game, "$ACTIVE_CARD.groupId", trace ++ ["$ACTIVE_GROUP"])
-                    game["groupById"][group_id]
-                  true ->
-                    raise "Variable $ACTIVE_GROUP is undefined."
-                end
+                "$ACTIVE_GROUP" ->
+                  cond do
+                    get_in(game, ["playerUi", "dropdownMenu", "group"]) ->
+                      get_in(game, ["playerUi", "dropdownMenu", "group"])
+                    get_in(game, ["playerUi", "activeCardId"]) ->
+                      group_id = evaluate(game, "$ACTIVE_CARD.groupId", trace ++ ["$ACTIVE_GROUP"])
+                      game["groupById"][group_id]
+                    true ->
+                      raise "Variable $ACTIVE_GROUP is undefined."
+                  end
 
-              "$ACTIVE_GROUP_ID" ->
-                evaluate(game, "$ACTIVE_GROUP", trace ++ ["$ACTIVE_GROUP"])["id"]
+                "$ACTIVE_GROUP_ID" ->
+                  evaluate(game, "$ACTIVE_GROUP", trace ++ ["$ACTIVE_GROUP"])["id"]
 
-              _ ->
-                raise "Variable #{code} is undefined. " <> inspect(trace)
-            end
+                _ ->
+                  raise "Variable #{code} is undefined. " <> inspect(trace)
+              end
           end
 
         is_binary(code) and String.starts_with?(code, "/") ->
