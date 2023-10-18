@@ -49,12 +49,16 @@ defmodule DragnCardsGame.UpdatePluginScript do
               # Get list of all JSON files from the plugin_json_path
               filenames = Path.wildcard(Path.join(plugin_json_path, "*.json"))
 
+              IO.puts("Found #{length(filenames)} JSON files")
+
               # Merge all JSON files
               game_def = Merger.merge_json_files(filenames)
 
               # Get list of .tsv files from plugin_tsv_path
               plugin_tsv_path = System.get_env("PLUGIN_TSV_PATH")
               filenames = Path.wildcard(Path.join(plugin_tsv_path, "*.tsv"))
+
+              IO.puts("Found #{length(filenames)} TSV files")
 
               # Process each .tsv file and merge them into a card_db
               card_db = Enum.reduce(filenames, %{}, fn(filename, acc) ->
@@ -66,6 +70,8 @@ defmodule DragnCardsGame.UpdatePluginScript do
                 temp_db = TsvProcess.process_rows(game_def, rows)
                 Merger.deep_merge([acc, temp_db])
               end)
+
+              IO.puts("Found #{length(Map.keys(card_db))} cards")
 
               # Plugin parameters for creation
               updated_params = %{
