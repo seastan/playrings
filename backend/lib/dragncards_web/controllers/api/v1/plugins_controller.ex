@@ -20,7 +20,7 @@ defmodule DragnCardsWeb.PluginsController do
     else
       0
     end
-    plugins = Plugins.list_plugins_info(0)
+    plugins = Plugins.list_plugins_info(user_id)
     render(conn, "index.json", plugins: plugins)
     #json(conn, %{plugins: nil})
   end
