@@ -45,7 +45,7 @@ export const PluginLobby = () => {
 
   // If user.id changes, reset plugins list
   useEffect(() => {
-    if (user?.id) getPlugin();
+    getPlugin();
   }, [user]);
 
   console.log("Rendering PluginLobby", splitUrl)

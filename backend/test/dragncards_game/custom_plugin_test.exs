@@ -1051,7 +1051,7 @@ defmodule DragnCardsGame.CustomPluginTest do
   end
 
 
-  # Swap with top card of deck
+  # While loop
   @tag :while_loop
   test "while_loop", %{user: _user, game: game, game_def: _game_def} do
 
@@ -1086,12 +1086,29 @@ defmodule DragnCardsGame.CustomPluginTest do
     game = Evaluate.evaluate(game, ["FUNCTION", "MY_ADD", "$A", "$B", ["ADD", "$A", "$B"]])
     assert Evaluate.evaluate(game, ["MY_ADD", 1, 2]) == 3
 
+    game = Evaluate.evaluate(game, ["FUNCTION", "MY_DECREASE", "$A", %{"$B" => 1}, ["SUBTRACT", "$A", "$B"]])
+    assert Evaluate.evaluate(game, ["MY_DECREASE", 2, 2]) == 0
+    assert Evaluate.evaluate(game, ["MY_DECREASE", 2, 1]) == 1
+    assert Evaluate.evaluate(game, ["MY_DECREASE", 2]) == 1
+    assert Evaluate.evaluate(game, ["MY_DECREASE"])["messages"] |> Enum.at(-1) |> String.starts_with?("Function MY_DECREASE expects")
+
+
     game = Evaluate.evaluate(game, ["LOAD_CARDS", "coreLeadership"]) # Leadership core set deck
     game = Evaluate.evaluate(game, ["FUNCTION", "MOVE_TOP_N_CARDS_OF_GROUP_TO_BOTTOM", "$N", "$GROUP_ID", ["MOVE_STACKS", "$GROUP_ID", "$GROUP_ID", "$N", "bottom"]])
     top_3 = Evaluate.evaluate(game, "$GAME.groupById.player1Deck.parentCardIds") |> Enum.slice(0, 3)
     game = Evaluate.evaluate(game, ["MOVE_TOP_N_CARDS_OF_GROUP_TO_BOTTOM", 3, "player1Deck"])
     bottom_3 = Evaluate.evaluate(game, "$GAME.groupById.player1Deck.parentCardIds") |> Enum.slice(-3, 3)
     assert top_3 == bottom_3
+
+
+    game = Evaluate.evaluate(game, ["LOAD_CARDS", "Q01.1"]) # Passage through Mirkwood
+    game = Evaluate.evaluate(game, ["DISCARD_UNTIL", "sharedEncounterDeck", "Enemy"])
+
+
+    # Print all messages
+    Enum.each(game["messages"], fn message ->
+      IO.puts(message)
+    end)
 
   end
 
@@ -1106,6 +1123,31 @@ defmodule DragnCardsGame.CustomPluginTest do
 
     game = Evaluate.evaluate(game, ["DEFINE", "$A", 2])
     assert Evaluate.evaluate(game, ["ACTION_LIST", "$LAZY_ADD"]) == 4
+
+  end
+
+  # Local variables
+  @tag :local_var
+  test "local_var", %{user: _user, game: game, game_def: _game_def} do
+
+    # Define a local variable. Since we are not in a function it will have a scope of 0
+    game = Evaluate.evaluate(game, ["VAR", "$A", 1])
+    assert game["variables"]["$A-0"] == 1
+    assert Evaluate.evaluate(game, "$A") == 1
+
+    # Define a function that returns the variables object so we can inspect it
+    game = Evaluate.evaluate(game, ["FUNCTION", "GET_VARS", "$A", "$B", "$GAME.variables"])
+
+    # Then this function is called, it will have a scope of 1, so the variables will be $A-1 and $B-1. It will not affect the value of $A-0
+    variables = Evaluate.evaluate(game, ["GET_VARS", 2, 3])
+    assert variables["$A-0"] == 1
+    assert variables["$A-1"] == 2
+    assert variables["$B-1"] == 3
+
+    # The game deleted the variables of scope 1 when the function was done
+    assert game["variables"]["$A-0"] == 1
+    assert game["variables"]["$A-1"] == nil
+    assert game["variables"]["$B-1"] == nil
 
   end
 

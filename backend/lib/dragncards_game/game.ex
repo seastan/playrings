@@ -63,10 +63,11 @@
       "groupById" => Groups.new(game_def),
       "stackById" => %{},
       "cardById"  => %{},
+      "currentScopeIndex" => 0,
       "imageUrlPrefix" => game_def["imageUrlPrefix"],
       "options" => options,
       "variables" => GameVariables.default(),
-      "functions" => %{},
+      "functions" => game_def["functions"] || %{},
       "automation" => if get_in(game_def, ["automation", "gameRules"]) do %{"_game_" => %{"rules" => game_def["automation"]["gameRules"]}} else %{} end,
       "messages" => [] # These messages will be delivered to the GameUi parent, which will then relay them to chat
     }
