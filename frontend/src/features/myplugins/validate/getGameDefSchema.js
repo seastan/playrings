@@ -440,7 +440,7 @@ export const getGameDefSchema = (gameDef) => {
           "_type_": "object",
           "_strictKeys_": true,
           "args": {
-            "_type_": "array",
+            "_type_": "any",
             "_itemSchema_": {
               "_type_": "string",
             }
