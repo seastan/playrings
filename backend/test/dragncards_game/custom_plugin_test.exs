@@ -1126,4 +1126,29 @@ defmodule DragnCardsGame.CustomPluginTest do
 
   end
 
+  # Local variables
+  @tag :local_var
+  test "local_var", %{user: _user, game: game, game_def: _game_def} do
+
+    # Define a local variable. Since we are not in a function it will have a scope of 0
+    game = Evaluate.evaluate(game, ["VAR", "$A", 1])
+    assert game["variables"]["$A-0"] == 1
+    assert Evaluate.evaluate(game, "$A") == 1
+
+    # Define a function that returns the variables object so we can inspect it
+    game = Evaluate.evaluate(game, ["FUNCTION", "GET_VARS", "$A", "$B", "$GAME.variables"])
+
+    # Then this function is called, it will have a scope of 1, so the variables will be $A-1 and $B-1. It will not affect the value of $A-0
+    variables = Evaluate.evaluate(game, ["GET_VARS", 2, 3])
+    assert variables["$A-0"] == 1
+    assert variables["$A-1"] == 2
+    assert variables["$B-1"] == 3
+
+    # The game deleted the variables of scope 1 when the function was done
+    assert game["variables"]["$A-0"] == 1
+    assert game["variables"]["$A-1"] == nil
+    assert game["variables"]["$B-1"] == nil
+
+  end
+
 end

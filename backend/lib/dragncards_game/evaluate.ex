@@ -270,6 +270,18 @@ defmodule DragnCardsGame.Evaluate do
               raise "Tried to define variable '#{var_name}' but it does not start with $."
             end
 
+          "VAR" ->
+            # Evaluate the value and assign it to the var name
+            var_name = Enum.at(code, 1)
+            current_scope_index = game["currentScopeIndex"] || 0
+            # if var_name does not start with $, raise an error
+            if String.starts_with?(var_name, "$") do
+              value = evaluate(game, Enum.at(code, 2), trace ++ ["LOCAL #{var_name}"])
+              put_in(game, ["variables", "#{var_name}-#{current_scope_index}"], value)
+            else
+              raise "Tried to define variable '#{var_name}' but it does not start with $."
+            end
+
           "DEFINED" ->
             var_name = Enum.at(code, 1)
             try do
@@ -875,8 +887,13 @@ defmodule DragnCardsGame.Evaluate do
               result = evaluate(game, func_code, trace)
               # If the result is a game, delete all defined variables
               if is_map(result) and Map.has_key?(result, "variables") do
-                Enum.reduce(func_args, result, fn(arg, acc) ->
-                  put_in(acc, ["variables"], Map.delete(acc["variables"], "#{arg}-#{new_scope_index}"))
+                # Loop over all keys in result["variables"] and delete the ones that end with "-#{new_scope_index}"
+                Enum.reduce(Map.keys(result["variables"]), result, fn(key, acc) ->
+                  if String.ends_with?(key, "-#{new_scope_index}") do
+                    put_in(acc, ["variables"], Map.delete(acc["variables"], key))
+                  else
+                    acc
+                  end
                 end)
               else
                 result

@@ -63,6 +63,7 @@
       "groupById" => Groups.new(game_def),
       "stackById" => %{},
       "cardById"  => %{},
+      "currentScopeIndex" => 0,
       "imageUrlPrefix" => game_def["imageUrlPrefix"],
       "options" => options,
       "variables" => GameVariables.default(),
