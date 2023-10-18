@@ -39,9 +39,9 @@ defmodule DragnCardsGame.UpdatePluginScript do
 
   def run do
     Repo.transaction(fn ->
-      case get_existing_user("dev_user") do
+      case get_existing_user(System.get_env("PLUGIN_AUTHOR")) do
         {:ok, user} ->
-          case get_existing_plugin("LotR Living Card Game") do
+          case get_existing_plugin(System.get_env("PLUGIN_NAME")) do
             {:ok, plugin} ->
               # Set up plugin JSON paths
               plugin_json_path = System.get_env("PLUGIN_JSON_PATH")
