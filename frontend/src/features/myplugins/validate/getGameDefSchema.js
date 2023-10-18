@@ -434,6 +434,23 @@ export const getGameDefSchema = (gameDef) => {
           },
         }
       },
+      "functions": {
+        "_type_": "object",
+        "_itemSchema_": {
+          "_type_": "object",
+          "_strictKeys_": true,
+          "args": {
+            "_type_": "array",
+            "_itemSchema_": {
+              "_type_": "string",
+            }
+          },
+          "code": {
+            "_type_": "actionList",
+            "_required_": true,
+          },
+        }
+      },    
       "gameProperties": {
         "_type_": "object",
         "_itemSchema_": {

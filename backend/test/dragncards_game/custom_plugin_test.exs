@@ -1093,6 +1093,16 @@ defmodule DragnCardsGame.CustomPluginTest do
     bottom_3 = Evaluate.evaluate(game, "$GAME.groupById.player1Deck.parentCardIds") |> Enum.slice(-3, 3)
     assert top_3 == bottom_3
 
+
+    game = Evaluate.evaluate(game, ["LOAD_CARDS", "Q01.1"]) # Passage through Mirkwood
+    game = Evaluate.evaluate(game, ["DISCARD_UNTIL", "sharedEncounterDeck", "Enemy"])
+
+
+    # Print all messages
+    Enum.each(game["messages"], fn message ->
+      IO.puts(message)
+    end)
+
   end
 
   # Pointers
