@@ -1021,6 +1021,9 @@ export const getGameDefSchema = (gameDef) => {
           },
           "canBeNegative": {
             "_type_": "boolean",
+          },
+          "hideLabel1": {
+            "_type_": "boolean",
           }
         }
       },
