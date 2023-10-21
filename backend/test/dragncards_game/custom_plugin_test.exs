@@ -184,6 +184,17 @@ defmodule DragnCardsGame.CustomPluginTest do
 
   end
 
+
+  @tag :starting_threat
+  test "starting_threat", %{user: user, game: game} do
+
+    # Load some decks into the game
+    game = Evaluate.evaluate(game, ["LOAD_CARDS", "starterElves"])
+    assert game["playerData"]["player1"]["threat"] == 29
+
+
+  end
+
   @tag :save_game
   test "save_game", %{user: user, game: game, game_def: game_def} do
     # Load some decks into the game

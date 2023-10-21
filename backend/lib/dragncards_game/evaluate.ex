@@ -199,6 +199,38 @@ defmodule DragnCardsGame.Evaluate do
     evaluate(game, condition, trace ++ ["card_match?"])
   end
 
+  @spec find_var(String.t(), integer(), map()) :: {:found, any()} | {:not_found, nil}
+  def find_var(input_string, start_integer, input_map) do
+    0..start_integer
+    |> Enum.reverse()
+    |> Enum.reduce_while(nil, fn i, _acc ->
+      key = "#{input_string}-#{i}"
+      case Map.fetch(input_map, key) do
+        :error -> {:cont, {false, nil}}
+        {:ok, value} -> {:halt, {true, value}}
+      end
+    end)
+    |> case do
+      {false, nil} -> # Not in local scopes, check global scope
+        case Map.fetch(input_map, input_string) do
+          :error -> {false, nil}
+          {:ok, value} -> {true, value}
+        end
+      found -> found # Found in local scopes
+    end
+  end
+
+  def get_lhs_rhs(game, code, trace) do
+    lhs = evaluate(game, Enum.at(code,1), trace ++ ["evaluate lhs"]) || 0
+    rhs = evaluate(game, Enum.at(code,2), trace ++ ["evaluate rhs"]) || 0
+    # If lhs or rhs is not a number, raise an error
+    if is_number(lhs) and is_number(rhs) do
+      {lhs, rhs}
+    else
+      raise "Tried to compare #{lhs} and #{rhs} but one of them is not a number."
+    end
+  end
+
   def evaluate_with_timeout(game, code, trace, timeout_ms \\ 35_000) do
     task = Task.async(fn ->
       try do
@@ -286,6 +318,8 @@ defmodule DragnCardsGame.Evaluate do
             var_name = Enum.at(code, 1)
             try do
               result = evaluate_inner(game, var_name, trace ++ ["DEFINED #{var_name}"])
+              IO.puts("result")
+              IO.inspect(result)
               result != nil
             rescue
               _ -> false
@@ -361,16 +395,20 @@ defmodule DragnCardsGame.Evaluate do
             evaluate(game, Enum.at(code,1), trace ++ ["NOT_EQUAL left"]) != evaluate(game, Enum.at(code,2), trace ++ ["NOT_EQUAL right"])
 
           "LESS_THAN" ->
-            evaluate(game, Enum.at(code,1), trace ++ ["LESS_THAN left"]) < evaluate(game, Enum.at(code,2), trace ++ ["LESS_THAN right"])
+            {lhs, rhs} = get_lhs_rhs(game, code, trace)
+            lhs < rhs
 
           "GREATER_THAN" ->
-            evaluate(game, Enum.at(code,1), trace ++ ["GREATER_THAN left"]) > evaluate(game, Enum.at(code,2), trace ++ ["GREATER_THAN right"])
+            {lhs, rhs} = get_lhs_rhs(game, code, trace)
+            lhs > rhs
 
           "LESS_EQUAL" ->
-            evaluate(game, Enum.at(code,1), trace ++ ["LESS_EQUAL left"]) <= evaluate(game, Enum.at(code,2), trace ++ ["LESS_EQUAL right"])
+            {lhs, rhs} = get_lhs_rhs(game, code, trace)
+            lhs <= rhs
 
           "GREATER_EQUAL" ->
-            evaluate(game, Enum.at(code,1), trace ++ ["GREATER_EQUAL left"]) >= evaluate(game, Enum.at(code,2), trace ++ ["GREATER_EQUAL right"])
+            {lhs, rhs} = get_lhs_rhs(game, code, trace)
+            lhs >= rhs
 
           "NOT" ->
             !evaluate(game, Enum.at(code,1), trace ++ ["NOT"])
@@ -926,86 +964,81 @@ defmodule DragnCardsGame.Evaluate do
 
         # It's a regular variable
         is_binary(code) and String.starts_with?(code, "$") ->
+          var_name = code
           current_scope_index = game["currentScopeIndex"] || 0
-          var_with_scope = "#{code}-#{current_scope_index}"
-          cond do
-            # User-defined variable
-            Map.has_key?(game, "variables") && Map.has_key?(game["variables"], code) ->
-              game["variables"][code]
-            # Function-defined variable
-            Map.has_key?(game["variables"], var_with_scope) ->
-              game["variables"][var_with_scope]
-            # Built-in variable
-            true ->
-              case code do
-                "$PLAYER_N" ->
-                  if game["playerUi"]["playerN"] == nil do
-                    raise "Variable $PLAYER_N is undefined."
-                  else
-                    game["playerUi"]["playerN"]
-                  end
+          {var_defined, var_value} = find_var(var_name, current_scope_index, game["variables"])
+          if var_defined do
+            var_value
+          else
+            case var_name do
+              "$PLAYER_N" ->
+                if game["playerUi"]["playerN"] == nil do
+                  raise "Variable $PLAYER_N is undefined."
+                else
+                  game["playerUi"]["playerN"]
+                end
 
-                "$ALIAS_N" ->
-                  player_n = evaluate(game, "$PLAYER_N", trace ++ ["$ALIAS_N"])
-                  get_in(game, ["playerInfo", player_n, "alias"])
+              "$ALIAS_N" ->
+                player_n = evaluate(game, "$PLAYER_N", trace ++ ["$ALIAS_N"])
+                get_in(game, ["playerInfo", player_n, "alias"])
 
-                "$PLAYER_ORDER" ->
-                  # Call evaluate(game, ["NEXT_PLAYER", acc]) numPlayers times, starting with the current player, and put the results in a list
-                  num_players = game["numPlayers"]
-                  first_player = game["firstPlayer"]
-                  {player_order, _} = Enum.reduce(0..num_players-1, {[], first_player}, fn _, {acc, player_i} ->
-                    next_player = evaluate(game, ["NEXT_PLAYER", player_i], trace ++ ["$PLAYER_ORDER"])
-                    {acc ++ [player_i], next_player}
-                  end)
-                  player_order
+              "$PLAYER_ORDER" ->
+                # Call evaluate(game, ["NEXT_PLAYER", acc]) numPlayers times, starting with the current player, and put the results in a list
+                num_players = game["numPlayers"]
+                first_player = game["firstPlayer"]
+                {player_order, _} = Enum.reduce(0..num_players-1, {[], first_player}, fn _, {acc, player_i} ->
+                  next_player = evaluate(game, ["NEXT_PLAYER", player_i], trace ++ ["$PLAYER_ORDER"])
+                  {acc ++ [player_i], next_player}
+                end)
+                player_order
 
-                "$GAME" ->
-                  game
+              "$GAME" ->
+                game
 
-                "$GROUP_BY_ID" ->
-                  game["groupById"]
+              "$GROUP_BY_ID" ->
+                game["groupById"]
 
-                "$STACK_BY_ID" ->
-                  game["stackById"]
+              "$STACK_BY_ID" ->
+                game["stackById"]
 
-                "$CARD_BY_ID" ->
-                  game["cardById"]
+              "$CARD_BY_ID" ->
+                game["cardById"]
 
-                "$PLAYER_DATA" ->
-                  game["playerData"]
+              "$PLAYER_DATA" ->
+                game["playerData"]
 
-                "$ACTIVE_CARD" ->
-                  evaluate(game, "$GAME.cardById.$ACTIVE_CARD_ID", trace)
+              "$ACTIVE_CARD" ->
+                evaluate(game, "$GAME.cardById.$ACTIVE_CARD_ID", trace)
 
-                "$ACTIVE_CARD_ID" ->
-                  if game["playerUi"]["activeCardId"] == nil do
-                    raise "Variable $ACTIVE_CARD_ID is undefined."
-                  else
-                    game["playerUi"]["activeCardId"]
-                  end
+              "$ACTIVE_CARD_ID" ->
+                if game["playerUi"]["activeCardId"] == nil do
+                  raise "Variable $ACTIVE_CARD_ID is undefined."
+                else
+                  game["playerUi"]["activeCardId"]
+                end
 
-                "$ACTIVE_FACE" ->
-                  evaluate(game, "$ACTIVE_CARD.currentFace", trace)
+              "$ACTIVE_FACE" ->
+                evaluate(game, "$ACTIVE_CARD.currentFace", trace)
 
-                "$ACTIVE_TOKENS" ->
-                  evaluate(game, "$ACTIVE_CARD.tokens", trace)
+              "$ACTIVE_TOKENS" ->
+                evaluate(game, "$ACTIVE_CARD.tokens", trace)
 
-                "$ACTIVE_GROUP" ->
-                  evaluate(game, "$GAME.groupById.$ACTIVE_GROUP_ID", trace ++ ["$ACTIVE_GROUP"])
+              "$ACTIVE_GROUP" ->
+                evaluate(game, "$GAME.groupById.$ACTIVE_GROUP_ID", trace ++ ["$ACTIVE_GROUP"])
 
-                "$ACTIVE_GROUP_ID" ->
-                  cond do
-                    get_in(game, ["playerUi", "dropdownMenu", "group"]) ->
-                      get_in(game, ["playerUi", "dropdownMenu", "group"])["id"]
-                    get_in(game, ["playerUi", "activeCardId"]) ->
-                      evaluate(game, "$ACTIVE_CARD.groupId", trace ++ ["$ACTIVE_GROUP"])
-                    true ->
-                      raise "Variable $ACTIVE_GROUP_ID is undefined."
-                  end
+              "$ACTIVE_GROUP_ID" ->
+                cond do
+                  get_in(game, ["playerUi", "dropdownMenu", "group"]) ->
+                    get_in(game, ["playerUi", "dropdownMenu", "group"])["id"]
+                  get_in(game, ["playerUi", "activeCardId"]) ->
+                    evaluate(game, "$ACTIVE_CARD.groupId", trace ++ ["$ACTIVE_GROUP"])
+                  true ->
+                    raise "Variable $ACTIVE_GROUP_ID is undefined."
+                end
 
-                _ ->
-                  raise "Variable #{code} is undefined. " <> inspect(trace)
-              end
+              _ ->
+                raise "Variable #{code} is undefined. " <> inspect(trace)
+            end
           end
 
         is_binary(code) and String.starts_with?(code, "/") ->

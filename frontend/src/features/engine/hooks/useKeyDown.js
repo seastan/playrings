@@ -91,7 +91,7 @@ export const useKeyDown = () => {
             }
         }
         for (var keyObj of dragnHotkeys) {
-            if (keyObj.key === dictKey) {
+            if (keyMatch(keyObj.key, dictKey)) {
                 doDragnHotkey(keyObj.actionList)
                 console.log("keydown action ",keyObj.actionList, gameDef.actionLists[keyObj.actionList])
                 return;
@@ -124,7 +124,16 @@ export const useKeyDown = () => {
 }
 
 const keyMatch = (key1, key2) => {
+
     if (key1 === key2) return true;
     if (key1.split('+').sort().join('+') === key2.split('+').sort().join('+')) return true;
+
+    // Check if key1 is "1", "2", ... "9"
+    if (key1.length === 1 && key1 >= "1" && key1 <= "9") {
+        // Drop any instance of Shift+ from key2
+        key2 = key2.replace("Shift+", "");
+        if (key1.split('+').sort().join('+') === key2.split('+').sort().join('+')) return true;
+    }
+    
     return false;
 }
