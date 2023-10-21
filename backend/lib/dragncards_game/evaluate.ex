@@ -220,6 +220,17 @@ defmodule DragnCardsGame.Evaluate do
     end
   end
 
+  def get_lhs_rhs(game, code, trace) do
+    lhs = evaluate(game, Enum.at(code,1), trace ++ ["evaluate lhs"]) || 0
+    rhs = evaluate(game, Enum.at(code,2), trace ++ ["evaluate rhs"]) || 0
+    # If lhs or rhs is not a number, raise an error
+    if is_number(lhs) and is_number(rhs) do
+      {lhs, rhs}
+    else
+      raise "Tried to compare #{lhs} and #{rhs} but one of them is not a number."
+    end
+  end
+
   def evaluate_with_timeout(game, code, trace, timeout_ms \\ 35_000) do
     task = Task.async(fn ->
       try do
@@ -384,16 +395,20 @@ defmodule DragnCardsGame.Evaluate do
             evaluate(game, Enum.at(code,1), trace ++ ["NOT_EQUAL left"]) != evaluate(game, Enum.at(code,2), trace ++ ["NOT_EQUAL right"])
 
           "LESS_THAN" ->
-            evaluate(game, Enum.at(code,1), trace ++ ["LESS_THAN left"]) < evaluate(game, Enum.at(code,2), trace ++ ["LESS_THAN right"])
+            {lhs, rhs} = get_lhs_rhs(game, code, trace)
+            lhs < rhs
 
           "GREATER_THAN" ->
-            evaluate(game, Enum.at(code,1), trace ++ ["GREATER_THAN left"]) > evaluate(game, Enum.at(code,2), trace ++ ["GREATER_THAN right"])
+            {lhs, rhs} = get_lhs_rhs(game, code, trace)
+            lhs > rhs
 
           "LESS_EQUAL" ->
-            evaluate(game, Enum.at(code,1), trace ++ ["LESS_EQUAL left"]) <= evaluate(game, Enum.at(code,2), trace ++ ["LESS_EQUAL right"])
+            {lhs, rhs} = get_lhs_rhs(game, code, trace)
+            lhs <= rhs
 
           "GREATER_EQUAL" ->
-            evaluate(game, Enum.at(code,1), trace ++ ["GREATER_EQUAL left"]) >= evaluate(game, Enum.at(code,2), trace ++ ["GREATER_EQUAL right"])
+            {lhs, rhs} = get_lhs_rhs(game, code, trace)
+            lhs >= rhs
 
           "NOT" ->
             !evaluate(game, Enum.at(code,1), trace ++ ["NOT"])

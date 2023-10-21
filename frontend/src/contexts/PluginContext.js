@@ -35,11 +35,12 @@ export const PluginProvider = ({ children }) => {
   const pluginId = useSelector(state => state?.gameUi?.game?.pluginId);
   const pluginVersion = useSelector(state => state?.gameUi?.game?.pluginVersion);
   const [plugin, setPlugin] = useState(null); 
-  const { data, isLoading, isError, doFetchUrl, doFetchHash, setData } = useDataApi(
+  const { data, isLoading, isError, doFetchUrl, doFetchHash, setData, progressEvent } = useDataApi(
     '/be/api/plugins/' + pluginId,
     null,
     false
   );
+  const percentLoaded = progressEvent?.total ? Math.round(progressEvent.loaded / progressEvent.total * 100) : 0;
 
   const [retrievedFromStorage, setRetrievedFromStorage] = useState(false); // Flag to track data source
 
@@ -73,10 +74,11 @@ export const PluginProvider = ({ children }) => {
   }, [data, pluginId]);
 
   return (
-    <PluginContext.Provider value={{ plugin: plugin, isLoading }}>
+    <PluginContext.Provider value={{ plugin: plugin, isLoading, progressEvent: progressEvent }}>
       {retrievedFromStorage === false && (isLoading || plugin?.game_def == null) ? (
-        <div className="absolute flex h-full w-full items-center justify-center opacity-80 bg-gray-800">
+        <div className="absolute text-white flex h-full w-full items-center justify-center opacity-80 bg-gray-800">
           <RotatingLines height={100} width={100} strokeColor="white" />
+          <div className="absolute">{percentLoaded}%</div>
         </div>
       ) : (
         children

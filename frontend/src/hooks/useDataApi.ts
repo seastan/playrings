@@ -6,12 +6,14 @@ async function axiosRetry(
   url: string,
   options: AxiosRequestConfig,
   retries: number,
-  delay: number
+  delay: number,
+  setProgressEvent: any
 ): Promise<AxiosResponse> {
   try {
     console.log("pluginTrace axiosRetry try 1", url)
     const an_axios = axios.create({
-      timeout: delay, 
+      //timeout: delay, 
+      onDownloadProgress: progressEvent => {console.log("progressEvent", progressEvent); setProgressEvent(progressEvent)}
     });
     const result = await an_axios(url, options);
 
@@ -33,7 +35,7 @@ async function axiosRetry(
       await new Promise((resolve) => setTimeout(resolve, delay));
       console.log("pluginTrace axiosRetry catch 2", url)
       // Retry with an increased delay
-      return axiosRetry(url, options, retries - 1, delay * 2);
+      return axiosRetry(url, options, retries - 1, delay * 2, setProgressEvent);
     } else {
       // If retries are exhausted, throw the error
       throw error;
@@ -52,6 +54,7 @@ const useDataApi = <T extends any>(
   const [isLoading, setIsLoading] = useState(false);
   const [isError, setIsError] = useState(false);
   const [initialized, setInitialized] = useState(false);
+  const [progressEvent, setProgressEvent] = useState<any>(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -67,7 +70,7 @@ const useDataApi = <T extends any>(
         const retries = 4;
         const initialDelay = 1000;
         console.log("pluginTrace useDataApi 1", url)
-        const result = await axiosRetry(url, {}, retries, initialDelay);
+        const result = await axiosRetry(url, {}, retries, initialDelay, setProgressEvent);
         console.log("pluginTrace useDataApi 2", result)
         setData(result.data);
       } catch (error) {
@@ -88,6 +91,7 @@ const useDataApi = <T extends any>(
     doFetchUrl: setUrl,
     doFetchHash: setHash,
     setData,
+    progressEvent
   };
 };
 
