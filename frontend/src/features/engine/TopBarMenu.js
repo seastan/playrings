@@ -204,7 +204,7 @@ export const TopBarMenu = React.memo(({}) => {
   const downloadGameAsJson = () => {
     const state = store.getState();
     const exportObj = state.gameUi.game;
-    const exportName = state.gameUi.roomName;
+    const exportName = state.gameUi.roomSlug;
     var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(exportObj));
     var downloadAnchorNode = document.createElement('a');
     downloadAnchorNode.setAttribute("href",     dataStr);
