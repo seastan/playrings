@@ -158,6 +158,9 @@ export const siteL10n = {
   "hoverOverTopBottom": {
     "English": "Hover over the top/bottom half of the card when pressing the key to add/remove tokens."
   },
+  "holdCtrl": {
+    "English": "Hold Ctrl to add/remove 5 tokens at a time."
+  },
   "cardHotkeys": {
     "English": "Card Hotkeys"
   },
@@ -226,7 +229,35 @@ export const siteL10n = {
   },
   "showTo": {
     "English": "Show To"
+  },
+  "targetCard": {
+    "English": "Target Card"
+  },
+  "startStopDrawingArrow": {
+    "English": "Start/stop drawing arrow"
+  },
+  "saveGame": {
+    "English": "Save game"
+  },
+  "clearTargetsArrows": {
+    "English": "Clear targets/arrows"
+  },
+  "undoOneAction": {
+    "English": "Undo one action"
+  },
+  "redoOneAction": {
+    "English": "Redo one action"
+  },
+  "undoManyActions": {
+    "English": "Undo round"
+  },
+  "redoManyActions": {
+    "English": "Redo round"
+  },
+  "moveToPreviousGameStep": {
+    "English": "Move to previous game step"
+  },
+  "moveToNextGameStep": {
+    "English": "Move to next game step"
   }
-
-
 }

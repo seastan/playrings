@@ -7,6 +7,7 @@ import { faChevronRight, faStar as faStarS } from "@fortawesome/free-solid-svg-i
 import moment from "moment";
 import { useSiteL10n } from "../../hooks/useSiteL10n";
 import { useHistory } from "react-router-dom";
+import useDataApi from "../../hooks/useDataApi";
 
 export const PluginsTable = ({ plugins }) => {
   const siteL10n = useSiteL10n();
@@ -15,6 +16,23 @@ export const PluginsTable = ({ plugins }) => {
   console.log("plugins 1", plugins)
   const toggleFavorite = () => null;
   const numPlugins = plugins?.length || 0;
+
+  // const { isLoading, isError, data, setData } = useDataApi(
+  //   "/be/api/rooms",
+  //   null
+  // );
+
+  // // Get the number of rooms for each plugin
+  // const rooms = data?.data != null ? data.data : [];
+  // var roomsByPlugin = {};
+  // for (var i=0; i<rooms.length; i++) {
+  //   const room = rooms[i];
+  //   if (roomsByPlugin[room.plugin_id] == null) {
+  //     roomsByPlugin[room.plugin_id] = 1;
+  //   } else {
+  //     roomsByPlugin[room.plugin_id] = roomsByPlugin[room.plugin_id] + 1;
+  //   }
+  // }
 
   for (var i=0; i<numPlugins; i++) {
     const pluginTemp = {...plugins[i]};
@@ -55,6 +73,7 @@ export const PluginsTable = ({ plugins }) => {
                     <div className="inline">({plugin.num_favorites})</div> */}
                     <div className="text-xs">{siteL10n("Last update:") + " " + moment.utc(plugin.updated_at).local().format("YYYY-MM-DD HH:mm:ss")}</div>
                     <div className="text-xs">{siteL10n("Author:") + " " + plugin.author_alias}</div>
+                    {/* <div className="text-xs">{siteL10n("Games in Progress:") + " " + (roomsByPlugin[plugin.id] || 0)}</div> */}
                   </div>
                   <div className="absolute right-0 flex items-center p-4">
                     <a className="text-white" target="_blank" onClick={() => {}}>

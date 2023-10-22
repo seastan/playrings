@@ -5,20 +5,18 @@ import { useDoActionList } from "./useDoActionList";
 import { dragnActionLists } from "../functions/dragnActionLists";
 
 export const dragnHotkeys = [
-    {"key": "T", "actionList": "targetCard", "label": "id:targetCard"},
-    {"key": "Shift+W", "actionList": "drawArrow", "label": "id:startStopDrawingArrow"},
-    {"key": "Shift+P", "actionList": "saveGame", "label": "id:saveGame"},
-    {"key": "Shift+W", "actionList": "drawArrow", "label": "id:startStopDrawingArrow"},
-    {"key": "Escape", "actionList": "clearTargets", "label": "id:clearTargetsArrows"},
-    {"key": "Ctrl+S", "actionList": "saveGame", "label": "id:saveGame"},
-    {"key": "Ctrl+Z", "actionList": "undo", "label": "id:undoOneAction"},
-    {"key": "Ctrl+Y", "actionList": "redo", "label": "id:redoOneAction"},
-    {"key": "ArrowLeft", "actionList": "undo", "label": "id:undoOneAction"},
-    {"key": "ArrowRight", "actionList": "redo", "label": "id:redoOneAction"},
-    {"key": "Shift+ArrowLeft", "actionList": "undoMany", "label": "id:undoManyActions"},
-    {"key": "Shift+ArrowRight", "actionList": "redoMany", "label": "id:redoManyActions"},
-    {"key": "ArrowUp", "actionList": "prevStep", "label": "id:moveToPreviousGameStep"},
-    {"key": "ArrowDown", "actionList": "nextStep", "label": "id:moveToNextGameStep"}
+    {"key": "T", "actionList": "targetCard", "label": "targetCard"},
+    {"key": "Shift+W", "actionList": "drawArrow", "label": "startStopDrawingArrow"},
+    {"key": "Escape", "actionList": "clearTargets", "label": "clearTargetsArrows"},
+    {"key": "Ctrl+S", "actionList": "saveGame", "label": "saveGame"},
+    {"key": "Ctrl+Z", "actionList": "undo", "label": "undoOneAction"},
+    {"key": "Ctrl+Y", "actionList": "redo", "label": "redoOneAction"},
+    {"key": "ArrowLeft", "actionList": "undo", "label": "undoOneAction"},
+    {"key": "ArrowRight", "actionList": "redo", "label": "redoOneAction"},
+    {"key": "Shift+ArrowLeft", "actionList": "undoMany", "label": "undoManyActions"},
+    {"key": "Shift+ArrowRight", "actionList": "redoMany", "label": "redoManyActions"},
+    {"key": "ArrowUp", "actionList": "prevStep", "label": "moveToPreviousGameStep"},
+    {"key": "ArrowDown", "actionList": "nextStep", "label": "moveToNextGameStep"}
   ]
   
   export const useDoDragnHotkey = () => {

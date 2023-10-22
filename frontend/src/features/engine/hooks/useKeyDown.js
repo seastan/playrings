@@ -69,6 +69,15 @@ export const useKeyDown = () => {
                 addToken(keyObj.tokenType, mouseTopBottom === "top" ? 1 : -1);
                 return;
             }
+            if (keyMatch("Ctrl+"+keyObj.key, dictKey)) {
+                if (!activeCardId) {
+                    sendLocalMessage(`You must hover over a card to use the "${dictKey}" hotkey.`);
+                    return;
+                }
+                addToken(keyObj.tokenType, mouseTopBottom === "top" ? 5 : -5);
+                return;
+            }
+            
         }
         for (var keyObj of gameDef?.hotkeys.game) {
             console.log("keydown action check ",keyObj.key, dictKey)

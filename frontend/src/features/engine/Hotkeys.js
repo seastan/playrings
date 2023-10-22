@@ -61,7 +61,7 @@ const processLabel = (label) => {
 export const HotkeyTable = React.memo(({hotkeyList, l10n}) => {
   const siteL10n = useSiteL10n();
   if (hotkeyList) return(
-    <table className="table-fixed rounded-lg w-full mb-6">
+    <table className="table-fixed rounded-lg w-full my-2">
       <tr className="bg-gray-800">
           <th className={col1Class}>{siteL10n("hotkeyTableKey")}</th>
           <th className={col2Class}>{siteL10n("hotkeyTableDescription")}</th>
@@ -109,6 +109,7 @@ export const Hotkeys = React.memo(({}) => {
             <h2 className="mb-2">{siteL10n("tokens")}</h2>
             {siteL10n("hoverOverTopBottom")}
             <HotkeyTable hotkeyList={gameDef?.hotkeys?.token} l10n={gameL10n}/>
+            {siteL10n("holdCtrl")}
           </div>
           <div className="w-1/3 float-left p-3">
             <h2 className="mb-2">{siteL10n("cardHotkeys")}</h2>
@@ -139,16 +140,17 @@ export const Hotkeys = React.memo(({}) => {
           <div className="w-full p-3 overflow-y-scroll" style={{height: "523px"}}>
             <h2 className="mb-2">{siteL10n("tokens")}</h2>
             {siteL10n("hoverOverTopBottom")}
-            <HotkeyTable hotkeyList={gameDef?.hotkeys?.token}/>
+            <HotkeyTable hotkeyList={gameDef?.hotkeys?.token} l10n={gameL10n}/>
+            {siteL10n("holdCtrl")}
             <br />
             <h2 className="mb-2">{siteL10n("cardHotkeys")}</h2>
             {siteL10n("hoverOverACard.")}
-            <HotkeyTable hotkeyList={gameDef?.hotkeys?.card}/>
+            <HotkeyTable hotkeyList={gameDef?.hotkeys?.card} l10n={gameL10n}/>
             <br />
             <h2 className="mb-2">{siteL10n("gameHotkeys")}</h2>
-            <HotkeyTable hotkeyList={gameDef?.hotkeys?.game}/>
+            <HotkeyTable hotkeyList={gameDef?.hotkeys?.game} l10n={gameL10n}/>
             <h2 className="mb-2">{siteL10n("dragnHotkeys")}</h2>
-            <HotkeyTable hotkeyList={dragnHotkeys}/>
+            <HotkeyTable hotkeyList={dragnHotkeys} l10n={siteL10n}/>
           </div>
         </div>
       </Draggable>
