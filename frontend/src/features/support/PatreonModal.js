@@ -22,7 +22,7 @@ export const PatreonModal = ({
         },
         { 
           amount: 1000, 
-          benefits: ["All lower tier benefits", `Optional "Esteemed Supporter" role on discord`, "Custom plugin backgrounds", "All funds collected from the first 100 supporters at this tier will be donated to GiveWell.com's Top Charities Fund"] 
+          benefits: ["All lower tier benefits", `Optional "Esteemed Supporter" discord role`] 
         },
     ];
 
@@ -47,6 +47,7 @@ export const PatreonModal = ({
       <h1 className="mb-2">Support on Patreon</h1>
       {isLoggedIn ? (
         <>
+          <div className="text-white text-xs mb-2">Half of all funds collected are donated to GiveWell.com's Top Charities Fund</div>
             {tiers.map((tier, index) => (
                 <div key={index} className="mb-4 border rounded-lg p-2 border-gray-500">
                 <PatreonButton

@@ -4,7 +4,9 @@ import useProfile from "./useProfile";
 export const useSiteL10n = () => {
     const user = useProfile();
     const language = user?.language || "English";
-    return (labelId) => {
-        return siteL10n?.[labelId]?.[language] || siteL10n?.[labelId]?.English || labelId;
+    return (label) => {
+        if (!label) return "";
+        else if (typeof label !== "string") return "";
+        else return siteL10n?.[label]?.[language] || siteL10n?.[label]?.English || label;
     }
 }
