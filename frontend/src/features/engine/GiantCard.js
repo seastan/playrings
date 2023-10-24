@@ -20,14 +20,13 @@ export const GiantCard = React.memo(({}) => {
   const visibleFaceSrc = useVisibleFaceSrc(activeCardId);
   console.log("Rendering GiantCard", visibleFace, visibleFaceSrc);
 
-  const cardType = visibleFace?.type;
-
-  const zoomFactor = gameDef?.cardTypes?.[cardType]?.zoomFactor;
-
-  var height = zoomFactor ? `${zoomFactor*95}vh` : "70vh";
-  if (visibleFace.height < visibleFace.width) height = "50vh"; // Need to make sure we aren't crossing the middle of the screen or else the GiantCard could cover the small card and mess up with the mouseover actions.
 
   if (!visibleFace) return(null);
+
+  const cardType = visibleFace?.type;
+  const zoomFactor = gameDef?.cardTypes?.[cardType]?.zoomFactor;
+  var height = zoomFactor ? `${zoomFactor*95}vh` : "70vh";
+  if (visibleFace.height < visibleFace.width) height = "50vh"; // Need to make sure we aren't crossing the middle of the screen or else the GiantCard could cover the small card and mess up with the mouseover actions.
 
   if (activeCardId && !touchAction) {
     //var height = visibleFace.height >= visibleFace.width ? "70vh" : "50vh";
