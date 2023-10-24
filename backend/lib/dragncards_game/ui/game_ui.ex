@@ -5,6 +5,7 @@ defmodule DragnCardsGame.GameUI do
 
 
   require Logger
+  alias ElixirSense.Providers.Eval
   alias DragnCardsGame.GameVariables
   alias DragnCardsGame.{Game, GameUI, Stack, Card, PlayerInfo, Evaluate, GameVariables}
 
@@ -16,15 +17,16 @@ defmodule DragnCardsGame.GameUI do
   @spec new(String.t(), integer(), Map.t()) :: GameUI.t()
   def new(room_slug, user_id, %{} = options) do
     Logger.debug("Making new GameUI")
+    game_def = Plugins.get_game_def(options["pluginId"])
     gameui = %{
-      "game" => Game.load(room_slug, options),
+      "game" => Game.load(room_slug, game_def, options),
       "roomSlug" => room_slug,
       "options" => options,
       "createdAt" => DateTime.utc_now(),
       "createdBy" => user_id,
       "privacyType" => options["privacyType"],
       "playerInfo" => %{
-        "player1" => PlayerInfo.new(user_id)
+        "player1" => if game_def["vacantSeatOnNewGame"] do nil else PlayerInfo.new(user_id) end
       },
       "deltas" => [],
       "replayStep" => 0,
@@ -549,8 +551,7 @@ defmodule DragnCardsGame.GameUI do
   ################################################################
 
   def game_action(gameui, user_id, action, options) do
-    player_n = get_player_n(gameui, user_id)
-    Logger.debug("game_action #{user_id} #{player_n} #{action}")
+    Logger.debug("game_action #{user_id} #{action} #{inspect(options)}")
     game_old = gameui["game"]
 
     game_new = game_old
@@ -561,7 +562,7 @@ defmodule DragnCardsGame.GameUI do
       |> put_in(["messages"], [])
 
     game_new = game_new
-      |> resolve_action_type(action, options, player_n, user_id)
+      |> resolve_action_type(action, options, user_id)
 
     game_new = game_new
       |> Map.delete("playerUi")
@@ -587,16 +588,16 @@ defmodule DragnCardsGame.GameUI do
     gameui
   end
 
-  def resolve_action_type(game, type, options, player_n, user_id) do
+  def resolve_action_type(game, type, options, user_id) do
     case type do
       "evaluate" ->
-        Evaluate.evaluate_with_timeout(game, options["action_list"], ["evaluate"])
+        Evaluate.evaluate_with_timeout(game, options["action_list"])
       "set_game" ->
         options["game"]
       "reset_game" ->
         reset_game(game)
-      "load_cards" ->
-        load_cards(game, player_n, options["load_list"])
+      # "load_cards" ->
+      #   load_cards(game, player_n, options["load_list"])
       "save_replay" ->
         save_replay(game, user_id)
       _ ->
@@ -780,18 +781,20 @@ defmodule DragnCardsGame.GameUI do
     end)
   end
 
-  def get_player_n(gameui, user_id) do
-    info = gameui["playerInfo"]
-    if user_id == nil do
-      nil
+  def get_player_n(game) do
+    if Evaluate.evaluate(game, ["DEFINED", "$PLAYER_N"], ["DEFINE get_player_n"]) do
+      Evaluate.evaluate(game, "$PLAYER_N", ["$PLAYER_N"])
     else
-      Enum.reduce_while(info, nil, fn {key, player_info}, acc ->
-        if player_info != nil and player_info["id"] == user_id do
-          {:halt, key}
-        else
-          {:cont, acc}
-        end
-      end)
+      nil
+    end
+  end
+
+  def get_alias_n(game) do
+    player_n = get_player_n(game)
+    if player_n do
+      Evaluate.evaluate(game, "$ALIAS_N", ["get_alias_n"])
+    else
+      "Host"
     end
   end
 
@@ -832,8 +835,9 @@ defmodule DragnCardsGame.GameUI do
         Logger.debug(inspect(changeset.errors)) # Print the errors
     end
 
-    Evaluate.evaluate(game, ["LOG", "$ALIAS_N", " saved the game."], [])
+    Evaluate.evaluate(game, ["LOG", get_alias_n(game), " saved the game."], ["LOG"])
   end
+
 
   def set_last_room_update(gameui) do
     if rem(Enum.count(gameui["deltas"]), 20) == 0 do
@@ -940,7 +944,7 @@ defmodule DragnCardsGame.GameUI do
       # Check if the number of stacks in the deck has changed, and if so, we shuffle
       if group["shuffleOnLoad"] && length(old_stack_ids) != length(new_stack_ids) do
         acc = shuffle_group(acc, group_id)
-        Evaluate.evaluate(acc, ["LOG", "$ALIAS_N", " shuffled ", l10n(acc, game_def, group["label"]), "."], [])
+        Evaluate.evaluate(acc, ["LOG", get_alias_n(new_game), " shuffled ", l10n(acc, game_def, group["label"]), "."], [])
       else
         acc
       end
@@ -966,7 +970,9 @@ defmodule DragnCardsGame.GameUI do
     update_stack_ids(gameui, group_id, shuffled_stack_ids)
   end
 
-  def load_cards(game, player_n, load_list) do
+  def load_cards(game, load_list) do
+    player_n = get_player_n(game)
+
     # If load_list is nil, raise an error
     if load_list == nil do
       raise "load_list is nil"
@@ -982,7 +988,21 @@ defmodule DragnCardsGame.GameUI do
       database_id = Map.fetch!(load_list_item, "databaseId")
       cardDetails = Map.fetch!(card_db, database_id)
       quantity = Map.fetch!(load_list_item, "quantity")
-      loadGroupId = Map.fetch!(load_list_item, "loadGroupId") |> String.replace("playerN", player_n)
+
+      loadGroupId = Map.fetch!(load_list_item, "loadGroupId")
+
+      loadGroupId =
+      if String.contains?(loadGroupId, "playerN") and player_n == nil do
+        raise "Tried to load a card into player group #{loadGroupId}, but no player was specified. Are you sitting in a seat?"
+      else
+        String.replace(loadGroupId, "playerN", player_n || "")
+      end
+
+      possibleGroupIds = Map.keys(game["groupById"])
+
+      if loadGroupId not in possibleGroupIds do
+        raise "Tried to load a card into a group that doesn't exist: #{loadGroupId}"
+      end
 
       %{
         "databaseId" => database_id,
@@ -1007,7 +1027,7 @@ defmodule DragnCardsGame.GameUI do
     #     Evaluate.evaluate(game, ["ERROR", "Loading cards: #{Exception.message(e)}"])
     # end
 
-    game = Evaluate.evaluate(game, ["LOG", "$PLAYER_N", " loaded cards."])
+    game = Evaluate.evaluate(game, ["LOG", get_alias_n(game), " loaded cards."])
 
     shuffle_changed_decks(game, old_game, game_def)
 

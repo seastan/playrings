@@ -107,9 +107,11 @@ const Table = ({filteredIds}) => {
   const gameDef = useGameDefinition();
   const gameL10n = useGameL10n();
   const loadDeck = useLoadPrebuiltDeck();
+  const dispatch = useDispatch();
 
   const handleSpawnClick = (id) => {
     loadDeck(id);
+    dispatch(setShowModal(null))
   }
 
   if (filteredIds.length === 0) return <div className="text-white">{gameL10n("No results")}</div>

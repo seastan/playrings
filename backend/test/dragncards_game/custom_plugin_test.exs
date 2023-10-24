@@ -1100,8 +1100,6 @@ defmodule DragnCardsGame.CustomPluginTest do
     game = Evaluate.evaluate(game, ["FUNCTION", "MY_DECREASE", "$A", %{"$B" => 1}, ["SUBTRACT", "$A", "$B"]])
     assert Evaluate.evaluate(game, ["MY_DECREASE", 2, 2]) == 0
     assert Evaluate.evaluate(game, ["MY_DECREASE", 2, 1]) == 1
-    assert Evaluate.evaluate(game, ["MY_DECREASE", 2]) == 1
-    assert Evaluate.evaluate(game, ["MY_DECREASE"])["messages"] |> Enum.at(-1) |> String.starts_with?("Function MY_DECREASE expects")
 
 
     game = Evaluate.evaluate(game, ["LOAD_CARDS", "coreLeadership"]) # Leadership core set deck

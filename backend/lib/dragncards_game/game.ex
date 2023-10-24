@@ -14,8 +14,8 @@
   @doc """
   load/2:  Create a game with specified options.
   """
-  @spec load(String.t(), Map.t()) :: Game.t()
-  def load(room_slug, options) do
+  @spec load(String.t(), Map.t(), Map.t()) :: Game.t()
+  def load(room_slug, game_def, options) do
     Logger.debug("Loading Game")
     Logger.debug("Options: #{inspect(options)}")
     game = if options["replayUuid"] != nil do
@@ -28,7 +28,7 @@
       if replay.game_json do replay.game_json else Game.new(room_slug, options) end
       # TODO: Set room name
     else
-      Game.new(room_slug, options)
+      Game.new(room_slug, game_def, options)
     end
     # Refresh id so that replay does not get overwritten
     put_in(game["id"], Ecto.UUID.generate)
@@ -37,10 +37,9 @@
   @doc """
   new/2:  Create a game with specified options.
   """
-  @spec new(String.t(), Map.t()) :: Game.t()
-  def new(room_slug, options) do
+  @spec new(String.t(), Map.t(), Map.t()) :: Game.t()
+  def new(room_slug, game_def, options) do
     Logger.debug("Making new Game")
-    game_def = Plugins.get_game_def(options["pluginId"])
     default_layout_info = Enum.at(game_def["layoutMenu"],0)
     layout_id = default_layout_info["layoutId"]
     base = %{
@@ -66,6 +65,7 @@
       "currentScopeIndex" => 0,
       "imageUrlPrefix" => game_def["imageUrlPrefix"],
       "options" => options,
+      "loadedADeck" => false,
       "variables" => GameVariables.default(),
       "functions" => game_def["functions"] || %{},
       "automation" => if get_in(game_def, ["automation", "gameRules"]) do %{"_game_" => %{"rules" => game_def["automation"]["gameRules"]}} else %{} end,

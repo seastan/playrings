@@ -25,6 +25,12 @@ export const getGameDefSchema = (gameDef) => {
       "backgroundUrl": {
         "_type_": "string",
       },
+      "loadPreBuiltOnNewGame": {
+        "_type_": "boolean",
+      },
+      "vacantSeatOnNewGame": {
+        "_type_": "boolean",
+      },
       "defaultAttachmentDirection": {
         "_type_": "string",
       },
@@ -774,6 +780,9 @@ export const getGameDefSchema = (gameDef) => {
                 "_type_": "boolean",
               },
               "hideTitle": {
+                "_type_": "boolean",
+              },
+              "showMenu": {
                 "_type_": "boolean",
               },
             }
