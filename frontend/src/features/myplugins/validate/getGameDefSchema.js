@@ -239,6 +239,9 @@ export const getGameDefSchema = (gameDef) => {
               "_memberOfPath_": "gameDef.tokens",
             }
           },
+          "zoomFactor": {
+            "_type_": "float",
+          },
         }
       },
       "clearTableOptions": {

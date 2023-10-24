@@ -5,9 +5,11 @@ import { useVisibleFace } from "./hooks/useVisibleFace";
 import { useVisibleFaceSrc } from "./hooks/useVisibleFaceSrc";
 import { useActiveCardId } from "./hooks/useActiveCardId";
 import { setActiveCardId } from "../store/playerUiSlice";
+import { useGameDefinition } from "./hooks/useGameDefinition";
 
 export const GiantCard = React.memo(({}) => {
   const user = useProfile();
+  const gameDef = useGameDefinition();
   const dispatch = useDispatch();
   const touchAction = useSelector(state => state?.playerUi?.touchAction);
   const activeCardId = useActiveCardId();
@@ -18,24 +20,17 @@ export const GiantCard = React.memo(({}) => {
   const visibleFaceSrc = useVisibleFaceSrc(activeCardId);
   console.log("Rendering GiantCard", visibleFace, visibleFaceSrc);
 
-  // useEffect(() => {
-  
-  //   // Check if activeCardId is not null
-  //   if (activeCardId !== null) {
-  //     // Check if activeCardGroupId has changed from its previous value
-  //     if (activeCardGroupId !== prevActiveCardGroupIdRef.current && prevActiveCardGroupIdRef.current) {
-  //       // Dispatch the action to set activeCardId to null
-  //       dispatch(setActiveCardId(null));
-  //     }
-  //   }
+  const cardType = visibleFace?.type;
 
-  //   // Update the ref with the current value of activeCardGroupId
-  //   prevActiveCardGroupIdRef.current = activeCardGroupId;
-  // }, [activeCardId, activeCardGroupId, dispatch]);
+  const zoomFactor = gameDef?.cardTypes?.[cardType]?.zoomFactor;
+
+  var height = zoomFactor ? `${zoomFactor*95}vh` : "70vh";
+  if (visibleFace.height < visibleFace.width) height = "50vh"; // Need to make sure we aren't crossing the middle of the screen or else the GiantCard could cover the small card and mess up with the mouseover actions.
+
   if (!visibleFace) return(null);
 
   if (activeCardId && !touchAction) {
-    var height = visibleFace.height >= visibleFace.width ? "70vh" : "50vh";
+    //var height = visibleFace.height >= visibleFace.width ? "70vh" : "50vh";
     //if (user?.language === "English_HD") height = visibleFace.height >= visibleFace.width ? "90vh" : "70vh";
     return (
       <img 
@@ -45,7 +40,7 @@ export const GiantCard = React.memo(({}) => {
         style={{
           right: screenLeftRight === "left" ? "3%" : "",
           left: screenLeftRight === "right" ? "3%" : "",
-          top: "5%",
+          top: "0%",
           borderRadius: '5%',
           MozBoxShadow: '0 0 50px 20px black',
           WebkitBoxShadow: '0 0 50px 20px black',
