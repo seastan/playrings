@@ -20,7 +20,7 @@ export const Group = React.memo(({
   const group = useSelector(state => state?.gameUi?.game?.groupById?.[groupId]);
   const isPile = region.type === "pile";
   const playerN = useSelector(state => state?.playerUi?.playerN);
-  const iconsVisible = isPile && playerN;
+  const iconsVisible = playerN && (region.showMenu || (isPile && region.showMenu !== false)) ;
   const browseTopN = useBrowseTopN();
   const doActionList = useDoActionList();
   // Print a warning to the console if the group is not found

@@ -23,13 +23,16 @@ import DeveloperModal from "./DeveloperModal";
 import { usePlayerN } from "./hooks/usePlayerN";
 import { pl } from "date-fns/locale";
 import { usePreloadCardImages } from "../../hooks/usePreloadCardImages";
+import { useGameDefinition } from "./hooks/useGameDefinition";
 
 export const Table = React.memo(() => {
+  const gameDef = useGameDefinition();
   const dispatch = useDispatch();
   const tooltipIds = useSelector(state => state?.playerUi?.tooltipIds);
   const touchMode = useSelector(state => state?.playerUi?.touchMode);
   const showModal = useSelector(state => state?.playerUi?.showModal);
   const showDeveloper = useSelector(state => state?.playerUi?.showDeveloper);
+  const loadedADeck = useSelector(state => state?.gameUi?.game?.loadedADeck);
   const options = useSelector(state => state?.gameUi?.game?.options); 
   const loaded = useSelector(state => state?.playerUi?.loaded);
   const redoStepsExist = useSelector(state => state?.gameUi?.game?.replayStep < state?.gameUi?.game?.replayLength-1);
@@ -40,6 +43,13 @@ export const Table = React.memo(() => {
   usePreloadCardImages();
   console.log('Rendering Table 1', playerN);
 
+  useEffect(() => {
+    if (loadedADeck && showModal === "prebuilt_deck") {
+      dispatch(setShowModal(null));
+    } else if (!loadedADeck && isHost && gameDef?.loadPreBuiltOnNewGame) {
+      dispatch(setShowModal("prebuilt_deck"));
+    }
+  }, [loadedADeck]);
 
   const handleTableClick = (event) => {
     dispatch(setMouseXY(null));

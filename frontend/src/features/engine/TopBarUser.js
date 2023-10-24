@@ -139,6 +139,7 @@ export const TopBarUser = React.memo(({
               src={gameDef?.firstPlayerImageUrl}
               onClick={(event) => handleFirstPlayerClick(event)}/>
             : null}
+          {playerDataPlayerN?.label ? <div className="pr-1">{playerDataPlayerN.label}:</div> : null}
           <UserName userID={sittingUserId} defaultName="Empty seat"/>
         </div>
 

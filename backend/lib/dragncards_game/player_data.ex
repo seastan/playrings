@@ -14,6 +14,7 @@ defmodule DragnCardsGame.PlayerData do
   def new(game_def) do
     base = %{
       "drawingArrowFrom" => nil,
+      "label" => nil,
     }
     # Add custom properties
     Enum.reduce(game_def["playerProperties"], base, fn({key,val}, acc) ->

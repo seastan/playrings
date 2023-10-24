@@ -231,7 +231,8 @@ defmodule DragnCardsGame.Evaluate do
     end
   end
 
-  def evaluate_with_timeout(game, code, trace, timeout_ms \\ 35_000) do
+  def evaluate_with_timeout(game, code, timeout_ms \\ 35_000) do
+    trace = [code]
     task = Task.async(fn ->
       try do
         evaluate(game, code, trace)
@@ -255,7 +256,12 @@ defmodule DragnCardsGame.Evaluate do
       evaluate_inner(game, code, trace)
     rescue
       e in RuntimeError ->
-        evaluate(game, ["ERROR", e.message], trace)
+        if String.starts_with?(e.message, ":") do
+          raise e.message
+        else
+          raise ": #{e.message} Trace: #{inspect(trace)}"
+        end
+          #evaluate(game, ["ERROR", e.message], trace)
     end
   end
 
@@ -271,6 +277,7 @@ defmodule DragnCardsGame.Evaluate do
       else
         #IO.inspect(code)
         function_name = Enum.at(code, 0)
+        trace == trace ++ function_name
         case function_name do
           "PREV" ->
             prev_game = game["prev_game"]
@@ -279,24 +286,24 @@ defmodule DragnCardsGame.Evaluate do
             |> put_in(["variables", "$TARGET_ID"], game["prev_game"]["variables"]["$TARGET_ID"])
             |> put_in(["variables", "$THIS"], game["prev_game"]["variables"]["$THIS"])
             |> put_in(["variables", "$THIS_ID"], game["prev_game"]["variables"]["$THIS_ID"])
-            evaluate(prev_game, Enum.at(code, 1), trace ++ ["PREV"])
+            evaluate(prev_game, Enum.at(code, 1), trace)
 
           "LOG_DEV" ->
             IO.puts("LOG_DEV:")
             IO.inspect(Enum.at(code, 1))
-            IO.inspect(evaluate(game, Enum.at(code, 1), trace ++ ["LOG_DEV"]))
+            IO.inspect(evaluate(game, Enum.at(code, 1), trace))
             game
 
           "ERROR" ->
-            Logger.error("in #{game["pluginName"]}\n#{Enum.at(code, 1)}")
-            evaluate(game, ["LOG", Enum.at(code, 1)], trace ++ ["ERROR"])
+            Logger.error("in #{game["pluginName"]}#{Enum.at(code, 1)}")
+            evaluate(game, ["LOG", Enum.at(code, 1)], trace)
 
           "DEFINE" ->
             # Evaluate the value and assign it to the var name
             var_name = Enum.at(code, 1)
             # if var_name does not start with $, raise an error
             if String.starts_with?(var_name, "$") do
-              value = evaluate(game, Enum.at(code, 2), trace ++ ["DEFINE #{var_name}"])
+              value = evaluate(game, Enum.at(code, 2), trace ++ ["#{var_name}"])
               put_in(game, ["variables", var_name], value)
             else
               raise "Tried to define variable '#{var_name}' but it does not start with $."
@@ -308,7 +315,7 @@ defmodule DragnCardsGame.Evaluate do
             current_scope_index = game["currentScopeIndex"] || 0
             # if var_name does not start with $, raise an error
             if String.starts_with?(var_name, "$") do
-              value = evaluate(game, Enum.at(code, 2), trace ++ ["LOCAL #{var_name}"])
+              value = evaluate(game, Enum.at(code, 2), trace ++ ["#{var_name}"])
               put_in(game, ["variables", "#{var_name}-#{current_scope_index}"], value)
             else
               raise "Tried to define variable '#{var_name}' but it does not start with $."
@@ -317,9 +324,7 @@ defmodule DragnCardsGame.Evaluate do
           "DEFINED" ->
             var_name = Enum.at(code, 1)
             try do
-              result = evaluate_inner(game, var_name, trace ++ ["DEFINED #{var_name}"])
-              IO.puts("result")
-              IO.inspect(result)
+              result = evaluate_inner(game, var_name, trace ++ ["#{var_name}"])
               result != nil
             rescue
               _ -> false
@@ -342,12 +347,12 @@ defmodule DragnCardsGame.Evaluate do
           "LIST" ->
             list = Enum.slice(code, 1, Enum.count(code))
             Enum.reduce(Enum.with_index(list), [], fn({item, index}, acc)->
-              acc ++ [evaluate(game, item, trace ++ ["LIST index #{index}"])]
+              acc ++ [evaluate(game, item, trace ++ ["index #{index}"])]
             end)
 
           "APPEND" ->
-            list = evaluate(game, Enum.at(code, 1), trace ++ ["APPEND left"]) || []
-            list ++ [evaluate(game, Enum.at(code, 2), trace ++ ["APPEND right"])]
+            list = evaluate(game, Enum.at(code, 1), trace ++ ["left"]) || []
+            list ++ [evaluate(game, Enum.at(code, 2), trace ++ ["right"])]
 
           "NEXT_PLAYER" ->
             current_player_i = evaluate(game, Enum.at(code, 1), trace ++ ["current_player_i"])
@@ -357,29 +362,29 @@ defmodule DragnCardsGame.Evaluate do
             "player" <> Integer.to_string(next_i)
 
           "GET_INDEX" ->
-            list = evaluate(game, Enum.at(code, 1), trace ++ ["GET_INDEX list"])
-            value = evaluate(game, Enum.at(code, 2), trace ++ ["GET_INDEX value"])
+            list = evaluate(game, Enum.at(code, 1), trace ++ ["list"])
+            value = evaluate(game, Enum.at(code, 2), trace ++ ["value"])
             Enum.find_index(list, fn(x) -> x == value end)
 
           "AT_INDEX" ->
-            list = evaluate(game, Enum.at(code, 1), trace ++ ["AT_INDEX list"])
-            index = evaluate(game, Enum.at(code, 2), trace ++ ["AT_INDEX index"])
+            list = evaluate(game, Enum.at(code, 1), trace ++ ["list"])
+            index = evaluate(game, Enum.at(code, 2), trace ++ ["index"])
             if list do Enum.at(list, index) else nil end
 
           "LENGTH" ->
-            value = evaluate(game, Enum.at(code, 1), trace ++ ["LENGTH"])
+            value = evaluate(game, Enum.at(code, 1), trace)
             if is_binary(value) do String.length(value) else Enum.count(value) end
 
           "AND" ->
             statements = Enum.slice(code, 1, Enum.count(code) - 1)
             Enum.all?(Enum.with_index(statements), fn {statement, index} ->
-              evaluate(game, statement, trace ++ ["AND index #{index}"])
+              evaluate(game, statement, trace ++ ["index #{index}"])
             end)
 
           "OR" ->
             statements = Enum.slice(code, 1, Enum.count(code) - 1)
             Enum.any?(Enum.with_index(statements), fn {statement, index} ->
-              evaluate(game, statement, trace ++ ["OR index #{index}"])
+              evaluate(game, statement, trace ++ ["index #{index}"])
             end)
 
           "TRUE" ->
@@ -389,10 +394,10 @@ defmodule DragnCardsGame.Evaluate do
             false
 
           "EQUAL" ->
-            evaluate(game, Enum.at(code,1), trace ++ ["EQUAL left"]) == evaluate(game, Enum.at(code,2), trace ++ ["EQUAL right"])
+            evaluate(game, Enum.at(code,1), trace ++ ["left"]) == evaluate(game, Enum.at(code,2), trace ++ ["right"])
 
           "NOT_EQUAL" ->
-            evaluate(game, Enum.at(code,1), trace ++ ["NOT_EQUAL left"]) != evaluate(game, Enum.at(code,2), trace ++ ["NOT_EQUAL right"])
+            evaluate(game, Enum.at(code,1), trace ++ ["left"]) != evaluate(game, Enum.at(code,2), trace ++ ["right"])
 
           "LESS_THAN" ->
             {lhs, rhs} = get_lhs_rhs(game, code, trace)
@@ -411,20 +416,20 @@ defmodule DragnCardsGame.Evaluate do
             lhs >= rhs
 
           "NOT" ->
-            !evaluate(game, Enum.at(code,1), trace ++ ["NOT"])
+            !evaluate(game, Enum.at(code,1), trace)
 
           "SUBSTRING" ->
-            string = evaluate(game, Enum.at(code,1), trace ++ ["SUBSTRING string"])
-            start = evaluate(game, Enum.at(code,2), trace ++ ["SUBSTRING start"])
-            length = evaluate(game, Enum.at(code,3), trace ++ ["SUBSTRING length"])
+            string = evaluate(game, Enum.at(code,1), trace ++ ["string"])
+            start = evaluate(game, Enum.at(code,2), trace ++ ["start"])
+            length = evaluate(game, Enum.at(code,3), trace ++ ["length"])
             String.slice(string, start..start+length-1)
 
           "JOIN_STRING" ->
-            evaluate(game, Enum.at(code,1), trace ++ ["JOIN_STRING_left"]) <> evaluate(game, Enum.at(code,2), trace ++ ["JOIN_STRING_right"])
+            evaluate(game, Enum.at(code,1), trace ++ ["left"]) <> evaluate(game, Enum.at(code,2), trace ++ ["right"])
 
           "IN_STRING" ->
-            container = evaluate(game, Enum.at(code,1), trace ++ ["IN_STRING container"])
-            containee = evaluate(game, Enum.at(code,2), trace ++ ["IN_STRING containee"])
+            container = evaluate(game, Enum.at(code,1), trace ++ ["container"])
+            containee = evaluate(game, Enum.at(code,2), trace ++ ["containee"])
             if container == nil or containee == nil do
               false
             else
@@ -432,46 +437,46 @@ defmodule DragnCardsGame.Evaluate do
             end
 
           "IN_LIST" ->
-            list = evaluate(game, Enum.at(code,1), trace ++ ["IN_LIST list"]) || []
-            Enum.member?(list, evaluate(game, Enum.at(code,2), trace ++ ["IN_LIST member"]))
+            list = evaluate(game, Enum.at(code,1), trace ++ ["list"]) || []
+            Enum.member?(list, evaluate(game, Enum.at(code,2), trace ++ ["member"]))
 
           "REMOVE_FROM_LIST_BY_VALUE" ->
-            list = evaluate(game, Enum.at(code,1), trace ++ ["IN_LIST REMOVE_FROM_LIST_BY_VALUE list"]) || []
-            value = evaluate(game, Enum.at(code,2), trace ++ ["IN_LIST REMOVE_FROM_LIST_BY_VALUE value"])
+            list = evaluate(game, Enum.at(code,1), trace ++ ["list"]) || []
+            value = evaluate(game, Enum.at(code,2), trace ++ ["value"])
             Enum.filter(list, fn(x) -> x != value end)
 
           "ADD" ->
-            (evaluate(game, Enum.at(code,1), trace ++ ["ADD left"]) || 0) + (evaluate(game, Enum.at(code,2), trace ++ ["ADD right"]) || 0)
+            (evaluate(game, Enum.at(code,1), trace ++ ["left"]) || 0) + (evaluate(game, Enum.at(code,2), trace ++ ["right"]) || 0)
 
           "SUBTRACT" ->
-            (evaluate(game, Enum.at(code,1), trace ++ ["SUBTRACT left"]) || 0) - (evaluate(game, Enum.at(code,2), trace ++ ["SUBTRACT right"]) || 0)
+            (evaluate(game, Enum.at(code,1), trace ++ ["left"]) || 0) - (evaluate(game, Enum.at(code,2), trace ++ ["right"]) || 0)
 
           "MULTIPLY" ->
-            (evaluate(game, Enum.at(code,1), trace ++ ["MULTIPLY left"]) || 0) * (evaluate(game, Enum.at(code,2), trace ++ ["MULTIPLY right"]) || 0)
+            (evaluate(game, Enum.at(code,1), trace ++ ["left"]) || 0) * (evaluate(game, Enum.at(code,2), trace ++ ["right"]) || 0)
 
           "DIVIDE" ->
-            divisor = (evaluate(game, Enum.at(code,2), trace ++ ["DIVIDE divisor"]) || 0)
-            if divisor do (evaluate(game, Enum.at(code,1), trace ++ ["DIVIDE dividend"]) || 0) / divisor else nil end
+            divisor = (evaluate(game, Enum.at(code,2), trace ++ ["divisor"]) || 0)
+            if divisor do (evaluate(game, Enum.at(code,1), trace ++ ["dividend"]) || 0) / divisor else nil end
 
           "RANDOM_INT" ->
-            mn = evaluate(game, Enum.at(code,1), trace ++ ["RANDOM_INT min"])
-            mx = evaluate(game, Enum.at(code,2), trace ++ ["RANDOM_INT max"])
+            mn = evaluate(game, Enum.at(code,1), trace ++ ["min"])
+            mx = evaluate(game, Enum.at(code,2), trace ++ ["max"])
             :rand.uniform(mx - mn + 1) + mn - 1
 
           "OBJ_GET_VAL" ->
-            map = evaluate(game, Enum.at(code,1), trace ++ ["OBJ_GET_VAL map"])
-            key = evaluate(game, Enum.at(code,2), trace ++ ["OBJ_GET_VAL key"])
+            map = evaluate(game, Enum.at(code,1), trace ++ ["map"])
+            key = evaluate(game, Enum.at(code,2), trace ++ ["key"])
             map[key]
 
           "OBJ_GET_BY_PATH" ->
-            map = evaluate(game, Enum.at(code,1), trace ++ ["OBJ_GET_BY_PATH map"])
-            path = evaluate(game, Enum.at(code,2), trace ++ ["OBJ_GET_BY_PATH path"])
+            map = evaluate(game, Enum.at(code,1), trace ++ ["map"])
+            path = evaluate(game, Enum.at(code,2), trace ++ ["path"])
             Enum.reduce(Enum.with_index(path), map, fn({pathi, index}, acc) ->
               cond do
                 pathi == nil ->
                   raise "Tried to access nil in path #{inspect(path)}."
                 String.starts_with?(pathi, "[") and String.ends_with?(pathi, "]") ->
-                  int_str = evaluate(game, String.slice(pathi,1..-2), trace ++ ["OBJ_GET_BY_PATH index #{index}"])
+                  int_str = evaluate(game, String.slice(pathi,1..-2), trace ++ ["index #{index}"])
                   int = convert_to_integer(int_str)
                   Enum.at(acc, int)
                 pathi == "currentFace" ->
@@ -486,7 +491,7 @@ defmodule DragnCardsGame.Evaluate do
                     acc["sides"]
                   end
                   if sides[current_side] == nil do
-                    raise "Tried to access side #{current_side} on an object with sides #{inspect(Map.keys(sides))}. #{inspect(trace)}"
+                    raise "Tried to access side #{current_side} on an object with sides #{inspect(Map.keys(sides))}."
                   else
                     sides[current_side]
                   end
@@ -526,7 +531,7 @@ defmodule DragnCardsGame.Evaluate do
                 acc == nil ->
                   nil
                 Map.has_key?(acc, pathi) ->
-                  Map.get(acc, evaluate(game, pathi, trace ++ ["OBJ_GET_BY_PATH key #{index}"]))
+                  Map.get(acc, evaluate(game, pathi, trace ++ ["key #{index}"]))
                 true ->
                   nil
                   #raise "Tried to access #{pathi} on an object that doesn't have that key. Only keys are #{Map.keys(acc)}. #{inspect(trace)}"
@@ -534,67 +539,67 @@ defmodule DragnCardsGame.Evaluate do
             end)
 
           "GET_STACK_ID" ->
-            group_id = evaluate(game, Enum.at(code,1), trace ++ ["GET_STACK_ID group_id"])
-            stack_index = evaluate(game, Enum.at(code,2), trace ++ ["GET_STACK_ID stack_index"])
+            group_id = evaluate(game, Enum.at(code,1), trace ++ ["group_id"])
+            stack_index = evaluate(game, Enum.at(code,2), trace ++ ["stack_index"])
             if group_id do evaluate(game, ["AT_INDEX", "$GAME.groupById." <> group_id <> ".stackIds", stack_index], trace) else nil end
 
           "GET_CARD_ID" ->
-            group_id = evaluate(game, Enum.at(code,1), trace ++ ["GET_CARD_ID group_id"])
-            stack_index = evaluate(game, Enum.at(code,2), trace ++ ["GET_CARD_ID stack_index"])
-            stack_id = evaluate(game, ["GET_STACK_ID", group_id, stack_index], trace ++ ["GET_CARD_ID stack_id"])
-            card_index = evaluate(game, Enum.at(code,3), trace ++ ["GET_CARD_ID card_index"])
+            group_id = evaluate(game, Enum.at(code,1), trace ++ ["group_id"])
+            stack_index = evaluate(game, Enum.at(code,2), trace ++ ["stack_index"])
+            stack_id = evaluate(game, ["GET_STACK_ID", group_id, stack_index], trace ++ ["stack_id"])
+            card_index = evaluate(game, Enum.at(code,3), trace ++ ["card_index"])
             if stack_id do evaluate(game, ["AT_INDEX", "$GAME.stackById." <> stack_id <> ".cardIds", card_index], trace) else nil end
 
           "OBJ_SET_VAL" ->
             case Enum.count(code) do
               4 ->
-                obj = evaluate(game, Enum.at(code,1), trace ++ ["OBJ_SET_VAL obj"])
-                key = evaluate(game, Enum.at(code,2), trace ++ ["OBJ_SET_VAL key"])
-                value = evaluate(game, Enum.at(code,3), trace ++ ["OBJ_SET_VAL value"])
+                obj = evaluate(game, Enum.at(code,1), trace ++ ["obj"])
+                key = evaluate(game, Enum.at(code,2), trace ++ ["key"])
+                value = evaluate(game, Enum.at(code,3), trace ++ ["value"])
                 put_in(obj[key], value)
               5 ->
-                obj = evaluate(game, Enum.at(code,1), trace ++ ["OBJ_SET_VAL obj"])
-                path = evaluate(game, Enum.at(code,2), trace ++ ["OBJ_SET_VAL path"])
-                key = evaluate(game, Enum.at(code,3), trace ++ ["OBJ_SET_VAL key"])
-                value = evaluate(game, Enum.at(code,4), trace ++ ["OBJ_SET_VAL value"])
+                obj = evaluate(game, Enum.at(code,1), trace ++ ["obj"])
+                path = evaluate(game, Enum.at(code,2), trace ++ ["path"])
+                key = evaluate(game, Enum.at(code,3), trace ++ ["key"])
+                value = evaluate(game, Enum.at(code,4), trace ++ ["value"])
                 put_in(obj, path ++ [key], value)
             end
 
           "GET" ->
-            path = evaluate(game, Enum.at(code,1), trace ++ ["GAME_GET_VAL path"])
+            path = evaluate(game, Enum.at(code,1), trace ++ ["path"])
             get_in(game, path)
 
           "SET" ->
-            path = evaluate(game, Enum.at(code, 1), trace ++ ["SET path"])
-            value = evaluate(game, Enum.at(code, 2), trace ++ ["SET value"])
-            put_by_path(game, path, value, trace ++ ["SET put_by_path"])
+            path = evaluate(game, Enum.at(code, 1), trace ++ ["path"])
+            value = evaluate(game, Enum.at(code, 2), trace ++ ["value"])
+            put_by_path(game, path, value, trace ++ ["put_by_path"])
 
           "TARGET" ->
-            card_id = evaluate(game, Enum.at(code, 1), trace ++ ["TARGET card_id"])
-            evaluate(game, ["SET", "/cardById/" <> card_id <> "/targeting/$PLAYER_N", true], trace ++ ["TARGET set"])
+            card_id = evaluate(game, Enum.at(code, 1), trace ++ ["card_id"])
+            evaluate(game, ["SET", "/cardById/" <> card_id <> "/targeting/$PLAYER_N", true], trace ++ ["set"])
 
           "UPDATE_ROOM_NAME" ->
-            name = evaluate(game, Enum.at(code, 1), trace ++ ["UPDATE_ROOM_NAME name"])
+            name = evaluate(game, Enum.at(code, 1), trace ++ ["name"])
             Rooms.update_room_name_by_slug(game["roomSlug"], name)
             evaluate(game, ["SET", "/roomName", name], trace)
 
           "INCREASE_VAL" ->
-            path = evaluate(game, Enum.at(code, 1), trace ++ ["INCREASE_VAL path"])
-            delta = evaluate(game, Enum.at(code, 2), trace ++ ["INCREASE_VAL delta"])
+            path = evaluate(game, Enum.at(code, 1), trace ++ ["path"])
+            delta = evaluate(game, Enum.at(code, 2), trace ++ ["delta"])
             old_value = get_in(game, path) || 0
-            put_by_path(game, path, old_value + delta, trace ++ ["INCREASE_VAL put_by_path"])
+            put_by_path(game, path, old_value + delta, trace ++ ["put_by_path"])
 
           "DECREASE_VAL" ->
-            path = evaluate(game, Enum.at(code, 1), trace ++ ["DECREASE_VAL path"])
-            delta = evaluate(game, Enum.at(code, 2), trace ++ ["DECREASE_VAL delta"])
+            path = evaluate(game, Enum.at(code, 1), trace ++ ["path"])
+            delta = evaluate(game, Enum.at(code, 2), trace ++ ["delta"])
             old_value = get_in(game, path) || 0
-            put_by_path(game, path, old_value - delta, trace ++ ["DECREASE_VAL put_by_path"])
+            put_by_path(game, path, old_value - delta, trace ++ ["put_by_path"])
 
           "COND" ->
             ifthens = Enum.slice(code, 1, Enum.count(code))
             Enum.reduce_while(0..Enum.count(ifthens)-1//2, game, fn(i, _acc) ->
-              if evaluate(game, Enum.at(ifthens, i), trace ++ ["COND index #{i} (if)"]) == true do
-                {:halt, evaluate(game, Enum.at(ifthens, i+1), trace ++ ["COND index #{i} (then)"])}
+              if evaluate(game, Enum.at(ifthens, i), trace ++ ["index #{i} (if)"]) == true do
+                {:halt, evaluate(game, Enum.at(ifthens, i+1), trace ++ ["index #{i} (then)"])}
               else
                 {:cont, game}
               end
@@ -602,7 +607,7 @@ defmodule DragnCardsGame.Evaluate do
 
           "LOG" ->
             statements = Enum.slice(code, 1, Enum.count(code))
-            message = message_list_to_string(game, statements, trace ++ ["LOG message_list_to_string"])
+            message = message_list_to_string(game, statements, trace ++ ["message_list_to_string"])
             put_in(game["messages"], game["messages"] ++ [message])
 
           "WHILE" ->
@@ -612,64 +617,59 @@ defmodule DragnCardsGame.Evaluate do
 
           "FOR_EACH_START_STOP_STEP" ->
             var_name = Enum.at(code, 1)
-            start = evaluate(game, Enum.at(code, 2), trace ++ ["FOR_EACH_START_STOP_STEP start"])
-            stop = evaluate(game, Enum.at(code, 3), trace ++ ["FOR_EACH_START_STOP_STEP stop"])
-            step = evaluate(game, Enum.at(code, 4), trace ++ ["FOR_EACH_START_STOP_STEP step"])
+            start = evaluate(game, Enum.at(code, 2), trace ++ ["start"])
+            stop = evaluate(game, Enum.at(code, 3), trace ++ ["stop"])
+            step = evaluate(game, Enum.at(code, 4), trace ++ ["step"])
             function = Enum.at(code, 5)
             Enum.reduce(start..stop-1//step, game, fn(i, acc) ->
               acc = put_in(acc, ["variables", var_name], i)
-              evaluate(acc, function, trace ++ ["FOR_EACH_START_STOP_STEP index #{i}"])
+              evaluate(acc, function, trace ++ ["index #{i}"])
             end)
 
           "FOR_EACH_KEY_VAL" ->
             argc = Enum.count(code) - 1
             key_name = Enum.at(code, 1)
             val_name = Enum.at(code, 2)
-            old_list = evaluate(game, Enum.at(code, 3), trace ++ ["FOR_EACH_KEY_VAL old_list"])
+            old_list = evaluate(game, Enum.at(code, 3), trace ++ ["old_list"])
             function = Enum.at(code, 4)
             old_list = if argc >= 5 do
-              order = if argc >= 6 and evaluate(game, Enum.at(code, 6), trace ++ ["FOR_EACH_KEY_VAL sort order"]) == "DESC" do :desc else :asc end
-              Enum.sort_by(old_list, fn({_key, obj}) -> get_in(obj, evaluate(game, Enum.at(code, 5), trace ++ ["FOR_EACH_KEY_VAL sort prop"])) end, order)
+              order = if argc >= 6 and evaluate(game, Enum.at(code, 6), trace ++ ["sort order"]) == "DESC" do :desc else :asc end
+              Enum.sort_by(old_list, fn({_key, obj}) -> get_in(obj, evaluate(game, Enum.at(code, 5), trace ++ ["sort prop"])) end, order)
             else
               old_list
             end
             Enum.reduce(old_list, game, fn({key, val}, acc) ->
               acc = put_in(acc, ["variables", key_name], key)
               acc = put_in(acc, ["variables", val_name], val)
-              evaluate(acc, function, trace ++ ["FOR_EACH_KEY_VAL key #{key}"])
+              evaluate(acc, function, trace ++ ["key #{key}"])
             end)
 
           "FOR_EACH_VAL" ->
             val_name = Enum.at(code, 1)
-            list = evaluate(game, Enum.at(code, 2), trace ++ ["FOR_EACH_VAL list"])
+            list = evaluate(game, Enum.at(code, 2), trace ++ ["list"])
             function = Enum.at(code, 3)
             Enum.reduce(Enum.with_index(list), game, fn({val, index}, acc) ->
               acc = put_in(acc, ["variables", val_name], val)
-              evaluate(acc, function, trace ++ ["FOR_EACH_VAL index #{index}"])
+              evaluate(acc, function, trace ++ ["index #{index}"])
             end)
 
           "MOVE_CARD" ->
             Logger.debug("MOVE_CARD " <> inspect(code))
             argc = Enum.count(code) - 1
-            card_id = evaluate(game, Enum.at(code, 1), trace ++ ["MOVE_CARD card_id"])
+            card_id = evaluate(game, Enum.at(code, 1), trace ++ ["card_id"])
             if card_id do
-              dest_group_id = evaluate(game, Enum.at(code, 2), trace ++ ["MOVE_CARD dest_group_id"])
-              dest_stack_index = evaluate(game, Enum.at(code, 3), trace ++ ["MOVE_CARD dest_stack_index"])
-              dest_card_index = if argc >= 4 do evaluate(game, Enum.at(code, 4), trace ++ ["MOVE_CARD dest_stack_index"]) else 0 end
-              options = if argc >= 5 do evaluate(game, Enum.at(code, 5), trace ++ ["MOVE_CARD options"]) else nil end
-              #try do
-                GameUI.move_card(game, card_id, dest_group_id, dest_stack_index, dest_card_index, options)
-              # rescue
-              #   e ->
-              #     raise("Failed to move card #{card_id} to dest_group_id:#{dest_group_id} dest_stack_index:#{dest_stack_index} dest_card_index:#{dest_card_index} combine:#{combine}. " <> inspect(e) <> inspect(trace))
-              # end
+              dest_group_id = evaluate(game, Enum.at(code, 2), trace ++ ["dest_group_id"])
+              dest_stack_index = evaluate(game, Enum.at(code, 3), trace ++ ["dest_stack_index"])
+              dest_card_index = if argc >= 4 do evaluate(game, Enum.at(code, 4), trace ++ ["dest_stack_index"]) else 0 end
+              options = if argc >= 5 do evaluate(game, Enum.at(code, 5), trace ++ ["options"]) else nil end
+              GameUI.move_card(game, card_id, dest_group_id, dest_stack_index, dest_card_index, options)
 
             else
               game
             end
 
           "LOAD_CARDS" ->
-            load_list_or_id = evaluate(game, Enum.at(code, 1), trace ++ ["LOAD_CARDS load_list"])
+            load_list_or_id = evaluate(game, Enum.at(code, 1), trace ++ ["load_list"])
             game_def = Plugins.get_game_def(game["options"]["pluginId"])
 
             # Set the load_list_id
@@ -688,52 +688,44 @@ defmodule DragnCardsGame.Evaluate do
 
             # Run preLoadActionList if it exists
             game = if game_def["automation"]["preLoadActionList"] do
-              evaluate(game, ["ACTION_LIST", game_def["automation"]["preLoadActionList"]], trace ++ ["LOAD_CARDS game preLoadActionList"])
+              evaluate(game, ["ACTION_LIST", game_def["automation"]["preLoadActionList"]], trace ++ ["game preLoadActionList"])
             else
               game
             end
-
             # Run deck's preLoadActionList if it exists
             game = if load_list_id && game_def["preBuiltDecks"][load_list_id]["preLoadActionList"] do
-              evaluate(game, ["ACTION_LIST", game_def["preBuiltDecks"][load_list_id]["preLoadActionList"]], trace ++ ["LOAD_CARDS deck preLoadActionList"])
+              evaluate(game, ["ACTION_LIST", game_def["preBuiltDecks"][load_list_id]["preLoadActionList"]], trace ++ ["deck preLoadActionList"])
             else
               game
             end
-
 
             prev_loaded_card_ids = game["loadedCardIds"]
 
-            # Load cards
-            game = try do
-              GameUI.load_cards(game, evaluate(game, "$PLAYER_N", trace), load_list)
-            rescue
-              e ->
-                exception = Exception.format(:error, e, __STACKTRACE__)
-                # Loop over rows in exception and truncate rows that are over 200 characters
-                exception = exception |> String.split("\n") |> Enum.map(fn(row) -> if String.length(row) > 200 do String.slice(row, 0, 200) <> "..." else row end end) |> Enum.join("\n")
 
-                raise("Failed to load cards. " <> exception <> inspect(trace))
-            end
+            game = GameUI.load_cards(game, load_list)
 
             # Run deck's postLoadActionList if it exists
             game = if load_list_id && game_def["preBuiltDecks"][load_list_id]["postLoadActionList"] do
-              evaluate(game, ["ACTION_LIST", game_def["preBuiltDecks"][load_list_id]["postLoadActionList"]], trace ++ ["LOAD_CARDS deck postLoadActionList"])
+              evaluate(game, ["ACTION_LIST", game_def["preBuiltDecks"][load_list_id]["postLoadActionList"]], trace ++ ["deck postLoadActionList"])
             else
               game
             end
 
             # Run postLoadActionList if it exists
             game = if game_def["automation"]["postLoadActionList"] do
-              evaluate(game, ["ACTION_LIST", game_def["automation"]["postLoadActionList"]], trace ++ ["LOAD_CARDS game postLoadActionList"])
+              evaluate(game, ["ACTION_LIST", game_def["automation"]["postLoadActionList"]], trace ++ ["game postLoadActionList"])
             else
               game
             end
 
             # Restore prev_loaded_card_ids
-            put_in(game, ["loadedCardIds"], prev_loaded_card_ids)
+            game = put_in(game, ["loadedCardIds"], prev_loaded_card_ids)
+
+            # Set loadedADeck to true
+            put_in(game, ["loadedADeck"], true)
 
           "DELETE_CARD" ->
-            card_id = evaluate(game, Enum.at(code, 1), trace ++ ["DELETE_CARD card_id"])
+            card_id = evaluate(game, Enum.at(code, 1), trace ++ ["card_id"])
             try do
               GameUI.delete_card(game, card_id)
             rescue
@@ -742,8 +734,8 @@ defmodule DragnCardsGame.Evaluate do
             end
 
           "ATTACH_CARD" ->
-            card_id = evaluate(game, Enum.at(code, 1), trace ++ ["ATTACH_CARD card_id"])
-            dest_card_id = evaluate(game, Enum.at(code, 2), trace ++ ["ATTACH_CARD dest_card_id"])
+            card_id = evaluate(game, Enum.at(code, 1), trace ++ ["card_id"])
+            dest_card_id = evaluate(game, Enum.at(code, 2), trace ++ ["dest_card_id"])
             dest_card = game["cardById"][dest_card_id]
             try do
               GameUI.move_card(game, card_id, dest_card["groupId"], dest_card["stackIndex"], -1, %{"combine" => true})
@@ -754,8 +746,8 @@ defmodule DragnCardsGame.Evaluate do
 
           "DRAW_CARD" ->
             argc = Enum.count(code) - 1
-            num = if argc == 0 do 1 else evaluate(game, Enum.at(code, 1), trace ++ ["DRAW_CARD num"]) end
-            player_n = evaluate(game, "$PLAYER_N", trace ++ ["DRAW_CARD player_n"])
+            num = if argc == 0 do 1 else evaluate(game, Enum.at(code, 1), trace ++ ["num"]) end
+            player_n = evaluate(game, "$PLAYER_N", trace ++ ["player_n"])
             try do
               GameUI.move_stacks(game, player_n <> "Deck", player_n <> "Hand", num, "bottom")
             rescue
@@ -765,10 +757,10 @@ defmodule DragnCardsGame.Evaluate do
 
           "MOVE_STACK" ->
             argc = Enum.count(code) - 1
-            stack_id = evaluate(game, Enum.at(code, 1), trace ++ ["MOVE_STACK stack_id"])
-            dest_group_id = evaluate(game, Enum.at(code, 2), trace ++ ["MOVE_STACK dest_group_id"])
-            dest_stack_index = evaluate(game, Enum.at(code, 3), trace ++ ["MOVE_STACK dest_stack_index"])
-            options = if argc >= 4 do evaluate(game, Enum.at(code, 4), trace ++ ["MOVE_STACK options"] ) else nil end
+            stack_id = evaluate(game, Enum.at(code, 1), trace ++ ["stack_id"])
+            dest_group_id = evaluate(game, Enum.at(code, 2), trace ++ ["dest_group_id"])
+            dest_stack_index = evaluate(game, Enum.at(code, 3), trace ++ ["dest_stack_index"])
+            options = if argc >= 4 do evaluate(game, Enum.at(code, 4), trace ++ ["options"] ) else nil end
             #try do
               GameUI.move_stack(game, stack_id, dest_group_id, dest_stack_index, options)
             #rescue
@@ -786,22 +778,22 @@ defmodule DragnCardsGame.Evaluate do
 
           "MOVE_STACKS" ->
             argc = Enum.count(code) - 1
-            orig_group_id = evaluate(game, Enum.at(code, 1), trace ++ ["MOVE_STACKS orig_group_id"])
-            dest_group_id = evaluate(game, Enum.at(code, 2), trace ++ ["MOVE_STACKS dest_group_id"])
-            top_n = if argc >= 3 do evaluate(game, Enum.at(code, 3), trace ++ ["MOVE_STACKS top_n"]) else length(game["groupById"][orig_group_id]["stackIds"]) end
-            position = if argc >= 4 do evaluate(game, Enum.at(code, 4), trace ++ ["MOVE_STACKS position"]) else "shuffle" end
-            options = if argc >= 5 do evaluate(game, Enum.at(code, 4), trace ++ ["MOVE_STACKS options"] ) else nil end
+            orig_group_id = evaluate(game, Enum.at(code, 1), trace ++ ["orig_group_id"])
+            dest_group_id = evaluate(game, Enum.at(code, 2), trace ++ ["dest_group_id"])
+            top_n = if argc >= 3 do evaluate(game, Enum.at(code, 3), trace ++ ["top_n"]) else length(game["groupById"][orig_group_id]["stackIds"]) end
+            position = if argc >= 4 do evaluate(game, Enum.at(code, 4), trace ++ ["position"]) else "shuffle" end
+            options = if argc >= 5 do evaluate(game, Enum.at(code, 4), trace ++ ["options"] ) else nil end
             GameUI.move_stacks(game, orig_group_id, dest_group_id, top_n, position, options)
 
           "SHUFFLE_GROUP" ->
-            group_id = evaluate(game, Enum.at(code, 1), trace ++ ["SHUFFLE_GROUP group_id"])
+            group_id = evaluate(game, Enum.at(code, 1), trace ++ ["group_id"])
             stack_ids = game["groupById"][group_id]["stackIds"]
             shuffled_stack_ids = stack_ids |> Enum.shuffle
             put_in(game, ["groupById", group_id, "stackIds"], shuffled_stack_ids)
 
           "SHUFFLE_TOP_X" ->
-            group_id = evaluate(game, Enum.at(code, 1), trace ++ ["SHUFFLE_TOP_X group_id"])
-            x = evaluate(game, Enum.at(code, 2), trace ++ ["SHUFFLE_TOP_X x"])
+            group_id = evaluate(game, Enum.at(code, 1), trace ++ ["group_id"])
+            x = evaluate(game, Enum.at(code, 2), trace ++ ["x"])
             stack_ids = game["groupById"][group_id]["stackIds"]
             stack_ids_l = Enum.slice(stack_ids, 0, x)
             stack_ids_r = Enum.slice(stack_ids, x, Enum.count(stack_ids))
@@ -809,8 +801,8 @@ defmodule DragnCardsGame.Evaluate do
             put_in(game, ["groupById", group_id, "stackIds"], stack_ids_l ++ stack_ids_r)
 
           "SHUFFLE_BOTTOM_X" ->
-            group_id = evaluate(game, Enum.at(code, 1), trace ++ ["SHUFFLE_BOTTOM_X group_id"])
-            x = evaluate(game, Enum.at(code, 2), trace ++ ["SHUFFLE_BOTTOM_X x"])
+            group_id = evaluate(game, Enum.at(code, 1), trace ++ ["group_id"])
+            x = evaluate(game, Enum.at(code, 2), trace ++ ["x"])
             stack_ids = game["groupById"][group_id]["stackIds"]
             stack_ids_r = Enum.slice(stack_ids, -x, x)
             stack_ids_l = Enum.slice(stack_ids, 0, Enum.count(stack_ids) - x)
@@ -818,12 +810,12 @@ defmodule DragnCardsGame.Evaluate do
             put_in(game, ["groupById", group_id, "stackIds"], stack_ids_l ++ stack_ids_r)
 
           "FACEUP_NAME_FROM_STACK_ID" ->
-            stack_id = evaluate(game, Enum.at(code, 1), trace ++ ["FACEUP_NAME_FROM_STACK_ID stack_id"])
+            stack_id = evaluate(game, Enum.at(code, 1), trace ++ ["stack_id"])
             card_id = Enum.at(game["stackById"][stack_id]["cardIds"],0)
-            evaluate(game, ["FACEUP_NAME_FROM_CARD_ID", card_id], trace ++ ["FACEUP_NAME_FROM_STACK_ID"])
+            evaluate(game, ["FACEUP_NAME_FROM_CARD_ID", card_id], trace)
 
           "FACEUP_NAME_FROM_CARD_ID" ->
-            card_id = evaluate(game, Enum.at(code, 1), trace ++ ["FACEUP_NAME_FROM_CARD_ID card_id"])
+            card_id = evaluate(game, Enum.at(code, 1), trace ++ ["card_id"])
             card = game["cardById"][card_id]
             face = card["sides"][card["currentSide"]]
             face["name"]
@@ -857,10 +849,10 @@ defmodule DragnCardsGame.Evaluate do
             all_cards
 
           "PROCESS_MAP" ->
-            map = evaluate(game, Enum.at(code, 1), trace ++ ["PROCESS_MAP map"])
+            map = evaluate(game, Enum.at(code, 1), trace ++ ["map"])
             map = Enum.reduce(map, %{}, fn({k, v}, acc) ->
-              k = evaluate(game, k, trace ++ ["PROCESS_MAP key"])
-              v = evaluate(game, v, trace ++ ["PROCESS_MAP value"])
+              k = evaluate(game, k, trace ++ ["key"])
+              v = evaluate(game, v, trace ++ ["value"])
               put_in(acc, [k], v)
             end)
             map
@@ -874,13 +866,13 @@ defmodule DragnCardsGame.Evaluate do
               is_list(action_list_or_id) ->
                 action_list_or_id
               String.starts_with?(action_list_or_id, "$") ->
-                evaluate_inner(game, action_list_or_id, trace ++ ["ACTION_LIST variable"])
+                evaluate_inner(game, action_list_or_id, trace ++ ["variable"])
               true ->
-                action_list_id = evaluate(game, Enum.at(code, 1), trace ++ ["ACTION_LIST action_list_id"])
+                action_list_id = evaluate(game, Enum.at(code, 1), trace ++ ["action_list_id"])
                 game_def = Plugins.get_game_def(game["options"]["pluginId"])
                 game_def["actionLists"][action_list_id]
             end
-            evaluate(game, action_list, trace ++ ["ACTION_LIST"])
+            evaluate(game, action_list, trace)
 
           # NONE OF THE ABOVE #
           _ ->
@@ -919,7 +911,7 @@ defmodule DragnCardsGame.Evaluate do
                       [{func_arg_name, input_arg}]
                     end
                 end
-                evaluate(acc, ["DEFINE", "#{func_arg_name}-#{new_scope_index}", input_arg], trace ++ ["DEFINE function arg #{func_arg_name}"])
+                evaluate(acc, ["DEFINE", "#{func_arg_name}-#{new_scope_index}", input_arg], trace ++ ["function arg #{func_arg_name}"])
               end)
               # Evaluate the function
               result = evaluate(game, func_code, trace)
