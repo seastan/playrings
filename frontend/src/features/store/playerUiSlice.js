@@ -35,6 +35,11 @@ const initialState = {
   favoriteGroupId: null,
   randomNumBetween: "3",
   draggingFromGroupId: null,
+  drag: {
+    stackId: null,
+    end: null,
+    endDelay: null,
+  }
 };
 
 const playerUiSlice = createSlice({
@@ -141,6 +146,18 @@ const playerUiSlice = createSlice({
     setDraggingFromGroupId: (state, { payload }) => {
       state.draggingFromGroupId = payload;
     },
+    setDrag: (state, { payload }) => {
+      state.drag = payload;
+    },
+    setDragStackId: (state, { payload }) => {
+      state.drag.stackId = payload;
+    },
+    setDragEnd: (state, { payload }) => {
+      state.drag.end = payload;
+    },
+    setDragEndDelay: (state, { payload }) => {
+      state.drag.endDelay = payload;
+    },
   }
 });
 
@@ -179,5 +196,9 @@ export const {
   setFavoriteGroupId,
   setRandomNumBetween,
   setDraggingFromGroupId,
+  setDrag,
+  setDragStackId,
+  setDragEnd,
+  setDragEndDelay,
  } = playerUiSlice.actions;
 export default playerUiSlice.reducer;

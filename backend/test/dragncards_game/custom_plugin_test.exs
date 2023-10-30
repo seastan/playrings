@@ -1133,6 +1133,37 @@ defmodule DragnCardsGame.CustomPluginTest do
     game = Evaluate.evaluate(game, ["DEFINE", "$A", 2])
     assert Evaluate.evaluate(game, ["ACTION_LIST", "$LAZY_ADD"]) == 4
 
+
+    game = Evaluate.evaluate(game, ["LOAD_CARDS", "Q01.1"]) # Passage through Mirkwood
+    game = Evaluate.evaluate(game, ["FUNCTION", "DISCARD_UNTIL", "$GROUP_ID", "$COND", [
+        ["VAR", "$CARD_ID", "$GAME.groupById.$GROUP_ID.parentCardIds.[0]"],
+        ["VAR", "$CARD", "$GAME.cardById.$CARD_ID"],
+        ["WHILE",
+          ["AND",
+            ["NOT", ["ACTION_LIST", "$COND"]],
+            ["GREATER_THAN", ["LENGTH", "$GAME.groupById.$GROUP_ID.stackIds"], 1]
+          ],
+          [
+            ["LOG_DEV", "Discarding {{$CARD.sides.A.name}}"],
+            ["MOVE_CARD", "$CARD_ID", "$CARD.discardGroupId", 0],
+            ["VAR", "$CARD_ID", "$GAME.groupById.$GROUP_ID.parentCardIds.[0]"],
+            ["VAR", "$CARD", "$GAME.cardById.$CARD_ID"]
+          ]
+        ]
+      ]
+    ])
+    game = Evaluate.evaluate(game, [
+      ["VAR", "$COND",
+        ["POINTER",
+          ["EQUAL", "$CARD.sides.A.type", "Enemy"]
+        ]
+      ],
+      ["DISCARD_UNTIL", "sharedEncounterDeck", "$COND"]
+    ])
+
+
+
+
   end
 
   # Local variables
@@ -1159,5 +1190,6 @@ defmodule DragnCardsGame.CustomPluginTest do
     assert game["variables"]["$B-1"] == nil
 
   end
+
 
 end

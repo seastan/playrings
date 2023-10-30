@@ -103,6 +103,8 @@ export const Stack = React.memo(({
             onMouseEnter={() => setIsMousedOver(true)}
             onMouseLeave={() => setIsMousedOver(false)}
             style={{...style,
+              visibility: dragSnapshot.isDropAnimating ? "hidden" : "visible",
+              transitionDuration: dragSnapshot.isDropAnimating ? "0.001s" : "0.2s",
               //transition: style.transition ? (dragSnapshot.isDragging ? style.transition + " scale 0.s ease-out" : style.transition) : null,
               transform: style.transform ? (dragSnapshot.isDragging ? style.transform + " scale(1.1)" : style.transform) : null,
               zIndex: Boolean(dragSnapshot.combineTargetFor) ? 6000 : style.zIndex,

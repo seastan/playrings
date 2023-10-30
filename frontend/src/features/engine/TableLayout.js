@@ -9,7 +9,7 @@ import { useGameL10n } from "./hooks/useGameL10n";
 import { TableChat } from "./TableChat";
 import { TableButton } from "./TableButton";
 
-export const TableLayout = React.memo(() => {
+export const TableLayout = React.memo(({addDroppableRef}) => {
   const gameL10n = useGameL10n();
   console.log("Rendering TableLayout");
   const sideGroupId = useSelector(state => state?.playerUi?.sideGroupId);
@@ -45,6 +45,7 @@ export const TableLayout = React.memo(() => {
           <TableRegion
             key={regionIndex}
             region={region}
+            addDroppableRef={addDroppableRef}
           />
         )
       })}
