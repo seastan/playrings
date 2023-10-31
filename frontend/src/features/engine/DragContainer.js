@@ -6,7 +6,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { setStackIds, setCardIds, setGroupById } from "../store/gameUiSlice";
 import { reorderGroupStackIds } from "./Reorder";
 import store from "../../store";
-import { setActiveCardId, setDragEnd, setDragEndDelay, setDragStackId, setDraggingFromGroupId, setTouchAction } from "../store/playerUiSlice";
+import { setActiveCardId, setDraggingEnd, setDraggingEndDelay, setDraggingStackId, setDraggingTransform, setDraggingFromGroupId, setTouchAction } from "../store/playerUiSlice";
 import { Table } from "./Table";
 import { useDoActionList } from "./hooks/useDoActionList";
 import { ArcherContainer } from 'react-archer';
@@ -20,6 +20,7 @@ export const DragContainer = React.memo(({}) => {
   const doActionList = useDoActionList();
   const [isDragging, setIsDragging] = useState(false);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const [mouseDownPosition, setMouseDownPosition] = useState({ x: 0, y: 0 });
   const keypressShift = useSelector(state => state?.playerUi?.keypress?.Shift);
   const playerData = useSelector(state => state?.gameUi?.game?.playerData);
   const touchMode = useSelector(state => state?.playerUi?.touchMode);
@@ -44,12 +45,21 @@ export const DragContainer = React.memo(({}) => {
     setMousePosition({ x: ev.clientX, y: ev.clientY });
   };
 
+  const updateMouseDown = (e) => {
+    console.log("updateMouseDown", e)
+    const rect = e.target.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    console.log(`Relative mouse position: ${x}, ${y}`);
+    setMouseDownPosition({ x: x, y: y });
+  }
+
   const onBeforeDragStart = (result) => {
     console.log("onBeforeDragStart", result)
     dispatch(setDraggingFromGroupId(result.source.droppableId));
-    dispatch(setDragStackId(result.draggableId));
-    dispatch(setDragEnd(false));
-    dispatch(setDragEndDelay(false));
+    dispatch(setDraggingStackId(result.draggableId));
+    dispatch(setDraggingEnd(false));
+    dispatch(setDraggingEndDelay(false));
     // const draggableNode = document.querySelector(`[data-rbd-draggable-id="${result.draggableId}"]`);
     // if (draggableNode) {
     //   draggableClientRect = draggableNode.getBoundingClientRect();
@@ -76,6 +86,15 @@ export const DragContainer = React.memo(({}) => {
     };
   }, [isDragging]);
 
+  useEffect(() => {
+    document.addEventListener("mousedown", updateMouseDown);
+
+    return () => {
+      document.removeEventListener("mousedown", updateMouseDown);
+    };
+  }, []);
+
+
   const onDragEnd = (result) => {
     console.log("onDragEnd", result)
     const game = store.getState()?.gameUi.game;
@@ -96,16 +115,13 @@ export const DragContainer = React.memo(({}) => {
     setIsDragging(false);
 
     dispatch(setDraggingFromGroupId(null));
-    dispatch(setDragEnd(true));
+    dispatch(setDraggingEnd(true));
     setTimeout(() => {
-      dispatch(setDragStackId(null));
-      dispatch(setDragEndDelay(true))
+      dispatch(setDraggingStackId(null));
+      dispatch(setDraggingEndDelay(true))
     }, 100);
 
-    // Dropped nowhere
-    if (!result.destination) {
-      return;
-    } 
+
     const dest = result.combine ? result.combine : result.destination;
     const destGroupId = dest?.droppableId;
 
@@ -117,14 +133,14 @@ export const DragContainer = React.memo(({}) => {
 
     if (droppableRefs?.[destGroupId]) {
       const droppableRect = droppableRefs[destGroupId].getBoundingClientRect();
-      const xRelative = mousePosition.x - droppableRect.left;
-      const yRelative = mousePosition.y - droppableRect.top;
+      const xRelative = mousePosition.x - mouseDownPosition.x - droppableRect.left;
+      const yRelative = mousePosition.y - mouseDownPosition.y - droppableRect.top;
       stackLeft = xRelative/droppableRect.width*100;
       stackTop = yRelative/droppableRect.height*100;
 
       console.log('Relative Position: ', mousePosition.x, mousePosition.y, droppableRect.left, droppableRect.top, xRelative, yRelative, stackLeft, stackTop);
     }
-
+    
     // Combine
     if (result.combine) {
       
@@ -170,6 +186,10 @@ export const DragContainer = React.memo(({}) => {
     
     // Dragged somewhere
     else {
+      // Dropped nowhere
+      if (!result.destination) {
+        return;
+      } 
       destGroup = game["groupById"][destGroupId];
 
       // Did not move anywhere - can bail early

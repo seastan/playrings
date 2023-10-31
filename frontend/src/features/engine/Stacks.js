@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import styled from "@emotion/styled";
 import { Draggable, Droppable } from "react-beautiful-dnd";
 import { Stack } from "./Stack";
@@ -11,8 +11,7 @@ import store from "../../store";
 import { ATTACHMENT_OFFSET } from "./functions/common";
 import NaturalDragAnimation from 'natural-drag-animation-rbdnd';
 import { Card } from "./Card";
-
-let tempTransform = null; 
+import { setDraggingToRegionType } from "../store/playerUiSlice";
 
 const Container = styled.div`
   background-color: ${props => props.isDraggingOver ? "rgba(1,1,1,0.3)" : ""};
@@ -54,7 +53,7 @@ const StacksList = React.memo(({
   mouseHere,
   selectedStackIndices
 }) => {
-  const draggingFromGroupId = useSelector(state => state?.playerUi?.draggingFromGroupId);
+  const draggingFromGroupId = useSelector(state => state?.playerUi?.dragging.fromGroupId);
   const isPile = region.type == "pile";
   // Truncate stacked piles
   console.log("Rendering StacksList", {groupId, region, draggingFromGroupId});
@@ -88,6 +87,7 @@ export const Stacks = React.memo(({
   addDroppableRef
 }) => {
   const containerRef = useRef(null);
+  const dispatch = useDispatch();
   console.log("Rendering Stacks for ",groupId, region);
   const [mouseHere, setMouseHere] = useState(false);
   const layout = useLayout();
@@ -109,43 +109,45 @@ export const Stacks = React.memo(({
       isDropDisabled={false}
       isCombineEnabled={group.canHaveAttachments}
       direction={region.direction}>
-      {(dropProvided, dropSnapshot) => (
-        <Container
-          ref={containerRef}
-          isDraggingOver={dropSnapshot.isDraggingOver}
-          isDropDisabled={false}
-          isDraggingFrom={Boolean(dropSnapshot.draggingFromThisWith)}
-          {...dropProvided.droppableProps}
-          direction={region.direction}
-          onMouseEnter={() => setMouseHere(region.type === "pile" && true)} 
-          //onMouseLeave={() => setMouseHere(region.type === "pile" && false)}
-          >
-            <PileImage 
-              region={region} 
-              stackIds={stackIds} 
-              isDraggingOver={dropSnapshot.isDraggingOver} 
-              isDraggingFrom={Boolean(dropSnapshot.draggingFromThisWith)}>
-            </PileImage>
-            <DropZone 
-              ref={dropProvided.innerRef} 
-              direction={region.direction}
-              margin={region.type === "row" ? rowSpacing/2 : 0}>
-              <StacksList
-                isDraggingOver={dropSnapshot.isDraggingOver}
-                isDraggingFrom={Boolean(dropSnapshot.draggingFromThisWith)}
-                groupId={groupId}
+      {(dropProvided, dropSnapshot) => {
+        if (dropSnapshot.isDraggingOver) dispatch(setDraggingToRegionType(region.type));
+        return(
+          <Container
+            ref={containerRef}
+            isDraggingOver={dropSnapshot.isDraggingOver}
+            isDropDisabled={false}
+            isDraggingFrom={Boolean(dropSnapshot.draggingFromThisWith)}
+            {...dropProvided.droppableProps}
+            direction={region.direction}
+            onMouseEnter={() => setMouseHere(region.type === "pile" && true)} 
+            //onMouseLeave={() => setMouseHere(region.type === "pile" && false)}
+            >
+              <PileImage 
                 region={region} 
-                stackIds={stackIds}
-                mouseHere={mouseHere}
-                selectedStackIndices={(selectedStackIndices ? selectedStackIndices : [...Array(stackIds.length).keys()])}/>
-              {dropProvided.placeholder}
-            </DropZone>
-        </Container>
-      )}
+                stackIds={stackIds} 
+                isDraggingOver={dropSnapshot.isDraggingOver} 
+                isDraggingFrom={Boolean(dropSnapshot.draggingFromThisWith)}>
+              </PileImage>
+              <DropZone 
+                ref={dropProvided.innerRef} 
+                direction={region.direction}
+                margin={region.type === "row" ? rowSpacing/2 : 0}>
+                <StacksList
+                  isDraggingOver={dropSnapshot.isDraggingOver}
+                  isDraggingFrom={Boolean(dropSnapshot.draggingFromThisWith)}
+                  groupId={groupId}
+                  region={region} 
+                  stackIds={stackIds}
+                  mouseHere={mouseHere}
+                  selectedStackIndices={(selectedStackIndices ? selectedStackIndices : [...Array(stackIds.length).keys()])}/>
+                {dropProvided.placeholder}
+              </DropZone>
+          </Container>
+        )
+      }}
     </Droppable>
   )
 })
-
 
 export const FreeZone = React.memo(({
   groupId,
@@ -153,6 +155,7 @@ export const FreeZone = React.memo(({
   addDroppableRef
 }) => {
   console.log("Rendering Stacks for ",groupId, region);
+  const dispatch = useDispatch();
   const [mouseHere, setMouseHere] = useState(false);
   const layout = useLayout();
   const rowSpacing = layout?.rowSpacing;
@@ -165,7 +168,9 @@ export const FreeZone = React.memo(({
       isDropDisabled={false}
       isCombineEnabled={false}
       direction={region.direction}>
-      {(dropProvided, dropSnapshot) => (
+      {(dropProvided, dropSnapshot) => {
+        if (dropSnapshot.isDraggingOver) dispatch(setDraggingToRegionType(region.type));
+        return(
         <Container
           ref={addDroppableRef(groupId)}
           isDraggingOver={dropSnapshot.isDraggingOver}
@@ -196,8 +201,8 @@ export const FreeZone = React.memo(({
                 selectedStackIndices={[...Array(stackIds.length).keys()]}/>
               {dropProvided.placeholder}
             </DropZone>
-        </Container>
-      )}
+        </Container>)
+      }}
     </Droppable>
   )
 })
@@ -211,7 +216,7 @@ const FreeStacksList = React.memo(({
   mouseHere,
   selectedStackIndices
 }) => {
-  const draggingFromGroupId = useSelector(state => state?.playerUi?.draggingFromGroupId);
+  const draggingFromGroupId = useSelector(state => state?.playerUi?.dragging.fromGroupId);
   const isPile = region.type == "pile";
   // Truncate stacked piles
   console.log("Rendering StacksList", {groupId, region, draggingFromGroupId});
@@ -261,11 +266,13 @@ export const FreeStack = React.memo(({
   hidden
 }) => {
   const gameDef = useGameDefinition();
+  const dispatch = useDispatch();
   const stack = useSelector(state => state?.gameUi?.game?.stackById[stackId]);
+  const draggingToRegionType = useSelector(state => state?.playerUi?.dragging.toRegionType);
   const touchMode = useSelector(state => state?.playerUi?.touchMode);
-  const thisDrag = useSelector(state => state?.playerUi?.drag?.stackId == stackId);
-  const stopDrag = useSelector(state => state?.playerUi?.drag?.end);
-  const stopDragDelay = useSelector(state => state?.playerUi?.drag?.endDelay); 
+  const thisDrag = useSelector(state => state?.playerUi?.dragging?.stackId == stackId);
+  const stopDrag = useSelector(state => state?.playerUi?.dragging?.end);
+  const stopDragDelay = useSelector(state => state?.playerUi?.dragging?.endDelay); 
   const zoomFactor = useSelector(state => state?.playerUi?.zoomFactor);
   const layout = useLayout();
   const rowSpacing = layout?.rowSpacing;
@@ -313,7 +320,7 @@ export const FreeStack = React.memo(({
   const stackWidth = cardWidth*cardSize + ATTACHMENT_OFFSET * (numCards - 1);
   const stackWidthFan = Math.min(handSpacing, cardWidth*cardSize*zoomFactor);
 
-  var backgroundColor = "black";
+  var backgroundColor = "white";
   if (thisDrag && !stopDrag) {
     backgroundColor = "red";
   } else if (thisDrag && !stopDragDelay) {
@@ -333,14 +340,11 @@ export const FreeStack = React.memo(({
           rotationMultiplier={1}>
           {style => {
             const updatedStyle = {...style}
-            if (dragSnapshot.isDropAnimating) updatedStyle.transitionDuration = "0.001s";
+            if (dragSnapshot.isDropAnimating && draggingToRegionType === "free") updatedStyle.transitionDuration = "0.001s";
             if (Boolean(dragSnapshot.combineTargetFor)) updatedStyle.zIndex = 6000;
             if (updatedStyle.transform && dragSnapshot.isDragging) updatedStyle.transform = updatedStyle.transform + " scale(1.1)";
-            if (updatedStyle.transform && !dragSnapshot.isDragging) tempTransform = updatedStyle.transform;
             if (!dragSnapshot.isDragging) updatedStyle.transform = "none";
-            if (dragSnapshot.isDragging) tempTransform = updatedStyle.transform;
-            updatedStyle.visibility = dragSnapshot.isDropAnimating ? "hidden" : "visible";
-            console.log("style of ", card0.sides.A.name, tempTransform)
+            updatedStyle.visibility = draggingToRegionType === "free" && ((thisDrag && style.transform === null) || dragSnapshot.isDropAnimating) ? "hidden" : "visible";
             return(
               <FreeStackContainer
                 isDragging={dragSnapshot.isDragging}
@@ -358,19 +362,28 @@ export const FreeStack = React.memo(({
                 style={updatedStyle}>
                 {cardIds.map((cardId, cardIndex) => {
                   return(
-                    <div 
-                      style={{
-                        width: "100px",
-                        height: "150px",
-                        backgroundColor: backgroundColor
-                      }}/>
+                    // <div 
+                    //   style={{
+                    //     width: "150px",
+                    //     height: "250px",
+                    //     backgroundColor: backgroundColor
+                    //   }}>
+                    //     origTransform: {JSON.stringify(style.transform)}
+                    //     updatedTransform: {JSON.stringify(updatedStyle.transform)}
+                    //     tempTransform: {JSON.stringify(tempTransform)}
+                    //     isDragging: {JSON.stringify(dragSnapshot.isDragging)}
+                    //     stopDrag: {JSON.stringify(stopDrag)}
+                    //     stopDragDelay: {JSON.stringify(stopDragDelay)}
+                    //     thisDrag: {JSON.stringify(thisDrag)}
+                    //     dropAnimating: {JSON.stringify(dragSnapshot.isDropAnimating)}
+                    // </div>
 
-                    // {/* <Card
-                    //   key={cardId}
-                    //   offset={offsets[cardIndex]}
-                    //   cardId={cardId}
-                    //   cardIndexFromGui={cardIndex}
-                    //   isDragging={(cardIndex === cardIds.length - 1) ? dragSnapshot.isDragging : false}/> */}
+                    <Card
+                      key={cardId}
+                      offset={offsets[cardIndex]}
+                      cardId={cardId}
+                      cardIndexFromGui={cardIndex}
+                      isDragging={(cardIndex === cardIds.length - 1) ? dragSnapshot.isDragging : false}/>
                   )
               })}
               </FreeStackContainer>
