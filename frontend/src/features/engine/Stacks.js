@@ -156,11 +156,14 @@ export const FreeZone = React.memo(({
 }) => {
   console.log("Rendering Stacks for ",groupId, region);
   const dispatch = useDispatch();
-  const [mouseHere, setMouseHere] = useState(false);
   const layout = useLayout();
   const rowSpacing = layout?.rowSpacing;
   const group = useSelector(state => state?.gameUi?.game?.groupById?.[groupId]);
   const stackIds = group.stackIds;
+
+  const draggingStackId = useSelector(state => state?.playerUi?.dragging?.stackId);
+  const draggingEnd = useSelector(state => state?.playerUi?.dragging?.end);
+  const draggingEndDelay = useSelector(state => state?.playerUi?.dragging?.endDelay); 
   return(
     <Droppable
       droppableId={groupId}
@@ -178,7 +181,6 @@ export const FreeZone = React.memo(({
           isDraggingFrom={Boolean(dropSnapshot.draggingFromThisWith)}
           {...dropProvided.droppableProps}
           direction={region.direction}
-          onMouseEnter={() => setMouseHere(region.type === "pile" && true)} 
           //onMouseLeave={() => setMouseHere(region.type === "pile" && false)}
           >
             <PileImage 
@@ -190,16 +192,12 @@ export const FreeZone = React.memo(({
             <DropZone 
               ref={dropProvided.innerRef} 
               direction={region.direction}
-              margin={region.type === "row" ? rowSpacing/2 : 0}>
+              margin={0}>
               <FreeStacksList
-                isDraggingOver={dropSnapshot.isDraggingOver}
-                isDraggingFrom={Boolean(dropSnapshot.draggingFromThisWith)}
-                groupId={groupId}
                 region={region} 
-                stackIds={stackIds}
-                mouseHere={mouseHere}
-                selectedStackIndices={[...Array(stackIds.length).keys()]}/>
+                stackIds={stackIds}/>
               {dropProvided.placeholder}
+              
             </DropZone>
         </Container>)
       }}
@@ -208,37 +206,17 @@ export const FreeZone = React.memo(({
 })
 
 const FreeStacksList = React.memo(({
-  isDraggingOver,
-  isDraggingFrom,
-  groupId,
   region,
-  stackIds,
-  mouseHere,
-  selectedStackIndices
+  stackIds
 }) => {
-  const draggingFromGroupId = useSelector(state => state?.playerUi?.dragging.fromGroupId);
-  const isPile = region.type == "pile";
-  // Truncate stacked piles
-  console.log("Rendering StacksList", {groupId, region, draggingFromGroupId});
-  var stackIdsToShow = stackIds;
-  if (isPile) {
-    stackIdsToShow = [];
-    if (stackIds.length > 0 && ((mouseHere && draggingFromGroupId === null) || draggingFromGroupId === groupId)) stackIdsToShow = [stackIds[0]];
-  }
 
-  if (!stackIdsToShow) return null;
   return (
-    stackIdsToShow?.map((stackId, stackIndex) => (
-      (selectedStackIndices.includes(stackIndex)) ? (
-        <FreeStack
-          key={stackId}
-          groupId={groupId}
-          region={region}
-          stackIndex={stackIndex}
-          stackId={stackId}
-          numStacks={selectedStackIndices.length}
-          hidden={isPile && isDraggingOver && !isDraggingFrom}/> 
-      ) : null 
+    stackIds?.map((stackId, stackIndex) => (
+      <FreeStack
+        key={stackId}
+        region={region}
+        stackIndex={stackIndex}
+        stackId={stackId}/> 
     ))
   ) 
 });
@@ -258,12 +236,9 @@ export const FreeStackContainer = styled.div`
 
 
 export const FreeStack = React.memo(({
-  groupId,
   region,
   stackIndex,
   stackId,
-  numStacks,
-  hidden
 }) => {
   const gameDef = useGameDefinition();
   const dispatch = useDispatch();
@@ -279,7 +254,7 @@ export const FreeStack = React.memo(({
   const cardSize = layout?.cardSize;
   const playerN = useSelector(state => state?.playerUi?.playerN);
   const [isMousedOver, setIsMousedOver] = useState(false);
-  console.log('Rendering Stack ', {stackIndex, region, hidden, layout});
+  console.log('Rendering Stack ', {region, layout});
   var spacingFactor = touchMode ? 1.5 : 1;
   const { height, width } = useWindowDimensions();
   const aspectRatio = width/height;
@@ -311,14 +286,10 @@ export const FreeStack = React.memo(({
     offsets[i] += leftOffsets;
   }
   // Calculate size of stack for proper spacing. Changes base on group type and number of stack in group.
-  const numStacksNonZero = Math.max(numStacks, 1);
-  const regionWidthInt = parseInt(region.width.substring(0, region.width.length - 1))
-  const handSpacing = (regionWidthInt-cardSize)*aspectRatio/numStacksNonZero;
   const cardWidth = card0?.sides[card0?.currentSide]?.width;
   const cardHeight = card0?.sides[card0?.currentSide]?.height;
   const stackHeight = cardHeight*cardSize*zoomFactor;
   const stackWidth = cardWidth*cardSize + ATTACHMENT_OFFSET * (numCards - 1);
-  const stackWidthFan = Math.min(handSpacing, cardWidth*cardSize*zoomFactor);
 
   var backgroundColor = "white";
   if (thisDrag && !stopDrag) {
@@ -349,11 +320,11 @@ export const FreeStack = React.memo(({
               <FreeStackContainer
                 isDragging={dragSnapshot.isDragging}
                 isGroupedOver={Boolean(dragSnapshot.combineTargetFor)}
-                stackWidth={region.type === "fan" ? stackWidthFan : stackWidth}
+                stackWidth={stackWidth}
                 stackHeight={stackHeight}
                 stackLeft={stack.left}
                 stackTop={stack.top}
-                margin={region.type === "row" ? rowSpacing : 0}
+                margin={0}
                 ref={dragProvided.innerRef}
                 {...dragProvided.draggableProps}
                 {...dragProvided.dragHandleProps}
