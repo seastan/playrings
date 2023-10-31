@@ -5,7 +5,8 @@ import { convertToPercentage } from "./functions/common";
 
 
 export const TableRegion = React.memo(({
-  region
+  region,
+  addDroppableRef
 }) => {
   console.log("Rendering TableRegion", region);
   const observingPlayerN = useSelector(state => state?.playerUi?.observingPlayerN);
@@ -32,6 +33,7 @@ export const TableRegion = React.memo(({
         <Group
           groupId={formattedGroupId}
           region={formattedRegion}
+          addDroppableRef={addDroppableRef}
         />
       }
     </div>

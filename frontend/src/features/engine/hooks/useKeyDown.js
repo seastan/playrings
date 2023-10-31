@@ -9,6 +9,7 @@ import { useGameDefinition } from './useGameDefinition';
 import { useActiveCardId } from './useActiveCardId';
 import { useSendLocalMessage } from './useSendLocalMessage';
 import { usePlayerN } from './usePlayerN';
+import { useVisibleFace } from './useVisibleFace';
 
 
 export const useKeyDown = () => {
@@ -23,6 +24,7 @@ export const useKeyDown = () => {
     const playerN = usePlayerN();
     const activeCardId = useActiveCardId();
     const activeCardGroupId = useSelector(state => state?.gameUi?.game?.cardById?.[activeCardId]?.groupId);
+    const visibleFace = useVisibleFace(activeCardId);
     const {gameBroadcast, chatBroadcast} = useContext(BroadcastContext);
     const doActionList = useDoActionList();
     const doDragnHotkey = useDoDragnHotkey()
@@ -60,24 +62,28 @@ export const useKeyDown = () => {
         } 
         console.log("keypressdict", {keypressShift, keypressControl, keypressAlt, dictKey})
 
+        var hotkeyTokenType = null;
         for (var keyObj of gameDef?.hotkeys.token) {
-            if (keyMatch(keyObj.key, dictKey)) {
+            var increment = 0;
+            if (keyMatch(keyObj.key, dictKey)) increment = 1;
+            if (keyMatch("Ctrl+"+keyObj.key, dictKey)) increment = 5;
+
+            if (increment) {
+                hotkeyTokenType = keyObj.tokenType;
                 if (!activeCardId) {
                     sendLocalMessage(`You must hover over a card to use the "${dictKey}" hotkey.`);
                     return;
                 }
-                addToken(keyObj.tokenType, mouseTopBottom === "top" ? 1 : -1);
-                return;
-            }
-            if (keyMatch("Ctrl+"+keyObj.key, dictKey)) {
-                if (!activeCardId) {
-                    sendLocalMessage(`You must hover over a card to use the "${dictKey}" hotkey.`);
+                const allowedTokens = gameDef.cardTypes?.[visibleFace?.type]?.tokens;
+                if (!allowedTokens || (allowedTokens && allowedTokens.includes(hotkeyTokenType))) {
+                    addToken(hotkeyTokenType, mouseTopBottom === "top" ? increment : -increment);
                     return;
                 }
-                addToken(keyObj.tokenType, mouseTopBottom === "top" ? 5 : -5);
-                return;
             }
-            
+        }
+        if (hotkeyTokenType) {
+            sendLocalMessage(`The selected hotkey attempted to add a token that is not valid for this card type.`);
+            return;
         }
         for (var keyObj of gameDef?.hotkeys.game) {
             console.log("keydown action check ",keyObj.key, dictKey)

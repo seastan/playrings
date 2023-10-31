@@ -25,7 +25,7 @@ import { pl } from "date-fns/locale";
 import { usePreloadCardImages } from "../../hooks/usePreloadCardImages";
 import { useGameDefinition } from "./hooks/useGameDefinition";
 
-export const Table = React.memo(() => {
+export const Table = React.memo(({addDroppableRef}) => {
   const gameDef = useGameDefinition();
   const dispatch = useDispatch();
   const tooltipIds = useSelector(state => state?.playerUi?.tooltipIds);
@@ -94,7 +94,7 @@ export const Table = React.memo(() => {
           </div>
           {/* Table */}
           <div className="relative w-full" style={{height: touchMode ? "82%" : "94%"}}>
-            <TableLayout/>
+            <TableLayout addDroppableRef={addDroppableRef}/>
           </div>
           {/* Touch Bar */}
           {touchMode && <div className="relative bg-gray-700 w-full" style={{height: "12%"}}>

@@ -266,6 +266,10 @@ defmodule DragnCardsGame.Evaluate do
   end
 
   def evaluate_inner(game, code, trace) do
+    #IO.puts("evaluate_inner 1")
+    #IO.inspect(code)
+
+    current_scope_index = game["currentScopeIndex"] || 0
     if is_list(code) && Enum.count(code) > 0 do
 
       if is_list(Enum.at(code, 0)) do
@@ -312,7 +316,6 @@ defmodule DragnCardsGame.Evaluate do
           "VAR" ->
             # Evaluate the value and assign it to the var name
             var_name = Enum.at(code, 1)
-            current_scope_index = game["currentScopeIndex"] || 0
             # if var_name does not start with $, raise an error
             if String.starts_with?(var_name, "$") do
               value = evaluate(game, Enum.at(code, 2), trace ++ ["#{var_name}"])
@@ -621,10 +624,13 @@ defmodule DragnCardsGame.Evaluate do
             stop = evaluate(game, Enum.at(code, 3), trace ++ ["stop"])
             step = evaluate(game, Enum.at(code, 4), trace ++ ["step"])
             function = Enum.at(code, 5)
-            Enum.reduce(start..stop-1//step, game, fn(i, acc) ->
-              acc = put_in(acc, ["variables", var_name], i)
+            game = Enum.reduce(start..stop-1//step, game, fn(i, acc) ->
+              acc = evaluate(acc, ["VAR", var_name, i], trace ++ ["index #{i}"])
               evaluate(acc, function, trace ++ ["index #{i}"])
             end)
+            # Delete local variable
+            game
+            |> put_in(["variables"], Map.delete(game["variables"], "#{var_name}-#{current_scope_index}"))
 
           "FOR_EACH_KEY_VAL" ->
             argc = Enum.count(code) - 1
@@ -638,20 +644,28 @@ defmodule DragnCardsGame.Evaluate do
             else
               old_list
             end
-            Enum.reduce(old_list, game, fn({key, val}, acc) ->
-              acc = put_in(acc, ["variables", key_name], key)
-              acc = put_in(acc, ["variables", val_name], val)
+            game = Enum.reduce(old_list, game, fn({key, val}, acc) ->
+              acc = evaluate(acc, ["VAR", key_name, key], trace ++ ["key #{key}"])
+              acc = evaluate(acc, ["VAR", val_name, val], trace ++ ["val"])
               evaluate(acc, function, trace ++ ["key #{key}"])
             end)
+            # Delete local variables
+            game
+            |> put_in(["variables"], Map.delete(game["variables"], "#{key_name}-#{current_scope_index}"))
+            |> put_in(["variables"], Map.delete(game["variables"], "#{val_name}-#{current_scope_index}"))
+
 
           "FOR_EACH_VAL" ->
             val_name = Enum.at(code, 1)
             list = evaluate(game, Enum.at(code, 2), trace ++ ["list"])
             function = Enum.at(code, 3)
-            Enum.reduce(Enum.with_index(list), game, fn({val, index}, acc) ->
-              acc = put_in(acc, ["variables", val_name], val)
+            game = Enum.reduce(Enum.with_index(list), game, fn({val, index}, acc) ->
+              acc = evaluate(acc, ["VAR", val_name, val], trace ++ ["index #{index}"])
               evaluate(acc, function, trace ++ ["index #{index}"])
             end)
+            # Delete local variable
+            game
+            |> put_in(["variables"], Map.delete(game["variables"], "#{val_name}-#{current_scope_index}"))
 
           "MOVE_CARD" ->
             Logger.debug("MOVE_CARD " <> inspect(code))
@@ -772,6 +786,7 @@ defmodule DragnCardsGame.Evaluate do
             stack_id = evaluate(game, Enum.at(code, 1), trace ++ ["DISCARD_STACK stack_id"])
             stack = game["stackById"][stack_id]
             card_ids = stack["cardIds"]
+
             Enum.reduce(card_ids, game, fn(card_id, acc) ->
               evaluate(acc, ["DISCARD_CARD", card_id], trace)
             end)
@@ -890,9 +905,8 @@ defmodule DragnCardsGame.Evaluate do
                 raise "Function #{function_name} expects #{Enum.count(func_args)} arguments, but got #{Enum.count(input_args)}."
               end
               # Call DEFINE on each of the function args
-              current_scope_index = game["currentScopeIndex"] || 0
               new_scope_index = current_scope_index + 1
-              game = put_in(game, ["currentScopeIndex"], new_scope_index)
+              game = put_in(game, ["currentScopeIndex"], current_scope_index + 1)
               game = Enum.reduce(Enum.with_index(func_args), game, fn({func_arg, index}, acc) ->
                 [{func_arg_name, input_arg}] = cond do
                   index >= Enum.count(input_args) -> # If we are beyond the range of input arguments, look for default arguments
@@ -911,7 +925,7 @@ defmodule DragnCardsGame.Evaluate do
                       [{func_arg_name, input_arg}]
                     end
                 end
-                evaluate(acc, ["DEFINE", "#{func_arg_name}-#{new_scope_index}", input_arg], trace ++ ["function arg #{func_arg_name}"])
+                evaluate(acc, ["VAR", func_arg_name, input_arg], trace ++ ["function arg #{func_arg_name}"])
               end)
               # Evaluate the function
               result = evaluate(game, func_code, trace)
@@ -939,7 +953,7 @@ defmodule DragnCardsGame.Evaluate do
       # Replace {{}} in strings with evaluated code
       code = if is_binary(code) do
         Regex.replace(~r/\{\{(.+?)\}\}/, code, fn _, match ->
-          evaluate(game, match, trace ++ ["{{}}"])
+          inspect(evaluate(game, match, trace ++ ["{{}}"]))
         end)
       else
         code
@@ -957,7 +971,6 @@ defmodule DragnCardsGame.Evaluate do
         # It's a regular variable
         is_binary(code) and String.starts_with?(code, "$") ->
           var_name = code
-          current_scope_index = game["currentScopeIndex"] || 0
           {var_defined, var_value} = find_var(var_name, current_scope_index, game["variables"])
           if var_defined do
             var_value

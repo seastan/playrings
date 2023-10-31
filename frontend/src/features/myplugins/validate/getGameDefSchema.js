@@ -744,12 +744,12 @@ export const getGameDefSchema = (gameDef) => {
               },
               "type": {
                 "_type_": "string",
-                "_memberOf_": ["row", "pile", "fan"],
+                "_memberOf_": ["row", "pile", "fan", "free"],
                 "_required_": true,
               },
               "direction": {
                 "_type_": "string",
-                "_memberOf_": ["horizontal", "vertical"],
+                "_memberOf_": ["horizontal", "vertical", "free"],
               },
               "left": {
                 "_type_": "string",

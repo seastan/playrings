@@ -31,6 +31,8 @@ export const Stack = React.memo(({
 }) => {
   const gameDef = useGameDefinition();
   const stack = useSelector(state => state?.gameUi?.game?.stackById[stackId]);
+  const draggingToRegionType = useSelector(state => state?.playerUi?.dragging.toRegionType);
+  const thisDrag = useSelector(state => state?.playerUi?.dragging?.stackId == stackId);
   const touchMode = useSelector(state => state?.playerUi?.touchMode);
   const zoomFactor = useSelector(state => state?.playerUi?.zoomFactor);
   const layout = useLayout();
@@ -90,36 +92,36 @@ export const Stack = React.memo(({
           style={dragProvided.draggableProps.style}
           snapshot={dragSnapshot}
           rotationMultiplier={1}>
-          {style => (
-          <StackContainer
-            isDragging={dragSnapshot.isDragging}
-            isGroupedOver={Boolean(dragSnapshot.combineTargetFor)}
-            stackWidth={region.type === "fan" ? stackWidthFan : stackWidth}
-            stackHeight={stackHeight}
-            margin={region.type === "row" ? rowSpacing : 0}
-            ref={dragProvided.innerRef}
-            {...dragProvided.draggableProps}
-            {...dragProvided.dragHandleProps}
-            onMouseEnter={() => setIsMousedOver(true)}
-            onMouseLeave={() => setIsMousedOver(false)}
-            style={{...style,
-              //transition: style.transition ? (dragSnapshot.isDragging ? style.transition + " scale 0.s ease-out" : style.transition) : null,
-              transform: style.transform ? (dragSnapshot.isDragging ? style.transform + " scale(1.1)" : style.transform) : null,
-              zIndex: Boolean(dragSnapshot.combineTargetFor) ? 6000 : style.zIndex,
-              //Boolean(dragSnapshot.combineTargetFor) ? {...style, zIndex:6000} : style
-              //</NaturalDragAnimation>dragSnapshot.isDragging ? {...style, transform: style.transform ? style.transform + " scale(1.1)" : "scale(1.1)"} : style
-            }}>
-            {cardIds.map((cardId, cardIndex) => {
-              return(
-                <Card
-                  key={cardId}
-                  offset={offsets[cardIndex]}
-                  cardId={cardId}
-                  cardIndexFromGui={cardIndex}
-                  isDragging={(cardIndex === cardIds.length - 1) ? dragSnapshot.isDragging : false}/>
-              )
-          })}
-          </StackContainer>)}
+          {style => {
+            const updatedStyle = {...style}
+            if (dragSnapshot.isDropAnimating && draggingToRegionType === "free") updatedStyle.transitionDuration = "0.001s";
+            if (Boolean(dragSnapshot.combineTargetFor)) updatedStyle.zIndex = 6000;
+            if (updatedStyle.transform && dragSnapshot.isDragging) updatedStyle.transform = updatedStyle.transform + " scale(1.1)";
+            updatedStyle.visibility = draggingToRegionType === "free" && ((thisDrag && style.transform === null) || dragSnapshot.isDropAnimating) ? "hidden" : "visible";
+            return(
+              <StackContainer
+                isDragging={dragSnapshot.isDragging}
+                isGroupedOver={Boolean(dragSnapshot.combineTargetFor)}
+                stackWidth={region.type === "fan" ? stackWidthFan : stackWidth}
+                stackHeight={stackHeight}
+                margin={region.type === "row" ? rowSpacing : 0}
+                ref={dragProvided.innerRef}
+                {...dragProvided.draggableProps}
+                {...dragProvided.dragHandleProps}
+                onMouseEnter={() => setIsMousedOver(true)}
+                onMouseLeave={() => setIsMousedOver(false)}
+                style={updatedStyle}>
+                {cardIds.map((cardId, cardIndex) => {
+                  return(
+                    <Card
+                      key={cardId}
+                      offset={offsets[cardIndex]}
+                      cardId={cardId}
+                      cardIndexFromGui={cardIndex}
+                      isDragging={(cardIndex === cardIds.length - 1) ? dragSnapshot.isDragging : false}/>
+                  )
+              })}
+              </StackContainer>)}}
         </NaturalDragAnimation>
       )}
     </Draggable>

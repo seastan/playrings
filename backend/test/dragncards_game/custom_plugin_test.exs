@@ -403,6 +403,15 @@ defmodule DragnCardsGame.CustomPluginTest do
 
   end
 
+  @tag :load_player_deck
+  test "load_player_deck", %{user: _user, game: game, game_def: _game_def} do
+
+    game = Evaluate.evaluate(game, ["LOAD_CARDS", "coreLeadership"])
+    assert length(game["groupById"]["player1Hand"]["stackIds"]) == 6
+
+  end
+
+
   # 4 player game
   @tag :four_player
   test "4 player game", %{user: _user, game: game, game_def: _game_def} do
@@ -825,6 +834,22 @@ defmodule DragnCardsGame.CustomPluginTest do
 
   end
 
+  @tag :for_each
+  test "for_each", %{user: _user, game: game, game_def: _game_def} do
+
+    game = Evaluate.evaluate(game, ["VAR", "$MYVAR", %{"test" => "test"}])
+
+    game = Evaluate.evaluate(game, ["LOAD_CARDS", "coreLeadership"]) # Leadership core set deck
+
+    IO.puts("FOR_EACH_KEY_VAL -2")
+    IO.inspect(game["variables"])
+
+    Evaluate.evaluate(game, ["FOR_EACH_KEY_VAL", "$CARD_ID", "$CARD", "$CARD_BY_ID",  [
+      ["LOG_DEV", "$CARD.sides.A.name"]
+    ]])
+
+  end
+
   # Staging threat
   @tag :staging_threat
   test "staging_threat", %{user: _user, game: game, game_def: _game_def} do
@@ -1133,6 +1158,37 @@ defmodule DragnCardsGame.CustomPluginTest do
     game = Evaluate.evaluate(game, ["DEFINE", "$A", 2])
     assert Evaluate.evaluate(game, ["ACTION_LIST", "$LAZY_ADD"]) == 4
 
+
+    game = Evaluate.evaluate(game, ["LOAD_CARDS", "Q01.1"]) # Passage through Mirkwood
+    game = Evaluate.evaluate(game, ["FUNCTION", "DISCARD_UNTIL", "$GROUP_ID", "$COND", [
+        ["VAR", "$CARD_ID", "$GAME.groupById.$GROUP_ID.parentCardIds.[0]"],
+        ["VAR", "$CARD", "$GAME.cardById.$CARD_ID"],
+        ["WHILE",
+          ["AND",
+            ["NOT", ["ACTION_LIST", "$COND"]],
+            ["GREATER_THAN", ["LENGTH", "$GAME.groupById.$GROUP_ID.stackIds"], 1]
+          ],
+          [
+            ["LOG_DEV", "Discarding {{$CARD.sides.A.name}}"],
+            ["MOVE_CARD", "$CARD_ID", "$CARD.discardGroupId", 0],
+            ["VAR", "$CARD_ID", "$GAME.groupById.$GROUP_ID.parentCardIds.[0]"],
+            ["VAR", "$CARD", "$GAME.cardById.$CARD_ID"]
+          ]
+        ]
+      ]
+    ])
+    game = Evaluate.evaluate(game, [
+      ["VAR", "$COND",
+        ["POINTER",
+          ["EQUAL", "$CARD.sides.A.type", "Enemy"]
+        ]
+      ],
+      ["DISCARD_UNTIL", "sharedEncounterDeck", "$COND"]
+    ])
+
+
+
+
   end
 
   # Local variables
@@ -1159,5 +1215,6 @@ defmodule DragnCardsGame.CustomPluginTest do
     assert game["variables"]["$B-1"] == nil
 
   end
+
 
 end
