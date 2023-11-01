@@ -479,6 +479,12 @@ export const getGameDefSchema = (gameDef) => {
         "_type_": "object",
 //        "_required_": true,
         "_strictKeys_": true,
+        "peekAtTopN": {
+          "_type_": "array",
+          "_itemSchema_": {
+            "_type_": "integer",
+          }
+        },
         "moveToGroupIds": {
           "_type_": "array",
           "_itemSchema_": {

@@ -60,7 +60,15 @@ export const Group = React.memo(({
             {region.hideTitle ? null :
               <span 
                 className="absolute mt-1 px-1 overflow-hidden rounded bg-gray-600-70" 
-                style={{fontSize: "1.5vh", top: "50%", left: "50%", transform: `translate(${iconsVisible ? "-30%" : "-40%"}, -70%) rotate(90deg)`, whiteSpace: "nowrap", zIndex: 2e3}}>
+                style={{
+                  fontSize: "1.5vh", 
+                  top: "50%", 
+                  left: "50%", 
+                  transform: `translate(${iconsVisible ? "-30%" : "-40%"}, -70%) rotate(90deg)`, 
+                  whiteSpace: "nowrap", 
+                  zIndex: 2e3,
+                  boxShadow: "0 0 10px 5px rgba(0,0,0,0.7)",
+                }}>
                   {iconsVisible &&
                     <div className="text-gray-300 w-full flex items-center justify-center" >
                       <div style={{fontSize: "2vh"}}>
