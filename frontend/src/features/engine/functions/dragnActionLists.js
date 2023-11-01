@@ -73,14 +73,14 @@ export const dragnActionLists = {
     ["MOVE_CARD", cardId, destGroupId, -1]
   ]),
   moveCardToTopX: (cardId, destGroupId, label) => ([
-    ["LOG", "$ALIAS_N", " shuffled ", ["FACEUP_NAME_FROM_CARD_ID", cardId], " into the top ", "$VAL", " cards of ", label, "."],
     ["INPUT", "integer", "$VAL", "Shuffle into top:", 5],
+    ["LOG", "$ALIAS_N", " shuffled ", ["FACEUP_NAME_FROM_CARD_ID", cardId], " into the top ", "$VAL", " cards of ", label, "."],
     ["MOVE_CARD", cardId, destGroupId, 0],
     ["SHUFFLE_TOP_X", destGroupId, "$VAL"]
   ]),
   moveCardToBottomX: (cardId, destGroupId, label) => ([
-    ["LOG", "$ALIAS_N", " shuffled ", ["FACEUP_NAME_FROM_CARD_ID", cardId], " into the bottom ", "$VAL", " cards of ", label, "."],
     ["INPUT", "integer", "$VAL", "Shuffle into bottom:", 5],
+    ["LOG", "$ALIAS_N", " shuffled ", ["FACEUP_NAME_FROM_CARD_ID", cardId], " into the bottom ", "$VAL", " cards of ", label, "."],
     ["MOVE_CARD", cardId, destGroupId, -1],
     ["SHUFFLE_BOTTOM_X", destGroupId, "$VAL"]
   ]),

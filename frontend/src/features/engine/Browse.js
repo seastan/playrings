@@ -18,7 +18,7 @@ const isNormalInteger = (val) => {
   return n !== Infinity && n === val && n >= 0;
 }
 
-export const Browse = React.memo(({}) => {
+export const Browse = React.memo(({addDroppableRef}) => {
   const {gameBroadcast, chatBroadcast} = useContext(BroadcastContext);
   const dispatch = useDispatch();
   const gameL10n = useGameL10n();
@@ -200,11 +200,10 @@ export const Browse = React.memo(({}) => {
             </div>
         </div>
         <Stacks
-          gameBroadcast={gameBroadcast}
-          chatBroadcast={chatBroadcast}
           groupId={groupId}
           region={region}
           selectedStackIndices={filteredStackIndices}
+          addDroppableRef={addDroppableRef}
         />
       </div>
  

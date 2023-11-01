@@ -28,7 +28,7 @@ export const TableLayout = React.memo(({addDroppableRef}) => {
 
   return (
     <>
-      <Browse/>
+      <Browse addDroppableRef={addDroppableRef}/>
       {layout.regions.map((region, regionIndex) => {
         if (region?.layoutVariants) {
           const variantVisible = () => {

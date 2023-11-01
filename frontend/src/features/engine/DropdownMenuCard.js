@@ -111,7 +111,7 @@ export const DropdownMenuCard = React.memo(({
         </DropdownItem>
         <DropdownItem
           leftIcon={<FontAwesomeIcon icon={faRandom}/>}
-          action={dragnActionLists.moveCardToBottomX(menuCard, destGroupId, label)}
+          action={dragnActionLists.moveCardToBottomX(menuCardId, destGroupId, label)}
           clickCallback={handleDropdownClick}>
           {l10n("shuffleIntoBottomX")}
         </DropdownItem>
@@ -243,11 +243,10 @@ export const DropdownMenuCard = React.memo(({
           })}
         </div>}
 
-        {activeMenu === "moveTo"+menuCard?.deckGroupId &&
+        {activeMenu === "moveTo"+menuCard?.deckGroupId ?
           DropdownMoveTo(menuCard?.deckGroupId,handleDropdownClick)
-        }
-
-        {gameDef?.cardMenu?.moveToGroupIds?.map((groupId, _index) => {
+        :
+        gameDef?.cardMenu?.moveToGroupIds?.map((groupId, _index) => {
           if (activeMenu === "moveTo"+groupId) return(
             DropdownMoveTo(groupId,handleDropdownClick)
           )
