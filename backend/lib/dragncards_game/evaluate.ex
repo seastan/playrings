@@ -953,7 +953,12 @@ defmodule DragnCardsGame.Evaluate do
       # Replace {{}} in strings with evaluated code
       code = if is_binary(code) do
         Regex.replace(~r/\{\{(.+?)\}\}/, code, fn _, match ->
-          inspect(evaluate(game, match, trace ++ ["{{}}"]))
+          replacement = evaluate(game, match, trace ++ ["{{}}"])
+          if is_list(replacement) or is_map(replacement) do
+            inspect(replacement)
+          else
+            to_string(replacement)
+          end
         end)
       else
         code
