@@ -494,7 +494,10 @@ defmodule DragnCardsGame.GameUI do
       game = update_card_ids(game, dest_stack_id, new_dest_card_ids)
       # Delete original stack
       game = delete_stack_from_stack_by_id(game, stack_id)
-      update_stack_state(game, dest_stack_id, orig_group_id, options)
+      Enum.reduce(old_orig_card_ids, game, fn(card_id, acc) ->
+        update_card_state(acc, card_id, orig_group_id, options)
+      end)
+      #update_stack_state(game, dest_stack_id, orig_group_id, options)
     else
       # Update destination group stack ids
       old_dest_stack_ids = get_stack_ids(game, dest_group_id)
