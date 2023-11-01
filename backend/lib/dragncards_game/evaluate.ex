@@ -762,12 +762,7 @@ defmodule DragnCardsGame.Evaluate do
             argc = Enum.count(code) - 1
             num = if argc == 0 do 1 else evaluate(game, Enum.at(code, 1), trace ++ ["num"]) end
             player_n = evaluate(game, "$PLAYER_N", trace ++ ["player_n"])
-            try do
-              GameUI.move_stacks(game, player_n <> "Deck", player_n <> "Hand", num, "bottom")
-            rescue
-              e ->
-                raise("Failed to draw #{num} card(s). " <> inspect(e) <> " " <> inspect(trace))
-            end
+            GameUI.move_stacks(game, player_n <> "Deck", player_n <> "Hand", num, "bottom")
 
           "MOVE_STACK" ->
             argc = Enum.count(code) - 1
