@@ -213,10 +213,15 @@ export const DragContainer = React.memo(({}) => {
         
         dispatch(setGroupById(newGroupById));
       }
-      doActionList([
-        ["SET", `/stackById/${origStackId}/left`, stackLeft],
-        ["SET", `/stackById/${origStackId}/top`, stackTop]
-      ])
+      doActionList(
+        ["COND",
+          ["DEFINED", `$GAME.stackById/${origStackId}`],
+          [
+            ["SET", `/stackById/${origStackId}/left`, stackLeft],
+            ["SET", `/stackById/${origStackId}/top`, stackTop]
+          ]
+        ]
+      )
     }
 
   }
