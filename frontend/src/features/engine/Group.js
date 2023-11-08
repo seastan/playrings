@@ -67,7 +67,7 @@ export const Group = React.memo(({
                   transform: `translate(${iconsVisible ? "-30%" : "-40%"}, -70%) rotate(90deg)`, 
                   whiteSpace: "nowrap", 
                   zIndex: 2e3,
-                  boxShadow: "0 0 10px 5px rgba(0,0,0,0.7)",
+                  boxShadow: "0 0 10px 5px rgba(0,0,0,0.6)",
                 }}>
                   {iconsVisible &&
                     <div className="text-gray-300 w-full flex items-center justify-center" >

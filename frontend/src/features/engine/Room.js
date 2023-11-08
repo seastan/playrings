@@ -24,7 +24,7 @@ export const Room = ({ slug }) => {
 
   const onChannelMessage = useCallback((event, payload) => {
     if (!payload?.response) return;
-    console.log("Got new payload: ", event, payload);
+    console.log("onChannelMessage: Got new payload: ", event, payload);
   
     // if (event === "phx_reply" && payload.response.my_delta != null) {
     //   // Update store with my own delta
@@ -47,7 +47,7 @@ export const Room = ({ slug }) => {
 
     // } else 
     if (event == "ask_for_update" && payload.messages) {
-      console.log("ask_for_update", payload.messages)
+      console.log("onChannelMessage: ask_for_update", payload.messages)
       setMessages(payload.messages)
     }
 
@@ -60,7 +60,7 @@ export const Room = ({ slug }) => {
       }
       // Simulate high ping/lag;
       //delayBroadcast = setTimeout(function() {
-      console.log("dispatching to game", game_ui)
+      console.log("onChannelMessage: dispatching to game", game_ui)
       dispatch(setGameUi(game_ui));
 
       // If the active card's group has changed due to a hotkey, reset the active card id
