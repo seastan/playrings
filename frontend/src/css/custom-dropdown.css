@@ -81,12 +81,12 @@
   
   .dropdown {
     position: absolute;
-    width: 300px;
+    width: 35vh;
     /* transform: translateX(-45%); */
     background-color: var(--bg);
     border: var(--border);
     border-radius: var(--border-radius);
-    padding: 10px;
+    padding: 1vh;
     overflow: hidden;
     transition: height var(--speed) ease;
   }
@@ -98,7 +98,7 @@
     background-color: var(--bg);
     border: var(--border);
     border-radius: var(--border-radius);
-    padding: 10px;
+    padding: 1vh;
     overflow: hidden;
     transition: height var(--speed) ease;
   }
@@ -108,27 +108,31 @@
   }
   
   .menu-title {
-    height: 25px;
+    height: 4vh;
     width: 100%;
+    font-weight: bold;
     align-items: center;
     text-align: center;
-    font-size: large;
+    font-size: 2.5vh;
     border-radius: var(--border-radius);
     padding: 0px;
-    margin-bottom: 15px;
+    margin-bottom: 1vh;
     color: white;
     text-decoration: none;
     vertical-align: text-top;
+    overflow-x: visible;
+    white-space: nowrap;
   }
 
   .menu-item {
-    height: 30px;
+    height: 4vh;
     display: flex;
     align-items: center;
+    font-size: 2vh;
     border-radius: var(--border-radius);
     transition: background var(--speed);
-    padding: 10px;
-    margin: 5px;
+    padding: 1vh;
+    margin: 0vh;
     color: white;
     text-decoration: none;
   }

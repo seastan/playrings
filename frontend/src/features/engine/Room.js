@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import RoomProviders from "./RoomProviders";
 import {useMessages, useSetMessages} from '../../contexts/MessagesContext';
 import useChannel from "../../hooks/useChannel";
-import { applyDelta, setGameUi } from "../store/gameUiSlice";
+import { applyDeltaRedo, applyDeltaUndo, setGame, setGameUi, setPlayerInfo, setReplayStep, setSockets } from "../store/gameUiSlice";
 import useProfile from "../../hooks/useProfile";
 import { resetPlayerUi, setActiveCardId, setPreHotkeyActiveCardGroupId } from "../store/playerUiSlice";
 import { usePlugin } from "./hooks/usePlugin";
@@ -12,6 +12,7 @@ import { useActiveCardId } from "./hooks/useActiveCardId";
 import store from "../../store";
 
 var delayBroadcast;
+
 
 export const Room = ({ slug }) => {
   const dispatch = useDispatch();
@@ -23,8 +24,48 @@ export const Room = ({ slug }) => {
   const [isClosed, setIsClosed] = useState(false);
 
   const onChannelMessage = useCallback((event, payload) => {
-    if (!payload?.response) return;
     console.log("onChannelMessage: Got new payload: ", event, payload);
+    if (event === "state_update" && payload.delta !== null) {
+      // Update store with my own delta
+      const newDelta = payload.delta;
+      const newReplayStep = payload.replayStep;
+      const gameUi = store.getState().gameUi;
+      const currentReplayStep = gameUi?.replayStep;
+      console.log("onChannelMessage currentReplayStep", currentReplayStep, "newReplayStep", newReplayStep, newDelta)
+      if (newReplayStep === currentReplayStep + 1) {
+        dispatch(applyDeltaRedo(newDelta));
+        dispatch(setReplayStep(newReplayStep));
+        setMessages(payload.messages);
+      } else {
+        alert("Game out of sync. Please reload the page.")
+      }
+    } else if (event === "current_state" && payload !== null) {
+      const game_ui = payload;
+      if (roomSlug !== game_ui.roomSlug) { // Entered a new room
+        // Reset player UI
+        dispatch(resetPlayerUi())
+      }
+      // Simulate high ping/lag;
+      //delayBroadcast = setTimeout(function() {
+      console.log("onChannelMessage: dispatching to game", game_ui)
+      dispatch(setGameUi(game_ui));
+
+      // If the active card's group has changed due to a hotkey, reset the active card id
+      const state = store.getState();
+      const activeCardId = state?.playerUi?.activeCardId;
+      const preHotkeyActiveCardGroupId = state?.playerUi?.preHotkeyActiveCardGroupId;
+      const activeCardGroupId = state?.gameUi?.game?.cardById[activeCardId]?.groupId;
+      if (preHotkeyActiveCardGroupId !== null && preHotkeyActiveCardGroupId !== activeCardGroupId) {
+        dispatch(setActiveCardId(null));
+        dispatch(setPreHotkeyActiveCardGroupId(null));
+      }
+    } else if (event === "seats_changed" && payload !== null) {
+      dispatch(setPlayerInfo(payload));
+    } else if (event === "users_changed" && payload !== null) {
+      dispatch(setSockets(payload));
+    }
+
+
   
     // if (event === "phx_reply" && payload.response.my_delta != null) {
     //   // Update store with my own delta
@@ -46,59 +87,59 @@ export const Room = ({ slug }) => {
     //   }
 
     // } else 
-    if (event == "ask_for_update" && payload.messages) {
-      console.log("onChannelMessage: ask_for_update", payload.messages)
-      setMessages(payload.messages)
-    }
+    // if (event == "ask_for_update" && payload.messages) {
+    //   console.log("onChannelMessage: ask_for_update", payload.messages)
+    //   setMessages(payload.messages)
+    // }
 
-    if (event === "phx_reply" && payload.response.game != null) {
-      // Update store with the full state received
-      const game_ui = payload.response;
-      if (roomSlug !== game_ui.roomSlug) { // Entered a new room
-        // Reset player UI
-        dispatch(resetPlayerUi())
-      }
-      // Simulate high ping/lag;
-      //delayBroadcast = setTimeout(function() {
-      console.log("onChannelMessage: dispatching to game", game_ui)
-      dispatch(setGameUi(game_ui));
-
-      // If the active card's group has changed due to a hotkey, reset the active card id
-      const state = store.getState();
-      const activeCardId = state?.playerUi?.activeCardId;
-      const preHotkeyActiveCardGroupId = state?.playerUi?.preHotkeyActiveCardGroupId;
-      const activeCardGroupId = state?.gameUi?.game?.cardById[activeCardId]?.groupId;
-      if (preHotkeyActiveCardGroupId !== null && preHotkeyActiveCardGroupId !== activeCardGroupId) {
-        dispatch(setActiveCardId(null));
-        dispatch(setPreHotkeyActiveCardGroupId(null));
-      }
-        
-      //}, 5000);
-    // } else if (event === "new_state" && payload.response.game_ui != null) {
+    // if (event === "phx_reply" && payload.response.game != null) {
     //   // Update store with the full state received
-    //   const { game_ui } = payload.response;
-    //   if (roomName !== game_ui.roomName) { // Entered a new room
+    //   const game_ui = payload.response;
+    //   if (roomSlug !== game_ui.roomSlug) { // Entered a new room
     //     // Reset player UI
     //     dispatch(resetPlayerUi())
     //   }
     //   // Simulate high ping/lag;
     //   //delayBroadcast = setTimeout(function() {
-    //     console.log("dispatching to game", game_ui)
-    //     dispatch(setGameUi(game_ui));
+    //   console.log("onChannelMessage: dispatching to game", game_ui)
+    //   dispatch(setGameUi(game_ui));
+
+    //   // If the active card's group has changed due to a hotkey, reset the active card id
+    //   const state = store.getState();
+    //   const activeCardId = state?.playerUi?.activeCardId;
+    //   const preHotkeyActiveCardGroupId = state?.playerUi?.preHotkeyActiveCardGroupId;
+    //   const activeCardGroupId = state?.gameUi?.game?.cardById[activeCardId]?.groupId;
+    //   if (preHotkeyActiveCardGroupId !== null && preHotkeyActiveCardGroupId !== activeCardGroupId) {
+    //     dispatch(setActiveCardId(null));
+    //     dispatch(setPreHotkeyActiveCardGroupId(null));
+    //   }
+        
     //   //}, 5000);
-    // } else if (event === "new_delta" && payload.response.new_delta !== null) {
-    //   // No need to apply delta for your own broadcasts, they are handled by a separate broadcast just to you (see first if statement)
-    //   if (payload.response.user_id === myUserId) return; 
-    //   // Simulate high ping/lag;
-    //   //delayBroadcast = setTimeout(function() {
-    //   dispatch(applyDelta(payload.response.new_delta))
-    //   //}, 5000);
-    } else if (event === "phx_reply" && payload.response.game === null) {
-      if (!isClosed) {
-        setIsClosed(true);
-        alert("Your room has closed or timed out. If you were in the middle of playing, it may have crashed. If so, please go to the Menu and download the game state file. Then, create a new room and upload that file to continue where you left off.")
-      }
-    }
+    // // } else if (event === "new_state" && payload.response.game_ui != null) {
+    // //   // Update store with the full state received
+    // //   const { game_ui } = payload.response;
+    // //   if (roomName !== game_ui.roomName) { // Entered a new room
+    // //     // Reset player UI
+    // //     dispatch(resetPlayerUi())
+    // //   }
+    // //   // Simulate high ping/lag;
+    // //   //delayBroadcast = setTimeout(function() {
+    // //     console.log("dispatching to game", game_ui)
+    // //     dispatch(setGameUi(game_ui));
+    // //   //}, 5000);
+    // // } else if (event === "new_delta" && payload.response.new_delta !== null) {
+    // //   // No need to apply delta for your own broadcasts, they are handled by a separate broadcast just to you (see first if statement)
+    // //   if (payload.response.user_id === myUserId) return; 
+    // //   // Simulate high ping/lag;
+    // //   //delayBroadcast = setTimeout(function() {
+    // //   dispatch(applyDelta(payload.response.new_delta))
+    // //   //}, 5000);
+    // } else if (event === "phx_reply" && payload.response.game === null) {
+    //   if (!isClosed) {
+    //     setIsClosed(true);
+    //     alert("Your room has closed or timed out. If you were in the middle of playing, it may have crashed. If so, please go to the Menu and download the game state file. Then, create a new room and upload that file to continue where you left off.")
+    //   }
+    // }
 
   }, [roomSlug]);
 

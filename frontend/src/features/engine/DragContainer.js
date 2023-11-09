@@ -197,9 +197,8 @@ export const DragContainer = React.memo(({}) => {
         orig.droppableId === dest.droppableId &&
         orig.index === dest.index
       ) {
-        doActionList([
-          ["LOG", "$ALIAS_N", " moved ", ["FACEUP_NAME_FROM_STACK_ID", origStackId], "."]
-        ])
+        // Do nothing
+        return;
       } else {
         // Moved to a different spot
         const newGroupById = reorderGroupStackIds(groupById, orig, dest);
@@ -208,20 +207,17 @@ export const DragContainer = React.memo(({}) => {
         // dispatch(setValues({updates: updates}));
         doActionList([
           ["LOG", "$ALIAS_N", " moved ", ["FACEUP_NAME_FROM_STACK_ID", origStackId], " from ", "$GAME.groupById."+origGroupId+".label", " to ", "$GAME.groupById."+destGroupId+".label", "."],
-          ["MOVE_STACK", origStackId, destGroupId, dest.index, {"allowFlip": allowFlip}]
+          ["MOVE_STACK", origStackId, destGroupId, dest.index, {"allowFlip": allowFlip}],
+          ["COND",
+            ["DEFINED", `$GAME.stackById/${origStackId}`],
+            [
+              ["SET", `/stackById/${origStackId}/left`, stackLeft],
+              ["SET", `/stackById/${origStackId}/top`, stackTop]
+            ]
+          ]
         ])
-        
         dispatch(setGroupById(newGroupById));
       }
-      doActionList(
-        ["COND",
-          ["DEFINED", `$GAME.stackById/${origStackId}`],
-          [
-            ["SET", `/stackById/${origStackId}/left`, stackLeft],
-            ["SET", `/stackById/${origStackId}/top`, stackTop]
-          ]
-        ]
-      )
     }
 
   }

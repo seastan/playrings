@@ -810,6 +810,17 @@ defmodule DragnCardsGame.GameUI do
     end
   end
 
+  def get_player_n_by_user_id(gameui, user_id) do
+    IO.puts("get_player_n_by_user_id")
+    IO.inspect(Map.keys(gameui))
+    gameui["playerInfo"]
+    |> Enum.find(fn {_, player_info} -> player_info["id"] == user_id end)
+    |> case do
+      nil -> nil
+      {player_n, _} -> player_n
+    end
+  end
+
   def save_replay(game, user_id) do
     game_uuid = game["id"]
     game_def = Plugins.get_game_def(game["options"]["pluginId"])

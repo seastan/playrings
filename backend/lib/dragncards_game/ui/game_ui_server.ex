@@ -232,6 +232,7 @@ defmodule DragnCardsGame.GameUIServer do
   end
 
   def handle_call({:add_player_to_room, user_id, pid}, _from, gameui) do
+    Logger.error("Adding #{pid_to_string(pid)} #{user_id}")
     put_in(gameui, ["sockets", pid_to_string(pid)], user_id)
     |> save_and_reply()
   end
@@ -242,6 +243,7 @@ defmodule DragnCardsGame.GameUIServer do
   end
 
   def handle_call({:leave, _user_id, pid}, _from, gameui) do
+    Logger.error("Leaving #{pid_to_string(pid)}")
     Map.delete(gameui, ["sockets", pid_to_string(pid)])
     |> save_and_reply()
   end
