@@ -18,6 +18,13 @@ defmodule DragnCards.Plugins do
   """
 
   def list_plugins_info(user_id) do
+
+    admin_query = from u in User,
+      where: u.id == ^user_id and u.admin == true,
+      select: u.id
+
+    is_admin = Repo.exists?(admin_query)
+
     IO.puts("list_plugins_info 0")
     IO.inspect(user_id)
     IO.puts("list_plugins_info 1")
@@ -27,7 +34,7 @@ defmodule DragnCards.Plugins do
     left_join: upp in UserPluginPermission,
     on: upp.private_access == p.id and upp.user_id == ^user_id,
     order_by: [desc: :version],
-    where: p.public == true or p.author_id == ^user_id or not is_nil(upp.id),
+    where: p.public == true or p.author_id == ^user_id or ^is_admin or not is_nil(upp.id),
     select: {
       p.author_id,
       u.alias,
@@ -44,13 +51,19 @@ defmodule DragnCards.Plugins do
   end
 
   def get_plugin_info(id, user_id) do
+    admin_query = from u in User,
+      where: u.id == ^user_id and u.admin == true,
+      select: u.id
+
+    is_admin = Repo.exists?(admin_query)
+
     query = from p in Plugin,
     join: u in User,
     on: [id: p.author_id],
     left_join: upp in UserPluginPermission,
     on: upp.private_access == p.id and upp.user_id == ^user_id,
     order_by: [desc: :version],
-    where: p.id == ^id and (p.public == true or p.author_id == ^user_id or not is_nil(upp.id)),
+    where: p.id == ^id and (p.public == true or p.author_id == ^user_id or ^is_admin or not is_nil(upp.id)),
     select: {
       p.author_id,
       u.alias,

@@ -14,6 +14,7 @@ defmodule DragnCards.Users.User do
   schema "users" do
     pow_user_fields()
     field(:alias, :string)
+    field(:admin, :boolean, default: false)
     field(:supporter_level, :integer)
     field(:language, :string, default: "English")
     field(:plugin_settings, :map, default: %{})
@@ -46,6 +47,7 @@ defmodule DragnCards.Users.User do
     %{
       id: user.id,
       alias: user.alias,
+      admin: user.admin,
       email: user.email,
       inserted_at: user.inserted_at,
       email_confirmed_at: user.email_confirmed_at,
