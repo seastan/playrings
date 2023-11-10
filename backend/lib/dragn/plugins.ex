@@ -25,9 +25,6 @@ defmodule DragnCards.Plugins do
 
     is_admin = Repo.exists?(admin_query)
 
-    IO.puts("list_plugins_info 0")
-    IO.inspect(user_id)
-    IO.puts("list_plugins_info 1")
     query = from p in Plugin,
     join: u in User,
     on: [id: p.author_id],

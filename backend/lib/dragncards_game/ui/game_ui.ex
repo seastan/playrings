@@ -811,8 +811,6 @@ defmodule DragnCardsGame.GameUI do
   end
 
   def get_player_n_by_user_id(gameui, user_id) do
-    IO.puts("get_player_n_by_user_id")
-    IO.inspect(Map.keys(gameui))
     gameui["playerInfo"]
     |> Enum.find(fn {_, player_info} -> player_info["id"] == user_id end)
     |> case do
