@@ -112,7 +112,7 @@ export const Profile: React.FC<Props> = () => {
           </div>
           <div>
             <span className="font-semibold">Email</span>: {user.email}
-          </div>
+          </div>git 
           <div>
             <span className="font-semibold">Email confirmed</span>:{" "}
             {user.email_confirmed_at == null && "No."}
@@ -122,9 +122,9 @@ export const Profile: React.FC<Props> = () => {
           <div>
             <span className="font-semibold">Patreon supporter level</span>: {user.supporter_level ? user.supporter_level : 0}
           </div>
-          {user.playtester && 
+          {user.admin && 
             <div>
-              <span className="font-semibold">Playtester</span>
+              <span className="font-semibold">Admin</span>
             </div>
           }
         </div>
