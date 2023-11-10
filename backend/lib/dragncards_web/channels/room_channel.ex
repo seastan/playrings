@@ -150,18 +150,18 @@ defmodule DragnCardsWeb.RoomChannel do
 
   # Define the handle_out function for the intercepted event
   def handle_out("send_state", triggered_by, socket) do
-    client_state = client_state(socket, socket.assigns)
-    if client_state != nil do
-      push(socket, "current_state", client_state)
+    new_client_state = client_state(socket, socket.assigns)
+    if new_client_state != nil do
+      push(socket, "current_state", new_client_state)
     end
     {:noreply, socket}
   end
 
   # Define the handle_out function for the intercepted event
   def handle_out("send_update", triggered_by, socket) do
-    client_update = client_state(socket, socket.assigns)
-    if client_update != nil do
-      push(socket, "state_update", client_update)
+    new_client_update = client_update(triggered_by, socket.assigns)
+    if new_client_update != nil do
+      push(socket, "state_update", new_client_update)
     end
     {:noreply, socket}
   end

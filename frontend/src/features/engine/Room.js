@@ -49,6 +49,7 @@ export const Room = ({ slug }) => {
       //delayBroadcast = setTimeout(function() {
       console.log("onChannelMessage: dispatching to game", game_ui)
       dispatch(setGameUi(game_ui));
+      //dispatch(setReplayStep(game_ui.replayStep));
 
       // If the active card's group has changed due to a hotkey, reset the active card id
       const state = store.getState();
