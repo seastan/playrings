@@ -25,7 +25,9 @@ defmodule DragnCardsWeb.RoomChannel do
     # state = GameUIServer.state(room_slug)
     GameUIServer.add_player_to_room(room_slug, user_id, pid)
     state = GameUIServer.state(room_slug)
-    broadcast!(socket, "users_changed", state["sockets"])
+    if state["sockets"] != nil do
+      broadcast!(socket, "users_changed", state["sockets"])
+    end
     push(socket, "current_state", client_state(socket, state))
     {:noreply, socket}
   end
@@ -83,7 +85,9 @@ defmodule DragnCardsWeb.RoomChannel do
     GameUIServer.set_seat(room_slug, user_id, player_i, new_user_id)
 
     state = GameUIServer.state(room_slug)
-    broadcast!(socket, "seats_changed", state["playerInfo"])
+    if state["playerInfo"] != nil do
+      broadcast!(socket, "seats_changed", state["playerInfo"])
+    end
 
     {:reply, :ok, socket}
   end
@@ -119,7 +123,9 @@ defmodule DragnCardsWeb.RoomChannel do
 
   defp on_terminate(%{assigns: %{room_slug: room_slug, user_id: user_id}, channel_pid: _pid} = socket) do
     state = GameUIServer.state(room_slug)
-    broadcast!(socket, "users_changed", state["sockets"])
+    if state["sockets"] != nil do
+      broadcast!(socket, "users_changed", state["sockets"])
+    end
   end
 
   defp notify_update(socket, room_slug, user_id) do
