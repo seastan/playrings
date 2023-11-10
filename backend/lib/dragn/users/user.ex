@@ -64,8 +64,6 @@ defmodule DragnCards.Users.User do
   This is called a "User" in the JS backend (public info about seomeone else.)
   """
   def to_public_profile(%User{} = user) do
-    IO.puts("to_public_profile 1")
-    IO.inspect(user.alias)
     %{
       id: user.id,
       alias: user.alias
@@ -75,9 +73,6 @@ defmodule DragnCards.Users.User do
   def alt_art_updates(user, nested_map) do
     plugin_settings_old = user.plugin_settings || %{}
     plugin_settings_new = Map.merge(plugin_settings_old, nested_map)
-    IO.puts("alt_art_updates 1")
-    IO.inspect(plugin_settings_new)
-    IO.puts("alt_art_updates 2")
     %{plugin_settings: plugin_settings_new}
   end
 

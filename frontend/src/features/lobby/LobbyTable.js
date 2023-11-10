@@ -51,6 +51,7 @@ export const LobbyTable = ({ plugin }) => {
   var filteredRooms = [];
   var activePrivate = 0;
   var activeRooms = 0;
+  var totalRooms = 0;
   if (rooms) {
     for (var i=0; i<rooms.length; i++) {
     //for (var replay of replayData) {
@@ -61,8 +62,7 @@ export const LobbyTable = ({ plugin }) => {
       if (status === "Active") activeRooms++;
       if (status === "Active" && room.privacy_type !== "public") activePrivate++;
       if (room.plugin_id !== plugin.id) continue;
-      console.log("Room 2", {room, selectedPlugin: plugin})
-      // Currently there is no "admin" user field so I am usering supporter_level === 100 as a hack
+      totalRooms++;
       if (room.privacy_type === "public" || myUser?.id === room.created_by || myUser?.admin) {
         filteredRooms.push({
           name: <Link to={"/room/" + room.slug}>{room.name || "Unspecified"}</Link>,
@@ -88,20 +88,16 @@ export const LobbyTable = ({ plugin }) => {
   
   filteredRooms.sort( compare );
 
-  if (filteredRooms.length === 0) {
-    return (
-      <div className="p-3 text-white rounded bg-gray-700 w-full">
-        No rooms created.
-      </div>
-    );
-  }
   return (
     <>
+      <div className="p-3 text-white rounded bg-gray-600-30 w-full">
+        <div>Active/Total Rooms: {activeRooms}/{totalRooms}</div>
+      </div>
 
       {isLoading && <div className="text-white text-center">Connecting to server...</div>}
       {isError && <div className="text-white text-center">Error communicating with server...</div>}
       <MUIDataTable
-        title={"Rooms ("+activeRooms+" active)"}
+        title={"Public Rooms"}
         data={filteredRooms}
         columns={columns}
         options={options}

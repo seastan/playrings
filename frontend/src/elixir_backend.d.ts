@@ -107,7 +107,7 @@ declare module "elixir-backend" {
     public background_url: null | string;
     public player_back_url: null | string;
     public encounter_back_url: null | string;
-    public playtester: null | integer;
+    public admin: null | integer;
     public language: null | string;
     public hidden_tooltips: null | Array<string>;
   }
