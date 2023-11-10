@@ -59,9 +59,9 @@ export const LobbyTable = ({ plugin }) => {
       console.log("Room 1", {room, selectedPlugin: plugin})
       const elapsedSeconds = (room.last_update ? currentUnixTime - room.last_update : Number.MAX_SAFE_INTEGER);
       const status = (elapsedSeconds < 60 ? "Active" : "Idle");
+      if (room.plugin_id !== plugin.id) continue;
       if (status === "Active") activeRooms++;
       if (status === "Active" && room.privacy_type !== "public") activePrivate++;
-      if (room.plugin_id !== plugin.id) continue;
       totalRooms++;
       if (room.privacy_type === "public" || myUser?.id === room.created_by || myUser?.admin) {
         filteredRooms.push({
