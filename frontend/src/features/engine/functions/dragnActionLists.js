@@ -41,7 +41,11 @@ export const dragnActionLists = {
   clearTargets: () => ([
     ["LOG", "$ALIAS_N", " cleared all  targets and arrows."],
     ["FOR_EACH_KEY_VAL", "$CARD_ID", "$CARD", "$GAME.cardById", [
-      ["SET", "/cardById/$CARD_ID/targeting/$PLAYER_N", false]
+      ["SET", "/cardById/$CARD_ID/targeting/$PLAYER_N", false],
+      ["COND", 
+        ["DEFINED", "$CARD.arrows.$PLAYER_N"],
+        ["SET", "/cardById/$CARD_ID/arrows/$PLAYER_N", ["LIST"]]
+      ]
     ]]
   ]),
   setStep: (stepId, stepInfo) => ([
