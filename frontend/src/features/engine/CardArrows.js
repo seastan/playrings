@@ -15,24 +15,27 @@ const arrowDivStyle = {
 export const CardArrows = React.memo(({ cardId }) => {
   const cardArrows = useSelector(state => state?.gameUi?.game?.cardById[cardId]?.arrows);
 
+
   const arrowElements = useMemo(() => {
-    return Object.entries(cardArrows).map(([playerI, playerIArrows]) => {
-      const arrowRelations = playerIArrows?.map(destCardId => ({
-        targetId: "arrow-" + destCardId,
-        targetAnchor: 'middle',
-        sourceAnchor: 'bottom'
-      }));
-      console.log("Arrow relations", arrowRelations);
-      return (
-        <ArcherElement
-          key={playerI}
-          id={"arrow-" + cardId}
-          relations={arrowRelations}
-        >
-          <div style={arrowDivStyle} />
-        </ArcherElement>
-      );
+    const arrowRelations = [];
+    Object.entries(cardArrows).map(([playerI, playerIArrows]) => {
+      for (var destCardId of playerIArrows) {
+        arrowRelations.push({
+          targetId: "arrow-" + destCardId,
+          targetAnchor: 'middle',
+          sourceAnchor: 'bottom'
+        });
+      }
     });
+    console.log("Arrow relations", arrowRelations);
+    return (
+      <ArcherElement
+        id={"arrow-" + cardId}
+        relations={arrowRelations}
+      >
+        <div style={arrowDivStyle} />
+      </ArcherElement>
+    );
   }, [cardArrows, cardId]);
 
   return <>{arrowElements}</>;
