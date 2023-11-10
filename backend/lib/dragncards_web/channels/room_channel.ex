@@ -25,10 +25,14 @@ defmodule DragnCardsWeb.RoomChannel do
     # state = GameUIServer.state(room_slug)
     GameUIServer.add_player_to_room(room_slug, user_id, pid)
     state = GameUIServer.state(room_slug)
+    client_state = client_state(socket, state)
     if state["sockets"] != nil do
       broadcast!(socket, "users_changed", state["sockets"])
     end
-    push(socket, "current_state", client_state(socket, state))
+    if client_state != nil do
+      push(socket, "current_state", client_state(socket, state))
+    end
+
     {:noreply, socket}
   end
 
@@ -146,13 +150,19 @@ defmodule DragnCardsWeb.RoomChannel do
 
   # Define the handle_out function for the intercepted event
   def handle_out("send_state", triggered_by, socket) do
-    push(socket, "current_state", client_state(socket, socket.assigns))
+    client_state = client_state(socket, socket.assigns)
+    if client_state != nil do
+      push(socket, "current_state", client_state)
+    end
     {:noreply, socket}
   end
 
   # Define the handle_out function for the intercepted event
   def handle_out("send_update", triggered_by, socket) do
-    push(socket, "state_update", client_update(triggered_by, socket.assigns))
+    client_update = client_state(socket, socket.assigns)
+    if client_update != nil do
+      push(socket, "state_update", client_update)
+    end
     {:noreply, socket}
   end
 
