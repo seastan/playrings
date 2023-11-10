@@ -19,8 +19,10 @@ export const useDoActionList = () => {
         } else if (!isList && gameDef?.actionLists && Object.keys(gameDef.actionLists).includes(idOrList)) {
             actionList = gameDef.actionLists[idOrList]
         }
+        console.log("processedActionList ", actionList)
         if (actionList != null) {
             var processedActionList = [...actionList];
+            console.log("processedActionList 1", processedActionList)
             for (var i=0; i<processedActionList.length; i++) {
                 const action = processedActionList[i];
                 if (action[0] === "INPUT") {
@@ -30,8 +32,10 @@ export const useDoActionList = () => {
                         processedActionList[i] = ["DEFINE", action[2], prompt(action[3],action[4])]
                     }
                 } else if (action[0] === "CONFIRM") {
+                    console.log("processedActionList 2", processedActionList, i)
                     if (!window.confirm(action[1])) return;
                     else processedActionList.splice(i,1);
+                    console.log("processedActionList 3", processedActionList, i)
                 }
             }
 

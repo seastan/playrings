@@ -19,13 +19,22 @@ const gameUiSlice = createSlice({
       //   if (key !== "game") state[key] = payload[key];
       // })
     },
-    applyDelta: (state, { payload }) => {
+    applyDeltaRedo: (state, { payload }) => {
       console.log("setting gameui delta", state, payload)
       if (!state?.game) {
         return;
       } else {
         console.log("setting gameui delta update", JSON.parse(JSON.stringify(state.game)))
-        setGame(updateByDelta(state.game, payload));
+        setGame(updateByDelta(state.game, payload, "redo"));
+      }
+    },
+    applyDeltaUndo: (state, { payload }) => {
+      console.log("setting gameui delta", state, payload)
+      if (!state?.game) {
+        return;
+      } else {
+        console.log("setting gameui delta update", JSON.parse(JSON.stringify(state.game)))
+        setGame(updateByDelta(state.game, payload), "undo");
       }
     },
     setGame: (state, { payload }) => {
@@ -34,6 +43,12 @@ const gameUiSlice = createSlice({
       } else {
         deepUpdate(state.game, payload);
       }
+    },
+    setPlayerInfo: (state, { payload }) => {
+      state.playerInfo = payload;
+    },
+    setSockets: (state, { payload }) => {
+      state.sockets = payload;
     },
     setGroupById: (state, { payload }) => {
       state.game.groupById = payload;
@@ -48,8 +63,11 @@ const gameUiSlice = createSlice({
       console.log("setValues", JSON.parse(JSON.stringify(state)), payload)
       updateValues(state, payload.updates);
     },
+    setReplayStep: (state, { payload }) => {
+      state.replayStep = payload;
+    }
   },
 });
 
-export const { setGameUi, applyDelta, setGame, setGroupById, setStackIds, setCardIds, setValues } = gameUiSlice.actions;
+export const { setGameUi, applyDeltaRedo, applyDeltaUndo, setGame, setPlayerInfo, setSockets, setGroupById, setStackIds, setCardIds, setValues, setReplayStep } = gameUiSlice.actions;
 export default gameUiSlice.reducer;

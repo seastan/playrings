@@ -3,8 +3,9 @@ defmodule DragnCardsWeb.RoomChannel do
   This channel will handle individual game rooms.
   """
   use DragnCardsWeb, :channel
-  alias DragnCardsGame.{GameUIServer}
+  alias DragnCardsGame.{GameUIServer, GameUI}
   alias DragnCardsChat.{ChatMessage}
+  intercept ["send_update", "send_state"]
 
   require Logger
 
@@ -15,6 +16,7 @@ defmodule DragnCardsWeb.RoomChannel do
       socket
       |> assign(:room_slug, room_slug)
 
+
     send(self(), :after_join)
     {:ok, socket}
   end
@@ -22,7 +24,9 @@ defmodule DragnCardsWeb.RoomChannel do
   def handle_info(:after_join, %{assigns: %{room_slug: room_slug, user_id: user_id}, channel_pid: pid} = socket) do
     # state = GameUIServer.state(room_slug)
     GameUIServer.add_player_to_room(room_slug, user_id, pid)
-    notify_quiet(socket, room_slug, user_id)
+    state = GameUIServer.state(room_slug)
+    broadcast!(socket, "users_changed", state["sockets"])
+    push(socket, "current_state", client_state(socket, state))
     {:noreply, socket}
   end
 
@@ -42,7 +46,7 @@ defmodule DragnCardsWeb.RoomChannel do
   ) do
     GameUIServer.game_action(room_slug, user_id, action, options)
 
-    notify(socket, room_slug, user_id)
+    notify_update(socket, room_slug, user_id)
 
     {:reply, {:ok, "game_action"}, socket}
   end
@@ -54,9 +58,15 @@ defmodule DragnCardsWeb.RoomChannel do
     },
     %{assigns: %{room_slug: room_slug, user_id: user_id}} = socket
   ) do
+    old_state = GameUIServer.state(room_slug)
+    old_game = old_state["game"]
     GameUIServer.step_through(room_slug, options)
+    new_state = GameUIServer.state(room_slug)
+    new_game = new_state["game"]
+    delta = GameUI.get_delta(old_game, new_game)
 
-    notify(socket, room_slug, user_id)
+
+    notify_state(socket, room_slug, user_id)
 
     {:reply, {:ok, "game_action"}, socket}
   end
@@ -72,21 +82,8 @@ defmodule DragnCardsWeb.RoomChannel do
   ) do
     GameUIServer.set_seat(room_slug, user_id, player_i, new_user_id)
 
-    notify_quiet(socket, room_slug, user_id)
-
-    {:reply, :ok, socket}
-  end
-
-  def handle_in(
-    "set_game_def",
-    %{
-      "game_def" => game_def,
-    },
-    %{assigns: %{room_slug: room_slug, user_id: user_id}} = socket
-  ) do
-    GameUIServer.set_game_def(room_slug, user_id, game_def)
-
-    notify(socket, room_slug, user_id)
+    state = GameUIServer.state(room_slug)
+    broadcast!(socket, "seats_changed", state["playerInfo"])
 
     {:reply, :ok, socket}
   end
@@ -98,29 +95,9 @@ defmodule DragnCardsWeb.RoomChannel do
   ) do
     GameUIServer.close_room(room_slug, user_id)
 
-    notify(socket, room_slug, user_id)
+    notify_state(socket, room_slug, user_id)
 
     {:reply, :ok, socket}
-  end
-
-  @doc """
-  notify_from_outside/1: Tell everyone in the channel to send a message
-  asking for a state update.
-  This used to broadcast game state to everyone, but game state can contain
-  private information.  So we tell everyone to ask for an update instead. Since
-  we're over a websocket, the extra cost shouldn't be that bad.
-  SERVER: "ask_for_update", %{}
-  CLIENT: "request_state", %{}
-  SERVER: "phx_reply", %{personalized state}
-
-  Note 1: After making this, I found a Phoenix Channel mechanism that lets
-  you intercept and change outgoing messages.  That might be better.
-  Note 2: "Outside" here means a caller from anywhere in the system can call
-  this, unlike "notify".
-  """
-  def notify_from_outside(room_slug) do
-    payload = %{user_id: 0}
-    DragnCardsWeb.Endpoint.broadcast!("room:" <> room_slug, "ask_for_update", payload)
   end
 
   def terminate({:normal, _payload}, _socket) do
@@ -141,24 +118,43 @@ defmodule DragnCardsWeb.RoomChannel do
   end
 
   defp on_terminate(%{assigns: %{room_slug: room_slug, user_id: user_id}, channel_pid: _pid} = socket) do
-    notify(socket, room_slug, user_id)
+    state = GameUIServer.state(room_slug)
+    broadcast!(socket, "users_changed", state["sockets"])
   end
 
+  defp notify_update(socket, room_slug, user_id) do
 
-  defp notify_quiet(socket, _room_slug, user_id) do
+    triggered_by = user_id
+    broadcast!(socket, "send_update", triggered_by)
 
-    # Send a phx_reply event to everyone to ask for an update. Include the messages from the current update
-    payload = %{
-      response: %{user_id: user_id},
-      status: "ok",
-    }
-
-    broadcast!(socket, "ask_for_update", payload)
+    {:noreply, socket}
   end
 
-  defp notify(socket, room_slug, user_id) do
+  defp notify_state(socket, room_slug, user_id) do
 
-    gameui = GameUIServer.state(room_slug)
+    triggered_by = user_id
+    broadcast!(socket, "send_state", triggered_by)
+
+    {:noreply, socket}
+  end
+
+  # Define the handle_out function for the intercepted event
+  def handle_out("send_state", triggered_by, socket) do
+    push(socket, "current_state", client_state(socket, socket.assigns))
+    {:noreply, socket}
+  end
+
+  # Define the handle_out function for the intercepted event
+  def handle_out("send_update", triggered_by, socket) do
+    push(socket, "state_update", client_update(triggered_by, socket.assigns))
+    {:noreply, socket}
+  end
+
+  defp client_update(triggered_by, assigns) do
+    gameui = GameUIServer.state(assigns[:room_slug])
+
+    player_n = GameUI.get_player_n_by_user_id(gameui, assigns[:user_id])
+    delta = Enum.at(gameui["deltas"], 0)
 
     log_messages = if gameui["logMessages"] == nil do
       []
@@ -170,14 +166,12 @@ defmodule DragnCardsWeb.RoomChannel do
       ChatMessage.new(message_text, -1)
     end)
 
-    # Send a phx_reply event to everyone to ask for an update. Include the messages from the current update
-    payload = %{
-      response: %{user_id: user_id},
-      status: "ok",
-      messages: messages
+    %{
+      "player_n" => player_n,
+      "delta" => delta,
+      "replayStep" => gameui["replayStep"],
+      "messages" => messages
     }
-
-    broadcast!(socket, "ask_for_update", payload)
   end
 
   # This is what part of the state gets sent to the client.

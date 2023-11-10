@@ -60,8 +60,9 @@ export const DropdownMenuGroup = React.memo(({
     )
   }
 
-  const left = mouseX < (window.innerWidth/2)  ? mouseX : mouseX -300;
-  const top = mouseY < (window.innerHeight/2) ? mouseY : mouseY -300;
+  const windowHeight = window.innerHeight;
+  const left = mouseX < (window.innerWidth/2)  ? mouseX + windowHeight * 0.01 : mouseX - windowHeight * 0.36;
+  const top = mouseY < (window.innerHeight/2) ? mouseY - windowHeight * 0.1 : mouseY - windowHeight * 0.5;
 
   const actionListShuffle = [
     ["SHUFFLE_GROUP", menuGroup.id],

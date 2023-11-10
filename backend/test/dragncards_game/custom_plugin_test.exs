@@ -1216,5 +1216,14 @@ defmodule DragnCardsGame.CustomPluginTest do
 
   end
 
+  # # temp
+  # @tag :temp
+  # test "temp", %{user: _user, game: game, game_def: _game_def} do
+
+  #   # Define a local variable. Since we are not in a function it will have a scope of 0
+  #   res = Evaluate.evaluate(game, ["DEFINED", "$GAME.stackById/123abc"])
+  #   IO.inspect(res)
+  # end
+
 
 end

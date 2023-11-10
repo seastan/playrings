@@ -15,8 +15,9 @@ export const DropdownMenuFirstPlayer = React.memo(({
   const numPlayers = useSelector(state => state.gameUi.game.numPlayers);  
   const dropdownMenu = useSelector(state => state?.playerUi?.dropdownMenu)
 
-  const left = mouseX < (window.innerWidth/2) ? mouseX : mouseX -300;
-  const top = mouseY < (window.innerHeight/2) ? mouseY : mouseY -250;
+  const windowHeight = window.innerHeight;
+  const left = mouseX < (window.innerWidth/2)  ? mouseX + windowHeight * 0.01 : mouseX - windowHeight * 0.36;
+  const top = mouseY < (window.innerHeight/2) ? mouseY - windowHeight * 0.1 : mouseY - windowHeight * 0.35;
 
   return (
     <div 

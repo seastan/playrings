@@ -17,25 +17,17 @@ export const arraysEqual = (a, b) => {
   return true;
 }
 
-export const updateByDelta = (obj, delta) => {
+export const updateByDelta = (obj, delta, direction) => {
   // Ignore timestamp
   delete delta["unix_ms"];
   // The we loop through delta properties and update obj
   for (var p in delta) { 
     // Ignore prototypes
-    if (!delta.hasOwnProperty(p)) continue;     
-    if (obj[p] === undefined) {
-      if (delta[p][0] === ":removed") {
-        // New key was created, add it to obj
-        obj[p] = delta[p][1];
-      } else {
-        return;
-      }
-    }
+    if (!delta.hasOwnProperty(p)) continue; 
     if (isObject(delta[p])) {
-      updateByDelta(obj[p],delta[p])
-    } else {
-      const newVal = delta[p][1];
+      updateByDelta(obj[p],delta[p], direction)
+    } else {    
+      const newVal = direction === "undo" ? delta[p][0] : delta[p][1];
       if (newVal === ":removed") {
         delete obj[p];
       } else {
@@ -44,6 +36,37 @@ export const updateByDelta = (obj, delta) => {
     }
   }
 }
+
+// export const updateByDelta = (map, delta, direction) => {
+//   // Check if both map and delta are objects
+//   if (isObject(map) && isObject(delta)) {
+//     // Remove the 'unix_ms' key from delta
+//     delete delta.unix_ms;
+
+//     // Loop over keys in delta and apply the changes to the map
+//     return Object.keys(delta).reduce((acc, k) => {
+//       if (typeof delta[k] === 'object' && delta[k] !== null && !Array.isArray(delta[k])) {
+//         // If the value is an object, apply applyDelta recursively
+//         acc[k] = applyDelta(map[k] || {}, delta[k], direction);
+//       } else {
+//         // If the value is an array, apply the undo or redo operation
+//         const newVal = direction === 'undo' ? delta[k][0] : delta[k][1];
+//         if (newVal === ':removed') {
+//           // If the new value is ':removed', delete the key from the map
+//           delete acc[k];
+//         } else {
+//           // Otherwise, update the value in the map
+//           acc[k] = newVal;
+//         }
+//       }
+//       return acc;
+//     }, {...map});
+//   } else {
+//     // If either map or delta isn't an object, return map as it is
+//     return map;
+//   }
+// }
+
   
 export const deepUpdate = (obj1, obj2) => {
   // If they are already equal, we are done
