@@ -811,11 +811,15 @@ defmodule DragnCardsGame.GameUI do
   end
 
   def get_player_n_by_user_id(gameui, user_id) do
-    gameui["playerInfo"]
-    |> Enum.find(fn {_, player_info} -> player_info["id"] == user_id end)
-    |> case do
-      nil -> nil
-      {player_n, _} -> player_n
+    if user_id == nil or gameui["playerInfo"] == nil do
+      nil
+    else
+      gameui["playerInfo"]
+      |> Enum.find(fn {_, player_info} -> player_info["id"] == user_id end)
+      |> case do
+        nil -> nil
+        {player_n, _} -> player_n
+      end
     end
   end
 
