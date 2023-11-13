@@ -41,7 +41,8 @@ const initialState = {
     transform: null,
     fromGroupId: null,
     toRegionType: null,
-  }
+  },
+  prompts: []
 };
 
 const playerUiSlice = createSlice({
@@ -163,6 +164,15 @@ const playerUiSlice = createSlice({
     setDraggingTransform: (state, { payload }) => {
       state.dragging.transform = payload;
     },
+    setPrompts: (state, { payload }) => {
+      state.prompts = payload;
+    },
+    addPrompt: (state, { payload }) => {
+      state.prompts.push(payload);
+    },
+    popPrompt: (state) => {
+      state.prompts.shift();
+    }
   }
 });
 

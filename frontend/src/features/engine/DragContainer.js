@@ -229,7 +229,7 @@ export const DragContainer = React.memo(({}) => {
         strokeColor="rgba(255,0,0,0.6)" 
         strokeWidth="15"
         svgContainerStyle={{ 
-          zIndex: 1e5,
+          zIndex: 2e3,
         }} 
         endShape={{
           arrow: {

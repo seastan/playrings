@@ -938,6 +938,40 @@ export const getGameDefSchema = (gameDef) => {
           }
         }
       },
+      "prompts": {
+        "_type_": "object",
+        "_itemSchema_": {
+          "_type_": "object",
+          "_strictKeys_": true,
+          "args": {
+            "_type_": "array",
+            "_required_": true,
+            "_itemSchema_": {
+              "_type_": "string",
+            }
+          },
+          "message": {
+            "_type_": "any",
+            "_required_": true,
+          },
+          "options": {
+            "_type_": "object",
+            "_itemSchema_": {
+              "_type_": "object",
+              "label": {
+                "_type_": "label",
+                "_required_": true,
+              },
+              "hotkey": {
+                "_type_": "string",
+              },
+              "code": {
+                "_type_": "array",
+              }
+            }
+          }
+        }
+      },
       "saveGame": {
         "_type_": "object",
         "_strictKeys_": true,
