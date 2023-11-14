@@ -933,16 +933,18 @@ defmodule DragnCardsGame.Evaluate do
 
               # Prepend the "VAR" statements to each option's code so that when it gets evaluated, it will have the variables defined
               # Append a command to delete the prompt
-              new_options = Enum.reduce(orig_options, orig_options, fn({option_id, option}, acc) ->
+              new_options = Enum.reduce(orig_options, [], fn(option, acc) ->
                 unset_command = ["UNSET", "/playerData/#{target_player_n}/prompts/#{prompt_uuid}"]
-                if option["code"] != nil do
-                  put_in(acc, [option_id, "code"], var_statements ++ option["code"] ++ [unset_command])
+                new_option = if option["code"] != nil do
+                  put_in(option, ["code"], var_statements ++ option["code"] ++ [unset_command])
                 else
-                  acc
+                  put_in(option, ["code"], unset_command)
                 end
+                acc ++ [new_option]
               end)
               new_prompt = put_in(new_prompt, ["options"], new_options)
 
+              # Add the prompt to the player's prompts
               put_in(acc, ["playerData", target_player_n, "prompts", prompt_uuid], new_prompt)
             end)
 

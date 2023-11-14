@@ -27,7 +27,7 @@ const DeveloperModal = () => {
 
   return (
     <Draggable handle=".handle">
-      <div style={{ position: "absolute", zIndex: 1000, cursor: "move", width: "40vw", height: "60vh" }}>
+      <div style={{ position: "absolute", zIndex: 10000, cursor: "move", width: "40vw"}}>
         <div className="handle" style={{ background: 'grey', width: '100%', cursor: 'move', height: '40px' }}></div>
         <CodeMirror
           value={input}

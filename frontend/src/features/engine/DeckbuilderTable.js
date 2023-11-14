@@ -88,7 +88,7 @@ export const DeckbuilderTable = React.memo(({currentGroupId, modifyDeckList, set
                     {addButtonsReversed.map((addButtonVal, _index) => {
                       return(
                         <div 
-                          className={keyClass + " float-right text-white"} 
+                          className={keyClass + " float-right text-white hover:bg-gray-400 cursor-pointer"} 
                           style={keyStyle}
                           onClick={()=>modifyDeckList(sideA?.databaseId, addButtonVal, currentGroupId)}>
                             +{addButtonVal}

@@ -1,8 +1,27 @@
+import React from "react";
 
-export const keyClass = "m-auto border cursor-pointer bg-gray-500 hover:bg-gray-400 text-center bottom inline-block";
+export const keyClass = "m-auto border bg-gray-500 text-center bottom inline-block";
 export const keyStyle = {width: "3vh", height: "3vh", borderRadius: "0.5vh"}
+export const keyStyleL = {width: "7vh", height: "3vh", borderRadius: "0.5vh"}
+export const keyStyleXL = {width: "12vh", height: "3vh", borderRadius: "0.5vh"}
 export const ATTACHMENT_OFFSET = 3.5;
 export const DEFAULT_CARD_Z_INDEX = 1000;
+
+export const keyDiv = (key, extraClasses = "") => {
+  if (key.length > 6) return <div className={keyClass + " " + extraClasses} style={keyStyleXL}>{key}</div>
+  else if (key.length > 1) return <div className={keyClass + " " + extraClasses} style={keyStyleL}>{key}</div>
+  else return <div className={keyClass + " " + extraClasses} style={keyStyle}>{key}</div>
+}
+
+export const keysDiv = (keysString, extraClasses = "") => {
+  const keys = keysString.split("+");
+  return(
+  <>
+    {keys.map((key) => keyDiv(key, extraClasses))}
+  </>
+  )
+};
+
 
 export const defaultdict = (defaultObj, defaultVal) => {
   return new Proxy(defaultObj, {

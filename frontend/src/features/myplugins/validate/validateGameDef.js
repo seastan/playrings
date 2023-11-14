@@ -51,6 +51,8 @@ const doesTypeMatch = (exp, act) => {
     return true;
   } else if (exp === "actionList" && act === "string") {
     return true;
+  } else if (exp === "code" && act === "array") {
+    return true;
   } else {
     return false;
   }
@@ -136,6 +138,10 @@ export const validateSchema = (gameDef, path, data, schema, errors) => {
 
   // TODO: Validate actionList
   if (expectedType === "actionList") {
+    return;
+  }  
+  // TODO: Validate code
+  if (expectedType === "code") {
     return;
   }
 

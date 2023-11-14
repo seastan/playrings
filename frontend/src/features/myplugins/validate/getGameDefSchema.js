@@ -455,7 +455,7 @@ export const getGameDefSchema = (gameDef) => {
             }
           },
           "code": {
-            "_type_": "actionList",
+            "_type_": "code",
             "_required_": true,
           },
         }
@@ -955,7 +955,8 @@ export const getGameDefSchema = (gameDef) => {
             "_required_": true,
           },
           "options": {
-            "_type_": "object",
+            "_type_": "array",
+            "_required_": true,
             "_itemSchema_": {
               "_type_": "object",
               "label": {
@@ -966,7 +967,7 @@ export const getGameDefSchema = (gameDef) => {
                 "_type_": "string",
               },
               "code": {
-                "_type_": "array",
+                "_type_": "code",
               }
             }
           }
