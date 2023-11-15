@@ -48,7 +48,7 @@ export const PluginLobby = () => {
     getPlugin();
   }, [user]);
 
-  console.log("Rendering PluginLobby", splitUrl)
+  console.log("Rendering PluginLobby", plugin)
   useEffect(() => {
     const url = window.location.href;
     if (url.includes("/load/")) {
@@ -111,7 +111,7 @@ export const PluginLobby = () => {
 
       <div className="flex justify-center w-full" style={{maxWidth: "600px"}}>
         <div className="w-full h-24 py-2 text-3xl">
-          <LobbyButton disabled={!plugin?.tutorialUrl} onClick={() => window.open(plugin?.tutorialUrl, '_blank')}>
+          <LobbyButton disabled={!plugin?.tutorial_url} onClick={() => window.open(plugin?.tutorial_url, '_blank')}>
             Tutorial
           </LobbyButton>
         </div>

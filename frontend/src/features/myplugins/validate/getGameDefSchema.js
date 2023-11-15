@@ -455,7 +455,7 @@ export const getGameDefSchema = (gameDef) => {
             }
           },
           "code": {
-            "_type_": "actionList",
+            "_type_": "code",
             "_required_": true,
           },
         }
@@ -935,6 +935,41 @@ export const getGameDefSchema = (gameDef) => {
           },
           "postLoadActionList": {
             "_type_": "actionList",
+          }
+        }
+      },
+      "prompts": {
+        "_type_": "object",
+        "_itemSchema_": {
+          "_type_": "object",
+          "_strictKeys_": true,
+          "args": {
+            "_type_": "array",
+            "_required_": true,
+            "_itemSchema_": {
+              "_type_": "string",
+            }
+          },
+          "message": {
+            "_type_": "any",
+            "_required_": true,
+          },
+          "options": {
+            "_type_": "array",
+            "_required_": true,
+            "_itemSchema_": {
+              "_type_": "object",
+              "label": {
+                "_type_": "label",
+                "_required_": true,
+              },
+              "hotkey": {
+                "_type_": "string",
+              },
+              "code": {
+                "_type_": "code",
+              }
+            }
           }
         }
       },

@@ -6,13 +6,10 @@ import { useDispatch, useSelector } from "react-redux";
 import { setShowHotkeys } from "../store/playerUiSlice";
 import { useGameL10n } from "./hooks/useGameL10n";
 import { useGameDefinition } from "./hooks/useGameDefinition";
-import { keyClass } from "./functions/common";
-import { keyStyle } from "./functions/common";
+import { keyDiv, keysDiv } from "./functions/common";
 import { useSiteL10n } from "../../hooks/useSiteL10n";
 import { dragnHotkeys } from "./hooks/useDragnHotkeys";
 
-const keyStyleL = {width: "7vh", height: "3vh", borderRadius: "0.5vh"}
-const keyStyleXL = {width: "12vh", height: "3vh", borderRadius: "0.5vh"}
 const windowClass = "insert-auto overflow-auto bg-gray-700 border max-w-lg rounded-lg outline-none text-white";
 const windowStyle = {
   position:"absolute", 
@@ -67,16 +64,12 @@ export const HotkeyTable = React.memo(({hotkeyList, l10n}) => {
           <th className={col2Class}>{siteL10n("hotkeyTableDescription")}</th>
       </tr>
       {hotkeyList.map((el, elIndex) => {
-      const keys = el.key.split("+")
+      const keysString = el.key
       const labelList = processLabel(l10n(el.label));
       return (
         <tr className={elIndex % 2 == 0 ? "bg-gray-500" : "bg-gray-600"}>
           <td className="p-1 text-center">
-            {keys.map((key, _keyIndex) => {
-              if (key.length > 6) return <div className={keyClass} style={keyStyleXL}>{key}</div>
-              else if (key.length > 1) return <div className={keyClass} style={keyStyleL}>{key}</div>
-              else return <div className={keyClass} style={keyStyle}>{key}</div>
-            })}
+            {keysDiv(keysString)}
           </td>
           
           <td className="text-center">

@@ -113,25 +113,25 @@ export const DeckbuilderCurrent = React.memo(({currentGroupId, setCurrentGroupId
           <div className="flex justify-center">
             <div className="m-1">
               <div 
-                className={keyClass + " m-2"} 
+                className={keyClass + " m-2 hover:bg-gray-400 cursor-pointer"} 
                 style={keyStyle}
                 onClick={()=>{saveCurrentDeck()}}>
                   <FontAwesomeIcon icon={faSave}/>
               </div>   
               <div 
-                className={keyClass + " m-1"} 
+                className={keyClass + " m-1 hover:bg-gray-400 cursor-pointer"} 
                 style={keyStyle}
                 onClick={()=>{playCurrentDeck()}}>
                   <FontAwesomeIcon icon={faPlay}/>
               </div>  
               <div 
-                className={keyClass + " m-1"} 
+                className={keyClass + " m-1 hover:bg-gray-400 cursor-pointer"} 
                 style={keyStyle}
                 onClick={()=>{exportCurrentDeck()}}>
                   <FontAwesomeIcon icon={faDownload}/>
               </div>
               <div 
-                className={keyClass + " m-1"} 
+                className={keyClass + " m-1 hover:bg-gray-400 cursor-pointer"} 
                 style={keyStyle}
                 onClick={()=>{deleteCurrentDeck()}}>
                   <FontAwesomeIcon icon={faTrash}/>
@@ -159,7 +159,7 @@ export const DeckbuilderCurrent = React.memo(({currentGroupId, setCurrentGroupId
                     onMouseMove={() => {setHoverCardDetails({...cardDb[cardUuid], leftSide: false})}}
                     onMouseLeave={() => setHoverCardDetails(null)}>
                     <div 
-                      className={keyClass} 
+                      className={keyClass + " hover:bg-gray-400 cursor-pointer"} 
                       style={keyStyle}
                       onClick={()=>modifyDeckList(cardUuid, -currentDeck.load_list[index].quantity, groupId, index)}>
                         <FontAwesomeIcon icon={faTrash}/>
@@ -167,14 +167,14 @@ export const DeckbuilderCurrent = React.memo(({currentGroupId, setCurrentGroupId
                     <div className="inline-block px-2 max-w-1/2">{cardDb[cardUuid]?.A?.name}</div>
                     <div className="absolute p-1 right-0 top-0">
                       <div 
-                        className={keyClass} 
+                        className={keyClass + " hover:bg-gray-400 cursor-pointer"} 
                         style={keyStyle}
                         onClick={()=>modifyDeckList(cardUuid, -1, groupId, index)}>
                           <FontAwesomeIcon icon={faChevronLeft}/>
                       </div>
                       <div className="inline-block px-2">{currentDeck.load_list[index].quantity}</div>
                       <div 
-                        className={keyClass} 
+                        className={keyClass + " hover:bg-gray-400 cursor-pointer"} 
                         style={keyStyle}
                         onClick={()=>modifyDeckList(cardUuid, 1, groupId, index)}>
                           <FontAwesomeIcon icon={faChevronRight}/>
