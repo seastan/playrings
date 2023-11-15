@@ -25,7 +25,7 @@
         order_by: [desc: e.inserted_at],
         limit: 1)
       replay = Repo.one(query)
-      if replay.game_json do replay.game_json else Game.new(room_slug, options) end
+      if replay.game_json do replay.game_json else Game.new(room_slug, game_def, options) end
       # TODO: Set room name
     else
       Game.new(room_slug, game_def, options)
