@@ -13,7 +13,8 @@ const promptStyle = {
 export const Prompts = React.memo(({
 }) => {
   const playerN = usePlayerN();
-  const prompts = useSelector(state => state?.gameUi?.game?.playerData?.[playerN]?.prompts); 
+  const prompts = useSelector(state => state?.gameUi?.game?.playerData?.[playerN]?.prompts) || {};
+  const sortedPromptIds = Object.keys(prompts).sort((a,b) => prompts[a].timestamp - prompts[b].timestamp);
   const doActionList = useDoActionList();
   if (!prompts) return null;
 
@@ -25,9 +26,10 @@ export const Prompts = React.memo(({
         width: "19%",
         zIndex: 3e3
       }}>
-        {Object.keys(prompts).map((promptKey, promptIndex) => {
+        {sortedPromptIds.map((promptKey, promptIndex) => {
           return(
             <div key={promptIndex} className="m-3 p-2 bg-gray-600-90 rounded" style={promptStyle}>
+              {prompts[promptKey]["timestamp"]}
               <div className="mb-2">{prompts[promptKey]["message"]}</div>
                 {prompts[promptKey]["options"] &&
                   <div className="">

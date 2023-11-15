@@ -888,7 +888,8 @@ defmodule DragnCardsGame.GameUI do
   end
 
   def reset_game(game) do
-    Game.new(game["roomSlug"], game["options"])
+    game_def = Plugins.get_game_def(game["options"]["pluginId"])
+    Game.new(game["roomSlug"], game_def, game["options"])
   end
 
   def create_card_in_group(game, game_def, group_id, load_list_item) do

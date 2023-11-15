@@ -16,12 +16,14 @@ export const useKeyDown = () => {
     const gameDef = useGameDefinition();
     const dispatch = useDispatch();
     
-    const keypress = useSelector(state => state?.playerUi?.keypress);
+    const keypress = useSelector(state => state?.playerUi?.keypress); 
     const keypressControl = keypress?.Control;
     const keypressShift = keypress?.Shift;
     const keypressAlt = keypress?.Alt;
     const mouseTopBottom = useSelector(state => state?.playerUi?.mouseTopBottom);
     const playerN = usePlayerN();
+    const prompts = useSelector(state => state?.gameUi?.game?.playerData?.[playerN]?.prompts) || {};
+    const sortedPromptIds = Object.keys(prompts).sort((a,b) => prompts[a].timestamp - prompts[b].timestamp);
     const activeCardId = useActiveCardId();
     const activeCardGroupId = useSelector(state => state?.gameUi?.game?.cardById?.[activeCardId]?.groupId);
     const visibleFace = useVisibleFace(activeCardId);
@@ -59,8 +61,18 @@ export const useKeyDown = () => {
         }
         if (Math.abs(keypressAlt-unix_sec) < 5) {
             dictKey = "Alt+" + dictKey;
-        } 
-        console.log("keypressdict", {keypressShift, keypressControl, keypressAlt, dictKey})
+        }
+
+        // Prompt hotkeys
+        if (sortedPromptIds.length > 0) {
+            const prompt = prompts[sortedPromptIds[0]];
+            for (var option of prompt.options) {
+                if (keyMatch(option.hotkey, dictKey)) {
+                    doActionList(option.code);
+                    return;
+                }
+            }
+        }
 
         var hotkeyTokenType = null;
         for (var keyObj of gameDef?.hotkeys.token) {
