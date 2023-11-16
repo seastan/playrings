@@ -276,8 +276,8 @@ export const DropdownMenuCard = React.memo(({
               const stepInfo = gameDef?.steps?.[stepId];
               if (stepInfo.phaseId === phaseId) return(
                 <DropdownItem
-                  rightIcon={visibleFace?.triggers?.[stepInfo.stepId] ? <FontAwesomeIcon icon={faCheck}/> : null}
-                  action={dragnActionLists.toggleTrigger(stepInfo.stepId)}
+                  rightIcon={visibleFace?.triggers?.[stepId] ? <FontAwesomeIcon icon={faCheck}/> : null}
+                  action={dragnActionLists.toggleTrigger(stepId)}
                   clickCallback={handleDropdownClick}>
                   <div className="text-xs">{gameL10n(stepInfo.label)}</div>
                 </DropdownItem>

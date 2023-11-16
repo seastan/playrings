@@ -49,12 +49,12 @@ export const TopBarMenu = React.memo(({}) => {
     }
     if (data.action === "clear_table") {
       // Mark status
-      doActionList(data.actionList);
+      //doActionList(data.actionList);
       // Save replay
-      gameBroadcast("game_action", {action: "save_replay", options: {player_ui: store.getState().playerUi}});
+      //gameBroadcast("game_action", {action: "save_replay", options: {player_ui: store.getState().playerUi}});
       // Reset game
-      gameBroadcast("game_action", {action: "reset_game", options: {player_ui: store.getState().playerUi}});
-      doActionList(["LOG", "$ALIAS_N", " reset the game."]);
+      gameBroadcast("game_action", {action: "reset_game", options: {player_ui: store.getState().playerUi, action_list: data.actionList}});
+      //doActionList(["LOG", "$ALIAS_N", " reset the game."]);
     } else if (data.action === "close_room") {
       // Mark status
       doActionList(data.actionList);
