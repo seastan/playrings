@@ -14,12 +14,12 @@ export const dragnActionLists = {
         "$ACTIVE_FACE.triggers.$STEP_ID",
         [
           ["LOG", "$ALIAS_N", " removed ", stepId, " trigger to ", "$ACTIVE_FACE.name", "."],
-          ["SET", "/$ACTIVE_FACE_PATH/triggers/" + stepId, false]
+          ["SET", "/cardById/$ACTIVE_CARD_ID/sides/$ACTIVE_CARD.currentSide/triggers/" + stepId, false]
         ],
         true,
         [
           ["LOG", "$ALIAS_N", " added ", stepId, " trigger to ", "$ACTIVE_FACE.name", "."],
-          ["SET", "/$ACTIVE_FACE_PATH/triggers/" + stepId, true]
+          ["SET", "/cardById/$ACTIVE_CARD_ID/sides/$ACTIVE_CARD.currentSide/triggers/" + stepId, true]
         ]
       ]
     ]

@@ -598,9 +598,9 @@ defmodule DragnCardsGame.GameUI do
       "set_game" ->
         options["game"]
       "reset_game" ->
-        reset_game(game)
-      # "load_cards" ->
-      #   load_cards(game, player_n, options["load_list"])
+        reset_game(game, user_id, options["action_list"])
+      "close_room" ->
+        close_room(game, user_id, options["action_list"])
       "save_replay" ->
         save_replay(game, user_id)
       _ ->
@@ -825,6 +825,8 @@ defmodule DragnCardsGame.GameUI do
 
   def save_replay(game, user_id) do
     game_uuid = game["id"]
+    IO.puts("save replay")
+    IO.inspect(game["options"])
     game_def = Plugins.get_game_def(game["options"]["pluginId"])
     save_metadata = get_in(game_def, ["saveGame", "metadata"])
 
@@ -887,9 +889,23 @@ defmodule DragnCardsGame.GameUI do
     end
   end
 
-  def reset_game(game) do
+  def reset_game(game, user_id, action_list) do
+    game_old = game
     game_def = Plugins.get_game_def(game["options"]["pluginId"])
-    Game.new(game["roomSlug"], game_def, game["options"])
+    game = Evaluate.evaluate_with_timeout(game, action_list)
+    game = save_replay(game, user_id)
+    game = Game.new(game["roomSlug"], game_def, game["options"])
+    Evaluate.evaluate(game, [
+      ["LOG", get_alias_n(game_old), " saved the game."],
+      ["LOG", get_alias_n(game_old), " reset the game."]
+    ])
+  end
+
+  def close_room(game, user_id, action_list) do
+    game_old = game
+    game = Evaluate.evaluate_with_timeout(game, action_list)
+    game = save_replay(game, user_id)
+    Evaluate.evaluate(game, ["LOG", get_alias_n(game_old), " closed the room."])
   end
 
   def create_card_in_group(game, game_def, group_id, load_list_item) do

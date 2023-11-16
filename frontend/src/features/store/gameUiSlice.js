@@ -44,6 +44,9 @@ const gameUiSlice = createSlice({
         deepUpdate(state.game, payload);
       }
     },
+    setRoomSlug: (state, { payload }) => {
+      state.roomSlug = payload;
+    },
     setPlayerInfo: (state, { payload }) => {
       state.playerInfo = payload;
     },
@@ -69,5 +72,5 @@ const gameUiSlice = createSlice({
   },
 });
 
-export const { setGameUi, applyDeltaRedo, applyDeltaUndo, setGame, setPlayerInfo, setSockets, setGroupById, setStackIds, setCardIds, setValues, setReplayStep } = gameUiSlice.actions;
+export const { setGameUi, applyDeltaRedo, applyDeltaUndo, setGame, setRoomSlug, setPlayerInfo, setSockets, setGroupById, setStackIds, setCardIds, setValues, setReplayStep } = gameUiSlice.actions;
 export default gameUiSlice.reducer;
