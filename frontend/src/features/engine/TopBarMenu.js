@@ -57,12 +57,12 @@ export const TopBarMenu = React.memo(({}) => {
       //doActionList(["LOG", "$ALIAS_N", " reset the game."]);
     } else if (data.action === "close_room") {
       // Mark status
-      doActionList(data.actionList);
+      //doActionList(data.actionList);
       // Save replay
-      gameBroadcast("game_action", {action: "save_replay", options: {}});
+      gameBroadcast("game_action", {action: "close_room", options: {player_ui: store.getState().playerUi, action_list: data.actionList}});
       // Close room
       history.push("/profile");
-      doActionList(["LOG", "$ALIAS_N", " closed the room."]);
+      //doActionList(["LOG", "$ALIAS_N", " closed the room."]);
       gameBroadcast("close_room", {});
     } else if (data.action === "load_deck") {
       loadFileDeck();

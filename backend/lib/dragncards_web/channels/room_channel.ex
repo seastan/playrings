@@ -25,20 +25,21 @@ defmodule DragnCardsWeb.RoomChannel do
     # state = GameUIServer.state(room_slug)
     GameUIServer.add_player_to_room(room_slug, user_id, pid)
     state = GameUIServer.state(room_slug)
-    client_state = client_state(socket, state)
+    client_state = client_state(socket)
     if state["sockets"] != nil do
       broadcast!(socket, "users_changed", state["sockets"])
     end
     if client_state != nil do
-      push(socket, "current_state", client_state(socket, state))
+      push(socket, "current_state", client_state(socket))
     end
 
     {:noreply, socket}
   end
 
   def handle_in("request_state", _payload, %{assigns: %{room_slug: room_slug}} = socket) do
-    state = GameUIServer.state(room_slug)
-    {:reply, {:ok, client_state(socket, state)}, socket}
+    client_state = client_state(socket)
+    push(socket, "current_state", client_state)
+    {:reply, {:ok, "request_state"}, socket}
   end
 
   def handle_in(
@@ -130,7 +131,7 @@ defmodule DragnCardsWeb.RoomChannel do
 
   # Define the handle_out function for the intercepted event
   def handle_out("send_state", triggered_by, socket) do
-    new_client_state = client_state(socket, socket.assigns)
+    new_client_state = client_state(socket)
     if new_client_state != nil do
       push(socket, "current_state", new_client_state)
     end
@@ -172,7 +173,7 @@ defmodule DragnCardsWeb.RoomChannel do
 
   # This is what part of the state gets sent to the client.
   # It can be used to transform or hide it before they get it.
-  defp client_state(_socket, state) do
-    state
+  defp client_state(socket) do
+    GameUIServer.state(socket.assigns[:room_slug])
   end
 end
