@@ -52,8 +52,31 @@ defmodule DragnCardsWeb.RoomChannel do
     %{assigns: %{room_slug: room_slug, user_id: user_id}} = socket
   ) do
     GameUIServer.game_action(room_slug, user_id, action, options)
+    state = GameUIServer.state(room_slug)
+    messages = state["logMessages"]
+    delta = Enum.at(state["deltas"], 0)
 
-    notify_update(socket, room_slug, user_id)
+    notify_update(socket, room_slug, user_id, messages, delta)
+
+    {:reply, {:ok, "game_action"}, socket}
+  end
+
+  def handle_in(
+    "step_through",
+    %{
+      "options" => options,
+    },
+    %{assigns: %{room_slug: room_slug, user_id: user_id}} = socket
+  ) do
+    old_state = GameUIServer.state(room_slug)
+    old_game = old_state["game"]
+    GameUIServer.step_through(room_slug, options)
+    new_state = GameUIServer.state(room_slug)
+    new_game = new_state["game"]
+    delta = GameUI.get_delta(old_game, new_game)
+    messages = new_state["logMessages"]
+
+    notify_update(socket, room_slug, user_id, messages, delta)
 
     {:reply, {:ok, "game_action"}, socket}
   end
@@ -113,10 +136,15 @@ defmodule DragnCardsWeb.RoomChannel do
     end
   end
 
-  defp notify_update(socket, room_slug, user_id) do
+  defp notify_update(socket, room_slug, user_id, messages, delta) do
 
-    triggered_by = user_id
-    broadcast!(socket, "send_update", triggered_by)
+    payload = %{
+      "delta" => delta,
+      "messages" => Enum.map(messages, fn(message_text) ->
+        ChatMessage.new(message_text, -1)
+      end)
+    }
+    broadcast!(socket, "send_update", payload)
 
     {:noreply, socket}
   end
@@ -139,35 +167,24 @@ defmodule DragnCardsWeb.RoomChannel do
   end
 
   # Define the handle_out function for the intercepted event
-  def handle_out("send_update", triggered_by, socket) do
-    new_client_update = client_update(triggered_by, socket.assigns)
+  def handle_out("send_update", payload, socket) do
+    new_client_update = client_update(payload, socket.assigns)
     if new_client_update != nil do
       push(socket, "state_update", new_client_update)
     end
     {:noreply, socket}
   end
 
-  defp client_update(triggered_by, assigns) do
+  defp client_update(payload, assigns) do
     gameui = GameUIServer.state(assigns[:room_slug])
 
     player_n = GameUI.get_player_n_by_user_id(gameui, assigns[:user_id])
-    delta = Enum.at(gameui["deltas"], 0)
-
-    log_messages = if gameui["logMessages"] == nil do
-      []
-    else
-      gameui["logMessages"]
-    end
-
-    messages = Enum.map(log_messages, fn(message_text) ->
-      ChatMessage.new(message_text, -1)
-    end)
 
     %{
       "player_n" => player_n,
-      "delta" => delta,
+      "delta" => payload["delta"],
       "replayStep" => gameui["replayStep"],
-      "messages" => messages
+      "messages" => payload["messages"]
     }
   end
 
