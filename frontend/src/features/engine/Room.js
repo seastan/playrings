@@ -3,9 +3,9 @@ import { useSelector, useDispatch } from 'react-redux';
 import RoomProviders from "./RoomProviders";
 import {useMessages, useSetMessages} from '../../contexts/MessagesContext';
 import useChannel from "../../hooks/useChannel";
-import { applyDeltaRedo, applyDeltaUndo, setGame, setGameUi, setPlayerInfo, setReplayStep, setRoomSlug, setSockets } from "../store/gameUiSlice";
+import { applyDeltaRedo, applyDeltaUndo, setGame, setGameUi, setPlayerInfo, setRoomSlug, setSockets } from "../store/gameUiSlice";
 import useProfile from "../../hooks/useProfile";
-import { resetPlayerUi, setActiveCardId, setPreHotkeyActiveCardGroupId } from "../store/playerUiSlice";
+import { resetPlayerUi, setActiveCardId, setPreHotkeyActiveCardGroupId, setReplayStep } from "../store/playerUiSlice";
 import { usePlugin } from "./hooks/usePlugin";
 import { PluginProvider } from "../../contexts/PluginContext";
 import { useActiveCardId } from "./hooks/useActiveCardId";
@@ -33,11 +33,12 @@ export const Room = ({ slug }) => {
     if (event === "state_update" && payload.delta !== null) {
       // Update store with my own delta
       const newDelta = payload.delta;
-      const newReplayStep = payload.replayStep;
-      const gameUi = store.getState().gameUi;
-      const currentReplayStep = gameUi?.replayStep;
-      console.log("onChannelMessage currentReplayStep", currentReplayStep, "newReplayStep", newReplayStep, newDelta)
-      if (newReplayStep === currentReplayStep + 1) {
+      const playerUiReplayStep = store.getState().playerUi.replayStep;
+      const oldReplayStep = payload.oldReplayStep;
+      const newReplayStep = payload.newReplayStep;
+      //const gameUi = store.getState().gameUi;
+      console.log("onChannelMessage playerUiReplayStep", playerUiReplayStep, "oldReplayStep", oldReplayStep, "newReplayStep", newReplayStep, newDelta)
+      if (oldReplayStep === playerUiReplayStep) {
         dispatch(applyDeltaRedo(newDelta));
         dispatch(setReplayStep(newReplayStep));
         setMessages(payload.messages);
@@ -56,7 +57,7 @@ export const Room = ({ slug }) => {
       console.log("onChannelMessage: dispatching to game", game_ui)
       dispatch(setGameUi(game_ui));
       setMessages(game_ui.logMessages);
-      //dispatch(setReplayStep(game_ui.replayStep));
+      dispatch(setReplayStep(game_ui.replayStep));
 
       // If the active card's group has changed due to a hotkey, reset the active card id
       const state = store.getState();
