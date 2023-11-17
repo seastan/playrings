@@ -11,6 +11,7 @@ const initialState = {
     Space: 0,
     w: null,
   },
+  replayStep: 0,
   showHotkeys: false,
   touchMode: false,
   typing: false,
@@ -76,6 +77,9 @@ const playerUiSlice = createSlice({
     },
     setKeypressW: (state, { payload }) => {
       state.keypress.w = payload;
+    },
+    setReplayStep: (state, { payload }) => {
+      state.replayStep = payload;
     },
     setShowHotkeys: (state, { payload }) => {
       state.showHotkeys = payload;
@@ -187,6 +191,7 @@ export const {
   setKeypressTab,
   setKeypressSpace,
   setKeypressW, 
+  setReplayStep,
   setShowHotkeys, 
   setTouchMode, 
   setTyping,

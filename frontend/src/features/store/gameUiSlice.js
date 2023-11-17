@@ -72,5 +72,5 @@ const gameUiSlice = createSlice({
   },
 });
 
-export const { setGameUi, applyDeltaRedo, applyDeltaUndo, setGame, setRoomSlug, setPlayerInfo, setSockets, setGroupById, setStackIds, setCardIds, setValues, setReplayStep } = gameUiSlice.actions;
+export const { setGameUi, applyDeltaRedo, applyDeltaUndo, setGame, setRoomSlug, setPlayerInfo, setSockets, setGroupById, setStackIds, setCardIds, setValues } = gameUiSlice.actions;
 export default gameUiSlice.reducer;
