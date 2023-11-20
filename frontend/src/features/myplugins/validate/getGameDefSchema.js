@@ -532,6 +532,12 @@ export const getGameDefSchema = (gameDef) => {
               "_type_": "any",
             }
           },
+          "onCardLeave": {
+            "_type_": "object",
+            "_itemSchema_": {
+              "_type_": "any",
+            }
+          },
           "_itemSchema_": {
             "_type_": "any",
           }
@@ -832,6 +838,40 @@ export const getGameDefSchema = (gameDef) => {
                 }
               }
             }
+          },
+          "textBoxes": {
+            "_type_": "array",
+            "_itemSchema_": {
+              "_type_": "object",
+              "_strictKeys_": true,
+              "textBoxId": {
+                "_type_": "string",
+                "_required_": true,
+                "_memberOf_": mytypeof(gameDef?.textBoxes) === "object" ? Object.keys(gameDef.textBoxes) : [],
+              },
+              "left": {
+                "_type_": "string",
+                "_required_": true,
+              },
+              "top": {
+                "_type_": "string",
+                "_required_": true,
+              },
+              "width": {
+                "_type_": "string",
+                "_required_": true,
+              },
+              "height": {
+                "_type_": "string",
+                "_required_": true,
+              },
+              "layoutVariants": {
+                "_type_": "object",
+                "_itemSchema_": {
+                  "_type_": "any",
+                }
+              }
+            }
           }
         }
       },
@@ -1041,6 +1081,17 @@ export const getGameDefSchema = (gameDef) => {
         "_itemSchema_": {
           "_type_": "string",
           "_memberOf_": mytypeof(gameDef?.steps) === "object" ? Object.keys(gameDef.steps) : [],
+        }
+      },
+      "textBoxes": {
+        "_type_": "object",
+        "_itemSchema_": {
+          "_type_": "object",
+          "_strictKeys_": true,
+          "content": {
+            "_type_": "any",
+            "_required_": true,
+          },
         }
       },
       "tokens": {

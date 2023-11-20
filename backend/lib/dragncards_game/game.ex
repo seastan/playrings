@@ -59,6 +59,8 @@
       "stepOrder" => game_def["stepOrder"],
       "phases" => game_def["phases"],
       "phaseOrder" => game_def["phaseOrder"],
+      "tokenById" => game_def["tokens"],
+      "textBoxById" => game_def["textBoxes"],
       "groupById" => Groups.new(game_def),
       "stackById" => %{},
       "cardById"  => %{},

@@ -106,11 +106,12 @@ defmodule DragnCardsGame.Evaluate do
 
   def apply_automation_rule(rule, path, game_old, game_new, trace) do
     if path_matches_listenpaths?(path, rule["listenTo"], game_new, trace) do
+      comment = rule["_comment"]
       case rule["type"] do
         "trigger" ->
-          apply_trigger_rule(rule, game_old, game_new, trace ++ ["apply_trigger_rule"])
+          apply_trigger_rule(rule, game_old, game_new, trace ++ ["apply_trigger_rule #{comment}"])
         "passive" ->
-          apply_passive_rule(rule, game_old, game_new, trace ++ ["apply_passive_rule"])
+          apply_passive_rule(rule, game_old, game_new, trace ++ ["apply_passive_rule #{comment}"])
         _ ->
           game_new
       end
@@ -227,7 +228,7 @@ defmodule DragnCardsGame.Evaluate do
     if is_number(lhs) and is_number(rhs) do
       {lhs, rhs}
     else
-      raise "Tried to compare #{lhs} and #{rhs} but one of them is not a number."
+      raise "Tried to compare #{inspect(lhs)} and #{inspect(rhs)} but one of them is not a number."
     end
   end
 
@@ -481,6 +482,15 @@ defmodule DragnCardsGame.Evaluate do
                 String.starts_with?(pathi, "[") and String.ends_with?(pathi, "]") ->
                   int_str = evaluate(game, String.slice(pathi,1..-2), trace ++ ["index #{index}"])
                   int = convert_to_integer(int_str)
+                  if acc == nil do
+                    raise "Tried to access index #{int} on a null array."
+                  end
+                  if not is_list(acc) do
+                    raise "Tried to access index #{int} on a non-array object."
+                  end
+                  if Enum.count(acc) <= int do
+                    raise "Tried to access index #{int} on an array of length #{Enum.count(acc)}."
+                  end
                   Enum.at(acc, int)
                 pathi == "currentFace" ->
                   current_side = if acc["currentSide"] == nil do
@@ -596,7 +606,7 @@ defmodule DragnCardsGame.Evaluate do
 
           "INCREASE_VAL" ->
             path = evaluate(game, Enum.at(code, 1), trace ++ ["path"])
-            delta = evaluate(game, Enum.at(code, 2), trace ++ ["delta"])
+            delta = evaluate(game, Enum.at(code, 2), trace ++ ["delta"]) || 0
             old_value = get_in(game, path) || 0
             put_by_path(game, path, old_value + delta, trace ++ ["put_by_path"])
 
@@ -881,8 +891,6 @@ defmodule DragnCardsGame.Evaluate do
             else
               [target_player_list]
             end
-            IO.puts("prompt 1")
-            IO.inspect(target_player_list)
             prompt_id = evaluate(game, Enum.at(code, 2), trace ++ ["prompt_id"])
             arg_vals = Enum.slice(code, 3, Enum.count(code))
             game_def = Plugins.get_game_def(game["options"]["pluginId"])
@@ -913,14 +921,10 @@ defmodule DragnCardsGame.Evaluate do
               end
               acc ++ [["VAR", arg_name, arg_val]]
             end)
-            IO.puts("prompt 2")
-            IO.inspect(var_statements)
             temp_game = Enum.reduce(var_statements, game, fn(var_statement, acc) ->
               evaluate(acc, var_statement, trace ++ ["var_statement"])
             end)
             new_message = evaluate(temp_game, orig_message, trace ++ ["message"])
-            IO.puts("prompt 3")
-            IO.inspect(new_message)
             prompt_uuid = Ecto.UUID.generate
 
 
@@ -948,8 +952,6 @@ defmodule DragnCardsGame.Evaluate do
               put_in(acc, ["playerData", target_player_n, "prompts", prompt_uuid], new_prompt)
             end)
 
-            IO.puts("prompt 5")
-            IO.inspect(game["playerData"])
             game
 
           "ACTION_LIST" ->
