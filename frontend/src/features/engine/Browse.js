@@ -89,7 +89,7 @@ export const Browse = React.memo(({addDroppableRef}) => {
       ["LOG", "$ALIAS_N", " closed ", gameL10n(group.label)+"."],
       ["FOR_EACH_VAL", "$STACK_ID", `$GROUP_BY_ID.${groupId}.stackIds`,
         [
-          ["DEFINE", "$CARD_ID", "$STACK_BY_ID.$STACK_ID.cardIds.[0]"],
+          ["VAR", "$CARD_ID", "$STACK_BY_ID.$STACK_ID.cardIds.[0]"],
           ["SET", "/cardById/$CARD_ID/peeking/$PLAYER_N", false]
         ]
       ],
@@ -105,7 +105,7 @@ export const Browse = React.memo(({addDroppableRef}) => {
       ["LOG", "$ALIAS_N", " closed ", gameL10n(group.label)+"."],
       ["FOR_EACH_VAL", "$STACK_ID", `$GROUP_BY_ID.${groupId}.stackIds`,
         [
-          ["DEFINE", "$CARD_ID", "$STACK_BY_ID.$STACK_ID.cardIds.[0]"],
+          ["VAR", "$CARD_ID", "$STACK_BY_ID.$STACK_ID.cardIds.[0]"],
           ["SET", "/cardById/$CARD_ID/peeking/$PLAYER_N", false]
         ]
       ]

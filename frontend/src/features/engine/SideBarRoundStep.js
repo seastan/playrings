@@ -20,7 +20,7 @@ export const ReminderButton = React.memo(({
     if (!playerN) return;
     var actionList = dragnActionLists.clearTargets();
     for (var cardId of triggerCardIds) {
-      actionList = actionList.concat([["DEFINE", "$ACTIVE_CARD_ID", cardId]]);
+      actionList = actionList.concat([["VAR", "$ACTIVE_CARD_ID", cardId]]);
       actionList = actionList.concat(dragnActionLists.targetCard(cardId));
     }
     console.log("targetTriggers", actionList);

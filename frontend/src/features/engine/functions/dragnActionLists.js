@@ -9,7 +9,7 @@ export const dragnActionLists = {
   ),
   toggleTrigger: (stepId) => (
     [
-      ["DEFINE", "$STEP_ID", stepId],
+      ["VAR", "$STEP_ID", stepId],
       ["COND",
         "$ACTIVE_FACE.triggers.$STEP_ID",
         [
@@ -43,7 +43,7 @@ export const dragnActionLists = {
     ["FOR_EACH_KEY_VAL", "$CARD_ID", "$CARD", "$GAME.cardById", [
       ["SET", "/cardById/$CARD_ID/targeting/$PLAYER_N", false],
       ["COND", 
-        ["DEFINED", "$CARD.arrows.$PLAYER_N"],
+        ["VAR", "$CARD.arrows.$PLAYER_N"],
         ["SET", "/cardById/$CARD_ID/arrows/$PLAYER_N", ["LIST"]]
       ]
     ]]
@@ -117,9 +117,9 @@ export const dragnActionLists = {
   ]),
   chooseRandom: (groupId) => ([
     ["LOG", "$ALIAS_N", " chose a random card from ", "$GAME.groupById." + groupId + ".label", "."],
-    ["DEFINE", "$RANDOM_IDX", ["RANDOM_INT", 0, ["SUBTRACT", ["LENGTH", "$GAME.groupById." + groupId + ".stackIds"], 1]]],
-    ["DEFINE", "$STACK_ID", "$GAME.groupById." + groupId + ".stackIds.[$RANDOM_IDX]"],
-    ["DEFINE", "$CARD_ID", "$GAME.stackById.$STACK_ID.cardIds.[0]"],
+    ["VAR", "$RANDOM_IDX", ["RANDOM_INT", 0, ["SUBTRACT", ["LENGTH", "$GAME.groupById." + groupId + ".stackIds"], 1]]],
+    ["VAR", "$STACK_ID", "$GAME.groupById." + groupId + ".stackIds.[$RANDOM_IDX]"],
+    ["VAR", "$CARD_ID", "$GAME.stackById.$STACK_ID.cardIds.[0]"],
     ["TARGET", "$CARD_ID"]
   ]),
   togglePeeking: (card, val, playerIList) => {

@@ -68,7 +68,7 @@ export const dragnHotkeys = [
           ])
         case "drawArrow":
             return doActionList([
-                ["DEFINE", "$FROM_CARD_ID", "$GAME.playerData.$PLAYER_N.drawingArrowFrom"],
+                ["VAR", "$FROM_CARD_ID", "$GAME.playerData.$PLAYER_N.drawingArrowFrom"],
                 ["COND",
                   ["EQUAL", "$FROM_CARD_ID", null],
                   [
