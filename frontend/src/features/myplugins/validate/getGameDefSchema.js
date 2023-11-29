@@ -465,6 +465,10 @@ export const getGameDefSchema = (gameDef) => {
         "_itemSchema_": {
           "_type_": "object",
           "_strictKeys_": true,
+          "label": {
+            "_type_": "label",
+            "_required_": true,
+          },
           "type": {
             "_type_": "string",
             "_required_": true,
@@ -473,6 +477,24 @@ export const getGameDefSchema = (gameDef) => {
             "_type_": "selfType",
             "_required_": true,
           },
+          "options": {
+            "_type_": "array",
+            "_itemSchema_": {
+              "_type_": "object",
+              "_strictKeys_": true,
+              "label": {
+                "_type_": "label",
+                "_required_": true,
+              },
+              "id": {
+                "_type_": "string",
+                "_required_": true,
+              }
+            }
+          },
+          "showInSettings": {
+            "_type_": "boolean",
+          }
         }
       },
       "groupMenu": {
@@ -903,6 +925,10 @@ export const getGameDefSchema = (gameDef) => {
         "_itemSchema_": {
           "_type_": "object",
           "_strictKeys_": true,
+          "label": {
+            "_type_": "label",
+            "_required_": true,
+          },
           "type": {
             "_type_": "string",
             "_required_": true,
@@ -916,6 +942,24 @@ export const getGameDefSchema = (gameDef) => {
           },
           "max": {
             "_type_": "selfType",
+          },
+          "options": {
+            "_type_": "array",
+            "_itemSchema_": {
+              "_type_": "object",
+              "_strictKeys_": true,
+              "label": {
+                "_type_": "label",
+                "_required_": true,
+              },
+              "id": {
+                "_type_": "string",
+                "_required_": true,
+              }
+            }
+          },
+          "showInSettings": {
+            "_type_": "boolean",
           }
         }
       },
@@ -1207,6 +1251,46 @@ export const getGameDefSchema = (gameDef) => {
             },
             "actionList": {
               "_type_": "actionList",
+            }
+          }
+        }
+      },
+      "userSettings" :{
+        "_type_": "array",
+        "_itemSchema_": {
+          "_type_": "object",
+          "_strictKeys_": true,
+          "id": {
+            "_type_": "string",
+            "_required_": true,
+          },
+          "label": {
+            "_type_": "label",
+            "_required_": true,
+          },
+          "type": {
+            "_type_": "string",
+            "_required_": true,
+            "_memberOf_": ["boolean", "integer", "string", "dropdown", "checkbox"],
+            "_memberOfPath_": `["boolean", "integer", "float", "string"]`,
+          },
+          "default": {
+            "_type_": "any",
+            "_required_": true,
+          },
+          "options": {
+            "_type_": "array",
+            "_itemSchema_": {
+              "_type_": "object",
+              "_strictKeys_": true,
+              "label": {
+                "_type_": "label",
+                "_required_": true,
+              },
+              "id": {
+                "_type_": "string",
+                "_required_": true,
+              }
             }
           }
         }

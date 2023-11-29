@@ -46,7 +46,9 @@ export const RoomProviders = ({ gameBroadcast, chatBroadcast }) => {
 
   return (
     
-      <div className="background"
+      <div 
+        key={backgroundUrl}
+        className="background"
         style={{
           height: "97vh",
           background: backgroundUrl ? `url(${backgroundUrl})` : "",

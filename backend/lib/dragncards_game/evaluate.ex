@@ -392,7 +392,7 @@ defmodule DragnCardsGame.Evaluate do
             if String.starts_with?(var_name, "$") do
               var_scope_index = find_var_scope_index(var_name, current_scope_index, game["variables"])
               current_value = game["variables"]["#{var_scope_index}"][var_name] || 0
-              delta = evaluate(game, Enum.at(code, 2), trace ++ [var_name])
+              delta = evaluate(game, Enum.at(code, 2), trace ++ [var_name]) || 0
               put_in(game, ["variables", "#{var_scope_index}", var_name], current_value + delta)
             else
               raise "Tried to update variable '#{var_name}' but it does not start with $."
@@ -405,7 +405,7 @@ defmodule DragnCardsGame.Evaluate do
             if String.starts_with?(var_name, "$") do
               var_scope_index = find_var_scope_index(var_name, current_scope_index, game["variables"])
               current_value = game["variables"]["#{var_scope_index}"][var_name] || 0
-              delta = evaluate(game, Enum.at(code, 2), trace ++ [var_name])
+              delta = evaluate(game, Enum.at(code, 2), trace ++ [var_name]) || 0
               put_in(game, ["variables", "#{var_scope_index}", var_name], current_value - delta)
             else
               raise "Tried to update variable '#{var_name}' but it does not start with $."

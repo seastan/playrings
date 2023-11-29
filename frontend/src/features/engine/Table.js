@@ -24,6 +24,7 @@ import { usePlayerN } from "./hooks/usePlayerN";
 import { pl } from "date-fns/locale";
 import { usePreloadCardImages } from "../../hooks/usePreloadCardImages";
 import { useGameDefinition } from "./hooks/useGameDefinition";
+import { SettingsModal } from "./SettingsModal";
 
 export const Table = React.memo(({addDroppableRef}) => {
   const gameDef = useGameDefinition();
@@ -106,6 +107,7 @@ export const Table = React.memo(({addDroppableRef}) => {
       <GiantCard/>
       {showModal === "card" ? <SpawnExistingCardModal/> : null}
       {showModal === "prebuilt_deck" ? <SpawnPrebuiltModal/> : null}
+      {showModal === "settings" ? <SettingsModal/> : null}
       {showModal === "custom" ? <SpawnCustomCardModal/> : null}
       {showModal === "builder" ? <DeckbuilderModal/> : null}
       {showDeveloper ? <DeveloperModal/> : null}

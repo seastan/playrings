@@ -1,7 +1,7 @@
 import { useContext } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import BroadcastContext from '../../../contexts/BroadcastContext';
-import { setKeypress, setKeypressAlt, setKeypressControl, setKeypressShift, setKeypressSpace, setKeypressTab, setPreHotkeyActiveCardGroupId } from '../../store/playerUiSlice';
+import { setKeypress, setKeypressAlt, setKeypressControl, setKeypressShift, setKeypressSpace, setKeypressTab, setPreHotkeyActiveCardGroupId, setShowModal } from '../../store/playerUiSlice';
 import { useAddToken } from './useAddToken';
 import { useDoActionList } from './useDoActionList';
 import { dragnHotkeys, useDoDragnHotkey } from './useDragnHotkeys';
@@ -46,7 +46,13 @@ export const useKeyDown = () => {
         if (k === " ") dispatch(setKeypressSpace(unix_sec));
         if (k === "Control") dispatch(setKeypressControl(unix_sec));
         if (k === "Shift") dispatch(setKeypressShift(unix_sec));
-        if (k === "Tab") dispatch(setKeypressTab(unix_sec));
+        if (k === "Tab") {
+            if (keypress?.Shift) {
+                dispatch(setShowModal("settings"));
+            } else {
+                dispatch(setKeypressTab(unix_sec));
+            }
+        }
         if (["Alt", " ", "Control", "Shift", "Tab"].includes(k)) return;
 
         var dictKey = k.length === 1 ? k.toUpperCase() : k;

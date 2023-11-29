@@ -26,7 +26,7 @@ export const Button: React.FC<Props> = ({
     "px-2 py-1 rounded w-full",
     { "bg-gray-300": !isPrimary },
     { "bg-blue-800 text-gray-100 shadow-lg": isPrimary && !isSubmit },
-    { "bg-green-700 text-gray-100 shadow-lg": isSubmit && !disabled },
+    { "bg-green-700 hover:bg-green-600 text-gray-100 shadow-lg": isSubmit && !disabled },
     { "bg-gray-600 text-gray-400 cursor-not-allowed": disabled },
     { "bg-red-800 text-white": isCancel }
   );

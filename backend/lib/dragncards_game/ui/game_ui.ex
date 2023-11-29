@@ -17,7 +17,8 @@ defmodule DragnCardsGame.GameUI do
   @spec new(String.t(), integer(), Map.t()) :: GameUI.t()
   def new(room_slug, user_id, %{} = options) do
     Logger.debug("Making new GameUI")
-    game_def = Plugins.get_game_def(options["pluginId"])
+    plugin_id = options["pluginId"]
+    game_def = Plugins.get_game_def(plugin_id)
     gameui = %{
       "game" => Game.load(room_slug, game_def, options),
       "roomSlug" => room_slug,
@@ -26,7 +27,7 @@ defmodule DragnCardsGame.GameUI do
       "createdBy" => user_id,
       "privacyType" => options["privacyType"],
       "playerInfo" => %{
-        "player1" => if game_def["vacantSeatOnNewGame"] do nil else PlayerInfo.new(user_id) end
+        "player1" => if game_def["vacantSeatOnNewGame"] do nil else PlayerInfo.new(user_id, plugin_id) end
       },
       "deltas" => [],
       "replayStep" => 0,

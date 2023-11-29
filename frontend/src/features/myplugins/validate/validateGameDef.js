@@ -53,6 +53,8 @@ const doesTypeMatch = (exp, act) => {
     return true;
   } else if (exp === "code" && act === "array") {
     return true;
+  } else if (exp === "option" && act === "string") {
+    return true;
   } else {
     return false;
   }

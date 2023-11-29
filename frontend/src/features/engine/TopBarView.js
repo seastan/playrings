@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { TopBarViewItem } from "./TopBarViewItem";
 import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { setShowHotkeys, setShowPlayersInRoom } from "../store/playerUiSlice";
+import { setShowHotkeys, setShowModal, setShowPlayersInRoom } from "../store/playerUiSlice";
 import { useGameL10n } from "./hooks/useGameL10n";
 import { useGameDefinition } from "./hooks/useGameDefinition";
 import { usePlayerIList } from "./hooks/usePlayerIList";
@@ -21,6 +21,9 @@ export const TopBarView = React.memo(({}) => {
         <ul className="second-level-menu">
           <li key={"Hotkeys"} onClick={() => dispatch(setShowHotkeys(true))}>
             {l10n("Hotkeys")} <div className={keyClass} style={keyStyleL}>Tab</div>
+          </li>
+          <li key={"PluginPreferences"} onClick={() => dispatch(setShowModal("settings"))}>
+            {l10n("PluginPreferences")} <div className={keyClass + " mr-2"} style={keyStyleL}>Shift</div>+<div className={keyClass} style={keyStyleL}>Tab</div>
           </li>
           <li key={"PlayersInRoom"} onClick={() => dispatch(setShowPlayersInRoom(true))}>
             {l10n("Spectators")}

@@ -65,12 +65,12 @@ export const DropdownMenuCard = React.memo(({
     
     var nestedObj;
     if (visibleFace?.imageUrl) {
-      nestedObj = {[pluginId]: {alt_art: {[key]: {[visibleSide]: url}}}}
+      nestedObj = {[pluginId]: {altArt: {[key]: {[visibleSide]: url}}}}
     } else {
-      nestedObj = {[pluginId]: {alt_art: {[visibleFace.name]: url}}}
+      nestedObj = {[pluginId]: {altArt: {[visibleFace.name]: url}}}
     }
     
-    const res = await axios.post("/be/api/v1/profile/update_alt_art", nestedObj, authOptions);
+    const res = await axios.post("/be/api/v1/profile/update_plugin_user_settings", nestedObj, authOptions);
 
     const pluginSettings = user.plugin_settings;
     deepUpdate(pluginSettings, nestedObj);
