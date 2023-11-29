@@ -9,7 +9,7 @@ defmodule DragnCardsGame.GameUI do
   alias DragnCardsGame.GameVariables
   alias DragnCardsGame.{Game, GameUI, Stack, Card, PlayerInfo, Evaluate, GameVariables}
 
-  alias DragnCards.{Repo, Replay, Plugins}
+  alias DragnCards.{Repo, Replay, Plugins, Users}
   alias DragnCards.Rooms.Room
 
   @type t :: Map.t()
@@ -37,6 +37,24 @@ defmodule DragnCardsGame.GameUI do
       "loadedCardIds" => [],
       "logMessages" => [] # These game messages will be delivered to chat
     }
+
+    # If the user has some default game settings, apply them
+    IO.puts("Getting user 1")
+    user = Users.get_user(user_id)
+    IO.inspect(user)
+    IO.puts("Getting user 2")
+    user_game_settings = user.plugin_settings["#{plugin_id}"]["game"]
+    IO.puts("Getting user 3")
+    IO.inspect(user_game_settings)
+    gameui = if user_game_settings != nil do
+      Enum.reduce(user_game_settings, gameui, fn({key, val}, acc) ->
+        IO.puts("Setting #{key} to #{inspect(val)}")
+        put_in(acc, ["game", key], val)
+      end)
+    else
+      gameui
+    end
+
     Logger.debug("Made new GameUI")
     gameui
   end

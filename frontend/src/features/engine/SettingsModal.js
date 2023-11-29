@@ -60,6 +60,9 @@ const ModalContent = () => {
   const authOptions = useAuthOptions();
   const plugin = usePlugin();
   const gameDef = useGameDefinition();
+  const databasePlayerSettings = user?.plugin_settings?.[plugin?.id]?.player;
+  const databaseGameSettings = user?.plugin_settings?.[plugin?.id]?.game;
+  const databaseUiSettings = user?.plugin_settings?.[plugin?.id]?.ui;
   const gameDefPlayerProperties = gameDef?.playerProperties;
   const gameDefGameProperties = gameDef?.gameProperties;
   const playerN = usePlayerN();
@@ -101,16 +104,29 @@ const ModalContent = () => {
 
     // Get state settings
     const statePlayerSettings = {};
+    const databasePlayerSettingsMode = {};
     if (statePlayerProperties) {
       for (const key of Object.keys(gameDefPlayerSettings)) {
         statePlayerSettings[key] = statePlayerProperties[key];
+        if (databasePlayerSettings?.[key] !== undefined) {
+          databasePlayerSettingsMode[key] = "allGames";
+        } else {
+          databasePlayerSettingsMode[key] = "thisGame";
+        }
       }
     }
     const stateGameSettings = {};
+    const databaseGameSettingsMode = {};
     if (stateGameProperties) {
       for (const key of Object.keys(gameDefGameSettings)) {
         console.log("stateGameProperties",stateGameProperties?.[key], key)
+        console.log("databaseGameSettings",databaseGameSettings?.[key], key)
         stateGameSettings[key] = stateGameProperties[key];
+        if (databaseGameSettings?.[key] !== undefined) {
+          databaseGameSettingsMode[key] = "allGames";
+        } else {
+          databaseGameSettingsMode[key] = "thisGame";
+        }
       }
     }
     setStatePlayerSettings(statePlayerSettings);
@@ -118,6 +134,9 @@ const ModalContent = () => {
 
     setCurrentPlayerSettings(statePlayerSettings);
     setCurrentGameSettings(stateGameSettings);
+
+    setCurrentPlayerSettingsMode(databasePlayerSettingsMode);
+    setCurrentGameSettingsMode(databaseGameSettingsMode);
     
   }, [playerN]);
 
