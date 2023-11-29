@@ -1,4 +1,19 @@
 export const siteL10n = {
+  "uiPreferences": {
+    "English": "UI Preferences"
+  },
+  "playerPreferences": {
+    "English": "Player Preferences"
+  },
+  "gamePreferences": {
+    "English": "Game Preferences"
+  },
+  "thisGame": {
+    "English": "This game only"
+  },
+  "allGames": {
+    "English": "Every game"
+  },
   "pluginPreferences": {
     "English": "Plugin Preferences"
   },
