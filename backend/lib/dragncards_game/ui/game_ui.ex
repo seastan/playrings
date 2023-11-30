@@ -26,9 +26,7 @@ defmodule DragnCardsGame.GameUI do
       "createdAt" => DateTime.utc_now(),
       "createdBy" => user_id,
       "privacyType" => options["privacyType"],
-      "playerInfo" => %{
-        "player1" => if game_def["vacantSeatOnNewGame"] do nil else PlayerInfo.new(user_id, plugin_id) end
-      },
+      "playerInfo" => %{},
       "deltas" => [],
       "replayStep" => 0,
       "replayLength" => 0, # Length of deltas. We need this because the delta array is not broadcast.
@@ -39,20 +37,21 @@ defmodule DragnCardsGame.GameUI do
     }
 
     # If the user has some default game settings, apply them
-    IO.puts("Getting user 1")
     user = Users.get_user(user_id)
-    IO.inspect(user)
-    IO.puts("Getting user 2")
     user_game_settings = user.plugin_settings["#{plugin_id}"]["game"]
-    IO.puts("Getting user 3")
-    IO.inspect(user_game_settings)
     gameui = if user_game_settings != nil do
       Enum.reduce(user_game_settings, gameui, fn({key, val}, acc) ->
-        IO.puts("Setting #{key} to #{inspect(val)}")
         put_in(acc, ["game", key], val)
       end)
     else
       gameui
+    end
+
+    # Sit the host down in the first player's seat
+    gameui = if game_def["vacantSeatOnNewGame"] do
+      gameui
+    else
+      sit_down(gameui, "player1", user_id)
     end
 
     Logger.debug("Made new GameUI")
@@ -85,6 +84,47 @@ defmodule DragnCardsGame.GameUI do
     end)
   end
 
+
+
+  ############################################################
+  # Seats                                                    #
+  ############################################################
+
+  def sit_down(gameui, player_n, user_id) do
+    player_info = PlayerInfo.new(user_id)
+    gameui
+    |> put_in(["playerInfo", player_n], player_info)
+    |> update_player_data(player_n, user_id)
+  end
+
+  defp update_player_data(gameui, _player_n, nil), do: gameui
+
+  defp update_player_data(gameui, player_n, user_id) do
+    user = Users.get_user(user_id)
+    game_def = Plugins.get_game_def(gameui["game"]["pluginId"])
+    plugin_id = gameui["options"]["pluginId"]
+    plugin_player_settings = user.plugin_settings["#{plugin_id}"]["player"]
+    action_list = if plugin_player_settings != nil do
+      Enum.reduce(plugin_player_settings, [], fn({key, val}, acc) ->
+        label = game_def["playerProperties"][key]["label"]
+        acc = acc ++ [["LOG", "{{$ALIAS_N}} set their #{label} to #{inspect(val)}."]]
+        acc ++ [["SET", "/playerData/#{player_n}/#{key}", val]]
+      end)
+    else
+      nil
+    end
+
+    # Submit the player data changes as an action
+    if Enum.count(action_list) > 0 do
+      options = %{
+        "action_list" => action_list,
+        "player_ui" => %{"playerN" => player_n}
+      }
+      game_action(gameui, user_id, "evaluate", options)
+    else
+      gameui
+    end
+  end
 
   ############################################################
   # Getters                                                  #

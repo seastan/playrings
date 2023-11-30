@@ -96,12 +96,23 @@ defmodule DragnCardsWeb.RoomChannel do
     },
     %{assigns: %{room_slug: room_slug, user_id: user_id}} = socket
   ) do
-    GameUIServer.set_seat(room_slug, user_id, player_i, new_user_id)
 
-    state = GameUIServer.state(room_slug)
-    if state["playerInfo"] != nil do
-      broadcast!(socket, "seats_changed", state["playerInfo"])
+    old_state = GameUIServer.state(room_slug)
+    old_replay_step = old_state["replayStep"]
+    old_game = old_state["game"]
+    GameUIServer.set_seat(room_slug, user_id, player_i, new_user_id)
+    new_state = GameUIServer.state(room_slug)
+    new_replay_step = new_state["replayStep"]
+    new_game = new_state["game"]
+    delta = GameUI.get_delta(old_game, new_game)
+    messages = new_state["logMessages"]
+
+
+    if new_state["playerInfo"] != nil do
+      broadcast!(socket, "seats_changed", new_state["playerInfo"])
     end
+
+    notify_update(socket, room_slug, user_id, old_replay_step, new_replay_step, messages, delta)
 
     {:reply, :ok, socket}
   end

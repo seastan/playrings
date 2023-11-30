@@ -1,21 +1,16 @@
 import React, {useEffect, useState} from "react";
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import ReactModal from "react-modal";
-import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { DropdownItem, GoBack } from "./DropdownMenuHelpers";
 import { setShowModal, setTyping } from "../store/playerUiSlice";
 import { useGameL10n } from "./hooks/useGameL10n";
 import { useGameDefinition } from "./hooks/useGameDefinition";
 import { useSiteL10n } from "../../hooks/useSiteL10n";
-import { useLoadPrebuiltDeck } from "./hooks/useLoadPrebuiltDeck";
 import { usePlugin } from "./hooks/usePlugin";
 import useProfile from "../../hooks/useProfile";
 import Axios from "axios";
 import { deepUpdate } from "../store/updateValues";
 import { useAuthOptions } from "../../hooks/useAuthOptions";
 import Button from "../../components/basic/Button";
-import { el } from "date-fns/locale";
 import { useDoActionList } from "./hooks/useDoActionList";
 import { usePlayerN } from "./hooks/usePlayerN";
 import store from "../../store";
@@ -94,7 +89,8 @@ const ModalContent = () => {
     return obj;
   }, {});
 
-  console.log("userSettings current",currentPlayerSettings);
+  console.log("userSettings ", user?.plugin_settings);
+  console.log("render player2Settings", store.getState()?.gameUi?.game?.playerData?.["player2"]);
 
   useEffect(() => {
     dispatch(setTyping(true));
@@ -108,6 +104,7 @@ const ModalContent = () => {
     if (statePlayerProperties) {
       for (const key of Object.keys(gameDefPlayerSettings)) {
         statePlayerSettings[key] = statePlayerProperties[key];
+        //alert(`Setting ${key} to ${statePlayerProperties[key]} ${playerN}`)
         if (databasePlayerSettings?.[key] !== undefined) {
           databasePlayerSettingsMode[key] = "allGames";
         } else {
@@ -138,7 +135,7 @@ const ModalContent = () => {
     setCurrentPlayerSettingsMode(databasePlayerSettingsMode);
     setCurrentGameSettingsMode(databaseGameSettingsMode);
     
-  }, [playerN]);
+  }, [plugin, user, playerN]);
 
 
   const handleInputChange = (settingType, id, value) => {
@@ -208,7 +205,6 @@ const ModalContent = () => {
     const permanentGameSettings = {};
     const permanentUiSettings = {};
     
-
     // Determine the values for this game (which will be pushed to backend) 
     // and all games (which will be pushed to backend and saved to user profile)
     for (const key of Object.keys(gameDefPlayerSettings)) {
@@ -240,22 +236,19 @@ const ModalContent = () => {
     };
     
     // If any settings are being updated, update the database
-    if (Object.keys(permanentPlayerSettings).length > 0 || Object.keys(permanentGameSettings).length > 0 || Object.keys(permanentUiSettings).length > 0) {
-      console.log("update_plugin_user_settings", newDatabasePluginSettings)
-      const res = await Axios.post("/be/api/v1/profile/update_plugin_user_settings", newDatabasePluginSettings, authOptions);
+    const res = await Axios.post("/be/api/v1/profile/update_plugin_user_settings", newDatabasePluginSettings, authOptions);
 
-      const pluginSettings = user.plugin_settings;
-      deepUpdate(pluginSettings, newDatabasePluginSettings);
-      const newProfileData = {
-        user_profile: {
-          ...user,
-          plugin_settings: pluginSettings
-        }}
+    const pluginSettings = user.plugin_settings;
+    deepUpdate(pluginSettings, newDatabasePluginSettings);
+    const newProfileData = {
+      user_profile: {
+        ...user,
+        plugin_settings: pluginSettings
+      }}
 
-      user.setData(newProfileData);
-      if (res.status !== 200) {
-        alert(siteL10n("settingUpdateError")); 
-      }
+    user.setData(newProfileData);
+    if (res.status !== 200) {
+      alert(siteL10n("settingUpdateError")); 
     }
     
     // Update the game
@@ -265,7 +258,7 @@ const ModalContent = () => {
       const value = thisGamePlayerSettings[key];
       if (value !== statePlayerSettings[key]) {
         actionList.push(["SET", `/playerData/$PLAYER_N/${key}`, value]);
-        actionList.push(["LOG", `{{$PLAYER_N}} set thier ${label} to ${value}.`]);
+        actionList.push(["LOG", `{{$ALIAS_N}} set thier ${label} to ${value}.`]);
       }
     }
     for (const key of Object.keys(thisGameGameSettings)) {
@@ -273,7 +266,7 @@ const ModalContent = () => {
       const value = thisGameGameSettings[key];
       if (value !== stateGameSettings[key]) {
         actionList.push(["SET", `/${key}`, value]);
-        actionList.push(["LOG", `{{$PLAYER_N}} set the ${label} to ${value}.`]);
+        actionList.push(["LOG", `{{$ALIAS_N}} set the ${label} to ${value}.`]);
       }
     }
 
