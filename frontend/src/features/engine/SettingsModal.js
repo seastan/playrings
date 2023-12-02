@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
 import { useDispatch, useSelector } from 'react-redux';
 import ReactModal from "react-modal";
-import { setShowModal, setTyping } from "../store/playerUiSlice";
+import { setShowModal, setTyping, setUserSettings } from "../store/playerUiSlice";
 import { useGameL10n } from "./hooks/useGameL10n";
 import { useGameDefinition } from "./hooks/useGameDefinition";
 import { useSiteL10n } from "../../hooks/useSiteL10n";
@@ -15,15 +15,22 @@ import { useDoActionList } from "./hooks/useDoActionList";
 import { usePlayerN } from "./hooks/usePlayerN";
 import store from "../../store";
 
-const uiSettings = [
-  {
-      "id": "backgroundUrl",
-      "label": "backgroundUrl",
-      "type": "string",
-      "default": "Hello",
-      "supporterLevel": 5
+// Move to another file, use this to set the default falues in playerUiSlice
+export const uiSettings = {
+  "backgroundUrl": {
+    "id": "backgroundUrl",
+    "label": "backgroundUrl",
+    "type": "string",
+    "default": "",
+    "supporterLevel": 5
+  },
+  "zoomPercent": {
+    "id": "zoomPercent",
+    "label": "zoomPercent",
+    "type": "integer",
+    "default": 100
   }
-]
+}
 
 export const SettingsModal = React.memo(({}) => {
     const dispatch = useDispatch();
@@ -55,6 +62,7 @@ const ModalContent = () => {
   const authOptions = useAuthOptions();
   const plugin = usePlugin();
   const gameDef = useGameDefinition();
+  const stateBackgroundUrl = useSelector(state => state?.playerUi?.userSettings?.backgroundUrl);
   const databasePlayerSettings = user?.plugin_settings?.[plugin?.id]?.player;
   const databaseGameSettings = user?.plugin_settings?.[plugin?.id]?.game;
   const databaseUiSettings = user?.plugin_settings?.[plugin?.id]?.ui;
@@ -69,8 +77,8 @@ const ModalContent = () => {
   const [currentPlayerSettingMode, setCurrentPlayerSettingsMode] = useState({});
   const [currentGameSettings, setCurrentGameSettings] = useState({});
   const [currentGameSettingMode, setCurrentGameSettingsMode] = useState({});
-  const [statePlayerSettings, setStatePlayerSettings] = useState({});
-  const [stateGameSettings, setStateGameSettings] = useState({});
+  const [onRenderPlayerSettings, setOnRenderPlayerSettings] = useState({});
+  const [onRenderGameSettings, setOnRenderGameSettings] = useState({});
 
   // Filter out keys in the game definition if their value (which is an object) does not have a showInSettings = true property
   const gameDefPlayerSettings = Object.keys(gameDefPlayerProperties).reduce((obj, key) => {
@@ -97,6 +105,7 @@ const ModalContent = () => {
     const state = store.getState();
     const statePlayerProperties = state?.gameUi?.game?.playerData?.[playerN];
     const stateGameProperties = state?.gameUi?.game;
+    const stateUiProperties = state?.playerUi?.userSettings;
 
     // Get state settings
     const statePlayerSettings = {};
@@ -104,7 +113,6 @@ const ModalContent = () => {
     if (statePlayerProperties) {
       for (const key of Object.keys(gameDefPlayerSettings)) {
         statePlayerSettings[key] = statePlayerProperties[key];
-        //alert(`Setting ${key} to ${statePlayerProperties[key]} ${playerN}`)
         if (databasePlayerSettings?.[key] !== undefined) {
           databasePlayerSettingsMode[key] = "allGames";
         } else {
@@ -116,8 +124,6 @@ const ModalContent = () => {
     const databaseGameSettingsMode = {};
     if (stateGameProperties) {
       for (const key of Object.keys(gameDefGameSettings)) {
-        console.log("stateGameProperties",stateGameProperties?.[key], key)
-        console.log("databaseGameSettings",databaseGameSettings?.[key], key)
         stateGameSettings[key] = stateGameProperties[key];
         if (databaseGameSettings?.[key] !== undefined) {
           databaseGameSettingsMode[key] = "allGames";
@@ -126,16 +132,47 @@ const ModalContent = () => {
         }
       }
     }
-    setStatePlayerSettings(statePlayerSettings);
-    setStateGameSettings(stateGameSettings);
+    const stateUiSettings = {};
+    const databaseUiSettingsMode = {};
+    for (const key of Object.keys(uiSettings)) {
+      stateUiSettings[key] = stateUiProperties[key];
+      if (databaseUiSettings?.[key] !== undefined) {
+        databaseUiSettingsMode[key] = "allGames";
+      } else {
+        databaseUiSettingsMode[key] = "thisGame";
+      }
+    }
+    console.log("useEffect UI settings", stateBackgroundUrl, stateUiProperties, stateUiSettings, databaseUiSettings)
+
+    setOnRenderPlayerSettings(statePlayerSettings);
+    setOnRenderGameSettings(stateGameSettings);
+    // No need to set onRenderUiSettings because we always apply it even if it's unchanged
 
     setCurrentPlayerSettings(statePlayerSettings);
     setCurrentGameSettings(stateGameSettings);
+    setCurrentUiSettings(stateUiSettings);
 
     setCurrentPlayerSettingsMode(databasePlayerSettingsMode);
     setCurrentGameSettingsMode(databaseGameSettingsMode);
+    setCurrentUiSettingsMode(databaseUiSettingsMode);
+
+
+    // const stateUiSettings = state?.playerUi?.userSettings;
+    // const databaseUiSettingsMode = {};
+    // for (const key of Object.keys(uiSettings)) {
+    //   if (databaseUiSettings?.[key] !== undefined) {
+    //     databaseUiSettingsMode[key] = "allGames";
+    //   } else {
+    //     databaseUiSettings[key] = uiSettings[key].default;
+    //     databaseUiSettingsMode[key] = "thisGame";
+    //   }
+    // }
+    // console.log("setCurrentUiSettings", databaseUiSettings, databaseUiSettingsMode)
+    // setCurrentUiSettings(databaseUiSettings);
+    // setCurrentUiSettingsMode(databaseUiSettingsMode);
+
     
-  }, [plugin, user, playerN]);
+  }, [playerN, stateBackgroundUrl]);
 
 
   const handleInputChange = (settingType, id, value) => {
@@ -198,9 +235,6 @@ const ModalContent = () => {
       url = null;
     }
 
-    const thisGamePlayerSettings = {};
-    const thisGameGameSettings = {};
-    const thisGameUiSettings = {};
     const permanentPlayerSettings = {};
     const permanentGameSettings = {};
     const permanentUiSettings = {};
@@ -208,23 +242,22 @@ const ModalContent = () => {
     // Determine the values for this game (which will be pushed to backend) 
     // and all games (which will be pushed to backend and saved to user profile)
     for (const key of Object.keys(gameDefPlayerSettings)) {
-      thisGamePlayerSettings[key] = currentPlayerSettings[key];
       if (currentPlayerSettingMode[key] === "allGames") {
         permanentPlayerSettings[key] = currentPlayerSettings[key];
       }
     }
     for (const key of Object.keys(gameDefGameSettings)) {
-      thisGameGameSettings[key] = currentGameSettings[key];
       if (currentGameSettingMode[key] === "allGames") {
         permanentGameSettings[key] = currentGameSettings[key];
       }
     }
+    console.log("uiSettings", uiSettings, currentUiSettings, currentUiSettingMode);
     for (const key of Object.keys(uiSettings)) {
-      thisGameUiSettings[key] = currentUiSettings[key];
       if (currentUiSettingMode[key] === "allGames") {
         permanentUiSettings[key] = currentUiSettings[key];
       }
     }
+    console.log("uiSettings", uiSettings, currentUiSettings, currentUiSettingMode, );
 
     // Update the database
     const newDatabasePluginSettings = {
@@ -253,18 +286,18 @@ const ModalContent = () => {
     
     // Update the game
     const actionList = [];
-    for (const key of Object.keys(thisGamePlayerSettings)) {
+    for (const key of Object.keys(currentPlayerSettings)) {
       const label = gameDefPlayerProperties[key].label;
-      const value = thisGamePlayerSettings[key];
-      if (value !== statePlayerSettings[key]) {
+      const value = currentPlayerSettings[key];
+      if (value !== onRenderPlayerSettings[key]) {
         actionList.push(["SET", `/playerData/$PLAYER_N/${key}`, value]);
         actionList.push(["LOG", `{{$ALIAS_N}} set thier ${label} to ${value}.`]);
       }
     }
-    for (const key of Object.keys(thisGameGameSettings)) {
+    for (const key of Object.keys(currentGameSettings)) {
       const label = gameDefGameProperties[key].label;
-      const value = thisGameGameSettings[key];
-      if (value !== stateGameSettings[key]) {
+      const value = currentGameSettings[key];
+      if (value !== onRenderGameSettings[key]) {
         actionList.push(["SET", `/${key}`, value]);
         actionList.push(["LOG", `{{$ALIAS_N}} set the ${label} to ${value}.`]);
       }
@@ -273,6 +306,11 @@ const ModalContent = () => {
     if (actionList.length > 0) {
       doActionList(actionList);
     }
+
+    // Update the UI settings
+    dispatch(setUserSettings(currentUiSettings));
+
+    // Close the modal
     dispatch(setTyping(false));
     dispatch(setShowModal(null));
   }
@@ -352,13 +390,16 @@ const ModalContent = () => {
       <h1 className="mb-2">{siteL10n("uiPreferences")}</h1>
       <table className="w-full text-sm mb-2">
         <tbody>
-          {uiSettings.map((propertyObj, index) => (
-            <tr key={propertyObj.id} className={index % 2 === 0 ? "bg-gray-600" : "bg-gray-700"}>
-              <td className="px-4 py-2 w-1/3">{siteL10n(propertyObj.label)}</td>
-              <td className="px-4 py-2 w-1/3 text-black">{renderFormElement("ui", currentUiSettings, propertyObj)}</td>
-              <td className="px-4 py-2 w-1/3 text-black">{renderModeElement("ui", currentUiSettingMode, propertyObj)}</td>
-            </tr>
-          ))}
+          {Object.keys(uiSettings).map((propertyId, index) => {
+            const propertyObj = uiSettings[propertyId];
+            return (
+              <tr key={propertyObj.id} className={index % 2 === 0 ? "bg-gray-600" : "bg-gray-700"}>
+                <td className="px-4 py-2 w-1/3">{siteL10n(propertyObj.label)}</td>
+                <td className="px-4 py-2 w-1/3 text-black">{renderFormElement("ui", currentUiSettings, propertyObj)}</td>
+                <td className="px-4 py-2 w-1/3 text-black">{renderModeElement("ui", currentUiSettingMode, propertyObj)}</td>
+              </tr>
+            )
+          })}
         </tbody>
       </table>
       <h1 className="mb-2">{siteL10n("playerPreferences")}</h1>

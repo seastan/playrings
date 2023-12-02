@@ -34,7 +34,7 @@ export const Stack = React.memo(({
   const draggingToRegionType = useSelector(state => state?.playerUi?.dragging.toRegionType);
   const thisDrag = useSelector(state => state?.playerUi?.dragging?.stackId == stackId);
   const touchMode = useSelector(state => state?.playerUi?.touchMode);
-  const zoomFactor = useSelector(state => state?.playerUi?.zoomFactor);
+  const zoomFactor = useSelector(state => state?.playerUi?.zoomPercent)/100;
   const layout = useLayout();
   const rowSpacing = layout?.rowSpacing;
   const cardSize = layout?.cardSize;

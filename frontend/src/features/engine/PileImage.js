@@ -40,7 +40,6 @@ export const PileImage = React.memo(({
   const card1 = useSelector(state => state?.gameUi?.game?.cardById?.[stack1?.cardIds?.[0]]);  
   const playerN = useSelector(state => state?.playerUi?.playerN);
   const rowSpacing = useSelector(state => state.gameUi?.game?.layout?.rowSpacing);  
-  const zoomFactor = useSelector(state => state?.playerUi?.zoomFactor);
   const cardScaleFactor = useCardScaleFactor();
 
   // If group is not a pile, then no PileImage should be generated

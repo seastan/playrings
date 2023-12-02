@@ -248,7 +248,7 @@ export const FreeStack = React.memo(({
   const thisDrag = useSelector(state => state?.playerUi?.dragging?.stackId == stackId);
   const stopDrag = useSelector(state => state?.playerUi?.dragging?.end);
   const stopDragDelay = useSelector(state => state?.playerUi?.dragging?.endDelay); 
-  const zoomFactor = useSelector(state => state?.playerUi?.zoomFactor);
+  const zoomFactor = useSelector(state => state?.playerUi?.zoomPercent)/100;
   const layout = useLayout();
   const rowSpacing = layout?.rowSpacing;
   const cardSize = layout?.cardSize;
