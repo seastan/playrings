@@ -196,7 +196,6 @@ defmodule DragnCardsGame.Evaluate do
   end
 
   def card_match?(game, var_name, card, condition, trace) do
-    game = put_in(game, ["currentScopeIndex"], game["currentScopeIndex"] + 1)
     game = evaluate(game, ["VAR", var_name, card], trace ++ ["VAR var_name"])
     evaluate(game, condition, trace ++ ["card_match?"])
   end

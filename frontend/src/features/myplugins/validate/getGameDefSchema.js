@@ -467,7 +467,6 @@ export const getGameDefSchema = (gameDef) => {
           "_strictKeys_": true,
           "label": {
             "_type_": "label",
-            "_required_": true,
           },
           "type": {
             "_type_": "string",
@@ -927,7 +926,6 @@ export const getGameDefSchema = (gameDef) => {
           "_strictKeys_": true,
           "label": {
             "_type_": "label",
-            "_required_": true,
           },
           "type": {
             "_type_": "string",
