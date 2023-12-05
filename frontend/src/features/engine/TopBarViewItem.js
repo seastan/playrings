@@ -21,16 +21,18 @@ export const TopBarViewItem = React.memo(({
     } 
   }
 
+  console.log("TopBarViewItem", groupId, group)
+
   if (!group) return;
 
   const stackIds = group.stackIds;
 
   return(
     <li className="relative cursor-pointer" onClick={() => handleMenuClick({action:"look_at",groupId:groupId})} key={groupId}>
-    <a className="absolute" href="#">
-      {gameL10n(group.label)}
-    </a>
-    <div className="absolute right-2 top-1 select-none">{stackIds.length}</div>
+      <div className="absolute">
+        {gameL10n(group.label)}
+      </div>
+      <div className="absolute right-2 top-1 select-none">{stackIds.length}</div>
     </li>
   )
 })

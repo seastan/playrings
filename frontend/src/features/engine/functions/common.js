@@ -65,10 +65,11 @@ export const getParentCardsInGroup = (game, groupId) => {
   const stackIds = game.groupById?.[groupId]?.stackIds || [];
   const parentCards = [];
   for (var stackId of stackIds) {
-    const cardIds = game.stackById[stackId].cardIds;
+    const cardIds = game.stackById?.[stackId]?.cardIds;
+    if (!cardIds || cardIds.length === 0) continue;
     const parentCardId = cardIds[0];
-    const parentCard = game.cardById[parentCardId];
-    parentCards.push(parentCard);
+    const parentCard = game.cardById?.[parentCardId];
+    if (parentCard) parentCards.push(parentCard);
   }
   return parentCards;
 }

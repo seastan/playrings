@@ -32,7 +32,8 @@ export const SpawnPrebuiltModal = React.memo(({}) => {
         className="insert-auto p-5 bg-gray-700 border max-h-lg mx-auto my-2 rounded-lg outline-none"
         style={{
           content: {
-            width: "600px",
+            width: "40vw",
+            maxWidth: "1200px",
             maxHeight: "95vh",
             overflowY: "scroll",
           }

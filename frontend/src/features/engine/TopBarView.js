@@ -4,34 +4,34 @@ import { TopBarViewItem } from "./TopBarViewItem";
 import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { setShowHotkeys, setShowModal, setShowPlayersInRoom } from "../store/playerUiSlice";
-import { useGameL10n } from "./hooks/useGameL10n";
 import { useGameDefinition } from "./hooks/useGameDefinition";
 import { usePlayerIList } from "./hooks/usePlayerIList";
+import { useSiteL10n } from "../../hooks/useSiteL10n";
 
-const keyClass = "m-auto border bg-gray-500 text-center bottom inline-block text-xs ml-2 mb-1";
-const keyStyleL = {width: "35px", height: "20px", borderRadius: "5px"}
+const keyClass = "m-auto border bg-gray-500 text-center inline-block ml-2";
+const keyStyleL = {width: "7vh", height: "3vh", borderRadius: "1vh", fontSize: "1.5vh"}
 
 export const TopBarView = React.memo(({}) => {
-  const l10n = useGameL10n();
+  const siteL10n = useSiteL10n();
   const dispatch = useDispatch();
   const gameDef = useGameDefinition();  
   return(
     <li>
-      <div className="h-full flex items-center justify-center select-none" href="#">{l10n("View")}</div>
+      <div className="h-full flex items-center justify-center select-none" href="#">{siteL10n("view")}</div>
         <ul className="second-level-menu">
-          <li key={"Hotkeys"} onClick={() => dispatch(setShowHotkeys(true))}>
-            {l10n("Hotkeys")} <div className={keyClass} style={keyStyleL}>Tab</div>
+          <li key={"hotkeys"} onClick={() => dispatch(setShowHotkeys(true))}>
+            {siteL10n("hotkeys")} <div className={keyClass} style={keyStyleL}>Tab</div>
           </li>
-          <li key={"PluginPreferences"} onClick={() => dispatch(setShowModal("settings"))}>
-            {l10n("PluginPreferences")} <div className={keyClass + " mr-2"} style={keyStyleL}>Shift</div>+<div className={keyClass} style={keyStyleL}>Tab</div>
+          <li key={"preferences"} onClick={() => dispatch(setShowModal("settings"))}>
+            {siteL10n("preferences")} <div className={keyClass + " mr-2"} style={keyStyleL}>Shift</div>+<div className={keyClass} style={keyStyleL}>Tab</div>
           </li>
-          <li key={"PlayersInRoom"} onClick={() => dispatch(setShowPlayersInRoom(true))}>
-            {l10n("Spectators")}
+          <li key={"playersInRoom"} onClick={() => dispatch(setShowPlayersInRoom(true))}>
+            {siteL10n("spectators")}
           </li>
 
-          <li key={"Shared"}>
+          <li key={"shared"}>
             
-            {l10n("Shared")}
+            {siteL10n("shared")}
               <span className="float-right mr-1"><FontAwesomeIcon icon={faChevronRight}/></span>
             
             <ul className="third-level-menu">
@@ -44,7 +44,7 @@ export const TopBarView = React.memo(({}) => {
           </li>
           {usePlayerIList().map((playerI, playerIndex) => (
           <li key={playerI}>
-            {l10n("Player")+" "+(playerIndex+1)}
+            {siteL10n("player")+" "+(playerIndex+1)}
               <span className="float-right mr-1"><FontAwesomeIcon icon={faChevronRight}/></span>
             <ul className="third-level-menu">
               {Object.keys(gameDef?.groups).sort().map((groupId, _index) => {

@@ -281,7 +281,9 @@ defmodule DragnCardsGame.Evaluate do
         game
       end
 
+
       result = evaluate_inner(game, code, trace)
+
 
       # Delete local variables
       if is_map(result) and Map.has_key?(result, "variables") do
@@ -307,6 +309,8 @@ defmodule DragnCardsGame.Evaluate do
           raise ": #{e.message} Trace: #{inspect(trace)}"
         end
           #evaluate(game, ["ERROR", e.message], trace)
+      _ ->
+        raise "Error evaluating code."
     end
   end
 
@@ -605,6 +609,9 @@ defmodule DragnCardsGame.Evaluate do
                       # Get the stack
                       stack = game["stackById"][stack_id]
                       # Get the parent card id
+                      if stack == nil do
+                        raise "Tried to access parentCardIds but one of the stacks is null."
+                      end
                       Enum.at(stack["cardIds"], 0)
                     end)
                   else
@@ -1166,8 +1173,11 @@ defmodule DragnCardsGame.Evaluate do
                 # Call evaluate(game, ["NEXT_PLAYER", acc]) numPlayers times, starting with the current player, and put the results in a list
                 num_players = game["numPlayers"]
                 first_player = game["firstPlayer"]
+                IO.puts("first_player: #{inspect(first_player)}")
                 {player_order, _} = Enum.reduce(0..num_players-1, {[], first_player}, fn _, {acc, player_i} ->
                   next_player = evaluate(game, ["NEXT_PLAYER", player_i], trace ++ ["$PLAYER_ORDER"])
+                  IO.puts("next_player: #{inspect(next_player)}")
+                  IO.inspect(acc ++ [player_i])
                   {acc ++ [player_i], next_player}
                 end)
                 player_order

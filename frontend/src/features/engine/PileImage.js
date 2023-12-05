@@ -60,7 +60,7 @@ export const PileImage = React.memo(({
   const cardToShow = getCardToShow(stackIds.length, isDraggingOver, isDraggingFrom);
   console.log("Rendering PileImage 2", region, stackIds, cardToShow);
 
-  if (cardToShow === null) return null;
+  if (cardToShow === null || cardToShow === undefined) return null;
 
   // Get the proper image source to display based on the particular user viewing the card
   // (some player might actively be peeking at the card)

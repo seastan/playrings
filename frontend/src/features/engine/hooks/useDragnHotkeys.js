@@ -45,9 +45,9 @@ export const dragnHotkeys = [
                 ["VAR", "$OLD_STEP_INDEX", ["GET_INDEX", "$GAME.stepOrder", "$GAME.stepId"]],
                 ["COND",
                   ["EQUAL", "$OLD_STEP_INDEX", 0],
-                  ["VAR", "$NEW_STEP_INDEX", ["SUBTRACT", ["LENGTH", "$GAME.stepOrder"], 1]],
+                  ["DEFINE", "$NEW_STEP_INDEX", ["SUBTRACT", ["LENGTH", "$GAME.stepOrder"], 1]],
                   true,
-                  ["VAR", "$NEW_STEP_INDEX", ["SUBTRACT", "$OLD_STEP_INDEX", 1]]
+                  ["DEFINE", "$NEW_STEP_INDEX", ["SUBTRACT", "$OLD_STEP_INDEX", 1]]
                 ],
                 ["VAR", "$STEP_ID", "$GAME.stepOrder.[$NEW_STEP_INDEX]"],
                 ["SET", "/stepId", "$STEP_ID"]
@@ -59,9 +59,9 @@ export const dragnHotkeys = [
               ["VAR", "$OLD_STEP_INDEX", ["GET_INDEX", "$GAME.stepOrder", "$GAME.stepId"]],
               ["COND",
                 ["EQUAL", "$OLD_STEP_INDEX", ["SUBTRACT", ["LENGTH", "$GAME.stepOrder"], 1]],
-                ["VAR", "$NEW_STEP_INDEX", 0],
+                ["DEFINE", "$NEW_STEP_INDEX", 0],
                 true,
-                ["VAR", "$NEW_STEP_INDEX", ["ADD", "$OLD_STEP_INDEX", 1]]
+                ["DEFINE", "$NEW_STEP_INDEX", ["ADD", "$OLD_STEP_INDEX", 1]]
               ],
               ["VAR", "$STEP_ID", "$GAME.stepOrder.[$NEW_STEP_INDEX]"],
               ["SET", "/stepId", "$STEP_ID"]
