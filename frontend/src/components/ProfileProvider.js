@@ -37,14 +37,14 @@ export const ProfileProvider = ({ children }) => {
   // if they have expired.
   // Also, if we're logged out or the backend goes down, the frontend
   // will know.
-  const fetchProfileEvery10Mins = useCallback(() => {
-    // Make a Timestamp that changes every 10 minutes
-    console.log("fetching profile 1")
-    let ts = format(new Date(), "h:mm");
-    ts = ts.slice(0, -1);
-    doFetchHash(ts);
-  }, [doFetchHash]);
-  useInterval(fetchProfileEvery10Mins, 600 * 1000);
+  // const fetchProfileEvery10Mins = useCallback(() => {
+  //   // Make a Timestamp that changes every 10 minutes
+  //   console.log("fetching profile 1")
+  //   let ts = format(new Date(), "h:mm");
+  //   ts = ts.slice(0, -1);
+  //   doFetchHash(ts);
+  // }, [doFetchHash]);
+  // useInterval(fetchProfileEvery10Mins, 600 * 1000);
   const user =
     data != null && data.user_profile != null ? data.user_profile : null;
   if (user) user.setData = setData;
