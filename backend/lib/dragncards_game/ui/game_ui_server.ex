@@ -222,7 +222,12 @@ defmodule DragnCardsGame.GameUIServer do
 
   def handle_call({:set_seat, _user_id, player_i, new_user_id}, _from, gameui) do
     try do
-      put_in(gameui["playerInfo"][player_i],PlayerInfo.new(new_user_id))
+      if new_user_id == nil do
+        put_in(gameui["playerInfo"][player_i], nil)
+      else
+        GameUI.sit_down(gameui, player_i, new_user_id)
+      end
+
     rescue
       e in RuntimeError ->
         IO.inspect(e)

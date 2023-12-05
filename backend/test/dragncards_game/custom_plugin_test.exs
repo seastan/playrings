@@ -245,6 +245,24 @@ defmodule DragnCardsGame.CustomPluginTest do
 
   end
 
+  @tag :bug
+  test "bug", %{user: _user, game: game, game_def: game_def} do
+
+    # Load some decks into the game
+    game = Evaluate.evaluate(game, ["LOAD_CARDS", "Q01.1"]) # Passage through Mirkwood
+    game = Evaluate.evaluate(game, ["LOAD_CARDS", "coreLeadership"]) # Leadership core set deck
+    assert length(game["groupById"]["player1Hand"]["stackIds"]) == 6
+    assert length(game["groupById"]["player1Deck"]["stackIds"]) == 24
+    assert game["playerData"]["player1"]["threat"] == 29
+
+    # Get one of the cards
+    aragorn_card_db_id = "51223bd0-ffd1-11df-a976-0801200c9001"
+    aragorn_card = Evaluate.evaluate(game, ["VAR", "$CARD", ["ONE_CARD", "$CARD", ["EQUAL", "$CARD.databaseId", aragorn_card_db_id]]])
+    IO.inspect(aragorn_card["variables"])
+
+  end
+
+
   @tag :card_hotkeys
   test "Card Hotkeys", %{user: _user, game: game, game_def: game_def} do
 
@@ -528,6 +546,11 @@ defmodule DragnCardsGame.CustomPluginTest do
 
     # Discard the stack
     game = Evaluate.evaluate(game, [["DEFINE", "$ACTIVE_CARD_ID", parent_card_id], ["ACTION_LIST", "discardCard"]])
+
+    # Print all messages
+    Enum.each(game["messages"], fn message ->
+      IO.puts(message)
+    end)
 
     assert length(game["groupById"]["player1Discard"]["stackIds"]) == 2
     assert length(game["groupById"]["sharedEncounterDiscard"]["stackIds"]) == 1
@@ -840,13 +863,6 @@ defmodule DragnCardsGame.CustomPluginTest do
     game = Evaluate.evaluate(game, ["VAR", "$MYVAR", %{"test" => "test"}])
 
     game = Evaluate.evaluate(game, ["LOAD_CARDS", "coreLeadership"]) # Leadership core set deck
-
-    IO.puts("FOR_EACH_KEY_VAL -2")
-    IO.inspect(game["variables"])
-
-    Evaluate.evaluate(game, ["FOR_EACH_KEY_VAL", "$CARD_ID", "$CARD", "$CARD_BY_ID",  [
-      ["LOG_DEV", "$CARD.sides.A.name"]
-    ]])
 
   end
 
@@ -1169,10 +1185,9 @@ defmodule DragnCardsGame.CustomPluginTest do
             ["GREATER_THAN", ["LENGTH", "$GAME.groupById.$GROUP_ID.stackIds"], 1]
           ],
           [
-            ["LOG_DEV", "Discarding {{$CARD.sides.A.name}}"],
             ["MOVE_CARD", "$CARD_ID", "$CARD.discardGroupId", 0],
-            ["VAR", "$CARD_ID", "$GAME.groupById.$GROUP_ID.parentCardIds.[0]"],
-            ["VAR", "$CARD", "$GAME.cardById.$CARD_ID"]
+            ["UPDATE_VAR", "$CARD_ID", "$GAME.groupById.$GROUP_ID.parentCardIds.[0]"],
+            ["UPDATE_VAR", "$CARD", "$GAME.cardById.$CARD_ID"]
           ]
         ]
       ]
@@ -1185,9 +1200,19 @@ defmodule DragnCardsGame.CustomPluginTest do
       ],
       ["DISCARD_UNTIL", "sharedEncounterDeck", "$COND"]
     ])
+    card_type = Evaluate.evaluate(game, "$GAME.groupById.sharedEncounterDeck.parentCards.[0].sides.A.type")
+    assert card_type == "Enemy"
 
-
-
+    game = Evaluate.evaluate(game, [
+      ["VAR", "$COND",
+        ["POINTER",
+          ["EQUAL", "$CARD.sides.A.type", "Location"]
+        ]
+      ],
+      ["DISCARD_UNTIL", "sharedEncounterDeck", "$COND"]
+    ])
+    card_type = Evaluate.evaluate(game, "$GAME.groupById.sharedEncounterDeck.parentCards.[0].sides.A.type")
+    assert card_type == "Location"
 
   end
 
@@ -1195,25 +1220,29 @@ defmodule DragnCardsGame.CustomPluginTest do
   @tag :local_var
   test "local_var", %{user: _user, game: game, game_def: _game_def} do
 
-    # Define a local variable. Since we are not in a function it will have a scope of 0
-    game = Evaluate.evaluate(game, ["VAR", "$A", 1])
-    assert game["variables"]["$A-0"] == 1
-    assert Evaluate.evaluate(game, "$A") == 1
+    game = Evaluate.evaluate(game, [
+      ["VAR", "$A", 0],
+      ["FOR_EACH_START_STOP_STEP", "$I", 0, 8, 1, [
+        ["LOG_DEV", "$I"],
+        ["INCREASE_VAR", "$A", 1]
+      ]],
+      ["LOG_DEV", "$A"]
+    ])
 
-    # Define a function that returns the variables object so we can inspect it
-    game = Evaluate.evaluate(game, ["FUNCTION", "GET_VARS", "$A", "$B", "$GAME.variables"])
 
-    # Then this function is called, it will have a scope of 1, so the variables will be $A-1 and $B-1. It will not affect the value of $A-0
-    variables = Evaluate.evaluate(game, ["GET_VARS", 2, 3])
-    assert variables["$A-0"] == 1
-    assert variables["$A-1"] == 2
-    assert variables["$B-1"] == 3
+  end
 
-    # The game deleted the variables of scope 1 when the function was done
-    assert game["variables"]["$A-0"] == 1
-    assert game["variables"]["$A-1"] == nil
-    assert game["variables"]["$B-1"] == nil
+  # Local variables
+  @tag :temp
+  test "temp", %{user: _user, game: game, game_def: _game_def} do
 
+    game = Evaluate.evaluate(game, ["LOAD_CARDS", "Q01.1"]) # Passage through Mirkwood
+    card = Evaluate.evaluate(game, [
+      ["VAR", "$CARD_ID", "$GAME.groupById.sharedEncounterDeck.parentCardIds.[0]"],
+      ["LOG_DEV", "$CARD_ID"],
+      ["ONE_CARD", "$CARD", ["EQUAL", "$CARD.id", "$CARD_ID"]]
+    ])
+    IO.inspect(card)
   end
 
   # # temp

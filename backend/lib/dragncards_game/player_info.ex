@@ -17,7 +17,7 @@ defmodule DragnCardsGame.PlayerInfo do
       if user == nil do nil else
         %{
           "id" => user_id,
-          "alias" => user.alias,
+          "alias" => user.alias
         }
       end
     end

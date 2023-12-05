@@ -209,7 +209,7 @@ export const DragContainer = React.memo(({}) => {
           ["LOG", "$ALIAS_N", " moved ", ["FACEUP_NAME_FROM_STACK_ID", origStackId], " from ", "$GAME.groupById."+origGroupId+".label", " to ", "$GAME.groupById."+destGroupId+".label", "."],
           ["MOVE_STACK", origStackId, destGroupId, dest.index, {"allowFlip": allowFlip}],
           ["COND",
-            ["DEFINED", `$GAME.stackById/${origStackId}`],
+            ["VAR", `$GAME.stackById/${origStackId}`],
             [
               ["SET", `/stackById/${origStackId}/left`, stackLeft],
               ["SET", `/stackById/${origStackId}/top`, stackTop]

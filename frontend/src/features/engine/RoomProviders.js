@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from 'react-redux';
 import RoomGame from "./RoomGame";
 import useProfile from "../../hooks/useProfile";
-import { setObservingPlayerN, setPlayerN } from "../store/playerUiSlice";
+import { setObservingPlayerN, setPlayerN, setUserSettings } from "../store/playerUiSlice";
 import BroadcastContext from "../../contexts/BroadcastContext";
 import { usePlugin } from "./hooks/usePlugin";
 import { PluginProvider } from "../../contexts/PluginContext";
@@ -23,6 +23,7 @@ export const RoomProviders = ({ gameBroadcast, chatBroadcast }) => {
   console.log("Rendering RoomProviders");
   const dispatch = useDispatch();
   const playerInfo = useSelector(state => state?.gameUi?.playerInfo);
+  const userSettings = useSelector(state => state?.playerUi?.userSettings);
   const myUser = useProfile();
   const playerN = getPlayerN(playerInfo, myUser?.id);
   const gameDef = useGameDefinition();
@@ -33,20 +34,33 @@ export const RoomProviders = ({ gameBroadcast, chatBroadcast }) => {
     dispatch(setPlayerN(playerN));
     if (playerN) dispatch(setObservingPlayerN(playerN)); // For a spectator (where playerN is null), leave as the default value
     setPlayerNSet(true);
+
+    const databaseUiSettings = myUser?.plugin_settings?.[pluginId]?.ui;
+    if (databaseUiSettings) {
+      console.log("Setting user settings from database", userSettings, databaseUiSettings)
+      const mergedSettings = {...userSettings, ...databaseUiSettings};
+      dispatch(setUserSettings(mergedSettings));
+    }
   }, [playerN])
 
   const gameBackgroundUrl = gameDef?.backgroundUrl;
-  const userBackgroundUrl = myUser?.plugin_settings?.[pluginId]?.background_url;
+  const playerUiBackgroundUrl = useSelector(state => state?.playerUi?.userSettings?.backgroundUrl);
+  //const userBackgroundUrl = myUser?.plugin_settings?.[pluginId]?.ui?.backgroundUrl;
+
+  console.log("backgroundUrl", {myUser, gameBackgroundUrl, playerUiBackgroundUrl}) //, userBackgroundUrl})
 
   var backgroundUrl = null;
-  if (gameBackgroundUrl && gameBackgroundUrl !== "") backgroundUrl = gameBackgroundUrl;
-  if (userBackgroundUrl && userBackgroundUrl !== "") backgroundUrl = userBackgroundUrl;
+  if (playerUiBackgroundUrl && playerUiBackgroundUrl !== "") backgroundUrl = playerUiBackgroundUrl;
+  //else if (userBackgroundUrl && userBackgroundUrl !== "") backgroundUrl = userBackgroundUrl;
+  else backgroundUrl = gameBackgroundUrl;
 
   console.log("Rendering RoomProviders h");
 
   return (
     
-      <div className="background"
+      <div 
+        key={backgroundUrl}
+        className="background"
         style={{
           height: "97vh",
           background: backgroundUrl ? `url(${backgroundUrl})` : "",

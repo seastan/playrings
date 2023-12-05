@@ -34,13 +34,13 @@ export const Stack = React.memo(({
   const draggingToRegionType = useSelector(state => state?.playerUi?.dragging.toRegionType);
   const thisDrag = useSelector(state => state?.playerUi?.dragging?.stackId == stackId);
   const touchMode = useSelector(state => state?.playerUi?.touchMode);
-  const zoomFactor = useSelector(state => state?.playerUi?.zoomFactor);
+  const zoomFactor = useSelector(state => state?.playerUi?.userSettings?.zoomPercent)/100;
   const layout = useLayout();
   const rowSpacing = layout?.rowSpacing;
   const cardSize = layout?.cardSize;
   const playerN = useSelector(state => state?.playerUi?.playerN);
   const [isMousedOver, setIsMousedOver] = useState(false);
-  console.log('Rendering Stack ', {stackIndex, region, hidden, layout});
+  console.log('Rendering Stack ', {stackIndex, region, hidden, layout, zoomFactor});
   var spacingFactor = touchMode ? 1.5 : 1;
   const { height, width } = useWindowDimensions();
   const aspectRatio = width/height;

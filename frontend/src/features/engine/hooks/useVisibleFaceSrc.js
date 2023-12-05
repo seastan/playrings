@@ -15,8 +15,8 @@ export const useVisibleFaceSrc = (cardId) => {
 
     if (!visibleFace) return null;
 
-    const altArt = user?.plugin_settings?.[plugin?.id]?.alt_art?.[databaseId]?.[visibleSide];
-    const altBack = user?.plugin_settings?.[plugin?.id]?.alt_art?.[visibleFace.name];
+    const altArt = user?.plugin_settings?.[plugin?.id]?.altArt?.[databaseId]?.[visibleSide];
+    const altBack = user?.plugin_settings?.[plugin?.id]?.altArt?.[visibleFace.name];
 
     if (altArt) return { src: altArt, default: null };
     if (altBack) return { src: altBack, default: null };

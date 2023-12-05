@@ -196,27 +196,44 @@ defmodule DragnCardsGame.Evaluate do
   end
 
   def card_match?(game, var_name, card, condition, trace) do
-    game = evaluate(game, ["DEFINE", var_name, card], trace ++ ["DEFINE var_name"])
+    game = evaluate(game, ["VAR", var_name, card], trace ++ ["VAR var_name"])
     evaluate(game, condition, trace ++ ["card_match?"])
   end
 
   @spec find_var(String.t(), integer(), map()) :: {:found, any()} | {:not_found, nil}
-  def find_var(input_string, start_integer, input_map) do
-    0..start_integer
+  def find_var(key, start_integer, input_map) do
+    #IO.puts("Searching for var #{key} in #{inspect(input_map)}")
+    1..start_integer
     |> Enum.reverse()
     |> Enum.reduce_while(nil, fn i, _acc ->
-      key = "#{input_string}-#{i}"
-      case Map.fetch(input_map, key) do
+      case Map.fetch(input_map["#{i}"], key) do
         :error -> {:cont, {false, nil}}
         {:ok, value} -> {:halt, {true, value}}
       end
     end)
     |> case do
       {false, nil} -> # Not in local scopes, check global scope
-        case Map.fetch(input_map, input_string) do
+        case Map.fetch(input_map, key) do
           :error -> {false, nil}
           {:ok, value} -> {true, value}
         end
+      found -> found # Found in local scopes
+    end
+  end
+
+  def find_var_scope_index(key, start_integer, input_map) do
+    #IO.puts("Searching for var #{key} in #{inspect(input_map)}")
+    1..start_integer
+    |> Enum.reverse()
+    |> Enum.reduce_while(nil, fn i, _acc ->
+      case Map.fetch(input_map["#{i}"], key) do
+        :error -> {:cont, {false, nil}}
+        {:ok, _} -> {:halt, i}
+      end
+    end)
+    |> case do
+      {false, nil} -> # Not in local scopes, check global scope
+        raise "Tried to access variable #{key} but it was not found in any scope."
       found -> found # Found in local scopes
     end
   end
@@ -253,8 +270,35 @@ defmodule DragnCardsGame.Evaluate do
   end
 
   def evaluate(game, code, trace \\ []) do
+    #if is_list(code) do IO.inspect(code) end
     try do
-      evaluate_inner(game, code, trace)
+
+      current_scope_index = game["currentScopeIndex"] + 1
+      game = put_in(game, ["currentScopeIndex"], current_scope_index)
+      game = if not Map.has_key?(game["variables"], "#{current_scope_index}") do
+        put_in(game, ["variables", "#{current_scope_index}"], %{})
+      else
+        game
+      end
+
+      result = evaluate_inner(game, code, trace)
+
+      # Delete local variables
+      if is_map(result) and Map.has_key?(result, "variables") do
+        #IO.inspect(result["variables"])
+        #IO.puts("Deleting variable #{current_scope_index+1} from #{inspect(result["variables"])}")
+        result = if Map.has_key?(result["variables"], "#{current_scope_index+1}") do
+          put_in(result, ["variables"], Map.delete(result["variables"], "#{current_scope_index+1}"))
+        else
+          result
+        end
+        #IO.puts("resulting variables after #{inspect(code)}: #{inspect(result["variables"])}")
+        put_in(result, ["currentScopeIndex"], current_scope_index - 1)
+      else
+        result
+      end
+
+
     rescue
       e in RuntimeError ->
         if String.starts_with?(e.message, ":") do
@@ -269,13 +313,16 @@ defmodule DragnCardsGame.Evaluate do
   def evaluate_inner(game, code, trace) do
     #IO.puts("evaluate_inner 1")
     #IO.inspect(code)
+    current_scope_index = game["currentScopeIndex"]
 
-    current_scope_index = game["currentScopeIndex"] || 0
+
     if is_list(code) && Enum.count(code) > 0 do
 
       if is_list(Enum.at(code, 0)) do
+        # Nested actionList
+        # Update currentScopeIndex
 
-        Enum.reduce(Enum.with_index(code), game, fn({action, index}, acc) ->
+        result = Enum.reduce(Enum.with_index(code), game, fn({action, index}, acc) ->
           evaluate(acc, action, trace ++ ["index #{index}"])
         end)
 
@@ -294,7 +341,7 @@ defmodule DragnCardsGame.Evaluate do
             evaluate(prev_game, Enum.at(code, 1), trace)
 
           "LOG_DEV" ->
-            IO.puts("LOG_DEV:")
+            IO.puts("LOG_DEV #{current_scope_index}:")
             IO.inspect(Enum.at(code, 1))
             IO.inspect(evaluate(game, Enum.at(code, 1), trace))
             game
@@ -320,9 +367,47 @@ defmodule DragnCardsGame.Evaluate do
             # if var_name does not start with $, raise an error
             if String.starts_with?(var_name, "$") do
               value = evaluate(game, Enum.at(code, 2), trace ++ ["#{var_name}"])
-              put_in(game, ["variables", "#{var_name}-#{current_scope_index}"], value)
+              put_in(game, ["variables", "#{current_scope_index}", var_name], value)
             else
               raise "Tried to define variable '#{var_name}' but it does not start with $."
+            end
+
+          "UPDATE_VAR" ->
+            # Evaluate the value and assign it to the var name
+            var_name = Enum.at(code, 1)
+            # if var_name does not start with $, raise an error
+            if String.starts_with?(var_name, "$") do
+              var_scope_index = find_var_scope_index(var_name, current_scope_index, game["variables"])
+              value = evaluate(game, Enum.at(code, 2), trace ++ ["#{var_name}"])
+              put_in(game, ["variables", "#{var_scope_index}", var_name], value)
+            else
+              raise "Tried to update variable '#{var_name}' but it does not start with $."
+            end
+
+          "INCREASE_VAR" ->
+            # Evaluate the value and assign it to the var name
+            var_name = Enum.at(code, 1)
+            # if var_name does not start with $, raise an error
+            if String.starts_with?(var_name, "$") do
+              var_scope_index = find_var_scope_index(var_name, current_scope_index, game["variables"])
+              current_value = game["variables"]["#{var_scope_index}"][var_name] || 0
+              delta = evaluate(game, Enum.at(code, 2), trace ++ [var_name]) || 0
+              put_in(game, ["variables", "#{var_scope_index}", var_name], current_value + delta)
+            else
+              raise "Tried to update variable '#{var_name}' but it does not start with $."
+            end
+
+          "DECREASE_VAR" ->
+            # Evaluate the value and assign it to the var name
+            var_name = Enum.at(code, 1)
+            # if var_name does not start with $, raise an error
+            if String.starts_with?(var_name, "$") do
+              var_scope_index = find_var_scope_index(var_name, current_scope_index, game["variables"])
+              current_value = game["variables"]["#{var_scope_index}"][var_name] || 0
+              delta = evaluate(game, Enum.at(code, 2), trace ++ [var_name]) || 0
+              put_in(game, ["variables", "#{var_scope_index}", var_name], current_value - delta)
+            else
+              raise "Tried to update variable '#{var_name}' but it does not start with $."
             end
 
           "DEFINED" ->
@@ -646,9 +731,9 @@ defmodule DragnCardsGame.Evaluate do
               acc = evaluate(acc, ["VAR", var_name, i], trace ++ ["index #{i}"])
               evaluate(acc, function, trace ++ ["index #{i}"])
             end)
-            # Delete local variable
-            game
-            |> put_in(["variables"], Map.delete(game["variables"], "#{var_name}-#{current_scope_index}"))
+            # # Delete local variable
+            # game
+            # |> put_in(["variables"], Map.delete(game["variables"], "#{var_name}-#{current_scope_index}"))
 
           "FOR_EACH_KEY_VAL" ->
             argc = Enum.count(code) - 1
@@ -667,10 +752,10 @@ defmodule DragnCardsGame.Evaluate do
               acc = evaluate(acc, ["VAR", val_name, val], trace ++ ["val"])
               evaluate(acc, function, trace ++ ["key #{key}"])
             end)
-            # Delete local variables
-            game
-            |> put_in(["variables"], Map.delete(game["variables"], "#{key_name}-#{current_scope_index}"))
-            |> put_in(["variables"], Map.delete(game["variables"], "#{val_name}-#{current_scope_index}"))
+            # # Delete local variables
+            # game
+            # |> put_in(["variables"], Map.delete(game["variables"], "#{key_name}-#{current_scope_index}"))
+            # |> put_in(["variables"], Map.delete(game["variables"], "#{val_name}-#{current_scope_index}"))
 
 
           "FOR_EACH_VAL" ->
@@ -681,9 +766,9 @@ defmodule DragnCardsGame.Evaluate do
               acc = evaluate(acc, ["VAR", val_name, val], trace ++ ["index #{index}"])
               evaluate(acc, function, trace ++ ["index #{index}"])
             end)
-            # Delete local variable
-            game
-            |> put_in(["variables"], Map.delete(game["variables"], "#{val_name}-#{current_scope_index}"))
+            # # Delete local variable
+            # game
+            # |> put_in(["variables"], Map.delete(game["variables"], "#{val_name}-#{current_scope_index}"))
 
           "MOVE_CARD" ->
             Logger.debug("MOVE_CARD " <> inspect(code))
@@ -987,8 +1072,8 @@ defmodule DragnCardsGame.Evaluate do
                 raise "Function #{function_name} expects #{Enum.count(func_args)} arguments, but got #{Enum.count(input_args)}."
               end
               # Call DEFINE on each of the function args
-              new_scope_index = current_scope_index + 1
-              game = put_in(game, ["currentScopeIndex"], current_scope_index + 1)
+              # new_scope_index = current_scope_index + 1
+              # game = put_in(game, ["currentScopeIndex"], current_scope_index + 1)
               game = Enum.reduce(Enum.with_index(func_args), game, fn({func_arg, index}, acc) ->
                 [{func_arg_name, input_arg}] = cond do
                   index >= Enum.count(input_args) -> # If we are beyond the range of input arguments, look for default arguments
@@ -1011,19 +1096,22 @@ defmodule DragnCardsGame.Evaluate do
               end)
               # Evaluate the function
               result = evaluate(game, func_code, trace)
-              # If the result is a game, delete all defined variables
-              if is_map(result) and Map.has_key?(result, "variables") do
-                # Loop over all keys in result["variables"] and delete the ones that end with "-#{new_scope_index}"
-                Enum.reduce(Map.keys(result["variables"]), result, fn(key, acc) ->
-                  if String.ends_with?(key, "-#{new_scope_index}") do
-                    put_in(acc, ["variables"], Map.delete(acc["variables"], key))
-                  else
-                    acc
-                  end
-                end)
-              else
-                result
-              end
+
+              # # Revert to current scope
+              # # If the result is a game, delete all defined variables
+              # if is_map(result) and Map.has_key?(result, "variables") do
+              #   # Loop over all keys in result["variables"] and delete the ones that end with "-#{new_scope_index}"
+              #   game = Enum.reduce(Map.keys(result["variables"]), result, fn(key, acc) ->
+              #     if String.ends_with?(key, "-#{new_scope_index}") do
+              #       put_in(acc, ["variables"], Map.delete(acc["variables"], key))
+              #     else
+              #       acc
+              #     end
+              #   end)
+              #   put_in(game, ["currentScopeIndex"], current_scope_index)
+              # else
+              #   result
+              # end
             else
               raise "Function #{inspect(Enum.at(code,0))} not recognized in #{inspect(code)}"
             end

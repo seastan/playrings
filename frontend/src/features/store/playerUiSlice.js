@@ -1,5 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { updateValues } from "./updateValues";
+import { uiSettings } from "../engine/SettingsModal";
 
 
 const initialState = {
@@ -9,13 +10,11 @@ const initialState = {
     Alt: 0,
     Tab: 0,
     Space: 0,
-    w: null,
   },
   replayStep: 0,
   showHotkeys: false,
   touchMode: false,
   typing: false,
-  zoomFactor: 1.0,
   activeCardId: null,
   preHotkeyActiveCardGroupId: null,
   observingPlayerN: "player1",
@@ -43,7 +42,12 @@ const initialState = {
     fromGroupId: null,
     toRegionType: null,
   },
-  prompts: []
+  prompts: [],
+  userSettings: Object.keys(uiSettings).reduce((acc, settingId) => {
+    acc[settingId] = uiSettings[settingId].default;
+    return acc;
+  }
+  , {}),
 };
 
 const playerUiSlice = createSlice({
@@ -89,9 +93,6 @@ const playerUiSlice = createSlice({
     },
     setTyping: (state, { payload }) => {
       state.typing = payload;
-    },
-    setZoomFactor: (state, { payload }) => {
-      state.zoomFactor = payload;
     },
     setActiveCardId: (state, { payload }) => {
       state.activeCardId = payload;
@@ -176,7 +177,10 @@ const playerUiSlice = createSlice({
     },
     popPrompt: (state) => {
       state.prompts.shift();
-    }
+    },
+    setUserSettings: (state, { payload }) => {
+      state.userSettings = payload;
+    },
   }
 });
 
@@ -195,7 +199,6 @@ export const {
   setShowHotkeys, 
   setTouchMode, 
   setTyping,
-  setZoomFactor,
   setActiveCardId,
   setPreHotkeyActiveCardGroupId,
   setScreenLeftRight,
@@ -220,6 +223,7 @@ export const {
   setDraggingEnd,
   setDraggingEndDelay,
   setDraggingTransform,
-  setDraggingToRegionType
+  setDraggingToRegionType,
+  setUserSettings
  } = playerUiSlice.actions;
 export default playerUiSlice.reducer;

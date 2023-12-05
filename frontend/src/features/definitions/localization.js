@@ -1,4 +1,25 @@
 export const siteL10n = {
+  "uiPreferences": {
+    "English": "UI Preferences"
+  },
+  "playerPreferences": {
+    "English": "Player Preferences"
+  },
+  "gamePreferences": {
+    "English": "Game Preferences"
+  },
+  "thisGame": {
+    "English": "This game only"
+  },
+  "allGames": {
+    "English": "Every game"
+  },
+  "pluginPreferences": {
+    "English": "Plugin Preferences"
+  },
+  "backgroundUrl": {
+    "English": "Background image URL"
+  },
   "hotkeyTableKey": {
     "English": "Key"
   },
@@ -213,10 +234,13 @@ export const siteL10n = {
     "English": "Enter the URL of the alt art image (must end in .jpg or .png). Leave blank to remove alt art."
   },
   "altArtFormatError": {
-    "English": "Alt art URL must end in .jpg or .png."
+    "English": "Image URL must end in .jpg or .png."
   },
   "altArtSetError": {
     "English": "Error setting new alt art."
+  },
+  "settingUpdateError": {
+    "English": "Error updating user settings."
   },
   "startStopDrawingArrow": {
     "English": "Start/stop drawing arrow"

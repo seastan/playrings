@@ -70,7 +70,7 @@ defmodule DragnCards.Users.User do
     }
   end
 
-  def alt_art_updates(user, nested_map) do
+  def settings_update(user, nested_map) do
     plugin_settings_old = user.plugin_settings || %{}
     plugin_settings_new = Map.merge(plugin_settings_old, nested_map)
     %{plugin_settings: plugin_settings_new}

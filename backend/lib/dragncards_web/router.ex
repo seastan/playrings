@@ -71,7 +71,7 @@ defmodule DragnCardsWeb.Router do
     # Profile
     get("/profile", ProfileController, :index)
     post("/profile/update", ProfileController, :update)
-    post("/profile/update_alt_art", ProfileController, :update_alt_art)
+    post("/profile/update_plugin_user_settings", ProfileController, :update_plugin_user_settings)
     get("/profile/:id", ProfileController, :show)
 
     # reCAPTCHA verification

@@ -5,7 +5,7 @@ import useProfile from "../../hooks/useProfile";
 import store from "../../store";
 import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { setZoomFactor, setLoaded, setRandomNumBetween, setShowModal, setTouchAction, setTouchMode, setShowDeveloper } from "../store/playerUiSlice";
+import { setLoaded, setRandomNumBetween, setShowModal, setTouchAction, setTouchMode, setShowDeveloper } from "../store/playerUiSlice";
 import { useGameL10n } from "./hooks/useGameL10n";
 import BroadcastContext from "../../contexts/BroadcastContext";
 import { useGameDefinition } from "./hooks/useGameDefinition";
@@ -32,7 +32,7 @@ export const TopBarMenu = React.memo(({}) => {
   const options = useSelector(state => state.gameUi?.game?.options);
   const isHost = myUserID === createdBy;  
   const playerN = useSelector(state => state?.playerUi?.playerN);
-  const zoomFactor = useSelector(state => state?.playerUi?.zoomFactor);
+  const zoomPercent = useSelector(state => state?.playerUi?.zoomPercent);
   const randomNumBetween = useSelector(state => state?.playerUi?.randomNumBetween);
   
   const dispatch = useDispatch();
@@ -100,11 +100,6 @@ export const TopBarMenu = React.memo(({}) => {
         dispatch(setRandomNumBetween(max))
         const result = getRandomIntInclusive(1,max);
         doActionList(["LOG", "$ALIAS_N", " chose a random number (1-"+max+"): "+result]);
-      }
-    } else if (data.action === "adjust_card_size") {
-      const num = parseInt(prompt("Adjust the apparent card size for yourself only (10-1000):",Math.round(zoomFactor*100)));
-      if (num>=10 && num<=1000) {
-        dispatch(setZoomFactor(num/100));
       }
     } else if (data.action === "spawn_existing") {
       dispatch(setShowModal("card"));
@@ -285,9 +280,7 @@ export const TopBarMenu = React.memo(({}) => {
             {siteL10n("dragnOptions")}
             <span className="float-right mr-1"><FontAwesomeIcon icon={faChevronRight}/></span>
           <ul className="third-level-menu">
-            <li key={"adjust_card_size"} onClick={() => handleMenuClick({action:"adjust_card_size"})}>{siteL10n("adjustCardSize")}</li>
             <li key={"developer_tools"} onClick={() => handleMenuClick({action:"developer_tools"})}>{siteL10n("developerTools")}</li>
-
           </ul>
         </li> 
         <li key={"advanced_functions"}>

@@ -9,7 +9,7 @@ defmodule DragnCardsGame.GameUI do
   alias DragnCardsGame.GameVariables
   alias DragnCardsGame.{Game, GameUI, Stack, Card, PlayerInfo, Evaluate, GameVariables}
 
-  alias DragnCards.{Repo, Replay, Plugins}
+  alias DragnCards.{Repo, Replay, Plugins, Users}
   alias DragnCards.Rooms.Room
 
   @type t :: Map.t()
@@ -17,7 +17,8 @@ defmodule DragnCardsGame.GameUI do
   @spec new(String.t(), integer(), Map.t()) :: GameUI.t()
   def new(room_slug, user_id, %{} = options) do
     Logger.debug("Making new GameUI")
-    game_def = Plugins.get_game_def(options["pluginId"])
+    plugin_id = options["pluginId"]
+    game_def = Plugins.get_game_def(plugin_id)
     gameui = %{
       "game" => Game.load(room_slug, game_def, options),
       "roomSlug" => room_slug,
@@ -25,9 +26,7 @@ defmodule DragnCardsGame.GameUI do
       "createdAt" => DateTime.utc_now(),
       "createdBy" => user_id,
       "privacyType" => options["privacyType"],
-      "playerInfo" => %{
-        "player1" => if game_def["vacantSeatOnNewGame"] do nil else PlayerInfo.new(user_id) end
-      },
+      "playerInfo" => %{},
       "deltas" => [],
       "replayStep" => 0,
       "replayLength" => 0, # Length of deltas. We need this because the delta array is not broadcast.
@@ -37,6 +36,27 @@ defmodule DragnCardsGame.GameUI do
       "logMessages" => [] # These game messages will be delivered to chat
     }
     Logger.debug("Made new GameUI")
+
+    # If the user has some default game settings, apply them
+    user = Users.get_user(user_id)
+    user_game_settings = user.plugin_settings["#{plugin_id}"]["game"]
+    gameui = if user_game_settings != nil do
+      Enum.reduce(user_game_settings, gameui, fn({key, val}, acc) ->
+        put_in(acc, ["game", key], val)
+      end)
+    else
+      gameui
+    end
+    Logger.debug("Set game settings")
+
+    # Sit the host down in the first player's seat
+    gameui = if game_def["vacantSeatOnNewGame"] do
+      gameui
+    else
+      Logger.debug("Sitting in player1 seat")
+      sit_down(gameui, "player1", user_id)
+    end
+
     gameui
   end
 
@@ -66,6 +86,50 @@ defmodule DragnCardsGame.GameUI do
     end)
   end
 
+
+
+  ############################################################
+  # Seats                                                    #
+  ############################################################
+
+  def sit_down(gameui, player_n, user_id) do
+    player_info = PlayerInfo.new(user_id)
+    gameui
+    |> put_in(["playerInfo", player_n], player_info)
+    |> update_player_data(player_n, user_id)
+  end
+
+  defp update_player_data(gameui, _player_n, nil), do: gameui
+
+  defp update_player_data(gameui, player_n, user_id) do
+    user = Users.get_user(user_id)
+    game_def = Plugins.get_game_def(gameui["game"]["pluginId"])
+    plugin_id = gameui["options"]["pluginId"]
+    Logger.debug("update_player_data plugin_id: #{inspect(plugin_id)}")
+    plugin_player_settings = user.plugin_settings["#{plugin_id}"]["player"]
+    Logger.debug("update_player_data plugin_player_settings: #{inspect(plugin_player_settings)}")
+    action_list = if plugin_player_settings != nil do
+      Enum.reduce(plugin_player_settings, [], fn({key, val}, acc) ->
+        label = game_def["playerProperties"][key]["label"]
+        acc = acc ++ [["LOG", "{{$ALIAS_N}} set their #{label} to #{inspect(val)}."]]
+        acc ++ [["SET", "/playerData/#{player_n}/#{key}", val]]
+      end)
+    else
+      []
+    end
+    Logger.debug("update_player_data action_list: #{inspect(action_list)}")
+
+    # Submit the player data changes as an action
+    if Enum.count(action_list) > 0 do
+      options = %{
+        "action_list" => action_list,
+        "player_ui" => %{"playerN" => player_n}
+      }
+      game_action(gameui, user_id, "evaluate", options)
+    else
+      gameui
+    end
+  end
 
   ############################################################
   # Getters                                                  #

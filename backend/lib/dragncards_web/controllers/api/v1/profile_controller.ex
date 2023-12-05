@@ -57,9 +57,9 @@ defmodule DragnCardsWeb.API.V1.ProfileController do
     end
   end
 
-  def update_alt_art(conn, nested_obj) do
+  def update_plugin_user_settings(conn, nested_obj) do
     user = Repo.get!(User, conn.assigns.current_user.id)
-    updates = User.alt_art_updates(user, nested_obj)
+    updates = User.settings_update(user, nested_obj)
     changeset = Ecto.Changeset.change(user, updates)
 
     case Repo.update(changeset) do
