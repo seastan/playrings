@@ -72,7 +72,7 @@ export const HotkeyTable = React.memo(({hotkeyList, l10n}) => {
             {keysDiv(keysString)}
           </td>
           
-          <td className="text-center">
+          <td className="text-center" style={{fontSize: "1.5vh"}}>
             {labelList.map((labelEl, _labelElIndex) => {
               if (labelEl.startsWith("icon(")) return <img className="m-auto h-6 inline-block" src={labelEl.slice(5,-1)}/> 
               else return labelEl
@@ -98,20 +98,22 @@ export const Hotkeys = React.memo(({}) => {
     return(
       <div className={windowClassL} style={windowStyleL}>
         <div className="w-full p-3 overflow-y-scroll">
-          <div className="w-1/3 float-left p-3">
-            <h2 className="mb-2">{siteL10n("tokens")}</h2>
+          <div className="w-1/4 float-left p-1">
+            <h2 className="mb-2">{siteL10n("tokenHotkeys")}</h2>
             {siteL10n("hoverOverTopBottom")}
             <HotkeyTable hotkeyList={gameDef?.hotkeys?.token} l10n={gameL10n}/>
             {siteL10n("holdCtrl")}
           </div>
-          <div className="w-1/3 float-left p-3">
+          <div className="w-1/4 float-left p-1">
             <h2 className="mb-2">{siteL10n("cardHotkeys")}</h2>
             {siteL10n("hoverOverACard")}
             <HotkeyTable hotkeyList={gameDef?.hotkeys?.card} l10n={gameL10n}/>
           </div>
-          <div className="w-1/3 float-left p-3">
+          <div className="w-1/4 float-left p-1">
             <h2 className="mb-2">{siteL10n("gameHotkeys")}</h2>
             <HotkeyTable hotkeyList={gameDef?.hotkeys?.game} l10n={gameL10n}/>
+          </div>
+          <div className="w-1/4 float-left p-1">
             <h2 className="mb-2">{siteL10n("dragnHotkeys")}</h2>
             <HotkeyTable hotkeyList={dragnHotkeys} l10n={siteL10n}/>
           </div>
@@ -131,7 +133,7 @@ export const Hotkeys = React.memo(({}) => {
               onTouchStart={() => dispatch(setShowHotkeys(false))}/>
           </div>
           <div className="w-full p-3 overflow-y-scroll" style={{height: "523px"}}>
-            <h2 className="mb-2">{siteL10n("tokens")}</h2>
+            <h2 className="mb-2">{siteL10n("tokenHotkeys")}</h2>
             {siteL10n("hoverOverTopBottom")}
             <HotkeyTable hotkeyList={gameDef?.hotkeys?.token} l10n={gameL10n}/>
             {siteL10n("holdCtrl")}

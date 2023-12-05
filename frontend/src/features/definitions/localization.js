@@ -1,4 +1,22 @@
 export const siteL10n = {
+  "hotkeys": {
+    "English": "Hotkeys"
+  },
+  "preferences": {
+    "English": "Preferences"
+  },
+  "spectators": {
+    "English": "Spectators"
+  },
+  "shared": {
+    "English": "Shared"
+  },
+  "player": {
+    "English": "Player"
+  },
+  "view": {
+    "English": "View"
+  },
   "uiPreferences": {
     "English": "UI Preferences"
   },
@@ -175,6 +193,9 @@ export const siteL10n = {
   },
   "tokens": {
     "English": "Tokens"
+  },
+  "tokenHotkeys": {
+    "English": "Token Hotkeys"
   },
   "hoverOverTopBottom": {
     "English": "Hover over the top/bottom half of the card when pressing the key to add/remove tokens."
