@@ -29,7 +29,13 @@ export const uiSettings = {
     "label": "zoomPercent",
     "type": "integer",
     "default": 100
-  }
+  },
+  "touchMode": {
+    "id": "touchMode",
+    "label": "touchMode",
+    "type": "boolean",
+    "default": false
+  },
 }
 
 export const SettingsModal = React.memo(({}) => {
@@ -371,7 +377,7 @@ const ModalContent = () => {
             ))}
           </select>
         );
-      case 'checkbox':
+      case 'boolean':
         return (
           <input
             type="checkbox"

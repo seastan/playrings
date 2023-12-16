@@ -33,7 +33,7 @@ export const Stack = React.memo(({
   const stack = useSelector(state => state?.gameUi?.game?.stackById[stackId]);
   const draggingToRegionType = useSelector(state => state?.playerUi?.dragging.toRegionType);
   const thisDrag = useSelector(state => state?.playerUi?.dragging?.stackId == stackId);
-  const touchMode = useSelector(state => state?.playerUi?.touchMode);
+  const touchMode = useSelector(state => state?.playerUi?.userSettings?.touchMode);
   const zoomFactor = useSelector(state => state?.playerUi?.userSettings?.zoomPercent)/100;
   const layout = useLayout();
   const rowSpacing = layout?.rowSpacing;

@@ -7,7 +7,6 @@ import { useKeyDown } from "./hooks/useKeyDown";
 const RoomGame = React.memo(({}) => {
   console.log('Rendering RoomGame');
   const dispatch = useDispatch();
-  const touchMode = useSelector(state => state?.playerUi.touchMode);
   const typing = useSelector(state => state?.playerUi.typing);
   const onKeyDown = useKeyDown();
 

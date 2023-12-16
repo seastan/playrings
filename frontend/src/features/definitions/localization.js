@@ -122,6 +122,12 @@ export const siteL10n = {
   "adjustCardSize": {
     "English": "Adjust card size"
   },
+  "zoomPercent": {
+    "English": "Card size"
+  },
+  "touchMode": {
+    "English": "Touch mode"
+  },
   "pluginOptions": {
     "English": "Plugin Options"
   },
@@ -155,29 +161,11 @@ export const siteL10n = {
   "markAsIncomplete": {
     "English": "Mark as incomplete"
   },
-  "undoManyActions": {
-    "English": "Undo many actions"
-  },
-  "redoManyActions": {
-    "English": "Redo many actions"
-  },
   "saveGame": {
     "English": "Save game"
   },
-  "clearTargetsArrows": {
-    "English": "Clear targets/arrows"
-  },
-  "undoOneAction": {
-    "English": "Undo one action"
-  },
-  "redoOneAction": {
-    "English": "Redo one action"
-  },
-  "undoManyActions": {
-    "English": "Undo round"
-  },
-  "redoManyActions": {
-    "English": "Redo round"
+  "clearTargets": {
+    "English": "Clear targets"
   },
   "moveToPreviousGameStep": {
     "English": "Move to previous game step"
@@ -278,14 +266,17 @@ export const siteL10n = {
   "targetCard": {
     "English": "Target Card"
   },
-  "startStopDrawingArrow": {
-    "English": "Start/stop drawing arrow"
-  },
   "saveGame": {
     "English": "Save game"
   },
   "clearTargetsArrows": {
     "English": "Clear targets/arrows"
+  },
+  "undo": {
+    "English": "Undo"
+  },
+  "redo": {
+    "English": "Redo"
   },
   "undoOneAction": {
     "English": "Undo one action"
@@ -304,5 +295,11 @@ export const siteL10n = {
   },
   "moveToNextGameStep": {
     "English": "Move to next game step"
-  }
+  },
+  "prevStep": {
+    "English": "Previous step"
+  },
+  "nextStep": {
+    "English": "Next step"
+  },
 }
