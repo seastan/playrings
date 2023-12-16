@@ -17,7 +17,7 @@ export const CardMouseRegion = React.memo(({
     const card = useSelector(state => state?.gameUi?.game?.cardById[cardId]);
     const visibleFace = useVisibleFace(cardId);
     const playerN = useSelector(state => state?.playerUi?.playerN);
-    const touchMode = useSelector(state => state?.playerUi?.touchMode);
+    const touchMode = useSelector(state => state?.playerUi?.userSettings?.touchMode);
     const touchAction = useSelector(state => state?.playerUi?.touchAction);
     const dropdownMenuVisible = useSelector(state => state?.playerUi?.dropdownMenu?.visible);
     const zIndex = useCardZIndex(cardId);

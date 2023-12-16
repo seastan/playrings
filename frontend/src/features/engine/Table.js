@@ -30,7 +30,7 @@ export const Table = React.memo(({addDroppableRef}) => {
   const gameDef = useGameDefinition();
   const dispatch = useDispatch();
   const tooltipIds = useSelector(state => state?.playerUi?.tooltipIds);
-  const touchMode = useSelector(state => state?.playerUi?.touchMode);
+  const touchMode = useSelector(state => state?.playerUi?.userSettings?.touchMode);
   const showModal = useSelector(state => state?.playerUi?.showModal);
   const showDeveloper = useSelector(state => state?.playerUi?.showDeveloper);
   const loadedADeck = useSelector(state => state?.gameUi?.game?.loadedADeck);

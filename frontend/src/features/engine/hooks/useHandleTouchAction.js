@@ -9,16 +9,17 @@ import BroadcastContext from "../../../contexts/BroadcastContext";
 import { useDoActionList } from "./useDoActionList";
 import { useGameDefinition } from "./useGameDefinition";
 import { useGetDefaultAction } from "./useGetDefaultAction";
+import { useDoDragnHotkey } from "./useDragnHotkeys";
 
 export const useHandleTouchAction = () => {
     const {gameBroadcast, chatBroadcast} = useContext(BroadcastContext);
     const dispatch = useDispatch();
     const gameDef = useGameDefinition();
     const playerN = useSelector(state => state?.playerUi?.playerN);
-    const touchMode = useSelector(state => state?.playerUi?.touchMode);
     const touchAction = useSelector(state => state?.playerUi?.touchAction);
     const activeCardId = useSelector(state => state?.playerUi?.activeCardId);
     const doActionList = useDoActionList();
+    const doDragnHotkey = useDoDragnHotkey();
     const [prevActive, setPrevActive] = useState(null);
     const getDefaultAction = useGetDefaultAction();
     const state = store.getState();
@@ -29,7 +30,7 @@ export const useHandleTouchAction = () => {
         if (!playerN) return null;
         if (touchAction) {
             if (touchAction?.actionType === "game") {
-                doActionList(touchAction?.actionList)
+                touchAction.isDragnButton ? doDragnHotkey(touchAction?.actionList) : doActionList(touchAction?.actionList);
                 dispatch(setTouchAction(null));
             } else if (touchAction?.actionType === "token" && touchedCard) {
                 const tokenType = touchAction?.tokenType;
@@ -50,7 +51,7 @@ export const useHandleTouchAction = () => {
                     }
                 }
             } else if (touchAction?.actionType === "card" && touchedCard) {
-                doActionList(touchAction?.actionList)
+                touchAction.isDragnButton ? doDragnHotkey(touchAction?.actionList) : doActionList(touchAction?.actionList);
                 dispatch(setMouseXY(null));
             }
             dispatch(setMouseXY(null));

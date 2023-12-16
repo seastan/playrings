@@ -1,7 +1,7 @@
 import { useContext } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import BroadcastContext from '../../../contexts/BroadcastContext';
-import { setKeypress, setKeypressAlt, setKeypressControl, setKeypressShift, setKeypressSpace, setKeypressTab, setPreHotkeyActiveCardGroupId, setShowModal } from '../../store/playerUiSlice';
+import { setKeypress, setKeypressAlt, setKeypressCommand, setKeypressControl, setKeypressShift, setKeypressSpace, setKeypressTab, setPreHotkeyActiveCardGroupId, setShowModal } from '../../store/playerUiSlice';
 import { useAddToken } from './useAddToken';
 import { useDoActionList } from './useDoActionList';
 import { dragnHotkeys, useDoDragnHotkey } from './useDragnHotkeys';
@@ -20,6 +20,7 @@ export const useKeyDown = () => {
     const keypressControl = keypress?.Control;
     const keypressShift = keypress?.Shift;
     const keypressAlt = keypress?.Alt;
+    const keypressCommand = keypress?.Command;
     const mouseTopBottom = useSelector(state => state?.playerUi?.mouseTopBottom);
     const playerN = usePlayerN();
     const prompts = useSelector(state => state?.gameUi?.game?.playerData?.[playerN]?.prompts) || {};
@@ -43,6 +44,7 @@ export const useKeyDown = () => {
         const k = event.key;
         const unix_sec = Math.floor(Date.now() / 1000);
         if (k === "Alt") dispatch(setKeypressAlt(unix_sec));
+        if (k === "Meta") dispatch(setKeypressAlt(unix_sec)); // We are using Meta as Alt on Macs
         if (k === " ") dispatch(setKeypressSpace(unix_sec));
         if (k === "Control") dispatch(setKeypressControl(unix_sec));
         if (k === "Shift") dispatch(setKeypressShift(unix_sec));
@@ -53,7 +55,7 @@ export const useKeyDown = () => {
                 dispatch(setKeypressTab(unix_sec));
             }
         }
-        if (["Alt", " ", "Control", "Shift", "Tab"].includes(k)) return;
+        if (["Alt", " ", "Control", "Shift", "Tab", "Meta"].includes(k)) return;
 
         var dictKey = k.length === 1 ? k.toUpperCase() : k;
         //if ((unix_sec - keypressShift) < 30) dictKey = "Shift+"+dictKey;

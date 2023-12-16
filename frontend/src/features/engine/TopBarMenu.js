@@ -244,14 +244,6 @@ export const TopBarMenu = React.memo(({}) => {
             })}
             </ul>
         </li>
-        <li key={"touch_mode"}>
-            {siteL10n("touchMode")}
-            <span className="float-right mr-1"><FontAwesomeIcon icon={faChevronRight}/></span>
-          <ul className="third-level-menu">
-              <li key={"touch_enabled"} onClick={() => dispatch(setTouchMode(true))}>{siteL10n("enable")}</li>
-              <li key={"touch_disabled"} onClick={() => {dispatch(setTouchMode(false)) && dispatch(setTouchAction(null))}}>{siteL10n("Disable")}</li>
-          </ul>
-        </li> 
         <li key={"unload"}>
             {siteL10n("unload")}
             <span className="float-right mr-1"><FontAwesomeIcon icon={faChevronRight}/></span>

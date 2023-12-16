@@ -1227,18 +1227,15 @@ export const getGameDefSchema = (gameDef) => {
             "_strictKeys_": true,
             "id": {
               "_type_": "string",
-              "_required_": true,
             },
             "label": {
               "_type_": "label",
-              "_required_": true,
             },
             "imageUrl": {
               "_type_": "string",
             },
             "actionType": {
               "_type_": "string",
-              "_required_": true,
               "_memberOf_": ["token", "card", "game", "engine"],
               "_memberOfPath_": `["token", "card", "game", "engine"]`,
             },
@@ -1249,7 +1246,11 @@ export const getGameDefSchema = (gameDef) => {
             },
             "actionList": {
               "_type_": "actionList",
+            },
+            "dragnButton": {
+              "_type_": "string",
             }
+
           }
         }
       },

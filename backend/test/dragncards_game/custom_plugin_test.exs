@@ -1236,13 +1236,7 @@ defmodule DragnCardsGame.CustomPluginTest do
   @tag :temp
   test "temp", %{user: _user, game: game, game_def: _game_def} do
 
-    game = Evaluate.evaluate(game, ["LOAD_CARDS", "Q01.1"]) # Passage through Mirkwood
-    card = Evaluate.evaluate(game, [
-      ["VAR", "$CARD_ID", "$GAME.groupById.sharedEncounterDeck.parentCardIds.[0]"],
-      ["LOG_DEV", "$CARD_ID"],
-      ["ONE_CARD", "$CARD", ["EQUAL", "$CARD.id", "$CARD_ID"]]
-    ])
-    IO.inspect(card)
+    game = Evaluate.evaluate(game, ["DEFINE", "$A", 1])
   end
 
   # # temp

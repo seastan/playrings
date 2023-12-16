@@ -5,6 +5,7 @@ import { useGameDefinition } from './useGameDefinition';
 export const useGetDefaultAction = () => {
   const gameDef = useGameDefinition();
   const defaultActions = gameDef?.defaultActions;
+  if (!defaultActions) return () => null;
   return ((cardId) => {
     const state = store.getState();
     const card = state?.gameUi?.game?.cardById[cardId];

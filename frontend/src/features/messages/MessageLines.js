@@ -4,7 +4,7 @@ import { useMessages } from "../../contexts/MessagesContext";
 import { useSelector } from "react-redux";
 
 export const MessageLines = ({ hover, messages }) => {
-  const touchMode = useSelector(state => state?.playerUi?.touchMode);
+  const touchMode = useSelector(state => state?.playerUi?.userSettings?.touchMode);
   const bottomRef = useRef();
   console.log("Rendering ChatMessages", messages)
 

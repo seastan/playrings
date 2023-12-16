@@ -244,7 +244,7 @@ export const FreeStack = React.memo(({
   const dispatch = useDispatch();
   const stack = useSelector(state => state?.gameUi?.game?.stackById[stackId]);
   const draggingToRegionType = useSelector(state => state?.playerUi?.dragging.toRegionType);
-  const touchMode = useSelector(state => state?.playerUi?.touchMode);
+  const touchMode = useSelector(state => state?.playerUi?.userSettings?.touchMode);
   const thisDrag = useSelector(state => state?.playerUi?.dragging?.stackId == stackId);
   const stopDrag = useSelector(state => state?.playerUi?.dragging?.end);
   const stopDragDelay = useSelector(state => state?.playerUi?.dragging?.endDelay); 

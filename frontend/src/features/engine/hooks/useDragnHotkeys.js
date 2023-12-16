@@ -18,6 +18,69 @@ export const dragnHotkeys = [
     {"key": "ArrowUp", "actionList": "prevStep", "label": "moveToPreviousGameStep"},
     {"key": "ArrowDown", "actionList": "nextStep", "label": "moveToNextGameStep"}
   ]
+
+export const dragnTouchButtons = {
+    "targetCard": {
+      "id": "targetCard",
+      "label": "targetCard",
+      "actionType": "card",
+      "actionList": "targetCard"
+    },
+    "drawArrow": {
+      "id": "drawArrow",
+      "label": "drawArrow",
+      "actionType": "card",
+      "actionList": "drawArrow"
+    },
+    "clearTargets": {
+      "id": "clearTargets",
+      "label": "clearTargets",
+      "actionType": "game",
+      "actionList": "clearTargets"
+    },
+    "saveGame": {
+      "id": "saveGame",
+      "label": "saveGame",
+      "actionType": "game",
+      "actionList": "saveGame"
+    },
+    "undo": {
+      "id": "undo",
+      "label": "undo",
+      "actionType": "game",
+      "actionList": "undo"
+    },
+    "redo": {
+      "id": "redo",
+      "label": "redo",
+      "actionType": "game",
+      "actionList": "redo"
+    },
+    "undoMany": {
+      "id": "undoMany",
+      "label": "undoMany",
+      "actionType": "game",
+      "actionList": "undoMany"
+    },
+    "redoMany": {
+      "id": "redoMany",
+      "label": "redoMany",
+      "actionType": "game",
+      "actionList": "redoMany"
+    },
+    "prevStep": {
+      "id": "prevStep",
+      "label": "prevStep",
+      "actionType": "game",
+      "actionList": "prevStep"
+    },
+    "nextStep": {
+      "id": "nextStep",
+      "label": "nextStep",
+      "actionType": "game",
+      "actionList": "nextStep"
+    }
+  }
   
   export const useDoDragnHotkey = () => {
     const doActionList = useDoActionList();
