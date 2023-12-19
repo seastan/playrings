@@ -29,7 +29,6 @@ export const Prompts = React.memo(({
         {sortedPromptIds.map((promptKey, promptIndex) => {
           return(
             <div key={promptIndex} className="m-3 p-2 bg-gray-600-90 rounded" style={promptStyle}>
-              {prompts[promptKey]["timestamp"]}
               <div className="mb-2">{prompts[promptKey]["message"]}</div>
                 {prompts[promptKey]["options"] &&
                   <div className="">

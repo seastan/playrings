@@ -3,11 +3,16 @@ import BroadcastContext from "../../../contexts/BroadcastContext";
 import store from "../../../store";
 import { useDoActionList } from "./useDoActionList";
 import { dragnActionLists } from "../functions/dragnActionLists";
+import { useDispatch } from "react-redux";
+import { useImportViaUrl } from "./useImportViaUrl";
+import { setShowModal } from "../../store/playerUiSlice";
 
 export const dragnHotkeys = [
     {"key": "T", "actionList": "targetCard", "label": "targetCard"},
     {"key": "Shift+W", "actionList": "drawArrow", "label": "startStopDrawingArrow"},
     {"key": "Escape", "actionList": "clearTargets", "label": "clearTargetsArrows"},
+    {"key": "Ctrl+U", "actionList": "loadURL", "label": "loadUrl"},
+    {"key": "Ctrl+L", "actionList": "loadPrebuilt", "label": "loadPrebuilt"},
     {"key": "Ctrl+S", "actionList": "saveGame", "label": "saveGame"},
     {"key": "Ctrl+Z", "actionList": "undo", "label": "undoOneAction"},
     {"key": "Ctrl+Y", "actionList": "redo", "label": "redoOneAction"},
@@ -84,9 +89,15 @@ export const dragnTouchButtons = {
   
   export const useDoDragnHotkey = () => {
     const doActionList = useDoActionList();
+    const dispatch = useDispatch();
+    const importViaUrl = useImportViaUrl();
     const {gameBroadcast} = useContext(BroadcastContext);
     return (actionList) => {
       switch (actionList) {
+        case "loadURL":
+          return importViaUrl();
+        case "loadPrebuilt":
+          return dispatch(setShowModal("prebuilt_deck"));
         case "targetCard":
           return doActionList(dragnActionLists.targetCard());
         case "saveGame":
