@@ -23,13 +23,22 @@ export const DropdownItem = (props) => {
     props.clickCallback(props);
   }
 
+  const handleRightIconClick = (event) => {
+    event.stopPropagation(); // Prevents triggering the click event of the parent element
+    if (props.rightIconClickCallback) {
+      props.rightIconClickCallback(props);
+    }
+  }
+
   return (
-    <a href="#" className="menu-item" 
-      //onTouchStart={(event) => handleDropDownItemClick(event)} onMouseUp={(event) => handleDropDownItemClick(event)}
-      onClick={(event) => handleDropDownItemClick(event)}>    
+    <a href="#" className="menu-item" onClick={(event) => handleDropDownItemClick(event)}>    
       {props.leftIcon && <span className="icon-button">{props.leftIcon}</span>}
       {props.children}
-      <span className="icon-right">{props.rightIcon}</span>
+      {props.rightIconClickCallback ? 
+        <span className="icon-right icon-button hover:bg-red-700" onClick={handleRightIconClick}>{props.rightIcon}</span> :
+        <span className="icon-right">{props.rightIcon}</span>
+      }
     </a>
   );
 }
+

@@ -45,9 +45,7 @@ export const Table = React.memo(({addDroppableRef}) => {
   console.log('Rendering Table 1', playerN);
 
   useEffect(() => {
-    if (loadedADeck && showModal === "prebuilt_deck") {
-      dispatch(setShowModal(null));
-    } else if (!loadedADeck && isHost && gameDef?.loadPreBuiltOnNewGame) {
+    if (!loadedADeck && isHost && gameDef?.loadPreBuiltOnNewGame) {
       dispatch(setShowModal("prebuilt_deck"));
     }
   }, [loadedADeck]);

@@ -1,7 +1,7 @@
 import React, {useState} from "react";
 import { useDispatch } from 'react-redux';
 import ReactModal from "react-modal";
-import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
+import { faChevronRight, faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { DropdownItem, GoBack } from "./DropdownMenuHelpers";
 import { setShowModal, setTyping } from "../store/playerUiSlice";
@@ -93,8 +93,8 @@ const InputBox = ({
       autoFocus
       style={{width:"50%"}} 
       type="text"
-      id="name" 
-      name="name" 
+      id="deckSearch" 
+      name="deckSearch" 
       className="mb-2 rounded-md" 
       placeholder=" Deck name..." 
       value={searchString}
@@ -157,6 +157,9 @@ const Menu = ({}) => {
     loadPrebuiltDeck(props.deckListOption.deckListId);
     dispatch(setShowModal(null))
   }
+  const handleRightIconClick = (props) => {
+    loadPrebuiltDeck(props.deckListOption.deckListId);
+  }
 
   return(<div 
     className="modalmenu bg-gray-800">
@@ -178,8 +181,10 @@ const Menu = ({}) => {
       {activeMenu.deckLists?.map((deckListOption, index) => {
         return(
           <DropdownItem
+            rightIcon={<FontAwesomeIcon className="" icon={faPlus}/>}
             returnToMenu={activeMenu}
             deckListOption={deckListOption}
+            rightIconClickCallback={handleRightIconClick}
             clickCallback={handleDeckListClick}>
             {gameL10n(deckListOption.label)}
           </DropdownItem>
