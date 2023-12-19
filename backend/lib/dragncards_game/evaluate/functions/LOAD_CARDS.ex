@@ -35,8 +35,9 @@ defmodule DragnCardsGame.Evaluate.Functions.LOAD_CARDS do
     end
 
     # Run preLoadActionList if it exists
-    game = if game_def["automation"]["preLoadActionList"] do
-      Evaluate.evaluate(game, ["ACTION_LIST", game_def["automation"]["preLoadActionList"]], trace ++ ["game preLoadActionList"])
+    automation = Map.get(game_def, "automation", %{})
+    game = if automation["preLoadActionList"] do
+      Evaluate.evaluate(game, ["ACTION_LIST", automation["preLoadActionList"]], trace ++ ["game preLoadActionList"])
     else
       game
     end
@@ -60,8 +61,8 @@ defmodule DragnCardsGame.Evaluate.Functions.LOAD_CARDS do
     end
 
     # Run postLoadActionList if it exists
-    game = if game_def["automation"]["postLoadActionList"] do
-      Evaluate.evaluate(game, ["ACTION_LIST", game_def["automation"]["postLoadActionList"]], trace ++ ["game postLoadActionList"])
+    game = if automation["postLoadActionList"] do
+      Evaluate.evaluate(game, ["ACTION_LIST", automation["postLoadActionList"]], trace ++ ["game postLoadActionList"])
     else
       game
     end

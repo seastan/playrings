@@ -1232,11 +1232,37 @@ defmodule DragnCardsGame.CustomPluginTest do
 
   end
 
+  @tag :mount_gram
+  test "mount_gram", %{user: _user, game: game, game_def: game_def} do
+
+    # Load some decks into the game
+    game = Evaluate.evaluate(game, ["LOAD_CARDS", "Q05.5"]) # Passage through Mirkwood
+    game = Evaluate.evaluate(game, ["LOAD_CARDS", "coreLeadership"]) # Leadership core set deck
+
+    # Flip 2 of the heroes over
+
+    game = Evaluate.evaluate(game, [["DEFINE", "$ACTIVE_CARD_ID", ["GET_CARD_ID", "player1Play1", 0, 0]], ["ACTION_LIST", "flipCard"]])
+    game = Evaluate.evaluate(game, [["DEFINE", "$ACTIVE_CARD_ID", ["GET_CARD_ID", "player1Play1", 1, 0]], ["ACTION_LIST", "flipCard"]])
+
+
+
+    IO.inspect(game["playerData"]["player1"])
+    prompt_keys = Map.keys(game["playerData"]["player1"]["prompts"])
+    prompt_key = Enum.at(prompt_keys, 0)
+    prompt = game["playerData"]["player1"]["prompts"][prompt_key]
+    option = Enum.at(prompt["options"], 0)
+    code = option["code"]
+    game = Evaluate.evaluate(game, code)
+
+
+  end
+
   # Local variables
   @tag :temp
   test "temp", %{user: _user, game: game, game_def: _game_def} do
 
-    game = Evaluate.evaluate(game, ["DEFINE", "$A", 1])
+    game = Evaluate.evaluate(game, ["DEFINE", "$A", ["LIST", "A", "B", "C"]])
+    game = Evaluate.evaluate(game, "$A.[1]")
   end
 
   # # temp

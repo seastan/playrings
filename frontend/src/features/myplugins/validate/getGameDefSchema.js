@@ -65,6 +65,8 @@ export const getGameDefSchema = (gameDef) => {
             "type": {
               "_type_": "string",
               "_required_": true,
+              "_memberOf_": ["trigger", "passive"],
+              "_memberOfPath_": `["trigger", "passive"]`,
             },
             "listenTo": {
               "_type_": "array",
@@ -103,20 +105,23 @@ export const getGameDefSchema = (gameDef) => {
                 "type": {
                   "_type_": "string",
                   "_required_": true,
+                  "_memberOf_": ["trigger", "passive", "entersPlay", "whileInPlay"],
+                  "_memberOfPath_": `["trigger", "passive", "entersPlay", "inPlay"]`,
                 },
                 "listenTo": {
                   "_type_": "array",
-                  "_required_": true,
                   "_itemSchema_": {
                     "_type_": "any",
                   }
                 },
                 "condition": {
                   "_type_": "array",
-                  "_required_": true,
                   "_itemSchema_": {
                     "_type_": "any",
                   }
+                },
+                "side": {
+                  "_type_": "string",
                 },
                 "then": {
                   "_type_": "actionList",
