@@ -30,8 +30,8 @@ defmodule DragnCardsGame.UpdatePluginScript do
     end
   end
 
-  defp get_existing_plugin(plugin_name) do
-    case Repo.get_by(Plugin, name: plugin_name) do
+  defp get_existing_plugin(plugin_name, plugin_author_id) do
+    case Repo.get_by(Plugin, name: plugin_name, author_id: plugin_author_id) do
       nil -> {:error, "Plugin not found"}
       plugin -> {:ok, plugin}
     end
@@ -41,7 +41,7 @@ defmodule DragnCardsGame.UpdatePluginScript do
     Repo.transaction(fn ->
       case get_existing_user(System.get_env("PLUGIN_AUTHOR")) do
         {:ok, user} ->
-          case get_existing_plugin(System.get_env("PLUGIN_NAME")) do
+          case get_existing_plugin(System.get_env("PLUGIN_NAME"), user.id) do
             {:ok, plugin} ->
               # Set up plugin JSON paths
               plugin_json_path = System.get_env("PLUGIN_JSON_PATH")
