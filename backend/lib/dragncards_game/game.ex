@@ -6,6 +6,7 @@
   """
   require Logger
   import Ecto.Query
+  alias ElixirSense.Log
   alias DragnCardsGame.{Groups, Game, PlayerData, GameVariables}
   alias DragnCards.{Repo, Replay, Plugins}
 
@@ -41,8 +42,20 @@
   def new(room_slug, game_def, options) do
     Logger.debug("Making new Game")
     default_layout_info = Enum.at(game_def["layoutMenu"],0)
+    Logger.debug("Got default layout info")
     layout_id = default_layout_info["layoutId"]
-    base = %{
+    Logger.debug("Got layout id #{layout_id}")
+    groups = Groups.new(game_def)
+    Logger.debug("Made groups")
+    automation = if get_in(game_def, ["automation", "gameRules"]) do %{"_game_" => %{"rules" => game_def["automation"]["gameRules"]}} else %{} end
+    Logger.debug("Made automation")
+    step_id =
+      game_def
+      |> Map.get("stepOrder", [])
+      |> Enum.at(0, nil)
+    Logger.debug("Got step id #{step_id}")
+    base = try do
+    %{
       "id" => Ecto.UUID.generate,
       "roomSlug" => room_slug,
       "roomName" => room_slug,
@@ -54,36 +67,46 @@
       "layoutId" => layout_id,
       "layoutVariants" => game_def["layouts"][layout_id]["defaultVariants"] || %{},
       "firstPlayer" => "player1",
-      "stepId" => Enum.at(game_def["stepOrder"],0),
-      "steps" => game_def["steps"],
-      "stepOrder" => game_def["stepOrder"],
-      "phases" => game_def["phases"],
-      "phaseOrder" => game_def["phaseOrder"],
-      "tokenById" => game_def["tokens"],
+      "stepId" => step_id,
+      "steps" => Map.get(game_def, "steps", %{}),
+      "stepOrder" => Map.get(game_def, "stepOrder", []),
+      "phases" => Map.get(game_def, "phases", %{}),
+      "phaseOrder" => Map.get(game_def, "phaseOrder", []),
+      "tokenById" => Map.get(game_def, "tokens", %{}),
       "textBoxById" => game_def["textBoxes"],
-      "groupById" => Groups.new(game_def),
+      "groupById" => groups,
       "stackById" => %{},
       "cardById"  => %{},
       "currentScopeIndex" => 0,
       "imageUrlPrefix" => game_def["imageUrlPrefix"],
       "options" => options,
       "loadedADeck" => false,
+      "loadedCardIds" => [],
       "variables" => GameVariables.default(),
       "functions" => game_def["functions"] || %{},
-      "automation" => if get_in(game_def, ["automation", "gameRules"]) do %{"_game_" => %{"rules" => game_def["automation"]["gameRules"]}} else %{} end,
+      "automation" => automation,
       "messages" => [] # These messages will be delivered to the GameUi parent, which will then relay them to chat
     }
+    rescue
+      e in KeyError ->
+        IO.puts("Error: #{inspect(e)}")
+      _ ->
+        IO.puts("Error detected")
+    end
     Logger.debug("Made new Game")
     # Add player data
     player_data = %{}
     player_data = Enum.reduce(1..game_def["maxPlayers"], player_data, fn(n, acc) ->
       put_in(acc["player"<>Integer.to_string(n)], PlayerData.new(game_def))
     end)
+    Logger.debug("Made player data")
     base = put_in(base["playerData"], player_data)
     # Add custom properties
-    Enum.reduce(game_def["gameProperties"], base, fn({key,val}, acc) ->
+    game = Enum.reduce(Map.get(game_def, "gameProperties", %{}), base, fn({key,val}, acc) ->
       put_in(acc[key], val["default"])
     end)
+    Logger.debug("Made custom properties")
+    game
   end
 
   def is_healthy(game) do

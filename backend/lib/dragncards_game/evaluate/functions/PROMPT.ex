@@ -1,5 +1,6 @@
 defmodule DragnCardsGame.Evaluate.Functions.PROMPT do
   alias DragnCardsGame.Evaluate
+  alias DragnCards.Plugins
   @moduledoc """
   Handles the 'PROMPT' operation in the DragnCardsGame evaluation process.
   """
@@ -7,7 +8,7 @@ defmodule DragnCardsGame.Evaluate.Functions.PROMPT do
   @doc """
   Executes the 'PROMPT' operation with the given arguments.
 
-  ## Parameters 
+  ## Parameters
 
     - `args`: The arguments required for the 'PROMPT' operation.
 
@@ -88,4 +89,3 @@ defmodule DragnCardsGame.Evaluate.Functions.PROMPT do
 
 
 end
-    

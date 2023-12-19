@@ -49,7 +49,7 @@ export const Group = React.memo(({
 
   if (!group) return null;
   const numStacks = group.stackIds.length;
-  const tablename = gameL10n(gameDef.groups[group.id].tableLabel);
+  const tablename = gameL10n(group.tableLabel);
   return(
     <div className="h-full w-full">
       

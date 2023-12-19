@@ -271,7 +271,7 @@ defmodule DragnCardsGame.Evaluate do
 
   def evaluate(game, code, trace \\ []) do
     #if is_list(code) do IO.inspect(code) end
-    try do
+    # try do
 
       current_scope_index = game["currentScopeIndex"] + 1
       game = put_in(game, ["currentScopeIndex"], current_scope_index)
@@ -301,17 +301,17 @@ defmodule DragnCardsGame.Evaluate do
       end
 
 
-    rescue
-      e in RuntimeError ->
-        if String.starts_with?(e.message, ":") do
-          raise e.message
-        else
-          raise ": #{e.message} Trace: #{inspect(trace)}"
-        end
-          #evaluate(game, ["ERROR", e.message], trace)
-      _ ->
-        raise "Error evaluating code."
-    end
+    # rescue
+    #   e in RuntimeError ->
+    #     if String.starts_with?(e.message, ":") do
+    #       raise e.message
+    #     else
+    #       raise ": #{e.message} Trace: #{inspect(trace)}"
+    #     end
+    #       #evaluate(game, ["ERROR", e.message], trace)
+    #   _ ->
+    #     raise "Error evaluating code."
+    # end
   end
 
 
@@ -412,7 +412,7 @@ defmodule DragnCardsGame.Evaluate do
         # It's a variable that is being deeply accessed, split it up and evaluate the path by parts
         is_binary(code) and String.starts_with?(code, "$") and String.contains?(code, ".") ->
           split = String.split(code, ".")
-          obj = evaluate(game, Enum.at(split, 0), trace)
+          obj = Enum.at(split, 0)
           path = ["LIST"] ++ Enum.slice(split, 1, Enum.count(split))
           evaluate(game, ["OBJ_GET_BY_PATH", obj, path], trace)
 

@@ -58,19 +58,27 @@ defmodule DragnCardsWeb.API.V1.ProfileController do
   end
 
   def update_plugin_user_settings(conn, nested_obj) do
-    user = Repo.get!(User, conn.assigns.current_user.id)
-    updates = User.settings_update(user, nested_obj)
-    changeset = Ecto.Changeset.change(user, updates)
+    current_user = conn.assigns.current_user
 
-    case Repo.update(changeset) do
-      {:ok, _user} ->
-        Pow.Plug.update_user(conn, %{})
-        conn
-        |> json(%{success: %{message: "Updated user's plugin settings"}})
-      {:error, changeset} ->
-        conn
-        |> json(%{error: %{message: "Failed to update user's plugin settings", changeset: changeset}})
+    if current_user do
+      user = Repo.get!(User, current_user.id)
+      updates = User.settings_update(user, nested_obj)
+      changeset = Ecto.Changeset.change(user, updates)
+
+      case Repo.update(changeset) do
+        {:ok, _user} ->
+          Pow.Plug.update_user(conn, %{})
+          conn
+          |> json(%{success: %{message: "Updated user's plugin settings"}})
+        {:error, changeset} ->
+          conn
+          |> json(%{error: %{message: "Failed to update user's plugin settings", changeset: changeset}})
+      end
+    else
+      conn
+      |> json(%{error: %{message: "User not authenticated"}})
     end
   end
+
 
 end

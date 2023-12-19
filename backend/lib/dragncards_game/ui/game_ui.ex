@@ -1004,6 +1004,37 @@ defmodule DragnCardsGame.GameUI do
 
   end
 
+  def preprocess_card_automation_rule(rule) do
+    if rule["type"] == "entersPlay" do
+      base_listen_to = ["/cardById/$THIS_ID/inPlay", "/cardById/$THIS_ID/currentSide"]
+      listen_to = if rule["listenTo"] do
+        base_listen_to ++ rule["listenTo"]
+      else
+        base_listen_to
+      end
+      base_condition = ["AND", "$THIS.inPlay", ["EQUAL", "$THIS.currentSide", rule["side"]]]
+      condition = if rule["condition"] do
+        base_condition ++ [rule["condition"]]
+      else
+        base_condition
+      end
+      rule
+      |> Map.put("type", "trigger")
+      |> Map.put("listenTo", listen_to)
+      |> Map.put("condition", condition)
+    else
+      rule
+    end
+
+  end
+
+  def preprocess_card_automation(card_automation) do
+    rules = Enum.reduce(card_automation["rules"], [], fn(rule, acc) ->
+      acc ++ [preprocess_card_automation_rule(rule)]
+    end)
+    Map.put(card_automation, "rules", rules)
+  end
+
   def implement_card_automations(game, game_def, card) do
     Logger.debug("implement_card_automations 1")
     card_automation = game_def["automation"]["cards"][card["databaseId"]]
@@ -1011,7 +1042,7 @@ defmodule DragnCardsGame.GameUI do
       game
     else
       game
-      |> put_in(["automation", card["id"]], card_automation)
+      |> put_in(["automation", card["id"]], preprocess_card_automation(card_automation))
       |> put_in(["automation", card["id"], "this_id"], card["id"])
     end
   end

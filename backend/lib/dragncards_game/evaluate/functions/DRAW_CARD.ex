@@ -18,7 +18,7 @@ defmodule DragnCardsGame.Evaluate.Functions.DRAW_CARD do
   def execute(game, code, trace) do
     argc = Enum.count(code) - 1
     num = if argc == 0 do 1 else Evaluate.evaluate(game, Enum.at(code, 1), trace ++ ["num"]) end
-    player_n = Evaluate.evaluate(game, "$PLAYER_N", trace ++ ["player_n"])
+    player_n = if argc == 2 do Evaluate.evaluate(game, Enum.at(code, 2), trace ++ ["player_n"]) else Evaluate.evaluate(game, "$PLAYER_N", trace ++ ["player_n"]) end
     GameUI.move_stacks(game, player_n <> "Deck", player_n <> "Hand", num, "bottom")
   end
 

@@ -144,7 +144,7 @@ export const EditPluginModal = ({ plugin, closeModal, doFetchHash}) => {
           setWarningMessagesGameDef([`Warning: Plugin name mismatch between existing definition (${plugin.name}) and uploaded definition (${mergedJSONs.pluginName}). Confirm that you are editing the appropriate plugin.`])
         }
       } catch (error) {
-        setErrorMessagesGameDef(["Invalid JSON file(s)"]);
+        setErrorMessagesGameDef([`Invalid JSON file(s): ${error.message}`]);
       }
     });
 
