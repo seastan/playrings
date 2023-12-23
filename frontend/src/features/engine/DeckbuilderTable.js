@@ -24,6 +24,13 @@ export const DeckbuilderTable = React.memo(({currentGroupId, modifyDeckList, set
     setFilters({...filters, [propName]: filteredVal});
   };
 
+  useEffect(() => {
+    const tableContainer = document.querySelector('.deckbuilder-table');
+    if (tableContainer) {
+      tableContainer.scrollLeft = 0;
+    }
+  }, []);
+
   const spawnFilteredCardDetails = useMemo(() => {
     if (!cardDb) return [];
     return Object.values(cardDb).filter(cardDetails => {
@@ -49,14 +56,14 @@ export const DeckbuilderTable = React.memo(({currentGroupId, modifyDeckList, set
   if (!cardDb) return;
 
   return(
-        <div className="" style={{width:"60%"}}>
-          <table className="table-fixed rounded-lg w-full overflow-h-scroll">
+        <div className="overflow-scroll deckbuilder-table" style={{width:"60%"}}>
+          <table className="table-fixed rounded-lg w-full">
             <thead>
               <tr className="bg-gray-800">
-                <th key={-1} className="text-white p-1"></th>
+                <th key={-1} className="text-white p-1" style={{width:"5vh"}}></th>
                 {gameDef.deckbuilder?.columns?.map((colDetails, colindex) => {
                   return(
-                    <th key={colindex}>
+                    <th key={colindex} style={{width:"15vh"}}>
                       <div className="text-white p-1">{gameL10n(colDetails.label)}</div>
                       <div>
                         <input 
@@ -98,7 +105,7 @@ export const DeckbuilderTable = React.memo(({currentGroupId, modifyDeckList, set
                   </td>
                   {gameDef.deckbuilder?.columns?.map((colDetails, colindex) => {
                     return(
-                      <td key={colindex} className="p-1">{sideA[colDetails.propName]}</td>
+                      <td key={colindex} className="p-1 whitespace-nowrap text-ellipsis overflow-hidden">{sideA[colDetails.propName]}</td>
                     )
                   })}
                 </tr>

@@ -66,9 +66,10 @@ export const Room = ({ slug }) => {
     } else if (event === "users_changed" && payload !== null) {
       dispatch(setSockets(payload));
     } else if (event === "phx_error") {
-      dispatch(setAlertMessage({text: "Server Error", timestamp: Date.now()}));
+      dispatch(setAlertMessage({text: "The server encountered an error. If the issue persists, download the game state JSON file and upload it in a new room.", timestamp: Date.now()}));
       //setRoomClosed(true);
     }
+
 
 
 

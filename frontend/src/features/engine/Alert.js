@@ -18,19 +18,19 @@ export const Alert = React.memo(({
   useEffect(() => {
     const timer = setTimeout(() => {
       dispatch(setAlertMessage(null));
-    }, 3000);
+    }, 8000);
     return () => clearTimeout(timer);
   }, [alertMessage]);
 
-  // If alert occued more than 3 seconds ago, don't show it
-  if (alertMessage === null || alertTime < Date.now() - 3000) return null;
+  // If alert occued more than 8 seconds ago, don't show it
+  if (alertMessage === null || alertTime < Date.now() - 8000) return null;
 
   return (
     <div className="absolute text-white" 
       style={{
         left: "50%", 
         top: "2%", 
-        width: "19%",
+        width: "25%",
         zIndex: 3e3,
         transform: "translate(-50%, 0%)",
         textAlign: "center",
