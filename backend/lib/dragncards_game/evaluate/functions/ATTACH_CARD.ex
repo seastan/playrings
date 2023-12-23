@@ -22,8 +22,8 @@ defmodule DragnCardsGame.Evaluate.Functions.ATTACH_CARD do
     try do
       GameUI.move_card(game, card_id, dest_card["groupId"], dest_card["stackIndex"], -1, %{"combine" => true})
     rescue
-      e ->
-        raise("Failed to attach card #{card_id} to dest_card_id:#{dest_card_id}. " <> inspect(e) <> inspect(trace))
+      _ ->
+        raise("Failed to attach card_id: #{inspect(card_id)} to dest_card_id: #{inspect(dest_card_id)}. ")
     end
   end
 

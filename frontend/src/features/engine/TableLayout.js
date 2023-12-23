@@ -10,6 +10,7 @@ import { TableChat } from "./TableChat";
 import { TableButton } from "./TableButton";
 import { TextBox } from "./TextBox";
 import { Prompts } from "./Prompts";
+import { Alert } from "./Alert";
 
 export const TableLayout = React.memo(({addDroppableRef}) => {
   const gameL10n = useGameL10n();
@@ -71,6 +72,7 @@ export const TableLayout = React.memo(({addDroppableRef}) => {
       })}
       <TableChat region={layout.chat}/>
       <Prompts/>
+      <Alert/>
 
     </>
   )

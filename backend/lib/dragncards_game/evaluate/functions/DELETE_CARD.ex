@@ -1,5 +1,5 @@
 defmodule DragnCardsGame.Evaluate.Functions.DELETE_CARD do
-  alias DragnCardsGame.Evaluate
+  alias DragnCardsGame.{Evaluate, GameUI}
   @moduledoc """
   Handles the 'DELETE_CARD' operation in the DragnCardsGame evaluation process.
   """
@@ -7,7 +7,7 @@ defmodule DragnCardsGame.Evaluate.Functions.DELETE_CARD do
   @doc """
   Executes the 'DELETE_CARD' operation with the given arguments.
 
-  ## Parameters 
+  ## Parameters
 
     - `args`: The arguments required for the 'DELETE_CARD' operation.
 
@@ -27,4 +27,3 @@ defmodule DragnCardsGame.Evaluate.Functions.DELETE_CARD do
 
 
 end
-    

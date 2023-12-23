@@ -1130,7 +1130,12 @@ defmodule DragnCardsGame.GameUI do
     # Loop over load list and add a "cardDetails" field to each item
     load_list = Enum.map(load_list, fn load_list_item ->
       database_id = Map.fetch!(load_list_item, "databaseId")
-      cardDetails = Map.fetch!(card_db, database_id)
+      cardDetails = try do
+        Map.fetch!(card_db, database_id)
+      rescue
+        _ ->
+          raise "Card with databaseId #{database_id} not found."
+      end
       quantity = Map.fetch!(load_list_item, "quantity")
 
       loadGroupId = Map.fetch!(load_list_item, "loadGroupId")
