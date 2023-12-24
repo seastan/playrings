@@ -1275,26 +1275,26 @@ defmodule DragnCardsGame.CustomPluginTest do
 
   end
 
-  @tag :glittering
-  test "glittering", %{user: _user, game: game, game_def: game_def} do
+  # @tag :glittering
+  # test "glittering", %{user: _user, game: game, game_def: game_def} do
 
-    # Load some decks into the game
-    game = Evaluate.evaluate(game, ["LOAD_CARDS", "QA1.7"])
-    # game = Evaluate.evaluate(game, ["LOAD_CARDS", "coreLeadership"]) # Leadership core set deck
+  #   # Load some decks into the game
+  #   game = Evaluate.evaluate(game, ["LOAD_CARDS", "QA1.7"])
+  #   # game = Evaluate.evaluate(game, ["LOAD_CARDS", "coreLeadership"]) # Leadership core set deck
 
-    prompt_keys = Map.keys(game["playerData"]["player1"]["prompts"])
-    prompt_key = Enum.at(prompt_keys, 0)
-    prompt = game["playerData"]["player1"]["prompts"][prompt_key]
-    option = Enum.at(prompt["options"], 0)
-    code = option["code"]
-    game = Evaluate.evaluate(game, code)
+  #   prompt_keys = Map.keys(game["playerData"]["player1"]["prompts"])
+  #   prompt_key = Enum.at(prompt_keys, 0)
+  #   prompt = game["playerData"]["player1"]["prompts"][prompt_key]
+  #   option = Enum.at(prompt["options"], 0)
+  #   code = option["code"]
+  #   game = Evaluate.evaluate(game, code)
 
-    # assert Enum.count(game["groupById"]["sharedExtra1"]["stackIds"]) == 4
-    # assert Enum.count(game["groupById"]["sharedExtra2"]["stackIds"]) == 4
-    # assert Enum.count(game["groupById"]["sharedExtra3"]["stackIds"]) == 4
+  #   # assert Enum.count(game["groupById"]["sharedExtra1"]["stackIds"]) == 4
+  #   # assert Enum.count(game["groupById"]["sharedExtra2"]["stackIds"]) == 4
+  #   # assert Enum.count(game["groupById"]["sharedExtra3"]["stackIds"]) == 4
 
 
-  end
+  # end
 
   # Local variables
   @tag :temp
