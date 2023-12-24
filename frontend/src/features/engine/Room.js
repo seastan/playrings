@@ -5,7 +5,7 @@ import {useSetMessages} from '../../contexts/MessagesContext';
 import useChannel from "../../hooks/useChannel";
 import { applyDeltaRedo, setGameUi, setPlayerInfo, setSockets } from "../store/gameUiSlice";
 import useProfile from "../../hooks/useProfile";
-import { resetPlayerUi, setActiveCardId, setPreHotkeyActiveCardGroupId, setReplayStep } from "../store/playerUiSlice";
+import { resetPlayerUi, setActiveCardId, setAlertMessage, setPreHotkeyActiveCardGroupId, setReplayStep } from "../store/playerUiSlice";
 import { PluginProvider } from "../../contexts/PluginContext";
 import store from "../../store";
 import ReactModal from "react-modal";
@@ -66,8 +66,10 @@ export const Room = ({ slug }) => {
     } else if (event === "users_changed" && payload !== null) {
       dispatch(setSockets(payload));
     } else if (event === "phx_error") {
-      setRoomClosed(true);
+      dispatch(setAlertMessage({text: "The server encountered an error. If the issue persists, download the game state JSON file and upload it in a new room.", timestamp: Date.now()}));
+      //setRoomClosed(true);
     }
+
 
 
 

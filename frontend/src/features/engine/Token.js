@@ -44,7 +44,7 @@ export const Token = React.memo(({
     function clickArrow(event,delta) {
         event.stopPropagation();
         var newAmount = 0;
-        if (!gameDef?.tokens[tokenType]?.modifier && (amount+delta < 0)) {
+        if (!gameDef?.tokens[tokenType]?.canBeNegative && (amount+delta < 0)) {
             newAmount = 0;
         } else {
             newAmount = amount+delta;

@@ -21,7 +21,7 @@ export const Prompts = React.memo(({
   return (
     <div className="absolute text-white" 
       style={{
-        left: "80%", 
+        left: "2%", 
         top: "2%", 
         width: "19%",
         zIndex: 3e3

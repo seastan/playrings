@@ -4,6 +4,7 @@ import { uiSettings } from "../engine/SettingsModal";
 
 
 const initialState = {
+  alertMessage: null,
   playerN: "player1",
   keypress: {
     Control: 0,
@@ -60,6 +61,9 @@ const playerUiSlice = createSlice({
     },
     setPlayerN: (state, { payload }) => {
       state.playerN = payload;
+    },
+    setAlertMessage: (state, { payload }) => {
+      state.alertMessage = payload;
     },
     setKeypress: (state, { payload }) => {
       state.keypress = payload;
@@ -224,6 +228,7 @@ export const {
   setDraggingEndDelay,
   setDraggingTransform,
   setDraggingToRegionType,
-  setUserSettings
+  setUserSettings,
+  setAlertMessage,
  } = playerUiSlice.actions;
 export default playerUiSlice.reducer;

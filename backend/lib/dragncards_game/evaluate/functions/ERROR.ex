@@ -1,5 +1,6 @@
 defmodule DragnCardsGame.Evaluate.Functions.ERROR do
   alias DragnCardsGame.Evaluate
+  require Logger
   @moduledoc """
   Handles the 'ERROR' operation in the DragnCardsGame evaluation process.
   """
@@ -7,7 +8,7 @@ defmodule DragnCardsGame.Evaluate.Functions.ERROR do
   @doc """
   Executes the 'ERROR' operation with the given arguments.
 
-  ## Parameters 
+  ## Parameters
 
     - `args`: The arguments required for the 'ERROR' operation.
 
@@ -22,4 +23,3 @@ defmodule DragnCardsGame.Evaluate.Functions.ERROR do
 
 
 end
-    
