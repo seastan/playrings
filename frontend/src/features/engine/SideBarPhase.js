@@ -27,12 +27,12 @@ export const SideBarPhase = React.memo(({
         </div>
       </div>
       <div className="w-full h-full flex flex-col float-left">
-        {gameDef?.stepOrder?.map((stepId, _stepIndex) => {
+        {gameDef?.stepOrder?.map((stepId, stepIndex) => {
           const stepInfo = gameDef?.steps?.[stepId];
           if (stepInfo?.phaseId == phaseId)
             return (
               <SideBarRoundStep
-                key={stepInfo.stepId}
+                key={stepIndex}
                 stepId={stepId}
                 triggerCardIds={triggerMap?.[stepId]}/>
             )

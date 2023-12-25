@@ -59,6 +59,7 @@ export const TableLayout = React.memo(({addDroppableRef}) => {
         if (tableButton?.layoutVariants && !regionVisible(tableButton)) return;
         return(
           <TableButton 
+            key={buttonIndex}
             tableButton={tableButton}
           />
         )
