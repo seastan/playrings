@@ -279,9 +279,9 @@ export const TopBarMenu = React.memo(({}) => {
             {siteL10n("pluginOptions")}
             <span className="float-right mr-1"><FontAwesomeIcon icon={faChevronRight}/></span>
           <ul className="third-level-menu">
-            {gameDef.pluginMenu?.options?.map((menuFunction, _index) => {
+            {gameDef.pluginMenu?.options?.map((menuFunction, index) => {
               return(
-                <li key={menuFunction.id} onClick={() => doActionList(menuFunction.actionList)}>{gameL10n(menuFunction.label)}</li>
+                <li key={index} onClick={() => doActionList(menuFunction.actionList)}>{gameL10n(menuFunction.label)}</li>
               )
             })}
           </ul>

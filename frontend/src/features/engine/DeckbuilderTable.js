@@ -19,8 +19,11 @@ export const DeckbuilderTable = React.memo(({currentGroupId, modifyDeckList, set
   const gameL10n = useGameL10n();
 
   const cardDb = usePlugin()?.card_db || {};
+  const [sortedCardIds, setSortedCardIds] = useState([]);
+  const [filteredCardIds, setFilteredCardIds] = useState([]);
   const [filters, setFilters] = useState({});
   console.log("Rendering DeckbuilderTable", cardDb);
+
 
   const handleFilterTyping = (event, propName) => {
     const filteredVal = event.target.value;
@@ -31,9 +34,27 @@ export const DeckbuilderTable = React.memo(({currentGroupId, modifyDeckList, set
   const handleSort = (columnName) => {
     const direction = sortConfig.column === columnName && sortConfig.direction === 'asc' ? 'desc' : 'asc';
     setSortConfig({ column: columnName, direction });
-    // Add logic here to sort your data based on the sortConfig
+    // Stable sort the cardIds
+    const sortedCardIdsCopy = [...sortedCardIds];
+    sortedCardIdsCopy.sort((a, b) => {
+      const aValue = cardDb[a].A[columnName];
+      const bValue = cardDb[b].A[columnName];
+      // Assuming string or number values, adjust if your data includes other types
+      if (gameDef?.faceProperties?.[columnName]?.type === 'integer') {
+        return direction === 'asc' ? parseInt(aValue) - parseInt(bValue) : parseInt(bValue) - parseInt(aValue);
+      }
+      if (typeof aValue === 'number' && typeof bValue === 'number') {
+        return direction === 'asc' ? aValue - bValue : bValue - aValue;
+      }
+      // String comparison
+      return direction === 'asc' ? aValue?.localeCompare(bValue) : bValue?.localeCompare(aValue);
+    });
+    setSortedCardIds(sortedCardIdsCopy);
   };
-  
+
+  useEffect(() => {
+    setSortedCardIds(Object.keys(cardDb));
+  }, [cardDb]);
 
   useEffect(() => {
     const tableContainer = document.querySelector('.deckbuilder-table');
@@ -42,14 +63,12 @@ export const DeckbuilderTable = React.memo(({currentGroupId, modifyDeckList, set
     }
   }, []);
 
-
-  const spawnFilteredCardDetails = useMemo(() => {
-    if (!cardDb) return [];
-
-    const sortedAndFiltered = Object.values(cardDb).filter(cardDetails => {
+  useEffect(() => {
+    // Filter the cardIds
+    const filteredCardIds = sortedCardIds.filter(cardId => {
       return Object.entries(filters).every(([propName, filterVal]) => {
-        const sideA = cardDetails["A"];
-        const sideB = cardDetails["B"];
+        const sideA = cardDb[cardId]["A"];
+        const sideB = cardDb[cardId]["B"];
         const matchSideA = (
           sideA[propName] !== null &&
           sideA[propName] !== "" &&
@@ -63,23 +82,8 @@ export const DeckbuilderTable = React.memo(({currentGroupId, modifyDeckList, set
         return matchSideA || matchSideB;
       });
     });
-
-    if (sortConfig.column) {
-      sortedAndFiltered.sort((a, b) => {
-        const aValue = a.A[sortConfig.column];
-        const bValue = b.A[sortConfig.column];
-        // Assuming string or number values, adjust if your data includes other types
-        if (typeof aValue === 'number' && typeof bValue === 'number') {
-          return sortConfig.direction === 'asc' ? aValue - bValue : bValue - aValue;
-        }
-        // String comparison
-        return sortConfig.direction === 'asc' ? aValue?.localeCompare(bValue) : bValue?.localeCompare(aValue);
-      });
-    }
-
-    return sortedAndFiltered;
-  }, [cardDb, filters, sortConfig]); // Make sure to include sortConfig in the dependency array
-
+    setFilteredCardIds(filteredCardIds);
+  }, [filters, sortedCardIds]);
 
   //return;
   if (!cardDb) return;
@@ -94,7 +98,7 @@ export const DeckbuilderTable = React.memo(({currentGroupId, modifyDeckList, set
                     const isSorted = sortConfig.column === colDetails.propName;
                     return (
                       <th key={colindex} style={{width:"15vh"}}>
-                        <div className="text-white p-1 flex justify-between items-center">
+                        <div className="text-white whitespace-nowrap p-1 flex justify-between items-center">
                           {gameL10n(colDetails.label)}
                           <div 
                             className="px-1 rounded border hover:bg-red-700"
@@ -122,13 +126,14 @@ export const DeckbuilderTable = React.memo(({currentGroupId, modifyDeckList, set
 
               </tr>
             </thead>
-            {spawnFilteredCardDetails.length <= RESULTS_LIMIT && spawnFilteredCardDetails.map((cardDetails, rowindex) => {
-              const sideA = cardDetails["A"];
+            {filteredCardIds.length <= RESULTS_LIMIT && filteredCardIds.map((cardId, rowindex) => {
+              const cardDetails = cardDb[cardId];
+              const sideA = cardDb[cardId]["A"];
               return(
                 <tr 
                   key={rowindex} 
                   className="text-white hover:bg-gray-600" 
-                  style={{color: deckbuilder.colorKey ? deckbuilder.colorValues[cardDetails.A[deckbuilder.colorKey]] : null}}
+                  style={{color: deckbuilder.colorKey ? deckbuilder.colorValues[sideA[deckbuilder.colorKey]] : null}}
                   onClick={() => {}}
                   onMouseEnter={() => {setHoverCardDetails(null); setHoverCardDetails({...cardDetails, leftSide: true})}}
                   onMouseLeave={() => setHoverCardDetails(null)}>
@@ -147,7 +152,8 @@ export const DeckbuilderTable = React.memo(({currentGroupId, modifyDeckList, set
                   {gameDef.deckbuilder?.columns?.map((colDetails, colindex) => {
                     const content = sideA[colDetails.propName];
                     // Determine if the content length is less than 5
-                    const isCenteredContent = (typeof content === 'string' && content.length === 1) || typeof content === 'number';
+                    console.log("deckbuilder content", sideA)
+                    const isCenteredContent = (typeof content === 'string' && content.length === 1) || !isNaN(+content);
                     // Combine the classes based on the condition
                     const cellClass = `p-1 whitespace-nowrap text-ellipsis overflow-hidden ${isCenteredContent ? 'text-center' : ''}`;
                     return (
@@ -159,7 +165,7 @@ export const DeckbuilderTable = React.memo(({currentGroupId, modifyDeckList, set
             })}
           </table>
       
-        {spawnFilteredCardDetails.length > RESULTS_LIMIT && <div className="p-1 text-white">Too many results</div>} 
+        {filteredCardIds.length > RESULTS_LIMIT && <div className="p-1 text-white">Too many results</div>} 
       </div>
     )
 })
