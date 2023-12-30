@@ -104,6 +104,7 @@ export const ProfileSettings = () => {
               <option value="English_HD">English (High Resolution)</option>
               <option value="French">French</option>
               <option value="Spanish">Spanish</option>
+              <option value="Chinese">Chinese</option>
             </select>
             {showResolutionMessage && <div className="alert alert-danger mt-4">High resolution images are only available to certain Patreon supporters.</div>}
             <label className="block text-sm font-bold mb-2 mt-4">
