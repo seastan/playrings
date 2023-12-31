@@ -1259,7 +1259,7 @@ export const gameL10n = {
     "Hotkeys": "快捷键",
     "Spectators": "观众",
     "Quest Companion": "任务助手",
-    "Shared": "共享",
+    "Shared": "共享的",
     "Player 1": "玩家1",
     "Player 2": "玩家2",
     "Player 3": "玩家3",
@@ -1556,7 +1556,7 @@ export const gameL10n = {
     "The Lord of the Rings Standalone": "魔戒独立冒险",
     "The Lord of the Rings Campaign": "魔戒战役",
     "Two-Player Limited-Edition Starter": "双人限量版入门套装",
-    "Print on Demand": "POD",
+    "Print on Demand": "独立剧情小扩（POD）",
     // Adventure Packs
     "ALeP - Children of Eorl & Oaths of the Rohirrim": "ALeP - 埃奥尔的子嗣与洛希尔人的誓言",
     "ALeP Ambush at Erelas": "ALeP 埃瑞拉斯的伏击",
