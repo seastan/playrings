@@ -1543,19 +1543,19 @@ export const gameL10n = {
     //Load quest window
 
     "Go Back": "返回",
-    "Core Set & Shadows of Mirkwood": "核心包与黑森林之黯",
-    "Khazad-dûm & Dwarrowdelf": "卡扎督姆与矮人故乡",
-    "Heirs of Númenor & Against the Shadow": "努门诺尔的后裔与对抗阴影",
-    "The Voice of Isengard & The Ringmaker": "艾森格之声与铸戒者",
-    "The Lost Realm & Angmar Awakened": "失落的王国与安格玛苏醒",
-    "The Grey Havens & The Dreamchaser": "灰港与逐梦者",
+    "Core Set & Shadows of Mirkwood": "核心包与幽暗密林的阴影",
+    "Khazad-dûm & Dwarrowdelf": "凯撒督姆与矮人故乡",
+    "Heirs of Númenor & Against the Shadow": "努门诺尔的后裔与对抗暗影",
+    "The Voice of Isengard & The Ringmaker": "艾辛格之声与铸戒者",
+    "The Lost Realm & Angmar Awakened": "失落的王国与安格玛觉醒",
+    "The Grey Havens & The Dreamchaser": "灰港岸与逐梦者",
     "The Sands of Harad & The Haradrim": "哈拉德之沙与哈拉德林",
-    "The Wilds of Rhovanion & Ered Mithrin": "罗瓦尼安的荒野与埃瑞德米斯林",
+    "The Wilds of Rhovanion & Ered Mithrin": "罗马尼安的荒野与伊瑞德米斯林",
     "A Shadow in the East & Vengeance of Mordor": "东方魔影与魔多的复仇",
     "The Hobbit": "霍比特人",
-    "The Lord of the Rings Standalone": "魔戒独立冒险",
-    "The Lord of the Rings Campaign": "魔戒战役",
-    "Two-Player Limited-Edition Starter": "双人限量版入门套装",
+    "The Lord of the Rings Standalone": "魔戒传奇扩独立冒险",
+    "The Lord of the Rings Campaign": "魔戒传奇扩战役",
+    "Two-Player Limited-Edition Starter": "双人限量版入门套装（黑森林之黯）",
     "Print on Demand": "独立剧情小扩（POD）",
     // Adventure Packs
     "ALeP - Children of Eorl & Oaths of the Rohirrim": "ALeP - 埃奥尔的子嗣与洛希尔人的誓言",
@@ -1581,7 +1581,7 @@ export const gameL10n = {
     // Khazad-dûm & Dwarrowdelf
     "Into the Pit": "深入矿坑",
     "The Seventh Level": "第七层",
-    "Flight from Moria": "逃离墨瑞亚",
+    "Flight from Moria": "逃离摩瑞亚",
     "The Redhorn Gate": "红角隘口",
     "Road to Rivendell": "瑞文戴尔之路",
     "The Watcher in the Water": "水中监视者",
@@ -1591,7 +1591,7 @@ export const gameL10n = {
 
     // Heirs of Númenor & Against the Shadow
     "Peril In Pelargir": "危险的佩拉格",
-    "Into Ithilien": "深入伊西立安",
+    "Into Ithilien": "深入伊西利安",
     "The Siege of Cair Andros": "围攻凯尔安卓斯",
     "The Steward's Fear": "摄政王的恐惧",
     "The Drúadan Forest": "督伊顿森林",
@@ -1601,7 +1601,7 @@ export const gameL10n = {
     "The Morgul Vale": "魔窟谷",
 
     // The Voice of Isengard & The Ringmaker
-    "Fords of Isen": "艾森河渡口",
+    "Fords of Isen": "艾辛河渡口",
     "To Catch an Orc": "活捉半兽人",
     "Into Fangorn": "进入法贡森林",
     "The Dunland Trap": "登兰德的陷阱",
@@ -1612,14 +1612,14 @@ export const gameL10n = {
     "The Antlered Crown": "鹿角王冠",
 
     // The Lost Realm & Angmar Awakened
-    "Intruders in Chetwood": "切特森林的入侵者",
-    "The Weather Hills": "风云丘陵",
-    "Deadmen's Dike": "死人堤",
-    "The Wastes of Eriador": "埃利阿多荒地",
-    "Escape from Mount Gram": "逃离格拉姆山",
-    "Across the Ettenmoors": "穿越埃滕荒原",
-    "The Treachery of Rhudaur": "鲁道尔的背叛",
-    "The Battle of Carn Dum": "卡恩督姆之战",
+    "Intruders in Chetwood": "契特森林的闯入者",
+    "The Weather Hills": "风云丘",
+    "Deadmen's Dike": "亡者之堤",
+    "The Wastes of Eriador": "伊利雅德荒原",
+    "Escape from Mount Gram": "逃离格兰山",
+    "Across the Ettenmoors": "横穿伊顿荒原",
+    "The Treachery of Rhudaur": "鲁道尔的阴谋",
+    "The Battle of Carn Dum": "卡恩督之战",
     "The Dread Realm": "亡者国度",
 
     // The Grey Havens & The Dreamchaser
@@ -1635,12 +1635,12 @@ export const gameL10n = {
 
     "Escape from Umbar": "逃离昂巴",
     "Desert Crossing": "穿越沙漠",
-    "The Long Arm of Mordor": "魔多的长臂",
+    "The Long Arm of Mordor": "魔多的长爪",
     "The Mumakil": "猛犸巨象",
-    "Race Across Harad": "哈拉德竞速",
+    "Race Across Harad": "哈拉德竞逐",
     "Beneath the Sands": "沙土之下",
     "The Black Serpent": "黑蛇",
-    "The Dungeons of Cirith Gurat": "西力斯古拉特的地牢",
+    "The Dungeons of Cirith Gurat": "西力斯古拉特地牢",
     "The Crossings of Poros": "波罗斯渡口",
   },
 }
