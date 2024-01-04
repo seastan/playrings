@@ -112,7 +112,7 @@ export const Profile: React.FC<Props> = () => {
           </div>
           <div>
             <span className="font-semibold">Email</span>: {user.email}
-          </div>git 
+          </div>
           <div>
             <span className="font-semibold">Email confirmed</span>:{" "}
             {user.email_confirmed_at == null && "No."}
