@@ -28,6 +28,14 @@ export const DeckbuilderTable = React.memo(({currentGroupId, modifyDeckList, set
   const handleFilterTyping = (event, propName) => {
     const filteredVal = event.target.value;
     console.log("filtertype", filters, filteredVal, propName);
+    // If the filter is empty, remove it from the filters
+    if (filteredVal === "") {
+      const filtersCopy = {...filters};
+      delete filtersCopy[propName];
+      setFilters(filtersCopy);
+      return;
+    }
+    // Otherwise, set the filter
     setFilters({...filters, [propName]: filteredVal});
   };
 
