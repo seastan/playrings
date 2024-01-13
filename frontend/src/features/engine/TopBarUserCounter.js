@@ -22,6 +22,7 @@ export const TopBarUserCounter = React.memo(({
   const playerN = useSelector(state => state?.playerUi?.playerN);  
   const [inputRef, setInputFocus] = useFocus();
   const playerIAlias = useSelector(state => state?.gameUi?.playerInfo?.[playerI]?.alias);
+  const touchMode = useSelector(state => state?.playerUi?.touchMode);
 
   const handleValueChange = (event) => {
     const newValue = Number(event.target.value);
@@ -36,7 +37,7 @@ export const TopBarUserCounter = React.memo(({
         ["LOG", "$ALIAS_N", totalDelta >= 0 ? " increased " : " decreased ", playerI, "'s ", gameL10n(label), " by ", Math.abs(totalDelta), "."]
       ]
       doActionList(listOfActions);
-      setInputFocus();
+      if (!touchMode) setInputFocus();
     }, 400);
   }
 

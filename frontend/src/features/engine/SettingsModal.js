@@ -14,6 +14,7 @@ import Button from "../../components/basic/Button";
 import { useDoActionList } from "./hooks/useDoActionList";
 import { usePlayerN } from "./hooks/usePlayerN";
 import store from "../../store";
+import { useIsHost } from "./hooks/useIsHost";
 
 // Move to another file, use this to set the default falues in playerUiSlice
 export const uiSettings = {
@@ -65,26 +66,27 @@ const ModalContent = () => {
   const dispatch = useDispatch();
   const doActionList = useDoActionList();
   const user = useProfile();
+  const isHost = useIsHost();
   const authOptions = useAuthOptions();
   const plugin = usePlugin();
   const gameDef = useGameDefinition();
   const stateBackgroundUrl = useSelector(state => state?.playerUi?.userSettings?.backgroundUrl);
-  const databasePlayerSettings = user?.plugin_settings?.[plugin?.id]?.player;
-  const databaseGameSettings = user?.plugin_settings?.[plugin?.id]?.game;
-  const databaseUiSettings = user?.plugin_settings?.[plugin?.id]?.ui;
+  const databasePlayerKeyVals = user?.plugin_settings?.[plugin?.id]?.player;
+  const databaseGameKeyVals = user?.plugin_settings?.[plugin?.id]?.game;
+  const databaseUiKeyVals = user?.plugin_settings?.[plugin?.id]?.ui;
   const gameDefPlayerProperties = gameDef?.playerProperties;
   const gameDefGameProperties = gameDef?.gameProperties;
   const playerN = usePlayerN();
   const siteL10n = useSiteL10n();
   const gameL10n = useGameL10n();
-  const [currentUiSettings, setCurrentUiSettings] = useState({});
-  const [currentUiSettingMode, setCurrentUiSettingsMode] = useState({});
-  const [currentPlayerSettings, setCurrentPlayerSettings] = useState({});
-  const [currentPlayerSettingMode, setCurrentPlayerSettingsMode] = useState({});
-  const [currentGameSettings, setCurrentGameSettings] = useState({});
-  const [currentGameSettingMode, setCurrentGameSettingsMode] = useState({});
-  const [onRenderPlayerSettings, setOnRenderPlayerSettings] = useState({});
-  const [onRenderGameSettings, setOnRenderGameSettings] = useState({});
+  const [currentUiKeyVals, setCurrentUiKeyVals] = useState({});
+  const [currentPlayerKeyVals, setCurrentPlayerKeyVals] = useState({});
+  const [currentGameKeyVals, setCurrentGameKeyVals] = useState({});
+  const [onRenderPlayerKeyVals, setOnRenderPlayerKeyVals] = useState({});
+  const [onRenderGameKeyVals, setOnRenderGameKeyVals] = useState({});
+  const [defaultUiKeyVals, setDefaultUiKeyVals] = useState({});
+  const [defaultPlayerKeyVals, setDefaultPlayerKeyVals] = useState({});
+  const [defaultGameKeyVals, setDefaultGameKeyVals] = useState({});
 
   // Filter out keys in the game definition if their value (which is an object) does not have a showInSettings = true property
   const gameDefPlayerSettings = Object.keys(gameDefPlayerProperties).reduce((obj, key) => {
@@ -103,136 +105,74 @@ const ModalContent = () => {
     return obj;
   }, {});
 
-  console.log("userSettings ", user?.plugin_settings);
-  console.log("render player2Settings", store.getState()?.gameUi?.game?.playerData?.["player2"]);
-
   useEffect(() => {
     dispatch(setTyping(true));
     const state = store.getState();
-    const statePlayerProperties = state?.gameUi?.game?.playerData?.[playerN];
-    const stateGameProperties = state?.gameUi?.game;
-    const stateUiProperties = state?.playerUi?.userSettings;
+    const statePlayerKeyVals = state?.gameUi?.game?.playerData?.[playerN];
+    const stateGameKeyVals = state?.gameUi?.game;
+    const stateUiKeyVals = state?.playerUi?.userSettings;
 
-    // Get state settings
-    const statePlayerSettings = {};
-    const databasePlayerSettingsMode = {};
-    if (statePlayerProperties) {
-      for (const key of Object.keys(gameDefPlayerSettings)) {
-        statePlayerSettings[key] = statePlayerProperties[key];
-        if (databasePlayerSettings?.[key] !== undefined) {
-          databasePlayerSettingsMode[key] = "allGames";
-        } else {
-          databasePlayerSettingsMode[key] = "thisGame";
-        }
-      }
+    // Filter out to just the keys that should be displayed in the settings modal
+    const settableStatePlayerKeyVals = Object.keys(gameDefPlayerSettings).reduce((obj, key) => {
+      obj[key] = statePlayerKeyVals[key];
+      return obj;
+    }, {});
+    
+    const settableStateGameKeyVals = Object.keys(gameDefGameSettings).reduce((obj, key) => {
+      obj[key] = stateGameKeyVals[key];
+      return obj;
     }
-    const stateGameSettings = {};
-    const databaseGameSettingsMode = {};
-    if (stateGameProperties) {
-      for (const key of Object.keys(gameDefGameSettings)) {
-        stateGameSettings[key] = stateGameProperties[key];
-        if (databaseGameSettings?.[key] !== undefined) {
-          databaseGameSettingsMode[key] = "allGames";
-        } else {
-          databaseGameSettingsMode[key] = "thisGame";
-        }
-      }
-    }
-    const stateUiSettings = {};
-    const databaseUiSettingsMode = {};
-    for (const key of Object.keys(uiSettings)) {
-      stateUiSettings[key] = stateUiProperties[key];
-      if (databaseUiSettings?.[key] !== undefined) {
-        databaseUiSettingsMode[key] = "allGames";
-      } else {
-        databaseUiSettingsMode[key] = "thisGame";
-      }
-    }
-    console.log("useEffect UI settings", stateBackgroundUrl, stateUiProperties, stateUiSettings, databaseUiSettings)
+    , {});
 
-    setOnRenderPlayerSettings(statePlayerSettings);
-    setOnRenderGameSettings(stateGameSettings);
+    const settableStateUiKeyVals = Object.keys(uiSettings).reduce((obj, key) => {
+      obj[key] = stateUiKeyVals[key];
+      return obj;
+    }
+    , {});
+
+    setOnRenderPlayerKeyVals(settableStatePlayerKeyVals);
+    setOnRenderGameKeyVals(settableStateGameKeyVals);
     // No need to set onRenderUiSettings because we always apply it even if it's unchanged
 
-    setCurrentPlayerSettings(statePlayerSettings);
-    setCurrentGameSettings(stateGameSettings);
-    setCurrentUiSettings(stateUiSettings);
+    setCurrentPlayerKeyVals(settableStatePlayerKeyVals);
+    setCurrentGameKeyVals(settableStateGameKeyVals);
+    setCurrentUiKeyVals(settableStateUiKeyVals);
 
-    setCurrentPlayerSettingsMode(databasePlayerSettingsMode);
-    setCurrentGameSettingsMode(databaseGameSettingsMode);
-    setCurrentUiSettingsMode(databaseUiSettingsMode);
+    const settableDefaultPlayerKeyVals = Object.keys(gameDefPlayerSettings).reduce((obj, key) => {
+      obj[key] = gameDefPlayerSettings[key].default;
+      if (databasePlayerKeyVals && databasePlayerKeyVals[key] !== undefined) {
+        obj[key] = databasePlayerKeyVals[key];
+      }
+      return obj;
+    }
+    , {});
 
+    const settableDefaultGameKeyVals = Object.keys(gameDefGameSettings).reduce((obj, key) => {
+      obj[key] = gameDefGameSettings[key].default;
+      if (databaseGameKeyVals && databaseGameKeyVals[key] !== undefined) {
+        obj[key] = databaseGameKeyVals[key];
+      }
+      return obj;
+    }
+    , {});
 
-    // const stateUiSettings = state?.playerUi?.userSettings;
-    // const databaseUiSettingsMode = {};
-    // for (const key of Object.keys(uiSettings)) {
-    //   if (databaseUiSettings?.[key] !== undefined) {
-    //     databaseUiSettingsMode[key] = "allGames";
-    //   } else {
-    //     databaseUiSettings[key] = uiSettings[key].default;
-    //     databaseUiSettingsMode[key] = "thisGame";
-    //   }
-    // }
-    // console.log("setCurrentUiSettings", databaseUiSettings, databaseUiSettingsMode)
-    // setCurrentUiSettings(databaseUiSettings);
-    // setCurrentUiSettingsMode(databaseUiSettingsMode);
+    const settableDefaultUiKeyVals = Object.keys(uiSettings).reduce((obj, key) => {
+      obj[key] = uiSettings[key].default;
+      if (databaseUiKeyVals && databaseUiKeyVals[key] !== undefined) {
+        obj[key] = databaseUiKeyVals[key];
+      }
+      return obj;
+    }
+    , {});
 
+    setDefaultPlayerKeyVals(settableDefaultPlayerKeyVals);
+    setDefaultGameKeyVals(settableDefaultGameKeyVals);
+    setDefaultUiKeyVals(settableDefaultUiKeyVals);
     
   }, [playerN, stateBackgroundUrl]);
 
-
-  const handleInputChange = (settingType, id, value) => {
-    switch (settingType) {
-      case "player":
-        setCurrentPlayerSettings(prevSettings => ({
-          ...prevSettings,
-          [id]: value
-        }));
-        break;
-      case "game":
-        setCurrentGameSettings(prevSettings => ({
-          ...prevSettings,
-          [id]: value
-        }));
-        break;
-      case "ui":
-        setCurrentUiSettings(prevSettings => ({
-          ...prevSettings,
-          [id]: value
-        }));
-        break;
-      default:
-        break;
-    }
-  };
-
-  const handleModeChange = (settingType, id, value) => {
-    switch (settingType) {
-      case "player":
-        setCurrentPlayerSettingsMode(prevSettings => ({
-          ...prevSettings,
-          [id]: value
-        }));
-        break;
-      case "game":
-        setCurrentGameSettingsMode(prevSettings => ({
-          ...prevSettings,
-          [id]: value
-        }));
-        break;
-      case "ui":
-        setCurrentUiSettingsMode(prevSettings => ({
-          ...prevSettings,
-          [id]: value
-        }));
-        break;
-      default:
-        break;
-    }
-  };
-
   const handleSave = async () => {
-    var url = currentPlayerSettings["background_url"];
+    var url = currentUiKeyVals["background_url"];
     if (url && !(url.endsWith(".png") || url.endsWith(".jpg") || url.endsWith(".jpeg"))) {
       alert(siteL10n("altArtFormatError"))
       return;
@@ -241,36 +181,12 @@ const ModalContent = () => {
       url = null;
     }
 
-    const permanentPlayerSettings = {};
-    const permanentGameSettings = {};
-    const permanentUiSettings = {};
-    
-    // Determine the values for this game (which will be pushed to backend) 
-    // and all games (which will be pushed to backend and saved to user profile)
-    for (const key of Object.keys(gameDefPlayerSettings)) {
-      if (currentPlayerSettingMode[key] === "allGames") {
-        permanentPlayerSettings[key] = currentPlayerSettings[key];
-      }
-    }
-    for (const key of Object.keys(gameDefGameSettings)) {
-      if (currentGameSettingMode[key] === "allGames") {
-        permanentGameSettings[key] = currentGameSettings[key];
-      }
-    }
-    console.log("uiSettings", uiSettings, currentUiSettings, currentUiSettingMode);
-    for (const key of Object.keys(uiSettings)) {
-      if (currentUiSettingMode[key] === "allGames") {
-        permanentUiSettings[key] = currentUiSettings[key];
-      }
-    }
-    console.log("uiSettings", uiSettings, currentUiSettings, currentUiSettingMode, );
-
     // Update the database
     const newDatabasePluginSettings = {
       [plugin.id]: {
-        player: permanentPlayerSettings,
-        game: permanentGameSettings,
-        ui: permanentUiSettings,
+        player: defaultPlayerKeyVals,
+        game: defaultGameKeyVals,
+        ui: defaultUiKeyVals
       }
     };
     
@@ -289,21 +205,22 @@ const ModalContent = () => {
     if (res.status !== 200) {
       alert(siteL10n("settingUpdateError")); 
     }
+    //user.doFetchHash(Date.now());
     
     // Update the game
     const actionList = [];
-    for (const key of Object.keys(currentPlayerSettings)) {
+    for (const key of Object.keys(currentPlayerKeyVals)) {
       const label = gameDefPlayerProperties[key].label;
-      const value = currentPlayerSettings[key];
-      if (value !== onRenderPlayerSettings[key]) {
+      const value = currentPlayerKeyVals[key];
+      if (value !== onRenderPlayerKeyVals[key]) {
         actionList.push(["SET", `/playerData/$PLAYER_N/${key}`, value]);
         actionList.push(["LOG", `{{$ALIAS_N}} set thier ${label} to ${value}.`]);
       }
     }
-    for (const key of Object.keys(currentGameSettings)) {
+    for (const key of Object.keys(currentGameKeyVals)) {
       const label = gameDefGameProperties[key].label;
-      const value = currentGameSettings[key];
-      if (value !== onRenderGameSettings[key]) {
+      const value = currentGameKeyVals[key];
+      if (value !== onRenderGameKeyVals[key]) {
         actionList.push(["SET", `/${key}`, value]);
         actionList.push(["LOG", `{{$ALIAS_N}} set the ${label} to ${value}.`]);
       }
@@ -314,132 +231,33 @@ const ModalContent = () => {
     }
 
     // Update the UI settings
-    dispatch(setUserSettings(currentUiSettings));
+    dispatch(setUserSettings(currentUiKeyVals));
 
     // Close the modal
     dispatch(setTyping(false));
     dispatch(setShowModal(null));
   }
 
-  const renderModeElement = (settingType, settingDict, propertyObj) => {
-    return (
-      <select
-        className="p-2 w-48"
-        value={settingDict[propertyObj.id]}
-        onChange={(e) => handleModeChange(settingType, propertyObj.id, e.target.value)}
-      >
-        <option key={"thisGame"} value={"thisGame"}>{siteL10n("thisGame")}</option>
-        <option key={"allGames"} value={"allGames"}>{siteL10n("allGames")}</option>
-      </select>
-    );
-  };
-
-  const renderFormElement = (settingType, settingDict, propertyObj) => {
-    console.log("renderFormElement", settingType, settingDict, propertyObj)
-    switch (propertyObj.type) {
-      case 'integer':
-        return (
-          <input
-            type="number"
-            className="p-1 w-16"
-            value={settingDict[propertyObj.id]}
-            onChange={(e) => handleInputChange(settingType, propertyObj.id, parseInt(e.target.value))}
-          />
-        );
-      case 'string':
-        return (
-          propertyObj.supporterLevel > user?.supporter_level ?
-            <button 
-              className="flex items-center justify-center rounded text-white bg-gray-800 hover:bg-gray-700 p-1 px-4"
-              onClick={() => {dispatch(setShowModal("patreon"))}}
-              >
-              <span>Unlock</span>
-              <img className="ml-2" style={{height: "20px"}} src="https://upload.wikimedia.org/wikipedia/commons/9/94/Patreon_logo.svg" alt="Patreon logo"/>
-            </button>
-            :
-            <input
-              disabled={propertyObj.supporterLevel > user?.supporter_level}
-              type="text"
-              className="p-1 w-48"
-              value={settingDict[propertyObj.id]}
-              onChange={(e) => handleInputChange(settingType, propertyObj.id, e.target.value)}
-            />
-        );
-      case 'option':
-        return (
-          <select
-            className="p-2 w-48"
-            value={settingDict[propertyObj.id]}
-            onChange={(e) => handleInputChange(settingType, propertyObj.id, e.target.value)}
-          >
-            {propertyObj.options.map(option => (
-              <option key={option.id} value={option.id}>{gameL10n(option.label)}</option>
-            ))}
-          </select>
-        );
-      case 'boolean':
-        return (
-          <input
-            type="checkbox"
-            className="p-1"
-            checked={settingDict[propertyObj.id]}
-            onChange={(e) => handleInputChange(settingType, propertyObj.id, e.target.checked)}
-          />
-        );
-      default:
-        return null;
-    }
-  };
+  
+  const description = (label) => {
+    return <div className="text-sm text-gray-300 mb-1">{siteL10n(label)}</div>
+  }
 
   return(
     <div className="text-white">
-      <h1 className="mb-2">{siteL10n("uiPreferences")}</h1>
-      <table className="w-full text-sm mb-2">
-        <tbody>
-          {Object.keys(uiSettings).map((propertyId, index) => {
-            const propertyObj = uiSettings[propertyId];
-            return (
-              <tr key={propertyObj.id} className={index % 2 === 0 ? "bg-gray-600" : "bg-gray-700"}>
-                <td className="px-4 py-2 w-1/3">{siteL10n(propertyObj.label)}</td>
-                <td className="px-4 py-2 w-1/3 text-black">{renderFormElement("ui", currentUiSettings, propertyObj)}</td>
-                <td className="px-4 py-2 w-1/3 text-black">{renderModeElement("ui", currentUiSettingMode, propertyObj)}</td>
-              </tr>
-            )
-          })}
-        </tbody>
-      </table>
-      <h1 className="mb-2">{siteL10n("playerPreferences")}</h1>
-      <table className="w-full text-sm mb-2">
-        <tbody>
-          {Object.keys(gameDefPlayerSettings).map((propertyId, index) => {
-            const propertyObj = gameDefPlayerSettings[propertyId];
-            if (!propertyObj.showInSettings) return null;
-            else return (
-              <tr key={propertyId} className={index % 2 === 0 ? "bg-gray-600" : "bg-gray-800"}>
-                <td className="px-4 py-2 w-1/3">{gameL10n(propertyObj.label)}</td>
-                <td className="px-4 py-2 w-1/3 text-black">{renderFormElement("player", currentPlayerSettings, propertyObj)}</td>
-                <td className="px-4 py-2 w-1/3 text-black">{renderModeElement("player", currentPlayerSettingMode, propertyObj)}</td>
-              </tr>
-            )
-          })}
-        </tbody>
-      </table>
-      <h1 className="mb-2">{siteL10n("gamePreferences")}</h1>
-      <table className="w-full text-sm mb-2">
-        <tbody>
-          {Object.keys(gameDefGameSettings).map((propertyId, index) => {
-            const propertyObj = gameDefGameSettings[propertyId];
-            if (!propertyObj.showInSettings) return null;
-            else return (
-              <tr key={propertyId} className={index % 2 === 0 ? "bg-gray-600" : "bg-gray-800"}>
-                <td className="px-4 py-2 w-1/3">{gameL10n(propertyObj.label)}</td>
-                <td className="px-4 py-2 w-1/3 text-black">{renderFormElement("game", currentGameSettings, propertyObj)}</td>
-                <td className="px-4 py-2 w-1/3 text-black">{renderModeElement("game", currentGameSettingMode, propertyObj)}</td>
-              </tr>
-            )
-          })}
-        </tbody>
-      </table>
+      <h1 className="mb-1">{siteL10n("uiPreferences")}</h1>
+      {description("uiPreferencesDescription")}
+      <SettingModalTable settings={uiSettings} currentKeyVals={currentUiKeyVals} defaultKeyVals={defaultUiKeyVals} setCurrentFunction={setCurrentUiKeyVals} setDefaultFunction={setDefaultUiKeyVals} l10n={siteL10n}/>
+      <h1 className="mb-1">{siteL10n("playerPreferences")}</h1>
+      {description("playerPreferencesDescription")}
+      <SettingModalTable settings={gameDefPlayerSettings} currentKeyVals={currentPlayerKeyVals} defaultKeyVals={defaultPlayerKeyVals} setCurrentFunction={setCurrentPlayerKeyVals} setDefaultFunction={setDefaultPlayerKeyVals} l10n={gameL10n}/>
+      {isHost && 
+        <div>
+          <h1 className="mb-1">{siteL10n("gamePreferences")}</h1>
+          {description("gamePreferencesDescription")}
+          <SettingModalTable settings={gameDefGameSettings} currentKeyVals={currentGameKeyVals} defaultKeyVals={defaultGameKeyVals} setCurrentFunction={setCurrentGameKeyVals} setDefaultFunction={setDefaultGameKeyVals} l10n={gameL10n}/>
+        </div>
+      }
       <div className="flex items-center justify-between">
         <Button isSubmit isPrimary className="my-2 w-64" onClick={handleSave}>
           Update
@@ -448,3 +266,106 @@ const ModalContent = () => {
     </div>
   );
 }
+
+const SettingModalTable = React.memo(({settings, currentKeyVals, defaultKeyVals, setCurrentFunction, setDefaultFunction, l10n}) => {
+  const baseClassName = "m-2 px-4 py-2 w-1/3";
+  return (
+    <table className="w-full text-sm mb-2">
+      <tbody>
+        <tr className="bg-gray-800 text-white">
+          <th className={baseClassName}></th>
+          <th className={baseClassName}>Current</th>
+          <th className={baseClassName}>Default</th>
+        </tr>
+        {Object.keys(settings).map((propertyId, index) => {
+          const settingObj = settings[propertyId];
+          const bgColour = index % 2 === 0 ? "bg-gray-500" : "bg-gray-600";
+          const className = baseClassName + " " + bgColour;
+          return (
+            <tr key={propertyId}>
+              <td className={className}>
+                {l10n(settingObj.label)}
+              </td>
+              <td className={className}>
+                <SettingsModalFormElement val={currentKeyVals[settingObj.id]} settingObj={settingObj} setFunction={setCurrentFunction} l10n={l10n}/>
+              </td>
+              <td className={className} style={{opacity: "70%"}}>
+                <SettingsModalFormElement val={defaultKeyVals[settingObj.id]} settingObj={settingObj} setFunction={setDefaultFunction} l10n={l10n}/>
+              </td>
+            </tr>
+          )
+        })}
+      </tbody>
+    </table>
+  )
+})
+
+const SettingsModalFormElement = ({val, settingObj, setFunction, l10n}) => {
+  const dispatch = useDispatch();
+  const user = useProfile();
+  switch (settingObj.type) {
+    case 'integer':
+      return (
+        <input
+          type="number"
+          className="p-1 w-16 text-black"
+          value={val}
+          onChange={(e) => {
+            const newValue = parseInt(e.target.value);
+            setFunction(prevSettings => ({...prevSettings, [settingObj.id]: newValue}))
+          }}
+        />
+      );
+    case 'string':
+      return (
+        settingObj.supporterLevel > user?.supporter_level ?
+          <button 
+            className="flex items-center justify-center rounded text-white bg-gray-800 hover:bg-gray-700 p-1 px-4"
+            onClick={() => {dispatch(setShowModal("patreon"))}}
+            >
+            <span>Unlock</span>
+            <img className="ml-2" style={{height: "20px"}} src="https://upload.wikimedia.org/wikipedia/commons/9/94/Patreon_logo.svg" alt="Patreon logo"/>
+          </button>
+          :
+          <input
+            disabled={settingObj.supporterLevel > user?.supporter_level}
+            type="text"
+            className="p-1 w-48 text-black"
+            value={val}
+            onChange={(e) => {
+              const newValue = e.target.value;
+              setFunction(prevSettings => ({ ...prevSettings, [settingObj.id]: newValue }));
+            }}
+          />
+      );
+    case 'option':
+      return (
+        <select
+          className="p-2 w-48 text-black"
+          value={val}
+          onChange={(e) => {
+            const newValue = e.target.value;
+            setFunction(prevSettings => ({...prevSettings, [settingObj.id]: newValue}));
+          }}
+        >
+          {settingObj.options.map(option => (
+            <option key={option.id} value={option.id}>{l10n(option.label)}</option>
+          ))}
+        </select>
+      );
+    case 'boolean':
+      return (
+        <input
+          type="checkbox"
+          className="p-1"
+          checked={val}
+          onChange={(e) => {
+            const newValue = e.target.checked;
+            setFunction(prevSettings => ({...prevSettings, [settingObj.id]: newValue}))}
+          }
+        />
+      );
+    default:
+      return null;
+  }
+};

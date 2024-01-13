@@ -20,6 +20,7 @@ export const TopBarSharedCounter = React.memo(({
   const [previousValue, setPreviousValue] = useState(value);
   const playerN = useSelector(state => state?.playerUi?.playerN);  
   const [inputRef, setInputFocus] = useFocus();
+  const touchMode = useSelector(state => state?.playerUi?.touchMode);
 
   useEffect(() => {
     setValue(stateValue);
@@ -39,7 +40,7 @@ export const TopBarSharedCounter = React.memo(({
         ["LOG", "$ALIAS_N", totalDelta >= 0 ? " increased " : " decreased ", gameL10n(label), " by ", Math.abs(totalDelta), "."]
       ];
       doActionList(listOfActions);
-      setInputFocus();
+      if (!touchMode) setInputFocus();
     }, 400);
   }
 

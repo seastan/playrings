@@ -70,10 +70,12 @@ export const Group = React.memo(({
                   boxShadow: "0 0 10px 5px rgba(0,0,0,0.6)",
                 }}>
                   {iconsVisible &&
-                    <div className="text-gray-300 w-full flex items-center justify-center" >
-                      <div style={{fontSize: "2vh"}}>
-                        <FontAwesomeIcon onClick={(event) => handleEyeClick(event)}  className="hover:text-white mx-2 -rotate-90" icon={faEye}/>
-                        <FontAwesomeIcon onClick={(event) => handleBarsClick(event)}  className="hover:text-white mx-2 -rotate-90" icon={faBars}/>
+                    <div className="text-gray-300 w-full h-full flex items-center justify-center" style={{fontSize: "2vh"}}>
+                      <div className="w-1/2 flex items-center justify-center py-1 rounded hover:bg-gray-500" onClick={(event) => handleEyeClick(event)}>
+                        <FontAwesomeIcon  className="mx-2 -rotate-90" icon={faEye}/>
+                      </div>
+                      <div className="w-1/2 flex items-center justify-center py-1 rounded hover:bg-gray-500" onClick={(event) => handleBarsClick(event)}>
+                        <FontAwesomeIcon className="mx-2 -rotate-90" icon={faBars}/>
                       </div>
                     </div>
                   }

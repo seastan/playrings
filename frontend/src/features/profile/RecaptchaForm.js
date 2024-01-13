@@ -16,7 +16,7 @@ const RecaptchaForm = () => {
       try {
         await axios.post('/be/api/v1/recaptcha/verify', { token: value }, authOptions);    
 
-        alert('Account confirmed');
+        alert('Account confirmed. Please log out and back in.');
       } catch (error) {
         alert('reCAPTCHA verification failed');
       }

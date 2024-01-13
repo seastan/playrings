@@ -14,12 +14,11 @@ import { useSiteL10n } from "../../hooks/useSiteL10n";
 import { getRandomIntInclusive } from "./functions/common";
 import { useImportLoadList } from "./hooks/useImportLoadList";
 import { useImportViaUrl } from "./hooks/useImportViaUrl";
+import { useIsHost } from "./hooks/useIsHost";
 
 
 export const TopBarMenu = React.memo(({}) => {
   const {gameBroadcast, chatBroadcast} = useContext(BroadcastContext);
-  const myUser = useProfile();
-  const myUserID = myUser?.id;
   const history = useHistory();
   const gameL10n = useGameL10n();
   const siteL10n = useSiteL10n();
@@ -28,11 +27,8 @@ export const TopBarMenu = React.memo(({}) => {
   const loadList = useImportLoadList();
   const importViaUrl = useImportViaUrl();
 
-  const createdBy = useSelector(state => state.gameUi?.createdBy);
-  const options = useSelector(state => state.gameUi?.game?.options);
-  const isHost = myUserID === createdBy;  
+  const isHost = useIsHost();
   const playerN = useSelector(state => state?.playerUi?.playerN);
-  const zoomPercent = useSelector(state => state?.playerUi?.zoomPercent);
   const randomNumBetween = useSelector(state => state?.playerUi?.randomNumBetween);
   
   const dispatch = useDispatch();

@@ -8,7 +8,7 @@ import useProfile from "../../hooks/useProfile";
 
 export const MessageLine = ({ message }) => {
   console.log("Rendering MessageLine",message)
-  const cleanText = message.text.replace(/<\/?.+?>/ig, '');
+  const cleanText = message?.text ? message.text.replace(/<\/?.+?>/ig, '') : "";
   const playerInfo = useSelector(state => state?.gameUi?.playerInfo);
   const gameDef = useGameDefinition();
   const playerIList = usePlayerIList();

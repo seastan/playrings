@@ -302,4 +302,13 @@ export const siteL10n = {
   "nextStep": {
     "English": "Next step"
   },
+  "uiPreferencesDescription": {
+    "English": "Default values for UI preferences will be applied when you enter a room."
+  },
+  "playerPreferencesDescription": {
+    "English": "Default values for player preferences will be applied when you sit down in a seat."
+  },
+  "gamePreferencesDescription": {
+    "English": "Default values for game preferences will be applied when you create a game."
+  },
 }
