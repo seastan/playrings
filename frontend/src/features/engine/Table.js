@@ -25,6 +25,7 @@ import { pl } from "date-fns/locale";
 import { usePreloadCardImages } from "../../hooks/usePreloadCardImages";
 import { useGameDefinition } from "./hooks/useGameDefinition";
 import { SettingsModal } from "./SettingsModal";
+import { useIsHost } from "./hooks/useIsHost";
 
 export const Table = React.memo(({addDroppableRef}) => {
   const gameDef = useGameDefinition();
@@ -34,15 +35,11 @@ export const Table = React.memo(({addDroppableRef}) => {
   const showModal = useSelector(state => state?.playerUi?.showModal);
   const showDeveloper = useSelector(state => state?.playerUi?.showDeveloper);
   const loadedADeck = useSelector(state => state?.gameUi?.game?.loadedADeck);
-  const options = useSelector(state => state?.gameUi?.game?.options); 
-  const loaded = useSelector(state => state?.playerUi?.loaded);
-  const redoStepsExist = useSelector(state => state?.gameUi?.game?.replayStep < state?.gameUi?.game?.replayLength-1);
   const myUserId = useProfile()?.id;
-  const createdBy = useSelector(state => state.gameUi?.createdBy);
-  const isHost = myUserId === createdBy;
+  const isHost = useIsHost();
   const playerN = usePlayerN();
   usePreloadCardImages();
-  console.log('Rendering Table 1', playerN);
+  console.log('Rendering Table', playerN);
 
   useEffect(() => {
     if (!loadedADeck && isHost && gameDef?.loadPreBuiltOnNewGame) {

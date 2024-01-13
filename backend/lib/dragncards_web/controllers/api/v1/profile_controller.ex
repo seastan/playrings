@@ -16,6 +16,7 @@ defmodule DragnCardsWeb.API.V1.ProfileController do
         |> json(%{error: %{code: 401, message: "Not authenticated"}})
 
       _ ->
+        user = Users.get_user(user.id)
         json(conn, %{user_profile: User.to_my_profile(user)})
     end
   end
@@ -59,11 +60,12 @@ defmodule DragnCardsWeb.API.V1.ProfileController do
 
   def update_plugin_user_settings(conn, nested_obj) do
     current_user = conn.assigns.current_user
-
+    IO.puts "current_user: #{inspect(current_user)}"
     if current_user do
       user = Repo.get!(User, current_user.id)
       updates = User.settings_update(user, nested_obj)
       changeset = Ecto.Changeset.change(user, updates)
+      IO.puts("changeset: #{inspect(changeset)}")
 
       case Repo.update(changeset) do
         {:ok, _user} ->

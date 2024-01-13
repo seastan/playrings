@@ -81,7 +81,7 @@ export const TouchBarBottom = React.memo(({}) => {
           {gameDef.touchBar?.map((row, rowIndex) => {
             return (
               <tr key={rowIndex} className={"bg-gray-700"} style={{height: `${100/gameDef.touchBar.length}%`}}>
-                {row.map((buttonObj, _index) => {
+                {row.map((buttonObj, colIndex) => {
                   var displayText = "";
                   if (buttonObj.dragnButton) {
                     const dragnButton = dragnTouchButtons[buttonObj.dragnButton];
@@ -94,7 +94,7 @@ export const TouchBarBottom = React.memo(({}) => {
                     displayText = siteL10n(buttonObj.label);
                   } else displayText = gameL10n(buttonObj.label);
                   return (
-                    <td className={containerClass} style={containerStyle}>
+                    <td key={colIndex} className={containerClass} style={containerStyle}>
                       <TouchButton buttonObj={buttonObj} displayText={displayText}/>
                     </td>
                   )

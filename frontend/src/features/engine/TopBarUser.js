@@ -12,13 +12,12 @@ import { useSiteL10n } from "../../hooks/useSiteL10n";
 import { FirstPlayerToken } from "./FirstPlayerToken";
 
 
-const TopBarUserButton = ({ onClickHandler, extraClass, children }) => {
+export const TopBarUserButton = ({ onClickHandler, extraParentClass, extraButtonClass, children }) => {
   return (
     <div 
       onClick={onClickHandler} 
-      className={`h-full w-1/2 float-left p-0.5`}
-    >
-      <div className={`w-full h-full flex justify-center rounded-lg ${extraClass}`}>
+      className={`h-full float-left p-0.5 ${extraParentClass}`}>
+      <div className={`w-full h-full flex justify-center items-center rounded-lg hover:bg-gray-400 ${extraButtonClass}`}>
         {children}
       </div>
     </div>
@@ -51,16 +50,6 @@ export const TopBarUser = React.memo(({
 
   const sittingUserId = playerInfo[playerI]?.id;
 
-  const handleFirstPlayerClick = (event) => {
-    event.stopPropagation();
-    if (!playerN) return;
-    const dropdownMenu = {
-        type: "firstPlayer",
-        title: "Set first player",
-    }
-    dispatch(setDropdownMenu(dropdownMenu));
-  }
-  
   // If not observing anyone, observe yourself
   if (!observingPlayerN && (myUserId === sittingUserId)) dispatch(setObservingPlayerN(playerI));
 
@@ -99,8 +88,8 @@ export const TopBarUser = React.memo(({
     if (!isLoggedIn) {
       return(
         <TopBarUserButton 
-          onClickHandler={() => handleSitClick("log_in")} 
-          extraClass={"hover:bg-gray-500"}>
+          onClickHandler={() => handleSitClick("log_in")}
+          extraParentClass={"w-1/2"}>
             {siteL10n("logIn")}
         </TopBarUserButton>)
     } else if (sittingUserId) {
@@ -108,22 +97,24 @@ export const TopBarUser = React.memo(({
         return(
           <TopBarUserButton 
             onClickHandler={() => handleSitClick("get_up")} 
-            extraClass={"bg-gray-500"}>
+            extraButtonClass={"bg-gray-500"}
+            extraParentClass={"w-1/2"}>
               {siteL10n("getUp")}
           </TopBarUserButton>)
       } else {
         return(
           <TopBarUserButton 
             onClickHandler={null} 
-            extraClass={"text-black"}>
+            extraButtonClass={"text-black"}
+            extraParentClass={"w-1/2"}>
               {siteL10n("taken")}
           </TopBarUserButton>)
       }
     } else {
       return(
         <TopBarUserButton 
-          onClickHandler={() => handleSitClick("sit")} 
-          extraClass={"hover:bg-gray-500"}>
+          onClickHandler={() => handleSitClick("sit")}
+          extraParentClass={"w-1/2"}>
             {siteL10n("sit")}
         </TopBarUserButton>)
     }
@@ -143,7 +134,8 @@ export const TopBarUser = React.memo(({
           {sitButton()}
           <TopBarUserButton
             onClickHandler={() => handleObserveClick()}
-            extraClass={(observingPlayerN===playerI) ? "bg-gray-500" : "hover:bg-gray-500"}
+            extraButtonClass={(observingPlayerN===playerI) ? "bg-gray-500" : "hover:bg-gray-500"}
+            extraParentClass={"w-1/2"}
           >{siteL10n("look")}</TopBarUserButton>
         </div>
       </div>

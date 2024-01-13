@@ -20,6 +20,7 @@ export const ProfileProvider = ({ children }) => {
     onError
   );
   console.log("Rendering ProfileProvider", data)
+  console.log("debug1 ProfileProvider", data?.user_profile?.plugin_settings?.["2"]?.ui.zoomPercent)
 
   // Check if a valid authToken exists (user is authenticated)
   const isAuthenticated = authToken !== null;
@@ -47,7 +48,10 @@ export const ProfileProvider = ({ children }) => {
   // useInterval(fetchProfileEvery10Mins, 600 * 1000);
   const user =
     data != null && data.user_profile != null ? data.user_profile : null;
-  if (user) user.setData = setData;
+  if (user) {
+    user.setData = setData;
+    user.doFetchHash = doFetchHash;
+  }
   console.log("data prov ",data)
 
   return (
