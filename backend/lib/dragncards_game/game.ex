@@ -8,15 +8,15 @@
   import Ecto.Query
   alias ElixirSense.Log
   alias DragnCardsGame.{Groups, Game, PlayerData, GameVariables}
-  alias DragnCards.{Repo, Replay, Plugins}
+  alias DragnCards.{Repo, Replay, Plugins, Users}
 
   @type t :: Map.t()
 
   @doc """
   load/2:  Create a game with specified options.
   """
-  @spec load(String.t(), Map.t(), Map.t()) :: Game.t()
-  def load(room_slug, game_def, options) do
+  @spec load(String.t(), integer(), Map.t(), Map.t()) :: Game.t()
+  def load(room_slug, user_id, game_def, options) do
     Logger.debug("Loading Game")
     Logger.debug("Options: #{inspect(options)}")
     game = if options["replayUuid"] != nil do
@@ -26,10 +26,10 @@
         order_by: [desc: e.inserted_at],
         limit: 1)
       replay = Repo.one(query)
-      if replay.game_json do replay.game_json else Game.new(room_slug, game_def, options) end
+      if replay.game_json do replay.game_json else Game.new(room_slug, user_id, game_def, options) end
       # TODO: Set room name
     else
-      Game.new(room_slug, game_def, options)
+      Game.new(room_slug, user_id, game_def, options)
     end
     # Refresh id so that replay does not get overwritten
     put_in(game["id"], Ecto.UUID.generate)
@@ -38,8 +38,8 @@
   @doc """
   new/2:  Create a game with specified options.
   """
-  @spec new(String.t(), Map.t(), Map.t()) :: Game.t()
-  def new(room_slug, game_def, options) do
+  @spec new(String.t(), integer(), Map.t(), Map.t()) :: Game.t()
+  def new(room_slug, user_id, game_def, options) do
     Logger.debug("Making new Game")
     default_layout_info = Enum.at(game_def["layoutMenu"],0)
     Logger.debug("Got default layout info")
@@ -106,6 +106,20 @@
       put_in(acc[key], val["default"])
     end)
     Logger.debug("Made custom properties")
+
+    # If the user has some default game settings, apply them
+    user = Users.get_user(user_id)
+    plugin_id = options["pluginId"]
+    user_game_settings = user.plugin_settings["#{plugin_id}"]["game"]
+    game = if user_game_settings != nil do
+
+      Enum.reduce(user_game_settings, game, fn({key, val}, acc) ->
+        put_in(acc, [key], val)
+      end)
+    else
+      game
+    end
+    Logger.debug("Set game settings")
     game
   end
 

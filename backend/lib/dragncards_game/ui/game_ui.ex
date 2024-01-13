@@ -20,7 +20,7 @@ defmodule DragnCardsGame.GameUI do
     plugin_id = options["pluginId"]
     game_def = Plugins.get_game_def(plugin_id)
     gameui = %{
-      "game" => Game.load(room_slug, game_def, options),
+      "game" => Game.load(room_slug, user_id, game_def, options),
       "roomSlug" => room_slug,
       "options" => options,
       "createdAt" => DateTime.utc_now(),
@@ -37,17 +37,6 @@ defmodule DragnCardsGame.GameUI do
     }
     Logger.debug("Made new GameUI")
 
-    # If the user has some default game settings, apply them
-    user = Users.get_user(user_id)
-    user_game_settings = user.plugin_settings["#{plugin_id}"]["game"]
-    gameui = if user_game_settings != nil do
-      Enum.reduce(user_game_settings, gameui, fn({key, val}, acc) ->
-        put_in(acc, ["game", key], val)
-      end)
-    else
-      gameui
-    end
-    Logger.debug("Set game settings")
 
     # Sit the host down in the first player's seat
     gameui = if game_def["vacantSeatOnNewGame"] do
@@ -974,7 +963,7 @@ defmodule DragnCardsGame.GameUI do
     game_def = Plugins.get_game_def(game["options"]["pluginId"])
     game = Evaluate.evaluate_with_timeout(game, action_list)
     game = save_replay(game, user_id)
-    game = Game.new(game["roomSlug"], game_def, game["options"])
+    game = Game.new(game["roomSlug"], user_id, game_def, game["options"])
     Evaluate.evaluate(game, [
       ["LOG", get_alias_n(game_old), " saved the game."],
       ["LOG", get_alias_n(game_old), " reset the game."]
