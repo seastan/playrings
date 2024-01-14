@@ -97,9 +97,14 @@ export const getGameDefSchema = (gameDef) => {
           "_type_": "object",
           "_itemSchema_": {
             "_type_": "object",
+            "ability": {
+              "_type_": "object",
+              "_itemSchema_": {
+                "_type_": "actionList"
+              }
+            },
             "rules": {
               "_type_": "array",
-              "_required_": true,
               "_itemSchema_": {
                 "_type_": "object",
                 "type": {

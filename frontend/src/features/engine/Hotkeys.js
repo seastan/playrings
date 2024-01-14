@@ -64,23 +64,24 @@ export const HotkeyTable = React.memo(({hotkeyList, l10n}) => {
           <th className={col2Class}>{siteL10n("hotkeyTableDescription")}</th>
       </tr>
       {hotkeyList.map((el, elIndex) => {
-      const keysString = el.key
-      const labelList = processLabel(l10n(el.label));
-      return (
-        <tr className={elIndex % 2 == 0 ? "bg-gray-500" : "bg-gray-600"}>
-          <td className="p-1 text-center">
-            {keysDiv(keysString)}
-          </td>
-          
-          <td className="text-center" style={{fontSize: "1.5vh"}}>
-            {labelList.map((labelEl, _labelElIndex) => {
-              if (labelEl.startsWith("icon(")) return <img className="m-auto h-6 inline-block" src={labelEl.slice(5,-1)}/> 
-              else return labelEl
-            })}
-          </td>
-        </tr>
-      )
-    })}
+        if (el.hideFromTable) return null;
+        const keysString = el.key
+        const labelList = processLabel(l10n(el.label));
+        return (
+          <tr className={elIndex % 2 == 0 ? "bg-gray-500" : "bg-gray-600"}>
+            <td className="p-1 text-center">
+              {keysDiv(keysString)}
+            </td>
+            
+            <td className="text-center" style={{fontSize: "1.5vh"}}>
+              {labelList.map((labelEl, _labelElIndex) => {
+                if (labelEl.startsWith("icon(")) return <img className="m-auto h-6 inline-block" src={labelEl.slice(5,-1)}/> 
+                else return labelEl
+              })}
+            </td>
+          </tr>
+        )
+      })}
     </table>
   )
 })

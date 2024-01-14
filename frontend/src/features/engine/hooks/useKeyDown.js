@@ -106,10 +106,8 @@ export const useKeyDown = () => {
             return;
         }
         for (var keyObj of gameDef?.hotkeys.game) {
-            console.log("keydown action check ",keyObj.key, dictKey)
             if (keyMatch(keyObj.key, dictKey)) {
                 doActionList(keyObj.actionList)
-                console.log("keydown action ",keyObj.actionList, gameDef.actionLists[keyObj.actionList])
                 return;
             }
         }
@@ -121,14 +119,12 @@ export const useKeyDown = () => {
                 }
                 doActionList(keyObj.actionList)
                 dispatch(setPreHotkeyActiveCardGroupId(activeCardGroupId));
-                console.log("keydown action ",keyObj.actionList, gameDef.actionLists[keyObj.actionList])
                 return;
             }
         }
         for (var keyObj of dragnHotkeys) {
             if (keyMatch(keyObj.key, dictKey)) {
                 doDragnHotkey(keyObj.actionList)
-                console.log("keydown action ",keyObj.actionList, gameDef.actionLists[keyObj.actionList])
                 return;
             }
         }
