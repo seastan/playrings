@@ -7,7 +7,12 @@ import useForm from "../../hooks/useForm";
 import axios from "axios";
 import useAuth from "../../hooks/useAuth";
 import { useAuthOptions } from "../../hooks/useAuthOptions";
+import { PatreonLinkButton } from "./PatreonLinkButton";
 
+function getParameterValue(url, paramName) {
+  const urlSearchParams = new URLSearchParams(url.split('?')[1]);
+  return urlSearchParams.get(paramName);
+}
 
 export const ProfileSettings = () => {
   const user = useProfile();
@@ -15,6 +20,9 @@ export const ProfileSettings = () => {
   const history = useHistory();
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
+  const [requestedPatreon, setRequestedPatreon] = useState(false);
+
+
   const { inputs, handleSubmit, handleInputChange, setInputs } = useForm(async () => {
     var valid = true;
     [inputs.background_url, inputs.player_back_url, inputs.encounter_back_url].forEach((str) => {
@@ -68,12 +76,48 @@ export const ProfileSettings = () => {
       }));
     }
   }, [user]);
+
+  // Patreon
+  useEffect(() => {
+    async function getAccessToken() {
+      if (!user) return;
+      if (requestedPatreon) return;
+      const url = window.location.href;
+      const splitUrl = url.split( '/' );
+      const patreonIndex = splitUrl.findIndex((e) => e === "patreon")
+      const patreonStr = patreonIndex > -1 ? splitUrl.slice(patreonIndex + 1).join("/") : null;
+      if (patreonStr) {
+        setRequestedPatreon(true);
+        console.log("Sending patreon request", patreonStr, user);
+        const code = getParameterValue(url, "code");
+        // wait a second for backend to stabilize
+        setSuccessMessage("Linking...");
+        setErrorMessage("");
+        await new Promise(r => setTimeout(r, 2000));
+        const res = await axios.get("/be/api/patreon/"+code, authOptions);
+
+        console.log("Patreon res", res);
+        if (res?.data?.success) {
+          user.doFetchHash((new Date()).toISOString());
+          setSuccessMessage("Patreon account linked. Support level: " + res?.data?.success?.supporter_level);
+          setErrorMessage("");
+        }
+        else {
+          setSuccessMessage("");
+          setErrorMessage("Error linking Patreon account. Please try again. If this error persists, please contact dragncards@gmail.com, indicating your DragnCards email, Patreon email (if different), and Patreon support level.");
+        }
+
+      }
+    }
+    getAccessToken();
+  }, [user]);
+
   if (user == null) {
     return null;
   }
 
 
-  const PatreonButton = ({patreonClientId, amount, redirectURI}) => {
+  const PatreonSignUpButton = ({patreonClientId, amount, redirectURI}) => {
     const clientId = `&client_id=${patreonClientId}`;
     const pledgeLevel = `&min_cents=${amount}`;
     const v2Params = "&scope=identity%20identity[email]";
@@ -91,39 +135,52 @@ export const ProfileSettings = () => {
     );
   };
 
+  // Get patreon data from environment variables
+  const redirectURI = process.env.REACT_APP_PATREON_REDIRECT_URI;
+  const patreonClientId = process.env.REACT_APP_PATREON_CLIENT_ID;
+  console.log("Patreon data", redirectURI, patreonClientId);
+
   return (
     <Container>
       <div className="bg-gray-100 p-4 rounded max-w-xl shadow">
-      <h1 className="font-semibold mb-4 text-black">Language</h1>
-      <form action="POST" onSubmit={handleSubmit}>
-        <fieldset>
-          <div className="mb-4">
-            <select 
-              name="language"
-              className="form-control w-full"
-              onChange={handleInputChange}
-              value={inputs.language || "English"}>
-              <option value="English">English</option>
-              <option value="French">French</option>
-              <option value="Spanish">Spanish</option>
-            </select>
-          </div>
-          <div className="flex items-center justify-between">
-              <Button isSubmit isPrimary className="mx-2">
-                Update
-              </Button>
-          </div>
-        </fieldset>
-      </form>
-      {errorMessage && (
-        <div className="alert alert-danger mt-4">{errorMessage}</div>
-      )}
-      {successMessage && (
-        <div className="alert alert-info mt-4">{successMessage}</div>
-      )}
-      </div>
+          
+        {errorMessage && (
+          <div className="alert alert-danger mt-4">{errorMessage}</div>
+        )}
+        {successMessage && (
+          <div className="alert alert-info mt-4">{successMessage}</div>
+        )}
 
-      {/* <PatreonButton patreonClientId={"MUANs_lS4yBmji1txII2sV6NJ3X1JEp5OSzPVr_rkU02jz3S2jTubjoMOSPK5Jul"} amount={1000} redirectURI={"https://www.dragncards.com/auth/patreon/callback"}/> */}
+        <h1 className="font-semibold mb-2 text-black">Patreon</h1>
+        <div>
+            <span className="font-semibold">
+              <div>Current supporter level: {user.supporter_level ? user.supporter_level : 0}</div> 
+            </span>
+          </div>
+        <PatreonLinkButton patreonClientId={patreonClientId} redirectURI={redirectURI} />
+
+        <h1 className="font-semibold my-2 text-black">Language</h1>
+        <form action="POST" onSubmit={handleSubmit}>
+          <fieldset>
+            <div className="mb-4">
+              <select 
+                name="language"
+                className="form-control w-full"
+                onChange={handleInputChange}
+                value={inputs.language || "English"}>
+                <option value="English">English</option>
+                <option value="French">French</option>
+                <option value="Spanish">Spanish</option>
+              </select>
+            </div>
+            <div className="flex items-center justify-between">
+                <Button isSubmit isPrimary className="mx-2">
+                  Update Language
+                </Button>
+            </div>
+          </fieldset>
+        </form>
+      </div>
 
     </Container>
 

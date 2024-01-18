@@ -60,7 +60,7 @@ export const Profile: React.FC<Props> = () => {
       const res = await axios.post("/be/api/replays/delete",data);
       setDeletedIndices([...deletedIndices, index]);
     }
-  }      
+  }     
 
   const options: MUIDataTableOptions = {
     filterType: "checkbox",
@@ -119,9 +119,6 @@ export const Profile: React.FC<Props> = () => {
             {user.email_confirmed_at != null && "Yes."}
           </div>
           {user.email_confirmed_at == null && <RecaptchaForm/>}
-          <div>
-            <span className="font-semibold">Patreon supporter level</span>: {user.supporter_level ? user.supporter_level : 0}
-          </div>
           {user.admin && 
             <div>
               <span className="font-semibold">Admin</span>

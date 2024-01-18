@@ -42,7 +42,7 @@ export const dragnActionLists = {
     ["COND",
       ["NOT_EQUAL", ability, null],
       [
-        ["LOG", "$ALIAS_N", " triggered the ability on ", "$ACTIVE_FACE.name", ": ", "$ACTIVE_FACE.ability"],
+        ["LOG", "$ALIAS_N", " triggered the ability on ", "$ACTIVE_FACE.name", "."],
         ["VAR", "$THIS_ID", "$ACTIVE_CARD_ID"],
         ["VAR", "$THIS", "$ACTIVE_CARD"],
         ability

@@ -82,3 +82,6 @@ config :phoenix, :plug_init_mode, :runtime
 if File.exists?("config/dev.secret.exs") do
   import_config "dev.secret.exs"
 end
+
+# Config the patreon redirect uri
+config :dragncards, :patreon_redirect_uri, "http://localhost:3000/profile/patreon/"

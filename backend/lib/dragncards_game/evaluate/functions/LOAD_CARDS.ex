@@ -50,7 +50,6 @@ defmodule DragnCardsGame.Evaluate.Functions.LOAD_CARDS do
 
     prev_loaded_card_ids = game["loadedCardIds"]
 
-
     game = GameUI.load_cards(game, load_list)
 
     # Run deck's postLoadActionList if it exists

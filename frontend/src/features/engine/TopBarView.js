@@ -7,6 +7,7 @@ import { setShowHotkeys, setShowModal, setShowPlayersInRoom } from "../store/pla
 import { useGameDefinition } from "./hooks/useGameDefinition";
 import { usePlayerIList } from "./hooks/usePlayerIList";
 import { useSiteL10n } from "../../hooks/useSiteL10n";
+import { keysDiv } from "./functions/common";
 
 const keyClass = "m-auto border bg-gray-500 text-center inline-block ml-2";
 const keyStyleL = {width: "7vh", height: "3vh", borderRadius: "1vh", fontSize: "1.5vh"}
@@ -20,10 +21,10 @@ export const TopBarView = React.memo(({}) => {
       <div className="h-full flex items-center justify-center select-none" href="#">{siteL10n("view")}</div>
         <ul className="second-level-menu">
           <li key={"hotkeys"} onClick={() => dispatch(setShowHotkeys(true))}>
-            {siteL10n("hotkeys")} <div className={keyClass} style={keyStyleL}>Tab</div>
+            {siteL10n("hotkeys")}{keysDiv("Tab", "ml-2")}
           </li>
           <li key={"preferences"} onClick={() => dispatch(setShowModal("settings"))}>
-            {siteL10n("preferences")} <div className={keyClass + " mr-2"} style={keyStyleL}>Shift</div>+<div className={keyClass} style={keyStyleL}>Tab</div>
+            {siteL10n("preferences")} {keysDiv("Shift", "ml-2")}{keysDiv("Tab")}
           </li>
           <li key={"playersInRoom"} onClick={() => dispatch(setShowPlayersInRoom(true))}>
             {siteL10n("spectators")}

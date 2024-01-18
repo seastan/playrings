@@ -45,8 +45,10 @@ defmodule DragnCardsGame.Card do
     card = put_in(base["sides"], sides)
 
     # loop over the cardProperties in game_def
-    Enum.reduce(game_def["cardProperties"], card, fn({key,val}, acc) ->
+    card = Enum.reduce(game_def["cardProperties"], card, fn({key,val}, acc) ->
       put_in(acc[key], val["default"])
     end)
+
+    card
   end
 end

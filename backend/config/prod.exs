@@ -35,6 +35,9 @@ config :logger, level: :info
 
 config :dragncards, :env_mode, :prod
 
+# Config the patreon redirect uri
+config :dragncards, :patreon_redirect_uri, "http://beta.dragncards.com/profile/patreon/"
+
 # ## SSL Support
 #
 # To get SSL working, you will need to add the `https` key

@@ -284,7 +284,6 @@ defmodule DragnCardsGame.Evaluate do
 
       result = evaluate_inner(game, code, trace)
 
-
       # Delete local variables
       if is_map(result) and Map.has_key?(result, "variables") do
         #IO.inspect(result["variables"])
