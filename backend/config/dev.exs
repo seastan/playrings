@@ -87,3 +87,4 @@ end
 config :dragncards, :patreon_client_id, System.get_env("PATREON_CLIENT_ID")
 config :dragncards, :patreon_client_secret, System.get_env("PATREON_CLIENT_SECRET")
 config :dragncards, :patreon_redirect_uri, System.get_env("PATREON_REDIRECT_URI")
+config :dragncards, :patreon_creator_token, System.get_env("PATREON_CREATOR_TOKEN")
