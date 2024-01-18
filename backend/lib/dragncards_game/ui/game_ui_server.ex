@@ -66,7 +66,7 @@ defmodule DragnCardsGame.GameUIServer do
   """
   @spec game_action(String.t(), integer, String.t(), Map.t()) :: GameUI.t()
   def game_action(game_name, user_id, action, options) do
-    game_exists?(game_name) && GenServer.call(via_tuple(game_name), {:game_action, user_id, action, options}, 5_000)
+    game_exists?(game_name) && GenServer.call(via_tuple(game_name), {:game_action, user_id, action, options}, 30_000)
   end
 
   @doc """

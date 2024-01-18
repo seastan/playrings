@@ -29,6 +29,7 @@ const AppRouter: React.FC = () => {
         <Route path="/signup" component={Signup} />
         <Route path="/profile" component={Profile} />
         <Route path="/myplugins" component={MyPlugins} />
+        <Route path="/auth/patreon" component={Profile} />
         <Route path="/newroom" component={Lobby} />
         <Route path="/plugin" component={PluginLobby} />
         <Route

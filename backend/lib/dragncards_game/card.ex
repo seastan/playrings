@@ -2,6 +2,7 @@ defmodule DragnCardsGame.Card do
   @moduledoc """
   Represents a playing card.
   """
+  require Logger
   alias DragnCardsGame.{CardFace,Tokens}
 
   @type t :: Map.t()
@@ -17,7 +18,7 @@ defmodule DragnCardsGame.Card do
 
   @spec card_from_card_details(Map.t(), Map.t(), String.t(), String.t()) :: Map.t()
   def card_from_card_details(card_details, game_def, card_db_id, group_id) do
-
+    Logger.debug("card_from_card_details 1")
     group = game_def["groups"][group_id]
     controller = group["controller"]
     base = %{
@@ -30,16 +31,24 @@ defmodule DragnCardsGame.Card do
       "targeting" => %{},
       "arrows" => %{},
       "tokens" => Tokens.new(),
-
-      # loop over the sides in card_details
-      # and add them to the card
-      "sides" => Enum.reduce(card_details, %{}, fn({side,val}, acc) ->
-        put_in(acc[side], CardFace.card_face_from_card_face_details(val, game_def))
-      end)
     }
+    Logger.debug("card_from_card_details 2")
+    # loop over the sides in card_details
+    # and add them to the card
+    sides = Enum.reduce(card_details, %{}, fn({side,val}, acc) ->
+      Logger.debug("Adding side #{side} to card")
+      put_in(acc[side], CardFace.card_face_from_card_face_details(val, game_def, side, card_db_id))
+    end)
+    Logger.debug("card_from_card_details 3")
+
+    # Add the sides to the card
+    card = put_in(base["sides"], sides)
+
     # loop over the cardProperties in game_def
-    Enum.reduce(game_def["cardProperties"], base, fn({key,val}, acc) ->
+    card = Enum.reduce(game_def["cardProperties"], card, fn({key,val}, acc) ->
       put_in(acc[key], val["default"])
     end)
+
+    card
   end
 end

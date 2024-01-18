@@ -3,6 +3,7 @@ defmodule DragnCardsGame.CardFace do
   @moduledoc """
   Represents a playing card.
   """
+  require Logger
 
   @type t :: Map.t()
 
@@ -109,12 +110,13 @@ defmodule DragnCardsGame.CardFace do
     end
   end
 
-  @spec card_face_from_card_face_details(Map.t(), Map.t()) :: Map.t()
-  def card_face_from_card_face_details(card_face_details, game_def) do
-
+  @spec card_face_from_card_face_details(Map.t(), Map.t(), String.t(), String.t()) :: Map.t()
+  def card_face_from_card_face_details(card_face_details, game_def, side, card_db_id) do
+    Logger.debug("card_face_from_card_face_details #{side} #{card_db_id}")
     type = card_face_details["type"]
     name = card_face_details["name"]
     triggers = trigger_steps_from_face_details(card_face_details, game_def["stepReminderRegex"])
+    ability = get_in(game_def, ["automation", "cards", card_db_id, "ability", side])
     width = game_def["cardTypes"][type]["width"] || game_def["cardBacks"][name]["width"] || 1
     height = game_def["cardTypes"][type]["height"] || game_def["cardBacks"][name]["height"] || 1
 
@@ -153,6 +155,7 @@ defmodule DragnCardsGame.CardFace do
     end)
     card_face
     |> Map.put("triggers", triggers)
+    |> Map.put("ability", ability)
     |> Map.put("width", width)
     |> Map.put("height", height)
   end

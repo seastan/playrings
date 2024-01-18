@@ -108,7 +108,7 @@ const useAuthDataApi = (
       setIsLoading(true);
 
       const an_axios = axios.create({
-        timeout: 3000,
+        timeout: 2000,
       });
       console.log("debug1 create", an_axios)
       an_axios.interceptors.response.use(id, intercept_error);
@@ -116,7 +116,6 @@ const useAuthDataApi = (
         console.log("debug1 result 1", url, authOptions)
         const result = await an_axios(url, authOptions); // FIXME: When profile hangs on refresh this is usually the culprit
         console.log("debug1 result 2", result)
-        console.log("debug1 result 2 3", result.data?.user_profile?.plugin_settings?.["2"]?.ui?.zoomPercent)
         if (result != null) {
           console.log("debug1 fetchtry", result.data?.user_profile?.language)
           setData(result.data);

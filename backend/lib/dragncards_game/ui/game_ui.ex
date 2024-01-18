@@ -49,32 +49,6 @@ defmodule DragnCardsGame.GameUI do
     gameui
   end
 
-  def pretty_print(game, header \\ nil) do
-    IO.puts(header)
-    Enum.each(game["groupById"], fn({group_id, group}) ->
-      stack_ids = get_stack_ids(game, group_id)
-      stacks_size = Enum.count(stack_ids)
-      if stacks_size > 0 do
-        IO.puts(group["id"])
-        Enum.each(stack_ids, fn(stack_id) ->
-          IO.puts("  #{stack_id}")
-          card_ids = get_card_ids(game, stack_id)
-          Enum.each(Enum.with_index(card_ids), fn({card_id, index}) ->
-            card = get_card(game, card_id)
-            indent = if index > 0 do
-              "  "
-            else
-              ""
-            end
-            card_name = card["sides"][card["currentSide"]]["name"]
-            card_id = card["id"]
-            IO.puts("#{indent}  #{card_name} #{card_id}")
-          end)
-        end)
-      end
-    end)
-  end
-
 
 
   ############################################################
@@ -323,7 +297,7 @@ defmodule DragnCardsGame.GameUI do
     game = Evaluate.evaluate(game, ["SET", "/cardById/" <> card_id <> "/groupId", dest_group_id], ["update_card_state cardId:#{card_id} groupId:#{dest_group_id}"])
     game = Evaluate.evaluate(game, ["SET", "/cardById/" <> card_id <> "/stackIndex", dest_stack_index], ["update_card_state cardId:#{card_id} stackIndex:#{dest_stack_index}"])
     game = Evaluate.evaluate(game, ["SET", "/cardById/" <> card_id <> "/cardIndex", dest_card_index], ["update_card_state cardId:#{card_id} cardIndex:#{dest_card_index}"])
-    game = Evaluate.evaluate(game, ["SET", "/cardById/" <> card_id <> "/stackParentCardId", parent_card["id"]], ["update_card_state cardId:#{card_id} stackParentCardId:#{parent_card["id"]}"])
+    game = Evaluate.evaluate(game, ["SET", "/cardById/" <> card_id <> "/parentCardId", parent_card["id"]], ["update_card_state cardId:#{card_id} stackParentCardId:#{parent_card["id"]}"])
     Logger.debug("update_card_state 3")
     # Update stackIndex and cardIndex of every card in the orig/dest group- This turned out to be very slow, becuase each SET triggered the loop through automations. Now we do do this directly, not through SET.
     # I think I need to to have some kind of flag to see if any of the automations rely on stackIndex or cardIndex
@@ -894,7 +868,7 @@ defmodule DragnCardsGame.GameUI do
 
   def save_replay(game, user_id) do
     game_uuid = game["id"]
-    IO.puts("save replay")
+    Logger.debug("save replay")
     IO.inspect(game["options"])
     game_def = Plugins.get_game_def(game["options"]["pluginId"])
     save_metadata = get_in(game_def, ["saveGame", "metadata"])
@@ -980,9 +954,11 @@ defmodule DragnCardsGame.GameUI do
   def create_card_in_group(game, game_def, group_id, load_list_item) do
     group_size = Enum.count(get_stack_ids(game, group_id))
     # Can't insert a card directly into a group need to make a stack first
+    Logger.debug("create_card_in_group 0")
     new_card = Card.card_from_card_details(load_list_item["cardDetails"], game_def, load_list_item["databaseId"], group_id)
-    new_stack = Stack.stack_from_card(new_card)
     Logger.debug("create_card_in_group 1")
+    new_stack = Stack.stack_from_card(new_card)
+    Logger.debug("create_card_in_group 2")
     game
     |> update_card(new_card)
     |> update_stack(new_stack)
@@ -1017,23 +993,29 @@ defmodule DragnCardsGame.GameUI do
 
   end
 
-  def preprocess_card_automation(card_automation) do
-    rules = Enum.reduce(card_automation["rules"], [], fn(rule, acc) ->
+  def preprocess_card_automation_rules(card_rules) do
+    Logger.debug("card_rules: #{inspect(card_rules)}")
+    rules = Enum.reduce(card_rules, [], fn(rule, acc) ->
       acc ++ [preprocess_card_automation_rule(rule)]
     end)
-    Map.put(card_automation, "rules", rules)
+    rules
   end
 
   def implement_card_automations(game, game_def, card) do
     Logger.debug("implement_card_automations 1")
     card_automation = game_def["automation"]["cards"][card["databaseId"]]
-    if card_automation == nil do
+    card_rules = get_in(card_automation, ["rules"])
+    game = if card_rules == nil do
       game
     else
       game
-      |> put_in(["automation", card["id"]], preprocess_card_automation(card_automation))
+      |> put_in(["automation", card["id"]], card_automation)
+      |> put_in(["automation", card["id"], "rules"], preprocess_card_automation_rules(card_rules))
       |> put_in(["automation", card["id"], "this_id"], card["id"])
     end
+
+    Logger.debug("implement_card_automations 2")
+    game
   end
 
   # def tba() do

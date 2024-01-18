@@ -11,6 +11,7 @@ import { CardImage } from "./CardImage";
 import { DefaultActionLabel } from "./DefaultActionLabel";
 import { useCardStyle } from "./hooks/useCardStyle";
 import { PeekingSymbol } from "./PeekingSymbol";
+import { AbilityButton } from "./AbilityButton";
 
 export const Card = React.memo(({
     cardId,
@@ -73,6 +74,8 @@ export const Card = React.memo(({
                     aspectRatio={width/height}/>
 
                 <CardArrows cardId={cardId}/>
+
+                <AbilityButton cardId={cardId}/>
                 
             </div>
     )

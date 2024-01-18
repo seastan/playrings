@@ -19,11 +19,12 @@ defmodule DragnCardsWeb.Router do
     plug(Pow.Plug.RequireAuthenticated, error_handler: DragnCardsWeb.APIAuthErrorHandler)
   end
 
+
   scope "/", DragnCardsWeb do
     pipe_through(:browser)
 
     get("/json_test", PageController, :json_test)
-    get("/", PageController, :index)
+    #get("/", PageController, :index)
   end
 
   # Other scopes may use custom stacks.
@@ -37,6 +38,8 @@ defmodule DragnCardsWeb.Router do
 
     post("/replays/delete", ReplayController, :delete)
     resources("/replays/:user_id", ReplayController, except: [:new, :edit])
+
+    get("/patreon/:code", PatreonController, :patreon_callback)
 
     # My plugins
     resources("/myplugins", MyPluginsController)

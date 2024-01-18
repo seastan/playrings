@@ -311,4 +311,7 @@ export const siteL10n = {
   "gamePreferencesDescription": {
     "English": "Default values for game preferences will be applied when you create a game."
   },
+  "triggerAbility": {
+    "English": "Trigger ability"
+  },
 }

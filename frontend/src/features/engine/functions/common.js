@@ -1,6 +1,6 @@
 import React from "react";
 
-export const keyClass = "m-auto border bg-gray-500 text-center bottom inline-block";
+export const keyClass = "m-auto border bg-gray-500 text-center bottom inline-block text-white";
 export const keyStyle = {width: "3vh", height: "3vh", borderRadius: "0.5vh"}
 export const keyStyleL = {width: "7vh", height: "3vh", borderRadius: "0.5vh"}
 export const keyStyleXL = {width: "12vh", height: "3vh", borderRadius: "0.5vh"}

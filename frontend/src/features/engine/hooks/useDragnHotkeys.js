@@ -6,9 +6,12 @@ import { dragnActionLists } from "../functions/dragnActionLists";
 import { useDispatch } from "react-redux";
 import { useImportViaUrl } from "./useImportViaUrl";
 import { setShowModal } from "../../store/playerUiSlice";
+import { useVisibleFace } from "./useVisibleFace";
+import { useActiveCardId } from "./useActiveCardId";
 
 export const dragnHotkeys = [
     {"key": "T", "actionList": "targetCard", "label": "targetCard"},
+    {"key": "Shift+A", "actionList": "triggerAutomationAbility", "label": "triggerAbility"},
     {"key": "Shift+W", "actionList": "drawArrow", "label": "startStopDrawingArrow"},
     {"key": "Escape", "actionList": "clearTargets", "label": "clearTargetsArrows"},
     {"key": "Ctrl+U", "actionList": "loadURL", "label": "loadUrl"},
@@ -91,6 +94,8 @@ export const dragnTouchButtons = {
     const doActionList = useDoActionList();
     const dispatch = useDispatch();
     const importViaUrl = useImportViaUrl();
+    const activeCardId = useActiveCardId();
+    const visibleFace = useVisibleFace(activeCardId);
     const {gameBroadcast} = useContext(BroadcastContext);
     return (actionList) => {
       switch (actionList) {
@@ -100,6 +105,9 @@ export const dragnTouchButtons = {
           return dispatch(setShowModal("prebuilt_deck"));
         case "targetCard":
           return doActionList(dragnActionLists.targetCard());
+        case "triggerAutomationAbility":
+          console.log("Ability: ",visibleFace)
+          return doActionList(dragnActionLists.triggerAutomationAbility(visibleFace?.ability));
         case "saveGame":
           return gameBroadcast("game_action", {action: "save_replay", options: {player_ui: store.getState().playerUi}});
         case "clearTargets":

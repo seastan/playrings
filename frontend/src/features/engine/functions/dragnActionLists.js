@@ -38,6 +38,19 @@ export const dragnActionLists = {
       ]
     ]
   ]),
+  triggerAutomationAbility: (ability) => ([
+    ["COND",
+      ["NOT_EQUAL", ability, null],
+      [
+        ["LOG", "$ALIAS_N", " triggered the ability on ", "$ACTIVE_FACE.name", "."],
+        ["VAR", "$THIS_ID", "$ACTIVE_CARD_ID"],
+        ["VAR", "$THIS", "$ACTIVE_CARD"],
+        ability
+      ],
+      ["TRUE"],
+      ["LOG", "$ALIAS_N", " attempted to trigger the ability on ", "$ACTIVE_FACE.name", " but it has no ability implemented."]
+    ]
+  ]),
   clearTargets: () => ([
     ["LOG", "$ALIAS_N", " cleared all  targets and arrows."],
     ["FOR_EACH_KEY_VAL", "$CARD_ID", "$CARD", "$GAME.cardById", [
