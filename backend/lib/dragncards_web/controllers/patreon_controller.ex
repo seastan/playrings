@@ -47,6 +47,12 @@ defmodule DragnCardsWeb.PatreonController do
     IO.puts("----------------------------- request_access_token 1")
     # Get client secret from environment variable
     # PATREON_REDIRECT_URI = "http://localhost:3000/profile/patreon/" for local development
+    client_id = System.get_env("PATREON_CLIENT_ID")
+    client_secret = System.get_env("PATREON_CLIENT_SECRET")
+    redirect_uri = System.get_env("PATREON_REDIRECT_URI")
+    IO.inspect(client_id)
+    IO.inspect(client_secret)
+    IO.inspect(redirect_uri)
     body = [
       {"code", code},
       {"grant_type", "authorization_code"},
