@@ -19,9 +19,6 @@ defmodule DragnCardsWeb.PatreonController do
     # Otherwise, the token is invalid
     case profile do
       %{"data" => _} ->
-        conn
-        |> json(%{error: %{message: "Failed to link Patreon account. Token expired."}})
-      _ ->
         IO.puts("----------------------------- patreon callback 2")
         IO.inspect(profile)
         amount_cents = get_amount_from_profile(profile)
@@ -36,6 +33,9 @@ defmodule DragnCardsWeb.PatreonController do
             amount_dollars = amount_cents / 100.0 |> ceil()
             update_user_supporter_level(conn, amount_dollars)
         end
+      _ ->
+        conn
+        |> json(%{error: %{message: "Failed to link Patreon account. Token expired."}})
 
     end
 
