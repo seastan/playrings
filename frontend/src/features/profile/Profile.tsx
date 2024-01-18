@@ -71,7 +71,8 @@ export const Profile: React.FC<Props> = () => {
   if (data) {
     var replayData = data.data;
     var nonDeletedData: Array<any> = [];
-    for (var i=0; i<replayData.length; i++) {
+    var numReplays = replayData ? replayData.length : 0;
+    for (var i=0; i<numReplays; i++) {
     //for (var replay of replayData) {
       const replay = replayData[i];
       if (replay.deleted_by && replay.deleted_by.includes(user.id)) continue;
