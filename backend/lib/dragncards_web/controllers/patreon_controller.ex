@@ -45,20 +45,19 @@ defmodule DragnCardsWeb.PatreonController do
 
   defp request_access_token(code) do
     IO.puts("----------------------------- request_access_token 1")
-    # Get client secret from environment variable
-    # PATREON_REDIRECT_URI = "http://localhost:3000/profile/patreon/" for local development
-    client_id = System.get_env("PATREON_CLIENT_ID")
-    client_secret = System.get_env("PATREON_CLIENT_SECRET")
-    redirect_uri = System.get_env("PATREON_REDIRECT_URI")
-    IO.inspect(client_id)
-    IO.inspect(client_secret)
-    IO.inspect(redirect_uri)
+    # Get client secret from environment variable fromprod.exs
+    patreon_client_id = Application.get_env(:dragncards, :patreon_client_id)
+    patreon_client_secret = Application.get_env(:dragncards, :patreon_client_secret)
+    patreon_redirect_uri = Application.get_env(:dragncards, :patreon_redirect_uri)
+    IO.inspect(patreon_client_id)
+    IO.inspect(patreon_client_secret)
+    IO.inspect(patreon_redirect_uri)
     body = [
       {"code", code},
       {"grant_type", "authorization_code"},
-      {"client_id", System.get_env("PATREON_CLIENT_ID")},
-      {"client_secret", System.get_env("PATREON_CLIENT_SECRET")},
-      {"redirect_uri", System.get_env("PATREON_REDIRECT_URI")}
+      {"client_id", patreon_client_id},
+      {"client_secret", patreon_client_secret},
+      {"redirect_uri", patreon_redirect_uri}
     ]
     |> URI.encode_query()
     IO.puts("----------------------------- request_access_token 2")
