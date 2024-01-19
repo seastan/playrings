@@ -40,11 +40,12 @@ export const dragnActionLists = {
   ]),
   triggerAutomationAbility: (ability) => ([
     ["COND",
-      ["NOT_EQUAL", ability, null],
+      ability !== null,
       [
         ["LOG", "$ALIAS_N", " triggered the ability on ", "$ACTIVE_FACE.name", "."],
         ["VAR", "$THIS_ID", "$ACTIVE_CARD_ID"],
         ["VAR", "$THIS", "$ACTIVE_CARD"],
+        ["LOG_DEV", "$THIS"],
         ability
       ],
       ["TRUE"],

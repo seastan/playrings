@@ -8,6 +8,7 @@ import { dragnActionLists } from "./functions/dragnActionLists";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBolt } from "@fortawesome/free-solid-svg-icons";
 import { usePlayerN } from "./hooks/usePlayerN";
+import { dragnHotkeys } from "./hooks/useDragnHotkeys";
 
 export const AbilityButton = React.memo(({
     cardId,
@@ -19,6 +20,9 @@ export const AbilityButton = React.memo(({
     const ability = cardVisibleFace?.ability;
     const hasAbility = cardVisibleFace?.ability !== undefined && cardVisibleFace?.ability !== null;
     const doActionList = useDoActionList();
+    // Find the item in the list of dragnHotkeys that has actionList === "triggerAutomationAbility"
+    const abilityHotkey = dragnHotkeys.find(hotkey => hotkey.actionList === "triggerAutomationAbility");
+    const abilityHotkeyKey = abilityHotkey?.key;
 
 
     const handleAbilityClick = () => {
@@ -29,22 +33,21 @@ export const AbilityButton = React.memo(({
 
     if (isActive && hasAbility) {
         return (
-            <div>
-                <div 
-                    className="absolute flex rounded-3xl bg-gray-600 border hover:bg-red-700 text-gray-300 justify-center items-center"
-                    style={{
-                        width: "3.5vh",
-                        height: "3.5vh",
-                        fontSize: "2vh",
-                        top: "0%",
-                        right: "0%",
-                        zIndex:zIndex+1,
-                        transform: "translate(30%, 0%)"
-                    }}
-                    onClick={() => handleAbilityClick()}
-                >
-                    <div><FontAwesomeIcon icon={faBolt}/></div>
-                </div>
+            <div 
+                className="absolute flex rounded-3xl bg-gray-600 border hover:bg-red-700 text-gray-300 justify-center items-center"
+                style={{
+                    width: "3.5vh",
+                    height: "3.5vh",
+                    fontSize: "2vh",
+                    top: "0%",
+                    right: "0%",
+                    zIndex:zIndex+1,
+                    transform: "translate(30%, 0%)"
+                }}
+                onClick={() => handleAbilityClick()}
+                title={abilityHotkeyKey}
+            >
+                <div><FontAwesomeIcon icon={faBolt}/></div>
             </div>
         )
     }

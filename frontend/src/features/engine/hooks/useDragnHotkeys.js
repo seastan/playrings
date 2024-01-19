@@ -8,6 +8,7 @@ import { useImportViaUrl } from "./useImportViaUrl";
 import { setShowModal } from "../../store/playerUiSlice";
 import { useVisibleFace } from "./useVisibleFace";
 import { useActiveCardId } from "./useActiveCardId";
+import { useSendLocalMessage } from "./useSendLocalMessage";
 
 export const dragnHotkeys = [
     {"key": "T", "actionList": "targetCard", "label": "targetCard"},
@@ -94,10 +95,16 @@ export const dragnTouchButtons = {
     const doActionList = useDoActionList();
     const dispatch = useDispatch();
     const importViaUrl = useImportViaUrl();
+    const sendLocalMessage = useSendLocalMessage();
     const activeCardId = useActiveCardId();
     const visibleFace = useVisibleFace(activeCardId);
     const {gameBroadcast} = useContext(BroadcastContext);
+    const cardActionLists = ["targetCard", "drawArrow", "triggerAutomationAbility"];
     return (actionList) => {
+      if (cardActionLists.includes(actionList) && !activeCardId) {
+        sendLocalMessage(`You must hover over a card to use that hotkey.`);
+        return;
+      }
       switch (actionList) {
         case "loadURL":
           return importViaUrl();
@@ -106,7 +113,6 @@ export const dragnTouchButtons = {
         case "targetCard":
           return doActionList(dragnActionLists.targetCard());
         case "triggerAutomationAbility":
-          console.log("Ability: ",visibleFace)
           return doActionList(dragnActionLists.triggerAutomationAbility(visibleFace?.ability));
         case "saveGame":
           return gameBroadcast("game_action", {action: "save_replay", options: {player_ui: store.getState().playerUi}});
