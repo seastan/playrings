@@ -1,4 +1,5 @@
 defmodule DragnCardsWeb.PatreonController do
+  alias DBConnection.App
   use DragnCardsWeb, :controller
   alias DragnCards.{Users, Repo, Users.User}
   alias Plug.Conn
@@ -21,26 +22,20 @@ defmodule DragnCardsWeb.PatreonController do
       %{"data" => _} ->
         IO.puts("----------------------------- patreon callback 2")
         IO.inspect(profile)
-        amount_cents = get_amount_from_profile(profile)
-        case amount_cents do
-          nil ->
+        case get_level_from_profile(profile) do
+          {:error, reason} ->
             conn
-            |> json(%{error: %{message: "Failed to link Patreon account. Token expired."}})
-          _ ->
+            |> json(%{error: %{message: "Failed to get supporter level"}})
+          {:ok, supporter_level} ->
             IO.puts("----------------------------- patreon callback 3")
-            IO.inspect(amount_cents)
-            # Divide by 100 (round up)
-            amount_dollars = amount_cents / 100.0 |> ceil()
-            update_user_supporter_level(conn, amount_dollars)
+            IO.inspect(supporter_level)
+            update_user_supporter_level(conn, supporter_level)
         end
       _ ->
         conn
-        |> json(%{error: %{message: "Failed to link Patreon account. Token expired."}})
+        |> json(%{error: %{message: "Failed to get profile data."}})
 
     end
-
-
-
   end
 
   defp request_access_token(code) do
@@ -84,6 +79,7 @@ defmodule DragnCardsWeb.PatreonController do
     IO.puts("----------------------------- fetch_user_profile 0")
     headers = [{"Authorization", "Bearer #{access_token}"}]
     case HTTPoison.get("https://www.patreon.com/api/oauth2/v2/identity?include=memberships&fields%5Bmember%5D=currently_entitled_amount_cents", headers) do
+    #case HTTPoison.get("https://www.patreon.com/api/oauth2/v2/identity?include=memberships.campaign&fields%5Bmember%5D=currently_entitled_amount_cents&fields%5Bcampaign%5D=id,name", headers) do
       {:ok, response} ->
         IO.puts("----------------------------- fetch_user_profile 1")
         # Assuming you want to work with the response body as a string
@@ -96,23 +92,36 @@ defmodule DragnCardsWeb.PatreonController do
     end
   end
 
-  def get_amount_from_profile(profile) do
-    included = Map.get(profile, "included", [])
-    # Loop over included to find the membership
-    membership = included |> Enum.find(fn x -> x["id"] == "38f2b2d6-1f10-454d-b1ad-e2fcc33d9cb4" end)
-    amount = case membership do
-      %{"attributes" => %{"currently_entitled_amount_cents" => amount}} ->
-        IO.puts("amount")
-        IO.inspect(amount)
-        amount
-      _ ->
-        IO.puts("no amount")
-        0
+  def get_level_from_profile(profile) do
+    case get_member_map() do
+      nil ->
+        {:erorr, "Failed to get campaign info"}
+      member_map ->
+        {:ok, get_level_from_profile_with_map(profile, member_map)}
     end
   end
 
-  def update_user_supporter_level(conn, supporter_level) do
+  def get_level_from_profile_with_map(profile, member_map) do
+    included = Map.get(profile, "included", [])
+    Enum.reduce(included, 0, fn x, acc ->
+      id = Map.get(x, "id")
+      member = Map.get(member_map, id)
+      IO.puts("id = #{id}, member = #{inspect member}")
+      if member do
+        amount_cents = get_in(member, ["attributes", "currently_entitled_amount_cents"])
+        IO.puts("Member is in map! amount_cents = #{inspect amount_cents}")
+        if amount_cents do
+          amount_cents / 100.0 |> ceil()
+        else
+          acc
+        end
+      else
+        acc
+      end
+    end)
+  end
 
+  def update_user_supporter_level(conn, supporter_level) do
     # Update user
     user_id = conn.assigns.current_user.id
     IO.puts("----------------------------- patreon callback 4")
@@ -132,6 +141,24 @@ defmodule DragnCardsWeb.PatreonController do
         conn
         |> json(%{error: %{message: "Failed to link Patreon account"}})
     end
+  end
+
+  def get_member_map() do
+    creator_token = Application.get_env(:dragncards, :patreon_creator_token)
+    headers = [{"Authorization", "Bearer #{creator_token}"}]
+    case HTTPoison.get("https://www.patreon.com/api/oauth2/v2/campaigns/6913198/members?fields%5Bmember%5D=full_name,email,currently_entitled_amount_cents&page%5Bsize%5D=5000", headers) do
+      {:ok, response} ->
+        # Assuming you want to work with the response body as a string
+        response_body = response.body |> Poison.decode!()
+        data = Map.get(response_body, "data", [])
+        Enum.reduce(data, %{}, fn x, acc ->
+          id = Map.get(x, "id")
+          acc |> Map.put(id, x)
+        end)
+      {:error, _error} ->
+        nil
+    end
+
   end
 
 end
