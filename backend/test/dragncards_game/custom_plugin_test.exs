@@ -68,9 +68,8 @@ defmodule DragnCardsGame.CustomPluginTest do
         |> Repo.update_all([])
         |> case do
           {1, nil} ->
-            # If the update was successful, print a confirmation message
-            IO.puts("Email Confirmed for user!")
-
+            # Do nothing if the update was successful
+            :ok
           _ ->
             # If the update was not successful, print a failure message
             IO.puts("Email NOT Confirmed for user!")

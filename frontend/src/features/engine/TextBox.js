@@ -16,6 +16,7 @@ export const TextBox = React.memo(({
         top: convertToPercentage(textBoxLayoutInfo.top), 
         width: convertToPercentage(textBoxLayoutInfo.width), 
         height: convertToPercentage(textBoxLayoutInfo.height),
+        zIndex: 1e3,
       }}>
       {textBox?.content}
     </div>
