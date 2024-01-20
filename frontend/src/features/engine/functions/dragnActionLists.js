@@ -163,6 +163,52 @@ export const dragnActionLists = {
         ["SET", "/cardById/" + card.id + "/peeking", peeking]
       ])
     }
+  },
+  toggleGroupVisibility: (group, val, playerIList) => {
+    if (val === "All") {
+      // Make an object where the keys are the playerI and the values are true
+      const peeking = playerIList.reduce((obj, playerI) => {
+        obj[playerI] = true;
+        return obj;
+      }
+      , {});
+      return ([
+        ["LOG", `{{$ALIAS_N}}" set ${group.label} to be peeked at by all players.`],
+        ["FOR_EACH_KEY_VAL", "$CARD_ID", "$CARD", "$GAME.cardById", [
+          ["COND",
+            ["EQUAL", "$CARD.groupId", group.id],
+            ["SET", "/cardById/$CARD_ID/peeking", peeking]
+          ]
+        ]],
+        ["SET", `/groupById/${group.id}/onCardEnter/peeking`, peeking]
+      ])
+    } else if (val === "None") {
+      return ([
+        ["LOG", `{{$ALIAS_N}}" set ${group.label} to be hidden from all players.`],
+        ["FOR_EACH_KEY_VAL", "$CARD_ID", "$CARD", "$GAME.cardById", [
+          ["COND",
+            ["EQUAL", "$CARD.groupId", group.id],
+            ["SET", "/cardById/$CARD_ID/peeking", {}]
+          ]
+        ]],
+        ["SET", `/groupById/${group.id}/onCardEnter/peeking`, {}]
+      ])
+    } else {
+      const peeking = {...group?.onCardEnter?.peeking, [val]: !group?.onCardEnter?.peeking?.[val]};
+      return ([
+        group?.onCardEnter?.peeking?.[val]
+          ? ["LOG", `{{$ALIAS_N}} set ${group.label} to not be peeked at by ${val}.`]
+          : ["LOG", `{{$ALIAS_N}} set ${group.label} to be peeked at by ${val}.`]
+        ,
+        ["FOR_EACH_KEY_VAL", "$CARD_ID", "$CARD", "$GAME.cardById", [
+          ["COND",
+            ["EQUAL", "$CARD.groupId", group.id],
+            ["SET", `/cardById/$CARD_ID/peeking`, peeking]
+          ]
+        ]],
+        ["SET", `/groupById/${group.id}/onCardEnter/peeking`, peeking]
+      ])
+    }
   }
 }
   

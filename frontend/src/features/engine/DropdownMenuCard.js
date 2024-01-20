@@ -223,11 +223,6 @@ export const DropdownMenuCard = React.memo(({
         <div className="menu">
           <GoBack goToMenu="main" clickCallback={handleDropdownClick}/>
           <DropdownItem
-            action={dragnActionLists.togglePeeking(menuCard, "All", playerIList)}
-            clickCallback={handleDropdownClick}>
-            {l10n("All")}
-          </DropdownItem>
-          <DropdownItem
             action={dragnActionLists.togglePeeking(menuCard, "None", playerIList)}
             clickCallback={handleDropdownClick}>
             {l10n("None")}
@@ -243,6 +238,11 @@ export const DropdownMenuCard = React.memo(({
               </DropdownItem>
             )
           })}
+          <DropdownItem
+            action={dragnActionLists.togglePeeking(menuCard, "All", playerIList)}
+            clickCallback={handleDropdownClick}>
+            {l10n("All")}
+          </DropdownItem>
         </div>}
 
         {activeMenu === "moveTo"+menuCard?.deckGroupId ?

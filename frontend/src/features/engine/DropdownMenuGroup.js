@@ -147,16 +147,15 @@ export const DropdownMenuGroup = React.memo(({
             <GoBack goToMenu="main" clickCallback={handleDropdownClick}/>
             <DropdownItem
               leftIcon={null}
-              action={"setVisibility"}
-              value="none"
+              action={dragnActionLists.toggleGroupVisibility(menuGroup, "None", playerIList)}
               clickCallback={handleDropdownClick}>
               {siteL10n("None")}
             </DropdownItem>
             {playerIList.map((playerI, _index) => {
               return(
                 <DropdownItem
-                  rightIcon={<FontAwesomeIcon icon={group?.defaultPeeking?.includes(playerI) ? faCheck : null}/>}
-                  action={"setVisibility"}
+                  rightIcon={<FontAwesomeIcon icon={group?.onCardEnter?.peeking?.[playerI] ? faCheck : null}/>}
+                  action={dragnActionLists.toggleGroupVisibility(menuGroup, playerI, playerIList)}
                   value={playerI}
                   clickCallback={handleDropdownClick}>
                   {siteL10n(playerI)}
@@ -165,8 +164,7 @@ export const DropdownMenuGroup = React.memo(({
             })}
             <DropdownItem
               leftIcon={null}
-              action={"setVisibility"}
-              position="all"
+              action={dragnActionLists.toggleGroupVisibility(menuGroup, "All", playerIList)}
               clickCallback={handleDropdownClick}>
               {siteL10n("All")}
             </DropdownItem>
