@@ -12,9 +12,9 @@ export const useImportViaUrl = () => {
   const doActionList = useDoActionList();
   const cardDb = useCardDb();
   return async () => {
-    if (gameDef["pluginName"] === "LotR Living Card Game") {
+    if (gameDef["pluginName"].includes("LotR Living Card Game")) {
       await importViaUrlRingsDb(importLoadList, doActionList, playerN);
-    } else if (gameDef["pluginName"] === "Marvel Champions: The Card Game") {
+    } else if (gameDef["pluginName"].includes("Marvel Champions: The Card Game")) {
       await importViaUrlMarvelCdb(importLoadList, doActionList, playerN, cardDb);
     } else {
       alert("Importing via URL is not yet supported for this game. Please request this feature on Discord.");
