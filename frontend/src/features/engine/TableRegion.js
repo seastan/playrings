@@ -12,6 +12,7 @@ export const TableRegion = React.memo(({
   const observingPlayerN = useSelector(state => state?.playerUi?.observingPlayerN);
   const browseGroupId = useSelector(state => state?.playerUi?.browseGroup?.id);
   const formattedGroupId = region.groupId.replace(/playerN/g, observingPlayerN);
+  const extraStyle = useSelector(state => state?.gameUi?.game?.groupById?.[formattedGroupId]?.extraStyle);
   const formattedRegion = {...region, groupId: formattedGroupId};
   console.log("Rendering TableRegion formatted", formattedRegion);
   const hideGroup = (formattedRegion.groupId === browseGroupId) || (browseGroupId && formattedRegion.hideWhileBrowsing);
@@ -21,6 +22,7 @@ export const TableRegion = React.memo(({
       className="absolute"
       style={{
         ...region?.style,
+        ...extraStyle,
         top: convertToPercentage(region.top),
         left: convertToPercentage(region.left),
         width: convertToPercentage(region.width),

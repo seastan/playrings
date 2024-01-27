@@ -208,14 +208,16 @@ defmodule DragnCardsGame.Evaluate do
     |> Enum.reduce_while(nil, fn i, _acc ->
       case Map.fetch(input_map["#{i}"], key) do
         :error -> {:cont, {false, nil}}
-        {:ok, value} -> {:halt, {true, value}}
+        {:ok, value} ->
+          {:halt, {true, value}}
       end
     end)
     |> case do
       {false, nil} -> # Not in local scopes, check global scope
         case Map.fetch(input_map, key) do
           :error -> {false, nil}
-          {:ok, value} -> {true, value}
+          {:ok, value} ->
+            {true, value}
         end
       found -> found # Found in local scopes
     end
@@ -271,7 +273,7 @@ defmodule DragnCardsGame.Evaluate do
 
   def evaluate(game, code, trace \\ []) do
     #if is_list(code) do IO.inspect(code) end
-    #try do
+    try do
 
       current_scope_index = game["currentScopeIndex"] + 1
       game = put_in(game, ["currentScopeIndex"], current_scope_index)
@@ -300,17 +302,19 @@ defmodule DragnCardsGame.Evaluate do
       end
 
 
-    # rescue
-    #   e in RuntimeError ->
-    #     if String.starts_with?(e.message, ":") do
-    #       raise e.message
-    #     else
-    #       raise ": #{e.message} Trace: #{inspect(trace)}"
-    #     end
-    #       #evaluate(game, ["ERROR", e.message], trace)
-    #   _ ->
-    #     raise "Error evaluating code."
-    # end
+    rescue
+      e in RuntimeError ->
+        if String.starts_with?(e.message, ":") do
+          raise e.message
+        else
+          raise ": #{e.message} Trace: #{inspect(trace)}"
+        end
+      e in FunctionClauseError ->
+        raise "FunctionClauseError: #{inspect(code)} Trace: #{inspect(trace)}"
+          #evaluate(game, ["ERROR", e.message], trace)
+      _ ->
+        raise "Error evaluating code."
+    end
   end
 
 

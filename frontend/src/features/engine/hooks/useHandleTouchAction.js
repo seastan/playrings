@@ -21,7 +21,7 @@ export const useHandleTouchAction = () => {
     const doActionList = useDoActionList();
     const doDragnHotkey = useDoDragnHotkey();
     const [prevActive, setPrevActive] = useState(null);
-    const getDefaultAction = useGetDefaultAction();
+    const getDefaultAction = useGetDefaultAction(activeCardId);
     const state = store.getState();
     const actionProps = {state, dispatch, gameBroadcast, chatBroadcast};
     console.log("Rendering HandleTouchActions")

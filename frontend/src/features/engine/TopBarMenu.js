@@ -115,8 +115,9 @@ export const TopBarMenu = React.memo(({}) => {
       loadFileCustom();
     }  else if (data.action === "layout") {
       doActionList([
+        ["LOG", "$ALIAS_N", " changed the layout to "+gameL10n(data.value.label)+"."],
         ["SET", "/layoutId", data.value.layoutId],
-        ["SET", "/numPlayers", data.value.numPlayers]
+        ["SET", "/numPlayers", data.value.numPlayers ? data.value.numPlayers : "$GAME.numPlayers"]
       ]);
     } 
   }

@@ -37,25 +37,27 @@ defmodule DragnCardsGame.Evaluate.Functions.PROMPT do
       [{arg_name, arg_val}] = cond do
         index >= Enum.count(arg_vals) -> # If we are beyond the range of input arguments, look for default arguments
           if is_map(arg) do
-    Map.to_list(arg)
+            Map.to_list(arg)
           else
-    raise "Prompt #{prompt_id} expects #{Enum.count(orig_args)} arguments, but got #{Enum.count(arg_vals)}."
+            raise "Prompt #{prompt_id} expects #{Enum.count(orig_args)} arguments, but got #{Enum.count(arg_vals)}."
           end
         true -> # We are within the range of input arguments, so use the input argument
-          arg_val = Enum.at(arg_vals, index)
+          arg_val = Evaluate.evaluate(game, Enum.at(arg_vals, index), trace ++ ["arg_val #{index}"])
           if is_map(arg) do
-    arg_name = Enum.at(Map.keys(arg), 0)
-    [{arg_name, arg_val}]
+            arg_name = Enum.at(Map.keys(arg), 0)
+            [{arg_name, arg_val}]
           else
-    arg_name = arg
-    [{arg_name, arg_val}]
+            arg_name = arg
+            [{arg_name, arg_val}]
           end
       end
       acc ++ [["VAR", arg_name, arg_val]]
     end)
+
     temp_game = Enum.reduce(var_statements, game, fn(var_statement, acc) ->
       Evaluate.evaluate(acc, var_statement, trace ++ ["var_statement"])
     end)
+
     new_message = Evaluate.evaluate(temp_game, orig_message, trace ++ ["message"])
     prompt_uuid = Ecto.UUID.generate
 

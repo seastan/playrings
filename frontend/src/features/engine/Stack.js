@@ -80,6 +80,7 @@ export const Stack = React.memo(({
   const stackHeight = cardHeight*cardSize*zoomFactor;
   const stackWidth = cardWidth*cardSize + ATTACHMENT_OFFSET * (numCards - 1);
   const stackWidthFan = Math.min(handSpacing, cardWidth*cardSize*zoomFactor);
+  console.log(`Rengering ${groupId} with ${numStacks} stacks. Stack ${stackIndex} has ${numCards} cards. Stack width is ${stackWidth}vh. Stack height is ${stackHeight}vh. Hand spacing is ${handSpacing}vh. Stack width fan is ${stackWidthFan}vh.`)
   
   return (
     <Draggable 

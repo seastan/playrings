@@ -1299,8 +1299,9 @@ defmodule DragnCardsGame.CustomPluginTest do
   @tag :temp
   test "temp", %{user: _user, game: game, game_def: _game_def} do
 
-    game = Evaluate.evaluate(game, ["DEFINE", "$A", ["LIST", "A", "B", "C"]])
-    game = Evaluate.evaluate(game, "$A.[1]")
+
+    game = Evaluate.evaluate(game, ["LOAD_CARDS", "Q01.2"])
+    game = Evaluate.evaluate(game, ["ACTION_LIST", "revealEncounterFaceup"])
   end
 
   # # temp

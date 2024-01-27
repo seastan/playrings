@@ -58,7 +58,7 @@ export const TouchButton = React.memo(({buttonObj, displayText}) => {
       //onMouseUp={(event) => handleClick(event)} onTouchStart={(event) => handleClick(event)} 
       onClick={(event) => handleClick(event)} 
       className={"absolute cursor-default h-full w-full p-0.5 top-0"}>
-      <div className={"flex rounded w-full h-full text-center items-center justify-center" + bgColor + hoverColor} style={{fontSize: "2vh", lineHeight: "100%"}}>
+      <div className={"flex rounded w-full h-full text-center items-center justify-center" + bgColor + hoverColor} style={{fontSize: "1.5vh", lineHeight: "100%"}}>
         {displayText}
       </div>
       {img}

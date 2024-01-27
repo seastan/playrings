@@ -697,7 +697,7 @@ export const getGameDefSchema = (gameDef) => {
             "_memberOfPath_": "gameDef.layouts",
           },
           "numPlayers": {
-            "_type_": "integer",
+            "_type_": "any",
             "_required_": true,
           },
         }
