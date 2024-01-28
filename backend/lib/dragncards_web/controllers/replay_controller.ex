@@ -36,7 +36,8 @@ defmodule DragnCardsWeb.ReplayController do
     updates = %{
       deleted_by: new_deleted_by
     }
-    r = Repo.get!(Replay, replay["id"])
+    # Get reply from database where uuid matches
+    r = Repo.get_by!(Replay, uuid: replay["uuid"])
     c = Ecto.Changeset.change(r, updates)
     case Repo.update(c) do
       {:ok, _struct}       -> # Updated with success
