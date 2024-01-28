@@ -52,7 +52,7 @@ export const Profile: React.FC<Props> = () => {
     setShowModal(true);
   }
   const deleteReplay = async(replay: any, index: number, numPlayers: number) => {
-    if (window.confirm("Are you sure you want to delete this replay?")) {
+    if (window.confirm("Are you sure you want to delete this saved game?")) {
       const data = {
         user: user,
         replay: replay,

@@ -17,7 +17,7 @@ import SharePluginModal from "./editplugin/SharePluginModal";
 //const lobbyButtonClass = 
 const iconButtonClass = "cursor-pointer hover:bg-white hover:text-black h-full w-full m-2 rounded flex items-center justify-center text-white no-underline select-none"
 
-const MyPluginEntry = ({plugin, setSelectedPlugin, setShowEditModal, setShowShareModal, index}) => {
+const MyPluginEntry = ({plugin, setSelectedPlugin, setShowEditModal, setShowShareModal, doFetchHash, index}) => {
   const siteL10n = useSiteL10n();
   const { authToken, renewToken, setAuthAndRenewToken } = useAuth();
   const authOptions = useMemo(
@@ -37,11 +37,16 @@ const MyPluginEntry = ({plugin, setSelectedPlugin, setShowEditModal, setShowShar
     setSelectedPlugin(plugin);
     setShowShareModal(true);
   }
-  const handleDeleteClick = () => {
-    const conf = window.confirm(siteL10n("Are you sure you want to delete your plugin?")+" ("+plugin.name+")");
+  const handleDeleteClick = async () => {
+    const conf = window.confirm(siteL10n(`This will delete ${plugin.name} and all decks built by users for this plugin. Are you sure?`));
     if (conf) {
-      const res = axios.delete("/be/api/myplugins/"+plugin.id, authOptions);
+      const res = await axios.delete("/be/api/myplugins/"+plugin.id, authOptions);
+
+      if (res.status === 200) {
+        doFetchHash((new Date()).toISOString());
+      }
     }
+    
   }
   return(
     <div className={"relative w-full p-4 my-2 rounded-lg text-white "+((index % 2 === 0) ? "bg-gray-700" : "bg-gray-800")}>
@@ -114,6 +119,7 @@ export const MyPlugins = () => {
             setSelectedPlugin={setSelectedPlugin}
             setShowEditModal={setShowEditModal}
             setShowShareModal={setShowShareModal}
+            doFetchHash={doFetchHash}
             index={index}
           />)
       })}
