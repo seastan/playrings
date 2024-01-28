@@ -171,6 +171,8 @@ export const ProfileSettings = () => {
                 <option value="English">English</option>
                 <option value="French">French</option>
                 <option value="Spanish">Spanish</option>
+                <option value="Italian">Italian</option>
+                <option value="German">German</option>
               </select>
             </div>
             <div className="flex items-center justify-between">
