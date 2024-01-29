@@ -1211,7 +1211,7 @@ export const gameL10n = {
 "ALeP The Glittering Caves": "ALeP Les Cavernes Scientillantes",
 
   },
-  "Chinese Simplified": {
+  "Chinese": {
     "Menu": "菜单",
     "Player count": "玩家数",
     "Layout": "页面布局",
