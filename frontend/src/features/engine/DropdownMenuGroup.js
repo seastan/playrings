@@ -137,7 +137,7 @@ export const DropdownMenuGroup = React.memo(({
                 rightIcon={<FontAwesomeIcon icon={faChevronRight}/>}
                 goToMenu={"moveTo"+moveToGroupId}
                 clickCallback={handleDropdownClick}>
-                {siteL10n(gameDef?.groups?.[moveToGroupId]?.label)}
+                {gameL10n(gameDef?.groups?.[moveToGroupId]?.label)}
               </DropdownItem>
               ))}
         </div>

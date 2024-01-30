@@ -14,6 +14,23 @@ import { tr } from "date-fns/locale";
 
 let draggableClientRect = null;
 
+const getAfterDragName = (game, stackId, destGroupId, allowFlip) => {
+  const stack = game.stackById[stackId];
+  const cardIds = stack.cardIds;
+  const cardId = cardIds[0];
+  const card = game.cardById[cardId];
+
+  if (!allowFlip) return card?.sides?.[card?.currentSide]?.name;
+  
+  const destGroup = game.groupById[destGroupId];
+  const destGroupCurrentSide = destGroup?.onCardEnter?.currentSide;
+  
+  if (destGroupCurrentSide) {
+    return card?.sides?.[destGroupCurrentSide]?.name;
+  }
+  return card?.sides?.[card?.currentSide]?.name;
+}
+
 export const DragContainer = React.memo(({}) => {
   console.log("Rendering DragContainer");
   const dispatch = useDispatch();
@@ -109,6 +126,9 @@ export const DragContainer = React.memo(({}) => {
     const topOfOrigStackCardId = origStackCardIds[0];
     const topOfOrigStackCard = game.cardById[topOfOrigStackCardId];
     const allowFlip = keypressShift ? false : true; 
+    const dest = result.combine ? result.combine : result.destination;
+    const destGroupId = dest?.droppableId;
+    const afterDragName = getAfterDragName(game, origStackId, destGroupId, allowFlip);
 
     var destGroup = null;
 
@@ -122,8 +142,6 @@ export const DragContainer = React.memo(({}) => {
     }, 100);
 
 
-    const dest = result.combine ? result.combine : result.destination;
-    const destGroupId = dest?.droppableId;
 
     const draggableNode = document.querySelector(`[data-rbd-draggable-id="${result.draggableId}"]`);
 
@@ -178,7 +196,7 @@ export const DragContainer = React.memo(({}) => {
       dispatch(setStackIds(newOrigGroup)); // This results is a jitter because the cardIndex is still 0 so it's briefly placed in the parent spot
       dispatch(setCardIds(newDestStack));
       doActionList([
-        ["LOG", "$ALIAS_N", " attached ", ["FACEUP_NAME_FROM_STACK_ID", origStackId], " from ", "$GAME.groupById."+origGroupId+".label", " to ", ["FACEUP_NAME_FROM_STACK_ID", destStackId], "."],
+        ["LOG", "$ALIAS_N", " attached ", afterDragName, " from ", "$GAME.groupById."+origGroupId+".label", " to ", ["FACEUP_NAME_FROM_STACK_ID", destStackId], "."],
         ["MOVE_STACK", origStackId, destGroupId, dest.index, {"combine": true, "allowFlip": allowFlip}]
       ])
     }
@@ -206,7 +224,7 @@ export const DragContainer = React.memo(({}) => {
         // const updates = [["game", "cardById", topOfOrigStackCardId, "currentSide", "A"]];
         // dispatch(setValues({updates: updates}));
         doActionList([
-          ["LOG", "$ALIAS_N", " moved ", ["FACEUP_NAME_FROM_STACK_ID", origStackId], " from ", "$GAME.groupById."+origGroupId+".label", " to ", "$GAME.groupById."+destGroupId+".label", "."],
+          ["LOG", "$ALIAS_N", " moved ", afterDragName, " from ", "$GAME.groupById."+origGroupId+".label", " to ", "$GAME.groupById."+destGroupId+".label", "."],
           ["MOVE_STACK", origStackId, destGroupId, dest.index, {"allowFlip": allowFlip}],
           ["COND",
             ["VAR", `$GAME.stackById/${origStackId}`],

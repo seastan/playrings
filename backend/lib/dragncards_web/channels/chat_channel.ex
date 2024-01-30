@@ -43,7 +43,7 @@ defmodule DragnCardsWeb.ChatChannel do
       %{assigns: %{room_slug: room_slug, user_id: user_id}} = socket
     ) do
 
-    message = ChatMessage.new(message_text, user_id)
+    message = ChatMessage.new(message_text, -1)
 
     messages = ChatServer.add_message(room_slug, message)
 

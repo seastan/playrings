@@ -33,7 +33,7 @@ export const TableChat = React.memo(({
       }}>
     <div 
       className="absolute bottom-0 left-0" 
-      style={{height: chatHover ? "100vh" : "100%", width:'100%', opacity: 0.7, zIndex: chatHover ? 1e6 : 1e3}}
+      style={{height: chatHover ? "100vh" : "100%", width:'100%', zIndex: chatHover ? 1e6 : 1e3}}
       onMouseEnter={() => handleStartChatHover()}
       onMouseLeave={() => handleStopChatHover()}>
       <MessageBox hover={chatHover} chatBroadcast={chatBroadcast}/>

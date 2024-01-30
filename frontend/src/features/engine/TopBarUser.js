@@ -10,6 +10,7 @@ import { TopBarUserCounter } from "./TopBarUserCounter";
 import { useGameDefinition } from "./hooks/useGameDefinition";
 import { useSiteL10n } from "../../hooks/useSiteL10n";
 import { FirstPlayerToken } from "./FirstPlayerToken";
+import { getPlayerIColor } from "./functions/common";
 
 
 export const TopBarUserButton = ({ onClickHandler, extraParentClass, extraButtonClass, children }) => {
@@ -42,6 +43,7 @@ export const TopBarUser = React.memo(({
   const isLoggedIn = useIsLoggedIn();
   const myUser = useProfile();
   const myUserId = myUser?.id;
+  const borderColor = getPlayerIColor(playerI);
 
 
   console.log("Rendering TopBarUser ", playerI, playerInfo, playerData, playerDataPlayerN);
@@ -121,7 +123,7 @@ export const TopBarUser = React.memo(({
   }
   
   return(
-    <div className="float-left h-full pr-1" style={{width: "16%", borderLeft: "1px solid lightgrey"}}>
+    <div className="float-left h-full pr-1 border-t" style={{width: "16%", borderLeft: "1px solid lightgrey", borderTopColor: borderColor}}>
       <div className="float-left h-full w-2/3">
         <div className="h-1/2 w-full flex justify-center">
           {/* Show First player token */}

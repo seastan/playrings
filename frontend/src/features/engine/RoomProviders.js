@@ -5,13 +5,13 @@ import useProfile from "../../hooks/useProfile";
 import { setObservingPlayerN, setPlayerN, setUserSettings } from "../store/playerUiSlice";
 import BroadcastContext from "../../contexts/BroadcastContext";
 import { usePlugin } from "./hooks/usePlugin";
-import { PluginProvider } from "../../contexts/PluginContext";
 import { useGameDefinition } from "./hooks/useGameDefinition";
 
 
 
 const getPlayerN = (playerInfo, id) => {
   if (!playerInfo) return null;
+  if (!id || id <= 0) return null;
   var playerN = null;
   Object.keys(playerInfo).forEach(playerI => {
     if (playerInfo[playerI]?.id === id) playerN = playerI;
@@ -41,13 +41,11 @@ export const RoomProviders = ({ gameBroadcast, chatBroadcast }) => {
       const mergedSettings = {...userSettings, ...databaseUiSettings};
       dispatch(setUserSettings(mergedSettings));
     }
-  }, [playerN])
+  }, [playerN, myUser])
 
   const gameBackgroundUrl = gameDef?.backgroundUrl;
   const playerUiBackgroundUrl = useSelector(state => state?.playerUi?.userSettings?.backgroundUrl);
   //const userBackgroundUrl = myUser?.plugin_settings?.[pluginId]?.ui?.backgroundUrl;
-
-  console.log("backgroundUrl", {myUser, gameBackgroundUrl, playerUiBackgroundUrl}) //, userBackgroundUrl})
 
   var backgroundUrl = null;
   if (playerUiBackgroundUrl && playerUiBackgroundUrl !== "") backgroundUrl = playerUiBackgroundUrl;

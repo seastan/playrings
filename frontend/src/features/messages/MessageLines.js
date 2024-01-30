@@ -1,6 +1,5 @@
-import React, { useRef, useEffect, useState } from "react";
+import React, { useRef, useEffect } from "react";
 import MessageLine from "./MessageLine";
-import { useMessages } from "../../contexts/MessagesContext";
 import { useSelector } from "react-redux";
 
 export const MessageLines = ({ hover, messages }) => {

@@ -7,6 +7,21 @@ export const keyStyleXL = {width: "12vh", height: "3vh", borderRadius: "0.5vh"}
 export const ATTACHMENT_OFFSET = 3.5;
 export const DEFAULT_CARD_Z_INDEX = 1000;
 
+export const playerColorMap = {
+  "player1": "rgb(255,90,139)", // Red
+  "player2": "rgb(121,180,255)", // Blue
+  "player3": "rgb(101,241,18)", // Green
+  "player4": "rgb(255,223,76)", // Yellow
+  "player5": "rgb(225,138,244)", // Purple
+  "player6": "rgb(255,187,191)", // Pink
+  "player7": "rgb(0,201,187)", // Teal
+  "player8": "rgb(255,142,12)", // Orange
+}
+
+export const getPlayerIColor = (playerI) => {
+  return playerColorMap[playerI] || "rgba(128,128,128)";
+}
+
 export const keyDiv = (key, extraClasses = "") => {
   if (key.length > 6) return <div className={keyClass + " " + extraClasses} style={keyStyleXL}>{key}</div>
   else if (key.length > 1) return <div className={keyClass + " " + extraClasses} style={keyStyleL}>{key}</div>
