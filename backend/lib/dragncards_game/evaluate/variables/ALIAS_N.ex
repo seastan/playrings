@@ -6,7 +6,7 @@ defmodule DragnCardsGame.Evaluate.Variables.ALIAS_N do
 
   def execute(game, trace) do
     player_n = Evaluate.evaluate(game, "$PLAYER_N", trace ++ ["$ALIAS_N"])
-    player_alias = get_in(game, ["playerInfo", player_n, "alias"])
+    player_alias = get_in(game, ["playerInfo", player_n, "alias"]) || "empty_seat"
     "[#{player_n}/#{player_alias}]"
   end
 end
