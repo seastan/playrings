@@ -321,11 +321,11 @@ export const siteL10n = {
   },
   "altArtPrompt": {
     "English": "Enter the URL of the alt art image (must end in .jpg or .png). Leave blank to remove alt art.",
-    "Chinese": "输入异画卡图片的URL（必须以 .jpg 或 .png 结尾）。留空以移除备用艺术。"
+    "Chinese": "输入异画卡图片的 URL（必须以 .jpg 或 .png 结尾）。留空以移除异画卡图片。"
   },
   "altArtFormatError": {
     "English": "Image URL must end in .jpg or .png.",
-    "Chinese": "图片URL必须以 .jpg 或 .png 结尾。"
+    "Chinese": "图片 URL 必须以 .jpg 或 .png 结尾。"
   },
   "altArtSetError": {
     "English": "Error setting new alt art.",
