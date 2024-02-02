@@ -1,317 +1,422 @@
 export const siteL10n = {
   "hotkeys": {
-    "English": "Hotkeys"
+    "English": "Hotkeys",
+    "Chinese": "快捷键"
   },
   "preferences": {
-    "English": "Preferences"
+    "English": "Preferences",
+    "Chinese": "偏好设置"
   },
   "spectators": {
-    "English": "Spectators"
+    "English": "Spectators",
+    "Chinese": "旁观者"
   },
   "shared": {
-    "English": "Shared"
+    "English": "Shared",
+    "Chinese": "共享"
   },
   "player": {
-    "English": "Player"
+    "English": "Player",
+    "Chinese": "玩家"
   },
   "view": {
-    "English": "View"
+    "English": "View",
+    "Chinese": "视图"
   },
   "uiPreferences": {
-    "English": "UI Preferences"
+    "English": "UI Preferences",
+    "Chinese": "界面偏好设置"
   },
   "playerPreferences": {
-    "English": "Player Preferences"
+    "English": "Player Preferences",
+    "Chinese": "玩家偏好设置"
   },
   "gamePreferences": {
-    "English": "Game Preferences"
+    "English": "Game Preferences",
+    "Chinese": "游戏偏好设置"
   },
   "thisGame": {
-    "English": "This game only"
+    "English": "This game only",
+    "Chinese": "仅限本游戏"
   },
   "allGames": {
-    "English": "Every game"
+    "English": "Every game",
+    "Chinese": "所有游戏"
   },
   "pluginPreferences": {
-    "English": "Plugin Preferences"
+    "English": "Plugin Preferences",
+    "Chinese": "插件偏好设置"
   },
   "backgroundUrl": {
-    "English": "Background image URL"
+    "English": "Background image URL",
+    "Chinese": "背景图片 URL"
   },
   "hotkeyTableKey": {
-    "English": "Key"
+    "English": "Key",
+    "Chinese": "按键"
   },
   "hotkeyTableDescription": {
-    "English": "Description"
+    "English": "Description",
+    "Chinese": "描述"
   },
   "look": {
-    "English": "Look"
+    "English": "Look",
+    "Chinese": "查看"
   },
   "sit": {
-    "English": "Sit"
+    "English": "Sit",
+    "Chinese": "坐下"
   },
   "taken": {
-    "English": "Taken"
+    "English": "Taken",
+    "Chinese": "已占用"
   },
   "logIn": {
-    "English": "Log In"
+    "English": "Log In",
+    "Chinese": "登录"
   },
   "getUp": {
-    "English": "Get Up"
+    "English": "Get Up",
+    "Chinese": "起身"
   },
   "menu": {
-    "English": "Menu"
+    "English": "Menu",
+    "Chinese": "菜单"
   },
   "layout": {
-    "English": "Layout"
+    "English": "Layout",
+    "Chinese": "布局"
   },
   "load": {
-    "English": "Load"
+    "English": "Load",
+    "Chinese": "加载"
   },
   "loadPrebuiltDeck": {
-    "English": "Load prebuilt deck"
+    "English": "Load prebuilt deck",
+    "Chinese": "加载预组牌库"
   },
   "loadGameJson": {
-    "English": "Load game (.json)"
+    "English": "Load game (.json)",
+    "Chinese": "加载游戏（.json）"
   },
   "loadGameDefinitionJson": {
-    "English": "Load game definition (.json)"
+    "English": "Load game definition (.json)",
+    "Chinese": "加载游戏定义（.json）"
   },
   "loadCustomCardsTxt": {
-    "English": "Load custom cards (.txt)"
+    "English": "Load custom cards (.txt)",
+    "Chinese": "加载自定义卡牌（.txt）"
   },
   "touchMode": {
-    "English": "Touch mode"
+    "English": "Touch mode",
+    "Chinese": "触摸模式"
   },
   "enable": {
-    "English": "Enable"
+    "English": "Enable",
+    "Chinese": "启用"
   },
   "disable": {
-    "English": "Disable"
+    "English": "Disable",
+    "Chinese": "禁用"
   },
   "unload": {
-    "English": "Unload"
+    "English": "Unload",
+    "Chinese": "卸载"
   },
   "unloadMyDeck": {
-    "English": "Unload my deck"
+    "English": "Unload my deck",
+    "Chinese": "卸载我的牌组"
   },
   "unloadSharedCards": {
-    "English": "Unload shared cards"
+    "English": "Unload shared cards",
+    "Chinese": "卸载共享卡牌"
   },
   "spawnCard": {
-    "English": "Spawn card"
+    "English": "Spawn card",
+    "Chinese": "生成卡牌"
   },
   "fromTheCardPool": {
-    "English": "From the card pool"
+    "English": "From the card pool",
+    "Chinese": "从游戏卡池生成"
   },
   "createYourOwnCard": {
-    "English": "Create your own card"
+    "English": "Create your own card",
+    "Chinese": "创建自定义卡牌"
   },
   "random": {
-    "English": "Random"
+    "English": "Random",
+    "Chinese": "随机"
   },
   "coin": {
-    "English": "Coin"
+    "English": "Coin",
+    "Chinese": "硬币"
   },
   "number": {
-    "English": "Number"
+    "English": "Number",
+    "Chinese": "数字"
   },
   "dragnOptions": {
-    "English": "Dragn Options"
+    "English": "Dragn Options",
+    "Chinese": "Dragn 选项"
   },
   "adjustCardSize": {
-    "English": "Adjust card size"
+    "English": "Adjust card size",
+    "Chinese": "调整卡牌大小"
   },
   "zoomPercent": {
-    "English": "Card size"
+    "English": "Card size",
+    "Chinese": "卡牌大小"
   },
   "touchMode": {
-    "English": "Touch mode"
+    "English": "Touch mode",
+    "Chinese": "触摸模式"
   },
   "pluginOptions": {
-    "English": "Plugin Options"
+    "English": "Plugin Options",
+    "Chinese": "插件选项"
   },
   "download": {
-    "English": "Download"
+    "English": "Download",
+    "Chinese": "下载"
   },
   "gameStateJson": {
-    "English": "Game state (.json)"
+    "English": "Game state (.json)",
+    "Chinese": "游戏状态（.json）"
   },
   "clearTable": {
-    "English": "Clear table"
+    "English": "Clear table",
+    "Chinese": "清空桌面"
   },
   "markAsVictory": {
-    "English": "Mark as victory"
+    "English": "Mark as victory",
+    "Chinese": "标记为胜利"
   },
   "markAsDefeat": {
-    "English": "Mark as defeat"
+    "English": "Mark as defeat",
+    "Chinese": "标记为失败"
   },
   "markAsIncomplete": {
-    "English": "Mark as incomplete"
+    "English": "Mark as incomplete",
+    "Chinese": "标记为未完成"
   },
   "closeRoom": {
-    "English": "Close room"
+    "English": "Close room",
+    "Chinese": "关闭房间"
   },
   "markAsVictory": {
-    "English": "Mark as victory"
+    "English": "Mark as victory",
+    "Chinese": "标记为胜利"
   },
   "markAsDefeat": {
-    "English": "Mark as defeat"
+    "English": "Mark as defeat",
+    "Chinese": "标记为失败"
   },
   "markAsIncomplete": {
-    "English": "Mark as incomplete"
+    "English": "Mark as incomplete",
+    "Chinese": "标记为未完成"
   },
   "saveGame": {
-    "English": "Save game"
+    "English": "Save game",
+    "Chinese": "保存游戏"
   },
   "clearTargets": {
-    "English": "Clear targets"
+    "English": "Clear targets",
+    "Chinese": "清除目标"
   },
   "moveToPreviousGameStep": {
-    "English": "Move to previous game step"
+    "English": "Move to previous game step",
+    "Chinese": "移动到上一个游戏步骤"
   },
   "moveToNextGameStep": {
-    "English": "Move to next game step"
+    "English": "Move to next game step",
+    "Chinese": "移动到下一个游戏步骤"
   },
   "moveToPreviousPhase": {
-    "English": "Move to previous phase"
+    "English": "Move to previous phase",
+    "Chinese": "移动到上一个阶段"
   },
   "moveToNextPhase": {
-    "English": "Move to next phase"
+    "English": "Move to next phase",
+    "Chinese": "移动到下一个阶段"
   },
   "tokens": {
-    "English": "Tokens"
+    "English": "Tokens",
+    "Chinese": "标记"
   },
   "tokenHotkeys": {
-    "English": "Token Hotkeys"
+    "English": "Token Hotkeys",
+    "Chinese": "标记相关快捷键"
   },
   "hoverOverTopBottom": {
-    "English": "Hover over the top/bottom half of the card when pressing the key to add/remove tokens."
+    "English": "Hover over the top/bottom half of the card when pressing the key to add/remove tokens.",
+    "Chinese": "将鼠标悬停在卡片的上半部分/下半部分，并按下按键以添加/移除标记。"
   },
   "holdCtrl": {
-    "English": "Hold Ctrl to add/remove 5 tokens at a time."
+    "English": "Hold Ctrl to add/remove 5 tokens at a time.",
+    "Chinese": "按住 Ctrl 键一次添加/移除 5 个标记。"
   },
   "cardHotkeys": {
-    "English": "Card Hotkeys"
+    "English": "Card Hotkeys",
+    "Chinese": "卡牌快捷键"
   },
   "gameHotkeys": {
-    "English": "Game Hotkeys"
+    "English": "Game Hotkeys",
+    "Chinese": "游戏快捷键"
   },
   "dragnHotkeys": {
-    "English": "Dragn Hotkeys"
+    "English": "Dragn Hotkeys",
+    "Chinese": "Dragn 快捷键"
   },
   "hoverOverACard": {
-    "English": "Hover over a card."
+    "English": "Hover over a card.",
+    "Chinese": "将鼠标悬停在一张卡牌上。"
   },
   "top": {
-    "English": "Top"
+    "English": "Top",
+    "Chinese": "顶部"
   },
   "bottom": {
-    "English": "Bottom"
+    "English": "Bottom",
+    "Chinese": "底部"
   },
   "shuffleIn": {
-    "English": "Shuffle in"
+    "English": "Shuffle in",
+    "Chinese": "洗入"
   },
   "shuffleIntoTopX": {
-    "English": "Shuffle into top X"
+    "English": "Shuffle into top X",
+    "Chinese": "洗入顶部 X 张"
   },
   "shuffleIntoBottomX": {
-    "English": "Shuffle into bottom X"
+    "English": "Shuffle into bottom X",
+    "Chinese": "洗入牌库底 X 张"
   },
   "detach": {
-    "English": "Detach"
+    "English": "Detach",
+    "Chinese": "分离"
   },
   "flip": {
-    "English": "Flip"
+    "English": "Flip",
+    "Chinese": "翻转"
   },
   "delete": {
-    "English": "Delete"
+    "English": "Delete",
+    "Chinese": "删除"
   },
   "moveTo": {
-    "English": "Move To"
+    "English": "Move To",
+    "Chinese": "移动到"
   },
   "toggleTriggers": {
-    "English": "Toggle Triggers"
+    "English": "Toggle Triggers",
+    "Chinese": "切换触发器"
   },
   "setRotation": {
-    "English": "Set Rotation"
+    "English": "Set Rotation",
+    "Chinese": "设置旋转方向"
   },
   "deckOfOrigin": {
-    "English": "Deck of origin"
+    "English": "Deck of origin",
+    "Chinese": "原始牌组"
   },
   "altArtPrompt": {
-    "English": "Enter the URL of the alt art image (must end in .jpg or .png). Leave blank to remove alt art."
+    "English": "Enter the URL of the alt art image (must end in .jpg or .png). Leave blank to remove alt art.",
+    "Chinese": "输入异画卡图片的 URL（必须以 .jpg 或 .png 结尾）。留空以移除异画卡图片。"
   },
   "altArtFormatError": {
-    "English": "Image URL must end in .jpg or .png."
+    "English": "Image URL must end in .jpg or .png.",
+    "Chinese": "图片 URL 必须以 .jpg 或 .png 结尾。"
   },
   "altArtSetError": {
-    "English": "Error setting new alt art."
+    "English": "Error setting new alt art.",
+    "Chinese": "设置新异画卡时发生错误。"
   },
   "settingUpdateError": {
-    "English": "Error updating user settings."
+    "English": "Error updating user settings.",
+    "Chinese": "更新用户设置时发生错误。"
   },
   "startStopDrawingArrow": {
-    "English": "Start/stop drawing arrow"
+    "English": "Start/stop drawing arrow",
+    "Chinese": "开始/停止绘制箭头"
   },
   "developerTools": {
-    "English": "Developer tools"
+    "English": "Developer tools",
+    "Chinese": "开发者工具"
   },
   "noDefinedPreBuiltDecks": {
-    "English": "No pre-built decks have beend defined for this game."
+    "English": "No pre-built decks have been defined for this game.",
+    "Chinese": "该游戏目前还没有定义任何预组牌库。"
   },
   "showTo": {
-    "English": "Show To"
+    "English": "Show To",
+    "Chinese": "展示给"
   },
   "targetCard": {
-    "English": "Target Card"
+    "English": "Target Card",
+    "Chinese": "标记卡牌目标"
   },
   "saveGame": {
-    "English": "Save game"
+    "English": "Save game",
+    "Chinese": "保存游戏"
   },
   "clearTargetsArrows": {
-    "English": "Clear targets/arrows"
+    "English": "Clear targets/arrows",
+    "Chinese": "清除目标标记/箭头"
   },
   "undo": {
-    "English": "Undo"
+    "English": "Undo",
+    "Chinese": "撤销"
   },
   "redo": {
-    "English": "Redo"
+    "English": "Redo",
+    "Chinese": "重做"
   },
   "undoOneAction": {
-    "English": "Undo one action"
+    "English": "Undo one action",
+    "Chinese": "撤销一步操作"
   },
   "redoOneAction": {
-    "English": "Redo one action"
+    "English": "Redo one action",
+    "Chinese": "重做一步操作"
   },
   "undoManyActions": {
-    "English": "Undo round"
+    "English": "Undo round",
+    "Chinese": "撤销回合"
   },
   "redoManyActions": {
-    "English": "Redo round"
+    "English": "Redo round",
+    "Chinese": "重做回合"
   },
   "moveToPreviousGameStep": {
-    "English": "Move to previous game step"
+    "English": "Move to previous game step",
+    "Chinese": "移动到上一个游戏步骤"
   },
   "moveToNextGameStep": {
-    "English": "Move to next game step"
+    "English": "Move to next game step",
+    "Chinese": "移动到下一个游戏步骤"
   },
   "prevStep": {
-    "English": "Previous step"
+    "English": "Previous step",
+    "Chinese": "上一步骤"
   },
   "nextStep": {
-    "English": "Next step"
+    "English": "Next step",
+    "Chinese": "下一步骤"
   },
   "uiPreferencesDescription": {
-    "English": "Default values for UI preferences will be applied when you enter a room."
+    "English": "Default values for UI preferences will be applied when you enter a room.",
+    "Chinese": "进入房间时将采用默认的界面偏好设置。"
   },
   "playerPreferencesDescription": {
-    "English": "Default values for player preferences will be applied when you sit down in a seat."
+    "English": "Default values for player preferences will be applied when you sit down in a seat.",
+    "Chinese": "坐下时将采用默认的玩家偏好设置。"
   },
   "gamePreferencesDescription": {
-    "English": "Default values for game preferences will be applied when you create a game."
+    "English": "Default values for game preferences will be applied when you create a game.",
+    "Chinese": "创建游戏时将采用默认的游戏偏好设置。"
   },
   "triggerAbility": {
-    "English": "Trigger ability"
-  },
+    "English": "Trigger ability",
+    "Chinese": "触发能力"
+  }
 }
