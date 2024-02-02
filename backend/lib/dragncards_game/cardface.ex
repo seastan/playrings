@@ -124,10 +124,9 @@ defmodule DragnCardsGame.CardFace do
     # for each key
     card_face = Enum.reduce(card_face_details, %{}, fn({key, value}, acc) ->
       # If the type has not been defined in game_def['faceProperties'], then make it a string
-      val_type = if Map.has_key?(game_def, "faceProperties") and Map.has_key?(game_def["faceProperties"], key) do
-        game_def["faceProperties"][key]["type"]
-      else
-        "string"
+      val_type = case get_in(game_def, ["faceProperties", key, "type"]) do
+        nil -> "string"
+        val -> val
       end
 
       if value == nil or (value == "" and val_type != "string") do

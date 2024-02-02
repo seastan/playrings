@@ -8,12 +8,16 @@ import { useDispatch } from "react-redux";
 import BroadcastContext from "../../contexts/BroadcastContext";
 import { useGameDefinition } from "./hooks/useGameDefinition";
 import { usePlugin } from "./hooks/usePlugin";
+import { useGameL10n } from "./hooks/useGameL10n";
+import { useImportLoadList } from "./hooks/useImportLoadList";
 
 export const SpawnCustomCardModal = React.memo(({}) => {
   const dispatch = useDispatch();
   const {gameBroadcast, chatBroadcast} = useContext(BroadcastContext);
   const gameDef = useGameDefinition();    
   const cardDb = usePlugin()?.card_db;
+  const gameL10n = useGameL10n();
+  const importLoadList = useImportLoadList();
 
   const { register, handleSubmit } = useForm();
   const backOptions = [];
@@ -40,10 +44,14 @@ export const SpawnCustomCardModal = React.memo(({}) => {
     const [faceA, faceB] = [{}, {}];
     for (var prop of faceProperties) {
       faceA[prop] = inputs["sideA"+prop];
-      faceB[prop] = inputs["sideA"+prop];
+      if (backType.value === "custom") faceB[prop] = inputs["sideB"+prop];
+      else if (prop === "name") faceB[prop] = backType.value;
+      else faceB[prop] = null;
     }
 
+
     const loadList = [{
+      "databaseId": null,
       "cardDetails": {
         "A": faceA,
         "B": faceB
@@ -51,9 +59,8 @@ export const SpawnCustomCardModal = React.memo(({}) => {
       "quantity": 1,
       "loadGroupId": deckGroupId
     }]
-
-    gameBroadcast("game_action", {action: "load_cards", options: {load_list: loadList}});
-    chatBroadcast("game_update", {message: "spawned "+ loadList[0].cardRow.sides.A.printname + "."});
+    console.log("importcard",loadList)
+    importLoadList(loadList);
   }
 
     const lineInput = (id, title) => {
@@ -107,7 +114,7 @@ export const SpawnCustomCardModal = React.memo(({}) => {
           <label for="owner"><h2 className="text-white">Load group: </h2></label>
           <select className="form-control mb-1" style={{width:"35%"}} ref={register({ required: false })} id={"loadGroupId"} name={"loadGroupId"}>
             {Object.keys(gameDef?.groups).sort().map((groupId,_groupIndex) => (
-              <option value={groupId}>{gameDef?.groups?.[groupId]?.name}</option>
+              <option value={groupId}>{gameL10n(gameDef?.groups?.[groupId]?.label)}</option>
             ))}
           </select>
           <div className="w-full h-full">
