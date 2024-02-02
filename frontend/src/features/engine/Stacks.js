@@ -53,15 +53,16 @@ const StacksList = React.memo(({
   mouseHere,
   selectedStackIndices
 }) => {
-  const draggingFromGroupId = useSelector(state => state?.playerUi?.dragging.fromGroupId);
   const isPile = region.type == "pile";
+  const showTopCard = useSelector((state) => {
+    const draggingFromGroupId = state?.playerUi?.dragging.fromGroupId;
+    return isPile && stackIds.length > 0 && ((mouseHere && draggingFromGroupId === null) || draggingFromGroupId === groupId);
+  });
   // Truncate stacked piles
-  console.log("Rendering StacksList", {groupId, region, draggingFromGroupId});
+  console.log("Rendering StacksList", {groupId, region});
   var stackIdsToShow = stackIds;
-  if (isPile) {
-    stackIdsToShow = [];
-    if (stackIds.length > 0 && ((mouseHere && draggingFromGroupId === null) || draggingFromGroupId === groupId)) stackIdsToShow = [stackIds[0]];
-  }
+  if (isPile) stackIdsToShow = [];
+  if (showTopCard) stackIdsToShow = [stackIds[0]];
 
   if (!stackIdsToShow) return null;
   return (

@@ -14,9 +14,7 @@ export const TableRegion = React.memo(({
   const formattedGroupId = region.groupId.replace(/playerN/g, observingPlayerN);
   const extraStyle = useSelector(state => state?.gameUi?.game?.groupById?.[formattedGroupId]?.extraStyle);
   const formattedRegion = {...region, groupId: formattedGroupId};
-  console.log("Rendering TableRegion formatted", formattedRegion);
   const hideGroup = (formattedRegion.groupId === browseGroupId) || (browseGroupId && formattedRegion.hideWhileBrowsing);
-  console.log("hidegroup", formattedRegion, browseGroupId, hideGroup);
   return (
     <div
       className="absolute"

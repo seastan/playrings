@@ -9,7 +9,7 @@ export const Tokens = React.memo(({
     isActive,
     aspectRatio,
  }) => {
-    const spacePressed = useSelector(state => state?.playerUi?.keypress?.Space);
+    const spacePressed = useSelector(state => Boolean(state?.playerUi?.keypress?.Space));
     const showButtons = isActive && spacePressed;
     const gameDef = useGameDefinition();
     const sideAType = useSelector(state => state?.gameUi?.game?.cardById?.[cardId]?.sides?.A?.type);
@@ -20,13 +20,14 @@ export const Tokens = React.memo(({
         <div className="absolute" style={{width:'100%', height:'100%'}}>
             {tokenTypes.map((tokenType, tokenIndex) => {
                 return (
-                    <Token 
+                    <Token
                         key={tokenIndex}
-                        tokenType={tokenType} 
                         cardId={cardId}
-                        zIndex={zIndex} 
-                        aspectRatio={aspectRatio}  
-                        showButtons={showButtons}/>
+                        tokenType={tokenType}
+                        showButtons={showButtons}
+                        zIndex={zIndex+tokenIndex}
+                        aspectRatio={aspectRatio}
+                    />
                 )
             })}
          </div>

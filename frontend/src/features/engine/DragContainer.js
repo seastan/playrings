@@ -1,16 +1,14 @@
 
-import React, { useEffect, useState } from "react";
-import { ArrowsBetweenDivsContextProvider, ArrowBetweenDivs, LineOrientation, ArrowAnchorPlacement } from 'react-simple-arrows';
+import React, { useCallback, useEffect, useState } from "react";
 import { DragDropContext } from "react-beautiful-dnd";
 import { useSelector, useDispatch } from 'react-redux';
 import { setStackIds, setCardIds, setGroupById } from "../store/gameUiSlice";
 import { reorderGroupStackIds } from "./Reorder";
 import store from "../../store";
-import { setActiveCardId, setDraggingEnd, setDraggingEndDelay, setDraggingStackId, setDraggingTransform, setDraggingFromGroupId, setTouchAction } from "../store/playerUiSlice";
+import { setDraggingEnd, setDraggingEndDelay, setDraggingStackId, setDraggingFromGroupId } from "../store/playerUiSlice";
 import { Table } from "./Table";
 import { useDoActionList } from "./hooks/useDoActionList";
 import { ArcherContainer } from 'react-archer';
-import { tr } from "date-fns/locale";
 
 let draggableClientRect = null;
 
@@ -39,26 +37,13 @@ export const DragContainer = React.memo(({}) => {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [mouseDownPosition, setMouseDownPosition] = useState({ x: 0, y: 0 });
   const keypressShift = useSelector(state => state?.playerUi?.keypress?.Shift);
-  const playerData = useSelector(state => state?.gameUi?.game?.playerData);
-  const touchMode = useSelector(state => state?.playerUi?.touchMode);
-  //const archerContainerRef = React.createRef();
-  const arrowColors = ["rgba(255,0,0,0.6)", "rgba(0,200,0,0.6)", "rgba(0,128,255,0.6)", "rgba(128,0,255,0.6)"];
-
-  //const arrows1 = playerData.player1.arrows;
-  //const arrows2 = playerData.player2.arrows;
-  //const arrows3 = playerData.player3.arrows;
-  //const arrows4 = playerData.player4.arrows;
-  const usingArrows = false; //(arrows1 && arrows1.length) || (arrows2 && arrows2.length) || (arrows3 && arrows3.length) || (arrows4 && arrows4.length);
-
   const droppableRefs = {};
-  console.log("Dropped in droppableRefs: ", droppableRefs)
 
-  const addDroppableRef = (id) => (ref) => {
+  const addDroppableRef = useCallback((id) => (ref) => {
     droppableRefs[id] = ref;
-  };
+  }, []);
 
   const updateMousePosition = ev => {
-    console.log("updateMousePosition", ev.clientX, ev.clientY)
     setMousePosition({ x: ev.clientX, y: ev.clientY });
   };
 
@@ -77,10 +62,6 @@ export const DragContainer = React.memo(({}) => {
     dispatch(setDraggingStackId(result.draggableId));
     dispatch(setDraggingEnd(false));
     dispatch(setDraggingEndDelay(false));
-    // const draggableNode = document.querySelector(`[data-rbd-draggable-id="${result.draggableId}"]`);
-    // if (draggableNode) {
-    //   draggableClientRect = draggableNode.getBoundingClientRect();
-    // }
 
     setIsDragging(true);
   }

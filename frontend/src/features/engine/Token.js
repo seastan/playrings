@@ -15,6 +15,7 @@ export const Token = React.memo(({
     zIndex,
     aspectRatio,
 }) => {
+
     const doActionList = useDoActionList();
     const rotation = useSelector(state => state?.gameUi?.game?.cardById?.[cardId]?.rotation);
     const tokenValue = useSelector(state => state?.gameUi?.game?.cardById?.[cardId]?.tokens?.[tokenType]) || 0;
@@ -24,7 +25,6 @@ export const Token = React.memo(({
     const gameDef = useGameDefinition();
     const tokenDef = gameDef?.tokens?.[tokenType];
 
-    console.log("Rendering Token",cardId,tokenType,tokenValue)
     if (!tokenDef) return;
 
     var label = amount;
@@ -69,7 +69,7 @@ export const Token = React.memo(({
     function handleDoubleClick(event) {
         event.stopPropagation();
     }
-    console.log("tokenscheck", showButtons, amount)
+    
     return(
         <Draggable>
         <div
