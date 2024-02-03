@@ -21,7 +21,7 @@ export const useBrowseTopN = () => {
       if (topNstr === "All") {
         topNint = -1;
         peekStackIds = stackIds;
-        message = ["LOG", "$ALIAS_N", " looked at ", groupName, "."];
+        message = ["LOG", "$ALIAS_N", " is looking at ", groupName, "."];
       } else if (topNstr === "None") {
         topNint = -1; 
         peekStackIds = [];
@@ -37,24 +37,17 @@ export const useBrowseTopN = () => {
         }
         if (topNint < 0) topNint = 0;
         peekStackIds = stackIds.slice(0, topNint);
-        message = ["LOG", "$ALIAS_N", " looked at the top ", topNint, " cards of ", groupName, "."]
+        message = ["LOG", "$ALIAS_N", " is looking at the top ", topNint, " cards of ", groupName, "."]
       } else {
         topNint = parseInt(topNstr) || 0;
         if (topNint > numStacks) topNint = numStacks;
         if (topNint < 0) topNint = 0;
         peekStackIds = stackIds.slice(0, topNint);
-        message = ["LOG", "$ALIAS_N", " looked at the top ", topNstr, " cards of ", groupName, "."]
+        message = ["LOG", "$ALIAS_N", " is looking at the top ", topNstr, " cards of ", groupName, "."]
       }
       const actionList = [
         message,
-        ["SET", `/playerData/${playerN}/browseGroup/id`, group.id],
-        ["SET", `/playerData/${playerN}/browseGroup/topN`, topNint],
-        ["FOR_EACH_START_STOP_STEP", "$i", 0, topNint == -1 ? stackIds.length : topNint, 1,
-          [
-            ["VAR", "$CARD_ID", `$GAME.groupById.${group.id}.parentCardIds.[$i]`],
-            ["SET", "/cardById/$CARD_ID/peeking/$PLAYER_N", visibility]
-          ]
-        ]
+        ["LOOK_AT", playerN, groupId, topNint, visibility]
       ];
       doActionList(actionList);
     }

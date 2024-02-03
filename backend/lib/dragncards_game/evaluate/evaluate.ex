@@ -304,13 +304,16 @@ defmodule DragnCardsGame.Evaluate do
 
     rescue
       e in RuntimeError ->
-        if String.starts_with?(e.message, ":") do
+        if String.starts_with?(e.message, "ABORT") do
           raise e.message
         else
           raise ": #{e.message} Trace: #{inspect(trace)}"
         end
       e in FunctionClauseError ->
         raise "FunctionClauseError: #{inspect(code)} Trace: #{inspect(trace)}"
+          #evaluate(game, ["ERROR", e.message], trace)
+      e in ArithmeticError ->
+        raise "ArithmeticError: #{inspect(code)} Trace: #{inspect(trace)}"
           #evaluate(game, ["ERROR", e.message], trace)
       _ ->
         raise "Error evaluating code."
