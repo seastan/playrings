@@ -2,6 +2,7 @@ import React from "react";
 import { useSelector } from 'react-redux';
 import { Group } from "./Group";
 import { convertToPercentage } from "./functions/common";
+import { usePlayerN } from "./hooks/usePlayerN";
 
 
 export const TableRegion = React.memo(({
@@ -10,7 +11,8 @@ export const TableRegion = React.memo(({
 }) => {
   console.log("Rendering TableRegion", region);
   const observingPlayerN = useSelector(state => state?.playerUi?.observingPlayerN);
-  const browseGroupId = useSelector(state => state?.playerUi?.browseGroup?.id);
+  const playerN = usePlayerN();
+  const browseGroupId = useSelector(state => state?.gameUi?.game?.playerData?.[playerN]?.browseGroup?.id);
   const formattedGroupId = region.groupId.replace(/playerN/g, observingPlayerN);
   const extraStyle = useSelector(state => state?.gameUi?.game?.groupById?.[formattedGroupId]?.extraStyle);
   const formattedRegion = {...region, groupId: formattedGroupId};

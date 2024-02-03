@@ -24,14 +24,9 @@ const initialState = {
   showDeveloper: null,
   loaded: null,
   showPlayersInRoom: false,
-  browseGroup: {
-    id: null,
-    topN: 0
-  },
   tooltipIds: [],
   mouseXY: null,
   cardClicked: false,
-  touchAction: null,
   sideGroupId: "sharedSetAside",
   favoriteGroupId: null,
   randomNumBetween: "3",
@@ -43,12 +38,11 @@ const initialState = {
     fromGroupId: null,
     toRegionType: null,
   },
-  prompts: [],
   userSettings: Object.keys(uiSettings).reduce((acc, settingId) => {
     acc[settingId] = uiSettings[settingId].default;
     return acc;
   }
-  , {}),
+  , {})
 };
 
 const playerUiSlice = createSlice({
@@ -124,12 +118,6 @@ const playerUiSlice = createSlice({
     },
     setShowPlayersInRoom: (state, { payload }) => {
       state.showPlayersInRoom = payload;
-    },
-    setBrowseGroupId: (state, { payload }) => {
-      state.browseGroup.id = payload;
-    },
-    setBrowseGroupTopN: (state, { payload }) => {
-      state.browseGroup.topN = payload;
     },
     setTooltipIds: (state, { payload }) => {
       state.tooltipIds = payload;
@@ -212,8 +200,6 @@ export const {
   setShowDeveloper,
   setLoaded,
   setShowPlayersInRoom,
-  setBrowseGroupId,
-  setBrowseGroupTopN,
   setTooltipIds,
   setMouseXY,
   setMouseTopBottom,

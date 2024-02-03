@@ -1,23 +1,27 @@
 import React from "react";
-import { useDispatch, useSelector } from 'react-redux';
-import { setBrowseGroupId, setBrowseGroupTopN } from "../store/playerUiSlice";
+import { useSelector } from 'react-redux';
 import { useGameL10n } from "./hooks/useGameL10n";
+import { useDoActionList } from "./hooks/useDoActionList";
 
 export const TopBarViewItem = React.memo(({
   groupId,
 }) => {
-  const dispatch = useDispatch();
   const gameL10n = useGameL10n();
   const group = useSelector(state => state?.gameUi?.game?.groupById?.[groupId]);
   const playerN = useSelector(state => state?.playerUi?.playerN);
+  const doActionList = useDoActionList();
 
   const handleMenuClick = (data) => {
     if (!playerN) {
       alert("Please sit at the table first.");
       return;
     } else if (data.action === "look_at") {
-      dispatch(setBrowseGroupId(data.groupId));
-      dispatch(setBrowseGroupTopN("All"))
+      const actionList = [
+        ["LOG", "$ALIAS_N", " fanned out ", gameL10n(group.label), "."],
+        ["SET", `/playerData/${playerN}/browseGroup/id`, data.groupId],
+        ["SET", `/playerData/${playerN}/browseGroup/topN`, "All"],
+      ]
+      doActionList(actionList);
     } 
   }
 

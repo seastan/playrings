@@ -5,9 +5,8 @@ import { useBrowseTopN } from "./hooks/useBrowseTopN";
 import { setValues } from "../store/gameUiSlice";
 import { faBars } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { setBrowseGroupId, setDropdownMenu, setTyping } from "../store/playerUiSlice";
+import { setDropdownMenu, setTyping } from "../store/playerUiSlice";
 import { useGameL10n } from "./hooks/useGameL10n";
-import BroadcastContext from "../../contexts/BroadcastContext";
 import { useGameDefinition } from "./hooks/useGameDefinition";
 import { useDoActionList } from "./hooks/useDoActionList";
 import { useLayout } from "./hooks/useLayout";
@@ -19,13 +18,13 @@ const isNormalInteger = (val) => {
 }
 
 export const Browse = React.memo(({addDroppableRef}) => {
-  const {gameBroadcast, chatBroadcast} = useContext(BroadcastContext);
   const dispatch = useDispatch();
   const gameL10n = useGameL10n();
   const gameDef = useGameDefinition();
   const playerN = useSelector(state => state?.playerUi?.playerN);
-  const groupId = useSelector(state => state?.playerUi?.browseGroup?.id);
-  const browseGroupTopN = useSelector(state => state?.playerUi?.browseGroup?.topN);
+  const playerData = useSelector(state => state?.gameUi?.game?.playerData);
+  const groupId = useSelector(state => state?.gameUi?.game?.playerData?.[playerN]?.browseGroup?.id);
+  const browseGroupTopN = useSelector(state => state?.gameUi?.game?.playerData?.[playerN]?.browseGroup?.topN);
   const group = useSelector(state => state?.gameUi?.game?.groupById?.[groupId]);
   const layout = useLayout();
   var region = layout?.browse;
@@ -79,7 +78,6 @@ export const Browse = React.memo(({addDroppableRef}) => {
       else if (option === "order") closeAndOrder();
       else if (option === "peeking") closeAndPeeking();
     }
-    dispatch(setBrowseGroupId(null));
     setSearchForText('');
     setSearchForProperty('All');
   }
@@ -87,6 +85,7 @@ export const Browse = React.memo(({addDroppableRef}) => {
   const closeAndShuffle = () => {
     const actionList = [
       ["LOG", "$ALIAS_N", " closed ", gameL10n(group.label)+"."],
+      ["SET", "/playerData/$PLAYER_N/browseGroup/id", null],
       ["FOR_EACH_VAL", "$STACK_ID", `$GROUP_BY_ID.${groupId}.stackIds`,
         [
           ["VAR", "$CARD_ID", "$STACK_BY_ID.$STACK_ID.cardIds.[0]"],
@@ -103,6 +102,7 @@ export const Browse = React.memo(({addDroppableRef}) => {
   const closeAndOrder = () => {
     const actionList = [
       ["LOG", "$ALIAS_N", " closed ", gameL10n(group.label)+"."],
+      ["SET", "/playerData/$PLAYER_N/browseGroup/id", null],
       ["FOR_EACH_VAL", "$STACK_ID", `$GROUP_BY_ID.${groupId}.stackIds`,
         [
           ["VAR", "$CARD_ID", "$STACK_BY_ID.$STACK_ID.cardIds.[0]"],
@@ -116,6 +116,7 @@ export const Browse = React.memo(({addDroppableRef}) => {
 
   const closeAndPeeking = () => {
     const actionList = [
+      ["SET", "/playerData/$PLAYER_N/browseGroup/id", null],
       ["LOG", "$ALIAS_N", " is still peeking at ", gameL10n(group.label)+"."],
     ];
     doActionList(actionList);

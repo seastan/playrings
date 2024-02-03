@@ -16,6 +16,11 @@ defmodule DragnCardsGame.PlayerData do
       "drawingArrowFrom" => nil,
       "label" => nil,
       "prompts" => %{},
+      "touchAction" => nil,
+      "browseGroup" => %{
+        "id" => nil,
+        "topN" => 0
+      },
     }
     # Add custom properties
     Enum.reduce(game_def["playerProperties"], base, fn({key,val}, acc) ->

@@ -1,13 +1,10 @@
-import { useDispatch } from "react-redux";
 import { useGameL10n } from "./useGameL10n";
 import store from "../../../store";
-import { setBrowseGroupId, setBrowseGroupTopN } from "../../store/playerUiSlice";
 import { useDoActionList } from "./useDoActionList";
 import { usePlayerN } from "./usePlayerN";
 
 export const useBrowseTopN = () => {
     const doActionList = useDoActionList();
-    const dispatch = useDispatch();
     const playerN = usePlayerN();
     const gameL10n = useGameL10n();
     return (groupId, topNstr) => {    
@@ -48,10 +45,10 @@ export const useBrowseTopN = () => {
         peekStackIds = stackIds.slice(0, topNint);
         message = ["LOG", "$ALIAS_N", " looked at the top ", topNstr, " cards of ", groupName, "."]
       }
-      dispatch(setBrowseGroupId(group.id));
-      dispatch(setBrowseGroupTopN(topNint));
       const actionList = [
         message,
+        ["SET", `/playerData/${playerN}/browseGroup/id`, group.id],
+        ["SET", `/playerData/${playerN}/browseGroup/topN`, topNint],
         ["FOR_EACH_START_STOP_STEP", "$i", 0, topNint == -1 ? stackIds.length : topNint, 1,
           [
             ["VAR", "$CARD_ID", `$GAME.groupById.${group.id}.parentCardIds.[$i]`],
