@@ -16,6 +16,11 @@ defmodule DragnCardsGame.Evaluate.Functions.ACTION_LIST do
 
   The result of the 'ACTION_LIST' operation.
   """
+  def get_action_list_from_game_def(plugin_id, action_list_id) do
+    game_def = Plugins.get_game_def(plugin_id)
+    game_def["actionLists"][action_list_id]
+  end
+
   def execute(game, code, trace) do
      action_list_or_id = Enum.at(code, 1)
 
@@ -24,11 +29,15 @@ defmodule DragnCardsGame.Evaluate.Functions.ACTION_LIST do
       is_list(action_list_or_id) ->
         action_list_or_id
       String.starts_with?(action_list_or_id, "$") ->
-        Evaluate.evaluate_inner(game, action_list_or_id, trace ++ ["variable"])
+        res = Evaluate.evaluate_inner(game, action_list_or_id, trace ++ ["variable"])
+        cond do
+          is_list(res) ->
+            res
+          true ->
+            get_action_list_from_game_def(game["options"]["pluginId"], res)
+        end
       true ->
-        action_list_id = Evaluate.evaluate(game, Enum.at(code, 1), trace ++ ["action_list_id"])
-        game_def = Plugins.get_game_def(game["options"]["pluginId"])
-        game_def["actionLists"][action_list_id]
+        get_action_list_from_game_def(game["options"]["pluginId"], action_list_or_id)
     end
     Evaluate.evaluate(game, action_list, trace)
 

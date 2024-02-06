@@ -5,7 +5,6 @@ import Button from "../../components/basic/Button";
 import useProfile from "../../hooks/useProfile";
 import useForm from "../../hooks/useForm";
 import axios from "axios";
-import useAuth from "../../hooks/useAuth";
 import { useAuthOptions } from "../../hooks/useAuthOptions";
 import { PatreonLinkButton } from "./PatreonLinkButton";
 
@@ -115,7 +114,6 @@ export const ProfileSettings = () => {
   if (user == null) {
     return null;
   }
-
 
   const PatreonSignUpButton = ({patreonClientId, amount, redirectURI}) => {
     const clientId = `&client_id=${patreonClientId}`;

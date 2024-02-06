@@ -365,9 +365,7 @@ defmodule DragnCardsGame.Evaluate do
             if Enum.count(input_args) > Enum.count(func_args) do
               raise "Function #{function_name} expects #{Enum.count(func_args)} arguments, but got #{Enum.count(input_args)}."
             end
-            # Call DEFINE on each of the function args
-            # new_scope_index = current_scope_index + 1
-            # game = put_in(game, ["currentScopeIndex"], current_scope_index + 1)
+            # Call VAR on each of the function args
             game = Enum.reduce(Enum.with_index(func_args), game, fn({func_arg, index}, acc) ->
               [{func_arg_name, input_arg}] = cond do
                 index >= Enum.count(input_args) -> # If we are beyond the range of input arguments, look for default arguments

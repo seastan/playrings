@@ -38,15 +38,12 @@ export const dragnActionLists = {
       ]
     ]
   ]),
-  triggerAutomationAbility: (ability) => ([
+  triggerAutomationAbility: (ability, cardId, currentSide) => ([
     ["COND",
       ability !== null,
       [
         ["LOG", "$ALIAS_N", " triggered the ability on ", "$ACTIVE_FACE.name", "."],
-        ["VAR", "$THIS_ID", "$ACTIVE_CARD_ID"],
-        ["VAR", "$THIS", "$ACTIVE_CARD"],
-        ["LOG_DEV", "$THIS"],
-        ability
+        ["ABILITY", cardId, currentSide],
       ],
       ["TRUE"],
       ["LOG", "$ALIAS_N", " attempted to trigger the ability on ", "$ACTIVE_FACE.name", " but it has no ability implemented."]

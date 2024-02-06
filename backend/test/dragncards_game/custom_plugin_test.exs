@@ -1274,6 +1274,33 @@ defmodule DragnCardsGame.CustomPluginTest do
 
   end
 
+  @tag :look_at_top_x
+  test "look_at_top_x", %{user: _user, game: game, game_def: game_def} do
+
+    # Load some decks into the game
+    game = Evaluate.evaluate(game, ["LOAD_CARDS", "Q06.6"])
+    game = Evaluate.evaluate(game, ["LOAD_CARDS", "coreLeadership"]) # Leadership core set deck
+
+    # Load Stargazer
+    game = Evaluate.evaluate(game, ["LOAD_CARDS", ["LIST", %{"databaseId" => "51223bd0-ffd1-11df-a976-0801212c9019", "loadGroupId" => "player1Play2", "quantity" => 1}]])
+
+    # Get the card
+    card = Evaluate.evaluate(game, ["GET_CARD", "player1Play2", 0, 0])
+
+    #
+    IO.puts("card")
+    IO.inspect(card)
+
+    # Trigger the ability
+    game = Evaluate.evaluate(game, ["ABILITY", card["id"], "A"])
+
+    # Print all messages
+    Enum.each(game["messages"], fn message ->
+      IO.puts(message)
+    end)
+
+  end
+
   # @tag :glittering
   # test "glittering", %{user: _user, game: game, game_def: game_def} do
 
