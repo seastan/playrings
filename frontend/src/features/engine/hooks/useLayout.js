@@ -1,8 +1,7 @@
 import { useSelector } from "react-redux";
-import { useGameDefinition } from "./useGameDefinition";
+import { usePlayerN } from "./usePlayerN";
 
 export const useLayout = () => {
-    const gameDef = useGameDefinition();
-    const layoutId = useSelector(state => state?.gameUi?.game?.layoutId);
-    return gameDef?.layouts?.[layoutId];
+    const playerN = usePlayerN();
+    return useSelector(state => (playerN ? state?.gameUi?.game?.playerData?.[playerN]?.layout : state?.gameUi?.game?.layout));
 }

@@ -257,7 +257,7 @@ defmodule DragnCardsGame.Evaluate do
       try do
         evaluate(game, code, trace)
       rescue
-        e in RuntimeError ->
+        e ->
           evaluate(game, ["ERROR", e.message], trace)
       end
     end)
@@ -265,16 +265,20 @@ defmodule DragnCardsGame.Evaluate do
     case Task.yield(task, timeout_ms) do
       nil ->
         Task.shutdown(task, :brutal_kill)
-        evaluate(game, ["ERROR", "Action timed out."], trace)
+        evaluate(game, ["ERROR", "Action timed out. #{inspect(trace)}"], trace)
       {:ok, result} ->
         result
     end
   end
 
+  defmodule RecursiveEvaluationError do
+    defexception message: "Default message", code: nil, trace: []
+  end
+
   def evaluate(game, code, trace \\ []) do
     #if is_list(code) do IO.inspect(code) end
     try do
-
+      # Increase scope index
       current_scope_index = game["currentScopeIndex"] + 1
       game = put_in(game, ["currentScopeIndex"], current_scope_index)
       game = if not Map.has_key?(game["variables"], "#{current_scope_index}") do
@@ -283,40 +287,31 @@ defmodule DragnCardsGame.Evaluate do
         game
       end
 
-
+      # Evaluate the code
       result = evaluate_inner(game, code, trace)
 
       # Delete local variables
       if is_map(result) and Map.has_key?(result, "variables") do
-        #IO.inspect(result["variables"])
-        #IO.puts("Deleting variable #{current_scope_index+1} from #{inspect(result["variables"])}")
         result = if Map.has_key?(result["variables"], "#{current_scope_index+1}") do
           put_in(result, ["variables"], Map.delete(result["variables"], "#{current_scope_index+1}"))
         else
           result
         end
-        #IO.puts("resulting variables after #{inspect(code)}: #{inspect(result["variables"])}")
+        # Decrease scope index
         put_in(result, ["currentScopeIndex"], current_scope_index - 1)
       else
         result
       end
 
-
     rescue
-      e in RuntimeError ->
+      e in RecursiveEvaluationError ->
+        raise RecursiveEvaluationError, message: e.message
+      e ->
         if String.starts_with?(e.message, "ABORT") do
-          raise e.message
+          raise RecursiveEvaluationError, message: e.message
         else
-          raise ": #{e.message} Trace: #{inspect(trace)}"
+          raise RecursiveEvaluationError, message: ": #{e.message} Trace: #{inspect(trace)}"
         end
-      e in FunctionClauseError ->
-        raise "FunctionClauseError: #{inspect(code)} Trace: #{inspect(trace)}"
-          #evaluate(game, ["ERROR", e.message], trace)
-      e in ArithmeticError ->
-        raise "ArithmeticError: #{inspect(code)} Trace: #{inspect(trace)}"
-          #evaluate(game, ["ERROR", e.message], trace)
-      _ ->
-        raise "Error evaluating code."
     end
   end
 
@@ -437,7 +432,7 @@ defmodule DragnCardsGame.Evaluate do
             if variable_module != nil do
               apply(variable_module, String.to_atom("execute"), [game, trace])
             else
-
+              IO.puts("Variable #{var_name} not found in #{inspect(game["variables"])}")
               case var_name do
 
                 "$ALIAS_N" ->
@@ -499,7 +494,7 @@ defmodule DragnCardsGame.Evaluate do
                   end
 
                 _ ->
-                  raise "Variable #{code} is undefined. " <> inspect(trace)
+                  raise "Variable #{code} is undefined."
               end
             end
           end

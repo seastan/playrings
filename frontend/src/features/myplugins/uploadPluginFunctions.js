@@ -41,8 +41,10 @@ for (var p in obj2) {
   if (obj1[p] === obj2[p]) continue;
   // Objects are not equal. We need to examine their data type to decide what to do
   if (Array.isArray(obj1[p]) && Array.isArray(obj2[p])) {
+    console.log("Merging arrays: ",p, obj1[p], obj2[p])
     // Both values are arrays. Concatenate them.
-    obj1[p] = obj1[p].concat(obj2[p]);
+    obj1[p] = [...obj1[p], ...obj2[p]];
+    console.log("Merged arrays: ",p, obj1[p])
   } else if (isObject(obj1[p]) && isObject(obj2[p])) {
     // Both values are objects
     deepMerge(obj1[p], obj2[p]);

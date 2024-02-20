@@ -20,5 +20,9 @@ defmodule DragnCardsUtil.Merger do
     Map.merge(v1, v2, &merge_values/3)
   end
 
+  defp merge_values(_key, v1, v2) when is_list(v1) and is_list(v2) do
+    v1 ++ v2
+  end
+
   defp merge_values(_key, _v1, v2), do: v2
 end

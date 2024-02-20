@@ -45,7 +45,12 @@ export const defaultdict = (defaultObj, defaultVal) => {
 }
 
 export const convertToPercentage = (input) => {
-  // Check if the input already includes a percentage sign
+  // If the input is a number, multiply by 100 and add a percent sign
+  if (typeof input === 'number') {
+    return `${input * 100}%`;
+  }
+
+  // Check if the input is a string and already includes a percentage sign
   if (input.endsWith('%')) {
     return input;
   }
@@ -67,7 +72,7 @@ export const convertToPercentage = (input) => {
   }
 
   // If the input is neither a fraction nor a percentage parse it and add a percent
-  return `${parseFloat(input)}%`;
+  return `${parseFloat(input)*100}%`;
 }
 
 export const getRandomIntInclusive = (min, max) => {

@@ -12,6 +12,9 @@ defmodule DragnCardsGame.PlayerData do
   """
   @spec new(Map.t()) :: PlayerData.t()
   def new(game_def) do
+    default_layout_info = Enum.at(game_def["layoutMenu"],0)
+    layout_id = default_layout_info["layoutId"]
+
     base = %{
       "drawingArrowFrom" => nil,
       "label" => nil,
@@ -21,6 +24,8 @@ defmodule DragnCardsGame.PlayerData do
         "id" => nil,
         "topN" => 0
       },
+      "layoutId" => layout_id,
+      "layout" => game_def["layouts"][layout_id]
     }
     # Add custom properties
     Enum.reduce(game_def["playerProperties"], base, fn({key,val}, acc) ->

@@ -11,7 +11,7 @@ import BroadcastContext from "../../contexts/BroadcastContext";
 import { useGameDefinition } from "./hooks/useGameDefinition";
 import { useDoActionList } from "./hooks/useDoActionList";
 import { useSiteL10n } from "../../hooks/useSiteL10n";
-import { getRandomIntInclusive } from "./functions/common";
+import { getRandomIntInclusive, keysDiv } from "./functions/common";
 import { useImportLoadList } from "./hooks/useImportLoadList";
 import { useImportViaUrl } from "./hooks/useImportViaUrl";
 import { useIsHost } from "./hooks/useIsHost";
@@ -114,11 +114,18 @@ export const TopBarMenu = React.memo(({}) => {
     } else if (data.action === "load_custom") {
       loadFileCustom();
     }  else if (data.action === "layout") {
-      doActionList([
-        ["LOG", "$ALIAS_N", " changed the layout to "+gameL10n(data.value.label)+"."],
-        ["SET", "/layoutId", data.value.layoutId],
-        ["SET", "/numPlayers", data.value.numPlayers ? data.value.numPlayers : "$GAME.numPlayers"]
-      ]);
+      if (data.playerI === "shared") {
+        doActionList([
+          ["LOG", "$ALIAS_N", " changed the layout for all players to "+gameL10n(data.value.label)+"."],
+          ["SET_LAYOUT", "shared", data.value.layoutId],
+          ["SET", "/numPlayers", data.value.numPlayers ? data.value.numPlayers : "$GAME.numPlayers"]
+        ]);
+      } else {
+        doActionList([
+          ["LOG", "$ALIAS_N", " changed the layout for themselves to "+gameL10n(data.value.label)+"."],
+          ["SET_LAYOUT", playerN, data.value.layoutId]
+        ]);
+      }
     } 
   }
 
@@ -236,7 +243,11 @@ export const TopBarMenu = React.memo(({}) => {
           <ul className="third-level-menu">
             {gameDef.layoutMenu?.map((info, index) => {
               return(
-                <li key={info.layoutId} onClick={() => handleMenuClick({action:"layout", value: info})}>{gameL10n(info.label)}</li>
+                <li key={info.layoutId}>
+                  <div className="absolute w-1/2">{gameL10n(info.label)}</div>
+                  <div className="absolute w-1/4 left-1/2" onClick={() => handleMenuClick({action:"layout", value: info, playerI: "shared"})}>{keysDiv(siteL10n("All Players"), "w-full hover:bg-gray-400")}</div>
+                  <div className="absolute w-1/4 left-3/4" onClick={() => handleMenuClick({action:"layout", value: info, playerI: playerN})}>{keysDiv(siteL10n("Just Me"), "w-full hover:bg-gray-400")}</div>
+                </li>
               )
             })}
             </ul>

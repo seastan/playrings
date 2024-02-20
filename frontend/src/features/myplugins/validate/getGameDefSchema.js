@@ -766,15 +766,8 @@ export const getGameDefSchema = (gameDef) => {
               "_required_": true,
             }
           },
-          "defaultVariants": {
-            "_type_": "object",
-            "_required_": true,
-            "_itemSchema_": {
-              "_type_": "any",
-            }
-          },
           "regions": {
-            "_type_": "array",
+            "_type_": "object",
             "_required_": true,
             "_itemSchema_": {
               "_type_": "object",
@@ -810,12 +803,6 @@ export const getGameDefSchema = (gameDef) => {
                 "_type_": "string",
                 "_required_": true,
               },
-              "layoutVariants": {
-                "_type_": "object",
-                "_itemSchema_": {
-                  "_type_": "any",
-                }
-              },
               "style": {
                 "_type_": "object",
                 "_itemSchema_": {
@@ -831,10 +818,13 @@ export const getGameDefSchema = (gameDef) => {
               "showMenu": {
                 "_type_": "boolean",
               },
+              "visible": {
+                "_type_": "boolean",
+              },
             }
           },
           "tableButtons": {
-            "_type_": "array",
+            "_type_": "object",
             "_itemSchema_": {
               "_type_": "object",
               "_strictKeys_": true,
@@ -861,25 +851,14 @@ export const getGameDefSchema = (gameDef) => {
               "height": {
                 "_type_": "string",
                 "_required_": true,
-              },
-              "layoutVariants": {
-                "_type_": "object",
-                "_itemSchema_": {
-                  "_type_": "any",
-                }
               }
             }
           },
           "textBoxes": {
-            "_type_": "array",
+            "_type_": "object",
             "_itemSchema_": {
               "_type_": "object",
               "_strictKeys_": true,
-              "textBoxId": {
-                "_type_": "string",
-                "_required_": true,
-                "_memberOf_": mytypeof(gameDef?.textBoxes) === "object" ? Object.keys(gameDef.textBoxes) : [],
-              },
               "left": {
                 "_type_": "string",
                 "_required_": true,
@@ -896,12 +875,9 @@ export const getGameDefSchema = (gameDef) => {
                 "_type_": "string",
                 "_required_": true,
               },
-              "layoutVariants": {
-                "_type_": "object",
-                "_itemSchema_": {
-                  "_type_": "any",
-                }
-              }
+              "visible": {
+                "_type_": "boolean",
+              },
             }
           }
         }

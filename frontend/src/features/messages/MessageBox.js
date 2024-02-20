@@ -91,7 +91,7 @@ export const MessageBox = ({ hover, chatBroadcast }) => {
       </div>
       <div 
         className="flex items-center justify-center float-left border-l text-white bg-gray-900 hover:bg-red-700" onClick={(e) => {e.stopPropagation(); downloadHTML(displayedMessages)}}
-        style={{height: "3vh", width: "3vh", animation: smoothScroll ? "glowing 1s infinite ease" : ""}}>
+        style={{height: "3vh", width: "2.99vh", animation: smoothScroll ? "glowing 1s infinite ease" : ""}}>
           <FontAwesomeIcon icon={faDownload}/>
       </div>
     </div>

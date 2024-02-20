@@ -418,5 +418,13 @@ export const siteL10n = {
   "triggerAbility": {
     "English": "Trigger ability",
     "Chinese": "触发能力"
-  }
+  },
+  "allPlayers": {
+    "English": "All players",
+    "Chinese": "所有玩家"
+  },
+  "justMe": {
+    "English": "Just me",
+    "Chinese": "仅限我"
+  },
 }

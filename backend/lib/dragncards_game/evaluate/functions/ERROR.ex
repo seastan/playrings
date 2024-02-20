@@ -17,8 +17,12 @@ defmodule DragnCardsGame.Evaluate.Functions.ERROR do
   The result of the 'ERROR' operation.
   """
   def execute(game, code, trace) do
-    Logger.error("in #{game["pluginName"]}#{Enum.at(code, 1)}")
-    Evaluate.evaluate(game, ["LOG", Enum.at(code, 1)], trace)
+    alias_n = Evaluate.evaluate(game, "$ALIAS_N", trace)
+    message = Enum.at(code, 1)
+    backend_message = "in #{game["pluginName"]} triggered by #{alias_n}#{message}"
+    Logger.error(backend_message)
+    frontend_message = "Error " <> backend_message
+    put_in(game["messages"], game["messages"] ++ [frontend_message])
   end
 
 

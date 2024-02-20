@@ -65,7 +65,7 @@
       "numPlayers" => default_layout_info["numPlayers"],
       "roundNumber" => 0,
       "layoutId" => layout_id,
-      "layoutVariants" => game_def["layouts"][layout_id]["defaultVariants"] || %{},
+      "layout" => game_def["layouts"][layout_id],
       "firstPlayer" => "player1",
       "stepId" => step_id,
       "steps" => Map.get(game_def, "steps", %{}),
