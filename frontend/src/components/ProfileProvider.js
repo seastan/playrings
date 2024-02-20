@@ -20,7 +20,6 @@ export const ProfileProvider = ({ children }) => {
     onError
   );
   console.log("Rendering ProfileProvider", data)
-  console.log("debug1 ProfileProvider", data?.user_profile?.plugin_settings?.["2"]?.ui.zoomPercent)
 
   // Check if a valid authToken exists (user is authenticated)
   const isAuthenticated = authToken !== null;

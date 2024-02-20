@@ -1,11 +1,10 @@
 import React, { useContext, useRef } from "react";
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory } from "react-router-dom";
-import useProfile from "../../hooks/useProfile";
 import store from "../../store";
 import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { setLoaded, setRandomNumBetween, setShowModal, setTouchAction, setTouchMode, setShowDeveloper } from "../store/playerUiSlice";
+import { setRandomNumBetween, setShowModal, setShowDeveloper } from "../store/playerUiSlice";
 import { useGameL10n } from "./hooks/useGameL10n";
 import BroadcastContext from "../../contexts/BroadcastContext";
 import { useGameDefinition } from "./hooks/useGameDefinition";

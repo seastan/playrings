@@ -26,18 +26,24 @@ import { usePreloadCardImages } from "../../hooks/usePreloadCardImages";
 import { useGameDefinition } from "./hooks/useGameDefinition";
 import { SettingsModal } from "./SettingsModal";
 import { useIsHost } from "./hooks/useIsHost";
+import { useDoActionList } from "./hooks/useDoActionList";
+import { useSetTouchAction } from "./hooks/useSetTouchAction";
+import { useTouchAction } from "./hooks/useTouchAction";
 
 export const Table = React.memo(({addDroppableRef}) => {
   const gameDef = useGameDefinition();
   const dispatch = useDispatch();
   const tooltipIds = useSelector(state => state?.playerUi?.tooltipIds);
   const touchMode = useSelector(state => state?.playerUi?.userSettings?.touchMode);
+  const touchAction = useTouchAction();
+  const setTouchAction = useSetTouchAction();
   const showModal = useSelector(state => state?.playerUi?.showModal);
   const showDeveloper = useSelector(state => state?.playerUi?.showDeveloper);
   const loadedADeck = useSelector(state => state?.gameUi?.game?.loadedADeck);
   const myUserId = useProfile()?.id;
   const isHost = useIsHost();
   const playerN = usePlayerN();
+  const doActionList = useDoActionList();
   usePreloadCardImages();
   console.log('Rendering Table', playerN);
 
@@ -51,7 +57,7 @@ export const Table = React.memo(({addDroppableRef}) => {
     dispatch(setMouseXY(null));
     dispatch(setDropdownMenu(null));
     dispatch(setActiveCardId(null));
-    dispatch(setTouchAction(null));
+    if (touchAction) setTouchAction(null);
   }
 
   //if (!loaded && isHost) onLoad(options, redoStepsExist, gameBroadcast, chatBroadcast, dispatch);

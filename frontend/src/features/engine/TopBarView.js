@@ -9,9 +9,6 @@ import { usePlayerIList } from "./hooks/usePlayerIList";
 import { useSiteL10n } from "../../hooks/useSiteL10n";
 import { keysDiv } from "./functions/common";
 
-const keyClass = "m-auto border bg-gray-500 text-center inline-block ml-2";
-const keyStyleL = {width: "7vh", height: "3vh", borderRadius: "1vh", fontSize: "1.5vh"}
-
 export const TopBarView = React.memo(({}) => {
   const siteL10n = useSiteL10n();
   const dispatch = useDispatch();

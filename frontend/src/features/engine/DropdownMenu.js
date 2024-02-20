@@ -3,10 +3,11 @@ import { DropdownMenuCommon } from "./DropdownMenuCommon";
 
 import "../../css/custom-dropdown.css";
 import { useSelector } from "react-redux";
+import { useTouchAction } from "./hooks/useTouchAction";
 
 export const DropdownMenu = React.memo(({}) => {
   const dropdownMenu = useSelector(state => state?.playerUi?.dropdownMenu);
-  const touchAction = useSelector(state => state?.playerUi?.touchAction);
+  const touchAction = useTouchAction();
   const mouseXY = useSelector(state => state?.playerUi?.mouseXY);
   
   const [mouseX, setMouseX] = useState(0);

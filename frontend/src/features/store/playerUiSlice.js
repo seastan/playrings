@@ -22,13 +22,10 @@ const initialState = {
   dropdownMenu: null,
   showModal: null,
   showDeveloper: null,
-  loaded: null,
   showPlayersInRoom: false,
   tooltipIds: [],
   mouseXY: null,
   cardClicked: false,
-  sideGroupId: "sharedSetAside",
-  favoriteGroupId: null,
   randomNumBetween: "3",
   dragging: {
     stackId: null,
@@ -131,15 +128,6 @@ const playerUiSlice = createSlice({
     setCardClicked: (state, { payload }) => {
       state.cardClicked = payload;
     },
-    setTouchAction: (state, { payload }) => {
-      state.touchAction = payload;
-    },
-    setSideGroupId: (state, { payload }) => {
-      state.sideGroupId = payload;
-    },
-    setFavoriteGroupId: (state, { payload }) => {
-      state.favoriteGroupId = payload;
-    },
     setRandomNumBetween: (state, { payload }) => {
       state.randomNumBetween = payload;
     },
@@ -160,15 +148,6 @@ const playerUiSlice = createSlice({
     },
     setDraggingTransform: (state, { payload }) => {
       state.dragging.transform = payload;
-    },
-    setPrompts: (state, { payload }) => {
-      state.prompts = payload;
-    },
-    addPrompt: (state, { payload }) => {
-      state.prompts.push(payload);
-    },
-    popPrompt: (state) => {
-      state.prompts.shift();
     },
     setUserSettings: (state, { payload }) => {
       state.userSettings = payload;
@@ -204,9 +183,6 @@ export const {
   setMouseXY,
   setMouseTopBottom,
   setCardClicked,
-  setTouchAction,
-  setSideGroupId,
-  setFavoriteGroupId,
   setRandomNumBetween,
   setDraggingFromGroupId,
   setDraggingStackId,

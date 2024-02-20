@@ -6,6 +6,7 @@ import { setMouseTopBottom, setDropdownMenu, setActiveCardId, setScreenLeftRight
 import { useHandleTouchAction } from "./hooks/useHandleTouchAction";
 import { useCardZIndex } from "./hooks/useCardZIndex";
 import { useVisibleFace } from "./hooks/useVisibleFace";
+import { useTouchAction } from "./hooks/useTouchAction";
 
 
 export const CardMouseRegion = React.memo(({
@@ -18,7 +19,7 @@ export const CardMouseRegion = React.memo(({
     const visibleFace = useVisibleFace(cardId);
     const playerN = useSelector(state => state?.playerUi?.playerN);
     const touchMode = useSelector(state => state?.playerUi?.userSettings?.touchMode);
-    const touchAction = useSelector(state => state?.playerUi?.touchAction);
+    const touchAction = useTouchAction();
     const dropdownMenuVisible = useSelector(state => state?.playerUi?.dropdownMenu?.visible);
     const zIndex = useCardZIndex(cardId);
     const handleTouchAction = useHandleTouchAction();

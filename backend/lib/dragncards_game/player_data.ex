@@ -25,7 +25,8 @@ defmodule DragnCardsGame.PlayerData do
         "topN" => 0
       },
       "layoutId" => layout_id,
-      "layout" => game_def["layouts"][layout_id]
+      "layout" => game_def["layouts"][layout_id],
+      "touchAction" => nil
     }
     # Add custom properties
     Enum.reduce(game_def["playerProperties"], base, fn({key,val}, acc) ->

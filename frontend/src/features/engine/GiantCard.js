@@ -1,17 +1,17 @@
-import React, { useEffect, useRef } from "react";
+import React, { useRef } from "react";
 import useProfile from "../../hooks/useProfile";
 import { useDispatch, useSelector } from "react-redux";
 import { useVisibleFace } from "./hooks/useVisibleFace";
 import { useVisibleFaceSrc } from "./hooks/useVisibleFaceSrc";
 import { useActiveCardId } from "./hooks/useActiveCardId";
-import { setActiveCardId } from "../store/playerUiSlice";
 import { useGameDefinition } from "./hooks/useGameDefinition";
+import { useTouchAction } from "./hooks/useTouchAction";
 
 export const GiantCard = React.memo(({}) => {
   const user = useProfile();
   const gameDef = useGameDefinition();
   const dispatch = useDispatch();
-  const touchAction = useSelector(state => state?.playerUi?.touchAction);
+  const touchAction = useTouchAction();
   const activeCardId = useActiveCardId();
   const activeCardGroupId = useSelector(state => state?.gameUi?.game?.cardById?.[activeCardId]?.groupId);
   const prevActiveCardGroupIdRef = useRef(activeCardGroupId);

@@ -10,13 +10,16 @@ import { useDoActionList } from "./useDoActionList";
 import { useGameDefinition } from "./useGameDefinition";
 import { useGetDefaultAction } from "./useGetDefaultAction";
 import { useDoDragnHotkey } from "./useDragnHotkeys";
+import { useSetTouchAction } from "./useSetTouchAction";
+import { useTouchAction } from "./useTouchAction";
 
 export const useHandleTouchAction = () => {
     const {gameBroadcast, chatBroadcast} = useContext(BroadcastContext);
     const dispatch = useDispatch();
     const gameDef = useGameDefinition();
     const playerN = useSelector(state => state?.playerUi?.playerN);
-    const touchAction = useSelector(state => state?.playerUi?.touchAction);
+    const touchAction = useTouchAction();
+    const setTouchAction = useSetTouchAction();
     const activeCardId = useSelector(state => state?.playerUi?.activeCardId);
     const doActionList = useDoActionList();
     const doDragnHotkey = useDoDragnHotkey();
@@ -26,12 +29,13 @@ export const useHandleTouchAction = () => {
     const actionProps = {state, dispatch, gameBroadcast, chatBroadcast};
     console.log("Rendering HandleTouchActions")
     return ((touchedCard) => {
+        console.log("handleTouchAction", touchedCard)
         // Must be a player
         if (!playerN) return null;
         if (touchAction) {
             if (touchAction?.actionType === "game") {
                 touchAction.isDragnButton ? doDragnHotkey(touchAction?.actionList) : doActionList(touchAction?.actionList);
-                dispatch(setTouchAction(null));
+                setTouchAction(null);
             } else if (touchAction?.actionType === "token" && touchedCard) {
                 const tokenType = touchAction?.tokenType;
                 const increment = touchAction?.doubleClicked ? -1 : 1;
@@ -44,10 +48,10 @@ export const useHandleTouchAction = () => {
                 doActionList(actionList);
                 const tokensLeft = touchAction?.tokensLeft;
                 if (tokensLeft >= 0) {
-                    if (tokensLeft === 0) dispatch(setTouchAction(null));
-                    else if (tokensLeft === 1 && hasToken) dispatch(setTouchAction(null));
+                    if (tokensLeft === 0) setTouchAction(null);
+                    else if (tokensLeft === 1 && hasToken) setTouchAction(null);
                     else if (hasToken) {
-                        dispatch(setTouchAction({...touchAction, tokensLeft: tokensLeft - 1}))
+                        setTouchAction({...touchAction, tokensLeft: tokensLeft - 1})
                     }
                 }
             } else if (touchAction?.actionType === "card" && touchedCard) {

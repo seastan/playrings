@@ -7,7 +7,7 @@ import useWindowDimensions from "../../hooks/useWindowDimensions";
 import store from "../../store";
 import NaturalDragAnimation from 'natural-drag-animation-rbdnd';
 import { useLayout } from "./hooks/useLayout";
-import { ATTACHMENT_OFFSET } from "./functions/common";
+import { ATTACHMENT_OFFSET, convertToPercentage } from "./functions/common";
 import { useGameDefinition } from "./hooks/useGameDefinition";
 
 export const StackContainer = styled.div`
@@ -73,14 +73,19 @@ export const Stack = React.memo(({
   }
   // Calculate size of stack for proper spacing. Changes base on group type and number of stack in group.
   const numStacksNonZero = Math.max(numStacks, 1);
-  const regionWidthInt = parseInt(region.width.substring(0, region.width.length - 1))
-  const handSpacing = (regionWidthInt-cardSize)*aspectRatio/numStacksNonZero;
+  const regionWidthPercent = convertToPercentage(region.width);
+  const regionWidthInt = parseInt(regionWidthPercent.substring(0, regionWidthPercent.length - 1))
+  const fanSpacingHoriz = (regionWidthInt-cardSize/2)*aspectRatio/numStacksNonZero;
   const cardWidth = card0?.sides[card0?.currentSide]?.width;
   const cardHeight = card0?.sides[card0?.currentSide]?.height;
   const stackHeight = cardHeight*cardSize*zoomFactor;
   const stackWidth = cardWidth*cardSize + ATTACHMENT_OFFSET * (numCards - 1);
-  const stackWidthFan = Math.min(handSpacing, cardWidth*cardSize*zoomFactor);
-  console.log(`Rengering ${groupId} with ${numStacks} stacks. Stack ${stackIndex} has ${numCards} cards. Stack width is ${stackWidth}vh. Stack height is ${stackHeight}vh. Hand spacing is ${handSpacing}vh. Stack width fan is ${stackWidthFan}vh.`)
+  const stackWidthFan = Math.min(fanSpacingHoriz, cardWidth*cardSize*zoomFactor);
+
+  const regionHeightPercent = convertToPercentage(region.height);
+  const regionHeightInt = parseInt(regionHeightPercent.substring(0, regionHeightPercent.length - 1))
+  const fanSpacingVert = (regionHeightInt-cardSize)/numStacksNonZero;
+  const stackHeightFan = Math.min(fanSpacingVert, cardHeight*cardSize*zoomFactor);
   
   return (
     <Draggable 
@@ -103,8 +108,8 @@ export const Stack = React.memo(({
               <StackContainer
                 isDragging={dragSnapshot.isDragging}
                 isGroupedOver={Boolean(dragSnapshot.combineTargetFor)}
-                stackWidth={region.type === "fan" ? stackWidthFan : stackWidth}
-                stackHeight={stackHeight}
+                stackWidth={(region.type === "fan" && region.direction == "horizontal") ? stackWidthFan : stackWidth}
+                stackHeight={(region.type === "fan" && region.direction == "vertical") ? stackHeightFan : stackHeight}
                 margin={region.type === "row" ? rowSpacing : 0}
                 ref={dragProvided.innerRef}
                 {...dragProvided.draggableProps}

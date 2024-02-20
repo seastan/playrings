@@ -1,16 +1,18 @@
 import React from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { useGameDefinition } from "./hooks/useGameDefinition";
-import { setMouseXY, setDropdownMenu, setTouchAction } from "../store/playerUiSlice";
+import { setMouseXY, setDropdownMenu } from "../store/playerUiSlice";
 import { useDoActionList } from "./hooks/useDoActionList";
 import { useGameL10n } from "./hooks/useGameL10n";
-import { el, is } from "date-fns/locale";
 import { useSiteL10n } from "../../hooks/useSiteL10n";
-import { dragnHotkeysTouchLabels, dragnTouchButtons, useDoDragnHotkey } from "./hooks/useDragnHotkeys";
+import { dragnTouchButtons, useDoDragnHotkey } from "./hooks/useDragnHotkeys";
+import { useTouchAction } from "./hooks/useTouchAction";
+import { useSetTouchAction } from "./hooks/useSetTouchAction";
 
 export const TouchButton = React.memo(({buttonObj, displayText}) => {
   const dispatch = useDispatch();
-  const touchAction = useSelector(state => state?.playerUi?.touchAction);
+  const setTouchAction = useSetTouchAction();
+  const touchAction = useTouchAction();
   const doActionList = useDoActionList();
   const doDragnHotkey = useDoDragnHotkey();
   // Check if action is selected
@@ -33,15 +35,15 @@ export const TouchButton = React.memo(({buttonObj, displayText}) => {
     // If button is selected already, either change it from + to - or deselect it
     } else if (selected) {
       if (touchAction?.actionType === "token" && !touchAction.doubleClicked) {
-        dispatch(setTouchAction(
+        setTouchAction(
           {...touchAction, doubleClicked: true}
-        ))
+        )
       } else {
-        dispatch(setTouchAction(null)); 
+        setTouchAction(null);
       }
     } 
     // Otherwise, select the button
-    else dispatch(setTouchAction(buttonObj));
+    else setTouchAction(buttonObj);
   }
 
   const img = buttonObj?.actionType === "token" ? 
