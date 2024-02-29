@@ -974,6 +974,9 @@ export const getQuestCompanionCycleFromQuestId = (questId) => {
     case "A1":
       if (questNum <= 3) return "Children of Eorl";
       else return "Oaths of the Rohirrim";
+    case "A2":
+      if (questNum <= 3) return "The Shire's Reckoning";
+      else return "The Fell Summer";
     case "00":
       return "Starter Set";
   }
