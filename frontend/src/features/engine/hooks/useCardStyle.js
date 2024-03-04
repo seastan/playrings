@@ -16,7 +16,7 @@ export const useCardStyle = (cardId, cardIndexFromGui, isDragging, offset) => {
     const isActive = useSelector(state => {return state?.playerUi?.activeCardId === cardId});
     const cardBorderColor = useSelector(state => state?.gameUi?.game?.cardById[cardId]?.borderColor);
 
-    var [height, width] = [cardVisibleFace.height, cardVisibleFace.width];
+    var [height, width] = [cardVisibleFace?.height, cardVisibleFace?.width];
     if (!height || !width) {
         height = gameDef?.cardBacks?.[cardVisibleFace.name]?.height;
         width = gameDef?.cardBacks?.[cardVisibleFace.name]?.width;

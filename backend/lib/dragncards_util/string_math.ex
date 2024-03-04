@@ -31,6 +31,10 @@ defmodule DragnCardsUtil.StringMath do
     end)
   end
 
+  def remove_whitespace(expression) do
+    Regex.replace(~r/\s/u, expression, "")
+  end
+
   def insert_implicit_multiplication(expression) do
     # Replace instances where "(" is not preceded by operators with "*("
     replaced = Regex.replace(~r/(?<![\+\-\*\/\^])\(/, expression, "*(")
@@ -56,6 +60,7 @@ defmodule DragnCardsUtil.StringMath do
 
   def evaluate_string(expression) do
     try do
+      expression = remove_whitespace(expression)
       expression = insert_implicit_multiplication(expression)
       result = compute_parentheses_inside_out(expression)
       tokens = string_to_tokens(result)

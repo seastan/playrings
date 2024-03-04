@@ -22,7 +22,7 @@ export const SideBarPhase = React.memo(({
       <div
         className={`absolute h-full pointer-events-none ${isPhase ? "bg-red-800" : ""}`}
         style={{width:"3vh"}}>
-        <div className="absolute" style={{top: "50%", left: "50%", transform: "translate(-50%, -50%) rotate(90deg)"}}>
+        <div className="absolute h-full w-full" style={{writingMode: "vertical-rl"}}>
           {gameL10n(phaseInfo.label)}
         </div>
       </div>

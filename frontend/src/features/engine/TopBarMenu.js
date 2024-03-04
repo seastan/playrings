@@ -115,7 +115,7 @@ export const TopBarMenu = React.memo(({}) => {
     }  else if (data.action === "layout") {
       if (data.playerI === "shared") {
         doActionList([
-          ["LOG", "$ALIAS_N", " changed the layout for all players to "+gameL10n(data.value.label)+"."],
+          ["LOG", "$ALIAS_N", " changed the layout for everyone to "+gameL10n(data.value.label)+"."],
           ["SET_LAYOUT", "shared", data.value.layoutId],
           ["SET", "/numPlayers", data.value.numPlayers ? data.value.numPlayers : "$GAME.numPlayers"]
         ]);
@@ -242,10 +242,11 @@ export const TopBarMenu = React.memo(({}) => {
           <ul className="third-level-menu">
             {gameDef.layoutMenu?.map((info, index) => {
               return(
-                <li key={info.layoutId}>
-                  <div className="absolute w-1/2">{gameL10n(info.label)}</div>
-                  <div className="absolute w-1/4 left-1/2" onClick={() => handleMenuClick({action:"layout", value: info, playerI: "shared"})}>{keysDiv(siteL10n("All Players"), "w-full hover:bg-gray-400")}</div>
-                  <div className="absolute w-1/4 left-3/4" onClick={() => handleMenuClick({action:"layout", value: info, playerI: playerN})}>{keysDiv(siteL10n("Just Me"), "w-full hover:bg-gray-400")}</div>
+                <li className="p-1" key={info.layoutId}>
+                  <div className="absolute" style={{width: "20%"}}>{gameL10n(info.label)}</div>
+                  <div className="absolute px-1 flex justify-end" style={{width: "20%", left: "40%", borderRadius: "0.5vh"}}>{siteL10n("Set for: ")}</div>
+                  <div className="absolute bg-gray-500 hover:bg-gray-400 px-1 flex justify-center" style={{width: "19%", left: "60%", borderRadius: "0.5vh"}} onClick={() => handleMenuClick({action:"layout", value: info, playerI: "shared"})}>{siteL10n("Everyone")}</div>
+                  <div className="absolute bg-gray-500 hover:bg-gray-400 px-1 flex justify-center" style={{width: "19%", left: "80%", borderRadius: "0.5vh"}} onClick={() => handleMenuClick({action:"layout", value: info, playerI: playerN})}>{siteL10n("Just Me")}</div>
                 </li>
               )
             })}

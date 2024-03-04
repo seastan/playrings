@@ -10,47 +10,56 @@ import { Prompts } from "./Prompts";
 import { Alert } from "./Alert";
 
 export const TableLayout = React.memo(({addDroppableRef}) => {
-  console.log("Rendering TableLayout");
   const layout = useLayout();
+
+  console.log("Rendering TableLayout", layout);
 
   if (!layout) return;
 
   return (
     <>
       <Browse addDroppableRef={addDroppableRef}/>
-      {Object.keys(layout.regions).map((regionId, regionIndex) => {
-        const region = layout.regions[regionId];
-        if (region?.visible === false) return;
-        return(
-          <TableRegion
-            key={regionIndex}
-            region={region}
-            addDroppableRef={addDroppableRef}
-          />
-        )
-      })}
+      {/* Table Regions */}
+      {layout.regions &&
+        Object.keys(layout?.regions).map((regionId, regionIndex) => {
+          const region = layout.regions[regionId];
+          if (region?.visible === false) return;
+          return(
+            <TableRegion
+              key={regionIndex}
+              region={region}
+              addDroppableRef={addDroppableRef}
+            />
+          )
+        })
+      }
       {/* Table Buttons */}
-      {Object.keys(layout.tableButtons).map((tableButtonId, buttonIndex) => {
-        const tableButton = layout.tableButtons[tableButtonId];
-        if (tableButton.visible === false) return;
-        return(
-          <TableButton 
-            key={buttonIndex}
-            tableButton={tableButton}
-          />
-        )
-      })}
+      {layout.tableButtons &&
+        Object.keys(layout?.tableButtons).map((tableButtonId, buttonIndex) => {
+          const tableButton = layout.tableButtons[tableButtonId];
+          if (tableButton.visible === false) return;
+          return(
+            <TableButton 
+              key={buttonIndex}
+              tableButton={tableButton}
+            />
+          )
+        })
+      }
       {/* Text Boxes */}
-      {Object.keys(layout.textBoxes).map((textBoxId, index) => {
-        const textBoxLayoutInfo = layout.textBoxes[textBoxId];
-        if (textBoxLayoutInfo.visible === false) return;
-        return(
-          <TextBox 
-            key={index}
-            textBoxLayoutInfo={textBoxLayoutInfo}
-          />
-        )
-      })}
+      {layout.textBoxes &&
+        Object.keys(layout.textBoxes).map((textBoxId, _index) => {
+          const textBoxLayoutInfo = layout.textBoxes[textBoxId];
+          if (textBoxLayoutInfo.visible === false) return;
+          return(
+            <TextBox 
+              key={textBoxId}
+              textBoxLayoutInfo={textBoxLayoutInfo}
+            />
+          )
+        })
+      }
+        
       <TableChat region={layout.chat}/>
       <Prompts/>
       <Alert/>
