@@ -29,7 +29,7 @@ defmodule DragnCardsGame.Evaluate do
       else
         case get_in(game_old, path_minus_key) do
           nil ->
-            if Enum.at(path_minus_key, 0) == "layoutVariants" do
+            if Enum.at(path_minus_key, 0) == "layoutVariants" do # legacy code
               game_old
             else
               raise "Tried to set a value (#{val_new}) at a nonexistent path: #{inspect(path_minus_key)}."
