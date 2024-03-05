@@ -16,11 +16,7 @@ defmodule DragnCardsGame.Evaluate do
       Enum.slice(path, 0, Enum.count(path)-1)
     rescue
       _ ->
-        if Enum.at(path, 0) == "layoutVariants" do
-          game_old
-        else
-          raise "Tried to set a value (#{val_new}) at a nonexistent path: #{inspect(path)}. #{inspect(trace)}"
-        end
+        raise "Tried to set a value (#{val_new}) at a nonexistent path: #{inspect(path)}."
     end
     key = Enum.at(path, -1)
     # IO.puts("path_minus_key 1")
@@ -33,7 +29,11 @@ defmodule DragnCardsGame.Evaluate do
       else
         case get_in(game_old, path_minus_key) do
           nil ->
-            raise("Tried to set a key (#{key}) at a nonexistent path: #{inspect(path_minus_key)}")
+            if Enum.at(path_minus_key, 0) == "layoutVariants" do
+              game_old
+            else
+              raise "Tried to set a value (#{val_new}) at a nonexistent path: #{inspect(path_minus_key)}."
+            end
 
           val_old ->
             # Check if val_old is a map
