@@ -1,4 +1,8 @@
 export const siteL10n = {
+  "pleaseSit": {
+    "English": "Please sit at the table first.",
+    "Chinese": "请先坐下。"
+  },
   "hotkeys": {
     "English": "Hotkeys",
     "Chinese": "快捷键"

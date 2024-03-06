@@ -3,9 +3,9 @@ import { convertToPercentage } from "./functions/common";
 import { useSelector } from "react-redux";
 
 export const TextBox = React.memo(({
+  textBoxId,
   textBoxLayoutInfo
 }) => {
-  const textBoxId = textBoxLayoutInfo?.textBoxId;
   const textBox = useSelector(state => state?.gameUi?.game?.textBoxById?.[textBoxId]);
   console.log("Rendering TextBox", textBoxLayoutInfo, textBox);
   return (

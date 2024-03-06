@@ -54,6 +54,7 @@ export const TableLayout = React.memo(({addDroppableRef}) => {
           return(
             <TextBox 
               key={textBoxId}
+              textBoxId={textBoxId}
               textBoxLayoutInfo={textBoxLayoutInfo}
             />
           )

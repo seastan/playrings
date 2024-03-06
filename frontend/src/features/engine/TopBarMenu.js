@@ -39,7 +39,7 @@ export const TopBarMenu = React.memo(({}) => {
 
   const handleMenuClick = (data) => {
     if (!playerN) {
-      alert("Please sit at the table first.");
+      alert(siteL10n("pleaseSit"));
       return;
     }
     if (data.action === "clear_table") {
