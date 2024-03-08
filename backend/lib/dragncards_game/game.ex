@@ -62,7 +62,7 @@
       "pluginId" => options["pluginId"],
       "pluginVersion" => options["pluginVersion"],
       "pluginName" => options["pluginName"],
-      "numPlayers" => default_layout_info["numPlayers"],
+      "numPlayers" => default_layout_info["numPlayers"] || 1,
       "roundNumber" => 0,
       "layoutId" => layout_id,
       "layout" => game_def["layouts"][layout_id],

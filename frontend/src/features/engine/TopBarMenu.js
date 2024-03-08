@@ -113,18 +113,20 @@ export const TopBarMenu = React.memo(({}) => {
     } else if (data.action === "load_custom") {
       loadFileCustom();
     }  else if (data.action === "layout") {
+      var actionList = null;
       if (data.playerI === "shared") {
-        doActionList([
+        actionList = [
           ["LOG", "$ALIAS_N", " changed the layout for everyone to "+gameL10n(data.value.label)+"."],
           ["SET_LAYOUT", "shared", data.value.layoutId],
           ["SET", "/numPlayers", data.value.numPlayers ? data.value.numPlayers : "$GAME.numPlayers"]
-        ]);
+        ];
       } else {
-        doActionList([
+        actionList = [
           ["LOG", "$ALIAS_N", " changed the layout for themselves to "+gameL10n(data.value.label)+"."],
           ["SET_LAYOUT", playerN, data.value.layoutId]
-        ]);
+        ];
       }
+      doActionList(actionList);
     } 
   }
 

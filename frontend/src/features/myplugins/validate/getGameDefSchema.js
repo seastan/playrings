@@ -708,6 +708,9 @@ export const getGameDefSchema = (gameDef) => {
         "_itemSchema_": {
           "_type_": "object",
           "_strictKeys_": true,
+          "postSetActionList": {
+            "_type_": "actionList",
+          },
           "cardSize": {
             "_type_": "float",
             "_required_": true,
