@@ -7,7 +7,7 @@ defmodule DragnCardsGame.Evaluate.Functions.SUBSTRING do
   @doc """
   Executes the 'SUBSTRING' operation with the given arguments.
 
-  ## Parameters 
+  ## Parameters
 
     - `args`: The arguments required for the 'SUBSTRING' operation.
 
@@ -19,9 +19,12 @@ defmodule DragnCardsGame.Evaluate.Functions.SUBSTRING do
     string = Evaluate.evaluate(game, Enum.at(code,1), trace ++ ["string"])
     start = Evaluate.evaluate(game, Enum.at(code,2), trace ++ ["start"])
     length = Evaluate.evaluate(game, Enum.at(code,3), trace ++ ["length"])
-    String.slice(string, start..start+length-1)
+    if string == nil || start == nil || length == nil do
+      raise "Tried to call SUBSTRING with nil arguments. string: #{string}, start: #{start}, length: #{length}"
+    else
+      String.slice(string, start..start+length-1)
+    end
   end
 
 
 end
-    

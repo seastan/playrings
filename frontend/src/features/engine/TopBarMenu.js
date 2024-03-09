@@ -78,7 +78,10 @@ export const TopBarMenu = React.memo(({}) => {
       const actionList = [
         ["FOR_EACH_KEY_VAL", "$CARD_ID", "$CARD", "$CARD_BY_ID", [
           ["COND",
-            ["EQUAL", "$CARD.controller", "shared"],
+            ["OR",
+              ["EQUAL", "$CARD.controller", null],
+              ["NOT_EQUAL", ["SUBSTRING", "$CARD.controller", 0, 6], "player"],
+            ],
             ["DELETE_CARD", "$CARD_ID"]
           ]
         ]],
