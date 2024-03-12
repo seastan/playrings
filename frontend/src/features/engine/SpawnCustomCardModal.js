@@ -60,7 +60,19 @@ export const SpawnCustomCardModal = React.memo(({}) => {
       "loadGroupId": deckGroupId
     }]
     console.log("importcard",loadList)
+
+    // Download the loadList as a file
+    const element = document.createElement("a");
+    const prettyString = JSON.stringify(loadList, null, 2);
+    const file = new Blob([prettyString], {type: 'text/plain'});
+    element.href = URL.createObjectURL(file);
+    element.download = `${faceA["name"]} - upload later via Menu - Load - Load custom cards.txt`;
+    document.body.appendChild(element); // Required for this to work in FireFox
+    element.click();
+
     importLoadList(loadList);
+
+
   }
 
     const lineInput = (id, title) => {
