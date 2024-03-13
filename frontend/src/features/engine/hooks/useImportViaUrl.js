@@ -50,10 +50,34 @@ const importViaUrlRingsDb = async (importLoadList, doActionList, playerN) => {
     return loadRingsDb(importLoadList, doActionList, playerN, ringsDbDomain, ringsDbType, ringsDbId);
 }
 
+const importViaUrlMarvelCdb = async (importLoadList, doActionList, playerN, cardDb) => {
+  const dbUrl = prompt("Paste full MarvelCDB URL","");
+  if (!dbUrl.includes("marvelcdb.com")) {
+    alert("Only importing from MarvelCDB is supported at this time.");
+    return;
+  }
+  const dbDomain = "marvelcdb";
+  var dbType;
+  if (dbUrl.includes("/decklist/")) dbType = "decklist";
+  else if (dbUrl.includes("/deck/")) dbType = "deck";
+  if (!dbType) {
+    alert("Invalid URL");
+    return;
+  }
+  var splitUrl = dbUrl.split( '/' );
+  const typeIndex = splitUrl.findIndex((e) => e === dbType)
+  if (splitUrl && splitUrl.length <= typeIndex + 2) {
+    alert("Invalid URL");
+    return;
+  }
+  const dbId = splitUrl[typeIndex + 2];
+  return loadMarvelCdb(importLoadList, doActionList, playerN, dbDomain, dbType, dbId, cardDb);
+}
+
 
 export const loadRingsDb = (importLoadList, doActionList, playerN, ringsDbDomain, ringsDbType, ringsDbId) => {
   doActionList(["LOG", "$ALIAS_N", " is importing a deck from RingsDB."]);
-  const urlBase = ringsDbDomain === "test" ? "https://www.test.ringsdb.com/api/" : "https://www.ringsdb.com/api/"
+  const urlBase = ringsDbDomain === "test" ? "https://test.ringsdb.com/api/" : "https://www.ringsdb.com/api/"
   const url = ringsDbType === "decklist" ? urlBase+"public/decklist/"+ringsDbId+".json" : urlBase+"oauth2/deck/load/"+ringsDbId;
   console.log("Fetching ", url);
   fetch(url)
@@ -122,30 +146,6 @@ export const loadRingsDb = (importLoadList, doActionList, playerN, ringsDbDomain
 }
 
 
-
-const importViaUrlMarvelCdb = async (importLoadList, doActionList, playerN, cardDb) => {
-  const dbUrl = prompt("Paste full MarvelCDB URL","");
-  if (!dbUrl.includes("marvelcdb.com")) {
-    alert("Only importing from MarvelCDB is supported at this time.");
-    return;
-  }
-  const dbDomain = "marvelcdb";
-  var dbType;
-  if (dbUrl.includes("/decklist/")) dbType = "decklist";
-  else if (dbUrl.includes("/deck/")) dbType = "deck";
-  if (!dbType) {
-    alert("Invalid URL");
-    return;
-  }
-  var splitUrl = dbUrl.split( '/' );
-  const typeIndex = splitUrl.findIndex((e) => e === dbType)
-  if (splitUrl && splitUrl.length <= typeIndex + 2) {
-    alert("Invalid URL");
-    return;
-  }
-  const dbId = splitUrl[typeIndex + 2];
-  return loadMarvelCdb(importLoadList, doActionList, playerN, dbDomain, dbType, dbId, cardDb);
-}
 
 
 export const loadMarvelCdb = (importLoadList, doActionList, playerN, dbDomain, dbType, dbId, cardDb) => {
