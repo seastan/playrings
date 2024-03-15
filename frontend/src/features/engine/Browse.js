@@ -134,6 +134,7 @@ export const Browse = React.memo(({addDroppableRef}) => {
   // If browseGroupTopN not set, or equal to "All" or "None", show all stacks
   var browseGroupTopNint = isNormalInteger(browseGroupTopN) ? parseInt(browseGroupTopN) : numStacks;
   if (browseGroupTopNint < 0) browseGroupTopNint = numStacks;
+  if (browseGroupTopNint > numStacks) browseGroupTopNint = numStacks;
   var filteredStackIndices = [...Array(browseGroupTopNint).keys()];
   
   // Filter by selected card type
