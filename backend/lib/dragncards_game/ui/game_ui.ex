@@ -281,7 +281,6 @@ defmodule DragnCardsGame.GameUI do
   # Update a card state
   # Modify the card orientation/tokens based on where it is now
   def update_card_state(game, card_id, orig_group_id \\ nil, move_options \\ nil) do
-    Logger.debug("update_card_state 1")
     {dest_group_id, dest_stack_index, dest_card_index} = gsc(game, card_id)
     orig_group = get_group(game, orig_group_id)
     dest_group = get_group(game, dest_group_id)
@@ -291,14 +290,13 @@ defmodule DragnCardsGame.GameUI do
     else
       true
     end
-    Logger.debug("update_card_state 2")
     parent_card = get_card_by_group_id_stack_index_card_index(game, [dest_group_id, dest_stack_index, 0])
 
     game = Evaluate.evaluate(game, ["SET", "/cardById/" <> card_id <> "/groupId", dest_group_id], ["update_card_state cardId:#{card_id} groupId:#{dest_group_id}"])
     game = Evaluate.evaluate(game, ["SET", "/cardById/" <> card_id <> "/stackIndex", dest_stack_index], ["update_card_state cardId:#{card_id} stackIndex:#{dest_stack_index}"])
     game = Evaluate.evaluate(game, ["SET", "/cardById/" <> card_id <> "/cardIndex", dest_card_index], ["update_card_state cardId:#{card_id} cardIndex:#{dest_card_index}"])
     game = Evaluate.evaluate(game, ["SET", "/cardById/" <> card_id <> "/parentCardId", parent_card["id"]], ["update_card_state cardId:#{card_id} stackParentCardId:#{parent_card["id"]}"])
-    Logger.debug("update_card_state 3")
+
     # Update stackIndex and cardIndex of every card in the orig/dest group- This turned out to be very slow, becuase each SET triggered the loop through automations. Now we do do this directly, not through SET.
     # I think I need to to have some kind of flag to see if any of the automations rely on stackIndex or cardIndex
     game = if orig_group_id != nil do
@@ -314,7 +312,7 @@ defmodule DragnCardsGame.GameUI do
     else
       game
     end
-    Logger.debug("update_card_state 4")
+
     game = Enum.reduce(Enum.with_index(dest_group["stackIds"]), game, fn({stack_id, stack_index}, acc) ->
       stack = get_stack(game, stack_id)
       Enum.reduce(Enum.with_index(stack["cardIds"]), acc, fn({card_id, card_index}, acc2) ->
@@ -324,18 +322,16 @@ defmodule DragnCardsGame.GameUI do
         #|> Evaluate.evaluate(["SET", "/cardById/" <> card_id <> "/cardIndex", card_index], ["update_card_state dest_group card_index:#{card_index}"])
       end)
     end)
-    Logger.debug("update_card_state 5")
+
     # If card gets moved to a facedown pile, or gets flipped up, erase peeking
     moving_to_facedown = dest_group["onCardEnter"]["currentSide"] == "B" and orig_group_id != dest_group_id
     will_flip = old_card["currentSide"] == "B" and dest_group["onCardEnter"]["currentSide"] == "A" and allow_flip
 
-    Logger.debug("update_card_state 6")
     game = if moving_to_facedown or will_flip do
       Evaluate.evaluate(game, ["SET", "/cardById/" <> card_id <> "/peeking", %{}], ["update_card_state cardId:#{card_id} peeking:empty"])
     else
       game
     end
-    Logger.debug("update_card_state 7")
 
     # Assign the prev group's onCardLeave values
     game = if orig_group["onCardLeave"] != nil do
@@ -370,14 +366,12 @@ defmodule DragnCardsGame.GameUI do
     else
       game
     end
-    Logger.debug("update_card_state 8")
 
     game = if orig_group["canHaveTokens"] != false and dest_group["canHaveTokens"] == false do
       Evaluate.evaluate(game, ["SET", "/cardById/" <> card_id <> "/tokens", %{}], ["update_card_state cardId:#{card_id} tokens:empty"])
     else
       game
     end
-    Logger.debug("update_card_state 9")
 
     game
 
