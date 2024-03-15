@@ -427,7 +427,6 @@ defmodule DragnCardsGame.GameUI do
   # Stack actions                                                 #
   #################################################################
 
-
   def get_top_card_of_stack(game, stack_id) do
     stack = get_stack(game, stack_id)
     card_id = Enum.at(stack["cardIds"],0)
@@ -603,6 +602,12 @@ defmodule DragnCardsGame.GameUI do
 
     game_new = game_new
       |> resolve_action_type(action, options, user_id)
+
+    game_new = if game_new["roundNumber"] > game_old["roundNumber"] do
+      save_replay(game_new, user_id)
+    else
+      game_new
+    end
 
     game_new = game_new
       |> Map.delete("playerUi")
