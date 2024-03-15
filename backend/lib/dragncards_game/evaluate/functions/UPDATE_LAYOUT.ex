@@ -22,12 +22,12 @@ defmodule DragnCardsGame.Evaluate.Functions.UPDATE_LAYOUT do
       Evaluate.put_by_path(game, path, value, trace ++ ["put_by_path shared"])
     rescue
       _ ->
-        Evaluate.evaluate(game, ["LOG", "WARNING: Could not update layout at path: #{path} with value: #{value}"])
+        game
+        #Evaluate.evaluate(game, ["LOG", "WARNING: Could not update layout at path: #{path} with value: #{value}"])
     end
     # Loop over key/values in the playerData and update the layout
     Enum.reduce(game["playerData"], game, fn({player_i, _player_data}, acc) ->
       player_path = ["playerData", player_i] ++ path
-      IO.puts("player_path: #{inspect(player_path)} value: #{inspect(value)}")
       try do # Not all players' layouts will have the region defined
         Evaluate.put_by_path(acc, player_path, value, trace ++ ["put_by_path player_i"])
       rescue

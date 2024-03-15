@@ -28,6 +28,10 @@ defmodule DragnCardsGame.Evaluate.Functions.PROMPT do
     game_def = Plugins.get_game_def(game["options"]["pluginId"])
 
     orig_prompt = game_def["prompts"][prompt_id]
+    if orig_prompt == nil do
+      raise "Prompt #{prompt_id} not found in game definition."
+    end
+
     orig_args = orig_prompt["args"]
     orig_message = orig_prompt["message"]
     orig_options = orig_prompt["options"]
@@ -67,14 +71,24 @@ defmodule DragnCardsGame.Evaluate.Functions.PROMPT do
     |> Map.put("message", new_message)
     |> Map.put("timestamp", DateTime.utc_now() |> DateTime.to_unix(:second) |> round())
 
+    IO.puts("here 1")
+
     game = Enum.reduce(target_player_list, game, fn(target_player_n, acc) ->
+      IO.puts("here 2")
 
       # Prepend the "VAR" statements to each option's code so that when it gets evaluated, it will have the variables defined
       # Append a command to delete the prompt
       new_options = Enum.reduce(orig_options, [], fn(option, acc) ->
+        IO.puts("unsetting #{target_player_n}")
         unset_command = ["UNSET", "/playerData/#{target_player_n}/prompts/#{prompt_uuid}"]
+        IO.inspect(unset_command)
         new_option = if option["code"] != nil do
-          put_in(option, ["code"], var_statements ++ option["code"] ++ [unset_command])
+          prompt_code = if is_list(Enum.at(option["code"], 0)) do
+            option["code"]
+          else
+            [option["code"]]
+          end
+          put_in(option, ["code"], var_statements ++ prompt_code ++ [unset_command])
         else
           put_in(option, ["code"], unset_command)
         end
