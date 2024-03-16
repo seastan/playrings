@@ -1,10 +1,10 @@
-import React, { useContext, useRef } from "react";
+import React, { useContext, useEffect, useRef } from "react";
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory } from "react-router-dom";
 import store from "../../store";
 import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { setRandomNumBetween, setShowModal, setShowDeveloper } from "../store/playerUiSlice";
+import { setRandomNumBetween, setShowModal, setShowDeveloper, setAutoLoadedDecks } from "../store/playerUiSlice";
 import { useGameL10n } from "./hooks/useGameL10n";
 import BroadcastContext from "../../contexts/BroadcastContext";
 import { useGameDefinition } from "./hooks/useGameDefinition";
@@ -12,8 +12,10 @@ import { useDoActionList } from "./hooks/useDoActionList";
 import { useSiteL10n } from "../../hooks/useSiteL10n";
 import { getRandomIntInclusive, keysDiv } from "./functions/common";
 import { useImportLoadList } from "./hooks/useImportLoadList";
-import { useImportViaUrl } from "./hooks/useImportViaUrl";
+import { loadMarvelCdb, loadRingsDb, useImportViaUrl } from "./hooks/useImportViaUrl";
 import { useIsHost } from "./hooks/useIsHost";
+import { usePlayerN } from "./hooks/usePlayerN";
+import { useCardDb } from "./hooks/useCardDb";
 
 
 export const TopBarMenu = React.memo(({}) => {
@@ -25,10 +27,15 @@ export const TopBarMenu = React.memo(({}) => {
   const doActionList = useDoActionList();
   const loadList = useImportLoadList();
   const importViaUrl = useImportViaUrl();
+  const importLoadList = useImportLoadList();
+  const cardDb = useCardDb();
 
   const isHost = useIsHost();
-  const playerN = useSelector(state => state?.playerUi?.playerN);
+  const playerN = usePlayerN();
   const randomNumBetween = useSelector(state => state?.playerUi?.randomNumBetween);
+  const gameOptions = useSelector(state => state?.gameUi?.game?.options);
+  const autoLoadedDecksGame = useSelector(state => state?.gameUi?.game?.autoLoadedDecks);
+  const autoLoadedDecksPlayer = useSelector(state => state?.playerUi?.autoLoadedDecks);
   
   const dispatch = useDispatch();
   const inputFileDeck = useRef(null);
@@ -217,6 +224,37 @@ export const TopBarMenu = React.memo(({}) => {
     downloadAnchorNode.remove();
     chatBroadcast("game_update", {message: "downloaded the game."});
   }
+
+  useEffect(() => {
+    // Log when the component mounts
+    console.log('Autoloaded mounted');
+
+    // Return a function from the useEffect callback
+    return () => {
+      // This code is executed when the component unmounts
+      console.log('Autoloaded will unmount');
+    };
+  }, []); // Empty dependency array means this effect runs only on mount and unmount
+
+  useEffect(() => {
+    if (autoLoadedDecksGame != true && autoLoadedDecksPlayer != true && gameOptions?.externalData) {
+      const externalData = gameOptions.externalData;
+      const domain = externalData.domain;
+      const type = externalData.type;
+      const id = externalData.id;
+      doActionList(["SET", "/autoLoadedDecks", true])
+      dispatch(setAutoLoadedDecks(true));
+      if (domain === "ringsdbtest") {
+        loadRingsDb(importLoadList, doActionList, playerN, "test", type, id);
+      }
+      else if (domain === "ringsdb") {
+        loadRingsDb(importLoadList, doActionList, playerN, "ringsdb", type, id);
+      }
+      else if (domain === "marvelcdb") {
+        loadMarvelCdb(importLoadList, doActionList, playerN, "marvelcdb", type, id, cardDb);
+      }
+    }
+  }, [autoLoadedDecksGame]);
 
   return(
     <li key={"Menu"}><div className="h-full flex items-center justify-center select-none">{siteL10n("menu")}</div>

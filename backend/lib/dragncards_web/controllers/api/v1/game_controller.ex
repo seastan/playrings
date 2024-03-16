@@ -16,6 +16,7 @@ defmodule DragnCardsWeb.API.V1.GameController do
     options = %{
       "privacyType" => params["room"]["privacy_type"],
       "replayUuid" => params["game_options"]["replay_uuid"],
+      "externalData" => params["game_options"]["external_data"],
       "ringsDbInfo" => params["game_options"]["ringsdb_info"],
       "pluginId" => params["game_options"]["plugin_id"],
       "pluginVersion" => params["game_options"]["plugin_version"],

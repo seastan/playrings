@@ -27,6 +27,7 @@ const initialState = {
   mouseXY: null,
   cardClicked: false,
   randomNumBetween: "3",
+  autoLoadedDecks: false,
   dragging: {
     stackId: null,
     end: null,
@@ -152,6 +153,9 @@ const playerUiSlice = createSlice({
     setUserSettings: (state, { payload }) => {
       state.userSettings = payload;
     },
+    setAutoLoadedDecks: (state, { payload }) => {
+      state.autoLoadedDecks = payload;
+    }
   }
 });
 
@@ -192,5 +196,6 @@ export const {
   setDraggingToRegionType,
   setUserSettings,
   setAlertMessage,
+  setAutoLoadedDecks
  } = playerUiSlice.actions;
 export default playerUiSlice.reducer;

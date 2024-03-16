@@ -14,6 +14,7 @@ export const CreateRoomModal = ({
   isLoggedIn, 
   closeModal, 
   replayUuid,
+  externalData,
   plugin,
 }) => {
   const [isError, setIsError] = useState(false);
@@ -42,6 +43,7 @@ export const CreateRoomModal = ({
         plugin_version: plugin.version,
         plugin_name: plugin.name,
         replay_uuid: replayUuid,
+        external_data: externalData,
 
 //        ringsdb_info: ringsDbInfo,
 //        load_shuffle: loadShuffle,

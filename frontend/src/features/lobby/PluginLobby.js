@@ -21,6 +21,7 @@ export const PluginLobby = () => {
   const [plugin, setPlugin] = useState(null);
   const [showModal, setShowModal] = useState(null);
   const [replayUuid, setReplayUuid] = useState(null);
+  const [externalData, setExternalData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [ringsDbInfo, setRingsDbInfo] = useState([null,null,null,null]);
 
@@ -54,6 +55,14 @@ export const PluginLobby = () => {
     if (url.includes("/load/")) {
       const loadIndex = splitUrl.findIndex((e) => e === "load")
       setReplayUuid(splitUrl[loadIndex + 1]);
+      setShowModal("createRoom");
+    }
+    if (url.includes("/external/")) {
+      const externalIndex = splitUrl.findIndex((e) => e === "external")
+      const externalDomain = splitUrl[externalIndex + 1];
+      const externalType = splitUrl[externalIndex + 2];
+      const externalId = splitUrl[externalIndex + 3];
+      setExternalData({domain: externalDomain, type: externalType, id: externalId})
       setShowModal("createRoom");
     }
   }, []);
@@ -138,6 +147,7 @@ export const PluginLobby = () => {
         isLoggedIn={isLoggedIn}
         closeModal={() => setShowModal(null)}
         replayUuid={replayUuid}
+        externalData={externalData}
         plugin={plugin}
       />
     </LobbyContainer>
