@@ -19,14 +19,11 @@ defmodule DragnCardsWeb.API.V1.UsersController do
     IO.puts("fetch_plugin_permission 1")
 
     query = from u in User,
-      left_join: upa in UserPluginPermission, on: upa.user_id == u.id,
-      where: is_nil(upa.private_access) or upa.private_access == ^plugin_id,
+      left_join: upa in UserPluginPermission, on: upa.user_id == u.id and upa.private_access == ^plugin_id,
       select: %{user_id: u.id, user_alias: u.alias, private_access: not is_nil(upa.private_access)}
 
     result = Repo.all(query)
       |> Enum.into(%{}, fn %{user_id: user_id, user_alias: user_alias, private_access: private_access} -> {user_alias, %{private_access: private_access, user_id: user_id}} end)
-
-    IO.puts("fetch_plugin_permission 3")
 
     json(conn, %{data: result})
   end
