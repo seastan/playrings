@@ -1,7 +1,12 @@
 defmodule DragnCardsGame.Evaluate.Functions.GET_ALIAS do
   alias DragnCardsGame.Evaluate
   @moduledoc """
-  Handles the 'GET_ALIAS' operation in the DragnCardsGame evaluation process.
+  *Arguments*:
+  1. playerI (a playerI string such as "player1" or "player2")
+
+  *Returns*:
+  (string) The alias corresponding to playerI.
+
   """
 
   @doc """

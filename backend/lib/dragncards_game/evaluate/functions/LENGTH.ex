@@ -1,13 +1,18 @@
 defmodule DragnCardsGame.Evaluate.Functions.LENGTH do
   alias DragnCardsGame.Evaluate
   @moduledoc """
-  Handles the 'LENGTH' operation in the DragnCardsGame evaluation process.
+  *Arguments*:
+  1. string_or_list (string | list)
+
+  *Returns*:
+  (number) The length of the string or list.
+
   """
 
   @doc """
   Executes the 'LENGTH' operation with the given arguments.
 
-  ## Parameters 
+  ## Parameters
 
     - `args`: The arguments required for the 'LENGTH' operation.
 
@@ -22,4 +27,3 @@ defmodule DragnCardsGame.Evaluate.Functions.LENGTH do
 
 
 end
-    

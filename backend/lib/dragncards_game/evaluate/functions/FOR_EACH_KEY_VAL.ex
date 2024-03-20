@@ -1,7 +1,44 @@
 defmodule DragnCardsGame.Evaluate.Functions.FOR_EACH_KEY_VAL do
   alias DragnCardsGame.Evaluate
   @moduledoc """
-  Handles the 'FOR_EACH_KEY_VAL' operation in the DragnCardsGame evaluation process.
+  *Arguments*:
+  1. key_name (string starting with $)
+  2. val_name (string starting with $)
+  3. obj (object)
+  4. function (actionList)
+  5. sort_prop (string) (optional)
+  6. sort_order (string) (optional)
+
+  Iterates over the key-value pairs of an object, assigning the key to key_name and the value to val_name.
+
+  If sort_prop is provided, the list will be sorted by that property before iteration.
+
+  If sort_order is provided, it will be used to determine the sort order ("ASC" or "DESC").
+
+  *Returns*:
+  (any) The result of the successive calling of the function on each key-value pair.
+
+  *Example*:
+  ```
+  [
+    ["FOR_EACH_KEY_VAL", "$CARD_ID", "$CARD", "$GAME.cardById, [
+      ["LOG", "{{$CARD_ID}}: {{$CARD.currentFace.name}}"]
+    ]
+  ]
+  ```
+  [
+    ["FOR_EACH_KEY_VAL", "$CARD_ID", "$CARD", "$GAME.cardById, [
+      ["COND",
+        ["EQUAL", ["VAR", "$CARD.rotation"], 90],
+        [
+          ["LOG", "{{$ALIAS_N}} readied {{$CARD.currentFace.name}}."],
+          ["SET", "/cardById/{{$CARD_ID}}/rotation", 0]
+        ]
+      ]
+    ]
+  ]
+  ```
+
   """
 
   @doc """

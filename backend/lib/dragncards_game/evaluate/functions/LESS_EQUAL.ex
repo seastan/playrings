@@ -1,7 +1,22 @@
 defmodule DragnCardsGame.Evaluate.Functions.LESS_EQUAL do
   alias DragnCardsGame.Evaluate
   @moduledoc """
-  Handles the 'LESS_EQUAL' operation in the DragnCardsGame evaluation process.
+  *Arguments*:
+  1. lhs (number)
+  2. rhs (number)
+
+  *Returns*:
+  (boolean) The result of the <= operation. Null values are treated as 0.
+
+  *Examples*:
+  ```
+  ["LESS_EQUAL", 5, 5] => true
+  ["LESS_EQUAL", 5, 4] => false
+  ["LESS_EQUAL", 5, 6] => true
+  ["LESS_EQUAL", 5, null] => false
+  ["LESS_EQUAL", null, 5] => true
+  ["LESS_EQUAL", null, null] => true
+  ```
   """
 
   @doc """

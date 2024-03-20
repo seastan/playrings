@@ -1,7 +1,14 @@
 defmodule DragnCardsGame.Evaluate.Functions.DRAW_CARD do
   alias DragnCardsGame.{Evaluate, GameUI}
   @moduledoc """
-  Handles the 'DRAW_CARD' operation in the DragnCardsGame evaluation process.
+  *Arguments*:
+  1. num (number)
+  2. playerI (string) (optional)
+
+  Draws num cards from the playerI's deck to their hand. If playerI is not provided, it defaults to the current player. This function requires that you have groups named playerIDeck and playerIHand for I = 1, 2, ... gameDef.maxplayers.
+
+  *Returns*:
+  (game state) The game state with the cards drawn.
   """
 
   @doc """

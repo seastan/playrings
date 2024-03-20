@@ -1,7 +1,13 @@
 defmodule DragnCardsGame.Evaluate.Functions.ABILITY do
   alias DragnCardsGame.{Evaluate}
   @moduledoc """
-  Handles the 'ABILITY' operation in the DragnCardsGame evaluation process.
+  *Arguments*:
+  1. card_id
+  2. side
+
+  Gets the card's databaseId and calls the ability actionList as defined in gameDef.automation.cards.<databaseId>.ability.<side>
+  *Returns*:
+  (any) The result of the ability actionList.
   """
 
   @doc """

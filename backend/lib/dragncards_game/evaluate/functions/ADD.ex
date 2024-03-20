@@ -1,13 +1,20 @@
 defmodule DragnCardsGame.Evaluate.Functions.ADD do
   alias DragnCardsGame.Evaluate
   @moduledoc """
-  Handles the 'ADD' operation in the DragnCardsGame evaluation process.
+  *Arguments*:
+  1. lhs (number)
+  2. rhs (number)
+
+  Adds the two numbers together. If either number is null, it is treated as 0.
+
+  *Returns*:
+  (number) The result of the addition.
   """
 
   @doc """
   Executes the 'ADD' operation with the given arguments.
 
-  ## Parameters 
+  ## Parameters
 
     - `args`: The arguments required for the 'ADD' operation.
 
@@ -21,4 +28,3 @@ defmodule DragnCardsGame.Evaluate.Functions.ADD do
 
 
 end
-    

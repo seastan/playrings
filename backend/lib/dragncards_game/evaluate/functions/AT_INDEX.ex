@@ -1,13 +1,20 @@
 defmodule DragnCardsGame.Evaluate.Functions.AT_INDEX do
   alias DragnCardsGame.Evaluate
   @moduledoc """
-  Handles the 'AT_INDEX' operation in the DragnCardsGame evaluation process.
+  *Arguments*:
+  1. list (list)
+  2. index (number)
+
+  Returns the element at the given index in the list. If the list is null, it returns null.
+
+  *Returns*:
+  (any) The element at the given index in the list.
   """
 
   @doc """
   Executes the 'AT_INDEX' operation with the given arguments.
 
-  ## Parameters 
+  ## Parameters
 
     - `args`: The arguments required for the 'AT_INDEX' operation.
 
@@ -23,4 +30,3 @@ defmodule DragnCardsGame.Evaluate.Functions.AT_INDEX do
 
 
 end
-    

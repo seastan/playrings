@@ -2,7 +2,13 @@ defmodule DragnCardsGame.Evaluate.Functions.ACTION_LIST do
   alias DragnCardsGame.Evaluate
   alias DragnCards.Plugins
   @moduledoc """
-  Handles the 'ACTION_LIST' operation in the DragnCardsGame evaluation process.
+  *Arguments*:
+  1. actionListId (string) or actionList (list)
+
+  If provided a string, gets the actionList from gameDef.actionLists. Then evaluates the actionList.
+
+  *Returns*:
+  (any) The result of the actionList.
   """
 
   @doc """

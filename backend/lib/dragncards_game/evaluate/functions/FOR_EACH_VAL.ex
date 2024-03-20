@@ -1,7 +1,23 @@
 defmodule DragnCardsGame.Evaluate.Functions.FOR_EACH_VAL do
   alias DragnCardsGame.Evaluate
   @moduledoc """
-  Handles the 'FOR_EACH_VAL' operation in the DragnCardsGame evaluation process.
+  *Arguments*:
+  1. val_name (string starting with $)
+  2. list (list)
+  3. function (actionList)
+
+  Iterates over the values in the list, assigning each value to val_name.
+
+  *Returns*:
+  (any) The result of the successive calling of the function on each value.
+
+  *Example*:
+  ```
+  [
+    ["FOR_EACH_VAL", "$CARD", "$GAME.groupById.player1Deck.parentCards, [
+      ["LOG", "{{$CARD.currentFace.name}} is in {{$GAME.groupById.player1Deck.label}}."]
+    ]
+  ]
   """
 
   @doc """

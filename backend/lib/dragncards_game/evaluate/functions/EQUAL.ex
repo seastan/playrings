@@ -1,13 +1,31 @@
 defmodule DragnCardsGame.Evaluate.Functions.EQUAL do
   alias DragnCardsGame.Evaluate
   @moduledoc """
-  Handles the 'EQUAL' operation in the DragnCardsGame evaluation process.
+  *Arguments*:
+  1. lhs (any)
+  2. rhs (any)
+
+  Compares the two values for equality.
+
+  *Returns*:
+  (boolean) The result of the comparison.
+
+  *Examples*:
+  ```
+  ["EQUAL", 1, 1] -> true
+  ["EQUAL", 1, 2] -> false
+  ["EQUAL", "a", "a"] -> true
+  ["EQUAL", "a", "b"] -> false
+  ["EQUAL", null, null] -> true
+  ["EQUAL", null, 1] -> false
+  ["EQUAL", "$GAME.firstPlayer", "player1"] -> true if the first player is "player1"
+  ```
   """
 
   @doc """
   Executes the 'EQUAL' operation with the given arguments.
 
-  ## Parameters 
+  ## Parameters
 
     - `args`: The arguments required for the 'EQUAL' operation.
 
@@ -21,4 +39,3 @@ defmodule DragnCardsGame.Evaluate.Functions.EQUAL do
 
 
 end
-    

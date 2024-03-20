@@ -1,13 +1,20 @@
 defmodule DragnCardsGame.Evaluate.Functions.DIVIDE do
   alias DragnCardsGame.Evaluate
   @moduledoc """
-  Handles the 'DIVIDE' operation in the DragnCardsGame evaluation process.
+  *Arguments*:
+  1. dividend (number)
+  2. divisor (number)
+
+  Divides the dividend by the divisor. If either number is null, it is treated as 0. If the divisor is 0, the result is null.
+
+  *Returns*:
+  (number | null) The result of the division.
   """
 
   @doc """
   Executes the 'DIVIDE' operation with the given arguments.
 
-  ## Parameters 
+  ## Parameters
 
     - `args`: The arguments required for the 'DIVIDE' operation.
 
@@ -22,4 +29,3 @@ defmodule DragnCardsGame.Evaluate.Functions.DIVIDE do
 
 
 end
-    

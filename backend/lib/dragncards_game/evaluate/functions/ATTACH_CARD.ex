@@ -1,7 +1,14 @@
 defmodule DragnCardsGame.Evaluate.Functions.ATTACH_CARD do
   alias DragnCardsGame.{Evaluate, GameUI}
   @moduledoc """
-  Handles the 'ATTACH_CARD' operation in the DragnCardsGame evaluation process.
+  *Arguments*:
+  1. card_id (string)
+  2. dest_card_id (string)
+
+  Attaches the card with card_id to the card with dest_card_id.
+
+  *Returns*:
+  (game state) The game state with the card attached.
   """
 
   @doc """

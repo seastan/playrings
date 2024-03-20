@@ -1,7 +1,13 @@
 defmodule DragnCardsGame.Evaluate.Functions.DELETE_CARD do
   alias DragnCardsGame.{Evaluate, GameUI}
   @moduledoc """
-  Handles the 'DELETE_CARD' operation in the DragnCardsGame evaluation process.
+  *Arguments*:
+  1. card_id (string)
+
+  Deletes the card with card_id from the game state. If the card is the only card in its stack, the stack is also deleted.
+
+  *Returns*:
+  (game state) The game state with the card deleted.
   """
 
   @doc """

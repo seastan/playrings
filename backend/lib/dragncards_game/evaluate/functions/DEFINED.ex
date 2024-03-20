@@ -1,13 +1,19 @@
 defmodule DragnCardsGame.Evaluate.Functions.DEFINED do
   alias DragnCardsGame.Evaluate
   @moduledoc """
-  Handles the 'DEFINED' operation in the DragnCardsGame evaluation process.
+  *Arguments*:
+  1. var_name (string starting with $)
+
+  Returns true if the variable with the given name is defined, false otherwise. If the variable's value is null it is considered undefined.
+
+  *Returns*:
+  (boolean) true if the variable with the given name is defined, false otherwise.
   """
 
   @doc """
   Executes the 'DEFINED' operation with the given arguments.
 
-  ## Parameters 
+  ## Parameters
 
     - `args`: The arguments required for the 'DEFINED' operation.
 
@@ -27,4 +33,3 @@ defmodule DragnCardsGame.Evaluate.Functions.DEFINED do
 
 
 end
-    

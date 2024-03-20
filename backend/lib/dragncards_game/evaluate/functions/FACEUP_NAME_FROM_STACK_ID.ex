@@ -1,13 +1,19 @@
 defmodule DragnCardsGame.Evaluate.Functions.FACEUP_NAME_FROM_STACK_ID do
   alias DragnCardsGame.Evaluate
   @moduledoc """
-  Handles the 'FACEUP_NAME_FROM_STACK_ID' operation in the DragnCardsGame evaluation process.
+  *Arguments*:
+  1. stack_id (string)
+
+  Gets the name of the faceup side of the card on the top of the stack with stack_id.
+
+  *Returns*:
+  (string) The name of the faceup side of the card on the top of the stack with stack_id.
   """
 
   @doc """
   Executes the 'FACEUP_NAME_FROM_STACK_ID' operation with the given arguments.
 
-  ## Parameters 
+  ## Parameters
 
     - `args`: The arguments required for the 'FACEUP_NAME_FROM_STACK_ID' operation.
 
@@ -23,4 +29,3 @@ defmodule DragnCardsGame.Evaluate.Functions.FACEUP_NAME_FROM_STACK_ID do
 
 
 end
-    

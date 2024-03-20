@@ -1,13 +1,20 @@
 defmodule DragnCardsGame.Evaluate.Functions.DEFINE do
   alias DragnCardsGame.Evaluate
   @moduledoc """
-  Handles the 'DEFINE' operation in the DragnCardsGame evaluation process.
+  *Arguments*:
+  1. var_name (string starting with $)
+  2. value (any)
+
+  Defines a global variable with the given name and value. If the variable already exists, it is overwritten. The variable persists across scopes and erased at the end of the backend process.
+
+  *Returns*:
+  (game state) The game state with the variable with the given name defined with the given value.
   """
 
   @doc """
   Executes the 'DEFINE' operation with the given arguments.
 
-  ## Parameters 
+  ## Parameters
 
     - `args`: The arguments required for the 'DEFINE' operation.
 
@@ -29,4 +36,3 @@ defmodule DragnCardsGame.Evaluate.Functions.DEFINE do
 
 
 end
-    

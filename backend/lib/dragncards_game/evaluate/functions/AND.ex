@@ -1,13 +1,17 @@
 defmodule DragnCardsGame.Evaluate.Functions.AND do
   alias DragnCardsGame.Evaluate
   @moduledoc """
-  Handles the 'AND' operation in the DragnCardsGame evaluation process.
+  *Arguments*:
+  Any number of boolean arguments
+
+  *Returns*:
+  (boolean) The result of the 'AND' operation.
   """
 
   @doc """
   Executes the 'AND' operation with the given arguments.
 
-  ## Parameters 
+  ## Parameters
 
     - `args`: The arguments required for the 'AND' operation.
 
@@ -24,4 +28,3 @@ defmodule DragnCardsGame.Evaluate.Functions.AND do
 
 
 end
-    

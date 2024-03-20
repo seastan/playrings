@@ -97,7 +97,8 @@ defmodule DragnCardsGame.Evaluate.Functions.PROMPT do
       new_prompt = put_in(new_prompt, ["options"], new_options)
 
       # Add the prompt to the player's prompts
-      put_in(acc, ["playerData", target_player_n, "prompts", prompt_uuid], new_prompt)
+      acc = put_in(acc, ["playerData", target_player_n, "prompts", prompt_uuid], new_prompt)
+      put_in(acc, ["playerData", target_player_n, "mostRecentPromptId"], prompt_uuid)
     end)
 
     game

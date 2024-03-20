@@ -1,13 +1,42 @@
 defmodule DragnCardsGame.Evaluate.Functions.GET_CARD_ID do
   alias DragnCardsGame.Evaluate
   @moduledoc """
-  Handles the 'GET_CARD_ID' operation in the DragnCardsGame evaluation process.
+  *Arguments*:
+  1. group_id (string)
+  2. stack_index (number)
+  3. card_index (number)
+
+  Returns the card id at the given card_index in the stack with the given group_id and stack_index. If the stack is null, it returns null.
+
+  *Returns*:
+  (string) The card id at the given index in the stack.
+
+  *Examples*
+
+  To get the top card id of your deck:
+  ```
+  ["GET_CARD_ID", "{{$PLAYER_N}}Deck", 0, 0]
+  ```
+
+  This is equivalent to:
+  ```
+  [
+    ["VAR", "$TOP_STACK_ID", "$GAME.groupById.{{$PLAYER_N}}Deck.stackIds.[0]"],
+    "$GAME.stackById.$TOP_STACK_ID.cardIds.[0]"
+  ]
+  ```
+  or:
+  ```
+  "$GAME.groupById.{{$PLAYER_N}}Deck.parentCardIds.[0]"
+  ```
+
+
   """
 
   @doc """
   Executes the 'GET_CARD_ID' operation with the given arguments.
 
-  ## Parameters 
+  ## Parameters
 
     - `args`: The arguments required for the 'GET_CARD_ID' operation.
 
@@ -25,4 +54,3 @@ defmodule DragnCardsGame.Evaluate.Functions.GET_CARD_ID do
 
 
 end
-    

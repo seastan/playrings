@@ -2,7 +2,26 @@ defmodule DragnCardsGame.Evaluate.Functions.CALC do
   alias DragnCardsGame.Evaluate
   alias DragnCardsUtil.StringMath
   @moduledoc """
-  Handles the 'CALC' operation in the DragnCardsGame evaluation process.
+  *Arguments*:
+  1. string (string)
+
+  Evaluates the given string as a mathematical expression.
+
+  *Returns*:
+  (number) The result of the calculation.
+
+  *Examples*:
+  ```
+  ["CALC", "1+1"] => 2
+  ```
+  ```
+  ["CALC", "2*3"] => 6
+  ```
+  ```
+  ["CALC", "4/(2^3)"] => 0.5
+  ```
+
+
   """
 
   @doc """

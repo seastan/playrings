@@ -1,7 +1,13 @@
 defmodule DragnCardsGame.Evaluate.Functions.ABORT do
   alias DragnCardsGame.{Evaluate}
   @moduledoc """
-  Handles the 'ABORT' operation in the DragnCardsGame evaluation process.
+  *Arguments*:
+  Any number of string arguments
+
+  Aborts all game state changes performed during the current backend process and halts the further eecution of the current actionList.
+
+  *Returns*:
+  (game state) The game state as it was prior to the most recent backend process, with sting arguments concatenated as an error message.
   """
 
   @doc """

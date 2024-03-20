@@ -1,13 +1,20 @@
 defmodule DragnCardsGame.Evaluate.Functions.DECREASE_VAL do
   alias DragnCardsGame.Evaluate
   @moduledoc """
-  Handles the 'DECREASE_VAL' operation in the DragnCardsGame evaluation process.
+  *Arguments*:
+  1. path (string)
+  2. delta (number)
+
+  Decreases the value at the given path by the given delta. If the current value at the given path is null, it is treated as 0.
+
+  *Returns*:
+  (game state) The game state with the value at the given path decreased by the given delta.
   """
 
   @doc """
   Executes the 'DECREASE_VAL' operation with the given arguments.
 
-  ## Parameters 
+  ## Parameters
 
     - `args`: The arguments required for the 'DECREASE_VAL' operation.
 
@@ -24,4 +31,3 @@ defmodule DragnCardsGame.Evaluate.Functions.DECREASE_VAL do
 
 
 end
-    

@@ -1,13 +1,18 @@
 defmodule DragnCardsGame.Evaluate.Functions.GET_INDEX do
   alias DragnCardsGame.Evaluate
   @moduledoc """
-  Handles the 'GET_INDEX' operation in the DragnCardsGame evaluation process.
+  *Arguments*:
+  1. list (list)
+  2. value (number)
+
+  *Returns*:
+  (number) The index of the first occurrence of the given value in the list.
   """
 
   @doc """
   Executes the 'GET_INDEX' operation with the given arguments.
 
-  ## Parameters 
+  ## Parameters
 
     - `args`: The arguments required for the 'GET_INDEX' operation.
 
@@ -23,4 +28,3 @@ defmodule DragnCardsGame.Evaluate.Functions.GET_INDEX do
 
 
 end
-    

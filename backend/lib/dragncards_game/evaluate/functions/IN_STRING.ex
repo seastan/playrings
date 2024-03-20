@@ -1,13 +1,18 @@
 defmodule DragnCardsGame.Evaluate.Functions.IN_STRING do
   alias DragnCardsGame.Evaluate
   @moduledoc """
-  Handles the 'IN_STRING' operation in the DragnCardsGame evaluation process.
+  *Arguments*:
+  1. container (string)
+  2. containee (string)
+
+  *Returns*:
+  (boolean) `true` if the containee is a substring of the container, `false` otherwise. If container == containee, it returns true.
   """
 
   @doc """
   Executes the 'IN_STRING' operation with the given arguments.
 
-  ## Parameters 
+  ## Parameters
 
     - `args`: The arguments required for the 'IN_STRING' operation.
 
@@ -27,4 +32,3 @@ defmodule DragnCardsGame.Evaluate.Functions.IN_STRING do
 
 
 end
-    

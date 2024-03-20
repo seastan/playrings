@@ -1,7 +1,22 @@
 defmodule DragnCardsGame.Evaluate.Functions.GREATER_EQUAL do
   alias DragnCardsGame.Evaluate
   @moduledoc """
-  Handles the 'GREATER_EQUAL' operation in the DragnCardsGame evaluation process.
+  *Arguments*:
+  1. lhs (number)
+  2. rhs (number)
+
+  *Returns*:
+  (boolean) The result of the >= operation. Null values are treated as 0.
+
+  *Examples*:
+  ```
+  ["GREATER_EQUAL", 5, 5] => true
+  ["GREATER_EQUAL", 5, 4] => true
+  ["GREATER_EQUAL", 5, 6] => false
+  ["GREATER_EQUAL", 5, null] => false
+  ["GREATER_EQUAL", null, 5] => false
+  ["GREATER_EQUAL", null, null] => true
+  ```
   """
 
   @doc """

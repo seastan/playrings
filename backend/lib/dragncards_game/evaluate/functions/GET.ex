@@ -1,13 +1,26 @@
 defmodule DragnCardsGame.Evaluate.Functions.GET do
   alias DragnCardsGame.Evaluate
   @moduledoc """
-  Handles the 'GET' operation in the DragnCardsGame evaluation process.
+  *Arguments*:
+  1. key_list (list)
+
+  *Returns*:
+  (any) The value at the given key_list in the game state.
+
+  *Examples*:
+  ```
+  ["GET", ["cardById", "$ACTIVE_CARD_ID", "controller"]]
+  ```
+  This is equivalent to:
+  ```
+  "$GAME.cardById.$ACTIVE_CARD_ID.controller"
+  ```
   """
 
   @doc """
   Executes the 'GET' operation with the given arguments.
 
-  ## Parameters 
+  ## Parameters
 
     - `args`: The arguments required for the 'GET' operation.
 
@@ -22,4 +35,3 @@ defmodule DragnCardsGame.Evaluate.Functions.GET do
 
 
 end
-    

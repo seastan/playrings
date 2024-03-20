@@ -1,6 +1,25 @@
 defmodule DragnCardsGame.Evaluate.Functions.FUNCTION do
   @moduledoc """
-  Handles the 'FUNCTION' operation in the DragnCardsGame evaluation process.
+  *Arguments*:
+  First argument: function_name (string, all caps)
+  Next N arguments: the names of the new function arguments (string starting with $)
+  Last argument: code (actionList)
+
+  Defines a new function with the given name, arguments, and code. The function name must be all caps. The new function will persist across backend proccesses and can be called from any actionList or scope.
+
+  It is recommended that you define all functions in advance in gameDef.functions rather than using this built-in function.
+
+  *Returns*:
+  (game state) The game state with the new function defined.
+
+  *Example*:
+  ```
+  [
+    ["FUNCTION", "MY_FUNCTION", "$ARG1", "$ARG2", [
+      ["LOG", "{{$ARG1}} and {{$ARG2}}"]
+    ],
+    ["MY_FUNCTION", "Hello", "World"]
+  ]
   """
 
   @doc """

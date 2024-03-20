@@ -1,7 +1,22 @@
 defmodule DragnCardsGame.Evaluate.Functions.LESS_THAN do
   alias DragnCardsGame.Evaluate
   @moduledoc """
-  Handles the 'LESS_THAN' operation in the DragnCardsGame evaluation process.
+  *Arguments*:
+  1. lhs (number)
+  2. rhs (number)
+
+  *Returns*:
+  (boolean) The result of the < operation. Null values are treated as 0.
+
+  *Examples*:
+  ```
+  ["LESS_THAN", 5, 5] => false
+  ["LESS_THAN", 5, 4] => false
+  ["LESS_THAN", 5, 6] => true
+  ["LESS_THAN", 5, null] => false
+  ["LESS_THAN", null, 5] => true
+  ["LESS_THAN", null, null] => false
+  ```
   """
 
   @doc """

@@ -1,13 +1,20 @@
 defmodule DragnCardsGame.Evaluate.Functions.JOIN_STRING do
   alias DragnCardsGame.Evaluate
   @moduledoc """
-  Handles the 'JOIN_STRING' operation in the DragnCardsGame evaluation process.
+  *Arguments*:
+  1. left (string)
+  2. right (string)
+
+  Concatenates the two strings together. If either string is null, it is treated as an empty string.
+
+  *Returns*:
+  (string) The result of the concatenation.
   """
 
   @doc """
   Executes the 'JOIN_STRING' operation with the given arguments.
 
-  ## Parameters 
+  ## Parameters
 
     - `args`: The arguments required for the 'JOIN_STRING' operation.
 
@@ -21,4 +28,3 @@ defmodule DragnCardsGame.Evaluate.Functions.JOIN_STRING do
 
 
 end
-    

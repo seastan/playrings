@@ -1,13 +1,18 @@
 defmodule DragnCardsGame.Evaluate.Functions.IN_LIST do
   alias DragnCardsGame.Evaluate
   @moduledoc """
-  Handles the 'IN_LIST' operation in the DragnCardsGame evaluation process.
+  *Arguments*:
+  1. list (list)
+  2. member (any)
+
+  *Returns*:
+  (boolean) `true` if the member is in the list, `false` otherwise.
   """
 
   @doc """
   Executes the 'IN_LIST' operation with the given arguments.
 
-  ## Parameters 
+  ## Parameters
 
     - `args`: The arguments required for the 'IN_LIST' operation.
 
@@ -22,4 +27,3 @@ defmodule DragnCardsGame.Evaluate.Functions.IN_LIST do
 
 
 end
-    

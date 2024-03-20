@@ -1,13 +1,20 @@
 defmodule DragnCardsGame.Evaluate.Functions.APPEND do
   alias DragnCardsGame.Evaluate
   @moduledoc """
-  Handles the 'APPEND' operation in the DragnCardsGame evaluation process.
+  *Arguments*:
+  1. list1 (list)
+  2. list2 (list)
+
+  Appends list2 to list1. If the first list is null, it is treated as an empty list.
+
+  *Returns*:
+  (list) The result of the append operation.
   """
 
   @doc """
   Executes the 'APPEND' operation with the given arguments.
 
-  ## Parameters 
+  ## Parameters
 
     - `args`: The arguments required for the 'APPEND' operation.
 
@@ -22,4 +29,3 @@ defmodule DragnCardsGame.Evaluate.Functions.APPEND do
 
 
 end
-    

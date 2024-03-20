@@ -1,6 +1,10 @@
 defmodule DragnCardsGame.Evaluate.Functions.FALSE do
   @moduledoc """
-  Handles the 'FALSE' operation in the DragnCardsGame evaluation process.
+  *Arguments*:
+  None
+
+  *Returns*:
+  `false`
   """
 
   @doc """

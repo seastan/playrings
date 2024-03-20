@@ -2,7 +2,13 @@ defmodule DragnCardsGame.Evaluate.Functions.ERROR do
   alias DragnCardsGame.Evaluate
   require Logger
   @moduledoc """
-  Handles the 'ERROR' operation in the DragnCardsGame evaluation process.
+  *Arguments*:
+  1. message (string)
+
+  Adds an error message to the log.
+
+  *Returns*:
+  (game state) The game state with the error message added to the log.
   """
 
   @doc """

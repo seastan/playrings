@@ -1,7 +1,22 @@
 defmodule DragnCardsGame.Evaluate.Functions.GREATER_THAN do
   alias DragnCardsGame.Evaluate
   @moduledoc """
-  Handles the 'GREATER_THAN' operation in the DragnCardsGame evaluation process.
+  *Arguments*:
+  1. lhs (number)
+  2. rhs (number)
+
+  *Returns*:
+  (boolean) The result of the > operation. Null values are treated as 0.
+
+  *Examples*:
+  ```
+  ["GREATER_THAN", 5, 5] => false
+  ["GREATER_THAN", 5, 4] => true
+  ["GREATER_THAN", 5, 6] => false
+  ["GREATER_THAN", 5, null] => true
+  ["GREATER_THAN", null, 5] => false
+  ["GREATER_THAN", null, null] => false
+  ```
   """
 
   @doc """

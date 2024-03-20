@@ -1,7 +1,34 @@
 defmodule DragnCardsGame.Evaluate.Functions.FILTER_CARDS do
   alias DragnCardsGame.Evaluate
   @moduledoc """
-  Handles the 'FILTER_CARDS' operation in the DragnCardsGame evaluation process.
+  *Arguments*:
+  1. var_name (string starting with $)
+  2. condition (actionList)
+
+  Filters the cards in the game by the given condition. var_name is the name of the variable that will be assigned to each card when the condition is evaluated.
+
+  *Returns*:
+  (list) The cards in the game that match the condition.
+
+  *Example*:
+  ```
+  [
+    ["VAR", "$SELECTED_CARDS",
+      ["FILTER_CARDS",
+        "$CARD",
+        ["AND",
+          ["EQUAL", ["VAR", "$CARD.type"], "Hero"],
+          ["EQUAL", ["VAR", "$CARD.controller"], "player1"]
+        ]
+      ]
+    ],
+    ["FOR_EACH_VAL", "$SELECTED_CARD", "$SELECTED_CARDS", [
+      ["LOG", "{{$ALIAS_N}} targeted {{$SELECTED_CARD.currentFace.name}}."],
+      ["SET", "/cardById/{{$SELECTED_CARD.id}}/targeting/$PLAYER_N", true]
+    ]]
+  ]
+  ```
+
   """
 
   @doc """

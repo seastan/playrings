@@ -1,7 +1,11 @@
 defmodule DragnCardsGame.Evaluate.Functions.GET_CARD do
   alias DragnCardsGame.Evaluate
   @moduledoc """
-  Handles the 'GET_CARD' operation in the DragnCardsGame evaluation process.
+  *Arguments*:
+  1. card_id (string)
+
+  *Returns*:
+  (card) The card with the given card_id.
   """
 
   @doc """

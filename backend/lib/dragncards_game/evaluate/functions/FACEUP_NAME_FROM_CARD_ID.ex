@@ -1,13 +1,24 @@
 defmodule DragnCardsGame.Evaluate.Functions.FACEUP_NAME_FROM_CARD_ID do
   alias DragnCardsGame.Evaluate
   @moduledoc """
-  Handles the 'FACEUP_NAME_FROM_CARD_ID' operation in the DragnCardsGame evaluation process.
+  *Arguments*:
+  1. card_id (string)
+
+  Gets the name of the faceup side of the card with card_id.
+
+  *Returns*:
+  (string) The name of the faceup side of the card with card_id.
+
+  *Example*
+  ```
+  ["LOG", "$ALIAS_N", " added 1 damage token to ", ["FACEUP_NAME_FROM_CARD_ID", "$ACTIVE_CARD_ID"]]
+  ```
   """
 
   @doc """
   Executes the 'FACEUP_NAME_FROM_CARD_ID' operation with the given arguments.
 
-  ## Parameters 
+  ## Parameters
 
     - `args`: The arguments required for the 'FACEUP_NAME_FROM_CARD_ID' operation.
 
@@ -24,4 +35,3 @@ defmodule DragnCardsGame.Evaluate.Functions.FACEUP_NAME_FROM_CARD_ID do
 
 
 end
-    
