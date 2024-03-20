@@ -1027,7 +1027,6 @@ export const getGameDefSchema = (gameDef) => {
           },
           "options": {
             "_type_": "array",
-            "_required_": true,
             "_itemSchema_": {
               "_type_": "object",
               "label": {
@@ -1041,6 +1040,9 @@ export const getGameDefSchema = (gameDef) => {
                 "_type_": "code",
               }
             }
+          },
+          "optionsActionList": {
+            "_type_": "actionList",
           }
         }
       },

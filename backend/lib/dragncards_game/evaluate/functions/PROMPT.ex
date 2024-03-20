@@ -34,7 +34,16 @@ defmodule DragnCardsGame.Evaluate.Functions.PROMPT do
 
     orig_args = orig_prompt["args"]
     orig_message = orig_prompt["message"]
-    orig_options = orig_prompt["options"]
+    orig_options = cond do
+      Map.has_key?(orig_prompt, "options") ->
+        orig_prompt["options"]
+
+      Map.has_key?(orig_prompt, "optionsActionList") ->
+        Evaluate.evaluate(game, ["ACTION_LIST", orig_prompt["optionsActionList"]], trace ++ ["optionsActionList"])
+
+      true ->
+        raise ArgumentError, message: "Prompt #{prompt_id} must contain an 'options' or 'optionsActionList' key"
+    end
 
     # Generate the variable definition statements that we to resolve the message and to prepended to the code
     var_statements = Enum.reduce(Enum.with_index(orig_args), [], fn({arg, index}, acc) ->

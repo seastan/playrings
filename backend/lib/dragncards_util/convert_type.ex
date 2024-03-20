@@ -65,6 +65,7 @@ defmodule DragnCardsUtil.ConvertType do
   end
 
   @spec convert_to_list(String.t() | nil) :: List.t()
+
   def convert_to_list(my_string) do
     if my_string == nil do
       []
