@@ -80,17 +80,11 @@ defmodule DragnCardsGame.Evaluate.Functions.PROMPT do
     |> Map.put("message", new_message)
     |> Map.put("timestamp", DateTime.utc_now() |> DateTime.to_unix(:second) |> round())
 
-    IO.puts("here 1")
-
     game = Enum.reduce(target_player_list, game, fn(target_player_n, acc) ->
-      IO.puts("here 2")
-
       # Prepend the "VAR" statements to each option's code so that when it gets evaluated, it will have the variables defined
       # Append a command to delete the prompt
       new_options = Enum.reduce(orig_options, [], fn(option, acc) ->
-        IO.puts("unsetting #{target_player_n}")
         unset_command = ["UNSET", "/playerData/#{target_player_n}/prompts/#{prompt_uuid}"]
-        IO.inspect(unset_command)
         new_option = if option["code"] != nil do
           prompt_code = if is_list(Enum.at(option["code"], 0)) do
             option["code"]

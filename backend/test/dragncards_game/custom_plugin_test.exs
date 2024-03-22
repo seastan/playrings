@@ -1301,6 +1301,32 @@ defmodule DragnCardsGame.CustomPluginTest do
 
   end
 
+
+  @tag :dynamic_prompt
+  test "dynamic_prompt", %{user: _user, game: game, game_def: _game_def} do
+
+    game = Evaluate.evaluate(game, ["FUNCTION", "LOCATION_NAME_TO_PROMPT_OPTION", "$LOCATION_NAME", ["PROCESS_MAP",
+        %{
+          "label" => "$LOCATION_NAME",
+          "hotkey" => [
+            ["VAR", "$HOTKEY_NUM", ["CALC", "{{$MAP_INDEX}} + 1"]],
+            "{{$HOTKEY_NUM}}"
+          ],
+          "actionList" => ["LIST", "CHOSE_LOCATION", "$LOCATION_NAME"]
+        }
+      ]])
+
+    game = Evaluate.evaluate(game, ["FUNCTION", "LOCATION_NAMES_TO_PROMPT_OPTIONS", "$LOCATION_NAMES", ["MAP", "$LOCATION_NAMES", "LOCATION_NAME_TO_PROMPT_OPTION"]])
+
+    res = Evaluate.evaluate(game, ["LOCATION_NAMES_TO_PROMPT_OPTIONS", ["LIST", "testLocation1", "testLocation2"]])
+
+
+
+    IO.inspect(res)
+
+    # ]])
+  end
+
   # @tag :glittering
   # test "glittering", %{user: _user, game: game, game_def: game_def} do
 

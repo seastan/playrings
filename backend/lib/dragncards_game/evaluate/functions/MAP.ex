@@ -1,4 +1,5 @@
 defmodule DragnCardsGame.Evaluate.Functions.MAP do
+  alias DragnCardsGame.Evaluate
   @moduledoc """
   *Arguments*:
   1. input_list (list)
@@ -36,7 +37,9 @@ defmodule DragnCardsGame.Evaluate.Functions.MAP do
   def execute(game, code, trace) do
     input_list = Evaluate.evaluate(game, Enum.at(code, 1), trace ++ ["input_list"])
     function_name = Evaluate.evaluate(game, Enum.at(code, 2), trace ++ ["function_name"])
-    Enum.map(input_list, fn x -> Evaluate.evaluate(game, [function_name, x], trace ++ ["Enum.map"]) end)
+    Enum.map(Enum.with_index(input_list), fn {element, index} ->
+      Evaluate.evaluate(game, [["VAR", "$MAP_INDEX", index], [function_name, element]], trace ++ ["index #{index}"])
+    end)
   end
 
 
