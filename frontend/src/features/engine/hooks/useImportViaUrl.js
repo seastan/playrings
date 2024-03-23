@@ -16,6 +16,8 @@ export const useImportViaUrl = () => {
       await importViaUrlRingsDb(importLoadList, doActionList, playerN);
     } else if (gameDef["pluginName"].includes("Marvel Champions: The Card Game")) {
       await importViaUrlMarvelCdb(importLoadList, doActionList, playerN, cardDb);
+    } else if (gameDef["pluginName"].includes("Earthborne Rangers")) {
+      await importViaUrlRangersDb(importLoadList, doActionList, playerN, cardDb);
     } else {
       alert("Importing via URL is not yet supported for this game. Please request this feature on Discord.");
     }
@@ -72,6 +74,24 @@ const importViaUrlMarvelCdb = async (importLoadList, doActionList, playerN, card
   }
   const dbId = splitUrl[typeIndex + 2];
   return loadMarvelCdb(importLoadList, doActionList, playerN, dbDomain, dbType, dbId, cardDb);
+}
+
+const importViaUrlRangersDb = async (importLoadList, doActionList, playerN, cardDb) => {
+  const dbUrl = prompt("Paste full RangersDB URL","");
+  if (!dbUrl.includes("rangersdb.com")) {
+    alert("Only importing from RangersDB is supported at this time.");
+    return;
+  }
+  const dbDomain = "rangersdb";
+  var dbType = "decks";
+  var splitUrl = dbUrl.split( '/' );
+  const typeIndex = splitUrl.findIndex((e) => e === dbType)
+  if (splitUrl && splitUrl.length <= typeIndex + 2) {
+    alert("Invalid URL");
+    return;
+  }
+  const dbId = splitUrl[typeIndex + 2];
+  return loadRangersDb(importLoadList, doActionList, playerN, dbDomain, dbType, dbId, cardDb);
 }
 
 
@@ -146,8 +166,6 @@ export const loadRingsDb = (importLoadList, doActionList, playerN, ringsDbDomain
 }
 
 
-
-
 export const loadMarvelCdb = (importLoadList, doActionList, playerN, dbDomain, dbType, dbId, cardDb) => {
   doActionList(["LOG", "$ALIAS_N", " is importing a deck from MarvelCDB."]);
 
@@ -162,11 +180,8 @@ export const loadMarvelCdb = (importLoadList, doActionList, playerN, dbDomain, d
     }
   })
 
-  console.log("marvelcdbIdTodatabaseId", marvelcdbIdTodatabaseId)
-
   const urlBase = "https://marvelcdb.com/api";
   const url = `${urlBase}/public/${dbType}/${dbId}.json`;// dbType === "decklist" ? urlBase+"public/decklist/"+dbId+".json" : urlBase+"oauth2/deck/load/"+dbId;
-  console.log("Fetching ", url);
   
   fetch(url)
   .then(response => response.json())
@@ -214,4 +229,122 @@ export const loadMarvelCdb = (importLoadList, doActionList, playerN, dbDomain, d
     // handle your errors here
     alert("Error loading deck. If you are attempting to load an unpublished deck, make sure you have link sharing turned on in your RingsDB profile settings.")
   })
+}
+
+
+
+export const loadRangersDb = (importLoadList, doActionList, playerN, dbDomain, dbType, dbId, cardDb) => {
+  doActionList(["LOG", "$ALIAS_N", " is importing a deck from MarvelCDB."]);
+  
+  fetch('https://gapi.rangersdb.com/v1/graphql', {
+      method: 'POST',
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        query: `{                                                                                                                                           
+          rangers_deck_by_pk(                                                                                                                               
+            id: ${dbId}                                                                                                                                        
+        ) {                                                                                                                                               
+          meta                                                                                                                                            
+          awa                                                                                                                                             
+          spi                                                                                                                                             
+          fit                                                                                                                                             
+          foc                                                                                                                                             
+          slots                                                                                                                                           
+          side_slots                                                                                                                                      
+          extra_slots                                                                                                                                     
+        }                                                                                                                                                 
+      }`
+    })
+  })                
+  .then(res => res.json())
+  .then(json => {
+    // Convert the object to a string with indentation for readability                                                                                    
+    console.log(JSON.stringify(json, null, 2));
+    const jsonData = json.data.rangers_deck_by_pk;
+    const loadList = [];
+    const role = jsonData.meta.role;
+    loadList.push({'databaseId': role.replace(/^0+/, ''), 'quantity': 1, 'loadGroupId': playerN+"Role"});
+    const slots = jsonData.slots;
+    for (const [slot, quantity] of Object.entries(slots)) {
+      loadList.push({'databaseId': slot.replace(/^0+/, ''), 'quantity': quantity, 'loadGroupId': playerN+"Deck"});
+    }
+    const sideSlots = jsonData.side_slots;
+    for (const [slot, quantity] of Object.entries(sideSlots)) {
+      loadList.push({'databaseId': slot.replace(/^0+/, ''), 'quantity': quantity, 'loadGroupId': playerN+"Sideboard"});
+    }
+    const extraSlots = jsonData.extra_slots;
+    for (const [slot, quantity] of Object.entries(extraSlots)) {
+      loadList.push({'databaseId': slot.replace(/^0+/, ''), 'quantity': quantity, 'loadGroupId': playerN+"Sideboard"});
+    }
+    const awa = jsonData.awa;
+    const spi = jsonData.spi;
+    const fit = jsonData.fit;
+    const foc = jsonData.foc;
+    var aspectCardId = null;
+    Object.keys(cardDb).forEach((databaseId, _databaseIdIndex) => {
+      const details = cardDb[databaseId]?.A;
+      console.log("rangersdbimportsides", details)
+      if (parseInt(details.AWA) === awa && parseInt(details.SPI) === spi && parseInt(details.FIT) === fit && parseInt(details.FOC) === foc) {
+        aspectCardId = databaseId;
+      }
+    })
+    if (aspectCardId) {
+      loadList.push({'databaseId': aspectCardId, 'quantity': 1, 'loadGroupId': playerN+"Aspect"});
+    }
+    importLoadList(loadList);
+    console.log("rangersdbimport", loadList)
+  });
+
+
+  // const urlBase = "https://rangersdb.com/api";
+  // const url = `${urlBase}/public/${dbType}/${dbId}.json`;// dbType === "decklist" ? urlBase+"public/decklist/"+dbId+".json" : urlBase+"oauth2/deck/load/"+dbId;
+  
+  // fetch(url)
+  // .then(response => response.json())
+  // .then((jsonData) => {
+  //   console.log("card db import response", jsonData)
+  //   const itentityCode = jsonData.investigator_code;
+  //   const slots = jsonData.slots;
+  //   var loadList = [];
+  //   if (itentityCode && marvelcdbIdTodatabaseId[itentityCode]) {
+  //     const databaseId = marvelcdbIdTodatabaseId[itentityCode];
+  //     loadList.push({'databaseId': databaseId, 'quantity': 1, 'loadGroupId': playerN+"Play1"});
+  //   } else {
+  //     alert("Encountered missing or unknown card ID for identity")
+  //   }
+  //   var fetches = [];
+  //   Object.keys(slots).forEach((slot, slotIndex) => {
+  //     console.log("card db import", slot, slots[slot])
+  //     const quantity = slots[slot];
+  //     const slotUrl = urlBase+"/public/card/"+slot+".json"
+  //     fetches.push(fetch(slotUrl)
+  //       .then(response => response.json())
+  //       .then((slotJsonData) => {
+  //         console.log("card db import", slotJsonData.name, slotJsonData)
+  //         // If slotJsonData.code is in the marvelcdbIdTodatabaseId mapping, use that databaseId
+  //         if (slotJsonData.code && marvelcdbIdTodatabaseId[slotJsonData.code]) {
+  //           const databaseId = marvelcdbIdTodatabaseId[slotJsonData.code];
+  //           // We could add some code here if we want to handle certain car types differently
+  //           loadList.push({'databaseId': databaseId, 'quantity': quantity, 'loadGroupId': playerN+"Deck"});
+  //         } else {
+  //           alert(`Encountered unknown card ID (${slotJsonData.code}) for ${slotJsonData.name}`)
+  //         }
+  //       })
+  //       .catch((error) => {
+  //         // handle your errors here
+  //         console.error("Could not find card", slot);
+  //       })
+  //     )
+  //   })
+  //   Promise.all(fetches).then(function() {
+  //     console.log("card db import loadList", loadList)
+  //     importLoadList(loadList);
+  //   });
+  // })
+  // .catch((error) => {
+  //   // handle your errors here
+  //   alert("Error loading deck. If you are attempting to load an unpublished deck, make sure you have link sharing turned on in your RingsDB profile settings.")
+  // })
 }

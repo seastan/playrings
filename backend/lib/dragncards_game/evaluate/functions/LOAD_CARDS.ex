@@ -2,7 +2,11 @@ defmodule DragnCardsGame.Evaluate.Functions.LOAD_CARDS do
   alias DragnCardsGame.{Evaluate, GameUI}
   alias DragnCards.Plugins
   @moduledoc """
-  Handles the 'LOAD_CARDS' operation in the DragnCardsGame evaluation process.
+  *Arguments*:
+  1. load_list_id (string): The id of a pre-built deck to load.
+
+  *Returns*:
+  (game state) The game with the cards from the pre-built deck loaded.
   """
 
   @doc """
