@@ -234,7 +234,7 @@ export const loadMarvelCdb = (importLoadList, doActionList, playerN, dbDomain, d
 
 
 export const loadRangersDb = (importLoadList, doActionList, playerN, dbDomain, dbType, dbId, cardDb) => {
-  doActionList(["LOG", "$ALIAS_N", " is importing a deck from MarvelCDB."]);
+  doActionList(["LOG", "$ALIAS_N", " is importing a deck from RangersDB."]);
   
   fetch('https://gapi.rangersdb.com/v1/graphql', {
       method: 'POST',
