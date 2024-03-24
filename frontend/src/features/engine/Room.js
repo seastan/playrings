@@ -50,7 +50,13 @@ export const Room = ({ slug }) => {
       //delayBroadcast = setTimeout(function() {
       console.log("onChannelMessage: dispatching to game", game_ui)
       dispatch(setGameUi(game_ui));
-      console.log("setmessages2", game_ui.logMessages)
+      const messageByTimestamp = game_ui?.game?.messageByTimestamp;
+      if (messageByTimestamp) {
+        // Get sorted messages
+        const messages = Object.keys(messageByTimestamp).sort().map(key => messageByTimestamp[key]);
+        console.log("setmessages2", messages)
+        setMessages(messages);
+      }
       //setMessages(game_ui.logMessages);
       dispatch(setReplayStep(game_ui.replayStep));
 

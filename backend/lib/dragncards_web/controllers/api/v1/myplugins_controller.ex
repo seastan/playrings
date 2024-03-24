@@ -38,9 +38,9 @@ defmodule DragnCardsWeb.MyPluginsController do
   #def create(conn, %{"user" => user}) do
   def create(conn, %{"plugin" => plugin_params}) do
     case Plugins.create_plugin(plugin_params) do
-      {:ok, _struct} ->
+      {:ok, plugin} ->
         conn
-        |> json(%{success: %{message: "Plugin created successfully"}})
+        |> json(%{success: %{message: "Plugin created successfully"}, plugin: plugin})
       {:error, _changeset} ->
         conn
         |> json(%{error: %{message: "Plugin creation failed"}})
@@ -54,9 +54,9 @@ defmodule DragnCardsWeb.MyPluginsController do
     IO.inspect(plugin_params)
     plugin = Plugins.get_plugin!(plugin_params["id"])
     case Plugins.update_plugin(plugin, plugin_params) do
-      {:ok, _struct} ->
+      {:ok, plugin} ->
         conn
-        |> json(%{success: %{message: "Plugin updated successfully"}})
+        |> json(%{success: %{message: "Plugin updated successfully"}, plugin: plugin})
       {:error, _changeset} ->
         conn
         |> json(%{error: %{message: "Plugin update failed"}})

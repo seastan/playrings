@@ -51,6 +51,9 @@ export const getGameDefSchema = (gameDef) => {
       },
       "automation": {
         "_type_": "object",
+        "postNewGameActionList": {
+          "_type_": "actionList",
+        },
         "postLoadActionList": {
           "_type_": "actionList",
         },

@@ -7,7 +7,7 @@
   require Logger
   import Ecto.Query
   alias ElixirSense.Log
-  alias DragnCardsGame.{Groups, Game, PlayerData, GameVariables}
+  alias DragnCardsGame.{Groups, Game, PlayerData, GameVariables, Evaluate}
   alias DragnCards.{Repo, Replay, Plugins, Users}
 
   @type t :: Map.t()
@@ -42,18 +42,13 @@
   def new(room_slug, user_id, game_def, options) do
     Logger.debug("Making new Game")
     default_layout_info = Enum.at(game_def["layoutMenu"],0)
-    Logger.debug("Got default layout info")
     layout_id = default_layout_info["layoutId"]
-    Logger.debug("Got layout id #{layout_id}")
     groups = Groups.new(game_def)
-    Logger.debug("Made groups")
     automation = if get_in(game_def, ["automation", "gameRules"]) do %{"_game_" => %{"rules" => game_def["automation"]["gameRules"]}} else %{} end
-    Logger.debug("Made automation")
     step_id =
       game_def
       |> Map.get("stepOrder", [])
       |> Enum.at(0, nil)
-    Logger.debug("Got step id #{step_id}")
     base = try do
     %{
       "id" => Ecto.UUID.generate,
@@ -85,6 +80,7 @@
       "variables" => GameVariables.default(),
       "functions" => game_def["functions"] || %{},
       "automation" => automation,
+      "messageByTimestamp" => %{},
       "messages" => [] # These messages will be delivered to the GameUi parent, which will then relay them to chat
     }
     rescue
@@ -112,10 +108,16 @@
     plugin_id = options["pluginId"]
     user_game_settings = user.plugin_settings["#{plugin_id}"]["game"]
     game = if user_game_settings != nil do
-
       Enum.reduce(user_game_settings, game, fn({key, val}, acc) ->
         put_in(acc, [key], val)
       end)
+    else
+      game
+    end
+
+    # Do post new game actions
+    game = if game_def["automation"]["postNewGameActionList"] do
+      Evaluate.evaluate_with_timeout(game, game_def["automation"]["postNewGameActionList"])
     else
       game
     end

@@ -1,4 +1,9 @@
 export const siteL10n = {
+  "createPrivateRoomAfter":
+  {
+    "English": "Create a private room",
+    "Chinese": "创建私人房间"
+  },
   "pleaseSit": {
     "English": "Please sit at the table first.",
     "Chinese": "请先坐下。"

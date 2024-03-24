@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import axios from "axios";
 import ReactModal from "react-modal";
+import { Redirect } from "react-router";
 import Button from "../../../components/basic/Button";
 import { useSiteL10n } from "../../../hooks/useSiteL10n";
 import useForm from "../../../hooks/useForm";
@@ -44,6 +45,41 @@ export const EditPluginModal = ({ plugin, closeModal, doFetchHash}) => {
 
   const inputFileGameDef = useRef(null);
   const inputFileCardDb = useRef(null);
+
+  const [createRoomAfter, setCreateRoomAfter] = useState(true);
+  const [roomSlugCreated, setRoomSlugCreated] = useState(null);
+
+  const createRoom = async (pluginId, pluginName, pluginVersion) => {
+    console.log("Creating Room",pluginId, pluginName, pluginVersion)
+    const data = { 
+      room: { 
+        name: "", 
+        user: user?.id, 
+        privacy_type: 'private',
+      },
+      game_options: {
+        plugin_id: pluginId,
+        plugin_version: pluginVersion,
+        plugin_name: pluginName,
+        replay_uuid: null,
+        external_data: null
+      }
+    };
+    try {
+      console.log("Creating room 1",data)
+      const res = await axios.post("/be/api/v1/games", data);
+      console.log("Creating room 2",res)
+      if (res.status !== 201) {
+        throw new Error("Room not created");
+      }
+      const room = res.data.success.room;
+      console.log("room created", room)
+      setRoomSlugCreated(room.slug);
+    } catch (err) {
+      console.log("Error creating room", err)
+    }
+  };
+
 
   const { inputs, handleSubmit, handleInputChange, setInputs } = useForm(async () => {
     console.log("inputs", inputs);
@@ -90,11 +126,13 @@ export const EditPluginModal = ({ plugin, closeModal, doFetchHash}) => {
     if (
       res.status === 200
     ) {
+      console.log("res pluginupdate", res);
       doFetchHash((new Date()).toISOString());
       setSuccessMessage("Plugin updated.");
       setErrorMessage("");
       setLoadingMessage("");
-      closeModal();
+      if (createRoomAfter) createRoom(res.data.plugin.id, res.data.plugin.name, res.data.plugin.version);
+      else closeModal();
     } else {
       setSuccessMessage("");
       setErrorMessage("Error."); 
@@ -105,6 +143,11 @@ export const EditPluginModal = ({ plugin, closeModal, doFetchHash}) => {
   useEffect(() => {
     if (inputs && plugin && inputs.public !== plugin.public) setInputs({...inputs, public: plugin.public});
   },[])
+
+
+  if (roomSlugCreated != null) {
+    return <Redirect push to={`/room/${roomSlugCreated}`} />;
+  }
 
   const uploadGameDefJson = async(event) => {
     event.preventDefault();
@@ -308,6 +351,18 @@ export const EditPluginModal = ({ plugin, closeModal, doFetchHash}) => {
           <Button disabled={!canSubmit} isSubmit={canSubmit} className="mt-4">
           {plugin ? siteL10n("Update Plugin") : siteL10n("Create Plugin")}
           </Button>
+          <span className="flex items-center mt-2">
+            <input
+              name="createRoomAfter"
+              type="checkbox"
+              className="h-6 w-6 m-1"
+              onChange={(event) => setCreateRoomAfter(event.target.checked)}
+              checked={createRoomAfter}
+            />
+            <label className="text-sm text-white ml-1">
+              {siteL10n("createPrivateRoomAfter")}
+            </label>
+          </span>
           {changesMade && <div className="alert alert-info mt-4">{siteL10n("You have unsaved changes.")}</div>}
           {successMessage && (
             <div className="alert alert-info mt-4">{successMessage}</div>
