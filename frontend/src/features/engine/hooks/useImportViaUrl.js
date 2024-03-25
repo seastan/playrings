@@ -265,18 +265,18 @@ export const loadRangersDb = (importLoadList, doActionList, playerN, dbDomain, d
     const jsonData = json.data.rangers_deck_by_pk;
     const loadList = [];
     const role = jsonData.meta.role;
-    loadList.push({'databaseId': role.replace(/^0+/, ''), 'quantity': 1, 'loadGroupId': playerN+"Role"});
+    loadList.push({'databaseId': role, 'quantity': 1, 'loadGroupId': playerN+"Role"});
     const slots = jsonData.slots;
     for (const [slot, quantity] of Object.entries(slots)) {
-      loadList.push({'databaseId': slot.replace(/^0+/, ''), 'quantity': quantity, 'loadGroupId': playerN+"Deck"});
+      loadList.push({'databaseId': slot, 'quantity': quantity, 'loadGroupId': playerN+"Deck"});
     }
     const sideSlots = jsonData.side_slots;
     for (const [slot, quantity] of Object.entries(sideSlots)) {
-      loadList.push({'databaseId': slot.replace(/^0+/, ''), 'quantity': quantity, 'loadGroupId': playerN+"Sideboard"});
+      loadList.push({'databaseId': slot, 'quantity': quantity, 'loadGroupId': playerN+"Sideboard"});
     }
     const extraSlots = jsonData.extra_slots;
     for (const [slot, quantity] of Object.entries(extraSlots)) {
-      loadList.push({'databaseId': slot.replace(/^0+/, ''), 'quantity': quantity, 'loadGroupId': playerN+"Sideboard"});
+      loadList.push({'databaseId': slot, 'quantity': quantity, 'loadGroupId': playerN+"Sideboard"});
     }
     const awa = jsonData.awa;
     const spi = jsonData.spi;
