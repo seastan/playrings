@@ -111,7 +111,7 @@ export const TopBarMenu = React.memo(({}) => {
     } else if (data.action === "spawn_custom") {
       dispatch(setShowModal("custom"));
     } else if (data.action === "developer_tools") {
-      dispatch(setShowDeveloper(true));
+      dispatch(setShowModal("developer"));
     } else if (data.action === "spawn_deck") {
       dispatch(setShowModal("prebuilt_deck"));
     } else if (data.action === "download") {

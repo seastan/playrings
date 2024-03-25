@@ -4,9 +4,12 @@ import { Controlled as CodeMirror } from "react-codemirror2";
 import "codemirror/lib/codemirror.css";
 import "codemirror/mode/javascript/javascript";
 import { useDispatch } from "react-redux";
-import { setTyping } from "../store/playerUiSlice";
+import { setShowModal, setTyping } from "../store/playerUiSlice";
 import Button from "../../components/basic/Button";
 import { useDoActionList } from "./hooks/useDoActionList";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faWindowClose, faX } from "@fortawesome/free-solid-svg-icons";
+import { faXmark } from "@fortawesome/free-regular-svg-icons";
 
 const DeveloperModal = () => {
   const dispatch = useDispatch();
@@ -27,8 +30,13 @@ const DeveloperModal = () => {
 
   return (
     <Draggable handle=".handle">
-      <div style={{ position: "absolute", zIndex: 10000, cursor: "move", width: "40vw"}}>
-        <div className="handle" style={{ background: 'grey', width: '100%', cursor: 'move', height: '40px' }}></div>
+      <div style={{ position: "absolute", zIndex: 10000, cursor: "move", width: "40vw" }}>
+        <div className="handle flex justify-between items-center bg-gray-500" style={{ width: '100%', cursor: 'move', height: '40px' }}>
+          <div> {/* Title or draggable area content */} </div>
+          <div className="p-2 hover:bg-red-600" onClick={() => dispatch(setShowModal(null))}>
+            <span className="text-white font-bold">X</span>
+          </div>
+        </div>
         <CodeMirror
           value={input}
           options={{
@@ -43,6 +51,7 @@ const DeveloperModal = () => {
         <Button onClick={handleClick}>Run</Button>
       </div>
     </Draggable>
+  
   );  
 };
 

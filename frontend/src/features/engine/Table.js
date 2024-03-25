@@ -38,7 +38,6 @@ export const Table = React.memo(({addDroppableRef}) => {
   const touchAction = useTouchAction();
   const setTouchAction = useSetTouchAction();
   const showModal = useSelector(state => state?.playerUi?.showModal);
-  const showDeveloper = useSelector(state => state?.playerUi?.showDeveloper);
   const loadedADeck = useSelector(state => state?.gameUi?.game?.loadedADeck);
   const myUserId = useProfile()?.id;
   const isHost = useIsHost();
@@ -111,7 +110,7 @@ export const Table = React.memo(({addDroppableRef}) => {
       {showModal === "settings" ? <SettingsModal/> : null}
       {showModal === "custom" ? <SpawnCustomCardModal/> : null}
       {showModal === "builder" ? <DeckbuilderModal/> : null}
-      {showDeveloper ? <DeveloperModal/> : null}
+      {showModal === "developer" ? <DeveloperModal/> : null}
       {showModal === "patreon" ? 
         <PatreonModal isOpen={true} isLoggedIn={myUserId} closeModal={() => dispatch(setShowModal(null))}/> : null}
       {tooltipIds.map((tooltipId, index) => {
