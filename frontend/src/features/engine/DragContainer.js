@@ -187,14 +187,14 @@ export const DragContainer = React.memo(({}) => {
       } 
       destGroup = game["groupById"][destGroupId];
 
-      // Did not move anywhere - can bail early
-      if (
-        orig.droppableId === dest.droppableId &&
-        orig.index === dest.index
-      ) {
-        // Do nothing
-        return;
-      } else {
+      // // Did not move anywhere - can bail early -- Need to disable this check because free zones can have cards move but stay at same index
+      // if (
+      //   orig.droppableId === dest.droppableId &&
+      //   orig.index === dest.index
+      // ) {
+      //   // Do nothing
+      //   return;
+      // } else {
         // Moved to a different spot
         const newGroupById = reorderGroupStackIds(groupById, orig, dest);
         // We could add some logic here to flip the card locally instantly, but there would still be a delay to get load the image
@@ -213,7 +213,7 @@ export const DragContainer = React.memo(({}) => {
           ]
         ])
         dispatch(setGroupById(newGroupById));
-      }
+      //}
     }
 
   }
