@@ -217,7 +217,7 @@ defmodule DragnCardsGame.CustomPluginTest do
 
     # Print all messages
     Enum.each(game["messages"], fn message ->
-      IO.puts(message)
+      IO.puts(message.text)
     end)
 
   end
@@ -490,7 +490,7 @@ defmodule DragnCardsGame.CustomPluginTest do
 
     # Print all messages
     Enum.each(game["messages"], fn message ->
-      IO.puts(message)
+      IO.puts(message.text)
     end)
 
   end
@@ -548,7 +548,7 @@ defmodule DragnCardsGame.CustomPluginTest do
 
     # Print all messages
     Enum.each(game["messages"], fn message ->
-      IO.puts(message)
+      IO.puts(message.text)
     end)
 
     assert length(game["groupById"]["player1Discard"]["stackIds"]) == 2
@@ -640,7 +640,7 @@ defmodule DragnCardsGame.CustomPluginTest do
 
     # Print all messages
     Enum.each(game["messages"], fn message ->
-      IO.puts(message)
+      IO.puts(message.text)
     end)
 
   end
@@ -717,7 +717,7 @@ defmodule DragnCardsGame.CustomPluginTest do
 
     # Print all messages
     Enum.each(game["messages"], fn message ->
-      IO.puts(message)
+      IO.puts(message.text)
     end)
 
   end
@@ -816,7 +816,7 @@ defmodule DragnCardsGame.CustomPluginTest do
 
     # Print all messages
     Enum.each(game["messages"], fn message ->
-      IO.puts(message)
+      IO.puts(message.text)
     end)
 
   end
@@ -851,7 +851,7 @@ defmodule DragnCardsGame.CustomPluginTest do
 
     # Print all messages
     Enum.each(game["messages"], fn message ->
-      IO.puts(message)
+      IO.puts(message.text)
     end)
 
   end
@@ -914,7 +914,7 @@ defmodule DragnCardsGame.CustomPluginTest do
 
     # Print all messages
     Enum.each(game["messages"], fn message ->
-      IO.puts(message)
+      IO.puts(message.text)
     end)
   end
 
@@ -987,7 +987,7 @@ defmodule DragnCardsGame.CustomPluginTest do
 
     # Print all messages
     Enum.each(game["messages"], fn message ->
-      IO.puts(message)
+      IO.puts(message.text)
     end)
 
   end
@@ -1062,7 +1062,7 @@ defmodule DragnCardsGame.CustomPluginTest do
 
     # Print all messages
     Enum.each(game["messages"], fn message ->
-      IO.puts(message)
+      IO.puts(message.text)
     end)
 
   end
@@ -1096,7 +1096,7 @@ defmodule DragnCardsGame.CustomPluginTest do
 
     # Print all messages
     Enum.each(game["messages"], fn message ->
-      IO.puts(message)
+      IO.puts(message.text)
     end)
 
   end
@@ -1126,7 +1126,7 @@ defmodule DragnCardsGame.CustomPluginTest do
 
     # Print all messages
     Enum.each(game["messages"], fn message ->
-      IO.puts(message)
+      IO.puts(message.text)
     end)
   end
 
@@ -1156,7 +1156,7 @@ defmodule DragnCardsGame.CustomPluginTest do
 
     # Print all messages
     Enum.each(game["messages"], fn message ->
-      IO.puts(message)
+      IO.puts(message.text)
     end)
 
   end
@@ -1296,7 +1296,7 @@ defmodule DragnCardsGame.CustomPluginTest do
 
     # Print all messages
     Enum.each(game["messages"], fn message ->
-      IO.puts(message)
+      IO.puts(message.text)
     end)
 
   end
