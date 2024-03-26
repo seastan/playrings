@@ -2,7 +2,7 @@ defmodule DragnCardsGame.Evaluate.Functions.LENGTH do
   alias DragnCardsGame.Evaluate
   @moduledoc """
   *Arguments*:
-  1. string_or_list (string | list)
+  1. `stringOrList` (string | list)
 
   *Returns*:
   (number) The length of the string or list.

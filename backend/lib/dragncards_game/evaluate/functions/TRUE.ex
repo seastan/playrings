@@ -1,6 +1,21 @@
 defmodule DragnCardsGame.Evaluate.Functions.TRUE do
   @moduledoc """
-  Handles the 'TRUE' operation in the DragnCardsGame evaluation process.
+  *Arguments*:
+  None
+
+  *Returns*:
+  `true`
+
+  *Examples*:
+
+  ```
+  ["COND",
+    ["FALSE"],
+    ["LOG", "This will not get logged"],
+    ["TRUE"]
+    ["LOG", "This will get logged"]
+  ]
+  ```
   """
 
   @doc """

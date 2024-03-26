@@ -2,13 +2,13 @@ defmodule DragnCardsGame.Evaluate.Functions.DECREASE_VAR do
   alias DragnCardsGame.Evaluate
   @moduledoc """
   *Arguments*:
-  1. var_name (string starting with $)
-  2. delta (number)
+  1. `varName` (string starting with `$`)
+  2. `delta` (number)
 
-  Decreases the value of the variable with the given name by the given delta. If the current value of the variable is null, it is treated as 0.
+  Decreases the value of the variable with the given name by the given delta. If the current value of the variable is `null`, it is treated as `0`.
 
   *Returns*:
-  (game state) The game state with the value of the variable with the given name decreased by the given delta.
+  (game state) The updated game state.
   """
 
   @doc """

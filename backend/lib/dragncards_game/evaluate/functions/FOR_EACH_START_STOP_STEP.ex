@@ -2,16 +2,16 @@ defmodule DragnCardsGame.Evaluate.Functions.FOR_EACH_START_STOP_STEP do
   alias DragnCardsGame.Evaluate
   @moduledoc """
   *Arguments*:
-  1. var_name (string starting with $)
-  2. start (number)
-  3. stop (number)
-  4. step (number)
-  5. function (actionList)
+  1. `varName` (string starting with `$`)
+  2. `start` (number)
+  3. `stop` (number)
+  4. `step` (number)
+  5. `function` (DragnLang code)
 
-  Iterates over the numbers from start to stop-1, incrementing by step each time. Assigns the current number to var_name.
+  Iterates over the numbers from `start` to `stop - 1`, incrementing by step each time. Assigns the current number to `varName`.
 
   *Returns*:
-  (any) The result of the successive calling of the function on each number.
+  (any) The result of the successive calling of `function` with each number assigned to `varName`.
 
   *Example*:
   ```

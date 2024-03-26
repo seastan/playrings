@@ -2,12 +2,13 @@ defmodule DragnCardsGame.Evaluate.Functions.ABILITY do
   alias DragnCardsGame.{Evaluate}
   @moduledoc """
   *Arguments*:
-  1. card_id
-  2. side
+  1. `card_id`
+  2. `side`
 
-  Gets the card's databaseId and calls the ability actionList as defined in gameDef.automation.cards.<databaseId>.ability.<side>
+  Gets the card's databaseId and calls the ability DragnLang code as defined in `gameDef.automation.cards.<databaseId>.ability.<side>`
+
   *Returns*:
-  (any) The result of the ability actionList.
+  (game state) The game state after executing the ability code.
   """
 
   @doc """

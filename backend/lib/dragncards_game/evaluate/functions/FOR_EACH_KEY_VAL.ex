@@ -2,29 +2,34 @@ defmodule DragnCardsGame.Evaluate.Functions.FOR_EACH_KEY_VAL do
   alias DragnCardsGame.Evaluate
   @moduledoc """
   *Arguments*:
-  1. key_name (string starting with $)
-  2. val_name (string starting with $)
-  3. obj (object)
-  4. function (actionList)
-  5. sort_prop (string) (optional)
-  6. sort_order (string) (optional)
+  1. `keyName` (string starting with $)
+  2. `valName` (string starting with $)
+  3. `obj` (object)
+  4. `function` (actionList)
+  5. `sortProp` (string) (optional)
+  6. `sortOrder` (string) (optional)
 
-  Iterates over the key-value pairs of an object, assigning the key to key_name and the value to val_name.
+  Iterates over the key-value pairs of an object, assigning the key to `keyName` and the value to `valName`.
 
-  If sort_prop is provided, the list will be sorted by that property before iteration.
+  If `sortProp` is provided, the list will be sorted by that property before iteration.
 
-  If sort_order is provided, it will be used to determine the sort order ("ASC" or "DESC").
+  If `sortOrder` is provided, it will be used to determine the sort order ("ASC" or "DESC").
 
   *Returns*:
   (any) The result of the successive calling of the function on each key-value pair.
 
-  *Example*:
+  *Examples*:
+
+  Log the name of each card in the game:
   ```
   [
     ["FOR_EACH_KEY_VAL", "$CARD_ID", "$CARD", "$GAME.cardById, [
       ["LOG", "{{$CARD_ID}}: {{$CARD.currentFace.name}}"]
     ]
   ]
+  ```
+
+  Readies any cards that are rotated 90 degrees:
   ```
   [
     ["FOR_EACH_KEY_VAL", "$CARD_ID", "$CARD", "$GAME.cardById, [

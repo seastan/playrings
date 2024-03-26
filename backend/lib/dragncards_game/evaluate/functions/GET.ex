@@ -2,10 +2,12 @@ defmodule DragnCardsGame.Evaluate.Functions.GET do
   alias DragnCardsGame.Evaluate
   @moduledoc """
   *Arguments*:
-  1. key_list (list)
+  1. `keyList` (list)
+
+  Returns the value at the given `keyList` in the game state. Not commonly used due to the more convenient dot syntax.
 
   *Returns*:
-  (any) The value at the given key_list in the game state.
+  (any) The value.
 
   *Examples*:
   ```

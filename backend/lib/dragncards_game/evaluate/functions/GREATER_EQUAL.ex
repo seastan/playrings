@@ -2,11 +2,11 @@ defmodule DragnCardsGame.Evaluate.Functions.GREATER_EQUAL do
   alias DragnCardsGame.Evaluate
   @moduledoc """
   *Arguments*:
-  1. lhs (number)
-  2. rhs (number)
+  1. `lhs` (number)
+  2. `rhs` (number)
 
   *Returns*:
-  (boolean) The result of the >= operation. Null values are treated as 0.
+  (boolean) The result of the `>=` operation. Null values are treated as `0`.
 
   *Examples*:
   ```

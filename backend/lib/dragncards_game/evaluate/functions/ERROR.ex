@@ -3,7 +3,7 @@ defmodule DragnCardsGame.Evaluate.Functions.ERROR do
   require Logger
   @moduledoc """
   *Arguments*:
-  1. message (string)
+  1. `message` (string)
 
   Adds an error message to the log.
 

@@ -1,7 +1,16 @@
 defmodule DragnCardsGame.Evaluate.Functions.SUBSTRING do
   alias DragnCardsGame.Evaluate
   @moduledoc """
-  Handles the 'SUBSTRING' operation in the DragnCardsGame evaluation process.
+  *Arguments*:
+  1. `string` (string)
+  2. `start` (integer)
+  3. `length` (integer)
+
+  Returns a substring of the given string, starting at the given index and with the given length.
+
+  *Returns*:
+  (string) The substring.
+
   """
 
   @doc """

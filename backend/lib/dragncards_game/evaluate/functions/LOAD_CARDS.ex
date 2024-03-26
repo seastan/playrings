@@ -3,7 +3,7 @@ defmodule DragnCardsGame.Evaluate.Functions.LOAD_CARDS do
   alias DragnCards.Plugins
   @moduledoc """
   *Arguments*:
-  1. load_list_id (string): The id of a pre-built deck to load.
+  1. `loadListId` (string): The id of a pre-built deck to load. Must be present in `gameDef.preBuiltDecks`.
 
   *Returns*:
   (game state) The game with the cards from the pre-built deck loaded.

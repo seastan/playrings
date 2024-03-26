@@ -1,7 +1,24 @@
 defmodule DragnCardsGame.Evaluate.Functions.SHUFFLE_LIST do
   alias DragnCardsGame.Evaluate
   @moduledoc """
-  Handles the 'SHUFFLE_LIST' operation in the DragnCardsGame evaluation process.
+  *Arguments*:
+  1. `list` (list)
+
+  Shuffles the given list.
+
+  *Returns*:
+  (list) The shuffled list.
+
+  *Examples*:
+
+  Get a random list of players
+  ```
+  ["SHUFFLE_LIST", ["LIST", "player1", "player2", "player3", "player4"]]
+  ```
+  Or
+  ```
+  ["SHUFFLE_LIST", "$PLAYER_ORDER"]
+  ```
   """
 
   @doc """

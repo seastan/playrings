@@ -5,6 +5,17 @@ defmodule DragnCardsGame.Evaluate.Functions.FALSE do
 
   *Returns*:
   `false`
+
+  *Examples*:
+
+  ```
+  ["COND",
+    ["FALSE"],
+    ["LOG", "This will not get logged"],
+    ["TRUE"]
+    ["LOG", "This will get logged"]
+  ]
+  ```
   """
 
   @doc """

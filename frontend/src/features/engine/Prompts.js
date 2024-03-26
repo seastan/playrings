@@ -3,6 +3,7 @@ import { useSelector } from "react-redux";
 import { usePlayerN } from "./hooks/usePlayerN";
 import { keysDiv } from "./functions/common";
 import { useDoActionList } from "./hooks/useDoActionList";
+import { useGameL10n } from "./hooks/useGameL10n";
 
 const promptStyle = {
   MozBoxShadow: '0 0 50px 20px black',
@@ -13,6 +14,7 @@ const promptStyle = {
 export const Prompts = React.memo(({
 }) => {
   const playerN = usePlayerN();
+  const gameL10n = useGameL10n();
   const prompts = useSelector(state => state?.gameUi?.game?.playerData?.[playerN]?.prompts) || {};
   const sortedPromptIds = Object.keys(prompts).sort((a,b) => prompts[a].timestamp - prompts[b].timestamp);
   const doActionList = useDoActionList();
@@ -35,7 +37,7 @@ export const Prompts = React.memo(({
                     {prompts[promptKey]["options"].map((option, index) => {
                       return(
                         <div key={index} className="m-1 p-1 rounded-lg bg-gray-800 hover:bg-red-800 cursor-default" onClick={() => doActionList(option.code)}>
-                          {promptIndex === 0 && <span className="pr-2">{keysDiv(option.hotkey, "hover:bg-gray-500")}</span>}<span>{option.label}</span>
+                          {promptIndex === 0 && <span className="pr-2">{keysDiv(option.hotkey, "hover:bg-gray-500")}</span>}<span>{gameL10n(option.label)}</span>
                         </div>
                       )
                     })}

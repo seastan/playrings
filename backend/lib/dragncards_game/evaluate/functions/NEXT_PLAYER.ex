@@ -1,13 +1,40 @@
 defmodule DragnCardsGame.Evaluate.Functions.NEXT_PLAYER do
   alias DragnCardsGame.Evaluate
   @moduledoc """
-  Handles the 'NEXT_PLAYER' operation in the DragnCardsGame evaluation process.
+  *Arguments*:
+  1. `currentPlayerI` (string like "player1")
+
+  Returns the next player in the game, based on the number of players in the game.
+
+
+  *Returns*:
+  (string like "player2") The id of the next player.
+
+  *Examples*:
+
+  In a 2-player game:
+  ```
+  ["NEXT_PLAYER", "player1"] -> "player2"
+  ```
+  In a 3-player game:
+  ```
+  ["NEXT_PLAYER", "player2"] -> "player3"
+  ```
+  In a 3-player game:
+  ```
+  ["NEXT_PLAYER", "player3"] -> "player1"
+  ```
+  In a 1-player game:
+  ```
+  ["NEXT_PLAYER", "player1"] -> "player1"
+  ```
+
   """
 
   @doc """
   Executes the 'NEXT_PLAYER' operation with the given arguments.
 
-  ## Parameters 
+  ## Parameters
 
     - `args`: The arguments required for the 'NEXT_PLAYER' operation.
 
@@ -25,4 +52,3 @@ defmodule DragnCardsGame.Evaluate.Functions.NEXT_PLAYER do
 
 
 end
-    

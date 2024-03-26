@@ -1,13 +1,26 @@
 defmodule DragnCardsGame.Evaluate.Functions.TARGET do
   alias DragnCardsGame.Evaluate
   @moduledoc """
-  Handles the 'TARGET' operation in the DragnCardsGame evaluation process.
+  *Arguments*:
+  1. `cardId` (string)
+
+  Shorthand for `["SET", "/cardById/cardId/targeting/$PLAYER_N", true]`
+
+  *Returns*:
+  (game state) The updated game state.
+
+  *Examples*:
+
+  Target the active card with the ID `card1`:
+  ```
+  ["TARGET", "$ACTIVE_CARD_ID"]
+  ```
   """
 
   @doc """
   Executes the 'TARGET' operation with the given arguments.
 
-  ## Parameters 
+  ## Parameters
 
     - `args`: The arguments required for the 'TARGET' operation.
 
@@ -22,4 +35,3 @@ defmodule DragnCardsGame.Evaluate.Functions.TARGET do
 
 
 end
-    

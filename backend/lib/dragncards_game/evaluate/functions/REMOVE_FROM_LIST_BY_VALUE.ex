@@ -1,13 +1,20 @@
 defmodule DragnCardsGame.Evaluate.Functions.REMOVE_FROM_LIST_BY_VALUE do
   alias DragnCardsGame.Evaluate
   @moduledoc """
-  Handles the 'REMOVE_FROM_LIST_BY_VALUE' operation in the DragnCardsGame evaluation process.
+  *Arguments*:
+  1. `list` (list)
+  2. `value` (any)
+
+  Removes all occurrences of `value` from `list`.
+
+  *Returns*:
+  (list) The updated list.
   """
 
   @doc """
   Executes the 'REMOVE_FROM_LIST_BY_VALUE' operation with the given arguments.
 
-  ## Parameters 
+  ## Parameters
 
     - `args`: The arguments required for the 'REMOVE_FROM_LIST_BY_VALUE' operation.
 
@@ -23,4 +30,3 @@ defmodule DragnCardsGame.Evaluate.Functions.REMOVE_FROM_LIST_BY_VALUE do
 
 
 end
-    

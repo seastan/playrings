@@ -37,11 +37,7 @@ export const DragContainer = React.memo(({}) => {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [mouseDownPosition, setMouseDownPosition] = useState({ x: 0, y: 0 });
   const keypressShift = useSelector(state => state?.playerUi?.keypress?.Shift);
-  const droppableRefs = {};
-
-  const addDroppableRef = useCallback((id) => (ref) => {
-    droppableRefs[id] = ref;
-  }, []);
+  const playerUiDroppableRefs = useSelector(state => state?.playerUi?.droppableRefs);
 
   const updateMousePosition = ev => {
     setMousePosition({ x: ev.clientX, y: ev.clientY });
@@ -126,12 +122,12 @@ export const DragContainer = React.memo(({}) => {
 
     const draggableNode = document.querySelector(`[data-rbd-draggable-id="${result.draggableId}"]`);
 
-    console.log("Dropped in: ", destGroupId, Object.keys(droppableRefs), droppableRefs[destGroupId], draggableNode)
+    console.log("Dropped in: ", destGroupId, playerUiDroppableRefs, draggableNode)
     var stackLeft = 0;
     var stackTop = 0;
 
-    if (droppableRefs?.[destGroupId]) {
-      const droppableRect = droppableRefs[destGroupId].getBoundingClientRect();
+    if (playerUiDroppableRefs?.[destGroupId]) {
+      const droppableRect = playerUiDroppableRefs[destGroupId].getBoundingClientRect();
       const xRelative = mousePosition.x - mouseDownPosition.x - droppableRect.left;
       const yRelative = mousePosition.y - mouseDownPosition.y - droppableRect.top;
       stackLeft = xRelative/droppableRect.width*100;
@@ -208,8 +204,9 @@ export const DragContainer = React.memo(({}) => {
           ["LOG", "$ALIAS_N", " moved ", afterDragName, " from ", "$GAME.groupById."+origGroupId+".label", " to ", "$GAME.groupById."+destGroupId+".label", "."],
           ["MOVE_STACK", origStackId, destGroupId, dest.index, {"allowFlip": allowFlip}],
           ["COND",
-            ["VAR", `$GAME.stackById/${origStackId}`],
+            ["DEFINED", `$GAME.stackById.${origStackId}`],
             [
+              ["LOG", "Setting stack position"],
               ["SET", `/stackById/${origStackId}/left`, stackLeft],
               ["SET", `/stackById/${origStackId}/top`, stackTop]
             ]
@@ -237,7 +234,7 @@ export const DragContainer = React.memo(({}) => {
           }
         }}>
       <DragDropContext onDragEnd={onDragEnd} onBeforeDragStart={onBeforeDragStart}>
-        <Table addDroppableRef={addDroppableRef}/>
+        <Table/>
       </DragDropContext>
     </ArcherContainer>
   )

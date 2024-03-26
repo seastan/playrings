@@ -35,7 +35,7 @@ defmodule Mix.Tasks.GenerateFunctionDocs do
     case Code.fetch_docs(module) do
       {:docs_v1, _, _, _, module_docs, _, _} ->
         module_name = Atom.to_string(module) |> String.split(".") |> Enum.at(-1)
-        "# #{module_name}\n\n" <> (module_docs["en"] || "No module documentation available.")
+        "### \"#{module_name}\"\n\n" <> (module_docs["en"] || "No module documentation available.") <> "\n---"
       _ ->
         ""
     end

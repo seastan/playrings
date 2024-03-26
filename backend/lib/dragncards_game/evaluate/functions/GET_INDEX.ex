@@ -6,7 +6,7 @@ defmodule DragnCardsGame.Evaluate.Functions.GET_INDEX do
   2. value (number)
 
   *Returns*:
-  (number) The index of the first occurrence of the given value in the list.
+  (number) The index of the first occurrence of the given `value` in `list`.
   """
 
   @doc """

@@ -1,7 +1,51 @@
 defmodule DragnCardsGame.Evaluate.Functions.ONE_CARD do
   alias DragnCardsGame.Evaluate
   @moduledoc """
-  Handles the 'ONE_CARD' operation in the DragnCardsGame evaluation process.
+  *Arguments*:
+  1. `varialeName` (string)
+  2. `condition` (DragnLang code)
+
+  Searches through the cards in an arbitrary order and returns the first card it finds that matches the condition. As it loops through the cards, it will assign each card to the variable name given in the first argument. This variable can then be used to reference the card in the condition.
+
+  If no card is found that matches the condition, this function will return `null`.
+
+  *Returns*:
+  (object) The first card that matches the condition.
+
+  *Examples*:
+
+  Find a card in the game that has the `"suit": "spades"` and `"value": "Queen"` properties on its side A face:
+  ```
+  ["ONE_CARD",
+    "$CARD",
+    ["AND",
+      ["EQUAL", "$CARD.suit", "spades"],
+      ["EQUAL", "$CARD.value", "Queen"]
+    ]
+  ]
+  ```
+
+  Find a card in the game that has the `"suit": "spades"` and `"value": "Queen"` properties, and log whether it is in play or not.
+  ```
+  [
+    ["VAR", "$MATCHED_CARD", ["ONE_CARD",
+      "$CARD",
+      ["AND",
+        ["EQUAL", "$CARD.suit", "spades"],
+        ["EQUAL", "$CARD.value", "Queen"]
+      ]
+    ]],
+    ["COND",
+      ["AND",
+        ["NOT_EQUAL", "$MATCHED_CARD", null],
+        ["EQUAL", "$MATCHED_CARD.inPlay", true]
+      ],
+      ["LOG", "Found card with suit spades and value Queen in play."],
+      ["TRUE"],
+      ["LOG", "Did not find card with suit spades and value Queen in play."]
+    ]
+  ]
+  ```
   """
 
   @doc """

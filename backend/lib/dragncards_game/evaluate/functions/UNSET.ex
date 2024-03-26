@@ -1,13 +1,31 @@
 defmodule DragnCardsGame.Evaluate.Functions.UNSET do
   alias DragnCardsGame.Evaluate
   @moduledoc """
-  Handles the 'UNSET' operation in the DragnCardsGame evaluation process.
+  *Arguments*:
+  1. `path` (string of keys separated by `/`)
+
+  Removes the key and is associated value at the given path in the game state. Does not trigger any automations.
+
+  *Returns*:
+  (game state) The updated game state.
+
+  *Examples*:
+
+  ```
+  [
+    ["SET", "/playerData/player1/hitPoints", 20],
+    ["LOG", ["EQUAL", "$GAME.playerData.player1.hitPoints", 20]], // true
+    ["UNSET", "/playerData/player1/hitPoints"],
+    ["LOG", ["EQUAL", "$GAME.playerData.player1.hitPoints", null]] // true
+  ]
+  ```
+
   """
 
   @doc """
   Executes the 'UNSET' operation with the given arguments.
 
-  ## Parameters 
+  ## Parameters
 
     - `args`: The arguments required for the 'UNSET' operation.
 
@@ -26,4 +44,3 @@ defmodule DragnCardsGame.Evaluate.Functions.UNSET do
 
 
 end
-    

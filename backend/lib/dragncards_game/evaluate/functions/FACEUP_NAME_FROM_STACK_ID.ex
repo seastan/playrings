@@ -2,12 +2,12 @@ defmodule DragnCardsGame.Evaluate.Functions.FACEUP_NAME_FROM_STACK_ID do
   alias DragnCardsGame.Evaluate
   @moduledoc """
   *Arguments*:
-  1. stack_id (string)
+  1. `stackId` (string)
 
-  Gets the name of the faceup side of the card on the top of the stack with stack_id.
+  Gets the name of the faceup side of the card on the top of the stack with `stackId`.
 
   *Returns*:
-  (string) The name of the faceup side of the card on the top of the stack with stack_id.
+  (string) The name of the faceup side of the card on the top of the stack with `stackId`.
   """
 
   @doc """

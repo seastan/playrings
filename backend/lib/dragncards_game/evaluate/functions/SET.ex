@@ -1,13 +1,37 @@
 defmodule DragnCardsGame.Evaluate.Functions.SET do
   alias DragnCardsGame.Evaluate
   @moduledoc """
-  Handles the 'SET' operation in the DragnCardsGame evaluation process.
+  *Arguments*:
+  1. `path` (string of keys separated by `/`)
+  2. `value` (any)
+
+  Sets the value at the given path in the game state. Triggers an automation that is listening to `path`.
+
+  *Returns*:
+  (game state) The updated game state.
+
+  *Examples*:
+
+  Set the value of `player1`'s `hitPoints` to 20:
+  ```
+  ["SET", "/playerData/player1/hitPoints", 20]
+  ```
+  Set the number of damage tokens on the active card to 0:
+  ```
+  ["SET", "/cardById/$ACTIVE_CARD_ID/tokens/damage", 0]
+  ```
+  Make a facedown active card visible to the player that triggered the action list:
+  ```
+  ["SET", "/cardById/$ACTIVE_CARD_ID/peeking/$PLAYER_N", true]
+  ```
+
+
   """
 
   @doc """
   Executes the 'SET' operation with the given arguments.
 
-  ## Parameters 
+  ## Parameters
 
     - `args`: The arguments required for the 'SET' operation.
 
@@ -23,4 +47,3 @@ defmodule DragnCardsGame.Evaluate.Functions.SET do
 
 
 end
-    

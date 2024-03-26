@@ -1,7 +1,22 @@
 defmodule DragnCardsGame.Evaluate.Functions.UPDATE_LAYOUT do
   alias DragnCardsGame.Evaluate
   @moduledoc """
-  Handles the 'UPDATE_LAYOUT' operation in the DragnCardsGame evaluation process.
+  *Arguments*:
+  1. `path` (string of keys separated by `/`)
+  2. `value` (any)
+
+  Updates the shared layout and each player's layout at the given path to the given value.
+
+  For example, if `path` is `"/layout/regions/sharedMainDeck/groupId"` and the value is `"sharedDeck2"`, it will update the shared layout at `"/layout/regions/sharedMainDeck/groupId"` to `"sharedDeck2"` and each player's layout at `"/playerData/playerI/layout/regions/sharedMainDeck/groupId"` to `"sharedDeck2"`.
+
+  *Returns*:
+  (game state) The updated game state.
+
+  *Examples*:
+
+  ```
+  ["UPDATE_LAYOUT", "/layout/regions/sharedMainDeck/groupId", "sharedDeck2"]
+  ```
   """
 
   @doc """
@@ -19,7 +34,9 @@ defmodule DragnCardsGame.Evaluate.Functions.UPDATE_LAYOUT do
     path = Evaluate.evaluate(game, Enum.at(code, 1), trace ++ ["path"])
     value = Evaluate.evaluate(game, Enum.at(code, 2), trace ++ ["value"])
     game = try do
-      Evaluate.put_by_path(game, path, value, trace ++ ["put_by_path shared"])
+      shared_path = ["LIST"] ++ path
+      Evaluate.evaluate(game, ["SET", shared_path, value], trace ++ ["set shared"])
+      #Evaluate.put_by_path(game, path, value, trace ++ ["put_by_path shared"])
     rescue
       _ ->
         game
@@ -27,9 +44,10 @@ defmodule DragnCardsGame.Evaluate.Functions.UPDATE_LAYOUT do
     end
     # Loop over key/values in the playerData and update the layout
     Enum.reduce(game["playerData"], game, fn({player_i, _player_data}, acc) ->
-      player_path = ["playerData", player_i] ++ path
+      player_path = ["LIST", "playerData", player_i] ++ path
       try do # Not all players' layouts will have the region defined
-        Evaluate.put_by_path(acc, player_path, value, trace ++ ["put_by_path player_i"])
+        Evaluate.evaluate(acc, ["SET", player_path, value], trace ++ ["set player_i"])
+        #Evaluate.put_by_path(acc, player_path, value, trace ++ ["put_by_path player_i"])
       rescue
         _ ->
           acc

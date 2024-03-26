@@ -4,7 +4,7 @@ defmodule DragnCardsGame.Evaluate.Functions.ABORT do
   *Arguments*:
   Any number of string arguments
 
-  Aborts all game state changes performed during the current backend process and halts the further execution of the action list.
+  Aborts all game state changes performed during the current backend process and halts the further execution of the backend process.
 
   *Returns*:
   (game state) The game state as it was prior to the most recent backend process, with sting arguments concatenated as an error message.

@@ -2,8 +2,8 @@ defmodule DragnCardsGame.Evaluate.Functions.AT_INDEX do
   alias DragnCardsGame.Evaluate
   @moduledoc """
   *Arguments*:
-  1. list (list)
-  2. index (number)
+  1. `list` (list)
+  2. `index` (number)
 
   Returns the element at the given index in the list. If the list is null, it returns null.
 

@@ -1,13 +1,20 @@
 defmodule DragnCardsGame.Evaluate.Functions.RANDOM_INT do
   alias DragnCardsGame.Evaluate
   @moduledoc """
-  Handles the 'RANDOM_INT' operation in the DragnCardsGame evaluation process.
+  *Arguments*:
+  1. `min` (integer)
+  2. `max` (integer)
+
+  Returns a random integer between `min` and `max`, inclusive.
+
+  *Returns*:
+  (integer) The random integer.
   """
 
   @doc """
   Executes the 'RANDOM_INT' operation with the given arguments.
 
-  ## Parameters 
+  ## Parameters
 
     - `args`: The arguments required for the 'RANDOM_INT' operation.
 
@@ -23,4 +30,3 @@ defmodule DragnCardsGame.Evaluate.Functions.RANDOM_INT do
 
 
 end
-    

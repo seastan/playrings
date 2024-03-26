@@ -39,11 +39,15 @@ export const useDoActionList = () => {
                 }
             }
 
+            var playerUi = store.getState().playerUi;
+            // Drop the droppableRefs from the playerUi object
+            playerUi = {...playerUi, droppableRefs: {}}
+
             gameBroadcast("game_action", {
                 action: "evaluate", 
                 options: {
                     action_list: processedActionList, 
-                    player_ui: store.getState().playerUi,
+                    player_ui: playerUi
                 }
             })
         }

@@ -3,7 +3,7 @@ defmodule DragnCardsGame.Evaluate.Functions.CALC do
   alias DragnCardsUtil.StringMath
   @moduledoc """
   *Arguments*:
-  1. string (string)
+  1. `string` (string)
 
   Evaluates the given string as a mathematical expression.
 

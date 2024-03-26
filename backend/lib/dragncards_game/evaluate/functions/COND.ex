@@ -2,12 +2,36 @@ defmodule DragnCardsGame.Evaluate.Functions.COND do
   alias DragnCardsGame.Evaluate
   @moduledoc """
   *Arguments*:
-  Any number of pairs of booleans and actionLists
+  Any number of pairs of booleans and DragnLang code blocks
 
   *Returns*:
-  (any) The result of the actionList after the first true boolean. If no boolean is true, returns the game state.
+  (any) The result of the DragnLang code block after the first true boolean. If no boolean is true, returns the game state.
 
   *Example*:
+  ```
+  ["COND",
+    ["FALSE"],
+    ["LOG", "This will not get logged"],
+    ["TRUE"]
+    ["LOG", "This will get logged"]
+  ]
+  ```
+  ```
+  ["COND",
+    ["TRUE"],
+    ["LOG", "This will not logged"],
+    ["TRUE"]
+    ["LOG", "This will not get logged"]
+  ]
+  ```
+  ```
+  ["COND",
+    ["FALSE"],
+    ["LOG", "This will not get logged"],
+    ["FALSE"]
+    ["LOG", "This will not get logged"]
+  ]
+  ```
   ```
   ["COND",
       ["LESS_THAN", ["LENGTH", "$GAME.groupById.player1Deck.stackIds"], 5],

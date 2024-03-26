@@ -2,8 +2,8 @@ defmodule DragnCardsGame.Evaluate.Functions.JOIN_STRING do
   alias DragnCardsGame.Evaluate
   @moduledoc """
   *Arguments*:
-  1. left (string)
-  2. right (string)
+  1. `left` (string)
+  2. `right` (string)
 
   Concatenates the two strings together. If either string is null, it is treated as an empty string.
 

@@ -2,13 +2,23 @@ defmodule DragnCardsGame.Evaluate.Functions.INCREASE_VAL do
   alias DragnCardsGame.Evaluate
   @moduledoc """
   *Arguments*:
-  1. path (string)
-  2. delta (number)
+  1. `path` (string of keys separated by `/`)
+  2. `delta` (number)
 
-  Increases the value at the given path by the given delta. If the current value at the given path is null, it is treated as 0.
+  Increases the value at the `path` by the `delta`. If the current value at `path` is `null`, it is treated as `0`.
+
+  This function calls the `SET` function under the hood, so it will trigger automations listening to `path`.
 
   *Returns*:
-  (game state) The game state with the value at the given path increased by the given delta.
+  (game state) The game state with the value at `path` increased by `delta`.
+
+  *Examples*:
+
+  Increase the nummber of damage tokens on the active card by 5:
+  ```
+  ["DECREASE_VAL", "/cardById/$ACTIVE_CARD_ID/tokens/damage", 5]
+  ```
+
   """
 
   @doc """

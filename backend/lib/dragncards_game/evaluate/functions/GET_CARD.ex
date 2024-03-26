@@ -2,10 +2,10 @@ defmodule DragnCardsGame.Evaluate.Functions.GET_CARD do
   alias DragnCardsGame.Evaluate
   @moduledoc """
   *Arguments*:
-  1. card_id (string)
+  1. `cardId` (string)
 
   *Returns*:
-  (card) The card with the given card_id.
+  (card) The card with the given `cardId`.
   """
 
   @doc """

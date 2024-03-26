@@ -1,13 +1,31 @@
 defmodule DragnCardsGame.Evaluate.Functions.PROCESS_MAP do
   alias DragnCardsGame.Evaluate
   @moduledoc """
-  Handles the 'PROCESS_MAP' operation in the DragnCardsGame evaluation process.
+  *Arguments*:
+  1. `object` (object)
+
+  Normally, when DragnLang evaluates an object, it returns that raw object. This function will return an object where each value has been processed as if it were DragnLang code.
+
+  *Returns*:
+  (object) The processed object.
+
+  *Examples*:
+
+  ```
+  [
+    ["VAR", "$B", 2],
+    ["VAR", "$OBJ1", {"a": 1, "b": "$B"}],
+    ["LOG", "$OBJ1"], // {"a": 1, "b": "$B"}
+    ["LOG", ["PROCESS_MAP", "$OBJ1"]] // {"a": 1, "b": 2}
+  ]
+  ```
+
   """
 
   @doc """
   Executes the 'PROCESS_MAP' operation with the given arguments.
 
-  ## Parameters 
+  ## Parameters
 
     - `args`: The arguments required for the 'PROCESS_MAP' operation.
 
@@ -26,4 +44,3 @@ defmodule DragnCardsGame.Evaluate.Functions.PROCESS_MAP do
 
 
 end
-    

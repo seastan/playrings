@@ -2,8 +2,8 @@ defmodule DragnCardsGame.Evaluate.Functions.DEFINE do
   alias DragnCardsGame.Evaluate
   @moduledoc """
   *Arguments*:
-  1. var_name (string starting with $)
-  2. value (any)
+  1. `varName` (string starting with `$`)
+  2. `value` (any)
 
   Defines a global variable with the given name and value. If the variable already exists, it is overwritten. The variable persists across scopes and erased at the end of the backend process.
 

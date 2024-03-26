@@ -28,6 +28,7 @@ const initialState = {
   cardClicked: false,
   randomNumBetween: "3",
   autoLoadedDecks: false,
+  droppableRefs: {},
   dragging: {
     stackId: null,
     end: null,
@@ -155,6 +156,9 @@ const playerUiSlice = createSlice({
     },
     setAutoLoadedDecks: (state, { payload }) => {
       state.autoLoadedDecks = payload;
+    },
+    setDroppableRefs: (state, { payload }) => {
+      state.droppableRefs[payload.id] = payload.ref;
     }
   }
 });
@@ -196,6 +200,7 @@ export const {
   setDraggingToRegionType,
   setUserSettings,
   setAlertMessage,
-  setAutoLoadedDecks
+  setAutoLoadedDecks,
+  setDroppableRefs
  } = playerUiSlice.actions;
 export default playerUiSlice.reducer;

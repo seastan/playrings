@@ -3,12 +3,12 @@ defmodule DragnCardsGame.Evaluate.Functions.ACTION_LIST do
   alias DragnCards.Plugins
   @moduledoc """
   *Arguments*:
-  1. actionListId (string) or actionList (list)
+  1. `actionListId` (string) or `actionList` (DragnLang code)
 
-  If provided a string, gets the actionList from gameDef.actionLists. Then evaluates the actionList.
+  If provided a string, gets the DragnLang code from `gameDef.actionLists`. Then evaluates that code.
 
   *Returns*:
-  (any) The result of the actionList.
+  (any) The result of the DragnLang code.
   """
 
   @doc """

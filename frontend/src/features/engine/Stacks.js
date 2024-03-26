@@ -11,7 +11,7 @@ import store from "../../store";
 import { ATTACHMENT_OFFSET } from "./functions/common";
 import NaturalDragAnimation from 'natural-drag-animation-rbdnd';
 import { Card } from "./Card";
-import { setDraggingToRegionType } from "../store/playerUiSlice";
+import { setDraggingToRegionType, setDroppableRefs } from "../store/playerUiSlice";
 
 const Container = styled.div`
   background-color: ${props => props.isDraggingOver ? "rgba(1,1,1,0.3)" : ""};
@@ -84,8 +84,7 @@ const StacksList = React.memo(({
 export const Stacks = React.memo(({
   groupId,
   region,
-  selectedStackIndices,
-  addDroppableRef
+  selectedStackIndices
 }) => {
   const containerRef = useRef(null);
   const dispatch = useDispatch();
@@ -98,11 +97,11 @@ export const Stacks = React.memo(({
 
   useEffect(() => {
     console.log("Adding Droppable Ref", groupId, containerRef.current);
-    addDroppableRef(groupId)(containerRef.current);
+    dispatch(setDroppableRefs({id: groupId, ref: containerRef.current}));
   }, [groupId]);
 
 
-  if (region.type === "free") return <FreeZone groupId={groupId} region={region} addDroppableRef={addDroppableRef}/>
+  if (region.type === "free") return <FreeZone groupId={groupId} region={region} containerRef={containerRef}/>
   else return(
     <Droppable
       droppableId={groupId}
@@ -153,9 +152,9 @@ export const Stacks = React.memo(({
 export const FreeZone = React.memo(({
   groupId,
   region,
-  addDroppableRef
+  containerRef
 }) => {
-  console.log("Rendering Stacks for ",groupId, region);
+  console.log("Rendering Free Stacks for ",groupId, region);
   const dispatch = useDispatch();
   const layout = useLayout();
   const rowSpacing = layout?.rowSpacing;
@@ -176,7 +175,7 @@ export const FreeZone = React.memo(({
         if (dropSnapshot.isDraggingOver) dispatch(setDraggingToRegionType(region.type));
         return(
         <Container
-          ref={addDroppableRef(groupId)}
+          ref={containerRef}
           isDraggingOver={dropSnapshot.isDraggingOver}
           isDropDisabled={false}
           isDraggingFrom={Boolean(dropSnapshot.draggingFromThisWith)}
@@ -255,7 +254,7 @@ export const FreeStack = React.memo(({
   const cardSize = layout?.cardSize;
   const playerN = useSelector(state => state?.playerUi?.playerN);
   const [isMousedOver, setIsMousedOver] = useState(false);
-  console.log('Rendering Stack ', {region, layout});
+  console.log('Rendering Free Stack ', {stack, region, layout});
   var spacingFactor = touchMode ? 1.5 : 1;
   const { height, width } = useWindowDimensions();
   const aspectRatio = width/height;

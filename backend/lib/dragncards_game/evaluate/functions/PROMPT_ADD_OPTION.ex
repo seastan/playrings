@@ -2,7 +2,31 @@ defmodule DragnCardsGame.Evaluate.Functions.PROMPT_ADD_OPTION do
   alias DragnCardsGame.Evaluate
   alias DragnCards.Plugins
   @moduledoc """
-  Handles the 'PROMPT_ADD_OPTION' operation in the DragnCardsGame evaluation process.
+  *Arguments*:
+  1. `targetPlayerI` (string like "player1") or `targetPlayerList` (list of such strings)
+  2. `label` (string)
+  3. `hotkey` (string)
+  4. `promptCode` (DragnLang code)
+
+  Adds an option to the most recent prompt for the given player(s).
+
+  *Returns*:
+  (game state) The updated game state.
+
+  *Examples*:
+
+  Assuming player1 currently has a prompt to let them press `1` to "Deal 1 damage to player 2", and you want to add an option to allow them to press `5` to deal 5 damage instead:
+  ```
+  ["PROMPT_ADD_OPTION",
+    "player1",
+    "Deal 5 damage to player 2",
+    "5",
+    [
+      ["LOG", ["GET_ALIAS", "player1"], " dealt 5 damage to ", ["GET_ALIAS", "player2"]],
+      ["DECREASE_VAL", "/playerData/player2/health", 5]
+    ]
+  ]
+  ```
   """
 
   @doc """

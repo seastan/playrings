@@ -2,11 +2,11 @@ defmodule DragnCardsGame.Evaluate.Functions.IN_STRING do
   alias DragnCardsGame.Evaluate
   @moduledoc """
   *Arguments*:
-  1. container (string)
-  2. containee (string)
+  1. `container` (string)
+  2. `containee` (string)
 
   *Returns*:
-  (boolean) `true` if the containee is a substring of the container, `false` otherwise. If container == containee, it returns true.
+  (boolean) `true` if `containee` is a substring of `container`, `false` otherwise. If `container == containee`, it returns `true`.
   """
 
   @doc """

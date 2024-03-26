@@ -2,14 +2,14 @@ defmodule DragnCardsGame.Evaluate.Functions.FOR_EACH_VAL do
   alias DragnCardsGame.Evaluate
   @moduledoc """
   *Arguments*:
-  1. val_name (string starting with $)
-  2. list (list)
-  3. function (actionList)
+  1. `valName` (string starting with $)
+  2. `list` (list)
+  3. `function` (DragnLang code)
 
-  Iterates over the values in the list, assigning each value to val_name.
+  Iterates over the values in `list`, assigning each value to `valName`.
 
   *Returns*:
-  (any) The result of the successive calling of the function on each value.
+  (any) The result of the successive calling of `function` with each value assigned to `valName`.
 
   *Example*:
   ```
@@ -18,6 +18,7 @@ defmodule DragnCardsGame.Evaluate.Functions.FOR_EACH_VAL do
       ["LOG", "{{$CARD.currentFace.name}} is in {{$GAME.groupById.player1Deck.label}}."]
     ]
   ]
+  ```
   """
 
   @doc """

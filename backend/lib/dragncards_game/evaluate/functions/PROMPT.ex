@@ -2,7 +2,29 @@ defmodule DragnCardsGame.Evaluate.Functions.PROMPT do
   alias DragnCardsGame.Evaluate
   alias DragnCards.Plugins
   @moduledoc """
-  Handles the 'PROMPT' operation in the DragnCardsGame evaluation process.
+  *Arguments*:
+  1. `targetPlayerI` (string like "player1") or `targetPlayerList` (list of such strings)
+  2. `promptId` (string)
+
+  Prompts the given player(s) with the prompt corresponding to `promptId`, as defined in `gameDef.prompts`.
+
+  *Returns*:
+  (game state) The updated game state.
+
+  *Examples*:
+
+  Assuming that in `gameDef.prompts` you have a prompt with the id `chooseTargetPlayer` that prompts the player to choose a target player, you can show this prompt to player1:
+  ```
+  ["PROMPT", "player1", "chooseTargetPlayer"]
+  ```
+  Show a prompt to player1 and player2 to choose a target player:
+  ```
+  ["PROMPT", ["LIST", "player1", "player2"], "chooseTargetPlayer"]
+  ```
+  Show a prompt to all players to choose a target player (using the built-in `$PLAYER_ORDER` variable to get the list of players in order of their turn):
+  ```
+  ["PROMPT", "$PLAYER_ORDER", "chooseTargetPlayer"]
+  ```
   """
 
   @doc """

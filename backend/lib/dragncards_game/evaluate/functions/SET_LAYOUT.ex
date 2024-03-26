@@ -2,7 +2,18 @@ defmodule DragnCardsGame.Evaluate.Functions.SET_LAYOUT do
   alias DragnCardsGame.Evaluate
   alias DragnCards.Plugins
   @moduledoc """
-  Handles the 'SET_LAYOUT' operation in the DragnCardsGame evaluation process.
+  *Arguments*:
+  1. `playerI` (string like "player1")
+  2. `layoutId` (string matching a layout id in `gameDef.layouts`)
+
+  Sets the layout of the given player to the layout with the given id. If `playerI` is "shared", the layout for all players and spectators is updated.
+
+  The shared layout (visible to spectators) is found at `/layout` and the player-specific layout is found at `/playerData/playerI/layout`.
+
+  The shared layout id is found at `/layoutId` and the player-specific layout id is found at `/playerData/playerI/layoutId`.
+
+  *Returns*:
+  (game state) The updated game state.
   """
 
   @doc """

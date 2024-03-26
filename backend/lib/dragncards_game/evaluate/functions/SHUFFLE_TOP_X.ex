@@ -1,13 +1,20 @@
 defmodule DragnCardsGame.Evaluate.Functions.SHUFFLE_TOP_X do
   alias DragnCardsGame.Evaluate
   @moduledoc """
-  Handles the 'SHUFFLE_TOP_X' operation in the DragnCardsGame evaluation process.
+  *Arguments*:
+  1. `groupId` (string)
+  2. `x` (integer)
+
+  Shuffles the top `x` cards of the group with the given ID.
+
+  *Returns*:
+  (game state) The updated game state.
   """
 
   @doc """
   Executes the 'SHUFFLE_TOP_X' operation with the given arguments.
 
-  ## Parameters 
+  ## Parameters
 
     - `args`: The arguments required for the 'SHUFFLE_TOP_X' operation.
 
@@ -27,4 +34,3 @@ defmodule DragnCardsGame.Evaluate.Functions.SHUFFLE_TOP_X do
 
 
 end
-    

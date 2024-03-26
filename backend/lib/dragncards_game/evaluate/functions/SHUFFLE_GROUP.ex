@@ -1,13 +1,26 @@
 defmodule DragnCardsGame.Evaluate.Functions.SHUFFLE_GROUP do
   alias DragnCardsGame.Evaluate
   @moduledoc """
-  Handles the 'SHUFFLE_GROUP' operation in the DragnCardsGame evaluation process.
+  *Arguments*:
+  1. `groupId` (string)
+
+  Shuffles the cards in the group with the given ID.
+
+  *Returns*:
+  (game state) The updated game state.
+
+  *Examples*:
+
+  Shuffle the cards in the group with the ID `player1Deck`:
+  ```
+  ["SHUFFLE_GROUP", "player1Deck"]
+  ```
   """
 
   @doc """
   Executes the 'SHUFFLE_GROUP' operation with the given arguments.
 
-  ## Parameters 
+  ## Parameters
 
     - `args`: The arguments required for the 'SHUFFLE_GROUP' operation.
 
@@ -24,4 +37,3 @@ defmodule DragnCardsGame.Evaluate.Functions.SHUFFLE_GROUP do
 
 
 end
-    

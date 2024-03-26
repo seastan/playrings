@@ -2,8 +2,8 @@ defmodule DragnCardsGame.Evaluate.Functions.EQUAL do
   alias DragnCardsGame.Evaluate
   @moduledoc """
   *Arguments*:
-  1. lhs (any)
-  2. rhs (any)
+  1. `lhs` (any)
+  2. `rhs` (any)
 
   Compares the two values for equality.
 

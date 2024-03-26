@@ -1,13 +1,19 @@
 defmodule DragnCardsGame.Evaluate.Functions.UPDATE_ROOM_NAME do
   alias DragnCardsGame.Evaluate
   @moduledoc """
-  Handles the 'UPDATE_ROOM_NAME' operation in the DragnCardsGame evaluation process.
+  *Arguments*:
+  1. `name` (string)
+
+  Updates the name of the room with the given name.
+
+  *Returns*:
+  (game state) The updated game state.
   """
 
   @doc """
   Executes the 'UPDATE_ROOM_NAME' operation with the given arguments.
 
-  ## Parameters 
+  ## Parameters
 
     - `args`: The arguments required for the 'UPDATE_ROOM_NAME' operation.
 
@@ -23,4 +29,3 @@ defmodule DragnCardsGame.Evaluate.Functions.UPDATE_ROOM_NAME do
 
 
 end
-    

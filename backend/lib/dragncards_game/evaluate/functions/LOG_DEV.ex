@@ -1,7 +1,13 @@
 defmodule DragnCardsGame.Evaluate.Functions.LOG_DEV do
   alias DragnCardsGame.Evaluate
   @moduledoc """
-  Handles the 'LOG_DEV' operation in the DragnCardsGame evaluation process.
+  *Arguments*:
+  1. `value` (any)
+
+  Logs `value` to the console. Only for local development purposes.
+
+  *Returns*:
+  (game state) The game state.
   """
 
   @doc """

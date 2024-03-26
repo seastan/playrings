@@ -9,7 +9,7 @@ import { TextBox } from "./TextBox";
 import { Prompts } from "./Prompts";
 import { Alert } from "./Alert";
 
-export const TableLayout = React.memo(({addDroppableRef}) => {
+export const TableLayout = React.memo(({}) => {
   const layout = useLayout();
 
   console.log("Rendering TableLayout", layout);
@@ -18,7 +18,7 @@ export const TableLayout = React.memo(({addDroppableRef}) => {
 
   return (
     <>
-      <Browse addDroppableRef={addDroppableRef}/>
+      <Browse/>
       {/* Table Regions */}
       {layout.regions &&
         Object.keys(layout?.regions).map((regionId, regionIndex) => {
@@ -28,7 +28,6 @@ export const TableLayout = React.memo(({addDroppableRef}) => {
             <TableRegion
               key={regionIndex}
               region={region}
-              addDroppableRef={addDroppableRef}
             />
           )
         })

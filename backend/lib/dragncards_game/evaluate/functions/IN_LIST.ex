@@ -2,8 +2,8 @@ defmodule DragnCardsGame.Evaluate.Functions.IN_LIST do
   alias DragnCardsGame.Evaluate
   @moduledoc """
   *Arguments*:
-  1. list (list)
-  2. member (any)
+  1. `list` (list)
+  2. `member` (any)
 
   *Returns*:
   (boolean) `true` if the member is in the list, `false` otherwise.

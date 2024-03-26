@@ -2,8 +2,8 @@ defmodule DragnCardsGame.Evaluate.Functions.ADD do
   alias DragnCardsGame.Evaluate
   @moduledoc """
   *Arguments*:
-  1. lhs (number)
-  2. rhs (number)
+  1. `lhs` (number)
+  2. `rhs` (number)
 
   Adds the two numbers together. If either number is null, it is treated as 0.
 

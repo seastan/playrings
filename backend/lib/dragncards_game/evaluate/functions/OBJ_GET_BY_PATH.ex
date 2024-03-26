@@ -1,7 +1,34 @@
 defmodule DragnCardsGame.Evaluate.Functions.OBJ_GET_BY_PATH do
   alias DragnCardsGame.Evaluate
   @moduledoc """
-  Handles the 'OBJ_GET_BY_PATH' operation in the DragnCardsGame evaluation process.
+  *Arguments*:
+  1. `object` (object)
+  2. `keyList` (list of keys, like `["LIST", "tokens", "damage"]`)
+
+  Returns the value at the given `keyList` path in the object. If the path is invalid, returns `null`.
+
+  This function is not normally used due to the convenience of the dot syntax for accessing object properties.
+
+  *Returns*:
+  (any) The value at the given path in the object.
+
+  *Examples*:
+
+  Check if the number of damage tokesn on the active card equals or exceeeds its hitPoints
+  ```
+  ["GREATER_EQUAL",
+    ["OBJ_GET_BY_PATH",  "$ACTIVE_CARD", ["LIST", "tokens", "damage"]],
+    ["OBJ_GET_BY_PATH",  "$ACTIVE_CARD", ["LIST", "hitPoints"]]
+  ]
+  ```
+  This is equivalent to the dot syntax:
+  ```
+  ["GREATER_EQUAL",
+    "$ACTIVE_CARD.tokens.damage",
+    "$ACTIVE_CARD.hitPoints"
+  ]
+  ```
+
   """
 
   @doc """

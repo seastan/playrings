@@ -2,10 +2,10 @@ defmodule DragnCardsGame.Evaluate.Functions.MAP do
   alias DragnCardsGame.Evaluate
   @moduledoc """
   *Arguments*:
-  1. input_list (list)
-  2. function_name (string, all caps)
+  1. `inputList` (list)
+  2. `functionName` (string, all caps)
 
-  Take the input list and returns an equal-sized list where the `ith` element is the result of function_name being called on element `i` of the input list. The function must take exactly 1 argument.
+  Take the input list and returns an equal-sized list where the `ith` element is the result of function_name being called on element `i` of `inputList`. The function must take exactly 1 argument.
 
   *Returns*:
   (list) The result of the map operation.
@@ -17,7 +17,7 @@ defmodule DragnCardsGame.Evaluate.Functions.MAP do
     ["MAP", "$MY_LIST", "MULTIPLY_BY_TWO"]
   ]
   ```
-  Assuming you have `MULTIPLY_BY_TWO` defined, this would result in:
+  Assuming you have `MULTIPLY_BY_TWO` defined, this would return:
   ```
   [2, 4, 6]
   ```

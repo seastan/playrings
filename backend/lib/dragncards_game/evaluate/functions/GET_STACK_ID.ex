@@ -2,10 +2,10 @@ defmodule DragnCardsGame.Evaluate.Functions.GET_STACK_ID do
   alias DragnCardsGame.Evaluate
   @moduledoc """
   *Arguments*:
-  1. group_id (string)
-  2. stack_index (number)
+  1. `groupId` (string)
+  2. `stackIndex` (number)
 
-  Returns the stack id at the given stack_index in the group with the given group_id. If the group is null, it returns null.
+  Returns the stack id at the given `stackIndex` in the group with the given `groupId`. If the group is null, it returns null.
 
   *Returns*:
   (string) The stack id at the given index in the group.

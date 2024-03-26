@@ -11,8 +11,7 @@ import { useDoActionList } from "./hooks/useDoActionList";
 
 export const Group = React.memo(({
   groupId,
-  region,
-  addDroppableRef
+  region
 }) => {
   console.log("Rendering Group ",groupId);
   const dispatch = useDispatch();
@@ -90,8 +89,7 @@ export const Group = React.memo(({
       <Stacks
         groupId={group.id}
         region={region}
-        selectedStackIndices={[...Array(numStacks).keys()]} 
-        addDroppableRef={addDroppableRef}
+        selectedStackIndices={[...Array(numStacks).keys()]}
       />
     </div>
   )

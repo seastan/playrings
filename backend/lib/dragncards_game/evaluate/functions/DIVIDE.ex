@@ -2,10 +2,10 @@ defmodule DragnCardsGame.Evaluate.Functions.DIVIDE do
   alias DragnCardsGame.Evaluate
   @moduledoc """
   *Arguments*:
-  1. dividend (number)
-  2. divisor (number)
+  1. `dividend` (number)
+  2. `divisor` (number)
 
-  Divides the dividend by the divisor. If either number is null, it is treated as 0. If the divisor is 0, the result is null.
+  Divides the `dividend` by the `divisor`. If either number is `null`, it is treated as `0`. If the divisor is `0`, the result is `null`.
 
   *Returns*:
   (number | null) The result of the division.

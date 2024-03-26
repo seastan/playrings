@@ -1,7 +1,31 @@
 defmodule DragnCardsGame.Evaluate.Functions.LOOK_AT do
   alias DragnCardsGame.{Evaluate}
   @moduledoc """
-  Handles the 'LOOK_AT' operation in the DragnCardsGame evaluation process.
+  *Arguments*:
+  1. `playerI` (string like "player1")
+  2. `groupId` (string)
+  3. `topN` (number)
+  4. `visibility` (boolean)
+
+  Opens up the browse window for the given player, and sets the visibility of the top N cards in the group to the given value.
+
+  To show all cards in the group, set `topN` to `-1`.
+
+  To hide the browse window and hide the cards from the player, set `groupId` to `null` and `visibility` to `false`.
+
+  *Returns*:
+  (game state) The game state with the specified browse window opened.
+
+  *Examples*:
+
+  Look at the top 5 cards of group `$MY_GROUP_ID`:
+  ```
+  [
+    ["LOG", "{{$ALIAS_N}} is looking at the top 5 cards of {{/groupById/$MY_GROUP_ID/label}}."],
+    ["LOOK_AT", "$PLAYER_N", "$MY_GROUP_ID", 5, true]
+  ]
+  ```
+
   """
 
   @doc """

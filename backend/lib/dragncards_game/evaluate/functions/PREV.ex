@@ -1,13 +1,35 @@
 defmodule DragnCardsGame.Evaluate.Functions.PREV do
   alias DragnCardsGame.Evaluate
   @moduledoc """
-  Handles the 'PREV' operation in the DragnCardsGame evaluation process.
+  *Arguments*:
+  None
+
+  Returns the game state before the current game state. This function can only be used in `gameDef.automation`, and is used to see whether a value being `SET` has changed.
+
+  *Returns*:
+  (object) The game state before the current game state.
+
+  *Examples*:
+
+  In `gameDef.automation`:
+  ```
+  {
+    "_comment": "Recompute the threat in the staging area when a card is flipped",
+    "type": "trigger",
+    "listenTo": ["/cardById/*/currentSide"],
+    "condition": ["AND",
+                    ["EQUAL", "$TARGET.groupId", "sharedStagingArea"],
+                    ["NOT_EQUAL", "$TARGET.currentSide", ["PREV", "$TARGET.currentSide"]]
+                ],
+    "then": ["COMPUTE_STAGING_THREAT"]
+  }
+  ```
   """
 
   @doc """
   Executes the 'PREV' operation with the given arguments.
 
-  ## Parameters 
+  ## Parameters
 
     - `args`: The arguments required for the 'PREV' operation.
 
@@ -27,4 +49,3 @@ defmodule DragnCardsGame.Evaluate.Functions.PREV do
 
 
 end
-    

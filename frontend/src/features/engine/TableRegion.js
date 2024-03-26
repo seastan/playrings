@@ -6,8 +6,7 @@ import { usePlayerN } from "./hooks/usePlayerN";
 
 
 export const TableRegion = React.memo(({
-  region,
-  addDroppableRef
+  region
 }) => {
   console.log("Rendering TableRegion", region);
   const observingPlayerN = useSelector(state => state?.playerUi?.observingPlayerN);
@@ -35,7 +34,6 @@ export const TableRegion = React.memo(({
         <Group
           groupId={formattedGroupId}
           region={formattedRegion}
-          addDroppableRef={addDroppableRef}
         />
       }
     </div>

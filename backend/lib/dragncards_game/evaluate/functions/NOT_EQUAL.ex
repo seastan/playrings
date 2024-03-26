@@ -1,13 +1,27 @@
 defmodule DragnCardsGame.Evaluate.Functions.NOT_EQUAL do
   alias DragnCardsGame.Evaluate
   @moduledoc """
-  Handles the 'NOT_EQUAL' operation in the DragnCardsGame evaluation process.
+  *Arguments*:
+  1. `lhs` (any)
+  2. `rhs` (any)
+
+  Returns `true` if the two values are not equal, `false` otherwise.
+
+  *Returns*:
+  (boolean) The result of the comparison.
+
+  *Examples*:
+
+  Check if the value of the variable `X` is not equal to 5:
+  ```
+  ["NOT_EQUAL", "$X", 5]
+  ```
   """
 
   @doc """
   Executes the 'NOT_EQUAL' operation with the given arguments.
 
-  ## Parameters 
+  ## Parameters
 
     - `args`: The arguments required for the 'NOT_EQUAL' operation.
 
@@ -21,4 +35,3 @@ defmodule DragnCardsGame.Evaluate.Functions.NOT_EQUAL do
 
 
 end
-    

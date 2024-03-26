@@ -1,7 +1,34 @@
 defmodule DragnCardsGame.Evaluate.Functions.VAR do
   alias DragnCardsGame.Evaluate
   @moduledoc """
-  Handles the 'VAR' operation in the DragnCardsGame evaluation process.
+  *Arguments*:
+  1. `varName` (string beginning with `$`)
+  2. `value` (any)
+
+  Defines a local variable with the given name and value. This variable can only be accessed within the current scope or lower/child scopes.
+
+  *Returns*:
+  (game state) The updated game state.
+
+  *Examples*:
+
+  Define a variable `X` with the value 5:
+  ```
+  ["VAR", "$X", 5]
+  ```
+  Scoping:
+  ```
+  [
+    ["VAR", "$X", 5],
+    [
+      ["VAR", "$Y", 10],
+      ["LOG", "$X"], // 5
+      ["LOG", "$Y"] // 10
+    ],
+    ["LOG", "$X"], // 5
+    ["LOG", "$Y"] // Error: Y is not defined
+  ]
+  ```
   """
 
   @doc """

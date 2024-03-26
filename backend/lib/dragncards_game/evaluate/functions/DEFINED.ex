@@ -2,12 +2,12 @@ defmodule DragnCardsGame.Evaluate.Functions.DEFINED do
   alias DragnCardsGame.Evaluate
   @moduledoc """
   *Arguments*:
-  1. var_name (string starting with $)
+  1. `varName` (string starting with `$`)
 
-  Returns true if the variable with the given name is defined, false otherwise. If the variable's value is null it is considered undefined.
+  Returns `true` if the variable with the given name is defined, `false` otherwise. If the variable's value is `null` it is considered undefined.
 
   *Returns*:
-  (boolean) true if the variable with the given name is defined, false otherwise.
+  (boolean) The result of the check.
   """
 
   @doc """

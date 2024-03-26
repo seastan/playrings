@@ -1,7 +1,44 @@
 defmodule DragnCardsGame.Evaluate.Functions.UPDATE_VAR do
   alias DragnCardsGame.Evaluate
   @moduledoc """
-  Handles the 'UPDATE_VAR' operation in the DragnCardsGame evaluation process.
+  *Arguments*:
+  1. `varName` (string beginning with `$`)
+  2. `value` (any)
+
+  Updates the value of the variable with the given name.
+
+  *Returns*:
+  (game state) The updated game state.
+
+  *Examples*:
+
+  Update the value of the variable `X` to 5:
+  ```
+  [
+    ["VAR", "$X", 5],
+    ["LOG", "$X"], // 5
+    ["UPDATE_VAR", "$X", 10],
+    ["LOG", "$X"] // 10
+  ]
+  ```
+  You also overwrite the variable with a new `VAR` operation. This works when at the same or lower/child scope, but if you want to update a variable in a higher/parent scope, you need to use `UPDATE_VAR`.
+  ```
+  [
+    ["VAR", "$X", 5],
+    ["LOG", "$X"], // 5
+    [
+      ["VAR", "$X", 10],
+      ["LOG", "$X"] // 10
+    ]],
+    ["LOG", "$X"], // 5
+    [
+      ["UPDATE_VAR", "$X", 10],
+      ["LOG", "$X"] // 10
+    ],
+    ["LOG", "$X"] // 10
+  ]
+  ```
+
   """
 
   @doc """

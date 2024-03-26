@@ -12,7 +12,8 @@ defmodule DragnCardsGame.Evaluate.Functions.FUNCTION do
   *Returns*:
   (game state) The game state with the new function defined.
 
-  *Example*:
+  *Examples*:
+
   ```
   [
     ["FUNCTION", "MY_FUNCTION", "$ARG1", "$ARG2", [
@@ -20,6 +21,7 @@ defmodule DragnCardsGame.Evaluate.Functions.FUNCTION do
     ],
     ["MY_FUNCTION", "Hello", "World"]
   ]
+  ```
   """
 
   @doc """

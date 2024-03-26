@@ -30,7 +30,7 @@ import { useDoActionList } from "./hooks/useDoActionList";
 import { useSetTouchAction } from "./hooks/useSetTouchAction";
 import { useTouchAction } from "./hooks/useTouchAction";
 
-export const Table = React.memo(({addDroppableRef}) => {
+export const Table = React.memo(({}) => {
   const gameDef = useGameDefinition();
   const dispatch = useDispatch();
   const tooltipIds = useSelector(state => state?.playerUi?.tooltipIds);
@@ -95,7 +95,7 @@ export const Table = React.memo(({addDroppableRef}) => {
           </div>
           {/* Table */}
           <div className="relative w-full" style={{height: touchMode ? "82%" : "94%"}}>
-            <TableLayout addDroppableRef={addDroppableRef}/>
+            <TableLayout/>
           </div>
           {/* Touch Bar */}
           {touchMode && <div className="relative bg-gray-700 w-full" style={{height: "12%"}}>

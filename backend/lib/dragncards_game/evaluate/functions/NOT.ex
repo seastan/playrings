@@ -1,13 +1,26 @@
 defmodule DragnCardsGame.Evaluate.Functions.NOT do
   alias DragnCardsGame.Evaluate
   @moduledoc """
-  Handles the 'NOT' operation in the DragnCardsGame evaluation process.
+  *Arguments*:
+  1. `value` (boolean)
+
+  Returns the logical NOT of `value`.
+
+  *Returns*:
+  (boolean) The result of the NOT operation.
+
+  *Examples*:
+
+  Check if the value of the variable `X` is not true:
+  ```
+  ["NOT", "$X"]
+  ```
   """
 
   @doc """
   Executes the 'NOT' operation with the given arguments.
 
-  ## Parameters 
+  ## Parameters
 
     - `args`: The arguments required for the 'NOT' operation.
 
@@ -21,4 +34,3 @@ defmodule DragnCardsGame.Evaluate.Functions.NOT do
 
 
 end
-    

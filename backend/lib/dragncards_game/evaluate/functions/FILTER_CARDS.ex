@@ -2,10 +2,10 @@ defmodule DragnCardsGame.Evaluate.Functions.FILTER_CARDS do
   alias DragnCardsGame.Evaluate
   @moduledoc """
   *Arguments*:
-  1. var_name (string starting with $)
-  2. condition (actionList)
+  1. `varName` (string starting with `$`)
+  2. `condition` (DragnLang code)
 
-  Filters the cards in the game by the given condition. var_name is the name of the variable that will be assigned to each card when the condition is evaluated.
+  Filters the cards in the game by the given condition. `varName` is the name of the variable that will be assigned to each card when `condition` is evaluated.
 
   *Returns*:
   (list) The cards in the game that match the condition.

@@ -1,7 +1,15 @@
 defmodule DragnCardsGame.Evaluate.Functions.RESET_INDEX do
   alias DragnCardsGame.{Evaluate, GameUI}
   @moduledoc """
-  Handles the 'RESET_INDEX' operation in the DragnCardsGame evaluation process.
+  *Arguments*:
+  None
+
+  Calls "SET" on the current stackIndex and cardIndex of each card in the game, triggering any automations that listen to those values.
+
+  The built-in move functions like `MOVE_CARD` and `MOVE_STACK` update the `stackIndex` and `cardIndex` of cards automatically, but don't use `SET` while doing so, so automations that are listening to those values won't trigger. This function can be used after a card moves to trigger those automations manually.
+
+  *Returns*:
+  (game state) The game state.
   """
 
   @doc """

@@ -2,10 +2,10 @@ defmodule DragnCardsGame.Evaluate.Functions.ATTACH_CARD do
   alias DragnCardsGame.{Evaluate, GameUI}
   @moduledoc """
   *Arguments*:
-  1. card_id (string)
-  2. dest_card_id (string)
+  1. `cardId` (string)
+  2. `destCardId` (string)
 
-  Attaches the card with card_id to the card with dest_card_id.
+  Attaches the card with `cardId` to the card with `destCardId`.
 
   *Returns*:
   (game state) The game state with the card attached.
