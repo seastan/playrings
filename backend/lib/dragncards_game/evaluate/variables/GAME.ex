@@ -1,6 +1,6 @@
 defmodule DragnCardsGame.Evaluate.Variables.GAME do
   @moduledoc """
-  Returns the game object.
+  Returns the game state.
   """
 
   def execute(game, _trace) do

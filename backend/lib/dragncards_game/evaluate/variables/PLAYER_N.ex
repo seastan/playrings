@@ -1,11 +1,12 @@
 defmodule DragnCardsGame.Evaluate.Variables.PLAYER_N do
   @moduledoc """
-  Returns the id of the player who triggered the actionList, such as "player1" or "player2".
+  Returns the id of the player who triggered the backend process, such as `player1` or `player2`.
 
-  If `$PLAYER_N` is redefined during an action list by `VAR` or `DEFINE`, all variables that inherit from it will be updated automatically:
+  If `$PLAYER_N` is redefined by `VAR` or `DEFINE`, all variables that inherit from it will be updated automatically:
 
   `$PLAYER_N`\\
   └ `$ALIAS_N`
+
   """
 
   def execute(game, _trace) do

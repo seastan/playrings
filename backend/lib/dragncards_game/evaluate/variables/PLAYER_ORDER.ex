@@ -2,7 +2,7 @@ defmodule DragnCardsGame.Evaluate.Variables.PLAYER_ORDER do
   alias DragnCardsGame.Evaluate
 
   @moduledoc """
-  Returns a list of player ids in turn order. So if there are 4 players and player2 is first, the list will be ["player2", "player3", "player4", "player1"].
+  Returns a list of player ids in turn order. So if there are 4 players and `player2` is first, the list will be `["player2", "player3", "player4", "player1"]`.
   """
 
   def execute(game, trace) do

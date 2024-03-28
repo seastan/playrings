@@ -117,7 +117,10 @@ export const dragnTouchButtons = {
         case "triggerAutomationAbility":
           return doActionList(dragnActionLists.triggerAutomationAbility(currentFace?.ability, activeCardId, currentSide));
         case "saveGame":
-          return gameBroadcast("game_action", {action: "save_replay", options: {player_ui: store.getState().playerUi}});
+          var playerUi = store.getState().playerUi;
+          // Drop the droppableRefs from the playerUi object
+          playerUi = {...playerUi, droppableRefs: {}}
+          return gameBroadcast("game_action", {action: "save_replay", options: {player_ui: playerUi}});
         case "clearTargets":
             return doActionList(dragnActionLists.clearTargets());
         case "undo":

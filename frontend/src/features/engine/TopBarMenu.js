@@ -55,13 +55,19 @@ export const TopBarMenu = React.memo(({}) => {
       // Save replay
       //gameBroadcast("game_action", {action: "save_replay", options: {player_ui: store.getState().playerUi}});
       // Reset game
-      gameBroadcast("game_action", {action: "reset_game", options: {player_ui: store.getState().playerUi, action_list: data.actionList}});
+      var playerUi = store.getState().playerUi;
+      // Drop the droppableRefs from the playerUi object
+      playerUi = {...playerUi, droppableRefs: {}}
+      gameBroadcast("game_action", {action: "reset_game", options: {player_ui: playerUi, action_list: data.actionList}});
       //doActionList(["LOG", "$ALIAS_N", " reset the game."]);
     } else if (data.action === "close_room") {
       // Mark status
       //doActionList(data.actionList);
+      var playerUi = store.getState().playerUi;
+      // Drop the droppableRefs from the playerUi object
+      playerUi = {...playerUi, droppableRefs: {}}
       // Save replay
-      gameBroadcast("game_action", {action: "close_room", options: {player_ui: store.getState().playerUi, action_list: data.actionList}});
+      gameBroadcast("game_action", {action: "close_room", options: {player_ui: playerUi, action_list: data.actionList}});
       // Close room
       history.push("/profile");
       //doActionList(["LOG", "$ALIAS_N", " closed the room."]);
