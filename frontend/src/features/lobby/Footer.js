@@ -1,6 +1,6 @@
 import React from 'react';
 
-export const Footer = (setShowTermsOfService) => {
+export const Footer = ({setShowTermsOfService}) => {
     return(
         <div className="mx-auto w-full p-2" style={{maxWidth: "600px"}}>
           <h3 className="mt-6 font-semibold text-center text-gray-300">About</h3>
