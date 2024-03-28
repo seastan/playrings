@@ -96,7 +96,6 @@ export const Stacks = React.memo(({
   const stackIds = group.stackIds;
 
   useEffect(() => {
-    console.log("Adding Droppable Ref", groupId, containerRef.current);
     dispatch(setDroppableRefs({id: groupId, ref: containerRef.current}));
   }, [groupId]);
 

@@ -45,8 +45,8 @@ defmodule DragnCardsGame.Evaluate.Functions.LOG do
     # Get unix ms timestamp
     timestamp = System.system_time(:millisecond)
     # Create a new chat message
-    message = ChatMessage.new(message, -1)
-    game = put_in(game, ["messageByTimestamp", timestamp], message)
+    message_obj = ChatMessage.new(message, -1)
+    game = put_in(game, ["messageByTimestamp", timestamp], message_obj)
     put_in(game["messages"], game["messages"] ++ [message])
   end
 

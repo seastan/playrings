@@ -86,6 +86,7 @@ export const Stack = React.memo(({
   const regionHeightInt = parseInt(regionHeightPercent.substring(0, regionHeightPercent.length - 1))
   const fanSpacingVert = (regionHeightInt-cardSize)/numStacksNonZero;
   const stackHeightFan = Math.min(fanSpacingVert, cardHeight*cardSize*zoomFactor);
+  console.log("log1", groupId, stackWidth, stackWidthFan, region.type, region.direction);
   
   return (
     <Draggable 
@@ -108,15 +109,16 @@ export const Stack = React.memo(({
               <StackContainer
                 isDragging={dragSnapshot.isDragging}
                 isGroupedOver={Boolean(dragSnapshot.combineTargetFor)}
-                stackWidth={(region.type === "fan" && region.direction == "horizontal") ? stackWidthFan : stackWidth}
-                stackHeight={(region.type === "fan" && region.direction == "vertical") ? stackHeightFan : stackHeight}
-                margin={region.type === "row" ? rowSpacing : 0}
                 ref={dragProvided.innerRef}
                 {...dragProvided.draggableProps}
                 {...dragProvided.dragHandleProps}
+                stackWidth={(region.type === "fan" && region.direction == "horizontal") ? stackWidthFan : stackWidth}
+                stackHeight={(region.type === "fan" && region.direction == "vertical") ? stackHeightFan : stackHeight}
+                margin={region.type === "row" ? rowSpacing : 0}
                 onMouseEnter={() => setIsMousedOver(true)}
                 onMouseLeave={() => setIsMousedOver(false)}
-                style={updatedStyle}>
+                style={updatedStyle}
+                >
                 {cardIds.map((cardId, cardIndex) => {
                   return(
                     <Card

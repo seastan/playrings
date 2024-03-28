@@ -159,7 +159,9 @@ defmodule DragnCardsWeb.RoomChannel do
       "oldReplayStep" => old_replay_step,
       "newReplayStep" => new_replay_step,
       "delta" => delta,
-      "messages" => messages
+      "messages" => Enum.map(messages, fn(message_text) ->
+        ChatMessage.new(message_text, -1)
+      end)
     }
     broadcast!(socket, "send_update", payload)
 
