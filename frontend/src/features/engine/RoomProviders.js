@@ -35,13 +35,17 @@ export const RoomProviders = ({ gameBroadcast, chatBroadcast }) => {
     if (playerN) dispatch(setObservingPlayerN(playerN)); // For a spectator (where playerN is null), leave as the default value
     setPlayerNSet(true);
 
+  }, [playerN, myUser])
+
+  useEffect(() => {
+
     const databaseUiSettings = myUser?.plugin_settings?.[pluginId]?.ui;
     if (databaseUiSettings) {
       console.log("Setting user settings from database", userSettings, databaseUiSettings)
       const mergedSettings = {...userSettings, ...databaseUiSettings};
       dispatch(setUserSettings(mergedSettings));
     }
-  }, [playerN, myUser])
+  }, [])
 
   const gameBackgroundUrl = gameDef?.backgroundUrl;
   const playerUiBackgroundUrl = useSelector(state => state?.playerUi?.userSettings?.backgroundUrl);

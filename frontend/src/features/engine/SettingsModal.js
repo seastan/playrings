@@ -318,7 +318,7 @@ const SettingsModalFormElement = ({val, settingObj, setFunction, l10n}) => {
       );
     case 'string':
       return (
-        settingObj.supporterLevel > user?.supporter_level ?
+        (settingObj.supporterLevel > user?.supporter_level && user.admin === false) ?
           <button 
             className="flex items-center justify-center rounded text-white bg-gray-800 hover:bg-gray-700 p-1 px-4"
             onClick={() => {dispatch(setShowModal("patreon"))}}
@@ -328,7 +328,7 @@ const SettingsModalFormElement = ({val, settingObj, setFunction, l10n}) => {
           </button>
           :
           <input
-            disabled={settingObj.supporterLevel > user?.supporter_level}
+            disabled={settingObj.supporterLevel > user?.supporter_level && user.admin === false}
             type="text"
             className="p-1 w-48 text-black"
             value={val}

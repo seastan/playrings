@@ -152,6 +152,7 @@ const playerUiSlice = createSlice({
       state.dragging.transform = payload;
     },
     setUserSettings: (state, { payload }) => {
+      console.log("setUserSettings", payload);
       state.userSettings = payload;
     },
     setAutoLoadedDecks: (state, { payload }) => {

@@ -15,6 +15,7 @@ export const SideBarPhase = React.memo(({
   const phaseInfo = useSelector(state => state?.gameUi?.game?.phases?.[phaseId]);
   console.log("Rendering SideBarPhase", {currentStepId, currentPhaseId, phaseId, phaseInfo});
   const isPhase = phaseId === currentPhaseId;
+  if (!phaseInfo) return null;
   return (
     <div 
       className={"relative text-center select-none text-gray-100"}
