@@ -489,6 +489,12 @@ export const getGameDefSchema = (gameDef) => {
             "_type_": "selfType",
             "_required_": true,
           },
+          "min": {
+            "_type_": "selfType",
+          },
+          "max": {
+            "_type_": "selfType",
+          },
           "options": {
             "_type_": "array",
             "_itemSchema_": {
@@ -503,9 +509,6 @@ export const getGameDefSchema = (gameDef) => {
                 "_required_": true,
               }
             }
-          },
-          "showInSettings": {
-            "_type_": "boolean",
           }
         }
       },
@@ -948,9 +951,6 @@ export const getGameDefSchema = (gameDef) => {
               }
             }
           },
-          "showInSettings": {
-            "_type_": "boolean",
-          }
         }
       },
       "pluginMenu": {
@@ -1009,6 +1009,26 @@ export const getGameDefSchema = (gameDef) => {
           },
           "postLoadActionList": {
             "_type_": "actionList",
+          }
+        }
+      },
+      "preferences": {
+        "_type_": "object",
+        "_strictKeys_": true,
+        "game": {
+          "_type_": "array",
+          "_itemSchema_": {
+            "_type_": "string",
+            "_memberOf_": mytypeof(gameDef?.gameProperties) === "object" ? Object.keys(gameDef.gameProperties) : [],
+            "_memberOfPath_": "gameDef.gameProperties"
+          }
+        },
+        "player": {
+          "_type_": "array",
+          "_itemSchema_": {
+            "_type_": "string",
+            "_memberOf_": mytypeof(gameDef?.playerProperties) === "object" ? Object.keys(gameDef.playerProperties) : [],
+            "_memberOfPath_": "gameDef.playerProperties"
           }
         }
       },

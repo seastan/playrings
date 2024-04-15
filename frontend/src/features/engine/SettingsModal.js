@@ -76,6 +76,7 @@ const ModalContent = () => {
   const databaseUiKeyVals = user?.plugin_settings?.[plugin?.id]?.ui;
   const gameDefPlayerProperties = gameDef?.playerProperties;
   const gameDefGameProperties = gameDef?.gameProperties;
+  const gameDefPreferences = gameDef?.preferences;
   const playerN = usePlayerN();
   const siteL10n = useSiteL10n();
   const gameL10n = useGameL10n();
@@ -89,19 +90,15 @@ const ModalContent = () => {
   const [defaultGameKeyVals, setDefaultGameKeyVals] = useState({});
 
   // Filter out keys in the game definition if their value (which is an object) does not have a showInSettings = true property
-  const gameDefPlayerSettings = Object.keys(gameDefPlayerProperties).reduce((obj, key) => {
-    if (gameDefPlayerProperties[key].showInSettings) {
-      obj[key] = gameDefPlayerProperties[key];
-      obj[key].id = key;
-    }
+  const gameDefPlayerSettings = gameDefPreferences?.player.reduce((obj, key) => {
+    obj[key] = gameDefPlayerProperties[key];
+    obj[key].id = key;
     return obj;
   }, {});
 
-  const gameDefGameSettings = Object.keys(gameDefGameProperties).reduce((obj, key) => {
-    if (gameDefGameProperties[key].showInSettings) {
-      obj[key] = gameDefGameProperties[key];
-      obj[key].id = key;
-    }
+  const gameDefGameSettings = gameDefPreferences?.game.reduce((obj, key) => {
+    obj[key] = gameDefGameProperties[key];
+    obj[key].id = key;
     return obj;
   }, {});
 
