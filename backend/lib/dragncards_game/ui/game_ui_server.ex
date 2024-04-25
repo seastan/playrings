@@ -145,12 +145,15 @@ defmodule DragnCardsGame.GameUIServer do
       end
     Logger.debug("game_ui_server init")
     # path = [:code.priv_dir(:dragncards), "python", "lotrlcg"] |> Path.join()
+
     # {:ok, pypid} = :python.start([{:python_path, to_charlist(path)}, {:python, 'python3'}])
-    # IO.puts("game_ui_server init")
+    # IO.puts("game_ui_server init python")
+    # IO.inspect(pypid)
+    # IO.inspect(path)
     # IO.inspect(:code.priv_dir(:dragncards))
     # gameui = put_in(gameui["pypid"], :erlang.pid_to_list(pypid))
     GameRegistry.add(gameui["roomSlug"], gameui)
-    #GameRegistry.add(gameui["roomName"]<>"-pypid", pypid)
+    # GameRegistry.add(gameui["roomName"]<>"-pypid", pypid)
     {:ok, gameui, timeout(gameui)}
   end
 
