@@ -36,12 +36,18 @@ const initialState = {
     transform: null,
     fromGroupId: null,
     toRegionType: null,
+    prevStyle: null,
+  },
+  tempDragStack: {
+    stackId: null,
+    toGroupId: null,
+    left: null,
+    top: null,
   },
   userSettings: Object.keys(uiSettings).reduce((acc, settingId) => {
     acc[settingId] = uiSettings[settingId].default;
     return acc;
-  }
-  , {})
+  },{})
 };
 
 const playerUiSlice = createSlice({
@@ -151,15 +157,21 @@ const playerUiSlice = createSlice({
     setDraggingTransform: (state, { payload }) => {
       state.dragging.transform = payload;
     },
+    setDraggingPrevStyle: (state, { payload }) => {
+      state.dragging.prevStyle = payload;
+    },
     setUserSettings: (state, { payload }) => {
       console.log("setUserSettings", payload);
-      state.userSettings = payload;
+      state.userSettings = payload; 
     },
     setAutoLoadedDecks: (state, { payload }) => {
       state.autoLoadedDecks = payload;
     },
     setDroppableRefs: (state, { payload }) => {
       state.droppableRefs[payload.id] = payload.ref;
+    },
+    setTempDragStack: (state, { payload }) => {
+      state.tempDragStack = payload;
     }
   }
 });
@@ -198,10 +210,12 @@ export const {
   setDraggingEnd,
   setDraggingEndDelay,
   setDraggingTransform,
+  setDraggingPrevStyle,
   setDraggingToRegionType,
   setUserSettings,
   setAlertMessage,
   setAutoLoadedDecks,
-  setDroppableRefs
+  setDroppableRefs,
+  setTempDragStack
  } = playerUiSlice.actions;
 export default playerUiSlice.reducer;

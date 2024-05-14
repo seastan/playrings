@@ -143,7 +143,7 @@ export const TopBarUser = React.memo(({
       </div>
 
       <div className="float-left h-full w-1/3">
-        {gameDef?.topBarCounters?.player.map((menuItem, index) => {
+        {gameDef?.topBarCounters?.player?.map((menuItem, index) => {
           return(
             <div key={index} className="h-1/2 w-full">
               <TopBarUserCounter 

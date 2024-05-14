@@ -1,6 +1,6 @@
 import React from "react";
 import { useDispatch, useSelector } from 'react-redux';
-import { Stacks } from "./Stacks";
+import { DroppableRegion } from "./DroppableRegion";
 import { faBars, faEye } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useBrowseTopN } from "./hooks/useBrowseTopN"; 
@@ -8,10 +8,12 @@ import { setDropdownMenu } from "../store/playerUiSlice";
 import { useGameL10n } from "./hooks/useGameL10n";
 import { useGameDefinition } from "./hooks/useGameDefinition";
 import { useDoActionList } from "./hooks/useDoActionList";
+import { Stack } from "./Stack";
 
 export const Group = React.memo(({
   groupId,
-  region
+  region,
+  onDragEnd
 }) => {
   console.log("Rendering Group ",groupId);
   const dispatch = useDispatch();
@@ -20,6 +22,7 @@ export const Group = React.memo(({
   const group = useSelector(state => state?.gameUi?.game?.groupById?.[groupId]);
   const isPile = region.type === "pile";
   const playerN = useSelector(state => state?.playerUi?.playerN);
+  const tempDragStack = useSelector(state => state?.playerUi?.tempDragStack);
   const iconsVisible = playerN && (region.showMenu || (isPile && region.showMenu !== false)) ;
   const browseTopN = useBrowseTopN();
   const doActionList = useDoActionList();
@@ -52,45 +55,56 @@ export const Group = React.memo(({
   return(
     <div className="h-full w-full">
       
-        <div
-          className="relative h-full float-left select-none text-gray-400"
-          style={{width:"17px"}}>
-            <div className="relative w-full h-full">
-            {region.hideTitle ? null :
-              <span 
-                className="absolute mt-1 px-1 overflow-hidden rounded bg-gray-600-70" 
-                style={{
-                  fontSize: "1.5vh", 
-                  top: "50%", 
-                  left: "50%", 
-                  transform: `translate(${iconsVisible ? "-30%" : "-40%"}, -70%) rotate(90deg)`, 
-                  whiteSpace: "nowrap", 
-                  zIndex: 2e3,
-                  boxShadow: "0 0 10px 5px rgba(0,0,0,0.6)",
-                }}>
-                  {iconsVisible &&
-                    <div className="text-gray-300 w-full h-full flex items-center justify-center" style={{fontSize: "2vh"}}>
-                      <div className="w-1/2 flex items-center justify-center py-1 rounded hover:bg-gray-500" onClick={(event) => handleEyeClick(event)}>
-                        <FontAwesomeIcon  className="mx-2 -rotate-90" icon={faEye}/>
-                      </div>
-                      <div className="w-1/2 flex items-center justify-center py-1 rounded hover:bg-gray-500" onClick={(event) => handleBarsClick(event)}>
-                        <FontAwesomeIcon className="mx-2 -rotate-90" icon={faBars}/>
-                      </div>
+      <div
+        className="relative h-full float-left select-none text-gray-400"
+        style={{width:"17px", backgroundColor: "rgba(255,0,0)"}}>
+          <div className="relative w-full h-full">
+          {region.hideTitle ? null :
+            <span 
+              className="absolute mt-1 px-1 overflow-hidden rounded bg-gray-600-70" 
+              style={{
+                fontSize: "1.5vh", 
+                top: "50%", 
+                left: "50%", 
+                transform: `translate(${iconsVisible ? "-30%" : "-40%"}, -70%) rotate(90deg)`, 
+                whiteSpace: "nowrap", 
+                zIndex: 2e3,
+                boxShadow: "0 0 10px 5px rgba(0,0,0,0.6)",
+              }}>
+                {iconsVisible &&
+                  <div className="text-gray-300 w-full h-full flex items-center justify-center" style={{fontSize: "2vh"}}>
+                    <div className="w-1/2 flex items-center justify-center py-1 rounded hover:bg-gray-500" onClick={(event) => handleEyeClick(event)}>
+                      <FontAwesomeIcon  className="mx-2 -rotate-90" icon={faEye}/>
                     </div>
-                  }
-                  <div className="w-full flex items-center justify-center" >
-                  {gameL10n(tablename) + (isPile ? " ("+numStacks+")" : "")}
+                    <div className="w-1/2 flex items-center justify-center py-1 rounded hover:bg-gray-500" onClick={(event) => handleBarsClick(event)}>
+                      <FontAwesomeIcon className="mx-2 -rotate-90" icon={faBars}/>
+                    </div>
                   </div>
-              </span>
-              
-            }
-            </div>
-        </div>
-      <Stacks
-        groupId={group.id}
-        region={region}
-        selectedStackIndices={[...Array(numStacks).keys()]}
-      />
+                }
+                <div className="w-full flex items-center justify-center" >
+                {gameL10n(tablename) + (isPile ? " ("+numStacks+")" : "")}
+                </div>
+            </span>
+            
+          }
+          </div>
+      </div>
+      <div className="h-full w-full" style={{marginLeft: "17px", backgroundColor: "rgba(0,0,255)"}}>
+        <DroppableRegion
+          groupId={groupId}
+          region={region}
+          selectedStackIndices={[...Array(numStacks).keys()]}
+          onDragEnd={onDragEnd}
+        />
+        {region.type === "free" && tempDragStack?.toGroupId === groupId &&
+          <div style={{left: `${tempDragStack.left}%`, top: `${tempDragStack.top}%`, position: "absolute", zIndex: 0, marginLeft: "17px"}}>
+            <Stack
+              stackId={tempDragStack.stackId}
+              isDragging={false}
+            />
+          </div>
+        }
+      </div>
     </div>
   )
 })

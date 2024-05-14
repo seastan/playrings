@@ -50,10 +50,6 @@ export const TopBarMenu = React.memo(({}) => {
       return;
     }
     if (data.action === "clear_table") {
-      // Mark status
-      //doActionList(data.actionList);
-      // Save replay
-      //gameBroadcast("game_action", {action: "save_replay", options: {player_ui: store.getState().playerUi}});
       // Reset game
       var playerUi = store.getState().playerUi;
       // Drop the droppableRefs from the playerUi object
@@ -128,7 +124,7 @@ export const TopBarMenu = React.memo(({}) => {
       loadFileGameDef();
     } else if (data.action === "load_custom") {
       loadFileCustom();
-    }  else if (data.action === "layout") {
+    } else if (data.action === "layout") {
       var actionList = null;
       if (data.playerI === "shared") {
         actionList = [
@@ -142,6 +138,12 @@ export const TopBarMenu = React.memo(({}) => {
           ["SET_LAYOUT", playerN, data.value.layoutId]
         ];
       }
+      doActionList(actionList);
+    } else if (data.action === "set_num_players") {
+      var actionList = [
+        ["LOG", "$ALIAS_N", " changed the number of players to "+data.value+"."],
+        ["SET", "/numPlayers", data.value]
+      ];
       doActionList(actionList);
     } 
   }
@@ -231,6 +233,16 @@ export const TopBarMenu = React.memo(({}) => {
     chatBroadcast("game_update", {message: "downloaded the game."});
   }
 
+  const generatePlayerListItems = () => {
+    const items = [];
+    for (let i = gameDef.minPlayers; i <= gameDef.maxPlayers; i++) {
+      items.push(
+        <li key={"set_num_players"} onClick={() => handleMenuClick({action:"set_num_players", value: i})}>{i}</li>
+      );
+    }
+    return items;
+  };
+
   useEffect(() => {
     // Log when the component mounts
     console.log('Autoloaded mounted');
@@ -301,6 +313,15 @@ export const TopBarMenu = React.memo(({}) => {
             })}
             </ul>
         </li>
+        {isHost &&
+          <li key={"num_players"}>
+            {siteL10n("numberOfPlayers")}
+            <span className="float-right mr-1"><FontAwesomeIcon icon={faChevronRight}/></span>
+            <ul className="third-level-menu">
+              {generatePlayerListItems()}
+            </ul>
+          </li>
+        }
         <li key={"unload"}>
             {siteL10n("unload")}
             <span className="float-right mr-1"><FontAwesomeIcon icon={faChevronRight}/></span>

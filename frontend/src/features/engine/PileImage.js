@@ -9,7 +9,7 @@ import { useGameDefinition } from "./hooks/useGameDefinition";
 import { getFirstCardOffset, getVisibleFace, getVisibleFaceSrc } from "./functions/common";
 import { StackContainer } from "./Stack";
 import { Card } from "./Card";
-import { DropZone } from "./Stacks";
+import { DropZone } from "./DroppableRegion";
 
 // Template for the returned element
 const ImageElement = styled.div`

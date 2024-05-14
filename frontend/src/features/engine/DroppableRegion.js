@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from 'react-redux';
 import styled from "@emotion/styled";
 import { Draggable, Droppable } from "react-beautiful-dnd";
-import { Stack } from "./Stack";
+import { StackDraggable } from "./Stack";
 import { PileImage } from "./PileImage"
 import { useLayout } from "./hooks/useLayout";
 import { useGameDefinition } from "./hooks/useGameDefinition";
@@ -11,7 +11,7 @@ import store from "../../store";
 import { ATTACHMENT_OFFSET } from "./functions/common";
 import NaturalDragAnimation from 'natural-drag-animation-rbdnd';
 import { Card } from "./Card";
-import { setDraggingToRegionType, setDroppableRefs } from "../store/playerUiSlice";
+import { setDraggingPrevStyle, setDraggingToRegionType, setDroppableRefs } from "../store/playerUiSlice";
 
 const Container = styled.div`
   background-color: ${props => props.isDraggingOver ? "rgba(1,1,1,0.3)" : ""};
@@ -24,7 +24,7 @@ const Container = styled.div`
   transition: all 0.2s;
   
   height: 100%;
-  width: calc(100% - 17px);
+  width: 100%;
   user-select: none;
   overflow-x: ${props => props.direction === "vertical" ? "hidden" : "auto"};
   overflow-y: ${props => props.direction === "vertical" ? "auto" : "hidden"};
@@ -44,7 +44,7 @@ export const DropZone = styled.div`
   margin: 0 0 0 ${props => props.margin}vh;
 `;
 
-const StacksList = React.memo(({
+const StacksListSorted = React.memo(({
   isDraggingOver,
   isDraggingFrom,
   groupId,
@@ -68,7 +68,7 @@ const StacksList = React.memo(({
   return (
     stackIdsToShow?.map((stackId, stackIndex) => (
       (selectedStackIndices.includes(stackIndex)) ? (
-        <Stack
+        <StackDraggable
           key={stackId}
           groupId={groupId}
           region={region}
@@ -81,10 +81,11 @@ const StacksList = React.memo(({
   ) 
 });
 
-export const Stacks = React.memo(({
+export const DroppableRegion = React.memo(({
   groupId,
   region,
-  selectedStackIndices
+  selectedStackIndices,
+  onDragEnd
 }) => {
   const containerRef = useRef(null);
   const dispatch = useDispatch();
@@ -100,13 +101,13 @@ export const Stacks = React.memo(({
   }, [groupId]);
 
 
-  if (region.type === "free") return <FreeZone groupId={groupId} region={region} containerRef={containerRef}/>
-  else return(
+  //if (region.type === "free") return <FreeZone groupId={groupId} region={region} containerRef={containerRef}/>
+  return(
     <Droppable
-      droppableId={groupId}
+      droppableId={groupId + "--" + region.type}
       key={groupId}
       isDropDisabled={false}
-      isCombineEnabled={group.canHaveAttachments}
+      isCombineEnabled={region.type === "free" ? false : group.canHaveAttachments}
       direction={region.direction}>
       {(dropProvided, dropSnapshot) => {
         if (dropSnapshot.isDraggingOver) dispatch(setDraggingToRegionType(region.type));
@@ -131,14 +132,22 @@ export const Stacks = React.memo(({
                 ref={dropProvided.innerRef} 
                 direction={region.direction}
                 margin={region.type === "row" ? rowSpacing/2 : 0}>
-                <StacksList
-                  isDraggingOver={dropSnapshot.isDraggingOver}
-                  isDraggingFrom={Boolean(dropSnapshot.draggingFromThisWith)}
-                  groupId={groupId}
-                  region={region} 
-                  stackIds={stackIds}
-                  mouseHere={mouseHere}
-                  selectedStackIndices={(selectedStackIndices ? selectedStackIndices : [...Array(stackIds.length).keys()])}/>
+                  {region.type === "free" ? 
+                    <StacksListFree
+                      region={region} 
+                      stackIds={stackIds}
+                      onDragEnd={onDragEnd}
+                    />
+                    :
+                    <StacksListSorted
+                      isDraggingOver={dropSnapshot.isDraggingOver}
+                      isDraggingFrom={Boolean(dropSnapshot.draggingFromThisWith)}
+                      groupId={groupId}
+                      region={region} 
+                      stackIds={stackIds}
+                      mouseHere={mouseHere}
+                      selectedStackIndices={(selectedStackIndices ? selectedStackIndices : [...Array(stackIds.length).keys()])}/>
+                  }
                 {dropProvided.placeholder}
               </DropZone>
           </Container>
@@ -148,65 +157,55 @@ export const Stacks = React.memo(({
   )
 })
 
-export const FreeZone = React.memo(({
-  groupId,
-  region,
-  containerRef
-}) => {
-  console.log("Rendering Free Stacks for ",groupId, region);
-  const dispatch = useDispatch();
-  const layout = useLayout();
-  const rowSpacing = layout?.rowSpacing;
-  const group = useSelector(state => state?.gameUi?.game?.groupById?.[groupId]);
-  const stackIds = group.stackIds;
-
-  const draggingStackId = useSelector(state => state?.playerUi?.dragging?.stackId);
-  const draggingEnd = useSelector(state => state?.playerUi?.dragging?.end);
-  const draggingEndDelay = useSelector(state => state?.playerUi?.dragging?.endDelay); 
-  return(
-    <Droppable
-      droppableId={groupId}
-      key={groupId}
-      isDropDisabled={false}
-      isCombineEnabled={false}
-      direction={region.direction}>
-      {(dropProvided, dropSnapshot) => {
-        if (dropSnapshot.isDraggingOver) dispatch(setDraggingToRegionType(region.type));
-        return(
-        <Container
-          ref={containerRef}
-          isDraggingOver={dropSnapshot.isDraggingOver}
-          isDropDisabled={false}
-          isDraggingFrom={Boolean(dropSnapshot.draggingFromThisWith)}
-          {...dropProvided.droppableProps}
-          direction={region.direction}
-          //onMouseLeave={() => setMouseHere(region.type === "pile" && false)}
-          >
-            <PileImage 
-              region={region} 
-              stackIds={stackIds} 
-              isDraggingOver={dropSnapshot.isDraggingOver} 
-              isDraggingFrom={Boolean(dropSnapshot.draggingFromThisWith)}>
-            </PileImage>
-            <DropZone 
-              ref={dropProvided.innerRef} 
-              direction={region.direction}
-              margin={0}>
-              <FreeStacksList
-                region={region} 
-                stackIds={stackIds}/>
-              {dropProvided.placeholder}
+// export const FreeZone = React.memo(({
+//   groupId,
+//   region,
+//   containerRef
+// }) => {
+//   console.log("Rendering Free Stacks for ",groupId, region);
+//   const dispatch = useDispatch();
+//   const group = useSelector(state => state?.gameUi?.game?.groupById?.[groupId]);
+//   const stackIds = group.stackIds;
+  
+//   return(
+//     <Droppable
+//       droppableId={groupId + "--" + region.type}
+//       key={groupId}
+//       isDropDisabled={false}
+//       isCombineEnabled={true}
+//       direction={region.direction}>
+//       {(dropProvided, dropSnapshot) => {
+//         if (dropSnapshot.isDraggingOver) dispatch(setDraggingToRegionType(region.type));
+//         return(
+//         <Container
+//           ref={containerRef}
+//           isDraggingOver={dropSnapshot.isDraggingOver}
+//           isDropDisabled={false}
+//           isDraggingFrom={Boolean(dropSnapshot.draggingFromThisWith)}
+//           {...dropProvided.droppableProps}
+//           direction={region.direction}
+//           //onMouseLeave={() => setMouseHere(region.type === "pile" && false)}
+//           >
+//             <DropZone 
+//               ref={dropProvided.innerRef} 
+//               direction={region.direction}
+//               margin={0}>
+//               <FreeStacksList
+//                 region={region} 
+//                 stackIds={stackIds}/>
+//               {dropProvided.placeholder}
               
-            </DropZone>
-        </Container>)
-      }}
-    </Droppable>
-  )
-})
+//             </DropZone>
+//         </Container>)
+//       }}
+//     </Droppable>
+//   )
+// })
 
-const FreeStacksList = React.memo(({
+const StacksListFree = React.memo(({
   region,
-  stackIds
+  stackIds,
+  onDragEnd
 }) => {
 
   return (
@@ -215,7 +214,9 @@ const FreeStacksList = React.memo(({
         key={stackId}
         region={region}
         stackIndex={stackIndex}
-        stackId={stackId}/> 
+        stackId={stackId}
+        onDragEnd={onDragEnd}
+      /> 
     ))
   ) 
 });
@@ -238,6 +239,7 @@ export const FreeStack = React.memo(({
   region,
   stackIndex,
   stackId,
+  onDragEnd
 }) => {
   const gameDef = useGameDefinition();
   const dispatch = useDispatch();
@@ -289,13 +291,6 @@ export const FreeStack = React.memo(({
   const cardHeight = card0?.sides[card0?.currentSide]?.height;
   const stackHeight = cardHeight*cardSize*zoomFactor;
   const stackWidth = cardWidth*cardSize + ATTACHMENT_OFFSET * (numCards - 1);
-
-  var backgroundColor = "white";
-  if (thisDrag && !stopDrag) {
-    backgroundColor = "red";
-  } else if (thisDrag && !stopDragDelay) {
-    backgroundColor = "green";
-  }
   
   return (
     <Draggable 
@@ -303,17 +298,46 @@ export const FreeStack = React.memo(({
       draggableId={stackId} 
       index={stackIndex}
       isDragDisabled={playerN === null}>
-      {(dragProvided, dragSnapshot) => (
+      {(dragProvided, dragSnapshot) => {
+        if (!dragSnapshot.isDropAnimating) {
+          dispatch(setDraggingPrevStyle(dragProvided.draggableProps.style));
+          console.log('log2 notDropAnimating:', dragProvided.draggableProps.style);
+        } else {
+          const result = {
+            "draggableId": stackId,
+            "type": "DEFAULT",
+            "source": {
+              "index": stackIndex,
+              "droppableId": region.groupId + "--" + region.type
+            },
+            "reason": "DROP",
+            "mode": "FLUID",
+            "destination": {
+              "droppableId": region.groupId + "--" + region.type,
+              "index": 0
+            },
+            "combine": null
+          }
+          onDragEnd(result);
+          const state = store.getState();
+          const prevStyle = state?.playerUi?.dragging?.prevStyle;
+          console.log('log2 isDropAnimating:', prevStyle);
+
+          //dragProvided.draggableProps.style = null;
+        }
+        
+        return(
         <NaturalDragAnimation
           style={dragProvided.draggableProps.style}
           snapshot={dragSnapshot}
           rotationMultiplier={1}>
           {style => {
             const updatedStyle = {...style}
-            if (dragSnapshot.isDropAnimating && draggingToRegionType === "free") updatedStyle.transitionDuration = "0.001s";
+            if (dragSnapshot.isDropAnimating && draggingToRegionType === "free") updatedStyle.transitionDuration = "0.0001s";
             if (Boolean(dragSnapshot.combineTargetFor)) updatedStyle.zIndex = 6000;
             if (updatedStyle.transform && dragSnapshot.isDragging) updatedStyle.transform = updatedStyle.transform + " scale(1.1)";
             if (!dragSnapshot.isDragging) updatedStyle.transform = "none";
+            if (dragSnapshot.isDropAnimating) updatedStyle.opacity = 0.5;
             updatedStyle.visibility = draggingToRegionType === "free" && ((thisDrag && style.transform === null) || dragSnapshot.isDropAnimating) ? "hidden" : "visible";
             return(
               <FreeStackContainer
@@ -332,21 +356,6 @@ export const FreeStack = React.memo(({
                 style={updatedStyle}>
                 {cardIds.map((cardId, cardIndex) => {
                   return(
-                    // <div 
-                    //   style={{
-                    //     width: "150px",
-                    //     height: "250px",
-                    //     backgroundColor: backgroundColor
-                    //   }}>
-                    //     origTransform: {JSON.stringify(style.transform)}
-                    //     updatedTransform: {JSON.stringify(updatedStyle.transform)}
-                    //     tempTransform: {JSON.stringify(tempTransform)}
-                    //     isDragging: {JSON.stringify(dragSnapshot.isDragging)}
-                    //     stopDrag: {JSON.stringify(stopDrag)}
-                    //     stopDragDelay: {JSON.stringify(stopDragDelay)}
-                    //     thisDrag: {JSON.stringify(thisDrag)}
-                    //     dropAnimating: {JSON.stringify(dragSnapshot.isDropAnimating)}
-                    // </div>
 
                     <Card
                       key={cardId}
@@ -359,7 +368,7 @@ export const FreeStack = React.memo(({
               </FreeStackContainer>
             )}}
         </NaturalDragAnimation>
-      )}
+      )}}
     </Draggable>
   );
 })

@@ -9,7 +9,7 @@ import { TextBox } from "./TextBox";
 import { Prompts } from "./Prompts";
 import { Alert } from "./Alert";
 
-export const TableLayout = React.memo(({}) => {
+export const TableLayout = React.memo(({onDragEnd}) => {
   const layout = useLayout();
 
   console.log("Rendering TableLayout", layout);
@@ -28,6 +28,7 @@ export const TableLayout = React.memo(({}) => {
             <TableRegion
               key={regionIndex}
               region={region}
+              onDragEnd={onDragEnd}
             />
           )
         })

@@ -1,6 +1,9 @@
 export const siteL10n = {
-  "createPrivateRoomAfter":
-  {
+  "numberOfPlayers": {
+    "English": "Number of players",
+    "Chinese": "玩家数量"
+  },
+  "createPrivateRoomAfter": {
     "English": "Create a private room",
     "Chinese": "创建私人房间"
   },

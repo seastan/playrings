@@ -22,32 +22,14 @@ export const StackContainer = styled.div`
   // display: ${props => (props.hidden) ? "none" : "flex"};
 
 export const Stack = React.memo(({
-  groupId,
-  region,
-  stackIndex,
   stackId,
-  numStacks,
-  hidden
+  isDragging,
 }) => {
   const gameDef = useGameDefinition();
   const stack = useSelector(state => state?.gameUi?.game?.stackById[stackId]);
-  const draggingToRegionType = useSelector(state => state?.playerUi?.dragging.toRegionType);
-  const thisDrag = useSelector(state => state?.playerUi?.dragging?.stackId == stackId);
-  const touchMode = useSelector(state => state?.playerUi?.userSettings?.touchMode);
-  const zoomFactor = useSelector(state => state?.playerUi?.userSettings?.zoomPercent)/100;
-  const layout = useLayout();
-  const rowSpacing = layout?.rowSpacing;
-  const cardSize = layout?.cardSize;
-  const playerN = useSelector(state => state?.playerUi?.playerN);
-  const [isMousedOver, setIsMousedOver] = useState(false);
-  console.log('Rendering Stack ', {stackIndex, region, hidden, layout, zoomFactor});
-  var spacingFactor = touchMode ? 1.5 : 1;
-  const { height, width } = useWindowDimensions();
-  const aspectRatio = width/height;
   if (!stack) return null;
-  const cardIds = stack.cardIds;
-  const numCards = cardIds.length;
-  const card0 = store.getState().gameUi.game.cardById[cardIds[0]];
+  const cardIds = stack?.cardIds;
+
   var leftOffsets = 0;
   var rightOffsets = 0;
   const offsets = [0];
@@ -71,6 +53,47 @@ export const Stack = React.memo(({
   for (var i = 0; i< offsets.length; i++) {
     offsets[i] += leftOffsets;
   }
+  return(
+    cardIds.map((cardId, cardIndex) => {
+      return(
+        <Card
+          key={cardId}
+          offset={offsets[cardIndex]}
+          cardId={cardId}
+          cardIndexFromGui={cardIndex}
+          isDragging={(cardIndex === cardIds.length - 1) ? isDragging : false}
+        />
+      )
+    })
+  );
+});
+
+export const StackDraggable = React.memo(({
+  groupId,
+  region,
+  stackIndex,
+  stackId,
+  numStacks,
+  hidden
+}) => {
+  const stack = useSelector(state => state?.gameUi?.game?.stackById[stackId]);
+  const draggingToRegionType = useSelector(state => state?.playerUi?.dragging.toRegionType);
+  const thisDrag = useSelector(state => state?.playerUi?.dragging?.stackId == stackId);
+  const touchMode = useSelector(state => state?.playerUi?.userSettings?.touchMode);
+  const zoomFactor = useSelector(state => state?.playerUi?.userSettings?.zoomPercent)/100;
+  const layout = useLayout();
+  const rowSpacing = layout?.rowSpacing;
+  const cardSize = layout?.cardSize;
+  const playerN = useSelector(state => state?.playerUi?.playerN);
+  const [isMousedOver, setIsMousedOver] = useState(false);
+  console.log('Rendering Stack ', {stackIndex, region, hidden, layout, zoomFactor});
+  var spacingFactor = touchMode ? 1.5 : 1;
+  const { height, width } = useWindowDimensions();
+  const aspectRatio = width/height;
+  if (!stack) return null;
+  const cardIds = stack.cardIds;
+  const numCards = cardIds.length;
+  const card0 = store.getState().gameUi.game.cardById[cardIds[0]];
   // Calculate size of stack for proper spacing. Changes base on group type and number of stack in group.
   const numStacksNonZero = Math.max(numStacks, 1);
   const regionWidthPercent = convertToPercentage(region.width);
@@ -104,7 +127,7 @@ export const Stack = React.memo(({
             if (dragSnapshot.isDropAnimating && draggingToRegionType === "free") updatedStyle.transitionDuration = "0.001s";
             if (Boolean(dragSnapshot.combineTargetFor)) updatedStyle.zIndex = 6000;
             if (updatedStyle.transform && dragSnapshot.isDragging) updatedStyle.transform = updatedStyle.transform + " scale(1.1)";
-            updatedStyle.visibility = draggingToRegionType === "free" && ((thisDrag && style.transform === null) || dragSnapshot.isDropAnimating) ? "hidden" : "visible";
+            //updatedStyle.visibility = draggingToRegionType === "free" && ((thisDrag && style.transform === null) || dragSnapshot.isDropAnimating) ? "visible" : "visible";
             return(
               <StackContainer
                 isDragging={dragSnapshot.isDragging}
@@ -119,16 +142,11 @@ export const Stack = React.memo(({
                 onMouseLeave={() => setIsMousedOver(false)}
                 style={updatedStyle}
                 >
-                {cardIds.map((cardId, cardIndex) => {
-                  return(
-                    <Card
-                      key={cardId}
-                      offset={offsets[cardIndex]}
-                      cardId={cardId}
-                      cardIndexFromGui={cardIndex}
-                      isDragging={(cardIndex === cardIds.length - 1) ? dragSnapshot.isDragging : false}/>
-                  )
-              })}
+                <Stack
+                  stackId={stackId}
+                  isDragging={dragSnapshot.isDragging}
+                />
+
               </StackContainer>)}}
         </NaturalDragAnimation>
       )}

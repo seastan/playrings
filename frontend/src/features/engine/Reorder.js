@@ -1,3 +1,5 @@
+import { get } from "http";
+
 // A little function to help us with reordering the result
 const Reorder = (list, startIndex, endIndex) => {
   const result = Array.from(list);
@@ -6,19 +8,27 @@ const Reorder = (list, startIndex, endIndex) => {
   return result;
 };
 
+export const getGroupIdAndRegionType = (droppableId) => {
+  // Split the droppableId to get the groupId and regionType: "groupId--regionType" -> ["groupId", "regionType"]
+  const split = droppableId.split("--");
+  return split;
+};
+
 export const reorderGroupStackIds = (groupById, orig, dest) => {
-  const origGroupStackIds = groupById[orig.droppableId].stackIds;
-  const destGroupStackIds = groupById[dest.droppableId].stackIds;
+  const origGroupId = getGroupIdAndRegionType(orig.droppableId)[0];
+  const destGroupId = getGroupIdAndRegionType(dest.droppableId)[0];
+  const origGroupStackIds = groupById[origGroupId].stackIds;
+  const destGroupStackIds = groupById[destGroupId].stackIds;
   const stack = origGroupStackIds[orig.index];
   const stackId = stack.id;
 
   // Moving to same list
-  if (orig.droppableId === dest.droppableId) {
+  if (origGroupId === destGroupId) {
     const reorderedStackIds = Reorder(origGroupStackIds, orig.index, dest.index);
     const newGroupById = {
       ...groupById,
-      [orig.droppableId]: {
-        ...groupById[orig.droppableId],
+      [origGroupId]: {
+        ...groupById[origGroupId],
         stackIds: reorderedStackIds
       }
     };
@@ -36,12 +46,12 @@ export const reorderGroupStackIds = (groupById, orig, dest) => {
 
   const newGroupById = {
     ...groupById,
-    [orig.droppableId]: {
-      ...groupById[orig.droppableId],
+    [origGroupId]: {
+      ...groupById[origGroupId],
       stackIds: newOrigGroupStackIds,
     },
-    [dest.droppableId]: {
-      ...groupById[dest.droppableId],
+    [destGroupId]: {
+      ...groupById[destGroupId],
       stackIds: newDestGroupStackIds,
     }
   };

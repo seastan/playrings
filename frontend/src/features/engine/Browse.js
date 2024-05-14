@@ -1,6 +1,6 @@
 import React, { useContext, useState } from "react";
 import { useSelector, useDispatch } from 'react-redux';
-import { Stacks } from "./Stacks";
+import { DroppableRegion } from "./DroppableRegion";
 import { useBrowseTopN } from "./hooks/useBrowseTopN";
 import { setValues } from "../store/gameUiSlice";
 import { faBars } from "@fortawesome/free-solid-svg-icons";
@@ -17,7 +17,7 @@ const isNormalInteger = (val) => {
   return n !== Infinity && n === val && n >= 0;
 }
 
-export const Browse = React.memo(({addDroppableRef}) => {
+export const Browse = React.memo(({}) => {
   const dispatch = useDispatch();
   const gameL10n = useGameL10n();
   const gameDef = useGameDefinition();
@@ -201,11 +201,10 @@ export const Browse = React.memo(({addDroppableRef}) => {
             }
             </div>
         </div>
-        <Stacks
+        <DroppableRegion
           groupId={groupId}
           region={region}
           selectedStackIndices={filteredStackIndices}
-          addDroppableRef={addDroppableRef}
         />
       </div>
  

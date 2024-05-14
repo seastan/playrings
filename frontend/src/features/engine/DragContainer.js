@@ -3,9 +3,9 @@ import React, { useCallback, useEffect, useState } from "react";
 import { DragDropContext } from "react-beautiful-dnd";
 import { useSelector, useDispatch } from 'react-redux';
 import { setStackIds, setCardIds, setGroupById } from "../store/gameUiSlice";
-import { reorderGroupStackIds } from "./Reorder";
+import { getGroupIdAndRegionType, reorderGroupStackIds } from "./Reorder";
 import store from "../../store";
-import { setDraggingEnd, setDraggingEndDelay, setDraggingStackId, setDraggingFromGroupId } from "../store/playerUiSlice";
+import { setDraggingEnd, setDraggingEndDelay, setDraggingStackId, setDraggingFromGroupId, setTempDragStack } from "../store/playerUiSlice";
 import { Table } from "./Table";
 import { useDoActionList } from "./hooks/useDoActionList";
 import { ArcherContainer } from 'react-archer';
@@ -45,7 +45,7 @@ export const DragContainer = React.memo(({}) => {
 
   const updateMouseDown = (e) => {
     console.log("updateMouseDown", e)
-    const rect = e.target.getBoundingClientRect();
+    const rect = e.target.parentElement.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
     console.log(`Relative mouse position: ${x}, ${y}`);
@@ -54,10 +54,13 @@ export const DragContainer = React.memo(({}) => {
 
   const onBeforeDragStart = (result) => {
     console.log("onBeforeDragStart", result)
-    dispatch(setDraggingFromGroupId(result.source.droppableId));
+    const droppableId = result.source.droppableId;
+    const [groupId, regionType] = getGroupIdAndRegionType(droppableId);
+    dispatch(setDraggingFromGroupId(groupId));
     dispatch(setDraggingStackId(result.draggableId));
     dispatch(setDraggingEnd(false));
     dispatch(setDraggingEndDelay(false));
+    dispatch(setTempDragStack(null));
 
     setIsDragging(true);
   }
@@ -89,12 +92,16 @@ export const DragContainer = React.memo(({}) => {
   }, []);
 
 
+
+
   const onDragEnd = (result) => {
-    console.log("onDragEnd", result)
+    //alert("onDragEnd")
+    console.log('log2 onDragEnd:', result);
     const game = store.getState()?.gameUi.game;
     const groupById = game.groupById;
     const orig = result.source;
-    const origGroupId = orig.droppableId;
+    const origDroppableId = orig.droppableId;
+    const [origGroupId, origRegionType] = getGroupIdAndRegionType(origDroppableId);
     const origGroup = groupById[origGroupId];
     const origGroupStackIds = origGroup.stackIds;
     const origStackId = origGroupStackIds[orig.index];    
@@ -103,11 +110,19 @@ export const DragContainer = React.memo(({}) => {
     const topOfOrigStackCardId = origStackCardIds[0];
     const topOfOrigStackCard = game.cardById[topOfOrigStackCardId];
     const allowFlip = keypressShift ? false : true; 
-    const dest = result.combine ? result.combine : result.destination;
-    const destGroupId = dest?.droppableId;
+    var dest = result.combine ? result.combine : result.destination;
+    if (!dest) {
+      dest = {...orig};
+    }
+    console.log("Dest: ", dest)
+
+    const destDroppableId = dest?.droppableId;
+    const [destGroupId, destRegionType] = getGroupIdAndRegionType(destDroppableId);
     const afterDragName = getAfterDragName(game, origStackId, destGroupId, allowFlip);
 
-    var destGroup = null;
+    const destGroup = groupById[destGroupId];
+    const destGroupStackIds = destGroup.stackIds;
+
 
     setIsDragging(false);
 
@@ -128,6 +143,7 @@ export const DragContainer = React.memo(({}) => {
 
     if (playerUiDroppableRefs?.[destGroupId]) {
       const droppableRect = playerUiDroppableRefs[destGroupId].getBoundingClientRect();
+      console.log("Droppable Rect: ", droppableRect)
       const xRelative = mousePosition.x - mouseDownPosition.x - droppableRect.left;
       const yRelative = mousePosition.y - mouseDownPosition.y - droppableRect.top;
       stackLeft = xRelative/droppableRect.width*100;
@@ -135,13 +151,17 @@ export const DragContainer = React.memo(({}) => {
 
       console.log('Relative Position: ', mousePosition.x, mousePosition.y, droppableRect.left, droppableRect.top, xRelative, yRelative, stackLeft, stackTop);
     }
+
+    dispatch(setTempDragStack({
+      stackId: origStackId, 
+      toGroupId: destGroupId,
+      left: stackLeft,
+      top: stackTop
+    }));
     
     // Combine
     if (result.combine) {
-      
-      destGroup = game["groupById"][destGroupId];
-      const destGroupStackIds = groupById[destGroupId].stackIds;
-
+    
       dest.index = -1;
       for(var i=0; i<=destGroupStackIds.length; i++) {
         if(destGroupStackIds[i] === dest.draggableId){
@@ -184,8 +204,10 @@ export const DragContainer = React.memo(({}) => {
       // Dropped nowhere
       if (!result.destination) {
         return;
-      } 
-      destGroup = game["groupById"][destGroupId];
+      }
+      if (destRegionType === "free") {
+        dest.index = destGroupStackIds.length;
+      }
 
       // // Did not move anywhere - can bail early -- Need to disable this check because free zones can have cards move but stay at same index
       // if (
@@ -206,7 +228,6 @@ export const DragContainer = React.memo(({}) => {
           ["COND",
             ["DEFINED", `$GAME.stackById.${origStackId}`],
             [
-              ["LOG", "Setting stack position"],
               ["SET", `/stackById/${origStackId}/left`, stackLeft],
               ["SET", `/stackById/${origStackId}/top`, stackTop]
             ]
@@ -234,7 +255,7 @@ export const DragContainer = React.memo(({}) => {
           }
         }}>
       <DragDropContext onDragEnd={onDragEnd} onBeforeDragStart={onBeforeDragStart}>
-        <Table/>
+        <Table onDragEnd={onDragEnd}/>
       </DragDropContext>
     </ArcherContainer>
   )

@@ -3,8 +3,9 @@ import { mytypeof } from "./validateGameDef";
 export const getGameDefSchema = (gameDef) => {
     return ({
       "_type_": "object",
-  
+      
       "pluginName": {
+        "_label_": "Plugin Name",
         "_type_": "string",
         "_required_": true
       },
