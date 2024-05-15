@@ -7,9 +7,9 @@ import useProfile from "../../hooks/useProfile";
 import { useCardScaleFactor } from "./hooks/useCardScaleFactor";
 import { useGameDefinition } from "./hooks/useGameDefinition";
 import { getFirstCardOffset, getVisibleFace, getVisibleFaceSrc } from "./functions/common";
-import { StackContainer } from "./Stack";
 import { Card } from "./Card";
 import { DropZone } from "./DroppableRegion";
+import { StackContainer } from "./StackDraggableSorted";
 
 // Template for the returned element
 const ImageElement = styled.div`

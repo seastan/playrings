@@ -35,8 +35,8 @@ const initialState = {
     endDelay: null,
     transform: null,
     fromGroupId: null,
-    toRegionType: null,
-    prevStyle: null,
+    toGroupId: null,
+    toRegionType: null
   },
   tempDragStack: {
     stackId: null,
@@ -142,6 +142,9 @@ const playerUiSlice = createSlice({
     setDraggingFromGroupId: (state, { payload }) => {
       state.dragging.fromGroupId = payload;
     },
+    setDraggingToGroupId: (state, { payload }) => {
+      state.dragging.toGroupId = payload;
+    },
     setDraggingToRegionType: (state, { payload }) => {
       state.dragging.toRegionType = payload;
     },
@@ -211,6 +214,7 @@ export const {
   setDraggingEndDelay,
   setDraggingTransform,
   setDraggingPrevStyle,
+  setDraggingToGroupId,
   setDraggingToRegionType,
   setUserSettings,
   setAlertMessage,

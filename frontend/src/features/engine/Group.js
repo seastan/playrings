@@ -26,6 +26,7 @@ export const Group = React.memo(({
   const iconsVisible = playerN && (region.showMenu || (isPile && region.showMenu !== false)) ;
   const browseTopN = useBrowseTopN();
   const doActionList = useDoActionList();
+  console.log("Group tempDragStack", tempDragStack)
   // Print a warning to the console if the group is not found
   if (!group) {
     doActionList(["LOG", "Error: Tried to display an unknown group: ", groupId]);
@@ -90,20 +91,21 @@ export const Group = React.memo(({
           </div>
       </div>
       <div className="h-full w-full" style={{marginLeft: "17px", backgroundColor: "rgba(0,0,255)"}}>
-        <DroppableRegion
-          groupId={groupId}
-          region={region}
-          selectedStackIndices={[...Array(numStacks).keys()]}
-          onDragEnd={onDragEnd}
-        />
-        {region.type === "free" && tempDragStack?.toGroupId === groupId &&
-          <div style={{left: `${tempDragStack.left}%`, top: `${tempDragStack.top}%`, position: "absolute", zIndex: 0, marginLeft: "17px"}}>
+        {(region.type === "free" && tempDragStack && tempDragStack?.toGroupId === groupId) &&
+          <div style={{left: `${tempDragStack.left}%`, top: `${tempDragStack.top}%`, position: "absolute", zIndex: 1e9, marginLeft: "17px"}}>
             <Stack
               stackId={tempDragStack.stackId}
               isDragging={false}
             />
           </div>
         }
+        <DroppableRegion
+          groupId={groupId}
+          region={region}
+          selectedStackIndices={[...Array(numStacks).keys()]}
+          onDragEnd={onDragEnd}
+        />
+
       </div>
     </div>
   )

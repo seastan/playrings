@@ -95,7 +95,8 @@ export const DragContainer = React.memo(({}) => {
 
 
   const onDragEnd = (result) => {
-    //alert("onDragEnd")
+    if (!isDragging) return;
+    setIsDragging(false);
     console.log('log2 onDragEnd:', result);
     const game = store.getState()?.gameUi.game;
     const groupById = game.groupById;
@@ -123,14 +124,12 @@ export const DragContainer = React.memo(({}) => {
     const destGroup = groupById[destGroupId];
     const destGroupStackIds = destGroup.stackIds;
 
-
-    setIsDragging(false);
-
     dispatch(setDraggingFromGroupId(null));
     dispatch(setDraggingEnd(true));
     setTimeout(() => {
       dispatch(setDraggingStackId(null));
-      dispatch(setDraggingEndDelay(true))
+      dispatch(setDraggingEndDelay(true));
+      dispatch(setTempDragStack(null));
     }, 100);
 
 
