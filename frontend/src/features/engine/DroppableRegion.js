@@ -5,8 +5,7 @@ import { Droppable } from "react-beautiful-dnd";
 import { PileImage } from "./PileImage"
 import { useLayout } from "./hooks/useLayout";
 import { setDraggingToGroupId, setDraggingToRegionType, setDroppableRefs } from "../store/playerUiSlice";
-import { StackDraggableFree } from "./StackDraggableFree";
-import { StackDraggableSorted } from "./StackDraggableSorted";
+import { StackDraggable } from "./StackDraggable";
 
 const Container = styled.div`
   background-color: ${props => props.isDraggingOver ? "rgba(1,1,1,0.3)" : ""};
@@ -64,14 +63,12 @@ const StacksListSorted = React.memo(({
   return (
     stackIdsToShow?.map((stackId, stackIndex) => (
       (selectedStackIndices.includes(stackIndex)) ? (
-        <StackDraggableSorted
+        <StackDraggable
           key={stackId}
-          groupId={groupId}
           region={region}
           stackIndex={stackIndex}
           stackId={stackId}
-          numStacks={selectedStackIndices.length}
-          hidden={isPile && isDraggingOver && !isDraggingFrom}
+          numStacksVisible={selectedStackIndices.length}
           onDragEnd={onDragEnd}
         /> 
       ) : null 
@@ -160,51 +157,6 @@ export const DroppableRegion = React.memo(({
   )
 })
 
-// export const FreeZone = React.memo(({
-//   groupId,
-//   region,
-//   containerRef
-// }) => {
-//   console.log("Rendering Free Stacks for ",groupId, region);
-//   const dispatch = useDispatch();
-//   const group = useSelector(state => state?.gameUi?.game?.groupById?.[groupId]);
-//   const stackIds = group.stackIds;
-  
-//   return(
-//     <Droppable
-//       droppableId={groupId + "--" + region.type}
-//       key={groupId}
-//       isDropDisabled={false}
-//       isCombineEnabled={true}
-//       direction={region.direction}>
-//       {(dropProvided, dropSnapshot) => {
-//         if (dropSnapshot.isDraggingOver) dispatch(setDraggingToRegionType(region.type));
-//         return(
-//         <Container
-//           ref={containerRef}
-//           isDraggingOver={dropSnapshot.isDraggingOver}
-//           isDropDisabled={false}
-//           isDraggingFrom={Boolean(dropSnapshot.draggingFromThisWith)}
-//           {...dropProvided.droppableProps}
-//           direction={region.direction}
-//           //onMouseLeave={() => setMouseHere(region.type === "pile" && false)}
-//           >
-//             <DropZone 
-//               ref={dropProvided.innerRef} 
-//               direction={region.direction}
-//               margin={0}>
-//               <FreeStacksList
-//                 region={region} 
-//                 stackIds={stackIds}/>
-//               {dropProvided.placeholder}
-              
-//             </DropZone>
-//         </Container>)
-//       }}
-//     </Droppable>
-//   )
-// })
-
 const StacksListFree = React.memo(({
   region,
   stackIds,
@@ -213,27 +165,18 @@ const StacksListFree = React.memo(({
 
   return (
     stackIds?.map((stackId, stackIndex) => (
-      <StackDraggableFree
+      <StackDraggable
         key={stackId}
         region={region}
         stackIndex={stackIndex}
         stackId={stackId}
+        numStacksVisible={stackIds.length}
         onDragEnd={onDragEnd}
       /> 
     ))
   ) 
 });
 
-
-export const FreeStackContainer = styled.div`
-  position: absolute;
-  userSelect: none;
-  margin: 0vh ${props => props.margin}vh 0vh 0vh;
-  left: ${props => props.stackLeft}%;
-  top: ${props => props.stackTop}%;
-  width: ${props => props.stackWidth}vh;
-  height: ${props => props.stackHeight}vh;
-`;
 
 
 

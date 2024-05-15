@@ -130,7 +130,7 @@ export const DragContainer = React.memo(({}) => {
       dispatch(setDraggingStackId(null));
       dispatch(setDraggingEndDelay(true));
       dispatch(setTempDragStack(null));
-    }, 100);
+    }, 200);
 
 
 

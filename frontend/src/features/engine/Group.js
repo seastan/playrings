@@ -58,7 +58,7 @@ export const Group = React.memo(({
       
       <div
         className="relative h-full float-left select-none text-gray-400"
-        style={{width:"17px", backgroundColor: "rgba(255,0,0)"}}>
+        style={{width:"1.7vh"}}>
           <div className="relative w-full h-full">
           {region.hideTitle ? null :
             <span 
@@ -86,13 +86,12 @@ export const Group = React.memo(({
                 {gameL10n(tablename) + (isPile ? " ("+numStacks+")" : "")}
                 </div>
             </span>
-            
           }
           </div>
       </div>
-      <div className="h-full w-full" style={{marginLeft: "17px", backgroundColor: "rgba(0,0,255)"}}>
+      <div className="h-full w-full" style={{marginLeft: "1.7vh"}}>
         {(region.type === "free" && tempDragStack && tempDragStack?.toGroupId === groupId) &&
-          <div style={{left: `${tempDragStack.left}%`, top: `${tempDragStack.top}%`, position: "absolute", zIndex: 1e9, marginLeft: "17px"}}>
+          <div style={{left: `${tempDragStack.left}%`, top: `${tempDragStack.top}%`, position: "absolute", zIndex: 1e9, marginLeft: "1.77vh"}}>
             <Stack
               stackId={tempDragStack.stackId}
               isDragging={false}

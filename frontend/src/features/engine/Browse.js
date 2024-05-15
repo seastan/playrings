@@ -190,7 +190,7 @@ export const Browse = React.memo(({}) => {
       <div className="h-full float-left " style={{width: "75%"}}>        
         <div
           className="relative h-full float-left select-none text-gray-300"
-          style={{width:"17px"}}>
+          style={{width:"1.7vh"}}>
             <div className="relative w-full h-full">
             {region.hideTitle ? null :
               <span 

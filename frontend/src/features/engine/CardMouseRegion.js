@@ -52,6 +52,7 @@ export const CardMouseRegion = React.memo(({
     }
     
     const handleMouseOver = (event) => {
+        console.log("cardmouseover", card);
         event.stopPropagation();
         if (!dropdownMenuVisible) makeActive(event);
         //setIsActive(true);
