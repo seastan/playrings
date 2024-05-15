@@ -9,7 +9,7 @@ import { useGameDefinition } from "./hooks/useGameDefinition";
 import { getFirstCardOffset, getVisibleFace, getVisibleFaceSrc } from "./functions/common";
 import { Card } from "./Card";
 import { DropZone } from "./DroppableRegion";
-import { StackContainer } from "./StackDraggableSorted";
+import { StackContainerSorted } from "./StackDraggable";
 
 // Template for the returned element
 const ImageElement = styled.div`
@@ -80,7 +80,7 @@ export const PileImage = React.memo(({
 
   return(
     <DropZone direction={"vertical"}>
-      <StackContainer
+      <StackContainerSorted
         stackWidth={stackWidth}
         stackHeight={stackHeight}>
         <Card
@@ -88,7 +88,7 @@ export const PileImage = React.memo(({
           offset={0}
           cardId={cardToShow.id} 
           isDragging={false}/>
-      </StackContainer>
+      </StackContainerSorted>
     </DropZone>
     )
   //return( <ImageElement width={cardWidth} height={cardHeight} leftOffset={leftOffset} src={visibleFaceSrc.src}/> );
