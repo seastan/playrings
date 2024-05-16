@@ -105,7 +105,7 @@ export const StackDraggable = React.memo(({
             }
             onDragEnd(result);
           }
-          
+          const isCombined = Boolean(dragSnapshot.combineTargetFor)
           return(
             <NaturalDragAnimation
               style={dragProvided.draggableProps.style}
@@ -114,16 +114,18 @@ export const StackDraggable = React.memo(({
               {style => {
                 const updatedStyle = {...style}
                 if (dragSnapshot.isDropAnimating && draggingToRegionType === "free") updatedStyle.transitionDuration = "0.0001s";
-                if (Boolean(dragSnapshot.combineTargetFor)) updatedStyle.zIndex = 6000;
+                if (isCombined) updatedStyle.zIndex = 6000;
                 if (updatedStyle.transform && dragSnapshot.isDragging) updatedStyle.transform = updatedStyle.transform + " scale(1.1)";
                 if (region.type === "free" && !dragSnapshot.isDragging) updatedStyle.transform = "none";
                 updatedStyle.visibility = draggingToRegionType === "free" && ((thisDrag && style.transform === null) || dragSnapshot.isDropAnimating) ? "hidden" : "visible";
                 updatedStyle.display = "inline-block";
+                // Check if mouse is within this div
+
                 if (region.type === "free") {
                   return(
                     <StackContainerFree
                       isDragging={dragSnapshot.isDragging}
-                      isGroupedOver={Boolean(dragSnapshot.combineTargetFor)}
+                      isGroupedOver={isCombined}
                       stackWidth={stackWidth}
                       stackHeight={stackHeight}
                       stackLeft={stack.left}

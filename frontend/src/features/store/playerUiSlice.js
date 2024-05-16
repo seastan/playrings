@@ -2,6 +2,21 @@ import { createSlice } from "@reduxjs/toolkit";
 import { updateValues } from "./updateValues";
 import { uiSettings } from "../engine/SettingsModal";
 
+const draggingDefault = {
+  stackId: null,
+  end: null,
+  endDelay: null,
+  transform: null,
+  fromGroupId: null,
+  toGroupId: null,
+  toRegionType: null,
+  mouseCurrentX: null,
+  mouseCurrentY: null,
+  mouseDownX: null,
+  mouseDownY: null,
+  stackRectangles: [],
+  groupRectangle: null,
+};
 
 const initialState = {
   alertMessage: null,
@@ -29,15 +44,7 @@ const initialState = {
   randomNumBetween: "3",
   autoLoadedDecks: false,
   droppableRefs: {},
-  dragging: {
-    stackId: null,
-    end: null,
-    endDelay: null,
-    transform: null,
-    fromGroupId: null,
-    toGroupId: null,
-    toRegionType: null
-  },
+  dragging: draggingDefault,
   tempDragStack: {
     stackId: null,
     toGroupId: null,
@@ -139,6 +146,9 @@ const playerUiSlice = createSlice({
     setRandomNumBetween: (state, { payload }) => {
       state.randomNumBetween = payload;
     },
+    setDraggingDefault: (state) => {
+      state.dragging = draggingDefault;
+    },
     setDraggingFromGroupId: (state, { payload }) => {
       state.dragging.fromGroupId = payload;
     },
@@ -163,8 +173,25 @@ const playerUiSlice = createSlice({
     setDraggingPrevStyle: (state, { payload }) => {
       state.dragging.prevStyle = payload;
     },
+    setDraggingMouseCurrentX: (state, { payload }) => {
+      state.dragging.mouseCurrentX = payload;
+    },
+    setDraggingMouseCurrentY: (state, { payload }) => {
+      state.dragging.mouseCurrentY = payload;
+    },
+    setDraggingMouseDownX: (state, { payload }) => {
+      state.dragging.mouseDownX = payload;
+    },
+    setDraggingMouseDownY: (state, { payload }) => {
+      state.dragging.mouseDownY = payload;
+    },
+    setDraggingStackRectangles: (state, { payload }) => {
+      state.dragging.stackRectangles = payload;
+    },
+    setDraggingGroupRectangle: (state, { payload }) => {
+      state.dragging.groupRectangle = payload;
+    },
     setUserSettings: (state, { payload }) => {
-      console.log("setUserSettings", payload);
       state.userSettings = payload; 
     },
     setAutoLoadedDecks: (state, { payload }) => {
@@ -208,6 +235,7 @@ export const {
   setMouseTopBottom,
   setCardClicked,
   setRandomNumBetween,
+  setDraggingDefault,
   setDraggingFromGroupId,
   setDraggingStackId,
   setDraggingEnd,
@@ -216,6 +244,12 @@ export const {
   setDraggingPrevStyle,
   setDraggingToGroupId,
   setDraggingToRegionType,
+  setDraggingMouseCurrentX,
+  setDraggingMouseCurrentY,
+  setDraggingMouseDownX,
+  setDraggingMouseDownY,
+  setDraggingStackRectangles,
+  setDraggingGroupRectangle,
   setUserSettings,
   setAlertMessage,
   setAutoLoadedDecks,

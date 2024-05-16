@@ -5,7 +5,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { setStackIds, setCardIds, setGroupById } from "../store/gameUiSlice";
 import { getGroupIdAndRegionType, reorderGroupStackIds } from "./Reorder";
 import store from "../../store";
-import { setDraggingEnd, setDraggingEndDelay, setDraggingStackId, setDraggingFromGroupId, setTempDragStack } from "../store/playerUiSlice";
+import { setDraggingEnd, setDraggingEndDelay, setDraggingStackId, setDraggingFromGroupId, setTempDragStack, setDraggingMouseCurrentX, setDraggingMouseCurrentY, setDraggingMouseDownX, setDraggingMouseDownY, setDraggingToGroupId, setDraggingToRegionType, setDraggingStackRectangles, setDraggingGroupRectangle, setDraggingDefault } from "../store/playerUiSlice";
 import { Table } from "./Table";
 import { useDoActionList } from "./hooks/useDoActionList";
 import { ArcherContainer } from 'react-archer';
@@ -34,13 +34,14 @@ export const DragContainer = React.memo(({}) => {
   const dispatch = useDispatch();
   const doActionList = useDoActionList();
   const [isDragging, setIsDragging] = useState(false);
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-  const [mouseDownPosition, setMouseDownPosition] = useState({ x: 0, y: 0 });
-  const keypressShift = useSelector(state => state?.playerUi?.keypress?.Shift);
+  //const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  //const [mouseDownPosition, setMouseDownPosition] = useState({ x: 0, y: 0 });
   const playerUiDroppableRefs = useSelector(state => state?.playerUi?.droppableRefs);
 
   const updateMousePosition = ev => {
-    setMousePosition({ x: ev.clientX, y: ev.clientY });
+    dispatch(setDraggingMouseCurrentX(ev.clientX));
+    dispatch(setDraggingMouseCurrentY(ev.clientY));
+    //setMousePosition({ x: ev.clientX, y: ev.clientY });
   };
 
   const updateMouseDown = (e) => {
@@ -49,7 +50,9 @@ export const DragContainer = React.memo(({}) => {
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
     console.log(`Relative mouse position: ${x}, ${y}`);
-    setMouseDownPosition({ x: x, y: y });
+    dispatch(setDraggingMouseDownX(x));
+    dispatch(setDraggingMouseDownY(y));
+    //setMouseDownPosition({ x: x, y: y });
   }
 
   const onBeforeDragStart = (result) => {
@@ -65,11 +68,37 @@ export const DragContainer = React.memo(({}) => {
     setIsDragging(true);
   }
 
-  // const onDragUpdate = (result) => {
-  //   const draggableNode = document.querySelector(`[data-rbd-draggable-id="${result.draggableId}"]`);
-  //   const draggableRect = draggableNode.getBoundingClientRect();
-  //   console.log("onDragUpdate", draggableRect.x, draggableRect.y)
-  // }
+  const onDragUpdate = (result) => {
+    const draggableNode = document.querySelector(`[data-rbd-draggable-id="${result.draggableId}"]`);
+    const draggableRect = draggableNode.getBoundingClientRect();
+    console.log("onDragUpdate", result, result?.destination, result?.destination?.droppableId)
+
+    const dest = result.destination;
+    if (!dest) return;
+    const droppableId = dest?.droppableId;
+    const [destGroupId, destRegionType] = getGroupIdAndRegionType(droppableId);
+
+    dispatch(setDraggingToGroupId(destGroupId));
+    dispatch(setDraggingToRegionType(destRegionType));
+
+    const destStackIds = store.getState()?.gameUi?.game?.groupById[destGroupId]?.stackIds;
+    setTimeout(() => {
+      const rects = [];
+      destStackIds.forEach(stackId => {
+        const stackNode = document.querySelector(`[data-rbd-draggable-id="${stackId}"]`);
+        if (stackNode) {
+          const stackRect = stackNode.getBoundingClientRect();
+          stackRect.stackId = stackId;
+          rects.push(stackRect);
+        }
+      })
+      dispatch(setDraggingStackRectangles(rects));
+      const groupRectangle = document.querySelector(`[data-rbd-droppable-id="${droppableId}"]`).getBoundingClientRect();
+      dispatch(setDraggingGroupRectangle(groupRectangle));
+      console.log("onDragUpdate", result, draggableRect, destStackIds)
+      console.log("onDragUpdate rects", rects, groupRectangle)
+    }, 200);
+  }
 
   useEffect(() => {
     if (isDragging) {
@@ -91,14 +120,13 @@ export const DragContainer = React.memo(({}) => {
     };
   }, []);
 
-
-
-
   const onDragEnd = (result) => {
     if (!isDragging) return;
     setIsDragging(false);
     console.log('log2 onDragEnd:', result);
     const game = store.getState()?.gameUi.game;
+    const playerUiDragging = store.getState()?.playerUi?.dragging;
+    const keypressShift = store.getState()?.playerUi?.keypress?.Shift;
     const groupById = game.groupById;
     const orig = result.source;
     const origDroppableId = orig.droppableId;
@@ -124,10 +152,12 @@ export const DragContainer = React.memo(({}) => {
     const destGroup = groupById[destGroupId];
     const destGroupStackIds = destGroup.stackIds;
 
-    dispatch(setDraggingFromGroupId(null));
-    dispatch(setDraggingEnd(true));
+    // dispatch(setDraggingFromGroupId(null));
+    // dispatch(setDraggingEnd(true));
+    dispatch(setDraggingDefault());
+    dispatch(setDraggingEndDelay(false));
     setTimeout(() => {
-      dispatch(setDraggingStackId(null));
+      //dispatch(setDraggingStackId(null));
       dispatch(setDraggingEndDelay(true));
       dispatch(setTempDragStack(null));
     }, 200);
@@ -143,12 +173,12 @@ export const DragContainer = React.memo(({}) => {
     if (playerUiDroppableRefs?.[destGroupId]) {
       const droppableRect = playerUiDroppableRefs[destGroupId].getBoundingClientRect();
       console.log("Droppable Rect: ", droppableRect)
-      const xRelative = mousePosition.x - mouseDownPosition.x - droppableRect.left;
-      const yRelative = mousePosition.y - mouseDownPosition.y - droppableRect.top;
+      // const xRelative = mousePosition.x - mouseDownPosition.x - droppableRect.left;
+      // const yRelative = mousePosition.y - mouseDownPosition.y - droppableRect.top;
+      const xRelative = playerUiDragging.mouseCurrentX - playerUiDragging.mouseDownX - droppableRect.left;
+      const yRelative = playerUiDragging.mouseCurrentY - playerUiDragging.mouseDownY - droppableRect.top;
       stackLeft = xRelative/droppableRect.width*100;
       stackTop = yRelative/droppableRect.height*100;
-
-      console.log('Relative Position: ', mousePosition.x, mousePosition.y, droppableRect.left, droppableRect.top, xRelative, yRelative, stackLeft, stackTop);
     }
 
     dispatch(setTempDragStack({
@@ -253,7 +283,7 @@ export const DragContainer = React.memo(({}) => {
             arrowThickness: 2,
           }
         }}>
-      <DragDropContext onDragEnd={onDragEnd} onBeforeDragStart={onBeforeDragStart}>
+      <DragDropContext onDragEnd={onDragEnd} onBeforeDragStart={onBeforeDragStart} onDragUpdate={onDragUpdate}>
         <Table onDragEnd={onDragEnd}/>
       </DragDropContext>
     </ArcherContainer>
