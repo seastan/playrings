@@ -5,6 +5,7 @@ export const keyStyle = {width: "3vh", height: "3vh", borderRadius: "0.5vh"}
 export const keyStyleL = {width: "7vh", height: "3vh", borderRadius: "0.5vh"}
 export const keyStyleXL = {width: "12vh", height: "3vh", borderRadius: "0.5vh"}
 export const ATTACHMENT_OFFSET = 3.5;
+export const COMBINE_REGION_WIDTH_FACTOR = 0.45;
 export const DEFAULT_CARD_Z_INDEX = 1000;
 
 export const playerColorMap = {

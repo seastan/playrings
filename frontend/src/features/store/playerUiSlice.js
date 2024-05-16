@@ -16,6 +16,8 @@ const draggingDefault = {
   mouseDownY: null,
   stackRectangles: [],
   groupRectangle: null,
+  hoverOverStackId: null,
+  hoverOverDirection: null,
 };
 
 const initialState = {
@@ -191,6 +193,12 @@ const playerUiSlice = createSlice({
     setDraggingGroupRectangle: (state, { payload }) => {
       state.dragging.groupRectangle = payload;
     },
+    setDraggingHoverOverStackId: (state, { payload }) => {
+      state.dragging.hoverOverStackId = payload;
+    },
+    setDraggingHoverOverDirection: (state, { payload }) => {
+      state.dragging.hoverOverDirection = payload;
+    },
     setUserSettings: (state, { payload }) => {
       state.userSettings = payload; 
     },
@@ -250,6 +258,8 @@ export const {
   setDraggingMouseDownY,
   setDraggingStackRectangles,
   setDraggingGroupRectangle,
+  setDraggingHoverOverStackId,
+  setDraggingHoverOverDirection,
   setUserSettings,
   setAlertMessage,
   setAutoLoadedDecks,

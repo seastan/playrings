@@ -21,6 +21,7 @@ const StackContainerFree = styled.div`
   top: ${props => props.stackTop}%;
   width: ${props => props.stackWidth}vh;
   height: ${props => props.stackHeight}vh;
+  opacity: ${props => props.isGroupedOver ? 0.5 : 1};
 `;
 
 export const StackContainerSorted = styled.div`
@@ -29,6 +30,7 @@ export const StackContainerSorted = styled.div`
   width: ${props => props.stackWidth}vh;
   height: ${props => props.stackHeight}vh;
   margin: 0vh ${props => props.margin}vh 0vh 0vh;
+  opacity: ${props => props.isGroupedOver ? 0.5 : 1};
 `;
 //
 //
@@ -48,12 +50,13 @@ export const StackDraggable = React.memo(({
     const draggingEnd = useSelector(state => state?.playerUi?.dragging?.end);
     const touchMode = useSelector(state => state?.playerUi?.userSettings?.touchMode);
     const zoomFactor = useSelector(state => state?.playerUi?.userSettings?.zoomPercent)/100;
+    const isCombined = useSelector(state => ((state?.playerUi?.dragging?.stackId === stackId) && (state?.playerUi?.dragging?.hoverOverStackId !== null)));
     const layout = useLayout();
     const rowSpacing = layout?.rowSpacing;
     const cardSize = layout?.cardSize;
     const playerN = useSelector(state => state?.playerUi?.playerN);
     const [isMousedOver, setIsMousedOver] = useState(false);
-    console.log('Rendering Stack ', {stackIndex, region, layout, zoomFactor});
+    console.log('Rendering Stack isCombined ', {isCombined});
     var spacingFactor = touchMode ? 1.5 : 1;
     const { height, width } = useWindowDimensions();
     const aspectRatio = width/height;
@@ -105,7 +108,7 @@ export const StackDraggable = React.memo(({
             }
             onDragEnd(result);
           }
-          const isCombined = Boolean(dragSnapshot.combineTargetFor)
+          //const isCombined = Boolean(dragSnapshot.combineTargetFor)
           return(
             <NaturalDragAnimation
               style={dragProvided.draggableProps.style}
@@ -114,7 +117,7 @@ export const StackDraggable = React.memo(({
               {style => {
                 const updatedStyle = {...style}
                 if (dragSnapshot.isDropAnimating && draggingToRegionType === "free") updatedStyle.transitionDuration = "0.0001s";
-                if (isCombined) updatedStyle.zIndex = 6000;
+                if (isCombined) updatedStyle.zIndex = 0;
                 if (updatedStyle.transform && dragSnapshot.isDragging) updatedStyle.transform = updatedStyle.transform + " scale(1.1)";
                 if (region.type === "free" && !dragSnapshot.isDragging) updatedStyle.transform = "none";
                 updatedStyle.visibility = draggingToRegionType === "free" && ((thisDrag && style.transform === null) || dragSnapshot.isDropAnimating) ? "hidden" : "visible";
@@ -148,7 +151,7 @@ export const StackDraggable = React.memo(({
                   return(
                     <StackContainerSorted
                       isDragging={dragSnapshot.isDragging}
-                      isGroupedOver={Boolean(dragSnapshot.combineTargetFor)}
+                      isGroupedOver={isCombined}
                       ref={dragProvided.innerRef}
                       {...dragProvided.draggableProps}
                       {...dragProvided.dragHandleProps}
