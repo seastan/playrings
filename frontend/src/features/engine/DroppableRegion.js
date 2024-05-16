@@ -6,6 +6,7 @@ import { PileImage } from "./PileImage"
 import { useLayout } from "./hooks/useLayout";
 import { setDraggingToGroupId, setDraggingToRegionType, setDroppableRefs } from "../store/playerUiSlice";
 import { StackDraggable } from "./StackDraggable";
+import { getStackDimensions } from "./functions/common";
 
 const Container = styled.div`
   background-color: ${props => props.isDraggingOver ? "rgba(1,1,1,0.3)" : ""};
@@ -29,14 +30,71 @@ const Container = styled.div`
 export const DropZone = styled.div`
   /* stop the list collapsing when empty */
   position: absolute;
-  display: ${props => props.direction === "vertical" ? "" : "flex"};
-  overflow-x: none;
+  display: ${props => props.direction === "vertical" ? "" : "block"};
+  white-space: nowrap;
+  overflow-x: scroll;
   width: calc(100% - ${props => props.margin}vh);
   height: 100%;
   min-height: 100%;
-  padding: 0.5vh;
+  padding: 0;
   margin: 0 0 0 ${props => props.margin}vh;
 `;
+
+const BoundingBoxesSorted = React.memo(({
+  region
+}) => {
+  const state = useSelector(state => state);
+  const layout = useLayout();
+  const stackIds = state?.gameUi?.game?.groupById?.[region.groupId]?.stackIds;
+  const listOfStackDimensions = stackIds?.map((stackId) => {
+    return getStackDimensions(stackId, layout, state)
+  });
+  // Accumulate the stack deminsions to get a list of stack XYs
+  const listOfStackLocations = [{left: 0, top: 0}];
+  for (var i = 1; i < listOfStackDimensions.length; i++) {
+    const prevStack = listOfStackDimensions[i-1];
+    const dLeft = region.direction === "horizontal" ? prevStack.width + layout.rowSpacing : 0;
+    const dTop = region.direction === "vertical" ? prevStack.height : 0;
+    const left = listOfStackLocations[i-1].left + dLeft;
+    const top = listOfStackLocations[i-1].top + dTop;
+    listOfStackLocations.push({left: left, top: top});
+  }
+  // Merge the dimensions with the XYs into a list of geometries
+  const listOfStackGeometries = [];
+  for (var i = 0; i < listOfStackDimensions.length; i++) {
+    const stackDim = listOfStackDimensions[i];
+    const stackLoc = listOfStackLocations[i];
+    listOfStackGeometries.push({...stackDim, ...stackLoc});
+  }
+
+  if (region.groupId === "player3PlayArea") console.log("Rendering BoundingBoxesSorted", {region, stackIds, listOfStackGeometries: listOfStackGeometries});
+  
+  if (region.type === "row") {
+    return (
+      <>
+      {listOfStackGeometries?.map((stackGeo, index) => (
+        <div
+          key={index}
+          style={{
+            position: "absolute",
+            top: `${stackGeo.top}vh`,
+            left: `${stackGeo.left}vh`,
+            width: `${stackGeo.parentWidth}vh`,
+            height: `${stackGeo.parentHeight}vh`,
+            border: "1px solid red",
+            backgroundColor: "rgba(255,0,0,0.3)",
+            zIndex: 1e9
+          }}
+        />
+      ))}
+      </>
+    )
+  }
+  
+  return null;
+});
+
+
 
 const StacksListSorted = React.memo(({
   isDraggingOver,
@@ -61,7 +119,12 @@ const StacksListSorted = React.memo(({
 
   if (!stackIdsToShow) return null;
   return (
-    stackIdsToShow?.map((stackId, stackIndex) => (
+    <>
+    {/* <BoundingBoxesSorted
+      region={region}
+      stackIdsToShow={stackIdsToShow}
+    /> */}
+    {stackIdsToShow?.map((stackId, stackIndex) => (
       (selectedStackIndices.includes(stackIndex)) ? (
         <StackDraggable
           key={stackId}
@@ -72,7 +135,8 @@ const StacksListSorted = React.memo(({
           onDragEnd={onDragEnd}
         /> 
       ) : null 
-    ))
+    ))}
+    </>
   ) 
 });
 

@@ -14,6 +14,7 @@ import { Stack } from "./Stack";
 
 const StackContainerFree = styled.div`
   position: absolute;
+  float: left;
   userSelect: none;
   margin: 0vh ${props => props.margin}vh 0vh 0vh;
   left: ${props => props.stackLeft}%;
@@ -25,11 +26,12 @@ const StackContainerFree = styled.div`
 export const StackContainerSorted = styled.div`
   position: relative;
   userSelect: none;
-  margin: 0vh ${props => props.margin}vh 0vh 0vh;
   width: ${props => props.stackWidth}vh;
   height: ${props => props.stackHeight}vh;
+  margin: 0vh ${props => props.margin}vh 0vh 0vh;
 `;
-
+//
+//
 export const StackDraggable = React.memo(({
     region,
     stackIndex,
@@ -116,6 +118,7 @@ export const StackDraggable = React.memo(({
                 if (updatedStyle.transform && dragSnapshot.isDragging) updatedStyle.transform = updatedStyle.transform + " scale(1.1)";
                 if (region.type === "free" && !dragSnapshot.isDragging) updatedStyle.transform = "none";
                 updatedStyle.visibility = draggingToRegionType === "free" && ((thisDrag && style.transform === null) || dragSnapshot.isDropAnimating) ? "hidden" : "visible";
+                updatedStyle.display = "inline-block";
                 if (region.type === "free") {
                   return(
                     <StackContainerFree

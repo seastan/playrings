@@ -129,3 +129,22 @@ export const getVisibleFaceSrc = (visibleFace, user, gameDef) => {
 export const getFirstCardOffset = (width, cardSize) => {
   return 0.2 + (1.39-width)*cardSize/2;
 }
+
+export const getStackDimensions = (stackId, layout, state) => {
+  const stack = state?.gameUi?.game?.stackById[stackId];
+  const touchMode = state?.playerUi?.userSettings?.touchMode;
+  const zoomFactor = state?.playerUi?.userSettings?.zoomPercent/100;
+  const cardSize = layout?.cardSize;
+  var spacingFactor = touchMode ? 1.5 : 1;
+  if (!stack) return null;
+  const cardIds = stack.cardIds;
+  const numCards = cardIds.length;
+  const card0 = state.gameUi.game.cardById[cardIds[0]];
+  // Calculate size of stack for proper spacing. Changes base on group type and number of stack in group.
+  const cardWidth = card0?.sides[card0?.currentSide]?.width * cardSize * zoomFactor;
+  const cardHeight = card0?.sides[card0?.currentSide]?.height * cardSize * zoomFactor;
+  const stackHeight = cardHeight;
+  const stackWidth = cardWidth + (ATTACHMENT_OFFSET * (numCards - 1) * zoomFactor);
+
+  return {height: stackHeight, width: stackWidth, parentHeight: cardHeight, parentWidth: cardWidth};
+}
