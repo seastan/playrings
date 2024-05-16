@@ -114,8 +114,8 @@ export const DragContainer = React.memo(({}) => {
       dispatch(setDraggingHoverOverStackId(null));
       dispatch(setDraggingHoverOverDirection(null));
     }
-    // dispatch(setDraggingMouseCurrentX(ev.clientX));
-    // dispatch(setDraggingMouseCurrentY(ev.clientY));
+    dispatch(setDraggingMouseCurrentX(ev.clientX));
+    dispatch(setDraggingMouseCurrentY(ev.clientY));
     // dispatch(setDraggingMouseCurrentX(centerX));
     // dispatch(setDraggingMouseCurrentY(centerY));
     //setMousePosition({ x: ev.clientX, y: ev.clientY });

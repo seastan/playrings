@@ -90,13 +90,13 @@ const ModalContent = () => {
   const [defaultGameKeyVals, setDefaultGameKeyVals] = useState({});
 
   // Filter out keys in the game definition if their value (which is an object) does not have a showInSettings = true property
-  const gameDefPlayerSettings = gameDefPreferences?.player.reduce((obj, key) => {
+  const gameDefPlayerSettings = (gameDefPreferences?.player ?? []).reduce((obj, key) => {
     obj[key] = gameDefPlayerProperties[key];
     obj[key].id = key;
     return obj;
   }, {});
 
-  const gameDefGameSettings = gameDefPreferences?.game.reduce((obj, key) => {
+  const gameDefGameSettings = (gameDefPreferences?.game ?? []).reduce((obj, key) => {
     obj[key] = gameDefGameProperties[key];
     obj[key].id = key;
     return obj;
