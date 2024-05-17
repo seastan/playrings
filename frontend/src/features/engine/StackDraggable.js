@@ -5,7 +5,7 @@ import { useLayout } from "./hooks/useLayout";
 import { useGameDefinition } from "./hooks/useGameDefinition";
 import useWindowDimensions from "../../hooks/useWindowDimensions";
 import store from "../../store";
-import { ATTACHMENT_OFFSET, convertToPercentage } from "./functions/common";
+import { ATTACHMENT_OFFSET, convertToPercentage, getOffsetTotalsAndAmounts } from "./functions/common";
 import NaturalDragAnimation from 'natural-drag-animation-rbdnd';
 import { Card } from "./Card";
 import styled from "@emotion/styled";
@@ -21,7 +21,7 @@ const StackContainerFree = styled.div`
   top: ${props => props.stackTop}%;
   width: ${props => props.stackWidth}vh;
   height: ${props => props.stackHeight}vh;
-  opacity: ${props => props.isGroupedOver ? 0.5 : 1};
+  opacity: ${props => props.isGroupedOver ? 0.4 : 1};
 `;
 
 export const StackContainerSorted = styled.div`
@@ -30,7 +30,7 @@ export const StackContainerSorted = styled.div`
   width: ${props => props.stackWidth}vh;
   height: ${props => props.stackHeight}vh;
   margin: 0vh ${props => props.margin}vh 0vh 0vh;
-  opacity: ${props => props.isGroupedOver ? 0.5 : 1};
+  opacity: ${props => props.isGroupedOver ? 0.4 : 1};
 `;
 //
 //
@@ -46,8 +46,10 @@ export const StackDraggable = React.memo(({
     const draggingToRegionType = useSelector(state => state?.playerUi?.dragging.toRegionType);
     const draggingFromGroupId = useSelector(state => state?.playerUi?.dragging.fromGroupId);
     const draggingToGroupId = useSelector(state => state?.playerUi?.dragging.toGroupId);
+    const tempDragStackId = useSelector(state => state?.playerUi?.tempDragStack?.stackId);
     const thisDrag = useSelector(state => state?.playerUi?.dragging?.stackId == stackId);
     const draggingEnd = useSelector(state => state?.playerUi?.dragging?.end);
+    const draggingEndDelay = useSelector(state => state?.playerUi?.dragging?.endDelay);
     const touchMode = useSelector(state => state?.playerUi?.userSettings?.touchMode);
     const zoomFactor = useSelector(state => state?.playerUi?.userSettings?.zoomPercent)/100;
     const isCombined = useSelector(state => ((state?.playerUi?.dragging?.stackId === stackId) && (state?.playerUi?.dragging?.hoverOverStackId !== null)));
@@ -65,14 +67,17 @@ export const StackDraggable = React.memo(({
     const numCards = cardIds.length;
     const card0 = store.getState().gameUi.game.cardById[cardIds[0]];
     // Calculate size of stack for proper spacing. Changes base on group type and number of stack in group.
+    const {offsetTotals, offsetAmounts} = getOffsetTotalsAndAmounts(stackId, store.getState());
+
     const numStacksNonZero = Math.max(numStacksVisible, 1);
     const regionWidthPercent = convertToPercentage(region.width);
     const regionWidthInt = parseInt(regionWidthPercent.substring(0, regionWidthPercent.length - 1))
     const fanSpacingHoriz = (regionWidthInt-cardSize/2)*aspectRatio/numStacksNonZero;
     const cardWidth = card0?.sides[card0?.currentSide]?.width;
     const cardHeight = card0?.sides[card0?.currentSide]?.height;
-    const stackHeight = cardHeight*cardSize*zoomFactor;
-    const stackWidth = cardWidth*cardSize + ATTACHMENT_OFFSET * (numCards - 1);
+    const stackHeight = (cardHeight*cardSize + ATTACHMENT_OFFSET * (offsetTotals.top + offsetTotals.bottom)) * zoomFactor;
+    //const stackWidth = cardWidth*cardSize + ATTACHMENT_OFFSET * (numCards - 1);
+    const stackWidth = (cardWidth*cardSize + ATTACHMENT_OFFSET * (offsetTotals.left + offsetTotals.right)) * zoomFactor;
     const stackWidthFan = Math.min(fanSpacingHoriz, cardWidth*cardSize*zoomFactor);
   
     const regionHeightPercent = convertToPercentage(region.height);
@@ -80,7 +85,10 @@ export const StackDraggable = React.memo(({
     const fanSpacingVert = (regionHeightInt-cardSize)/numStacksNonZero;
     const stackHeightFan = Math.min(fanSpacingVert, cardHeight*cardSize*zoomFactor);
     console.log("log1", stackWidth, stackWidthFan, region.type, region.direction);
-    
+
+    if (tempDragStackId === stackId) {
+      return null;
+    }
 
     return (
       <Draggable 
@@ -89,24 +97,48 @@ export const StackDraggable = React.memo(({
         index={stackIndex}
         isDragDisabled={playerN === null}>
         {(dragProvided, dragSnapshot) => {
-          if (!draggingEnd && draggingToRegionType == "free" && dragSnapshot.isDropAnimating) {
-            console.log('log3 started drag end from:', stackId, draggingFromGroupId);
-            const result = {
-              "draggableId": stackId,
-              "type": "MANUAL",
-              "source": {
-                "index": stackIndex,
-                "droppableId": draggingFromGroupId + "--" + region.type
-              },
-              "reason": "DROP",
-              "mode": "FLUID",
-              "destination": {
-                "droppableId": draggingToGroupId + "--" + draggingToRegionType,
-                "index": numStackIdsInGroup
-              },
-              "combine": null
+          const hoverOverStackId = store.getState().playerUi?.dragging?.hoverOverStackId;
+          console.log('onDragEnd hoverOverStackId 1:',{hoverOverStackId, draggingEnd, draggingEndDelay});
+          if (!draggingEnd && dragSnapshot.isDropAnimating) {
+            const hoverOverStackId = store.getState().playerUi?.dragging?.hoverOverStackId;
+            const hoverOverDirection = store.getState().playerUi?.dragging?.hoverOverDirection;
+            console.log('onDragEnd hoverOverStackId 2:',{hoverOverStackId, draggingEnd, draggingEndDelay});
+            if (hoverOverStackId) {
+              const result = {
+                "draggableId": "6920565a-6485-4f5b-b0f7-66e36286efee",
+                "type": "DEFAULT",
+                "source": {
+                  "index": stackIndex,
+                  "droppableId": draggingFromGroupId + "--" + region.type
+                },
+                "reason": "DROP",
+                "mode": "FLUID",
+                "destination": null,
+                "combine": {
+                  "draggableId": hoverOverStackId,
+                  "droppableId": draggingToGroupId + "--" + draggingToRegionType,
+                  "direction": hoverOverDirection
+                }
+              }
+              onDragEnd(result);
+            } else if (draggingToRegionType == "free") {
+              const result = {
+                "draggableId": stackId,
+                "type": "MANUAL",
+                "source": {
+                  "index": stackIndex,
+                  "droppableId": draggingFromGroupId + "--" + region.type
+                },
+                "reason": "DROP",
+                "mode": "FLUID",
+                "destination": {
+                  "droppableId": draggingToGroupId + "--" + draggingToRegionType,
+                  "index": numStackIdsInGroup
+                },
+                "combine": null
+              }
+              onDragEnd(result);
             }
-            onDragEnd(result);
           }
           //const isCombined = Boolean(dragSnapshot.combineTargetFor)
           return(

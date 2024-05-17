@@ -149,3 +149,36 @@ export const getStackDimensions = (stackId, layout, state) => {
 
   return {height: stackHeight, width: stackWidth, parentHeight: cardHeight, parentWidth: cardWidth};
 }
+
+export const getOffsetTotalsAndAmounts = (stackId, state) => {
+  const stack = state?.gameUi?.game?.stackById[stackId];
+  if (!stack) return {offsetTotals: {top: 0, left: 0, right: 0, bottom: 0}, offsetAmounts: [{top: 0, left: 0}]};
+  const cardIds = stack?.cardIds;
+  const offsetTotals = {top: 0, left: 0, right: 0, bottom: 0};
+  const offsetAmounts = [{top: 0, left: 0}];
+  for (var i = 1; i<cardIds.length; i++) {
+    const cardiId = cardIds[i];
+    const cardi = state.gameUi.game.cardById[cardiId];
+    const attachmentDirection = cardi.attachmentDirection || "right";
+    if (attachmentDirection === "left") {
+      offsetTotals.left++;
+      offsetAmounts.push({top: 0, left: -offsetTotals.left});
+    } else if (attachmentDirection === "top") {
+      offsetTotals.top++;
+      offsetAmounts.push({top: -offsetTotals.top, left: 0});
+    } else if (attachmentDirection === "bottom") {
+      offsetTotals.bottom++;
+      offsetAmounts.push({top: offsetTotals.bottom, left: 0});
+    } else {
+      offsetTotals.right++;
+      offsetAmounts.push({top: 0, left: offsetTotals.right});
+    }
+  }
+  // Add the left and top offsetTotals to each offsetAmount
+  offsetAmounts.forEach((offsetAmount, index) => {
+    offsetAmount.top += offsetTotals.top;
+    offsetAmount.left += offsetTotals.left;
+  });
+  return {offsetTotals, offsetAmounts};
+}
+

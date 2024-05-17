@@ -4,8 +4,8 @@ import { uiSettings } from "../engine/SettingsModal";
 
 const draggingDefault = {
   stackId: null,
-  end: null,
-  endDelay: null,
+  end: true,
+  endDelay: false,
   transform: null,
   fromGroupId: null,
   toGroupId: null,

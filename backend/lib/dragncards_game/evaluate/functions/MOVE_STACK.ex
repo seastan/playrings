@@ -11,7 +11,7 @@ defmodule DragnCardsGame.Evaluate.Functions.MOVE_STACK do
 
   If `destStackIndex` is -1, the stack will be inserted at the end of the group.
 
-  If the `options` object contains `{"combine": true}`, then instead of inserting it at `destStackIndex`, the stack will be attached to the back of the stack at `destStackIndex`.
+  If the `options` object contains `{"combine": "left"|"right"|"top"|"bottom"}`, then instead of inserting it at `destStackIndex`, the stack will be attached to the back of the stack at `destStackIndex` in the direction specified.
 
   If the `options` object contains `{"allowFlip": false}`, then all the cards in the stack will ignore the `onCardEnter.currentSide` setting of whatever group they are moving to.
 

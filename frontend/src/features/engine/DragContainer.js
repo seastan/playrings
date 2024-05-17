@@ -98,7 +98,7 @@ export const DragContainer = React.memo(({}) => {
   const playerUiDroppableRefs = useSelector(state => state?.playerUi?.droppableRefs);
 
   const updateMousePosition = ev => {
-    const draggingStackId = store.getState()?.playerUi?.dragging?.stackId;
+    const draggingStackId = store.getState()?.playerUi?.dragging?.stackId;  
     const draggableNode = document.querySelector(`[data-rbd-draggable-id="${draggingStackId}"]`);
     const draggableRect = draggableNode.getBoundingClientRect();
     draggableRect.stackId = draggingStackId;
@@ -138,7 +138,6 @@ export const DragContainer = React.memo(({}) => {
     dispatch(setDraggingFromGroupId(groupId));
     dispatch(setDraggingStackId(result.draggableId));
     dispatch(setDraggingEnd(false));
-    dispatch(setDraggingEndDelay(false));
     dispatch(setTempDragStack(null));
 
 
@@ -203,7 +202,10 @@ export const DragContainer = React.memo(({}) => {
   const onDragEnd = (result) => {
     if (!isDragging) return;
     setIsDragging(false);
-    console.log('log2 onDragEnd:', result);
+    const draggingEnd = store.getState()?.playerUi?.dragging?.end;
+    if (draggingEnd) return;
+    const draggingEndDelay = store.getState()?.playerUi?.dragging?.endDelay;
+    console.log('log2 onDragEnd:', result, {draggingEnd, draggingEndDelay});
     const game = store.getState()?.gameUi.game;
     const playerUiDragging = store.getState()?.playerUi?.dragging;
     const keypressShift = store.getState()?.playerUi?.keypress?.Shift;
@@ -235,10 +237,10 @@ export const DragContainer = React.memo(({}) => {
     // dispatch(setDraggingFromGroupId(null));
     // dispatch(setDraggingEnd(true));
     dispatch(setDraggingDefault());
-    dispatch(setDraggingEndDelay(false));
+    dispatch(setDraggingEndDelay(true));
     setTimeout(() => {
       //dispatch(setDraggingStackId(null));
-      dispatch(setDraggingEndDelay(true));
+      dispatch(setDraggingEndDelay(false));
       dispatch(setTempDragStack(null));
     }, 200);
 
@@ -261,49 +263,53 @@ export const DragContainer = React.memo(({}) => {
       stackTop = yRelative/droppableRect.height*100;
     }
 
-    dispatch(setTempDragStack({
-      stackId: origStackId, 
-      toGroupId: destGroupId,
-      left: stackLeft,
-      top: stackTop
-    }));
+    if (destRegionType === "free") {
+      dispatch(setTempDragStack({
+        stackId: origStackId, 
+        toGroupId: destGroupId,
+        left: stackLeft,
+        top: stackTop
+      }));
+    }
     
     // Combine
     if (result.combine) {
-    
-      dest.index = -1;
-      for(var i=0; i<=destGroupStackIds.length; i++) {
-        if(destGroupStackIds[i] === dest.draggableId){
-          dest.index = i;
-        }
-      }
-      if (!dest.index < 0) return;
-      const destStackId = destGroupStackIds[dest.index];
+      console.log("Combine onDragEnd", result.combine)
+      // dest.index = -1;
+      // for(var i=0; i<=destGroupStackIds.length; i++) {
+      //   if(destGroupStackIds[i] === dest.draggableId){
+      //     dest.index = i;
+      //   }
+      // }
+      // if (!dest.index < 0) return;
+      const destStackId = result.combine.draggableId; //destGroupStackIds[dest.index];
       const destStack = game.stackById[destStackId];
       const destStackCardIds = destStack.cardIds;
-      const newDestStackCardIds = destStackCardIds.concat(origStackCardIds);
+      const card0 = game.cardById[destStackCardIds[0]];
+      const stackIndex = card0.stackIndex;
+      //const newDestStackCardIds = destStackCardIds.concat(origStackCardIds);
 
-      const newDestStack = {
-        ...destStack,
-        cardIds: newDestStackCardIds,
-      }
+      // const newDestStack = {
+      //   ...destStack,
+      //   cardIds: newDestStackCardIds,
+      // }
 
-      const newOrigGroupStackIds = Array.from(origGroupStackIds);
-      newOrigGroupStackIds.splice(orig.index, 1);
+      // const newOrigGroupStackIds = Array.from(origGroupStackIds);
+      // newOrigGroupStackIds.splice(orig.index, 1);
 
-      const newOrigGroup = {
-        ...origGroup,
-        stackIds: newOrigGroupStackIds
-      }   
+      // const newOrigGroup = {
+      //   ...origGroup,
+      //   stackIds: newOrigGroupStackIds
+      // }
       // We could add some logic here to flip the card locally instantly, but there would still be a delay to get load the image
       // const updates = [["cardById",topOfOrigStackCardId,"currentSide", "A"]];
       // dispatch(setValues({updates: updates}));
 
-      dispatch(setStackIds(newOrigGroup)); // This results is a jitter because the cardIndex is still 0 so it's briefly placed in the parent spot
-      dispatch(setCardIds(newDestStack));
+      //dispatch(setStackIds(newOrigGroup)); // This results is a jitter because the cardIndex is still 0 so it's briefly placed in the parent spot
+      //dispatch(setCardIds(newDestStack));
       doActionList([
         ["LOG", "$ALIAS_N", " attached ", afterDragName, " from ", "$GAME.groupById."+origGroupId+".label", " to ", ["FACEUP_NAME_FROM_STACK_ID", destStackId], "."],
-        ["MOVE_STACK", origStackId, destGroupId, dest.index, {"combine": true, "allowFlip": allowFlip}]
+        ["MOVE_STACK", origStackId, destGroupId, stackIndex, {"combine": result.combine.direction, "allowFlip": allowFlip}],
       ])
     }
 

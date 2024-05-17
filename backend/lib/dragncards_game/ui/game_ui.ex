@@ -292,10 +292,19 @@ defmodule DragnCardsGame.GameUI do
     end
     parent_card = get_card_by_group_id_stack_index_card_index(game, [dest_group_id, dest_stack_index, 0])
 
+    # Update location of card
     game = Evaluate.evaluate(game, ["SET", "/cardById/" <> card_id <> "/groupId", dest_group_id], ["update_card_state cardId:#{card_id} groupId:#{dest_group_id}"])
     game = Evaluate.evaluate(game, ["SET", "/cardById/" <> card_id <> "/stackIndex", dest_stack_index], ["update_card_state cardId:#{card_id} stackIndex:#{dest_stack_index}"])
     game = Evaluate.evaluate(game, ["SET", "/cardById/" <> card_id <> "/cardIndex", dest_card_index], ["update_card_state cardId:#{card_id} cardIndex:#{dest_card_index}"])
     game = Evaluate.evaluate(game, ["SET", "/cardById/" <> card_id <> "/parentCardId", parent_card["id"]], ["update_card_state cardId:#{card_id} stackParentCardId:#{parent_card["id"]}"])
+
+    # Update attachment direction
+    game = if move_options != nil and move_options["combine"] != nil do
+      attachment_direction = move_options["combine"]
+      Evaluate.evaluate(game, ["SET", "/cardById/" <> card_id <> "/attachmentDirection", attachment_direction], ["update_card_state cardId:#{card_id} attahment_direction:#{attachment_direction}"])
+    else
+      game
+    end
 
     # Update stackIndex and cardIndex of every card in the orig/dest group- This turned out to be very slow, becuase each SET triggered the loop through automations. Now we do do this directly, not through SET.
     # I think I need to to have some kind of flag to see if any of the automations rely on stackIndex or cardIndex
@@ -513,13 +522,13 @@ defmodule DragnCardsGame.GameUI do
     end
     Logger.debug("Moving stack: #{card_side_a_names} #{dest_group_id} #{dest_stack_index}")
     # If attaching to same group at higher index, dest_index will end up being 1 less
-    dest_stack_index = if orig_group_id == dest_group_id and options["combine"] == true and orig_stack_index < dest_stack_index do dest_stack_index - 1 else dest_stack_index end
+    dest_stack_index = if orig_group_id == dest_group_id and options["combine"] != nil and orig_stack_index < dest_stack_index do dest_stack_index - 1 else dest_stack_index end
     # Delete stack id from old group
     old_orig_stack_ids = get_stack_ids(game, orig_group_id)
     new_orig_stack_ids = List.delete_at(old_orig_stack_ids, orig_stack_index)
     game = update_stack_ids(game, orig_group_id, new_orig_stack_ids)
     # Add to new position
-    if options["combine"] do
+    if options["combine"] != nil do
       # Get existing destination stack
       dest_stack = get_stack_by_index(game, dest_group_id, dest_stack_index)
       dest_stack_id = dest_stack["id"]
@@ -877,6 +886,7 @@ defmodule DragnCardsGame.GameUI do
       metadata: if save_metadata == nil do nil else Evaluate.evaluate(game, ["PROCESS_MAP", save_metadata], ["save_replay"]) end,
       plugin_id: game["pluginId"],
     }
+
 
     result = case Repo.get_by(Replay, [user_id: user_id, uuid: game_uuid]) do
       nil  -> %Replay{user_id: user_id, uuid: game_uuid} # Replay not found, we build one
