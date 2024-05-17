@@ -8,18 +8,14 @@ import { useGameDefinition } from "./hooks/useGameDefinition";
 import { useTouchAction } from "./hooks/useTouchAction";
 
 export const GiantCard = React.memo(({}) => {
-  const user = useProfile();
   const gameDef = useGameDefinition();
   const dispatch = useDispatch();
   const touchAction = useTouchAction();
   const activeCardId = useActiveCardId();
-  const activeCardGroupId = useSelector(state => state?.gameUi?.game?.cardById?.[activeCardId]?.groupId);
-  const prevActiveCardGroupIdRef = useRef(activeCardGroupId);
   const visibleFace = useVisibleFace(activeCardId);
   const screenLeftRight = useSelector(state => state?.playerUi?.screenLeftRight);
   const visibleFaceSrc = useVisibleFaceSrc(activeCardId);
   console.log("Rendering GiantCard", visibleFace, visibleFaceSrc);
-
 
   if (!visibleFace) return(null);
 

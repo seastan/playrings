@@ -201,11 +201,13 @@ export const Browse = React.memo(({}) => {
             }
             </div>
         </div>
-        <DroppableRegion
-          groupId={groupId}
-          region={region}
-          selectedStackIndices={filteredStackIndices}
-        />
+        <div className="h-full w-full" style={{marginLeft: "1.7vh"}}>
+          <DroppableRegion
+            groupId={groupId}
+            region={region}
+            selectedStackIndices={filteredStackIndices}
+          />
+        </div>
       </div>
  
       <div className="absolute h-full p-2 select-none" style={{left:"70%", width:"20%"}}>

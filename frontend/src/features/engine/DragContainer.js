@@ -52,7 +52,6 @@ const isDirectionValid = (direction, regionType, regionDirection) => {
 
 
 const getHoverStackIdAndDirection = (mouseCurrentX, mouseCurrentY, draggingRectangle, stackRectangles, groupRectangle, droppableId) => {
-  console.log("getHoverStackIdAndDirection", mouseCurrentX, mouseCurrentY, draggingRectangle, stackRectangles, groupRectangle)
   const [groupId, regionType, regionDirection] = getGroupIdAndRegionType(droppableId);
   if (!stackRectangles || stackRectangles.length === 0 || !groupRectangle) {
     return {stackId: null, direction: null};
@@ -125,7 +124,6 @@ export const DragContainer = React.memo(({}) => {
     const centerY = draggableRect.top + draggableRect.height / 2;
 
     const hoverData = getHoverStackIdAndDirection(centerX, centerY, draggableRect, store.getState()?.playerUi?.dragging?.stackRectangles, store.getState()?.playerUi?.dragging?.groupRectangle, hoverOverDroppableId);
-    console.log("hoverData", hoverData)
     if (hoverData.stackId) {
       dispatch(setDraggingHoverOverStackId(hoverData.stackId));
       dispatch(setDraggingHoverOverDirection(hoverData.direction));
@@ -142,7 +140,7 @@ export const DragContainer = React.memo(({}) => {
 
   const updateMouseDown = (e) => {
     console.log("updateMouseDown", e)
-    const rect = e.target.parentElement.getBoundingClientRect();
+    const rect = e.target.parentElement.parentElement.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
     console.log(`Relative mouse position: ${x}, ${y}`);
@@ -274,6 +272,8 @@ export const DragContainer = React.memo(({}) => {
       const yRelative = playerUiDragging.mouseCurrentY - playerUiDragging.mouseDownY - droppableRect.top;
       stackLeft = xRelative/droppableRect.width*100;
       stackTop = yRelative/droppableRect.height*100;
+
+      console.log("stackPlacement", playerUiDragging.mouseCurrentX, playerUiDragging.mouseDownX, droppableRect.left, xRelative, stackLeft)
     }
 
     if (destRegionType === "free") {

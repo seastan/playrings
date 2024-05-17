@@ -1,15 +1,12 @@
-import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from 'react-redux';
+import React, { useState } from "react";
+import { useSelector } from 'react-redux';
 import { Draggable } from "react-beautiful-dnd";
 import { useLayout } from "./hooks/useLayout";
-import { useGameDefinition } from "./hooks/useGameDefinition";
 import useWindowDimensions from "../../hooks/useWindowDimensions";
 import store from "../../store";
 import { ATTACHMENT_OFFSET, convertToPercentage, getOffsetTotalsAndAmounts } from "./functions/common";
 import NaturalDragAnimation from 'natural-drag-animation-rbdnd';
-import { Card } from "./Card";
 import styled from "@emotion/styled";
-import { setTempDragStack } from "../store/playerUiSlice";
 import { Stack } from "./Stack";
 import { getGroupIdAndRegionType } from "./Reorder";
 
@@ -158,7 +155,7 @@ export const StackDraggable = React.memo(({
                 if (updatedStyle.transform && dragSnapshot.isDragging) updatedStyle.transform = updatedStyle.transform + " scale(1.1)";
                 if (region.type === "free" && !dragSnapshot.isDragging) updatedStyle.transform = "none";
                 updatedStyle.visibility = draggingToFree && ((thisDrag && style.transform === null) || dragSnapshot.isDropAnimating) ? "hidden" : "visible";
-                updatedStyle.display = "inline-block";
+                if (region.direction === "horizontal") updatedStyle.display = "inline-block";
                 // Check if mouse is within this div
 
                 if (region.type === "free") {

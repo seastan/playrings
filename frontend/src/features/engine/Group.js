@@ -91,7 +91,7 @@ export const Group = React.memo(({
       </div>
       <div className="h-full w-full" style={{marginLeft: "1.7vh"}}>
         {(region.type === "free" && tempDragStack && tempDragStack?.toGroupId === groupId) &&
-          <div style={{left: `${tempDragStack.left}%`, top: `${tempDragStack.top}%`, position: "absolute", zIndex: 1e9, marginLeft: "1.77vh"}}>
+          <div style={{left: `${tempDragStack.left}%`, top: `${tempDragStack.top}%`, position: "absolute", zIndex: 1e9, marginLeft: "1.7vh"}}>
             <Stack
               stackId={tempDragStack.stackId}
               isDragging={false}

@@ -46,7 +46,6 @@ export const useMessageTextToHtml = () => {
 
 
 export const MessageLine = ({ message }) => {
-  console.log("Rendering MessageLine",message)
   const cleanText = message?.text ? message.text.replace(/<\/?.+?>/ig, '') : "";
   const messageTextToHtml = useMessageTextToHtml();
   const processedText = messageTextToHtml(cleanText);
