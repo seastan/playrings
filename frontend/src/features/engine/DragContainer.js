@@ -37,14 +37,12 @@ const isXYinBox = (x, y, boxX, boxY, boxWidth, boxHeight) => {
 const isDirectionValid = (direction, regionType, regionDirection) => {
   if ((direction === "left" || direction === "right") && 
     (
-      (regionType === "row" && regionDirection === "horizontal") || 
-      (regionType === "fan" && regionDirection === "horizontal") || 
+      (regionType === "row" && regionDirection === "horizontal") ||
       regionType === "free")
     ) return true;
   if ((direction === "top" || direction === "bottom") &&
     (
-      (regionType === "row" && regionDirection === "vertical") || 
-      (regionType === "fan" && regionDirection === "vertical") || 
+      (regionType === "row" && regionDirection === "vertical") ||
       regionType === "free")
     ) return true;
   return false;
