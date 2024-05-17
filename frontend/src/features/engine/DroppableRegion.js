@@ -4,11 +4,12 @@ import styled from "@emotion/styled";
 import { Droppable } from "react-beautiful-dnd";
 import { PileImage } from "./PileImage"
 import { useLayout } from "./hooks/useLayout";
-import { setDraggingHoverOverDirection, setDraggingHoverOverStackId, setDraggingRectangles, setDraggingToGroupId, setDraggingToRegionType, setDroppableRefs } from "../store/playerUiSlice";
+import { setDraggingHoverOverDirection, setDraggingHoverOverStackId, setDraggingRectangles, setDroppableRefs } from "../store/playerUiSlice";
 import { StackDraggable } from "./StackDraggable";
 import { getStackDimensions } from "./functions/common";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLink } from "@fortawesome/free-solid-svg-icons";
+import { getGroupIdAndRegionType } from "./Reorder";
 
 const Container = styled.div`
   background-color: ${props => props.isDraggingOver ? "rgba(1,1,1,0.3)" : ""};
@@ -244,7 +245,8 @@ const StacksListSorted = React.memo(({
 }) => {
   const isPile = region.type == "pile";
   const showTopCard = useSelector((state) => {
-    const draggingFromGroupId = state?.playerUi?.dragging.fromGroupId;
+    const draggingFromDroppableId = state?.playerUi?.dragging?.fromDroppableId;
+    const [draggingFromGroupId, dragginFromRegionType, draggingFromRegionDirection] = getGroupIdAndRegionType(draggingFromDroppableId);
     return isPile && stackIds.length > 0 && ((mouseHere && draggingFromGroupId === null) || draggingFromGroupId === groupId);
   });
   // Truncate stacked piles
@@ -299,17 +301,13 @@ export const DroppableRegion = React.memo(({
   //if (region.type === "free") return <FreeZone groupId={groupId} region={region} containerRef={containerRef}/>
   return(
     <Droppable
-      droppableId={groupId + "--" + region.type}
+      droppableId={groupId + "--" + region.type + "--" + region.direction}
       key={groupId}
       isDropDisabled={false}
       //isCombineEnabled={region.type === "free" ? false : group.canHaveAttachments}
       isCombineEnabled={false}
       direction={region.direction}>
       {(dropProvided, dropSnapshot) => {
-        // if (dropSnapshot.isDraggingOver) {
-        //   dispatch(setDraggingToGroupId(groupId));
-        //   dispatch(setDraggingToRegionType(region.type));
-        // }
         const timestamp = new Date().getTime();
         console.log("Rendering DroppableRegion", {groupId, timestamp})
         return(
@@ -321,7 +319,6 @@ export const DroppableRegion = React.memo(({
             {...dropProvided.droppableProps}
             direction={region.direction}
             onMouseEnter={() => setMouseHere(region.type === "pile" && true)} 
-            onMouseOver={() => console.log("MouseOver")}
             //onMouseLeave={() => setMouseHere(region.type === "pile" && false)}
             >
               <PileImage 

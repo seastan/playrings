@@ -7,9 +7,7 @@ const draggingDefault = {
   end: true,
   endDelay: false,
   transform: null,
-  fromGroupId: null,
-  toGroupId: null,
-  toRegionType: null,
+  fromDroppableId: null,
   mouseCurrentX: null,
   mouseCurrentY: null,
   mouseDownX: null,
@@ -18,6 +16,7 @@ const draggingDefault = {
   groupRectangle: null,
   hoverOverStackId: null,
   hoverOverDirection: null,
+  hoverOverDroppableId: null,
 };
 
 const initialState = {
@@ -151,14 +150,8 @@ const playerUiSlice = createSlice({
     setDraggingDefault: (state) => {
       state.dragging = draggingDefault;
     },
-    setDraggingFromGroupId: (state, { payload }) => {
-      state.dragging.fromGroupId = payload;
-    },
-    setDraggingToGroupId: (state, { payload }) => {
-      state.dragging.toGroupId = payload;
-    },
-    setDraggingToRegionType: (state, { payload }) => {
-      state.dragging.toRegionType = payload;
+    setDraggingFromDroppableId: (state, { payload }) => {
+      state.dragging.fromDroppableId = payload;
     },
     setDraggingStackId: (state, { payload }) => {
       state.dragging.stackId = payload;
@@ -198,6 +191,9 @@ const playerUiSlice = createSlice({
     },
     setDraggingHoverOverDirection: (state, { payload }) => {
       state.dragging.hoverOverDirection = payload;
+    },
+    setDraggingHoverOverDroppableId: (state, { payload }) => {
+      state.dragging.hoverOverDroppableId = payload;
     },
     setUserSettings: (state, { payload }) => {
       state.userSettings = payload; 
@@ -244,14 +240,12 @@ export const {
   setCardClicked,
   setRandomNumBetween,
   setDraggingDefault,
-  setDraggingFromGroupId,
+  setDraggingFromDroppableId,
   setDraggingStackId,
   setDraggingEnd,
   setDraggingEndDelay,
   setDraggingTransform,
   setDraggingPrevStyle,
-  setDraggingToGroupId,
-  setDraggingToRegionType,
   setDraggingMouseCurrentX,
   setDraggingMouseCurrentY,
   setDraggingMouseDownX,
@@ -260,6 +254,7 @@ export const {
   setDraggingGroupRectangle,
   setDraggingHoverOverStackId,
   setDraggingHoverOverDirection,
+  setDraggingHoverOverDroppableId,
   setUserSettings,
   setAlertMessage,
   setAutoLoadedDecks,

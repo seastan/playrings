@@ -11,6 +11,7 @@ import { Card } from "./Card";
 import styled from "@emotion/styled";
 import { setTempDragStack } from "../store/playerUiSlice";
 import { Stack } from "./Stack";
+import { getGroupIdAndRegionType } from "./Reorder";
 
 const StackContainerFree = styled.div`
   position: absolute;
@@ -43,9 +44,6 @@ export const StackDraggable = React.memo(({
   }) => {
     const stack = useSelector(state => state?.gameUi?.game?.stackById[stackId]);
     const numStackIdsInGroup = useSelector(state => state?.gameUi?.game?.groupById?.[region.groupId]?.stackIds.length);
-    const draggingToRegionType = useSelector(state => state?.playerUi?.dragging.toRegionType);
-    const draggingFromGroupId = useSelector(state => state?.playerUi?.dragging.fromGroupId);
-    const draggingToGroupId = useSelector(state => state?.playerUi?.dragging.toGroupId);
     const tempDragStackId = useSelector(state => state?.playerUi?.tempDragStack?.stackId);
     const thisDrag = useSelector(state => state?.playerUi?.dragging?.stackId == stackId);
     const draggingEnd = useSelector(state => state?.playerUi?.dragging?.end);
@@ -97,11 +95,12 @@ export const StackDraggable = React.memo(({
         index={stackIndex}
         isDragDisabled={playerN === null}>
         {(dragProvided, dragSnapshot) => {
-          const hoverOverStackId = store.getState().playerUi?.dragging?.hoverOverStackId;
-          console.log('onDragEnd hoverOverStackId 1:',{hoverOverStackId, draggingEnd, draggingEndDelay});
           if (!draggingEnd && dragSnapshot.isDropAnimating) {
+            const fromDroppableId = store.getState().playerUi?.dragging?.fromDroppableId;
             const hoverOverStackId = store.getState().playerUi?.dragging?.hoverOverStackId;
             const hoverOverDirection = store.getState().playerUi?.dragging?.hoverOverDirection;
+            const hoverOverDroppableId = store.getState().playerUi?.dragging?.hoverOverDroppableId;
+            const [toGroupId, toRegionType, toRegionDirection] = getGroupIdAndRegionType(hoverOverDroppableId);
             console.log('onDragEnd hoverOverStackId 2:',{hoverOverStackId, draggingEnd, draggingEndDelay});
             if (hoverOverStackId) {
               const result = {
@@ -109,30 +108,30 @@ export const StackDraggable = React.memo(({
                 "type": "DEFAULT",
                 "source": {
                   "index": stackIndex,
-                  "droppableId": draggingFromGroupId + "--" + region.type
+                  "droppableId": fromDroppableId
                 },
                 "reason": "DROP",
                 "mode": "FLUID",
                 "destination": null,
                 "combine": {
                   "draggableId": hoverOverStackId,
-                  "droppableId": draggingToGroupId + "--" + draggingToRegionType,
+                  "droppableId": hoverOverDroppableId,
                   "direction": hoverOverDirection
                 }
               }
               onDragEnd(result);
-            } else if (draggingToRegionType == "free") {
+            } else if (toRegionType == "free") {
               const result = {
                 "draggableId": stackId,
                 "type": "MANUAL",
                 "source": {
                   "index": stackIndex,
-                  "droppableId": draggingFromGroupId + "--" + region.type
+                  "droppableId": fromDroppableId
                 },
                 "reason": "DROP",
                 "mode": "FLUID",
                 "destination": {
-                  "droppableId": draggingToGroupId + "--" + draggingToRegionType,
+                  "droppableId": hoverOverDroppableId,
                   "index": numStackIdsInGroup
                 },
                 "combine": null
@@ -141,6 +140,12 @@ export const StackDraggable = React.memo(({
             }
           }
           //const isCombined = Boolean(dragSnapshot.combineTargetFor)
+          const draggingToDroppableId = store.getState().playerUi?.dragging?.hoverOverDroppableId;
+          var draggingToFree = false;
+          if (draggingToDroppableId) {
+            const [toGroupId, toRegionType, toRegionDirection] = getGroupIdAndRegionType(draggingToDroppableId);
+            draggingToFree = toRegionType === "free";
+          }
           return(
             <NaturalDragAnimation
               style={dragProvided.draggableProps.style}
@@ -148,11 +153,11 @@ export const StackDraggable = React.memo(({
               rotationMultiplier={1}>
               {style => {
                 const updatedStyle = {...style}
-                if (dragSnapshot.isDropAnimating && draggingToRegionType === "free") updatedStyle.transitionDuration = "0.0001s";
+                if (dragSnapshot.isDropAnimating && draggingToFree) updatedStyle.transitionDuration = "0.0001s";
                 if (isCombined) updatedStyle.zIndex = 0;
                 if (updatedStyle.transform && dragSnapshot.isDragging) updatedStyle.transform = updatedStyle.transform + " scale(1.1)";
                 if (region.type === "free" && !dragSnapshot.isDragging) updatedStyle.transform = "none";
-                updatedStyle.visibility = draggingToRegionType === "free" && ((thisDrag && style.transform === null) || dragSnapshot.isDropAnimating) ? "hidden" : "visible";
+                updatedStyle.visibility = draggingToFree && ((thisDrag && style.transform === null) || dragSnapshot.isDropAnimating) ? "hidden" : "visible";
                 updatedStyle.display = "inline-block";
                 // Check if mouse is within this div
 

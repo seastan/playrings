@@ -9,6 +9,7 @@ const Reorder = (list, startIndex, endIndex) => {
 };
 
 export const getGroupIdAndRegionType = (droppableId) => {
+  if (!droppableId) return [null, null, null];
   // Split the droppableId to get the groupId and regionType: "groupId--regionType" -> ["groupId", "regionType"]
   const split = droppableId.split("--");
   return split;

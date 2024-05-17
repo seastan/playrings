@@ -5,7 +5,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { setStackIds, setCardIds, setGroupById } from "../store/gameUiSlice";
 import { getGroupIdAndRegionType, reorderGroupStackIds } from "./Reorder";
 import store from "../../store";
-import { setDraggingEnd, setDraggingEndDelay, setDraggingStackId, setDraggingFromGroupId, setTempDragStack, setDraggingMouseCurrentX, setDraggingMouseCurrentY, setDraggingMouseDownX, setDraggingMouseDownY, setDraggingToGroupId, setDraggingToRegionType, setDraggingStackRectangles, setDraggingGroupRectangle, setDraggingDefault, setDraggingHoverOverStackId, setDraggingHoverOverDirection } from "../store/playerUiSlice";
+import { setDraggingEnd, setDraggingEndDelay, setDraggingStackId, setTempDragStack, setDraggingMouseCurrentX, setDraggingMouseCurrentY, setDraggingMouseDownX, setDraggingMouseDownY, setDraggingStackRectangles, setDraggingGroupRectangle, setDraggingDefault, setDraggingHoverOverStackId, setDraggingHoverOverDirection, setDraggingHoverOverDroppableId, setDraggingFromDroppableId } from "../store/playerUiSlice";
 import { Table } from "./Table";
 import { useDoActionList } from "./hooks/useDoActionList";
 import { ArcherContainer } from 'react-archer';
@@ -34,8 +34,26 @@ const isXYinBox = (x, y, boxX, boxY, boxWidth, boxHeight) => {
   return (x >= boxX && x <= boxX + boxWidth && y >= boxY && y <= boxY + boxHeight);
 }
 
-const getHoverStackIdAndDirection = (mouseCurrentX, mouseCurrentY, draggingRectangle, stackRectangles, groupRectangle) => {
+const isDirectionValid = (direction, regionType, regionDirection) => {
+  if ((direction === "left" || direction === "right") && 
+    (
+      (regionType === "row" && regionDirection === "horizontal") || 
+      (regionType === "fan" && regionDirection === "horizontal") || 
+      regionType === "free")
+    ) return true;
+  if ((direction === "top" || direction === "bottom") &&
+    (
+      (regionType === "row" && regionDirection === "vertical") || 
+      (regionType === "fan" && regionDirection === "vertical") || 
+      regionType === "free")
+    ) return true;
+  return false;
+}
+
+
+const getHoverStackIdAndDirection = (mouseCurrentX, mouseCurrentY, draggingRectangle, stackRectangles, groupRectangle, droppableId) => {
   console.log("getHoverStackIdAndDirection", mouseCurrentX, mouseCurrentY, draggingRectangle, stackRectangles, groupRectangle)
+  const [groupId, regionType, regionDirection] = getGroupIdAndRegionType(droppableId);
   if (!stackRectangles || stackRectangles.length === 0 || !groupRectangle) {
     return {stackId: null, direction: null};
   }
@@ -67,10 +85,10 @@ const getHoverStackIdAndDirection = (mouseCurrentX, mouseCurrentY, draggingRecta
       width: combineRegionWidth*2 + stackRectangle.width,
       height: 0.5*stackRectangle.height
     }
-    const isInsideLeft = isXYinBox(mouseCurrentX, mouseCurrentY, leftRectangle.left, leftRectangle.top, leftRectangle.width, leftRectangle.height);
-    const isInsideRight = isXYinBox(mouseCurrentX, mouseCurrentY, rightRectangle.left, rightRectangle.top, rightRectangle.width, rightRectangle.height);
-    const isInsideTop = isXYinBox(mouseCurrentX, mouseCurrentY, topRectangle.left, topRectangle.top, topRectangle.width, topRectangle.height);
-    const isInsideBottom = isXYinBox(mouseCurrentX, mouseCurrentY, bottomRectangle.left, bottomRectangle.top, bottomRectangle.width, bottomRectangle.height);
+    const isInsideLeft = isDirectionValid("left", regionType, regionDirection) && isXYinBox(mouseCurrentX, mouseCurrentY, leftRectangle.left, leftRectangle.top, leftRectangle.width, leftRectangle.height);
+    const isInsideRight = isDirectionValid("right", regionType, regionDirection) && isXYinBox(mouseCurrentX, mouseCurrentY, rightRectangle.left, rightRectangle.top, rightRectangle.width, rightRectangle.height);
+    const isInsideTop = isDirectionValid("top", regionType, regionDirection) && isXYinBox(mouseCurrentX, mouseCurrentY, topRectangle.left, topRectangle.top, topRectangle.width, topRectangle.height);
+    const isInsideBottom = isDirectionValid("bottom", regionType, regionDirection) && isXYinBox(mouseCurrentX, mouseCurrentY, bottomRectangle.left, bottomRectangle.top, bottomRectangle.width, bottomRectangle.height);
     if (i==0) {
       console.log("isInsideLeft", isInsideLeft, "isInsideRight", isInsideRight, "isInsideTop", isInsideTop, "isInsideBottom", isInsideBottom)
     }
@@ -99,13 +117,14 @@ export const DragContainer = React.memo(({}) => {
 
   const updateMousePosition = ev => {
     const draggingStackId = store.getState()?.playerUi?.dragging?.stackId;  
+    const hoverOverDroppableId = store.getState()?.playerUi?.dragging?.hoverOverDroppableId;  
     const draggableNode = document.querySelector(`[data-rbd-draggable-id="${draggingStackId}"]`);
     const draggableRect = draggableNode.getBoundingClientRect();
     draggableRect.stackId = draggingStackId;
     const centerX = draggableRect.left + draggableRect.width / 2;
     const centerY = draggableRect.top + draggableRect.height / 2;
 
-    const hoverData = getHoverStackIdAndDirection(centerX, centerY, draggableRect, store.getState()?.playerUi?.dragging?.stackRectangles, store.getState()?.playerUi?.dragging?.groupRectangle);
+    const hoverData = getHoverStackIdAndDirection(centerX, centerY, draggableRect, store.getState()?.playerUi?.dragging?.stackRectangles, store.getState()?.playerUi?.dragging?.groupRectangle, hoverOverDroppableId);
     console.log("hoverData", hoverData)
     if (hoverData.stackId) {
       dispatch(setDraggingHoverOverStackId(hoverData.stackId));
@@ -134,8 +153,7 @@ export const DragContainer = React.memo(({}) => {
 
   const onBeforeDragStart = (result) => {
     const droppableId = result.source.droppableId;
-    const [groupId, regionType] = getGroupIdAndRegionType(droppableId);
-    dispatch(setDraggingFromGroupId(groupId));
+    dispatch(setDraggingFromDroppableId(droppableId));
     dispatch(setDraggingStackId(result.draggableId));
     dispatch(setDraggingEnd(false));
     dispatch(setTempDragStack(null));
@@ -148,13 +166,9 @@ export const DragContainer = React.memo(({}) => {
   }
 
   const updateDraggingUi = (draggableId, droppableId) => {
-    const draggableNode = document.querySelector(`[data-rbd-draggable-id="${draggableId}"]`);
-    const draggableRect = draggableNode.getBoundingClientRect();
+    const [destGroupId, destRegionType, destRegionDirection] = getGroupIdAndRegionType(droppableId);
 
-    const [destGroupId, destRegionType] = getGroupIdAndRegionType(droppableId);
-
-    dispatch(setDraggingToGroupId(destGroupId));
-    dispatch(setDraggingToRegionType(destRegionType));
+    dispatch(setDraggingHoverOverDroppableId(droppableId));
 
     const destStackIds = store.getState()?.gameUi?.game?.groupById[destGroupId]?.stackIds;
     setTimeout(() => {
@@ -212,7 +226,7 @@ export const DragContainer = React.memo(({}) => {
     const groupById = game.groupById;
     const orig = result.source;
     const origDroppableId = orig.droppableId;
-    const [origGroupId, origRegionType] = getGroupIdAndRegionType(origDroppableId);
+    const [origGroupId, origRegionType, origRegionDirection] = getGroupIdAndRegionType(origDroppableId);
     const origGroup = groupById[origGroupId];
     const origGroupStackIds = origGroup.stackIds;
     const origStackId = origGroupStackIds[orig.index];    
@@ -228,13 +242,12 @@ export const DragContainer = React.memo(({}) => {
     console.log("Dest: ", dest)
 
     const destDroppableId = dest?.droppableId;
-    const [destGroupId, destRegionType] = getGroupIdAndRegionType(destDroppableId);
+    const [destGroupId, destRegionType, destRegionDirection] = getGroupIdAndRegionType(destDroppableId);
     const afterDragName = getAfterDragName(game, origStackId, destGroupId, allowFlip);
 
     const destGroup = groupById[destGroupId];
     const destGroupStackIds = destGroup.stackIds;
 
-    // dispatch(setDraggingFromGroupId(null));
     // dispatch(setDraggingEnd(true));
     dispatch(setDraggingDefault());
     dispatch(setDraggingEndDelay(true));
