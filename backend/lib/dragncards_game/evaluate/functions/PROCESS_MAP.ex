@@ -34,8 +34,6 @@ defmodule DragnCardsGame.Evaluate.Functions.PROCESS_MAP do
   The result of the 'PROCESS_MAP' operation.
   """
   def execute(game, code, trace) do
-    IO.puts("PROCESS_MAP")
-    IO.inspect(code)
     Evaluate.evaluate(game, Enum.at(code, 1), trace ++ ["map"])
     |> Enum.reduce(%{}, fn({k, v}, acc) ->
       k = Evaluate.evaluate(game, k, trace ++ ["key"])

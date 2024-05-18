@@ -613,6 +613,9 @@ defmodule DragnCardsGame.GameUI do
       |> resolve_action_type(action, options, user_id)
 
     game_new = if game_new["roundNumber"] > game_old["roundNumber"] do
+      game_new = game_new
+      |> put_in(["playerUi"], options["player_ui"])
+      |> put_in(["playerInfo"], gameui["playerInfo"])
       save_replay(game_new, user_id)
     else
       game_new
@@ -876,8 +879,7 @@ defmodule DragnCardsGame.GameUI do
 
   def save_replay(game, user_id) do
     game_uuid = game["id"]
-    Logger.debug("save replay")
-    IO.inspect(game["options"])
+
     game_def = Plugins.get_game_def(game["options"]["pluginId"])
     save_metadata = get_in(game_def, ["saveGame", "metadata"])
 
@@ -887,11 +889,12 @@ defmodule DragnCardsGame.GameUI do
       plugin_id: game["pluginId"],
     }
 
-
     result = case Repo.get_by(Replay, [user_id: user_id, uuid: game_uuid]) do
       nil  -> %Replay{user_id: user_id, uuid: game_uuid} # Replay not found, we build one
       replay -> replay  # Replay exists, let's use it
     end
+
+    result = result
     |> Replay.changeset(updates)
     |> Repo.insert_or_update
 

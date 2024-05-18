@@ -168,16 +168,18 @@ export const TopBarMenu = React.memo(({}) => {
     event.preventDefault();
     const reader = new FileReader();
     reader.onload = async (event) => {
+      var gameObj = null;
       try {
-        const gameObj = JSON.parse(event.target.result);
-        if (gameObj) {
-          //dispatch(setGame(gameObj));
-          doActionList(["LOG", "$ALIAS_N", " uploaded a game."])
-          gameBroadcast("game_action", {action: "set_game", options: {game: gameObj}})
-        }
+        gameObj = JSON.parse(event.target.result);
       } catch(e) {
           alert("Game must be a valid JSON file."); // error in the above string (in this case, yes)!
       }
+      if (gameObj) {
+        //dispatch(setGame(gameObj));
+        var playerUi = store.getState().playerUi;
+        playerUi = {...playerUi, droppableRefs: {}} // Drop the droppableRefs from the playerUi object
+        gameBroadcast("game_action", {action: "set_game", options: {game: gameObj, player_ui: playerUi}})
+      } 
     }
     reader.readAsText(event.target.files[0]);
     inputFileGame.current.value = "";
