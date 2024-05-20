@@ -13,27 +13,53 @@
   @type t :: Map.t()
 
   @doc """
-  load/2:  Create a game with specified options.
+  Creates a game with specified options.
   """
-  @spec load(String.t(), integer(), Map.t(), Map.t()) :: Game.t()
+  @spec load(String.t(), integer(), map(), map()) :: map()
   def load(room_slug, user_id, game_def, options) do
     Logger.debug("Loading Game")
-    Logger.debug("Options: #{inspect(options)}")
-    game = if options["replayUuid"] != nil do
-      replay_uuid = options["replayUuid"]
-      query = from(e in Replay,
+
+    game_data =
+      case options["replayUuid"] do
+        nil -> new_game(room_slug, user_id, game_def, options)
+        replay_uuid -> load_replay_game(replay_uuid, room_slug, user_id, game_def, options)
+      end
+
+    # Refresh id so that replay does not get overwritten
+    put_in(game_data.game["id"], Ecto.UUID.generate())
+  end
+
+  defp new_game(room_slug, user_id, game_def, options) do
+    %{
+      game: Game.new(room_slug, user_id, game_def, options),
+      deltas: []
+    }
+  end
+
+  defp load_replay_game(replay_uuid, room_slug, user_id, game_def, options) do
+
+    query =
+      from(e in Replay,
         where: e.uuid == ^replay_uuid,
         order_by: [desc: e.inserted_at],
-        limit: 1)
-      replay = Repo.one(query)
-      if replay.game_json do replay.game_json else Game.new(room_slug, user_id, game_def, options) end
-      # TODO: Set room name
+        limit: 1
+      )
+
+    replay = Repo.one(query)
+
+    if replay.game_json do
+      %{
+        game: replay.game_json,
+        deltas: replay.deltas
+      }
     else
-      Game.new(room_slug, user_id, game_def, options)
+      new_game(room_slug, user_id, game_def, options)
     end
-    # Refresh id so that replay does not get overwritten
-    put_in(game["id"], Ecto.UUID.generate)
+
+    # TODO: Set room name
   end
+
+
 
   @doc """
   new/2:  Create a game with specified options.

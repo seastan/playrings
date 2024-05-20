@@ -23,9 +23,9 @@ export const TopBarView = React.memo(({}) => {
           <li key={"preferences"} onClick={() => dispatch(setShowModal("settings"))}>
             {siteL10n("preferences")} {keysDiv("Shift", "ml-2")}{keysDiv("Tab")}
           </li>
-          <li key={"playersInRoom"} onClick={() => dispatch(setShowPlayersInRoom(true))}>
+          {/* <li key={"playersInRoom"} onClick={() => dispatch(setShowPlayersInRoom(true))}>
             {siteL10n("spectators")}
-          </li>
+          </li> */}
 
           <li key={"shared"}>
             

@@ -52,13 +52,20 @@ defmodule DragnCardsWeb.RoomChannel do
     %{assigns: %{room_slug: room_slug, user_id: user_id}} = socket
   ) do
 
-    state = GameUIServer.state(room_slug)
-    old_replay_step = state["replayStep"]
+    old_state = GameUIServer.state(room_slug)
+    old_replay_step = old_state["replayStep"]
     GameUIServer.game_action(room_slug, user_id, action, options)
-    state = GameUIServer.state(room_slug)
-    new_replay_step = state["replayStep"]
-    messages = state["logMessages"]
-    delta = Enum.at(state["deltas"], 0)
+    new_state = GameUIServer.state(room_slug)
+    new_replay_step = new_state["replayStep"]
+    messages = new_state["logMessages"]
+    delta = Enum.at(new_state["deltas"], 0)
+
+    # If round changed, save replay
+    if get_in(new_state, ["game", "roundNumber"]) != get_in(old_state, ["game", "roundNumber"]) do
+      GameUI.save_replay(new_state, user_id, options)
+    end
+    IO.puts("messages 1")
+    IO.inspect(messages)
 
     notify_update(socket, room_slug, user_id, old_replay_step, new_replay_step, messages, delta)
 

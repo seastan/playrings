@@ -19,24 +19,25 @@ defmodule DragnCardsGame.GameUI do
     Logger.debug("Making new GameUI")
     plugin_id = options["pluginId"]
     game_def = Plugins.get_game_def(plugin_id)
+    %{game: game, deltas: deltas} = Game.load(room_slug, user_id, game_def, options)
+
     gameui = %{
-      "game" => Game.load(room_slug, user_id, game_def, options),
+      "game" => game,
       "roomSlug" => room_slug,
       "options" => options,
       "createdAt" => DateTime.utc_now(),
       "createdBy" => user_id,
       "privacyType" => options["privacyType"],
       "playerInfo" => %{},
-      "deltas" => [],
-      "replayStep" => 0,
-      "replayLength" => 0, # Length of deltas. We need this because the delta array is not broadcast.
+      "deltas" => deltas,
+      "replayStep" => Enum.count(deltas) - 1,
+      "replayLength" => Enum.count(deltas), # Length of deltas. We need this because the delta array is not broadcast.
       "sockets" => %{},
       "logTimestamp" => nil,
       "loadedCardIds" => [],
       "logMessages" => [] # These game messages will be delivered to chat
     }
     Logger.debug("Made new GameUI")
-
 
     # Sit the host down in the first player's seat
     gameui = if game_def["vacantSeatOnNewGame"] do
@@ -612,14 +613,14 @@ defmodule DragnCardsGame.GameUI do
     game_new = game_new
       |> resolve_action_type(action, options, user_id)
 
-    game_new = if game_new["roundNumber"] > game_old["roundNumber"] do
-      game_new = game_new
-      |> put_in(["playerUi"], options["player_ui"])
-      |> put_in(["playerInfo"], gameui["playerInfo"])
-      save_replay(game_new, user_id)
-    else
-      game_new
-    end
+    # game_new = if game_new["roundNumber"] > game_old["roundNumber"] do
+    #   game_new = game_new
+    #   |> put_in(["playerUi"], options["player_ui"])
+    #   |> put_in(["playerInfo"], gameui["playerInfo"])
+    #   save_replay(game_new, user_id)
+    # else
+    #   game_new
+    # end
 
     game_new = game_new
       |> Map.delete("playerUi")
@@ -655,8 +656,8 @@ defmodule DragnCardsGame.GameUI do
         reset_game(game, user_id, options["action_list"])
       "close_room" ->
         close_room(game, user_id, options["action_list"])
-      "save_replay" ->
-        save_replay(game, user_id)
+      # "save_replay" ->
+      #   save_replay(game, user_id)
       _ ->
         game
     end
@@ -877,8 +878,15 @@ defmodule DragnCardsGame.GameUI do
     end
   end
 
-  def save_replay(game, user_id) do
+  def save_replay(gameui, user_id, options) do
+    game = gameui["game"]
+    game = game
+      |> put_in(["playerUi"], options["player_ui"])
+      |> put_in(["playerInfo"], gameui["playerInfo"])
+
     game_uuid = game["id"]
+
+    deltas = gameui["deltas"]
 
     game_def = Plugins.get_game_def(game["options"]["pluginId"])
     save_metadata = get_in(game_def, ["saveGame", "metadata"])
@@ -887,6 +895,7 @@ defmodule DragnCardsGame.GameUI do
       game_json: game,
       metadata: if save_metadata == nil do nil else Evaluate.evaluate(game, ["PROCESS_MAP", save_metadata], ["save_replay"]) end,
       plugin_id: game["pluginId"],
+      deltas: deltas,
     }
 
     result = case Repo.get_by(Replay, [user_id: user_id, uuid: game_uuid]) do
@@ -908,7 +917,8 @@ defmodule DragnCardsGame.GameUI do
         Logger.debug(inspect(changeset.errors)) # Print the errors
     end
 
-    Evaluate.evaluate(game, ["LOG", get_alias_n(game), " saved the game."], ["LOG"])
+    IO.puts("=========================== Replay saved!")
+    #Evaluate.evaluate(game, ["LOG", get_alias_n(game), " saved the game."], ["LOG"])
   end
 
 
@@ -948,7 +958,7 @@ defmodule DragnCardsGame.GameUI do
     game_old = game
     game_def = Plugins.get_game_def(game["options"]["pluginId"])
     game = Evaluate.evaluate_with_timeout(game, action_list)
-    game = save_replay(game, user_id)
+    #game = save_replay(game, user_id)
     game = Game.new(game["roomSlug"], user_id, game_def, game["options"])
     Evaluate.evaluate(game, [
       ["LOG", get_alias_n(game_old), " saved the game."],
@@ -959,7 +969,7 @@ defmodule DragnCardsGame.GameUI do
   def close_room(game, user_id, action_list) do
     game_old = game
     game = Evaluate.evaluate_with_timeout(game, action_list)
-    game = save_replay(game, user_id)
+    #game = save_replay(game, user_id)
     Evaluate.evaluate(game, ["LOG", get_alias_n(game_old), " closed the room."])
   end
 
