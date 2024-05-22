@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux';
 import { Group } from "./Group";
 import { convertToPercentage } from "./functions/common";
 import { usePlayerN } from "./hooks/usePlayerN";
+import { useFormatGroupId } from "./hooks/useFormatGroupId";
 
 
 export const TableRegion = React.memo(({
@@ -10,10 +11,10 @@ export const TableRegion = React.memo(({
   onDragEnd
 }) => {
   console.log("Rendering TableRegion", region);
-  const observingPlayerN = useSelector(state => state?.playerUi?.observingPlayerN);
   const playerN = usePlayerN();
+  const formatGroupId = useFormatGroupId();
   const browseGroupId = useSelector(state => state?.gameUi?.game?.playerData?.[playerN]?.browseGroup?.id);
-  const formattedGroupId = region.groupId.replace(/playerN/g, observingPlayerN);
+  const formattedGroupId = formatGroupId(region.groupId);
   const extraStyle = useSelector(state => state?.gameUi?.game?.groupById?.[formattedGroupId]?.extraStyle);
   const formattedRegion = {...region, groupId: formattedGroupId};
   const hideGroup = (formattedRegion.groupId === browseGroupId) || (browseGroupId && formattedRegion.hideWhileBrowsing);

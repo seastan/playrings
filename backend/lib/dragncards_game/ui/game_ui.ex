@@ -632,16 +632,12 @@ defmodule DragnCardsGame.GameUI do
     # game_new = game_new
     #   |> assign_stack_and_card_indices()
 
-    set_last_room_update(gameui)
 
     gameui = gameui
     |> put_in(["game"], game_new)
 
-    gameui = gameui
-    |> update_log(game_new["messages"])
-
-    gameui = gameui
-    |> add_delta(game_old)
+    # gameui = gameui
+    # |> update_log(game_new["messages"])
 
     gameui
   end
@@ -683,12 +679,13 @@ defmodule DragnCardsGame.GameUI do
 
   def update_log(gameui, messages) do
     gameui
-    |> put_in(["logTimestamp"], System.system_time(:millisecond))
-    |> put_in(["logMessages"], messages)
+    # |> put_in(["logTimestamp"], System.system_time(:millisecond))
+    # |> put_in(["logMessages"], messages)
   end
 
-  def add_delta(gameui, prev_game) do
+  def add_delta(gameui, prev_gameui) do
     game = gameui["game"]
+    prev_game = prev_gameui["game"]
     ds = gameui["deltas"]
     new_step = gameui["replayStep"]+1
     gameui = put_in(gameui["replayStep"], new_step)
@@ -697,7 +694,7 @@ defmodule DragnCardsGame.GameUI do
     gameui = if d do
       # add timestamp to delta
       timestamp = System.system_time(:millisecond)
-      d = put_in(d["unix_ms"], "#{timestamp}")
+      d = put_in(d["_delta_metadata"], %{"unix_ms" => "#{timestamp}", "log_messages" => game["messages"]})
       ds = Enum.slice(ds, Enum.count(ds)-gameui["replayStep"]+1..-1)
       ds = [d | ds]
       put_in(gameui["deltas"], ds)
@@ -789,7 +786,7 @@ defmodule DragnCardsGame.GameUI do
 
   def apply_delta(map, delta, direction) do
     if is_map(map) and is_map(delta) do
-      delta = Map.delete(delta, "unix_ms")
+      delta = Map.delete(delta, "_delta_metadata")
       # Loop over keys in delta and apply the changes to the map
       Enum.reduce(delta, map, fn({k, v}, acc) ->
         if is_map(v) do

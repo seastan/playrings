@@ -19,7 +19,7 @@ export const arraysEqual = (a, b) => {
 
 export const updateByDelta = (obj, delta, direction) => {
   // Ignore timestamp
-  delete delta["unix_ms"];
+  delete delta["_delta_metadata"];
   // The we loop through delta properties and update obj
   for (var p in delta) { 
     // Ignore prototypes

@@ -46,6 +46,10 @@ const initialState = {
   autoLoadedDecks: false,
   droppableRefs: {},
   dragging: draggingDefault,
+  spectatorMode: {
+    active: false,
+    peekingAll: false,
+  },
   tempDragStack: {
     stackId: null,
     toGroupId: null,
@@ -206,6 +210,12 @@ const playerUiSlice = createSlice({
     },
     setTempDragStack: (state, { payload }) => {
       state.tempDragStack = payload;
+    },
+    setSpectatorModeEnabled: (state, { payload }) => {
+      state.spectatorMode.active = payload;
+    },
+    setSpectatorModePeekingAll: (state, { payload }) => {
+      state.spectatorMode.peekingAll = payload;
     }
   }
 });
@@ -259,6 +269,8 @@ export const {
   setAlertMessage,
   setAutoLoadedDecks,
   setDroppableRefs,
-  setTempDragStack
+  setTempDragStack,
+  setSpectatorModeEnabled,
+  setSpectatorModePeekingAll
  } = playerUiSlice.actions;
 export default playerUiSlice.reducer;

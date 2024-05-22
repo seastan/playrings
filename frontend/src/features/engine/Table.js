@@ -29,6 +29,7 @@ import { useIsHost } from "./hooks/useIsHost";
 import { useDoActionList } from "./hooks/useDoActionList";
 import { useSetTouchAction } from "./hooks/useSetTouchAction";
 import { useTouchAction } from "./hooks/useTouchAction";
+import { ReplayPanel } from "./ReplayPanel";
 
 export const Table = React.memo(({onDragEnd}) => {
   const gameDef = useGameDefinition();
@@ -83,7 +84,7 @@ export const Table = React.memo(({onDragEnd}) => {
       onClick={(event) => handleTableClick(event)}>
       <DropdownMenu/>
       <Hotkeys/>
-      {/* <PlayersInRoom/> */}
+      <PlayersInRoom/>
       {/* Side panel */}
       <SideBar/>
       {/* Main panel */}
@@ -103,6 +104,8 @@ export const Table = React.memo(({onDragEnd}) => {
           </div>}
         </div>
       </div>
+      {/* Replay panel */}
+      {/* <ReplayPanel/> */}
       {/* Card hover view */}
       <GiantCard/>
       {showModal === "card" ? <SpawnExistingCardModal/> : null}

@@ -38,6 +38,13 @@ export const keysDiv = (keysString, extraClasses = "") => {
   )
 };
 
+export const playerIToPlayerIndex = (playerI) => {
+  return parseInt(playerI.replace("player","")) - 1;
+}
+
+export const playerIToPlayerNum = (playerI) => {
+  return parseInt(playerI.replace("player",""));
+}
 
 export const defaultdict = (defaultObj, defaultVal) => {
   return new Proxy(defaultObj, {

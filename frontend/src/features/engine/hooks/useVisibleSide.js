@@ -5,5 +5,6 @@ export const useVisibleSide = (cardId) => {
     const playerN = usePlayerN();
     const currentSide = useSelector(state => state?.gameUi?.game?.cardById?.[cardId]?.currentSide);
     const peekingPlayerN = useSelector(state => state?.gameUi?.game?.cardById?.[cardId]?.peeking?.[playerN]);
-    return peekingPlayerN ? "A" : currentSide;
+    const peekingAll = useSelector(state => state?.playerUi?.peekingAll);
+    return (peekingPlayerN || peekingAll) ? "A" : currentSide;
 }

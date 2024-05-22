@@ -113,6 +113,24 @@ export const validateSchema = (gameDef, path, data, schema, errors) => {
     return;
   }
 
+  // Handle groupId
+  if (expectedType === "groupId") {
+    if (mytypeof(data) !== "string") {
+      errors.push(`Invalid key in ${path}: "${data}". Key must be present in gameDef.groups.`);
+      return;
+    }
+    // Replace "{playerN}" or "{playerN+#}" with "player1"
+    var reformattedGroupId = data.replace(/{playerN+(\+\d+)?}/, "player1");
+    // Replace "playerN" or "playerN+#" with "player1"
+    reformattedGroupId = reformattedGroupId.replace(/playerN+(\+\d+)?/, "player1");
+    // Check if the group is in gameDef.groups
+    if (!gameDef.groups[reformattedGroupId]) {
+      errors.push(`Invalid key in ${path}: "${data}". Key must be present in gameDef.groups.`);
+      return;
+    }
+    return;
+  }
+
   // Check type mismatch
   if (doesTypeMatch(expectedType, mytypeof(data)) == false) {
  
@@ -129,7 +147,7 @@ export const validateSchema = (gameDef, path, data, schema, errors) => {
   // TODO: Check for memberOf
   if (schema._memberOf_ && !schema._memberOf_.includes(data)) {
       
-    // Special expception for loadGroupIds - you can start a group with "playerN" 
+    // Special exception for loadGroupIds - you can start a group with "playerN" 
     // even if it is not in gameDef.groups, and it will be resolved at load time.
     if (path.includes("loadGroupId") && data.startsWith("playerN"))
       return;

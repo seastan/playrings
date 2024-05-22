@@ -64,10 +64,8 @@ defmodule DragnCardsWeb.RoomChannel do
     if get_in(new_state, ["game", "roundNumber"]) != get_in(old_state, ["game", "roundNumber"]) do
       GameUI.save_replay(new_state, user_id, options)
     end
-    IO.puts("messages 1")
-    IO.inspect(messages)
 
-    notify_update(socket, room_slug, user_id, old_replay_step, new_replay_step, messages, delta)
+    notify_update(socket, room_slug, user_id, old_state)
 
     {:reply, {:ok, "game_action"}, socket}
   end
@@ -87,9 +85,9 @@ defmodule DragnCardsWeb.RoomChannel do
     new_replay_step = new_state["replayStep"]
     new_game = new_state["game"]
     delta = GameUI.get_delta(old_game, new_game)
-    messages = new_state["logMessages"]
+    #messages = new_state["logMessages"]
 
-    notify_update(socket, room_slug, user_id, old_replay_step, new_replay_step, messages, delta)
+    notify_update(socket, room_slug, user_id, old_state)
 
     {:reply, {:ok, "game_action"}, socket}
   end
@@ -119,7 +117,7 @@ defmodule DragnCardsWeb.RoomChannel do
       broadcast!(socket, "seats_changed", new_state["playerInfo"])
     end
 
-    notify_update(socket, room_slug, user_id, old_replay_step, new_replay_step, messages, delta)
+    notify_update(socket, room_slug, user_id, old_state)
 
     {:reply, :ok, socket}
   end
@@ -160,15 +158,15 @@ defmodule DragnCardsWeb.RoomChannel do
     end
   end
 
-  defp notify_update(socket, room_slug, user_id, old_replay_step, new_replay_step, messages, delta) do
+  defp notify_update(socket, room_slug, user_id, old_gameui) do
+    GameUIServer.process_update(room_slug, user_id, old_gameui)
+    new_gameui = GameUIServer.state(room_slug)
+    delta = Enum.at(new_gameui["deltas"], 0)
 
     payload = %{
-      "oldReplayStep" => old_replay_step,
-      "newReplayStep" => new_replay_step,
-      "delta" => delta,
-      "messages" => Enum.map(messages, fn(message_text) ->
-        ChatMessage.new(message_text, -1)
-      end)
+      "oldReplayStep" => old_gameui["replayStep"],
+      "newReplayStep" => new_gameui["replayStep"],
+      "delta" => delta
     }
     broadcast!(socket, "send_update", payload)
 

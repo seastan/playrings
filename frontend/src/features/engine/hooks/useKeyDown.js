@@ -71,6 +71,7 @@ export const useKeyDown = () => {
             dictKey = "Alt+" + dictKey;
         }
 
+        console.log("Detected hotkey: ", dictKey)
         // Prompt hotkeys
         if (sortedPromptIds.length > 0) {
             const prompt = prompts[sortedPromptIds[0]];

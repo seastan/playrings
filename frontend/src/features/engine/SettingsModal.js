@@ -36,7 +36,7 @@ export const uiSettings = {
     "label": "touchMode",
     "type": "boolean",
     "default": false
-  },
+  }
 }
 
 export const SettingsModal = React.memo(({}) => {

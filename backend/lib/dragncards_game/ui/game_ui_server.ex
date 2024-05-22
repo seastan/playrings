@@ -62,6 +62,14 @@ defmodule DragnCardsGame.GameUIServer do
   end
 
   @doc """
+  process_update/3: Process an update to the state.
+  """
+  @spec process_update(String.t(), integer, Map.t()) :: GameUI.t()
+  def process_update(game_name, user_id, old_gameui) do
+    game_exists?(game_name) && GenServer.call(via_tuple(game_name), {:process_update, user_id, old_gameui})
+  end
+
+  @doc """
   game_action/4: Perform given action on a card.
   """
   @spec game_action(String.t(), integer, String.t(), Map.t()) :: GameUI.t()
@@ -78,7 +86,7 @@ defmodule DragnCardsGame.GameUIServer do
   end
 
   @doc """
-  game_action/4: Perform given action on a card.
+  step_through/2: Perform given action on a card.
   """
   @spec step_through(String.t(), Map.t()) :: GameUI.t()
   def step_through(game_name, options) do
@@ -191,6 +199,15 @@ defmodule DragnCardsGame.GameUIServer do
         gameui = GameUI.game_action(gameui, user_id, action, options)
         put_in(gameui["error"], false)
     end
+
+    gameui
+    |> save_and_reply()
+  end
+
+  def handle_call({:process_update, _user_id, old_gameui}, _from, new_gameui) do
+
+    gameui = GameUI.add_delta(old_gameui, new_gameui)
+    GameUI.set_last_room_update(gameui)
 
     gameui
     |> save_and_reply()
