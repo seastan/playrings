@@ -30,12 +30,10 @@ defmodule DragnCardsGame.GameUI do
       "privacyType" => options["privacyType"],
       "playerInfo" => %{},
       "deltas" => deltas,
-      "replayStep" => Enum.count(deltas) - 1,
-      "replayLength" => Enum.count(deltas), # Length of deltas. We need this because the delta array is not broadcast.
+      "replayStep" => Enum.count(deltas)-1,
       "sockets" => %{},
       "logTimestamp" => nil,
-      "loadedCardIds" => [],
-      "logMessages" => [] # These game messages will be delivered to chat
+      "loadedCardIds" => []
     }
     Logger.debug("Made new GameUI")
 
@@ -679,24 +677,30 @@ defmodule DragnCardsGame.GameUI do
 
   def update_log(gameui, messages) do
     gameui
-    # |> put_in(["logTimestamp"], System.system_time(:millisecond))
-    # |> put_in(["logMessages"], messages)
   end
 
   def add_delta(gameui, prev_gameui) do
     game = gameui["game"]
     prev_game = prev_gameui["game"]
     ds = gameui["deltas"]
-    new_step = gameui["replayStep"]+1
-    gameui = put_in(gameui["replayStep"], new_step)
-    gameui = put_in(gameui["replayLength"], new_step)
+    prev_replay_step = prev_gameui["replayStep"]
+    new_replay_step = prev_replay_step+1
+    gameui = put_in(gameui["replayStep"], new_replay_step)
     d = get_delta(prev_game, game)
     gameui = if d do
       # add timestamp to delta
       timestamp = System.system_time(:millisecond)
       d = put_in(d["_delta_metadata"], %{"unix_ms" => "#{timestamp}", "log_messages" => game["messages"]})
-      ds = Enum.slice(ds, Enum.count(ds)-gameui["replayStep"]+1..-1)
-      ds = [d | ds]
+      IO.puts("prev replay step: #{prev_replay_step}")
+      IO.puts("old delta length: #{Enum.count(ds)}")
+      ds = if prev_replay_step == -1 do
+        []
+      else
+        Enum.slice(ds, 0..prev_replay_step)
+      end
+      ds = ds ++ [d]
+      IO.puts("new replay step: #{new_replay_step}")
+      IO.puts("new delta length: #{Enum.count(ds)}")
       put_in(gameui["deltas"], ds)
     else
       gameui
@@ -707,7 +711,7 @@ defmodule DragnCardsGame.GameUI do
   def step(gameui, direction) do
     case direction do
       "undo" ->
-          undo(gameui)
+        undo(gameui)
       "redo" ->
         redo(gameui)
       _ ->
@@ -716,40 +720,26 @@ defmodule DragnCardsGame.GameUI do
   end
 
   def undo(%{"replayStep" => replay_step, "deltas" => deltas, "game" => game} = gameui) do
-    if replay_step > 0 do
-      messages = game["messages"]
-      delta = Enum.at(deltas, Enum.count(deltas)-replay_step)
+    if replay_step >= 0 do
+      delta = Enum.at(deltas, replay_step)
       game = apply_delta(game, delta, "undo")
-      messages = if messages == [] do
-        [inspect(delta)]
-      else
-        messages
-      end
       gameui
-        |> update_log(Enum.map(messages, &("UNDO: " <> &1)))
         |> put_in(["game"], game)
         |> put_in(["replayStep"], replay_step-1)
     else
-      update_log(gameui, ["UNDO: Nothing to undo"])
+      gameui
     end
   end
 
   def redo(%{"replayStep" => replay_step, "deltas" => deltas, "game" => game} = gameui) do
-    if replay_step < Enum.count(deltas) do
-      delta = Enum.at(deltas,Enum.count(deltas)-replay_step-1)
+    if replay_step < Enum.count(deltas)-1 do
+      delta = Enum.at(deltas, replay_step+1)
       game = apply_delta(game, delta, "redo")
-      messages = game["messages"]
-      messages = if messages == [] do
-        [inspect(delta)]
-      else
-        messages
-      end
       gameui
-        |> update_log(Enum.map(messages, &("REDO: " <> &1)))
         |> put_in(["game"], game)
         |> put_in(["replayStep"], replay_step+1)
     else
-      update_log(gameui, ["REDO: Nothing to redo"])
+      gameui
     end
   end
 
@@ -813,6 +803,35 @@ defmodule DragnCardsGame.GameUI do
     Enum.reduce(delta_list, game, fn(delta, acc) ->
       apply_delta(acc, delta, direction)
     end)
+  end
+
+  def apply_deltas_until_index(gameui, target_replay_index) do
+    deltas = gameui["deltas"]
+    initial_replay_index = gameui["replayStep"]
+    cond do
+      target_replay_index < initial_replay_index ->
+        Enum.reduce_while(deltas, gameui, fn(_delta, acc) ->
+          replay_step = acc["replayStep"]
+          cond do
+            replay_step == target_replay_index ->
+              {:halt, acc}
+            true ->
+              {:cont, step(acc, "undo")}
+          end
+        end)
+      target_replay_index > initial_replay_index ->
+        Enum.reduce_while(deltas, gameui, fn(_delta, acc) ->
+          replay_step = acc["replayStep"]
+          cond do
+            replay_step == target_replay_index ->
+              {:halt, acc}
+            true ->
+              {:cont, step(acc, "redo")}
+          end
+        end)
+      true ->
+        gameui
+    end
   end
 
   def apply_deltas_until_round_change(gameui, direction) do
@@ -939,13 +958,14 @@ defmodule DragnCardsGame.GameUI do
 
   def step_through(gameui, options) do
     size = options["size"]
-    direction = options["direction"]
 
     cond do
       size == "single" ->
-        step(gameui, direction)
+        step(gameui, options["direction"])
       size == "round" ->
-        apply_deltas_until_round_change(gameui, direction)
+        apply_deltas_until_round_change(gameui, options["direction"])
+      size == "index" ->
+        apply_deltas_until_index(gameui, options["index"])
       true ->
         gameui
     end

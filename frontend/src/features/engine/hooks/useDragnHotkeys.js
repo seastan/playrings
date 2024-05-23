@@ -121,7 +121,7 @@ export const useDoDragnHotkey = () => {
         var playerUi = store.getState().playerUi;
         // Drop the droppableRefs from the playerUi object
         playerUi = {...playerUi, droppableRefs: {}}
-        return gameBroadcast("game_action", {action: "save_replay", options: {player_ui: playerUi}});
+        return gameBroadcast("save_replay", {options: {player_ui: playerUi}});
       case "clearTargets":
           return doActionList(dragnActionLists.clearTargets());
       case "peekAtAllFacedownCards":

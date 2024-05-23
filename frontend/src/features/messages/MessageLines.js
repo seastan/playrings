@@ -1,11 +1,10 @@
 import React, { useRef, useEffect } from "react";
-import MessageLine from "./MessageLine";
 import { useSelector } from "react-redux";
 
-export const MessageLines = ({ hover, messages }) => {
+export const MessageLines = ({ hover, messageDivs }) => {
   const touchMode = useSelector(state => state?.playerUi?.userSettings?.touchMode);
   const bottomRef = useRef();
-  console.log("Rendering ChatMessages", messages)
+  console.log("Rendering MessageLines", messageDivs)
 
   const scrollToBottom = () => {
     if (bottomRef?.current)
@@ -17,13 +16,11 @@ export const MessageLines = ({ hover, messages }) => {
 
   useEffect(() => {
     if (!touchMode) scrollToBottom();
-  }, [messages, hover, touchMode])
+  }, [messageDivs, hover, touchMode])
 
   return (
     <div>
-      {messages?.map((m, i) => {
-        return(<MessageLine key={i} message={m} />)
-      })}
+      {messageDivs}
       <div ref={bottomRef} className="list-bottom"></div>
     </div>
   );

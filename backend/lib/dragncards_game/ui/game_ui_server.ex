@@ -193,7 +193,7 @@ defmodule DragnCardsGame.GameUIServer do
           exception ->
             stack_trace = __STACKTRACE__
             Logger.error("in #{gameui["game"]["pluginName"]}\naction: #{action}\noptions: #{inspect options}\nexception: #{inspect exception}\nstack trace: #{inspect stack_trace}")
-            put_in(gameui["logMessages"], ["Error: " <> inspect(stack_trace)])
+            put_in(gameui, ["game", "messages"], gameui["game"]["messages"] ++ ["Error: " <> inspect(stack_trace)])
         end
       _ ->
         gameui = GameUI.game_action(gameui, user_id, action, options)
@@ -206,7 +206,7 @@ defmodule DragnCardsGame.GameUIServer do
 
   def handle_call({:process_update, _user_id, old_gameui}, _from, new_gameui) do
 
-    gameui = GameUI.add_delta(old_gameui, new_gameui)
+    gameui = GameUI.add_delta(new_gameui, old_gameui)
     GameUI.set_last_room_update(gameui)
 
     gameui

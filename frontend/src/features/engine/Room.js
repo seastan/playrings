@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import RoomProviders from "./RoomProviders";
 import {useSetMessages} from '../../contexts/MessagesContext';
 import useChannel from "../../hooks/useChannel";
-import { applyDeltaRedo, setGameUi, setPlayerInfo, setSockets } from "../store/gameUiSlice";
+import { applyDeltaRedo, appendDelta, setGameUi, setPlayerInfo, setSockets, setDeltas } from "../store/gameUiSlice";
 import useProfile from "../../hooks/useProfile";
 import { resetPlayerUi, setActiveCardId, setAlertMessage, setPreHotkeyActiveCardGroupId, setReplayStep } from "../store/playerUiSlice";
 import { PluginProvider } from "../../contexts/PluginContext";
@@ -34,10 +34,27 @@ export const Room = ({ slug }) => {
       if (oldReplayStep === playerUiReplayStep) {
         dispatch(applyDeltaRedo(newDelta));
         dispatch(setReplayStep(newReplayStep));
-        console.log("setmessages1", payload.messages)
-        setMessages(payload.messages);
+        const numDeltas = store.getState().gameUi.deltas.length;
+        if (newReplayStep === numDeltas) {
+          dispatch(appendDelta(newDelta));
+        } else if (newReplayStep < numDeltas) {
+          const deltas = store.getState().gameUi.deltas;
+          const newDeltas = deltas.slice(0, newReplayStep);
+          newDeltas.push(newDelta);
+          dispatch(setDeltas(newDeltas));
+        }
       } else {
-        //alert("Game out of sync.")
+        setOutOfSync(true);
+      }
+    } else if (event === "go_to_replay_step" && payload.delta !== null) {
+      const newDelta = payload.delta;
+      const playerUiReplayStep = store.getState().playerUi.replayStep;
+      const oldReplayStep = payload.oldReplayStep;
+      const newReplayStep = payload.newReplayStep;
+      if (oldReplayStep === playerUiReplayStep) {
+        dispatch(applyDeltaRedo(newDelta));
+        dispatch(setReplayStep(newReplayStep));
+      } else {
         setOutOfSync(true);
       }
     } else if (event === "current_state" && payload !== null) {

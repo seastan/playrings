@@ -68,9 +68,15 @@ const gameUiSlice = createSlice({
     },
     setReplayStep: (state, { payload }) => {
       state.replayStep = payload;
+    },
+    setDeltas: (state, { payload }) => {
+      state.deltas = payload;
+    },
+    appendDelta: (state, { payload }) => {
+      state.deltas.push(payload);
     }
-  },
+  }
 });
 
-export const { setGameUi, applyDeltaRedo, applyDeltaUndo, setGame, setRoomSlug, setPlayerInfo, setSockets, setGroupById, setStackIds, setCardIds, setValues } = gameUiSlice.actions;
+export const { setGameUi, applyDeltaRedo, applyDeltaUndo, setGame, setRoomSlug, setPlayerInfo, setSockets, setGroupById, setStackIds, setCardIds, setValues, setDeltas, appendDelta } = gameUiSlice.actions;
 export default gameUiSlice.reducer;

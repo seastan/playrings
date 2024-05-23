@@ -56,9 +56,6 @@ defmodule DragnCardsWeb.RoomChannel do
     old_replay_step = old_state["replayStep"]
     GameUIServer.game_action(room_slug, user_id, action, options)
     new_state = GameUIServer.state(room_slug)
-    new_replay_step = new_state["replayStep"]
-    messages = new_state["logMessages"]
-    delta = Enum.at(new_state["deltas"], 0)
 
     # If round changed, save replay
     if get_in(new_state, ["game", "roundNumber"]) != get_in(old_state, ["game", "roundNumber"]) do
@@ -68,6 +65,28 @@ defmodule DragnCardsWeb.RoomChannel do
     notify_update(socket, room_slug, user_id, old_state)
 
     {:reply, {:ok, "game_action"}, socket}
+  end
+
+  def handle_in(
+    "save_replay",
+    %{
+      "options" => options,
+      "timestamp" => _timestamp,
+    },
+    %{assigns: %{room_slug: room_slug, user_id: user_id}} = socket
+  ) do
+
+    new_state = GameUIServer.state(room_slug)
+    GameUI.save_replay(new_state, user_id, options)
+
+    payload = %{
+      "level" => "info",
+      "message" => "Game saved"
+    }
+
+    notify_alert(socket, room_slug, user_id, payload)
+
+    {:reply, {:ok, "save_replay"}, socket}
   end
 
   def handle_in(
@@ -85,9 +104,13 @@ defmodule DragnCardsWeb.RoomChannel do
     new_replay_step = new_state["replayStep"]
     new_game = new_state["game"]
     delta = GameUI.get_delta(old_game, new_game)
-    #messages = new_state["logMessages"]
 
-    notify_update(socket, room_slug, user_id, old_state)
+    payload = %{
+      "oldReplayStep" => old_state["replayStep"],
+      "newReplayStep" => new_state["replayStep"],
+      "delta" => delta
+    }
+    broadcast!(socket, "go_to_replay_step", payload)
 
     {:reply, {:ok, "game_action"}, socket}
   end
@@ -107,11 +130,6 @@ defmodule DragnCardsWeb.RoomChannel do
     old_game = old_state["game"]
     GameUIServer.set_seat(room_slug, user_id, player_i, new_user_id)
     new_state = GameUIServer.state(room_slug)
-    new_replay_step = new_state["replayStep"]
-    new_game = new_state["game"]
-    delta = GameUI.get_delta(old_game, new_game)
-    messages = new_state["logMessages"]
-
 
     if new_state["playerInfo"] != nil do
       broadcast!(socket, "seats_changed", new_state["playerInfo"])
@@ -159,9 +177,10 @@ defmodule DragnCardsWeb.RoomChannel do
   end
 
   defp notify_update(socket, room_slug, user_id, old_gameui) do
+
     GameUIServer.process_update(room_slug, user_id, old_gameui)
     new_gameui = GameUIServer.state(room_slug)
-    delta = Enum.at(new_gameui["deltas"], 0)
+    delta = Enum.at(new_gameui["deltas"], -1)
 
     payload = %{
       "oldReplayStep" => old_gameui["replayStep"],
@@ -181,6 +200,13 @@ defmodule DragnCardsWeb.RoomChannel do
     {:noreply, socket}
   end
 
+  defp notify_alert(socket, room_slug, user_id, payload) do
+
+    broadcast!(socket, "send_alert", payload)
+
+    {:noreply, socket}
+  end
+
   # Define the handle_out function for the intercepted event
   def handle_out("send_state", triggered_by, socket) do
     new_client_state = client_state(socket)
@@ -195,6 +221,15 @@ defmodule DragnCardsWeb.RoomChannel do
     new_client_update = client_update(payload, socket.assigns)
     if new_client_update != nil do
       push(socket, "state_update", new_client_update)
+    end
+    {:noreply, socket}
+  end
+
+  # Define the handle_out function for the intercepted event
+  def handle_out("go_to_replay_step", payload, socket) do
+    new_client_update = client_update(payload, socket.assigns)
+    if new_client_update != nil do
+      push(socket, "go_to_replay_step", new_client_update)
     end
     {:noreply, socket}
   end

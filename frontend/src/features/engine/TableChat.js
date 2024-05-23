@@ -8,7 +8,6 @@ var delayBroadcast;
 export const TableChat = React.memo(({
   region
 }) => {
-  const {gameBroadcast, chatBroadcast} = useContext(BroadcastContext);
   const [chatHover, setChatHover] = useState(false);
 
 
@@ -36,7 +35,7 @@ export const TableChat = React.memo(({
       style={{height: chatHover ? "100vh" : "100%", width:'100%', zIndex: chatHover ? 1e6 : 1e3}}
       onMouseEnter={() => handleStartChatHover()}
       onMouseLeave={() => handleStopChatHover()}>
-      <MessageBox hover={chatHover} chatBroadcast={chatBroadcast}/>
+      <MessageBox hover={chatHover}/>
     </div>
   </div>
   )
