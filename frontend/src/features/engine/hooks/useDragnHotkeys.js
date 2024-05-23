@@ -10,6 +10,7 @@ import { useActiveCardId } from "./useActiveCardId";
 import { useSendLocalMessage } from "./useSendLocalMessage";
 import { useCurrentFace } from "./useCurrentFace";
 import { useCurrentSide } from "./useCurrentSide";
+import useProfile from "../../../hooks/useProfile";
 
 export const dragnHotkeys = [
   {"key": "T", "actionList": "targetCard", "label": "targetCard"},
@@ -94,6 +95,7 @@ export const dragnTouchButtons = {
 }
   
 export const useDoDragnHotkey = () => {
+  const user = useProfile();
   const doActionList = useDoActionList();
   const dispatch = useDispatch();
   const importViaUrl = useImportViaUrl();
@@ -125,7 +127,12 @@ export const useDoDragnHotkey = () => {
       case "clearTargets":
           return doActionList(dragnActionLists.clearTargets());
       case "peekAtAllFacedownCards":
-          return dispatch(setSpectatorModePeekingAll(!store.getState().playerUi.peekingAll));
+          const isSpectator = store.getState().gameUi.spectators[user?.id];
+          if (!isSpectator) {
+            return sendLocalMessage("Only omniscient spectators cannot peek at facedown cards. The host can grant this permission in the chat section of the messages panel.");
+          } else {
+            return dispatch(setSpectatorModePeekingAll(!store.getState().playerUi?.spectatorMode?.peekingAll));
+          }
       case "undo":
           return gameBroadcast("step_through", {options: {size: "single", direction: "undo"}});
       case "redo":

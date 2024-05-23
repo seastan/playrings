@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import RoomProviders from "./RoomProviders";
 import {useSetMessages} from '../../contexts/MessagesContext';
 import useChannel from "../../hooks/useChannel";
-import { applyDeltaRedo, appendDelta, setGameUi, setPlayerInfo, setSockets, setDeltas } from "../store/gameUiSlice";
+import { applyDeltaRedo, appendDelta, setGameUi, setPlayerInfo, setSockets, setDeltas, setSpectators } from "../store/gameUiSlice";
 import useProfile from "../../hooks/useProfile";
 import { resetPlayerUi, setActiveCardId, setAlert, setPreHotkeyActiveCardGroupId, setReplayStep } from "../store/playerUiSlice";
 import { PluginProvider } from "../../contexts/PluginContext";
@@ -85,6 +85,8 @@ export const Room = ({ slug }) => {
         ...payload,
         timestamp: Date.now()
       }));
+    } else if (event === "spectators_changed" && payload !== null) {
+      dispatch(setSpectators(payload));
     } else if (event === "seats_changed" && payload !== null) {
       dispatch(setPlayerInfo(payload));
     } else if (event === "users_changed" && payload !== null) {
@@ -92,8 +94,8 @@ export const Room = ({ slug }) => {
     } else if (event === "phx_error") {
       dispatch(setAlert({
         level: "crash",
-        text: "Your room has closed or timed out. If you were in the middle of playing, it may have crashed. \
-          If so, please go to the Menu and download the game state file. \
+        text: "Unknown error. \
+          If this issue persists, please go to the Menu and download the game state file. \
           Then, create a new room and upload that file to continue where you left off.",
         timestamp: Date.now()
       }));

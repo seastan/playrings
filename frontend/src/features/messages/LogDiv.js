@@ -1,18 +1,9 @@
-import React, { useEffect, useState, useContext } from "react";
+import React from "react";
 import MessageLines from "./MessageLines";
-import { useSelector } from "react-redux";
-import { LogMessageDiv } from "./LogMessageDiv";
+import { useAllLogMessageDivs } from "../engine/hooks/useAllLogMessageDivs";
 
 export const LogDiv = ({ hover }) => {
-  const deltas = useSelector(state => state?.gameUi?.deltas);
-
-  console.log("Rendering Log", deltas)
-
-  const allLogMessageDivs = deltas.map((delta, deltaIndex) => {
-    return(<LogMessageDiv key={deltaIndex} delta={delta} deltaIndex={deltaIndex}/>)
-  })
-
-  console.log("Rendering allLogMessageDivs", allLogMessageDivs)
+  const allLogMessageDivs = useAllLogMessageDivs();
 
   return (
     <div className="flex flex-col" style={{height: "100%"}}>

@@ -64,7 +64,7 @@ export const Alert = React.memo(({
         left: "70%", 
         top: "2%", 
         width: "25%",
-        zIndex: 3e3,
+        zIndex: 3e6,
         textAlign: "center",
         opacity: 0.9,
       }}>

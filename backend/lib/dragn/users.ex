@@ -37,4 +37,25 @@ defmodule DragnCards.Users do
       user.supporter_level
     end
   end
+
+  def anon_user_alias() do
+    # Generate random number from 1 to 100000
+    rand_num = :rand.uniform(100000) |> Integer.to_string
+    # Pad with zeros
+    rand_num = String.pad_leading(rand_num, 5, "0")
+    "u#{rand_num}"
+  end
+
+  def get_alias(nil) do
+    anon_user_alias()
+  end
+
+  def get_alias(user_id) do
+    user = get_user(user_id)
+    if user == nil do
+      anon_user_alias()
+    else
+      user.alias
+    end
+  end
 end

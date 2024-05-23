@@ -31,7 +31,7 @@ export const ChatInput = ({ chatBroadcast }) => {
     }
   );
   return (
-    <form className="h-full" onSubmit={handleSubmit}>
+    <form className="h-full w-full" onSubmit={handleSubmit}>
       <input
         type="text"
         name="chat"

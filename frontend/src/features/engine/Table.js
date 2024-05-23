@@ -84,7 +84,6 @@ export const Table = React.memo(({onDragEnd}) => {
       onClick={(event) => handleTableClick(event)}>
       <DropdownMenu/>
       <Hotkeys/>
-      <PlayersInRoom/>
       {/* Side panel */}
       <SideBar/>
       {/* Main panel */}

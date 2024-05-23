@@ -51,7 +51,6 @@ defmodule DragnCardsWeb.MyPluginsController do
   # Update: Update plugin
   @spec update(Conn.t(), map()) :: Conn.t()
   def update(conn, %{"plugin" => plugin_params}) do
-    IO.inspect(plugin_params)
     plugin = Plugins.get_plugin!(plugin_params["id"])
     case Plugins.update_plugin(plugin, plugin_params) do
       {:ok, plugin} ->

@@ -4,6 +4,7 @@ import MessageLines from "./MessageLines";
 import ChatInput from "./ChatInput";
 import { useMessageTextToHtml } from "./MessageLine";
 import BroadcastContext from "../../contexts/BroadcastContext";
+import { PlayersInRoom } from "../engine/PlayersInRoom";
 
 export const ChatDiv = ({ hover }) => {
   const {gameBroadcast, chatBroadcast} = useContext(BroadcastContext);
@@ -18,17 +19,22 @@ export const ChatDiv = ({ hover }) => {
   }, [newMessageObjects]);
 
   const allChatMessageDivs = allChatMessageObjects.map((m, i) => {
-    return <div className="text-white">{messageTextToHtml(m.text)}</div>
+    return <div className="pl-2 text-white">{messageTextToHtml(m.text)}</div>
   })
   console.log("allChatMessageDivs", allChatMessageDivs)
 
   return (
-    <div className="flex flex-col" style={{height: "100%"}}>
-      <div className="bg-gray-900 overflow-y-auto" style={{height: `calc(100% - 3vh)`}}>
-        <MessageLines hover={hover} messageDivs={allChatMessageDivs} />
+    <div className="flex" style={{height: "100%"}}>
+      <div style={{height: "100%", width: "35%", borderRight: "1px solid gray"}}>
+        <PlayersInRoom/>
       </div>
-      <div className="text-center float-left" style={{height: "3vh", width: "100%"}}>
-        <ChatInput chatBroadcast={chatBroadcast}/>
+      <div className="flex flex-col" style={{height: "100%", width: "65%"}}>
+        <div className="bg-gray-900 overflow-y-auto" style={{height: `calc(100% - 3vh)`}}>
+          <MessageLines hover={hover} messageDivs={allChatMessageDivs} />
+        </div>
+        <div className="text-center float-left" style={{height: "3vh", width: "100%"}}>
+          <ChatInput chatBroadcast={chatBroadcast}/>
+        </div>
       </div>
     </div>
 

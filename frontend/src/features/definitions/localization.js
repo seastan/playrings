@@ -1,7 +1,7 @@
 export const siteL10n = {
-  "peekAtAllFaceDownCards": {
-    "English": "Peek at all face-down cards",
-    "Chinese": "查看所有背面朝上的卡牌"
+  "peekAtAllFacedownCards": {
+    "English": "Peek at all face-down cards (omniscient mode only)",
+    "Chinese": "查看所有背面朝上的卡牌（仅限旁观者模式）"
   },
   "numberOfPlayers": {
     "English": "Number of players",

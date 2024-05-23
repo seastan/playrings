@@ -22,8 +22,7 @@ defmodule DragnCardsWeb.RoomChannel do
     {:ok, socket}
   end
 
-  def handle_info(:after_join, %{assigns: %{room_slug: room_slug, user_id: user_id}, channel_pid: pid} = socket) do
-    # state = GameUIServer.state(room_slug)
+  def handle_info(:after_join, %{assigns: %{room_slug: room_slug, user_id: user_id}, transport_pid: pid} = socket) do
     GameUIServer.add_player_to_room(room_slug, user_id, pid)
     state = GameUIServer.state(room_slug)
     client_state = client_state(socket)
@@ -143,6 +142,36 @@ defmodule DragnCardsWeb.RoomChannel do
   end
 
   def handle_in(
+    "set_spectator",
+    %{
+      "user_id" => spectator_user_id,
+      "value" => value,
+    },
+    %{assigns: %{room_slug: room_slug, user_id: user_id}} = socket
+  ) do
+
+    spectator_alias = Users.get_alias(spectator_user_id)
+    GameUIServer.set_spectator(room_slug, user_id, spectator_user_id, value)
+    state = GameUIServer.state(room_slug)
+
+    broadcast!(socket, "spectators_changed", state["spectators"])
+
+    message = if value do
+      "#{spectator_alias} is now an omniscient spectator and has the power to see facedown cards."
+    else
+      "#{spectator_alias} is no longer an omniscient spectator."
+    end
+
+    payload = %{
+      "level" => "info",
+      "text" => message
+    }
+    notify_alert(socket, room_slug, user_id, payload)
+
+    {:reply, :ok, socket}
+  end
+
+  def handle_in(
     "reset_game",
     %{
       "options" => options,
@@ -174,9 +203,8 @@ defmodule DragnCardsWeb.RoomChannel do
     {:reply, :ok, socket}
   end
 
-  def terminate({:normal, _payload}, _socket) do
-    # Closed normally. Do nothing.
-    {:ok}
+  def terminate({:normal, _payload}, socket) do
+    on_terminate(socket)
   end
 
   def terminate({:shutdown, :left}, socket) do
@@ -191,12 +219,14 @@ defmodule DragnCardsWeb.RoomChannel do
     on_terminate(socket)
   end
 
-  defp on_terminate(%{assigns: %{room_slug: room_slug, user_id: user_id}, channel_pid: _pid} = socket) do
+  defp on_terminate(%{assigns: %{room_slug: room_slug, user_id: user_id}, transport_pid: pid} = socket) do
+    GameUIServer.remove_player_from_room(room_slug, user_id, pid)
     state = GameUIServer.state(room_slug)
     if state["sockets"] != nil do
       broadcast!(socket, "users_changed", state["sockets"])
     end
   end
+
 
   defp notify_update(socket, room_slug, user_id, old_gameui) do
 

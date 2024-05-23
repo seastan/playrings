@@ -47,7 +47,6 @@ const initialState = {
   droppableRefs: {},
   dragging: draggingDefault,
   spectatorMode: {
-    active: false,
     peekingAll: false,
   },
   tempDragStack: {

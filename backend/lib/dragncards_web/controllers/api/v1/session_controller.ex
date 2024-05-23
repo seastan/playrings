@@ -48,7 +48,6 @@ defmodule DragnCardsWeb.API.V1.SessionController do
         |> json(%{error: %{status: 401, message: "Invalid token"}})
 
       {conn, _user} ->
-        # "Renew work!" |> IO.inspect()
         IO.puts("session renew success")
         IO.inspect(conn)
         json(conn, %{

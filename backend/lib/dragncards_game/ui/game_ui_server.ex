@@ -7,6 +7,7 @@ defmodule DragnCardsGame.GameUIServer do
 
   require Logger
   alias DragnCardsGame.{GameUI, GameRegistry, User, PlayerInfo}
+  alias DragnCards.Users
 
   def is_player(gameui, user_id) do
     ids = gameui["playerInfo"]
@@ -110,15 +111,36 @@ defmodule DragnCardsGame.GameUIServer do
   end
 
   @doc """
+  set_spectator/4: Set a spectator value.
+  """
+  @spec set_spectator(String.t(), integer, String.t(), integer) :: GameUI.t()
+  def set_spectator(game_name, user_id, spectator_user_id, value) do
+    game_exists?(game_name) && GenServer.call(via_tuple(game_name), {:set_spectator, user_id, spectator_user_id, value})
+  end
+
+  @doc """
   add_player_to_room/2: Add a player to the room.
   """
   @spec add_player_to_room(String.t(), integer, pid()) :: GameUI.t()
-  def add_player_to_room(game_name, user_id, _pid) do
+  def add_player_to_room(game_name, user_id, connection_pid) do
     case GenServer.whereis(via_tuple(game_name)) do
       nil ->
         {:error, :not_found}
       pid ->
-        GenServer.call(pid, {:add_player_to_room, user_id, pid})
+        GenServer.call(pid, {:add_player_to_room, user_id, connection_pid})
+    end
+  end
+
+  @doc """
+  remove_player_from_room/2: Add a player to the room.
+  """
+  @spec remove_player_from_room(String.t(), integer, pid()) :: GameUI.t()
+  def remove_player_from_room(game_name, user_id, connection_pid) do
+    case GenServer.whereis(via_tuple(game_name)) do
+      nil ->
+        {:error, :not_found}
+      pid ->
+        GenServer.call(pid, {:remove_player_from_room, user_id, connection_pid})
     end
   end
 
@@ -247,7 +269,6 @@ defmodule DragnCardsGame.GameUIServer do
       |> put_in(["error"], false)
     rescue
       e in RuntimeError ->
-        IO.inspect(e)
         put_in(gameui["error"],true)
     end
     |> save_and_reply()
@@ -263,14 +284,44 @@ defmodule DragnCardsGame.GameUIServer do
 
     rescue
       e in RuntimeError ->
-        IO.inspect(e)
+        put_in(gameui["error"],true)
+    end
+    |> save_and_reply()
+  end
+
+  def handle_call({:set_spectator, _user_id, spectator_user_id, value}, _from, gameui) do
+    try do
+      # Verify that spectator_user_id is in gameui["sockets"]
+      if Map.has_key?(gameui["sockets"], spectator_user_id) do
+        put_in(gameui, ["spectators", spectator_user_id], value)
+      else
+        raise RuntimeError, "User not found in room"
+      end
+    rescue
+      e in RuntimeError ->
         put_in(gameui["error"],true)
     end
     |> save_and_reply()
   end
 
   def handle_call({:add_player_to_room, user_id, pid}, _from, gameui) do
-    put_in(gameui, ["sockets", pid_to_string(pid)], user_id)
+    socket_id = if user_id == nil do pid_to_string(pid) else user_id end
+    socket_obj = %{
+      user_id: user_id,
+      alias: Users.get_alias(user_id),
+      is_logged_in: user_id != nil
+    }
+    gameui = put_in(gameui, ["sockets", socket_id], socket_obj)
+    gameui
+    |> save_and_reply()
+  end
+
+  def handle_call({:remove_player_from_room, user_id, pid}, _from, gameui) do
+    socket_id = if user_id == nil do pid_to_string(pid) else user_id end
+    old_sockets = gameui["sockets"]
+    new_sockets = Map.delete(old_sockets, socket_id)
+    gameui = put_in(gameui, ["sockets"], new_sockets)
+    gameui
     |> save_and_reply()
   end
 
