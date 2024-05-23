@@ -14,7 +14,7 @@ export const PatreonModal = ({
     const tiers = [
         { 
           amount: 300, 
-          benefits: ["Unlimited saved games"] 
+          benefits: ["Unlimited saved games", "Saved games include full replay"] 
         },
         { 
           amount: 500, 
