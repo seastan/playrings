@@ -29,7 +29,6 @@ import { useIsHost } from "./hooks/useIsHost";
 import { useDoActionList } from "./hooks/useDoActionList";
 import { useSetTouchAction } from "./hooks/useSetTouchAction";
 import { useTouchAction } from "./hooks/useTouchAction";
-import { ReplayPanel } from "./ReplayPanel";
 
 export const Table = React.memo(({onDragEnd}) => {
   const gameDef = useGameDefinition();
