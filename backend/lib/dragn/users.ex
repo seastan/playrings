@@ -58,4 +58,13 @@ defmodule DragnCards.Users do
       user.alias
     end
   end
+
+  def get_replay_save_permission(user_id) do
+    user = get_user(user_id)
+    if user == nil do
+      false
+    else
+      get_supporter_level(user_id) >= 3
+    end
+  end
 end

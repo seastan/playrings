@@ -651,8 +651,6 @@ defmodule DragnCardsGame.GameUI do
         reset_game(game, user_id, options["action_list"])
       "close_room" ->
         close_room(game, user_id, options["action_list"])
-      # "save_replay" ->
-      #   save_replay(game, user_id)
       _ ->
         game
     end
@@ -692,16 +690,12 @@ defmodule DragnCardsGame.GameUI do
       # add timestamp to delta
       timestamp = System.system_time(:millisecond)
       d = put_in(d["_delta_metadata"], %{"unix_ms" => "#{timestamp}", "log_messages" => game["messages"]})
-      IO.puts("prev replay step: #{prev_replay_step}")
-      IO.puts("old delta length: #{Enum.count(ds)}")
       ds = if prev_replay_step == -1 do
         []
       else
         Enum.slice(ds, 0..prev_replay_step)
       end
       ds = ds ++ [d]
-      IO.puts("new replay step: #{new_replay_step}")
-      IO.puts("new delta length: #{Enum.count(ds)}")
       put_in(gameui["deltas"], ds)
     else
       gameui
@@ -895,18 +889,23 @@ defmodule DragnCardsGame.GameUI do
     end
   end
 
-  def trim_saved_deltas(deltas, user_id) do
+  def does_user_save_full_replay(user_id) do
     supporter_level = Users.get_supporter_level(user_id)
-    trim_deltas = supporter_level < 3
-    if trim_deltas do
+    supporter_level >= 3
+  end
+
+  def trim_saved_deltas(deltas, user_id) do
+    save_full_replay = Users.get_replay_save_permission(user_id)
+
+    if save_full_replay do
+      deltas
+    else
       start_index = if Enum.count(deltas) > 5 do
         Enum.count(deltas)-5
       else
         0
       end
       Enum.slice(deltas, start_index..-1)
-    else
-      deltas
     end
   end
 
@@ -950,8 +949,12 @@ defmodule DragnCardsGame.GameUI do
         Logger.debug(inspect(changeset.errors)) # Print the errors
     end
 
-    IO.puts("=========================== Replay saved!")
-    #Evaluate.evaluate(game, ["LOG", get_alias_n(game), " saved the game."], ["LOG"])
+    case Users.get_replay_save_permission(user_id) do
+      true ->
+        {:ok, "Full replay saved."}
+      false ->
+        {:ok, "Current game saved. To save full replays, become a supporter."}
+    end
   end
 
 

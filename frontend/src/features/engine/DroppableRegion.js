@@ -20,14 +20,13 @@ const Container = styled.div`
   -moz-transition: all 0.2s;
   -o-transition: all 0.2s;
   transition: all 0.2s;
-  
   height: 100%;
   width: 100%;
   user-select: none;
   overflow-x: ${props => props.direction === "vertical" ? "hidden" : "auto"};
-  overflow-y: ${props => props.direction === "vertical" ? "auto" : "hidden"};
   max-height: 100%;
   position: relative;
+  overflow: visible;
 `;
 
 export const DropZone = styled.div`

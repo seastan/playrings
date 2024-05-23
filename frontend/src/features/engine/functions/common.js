@@ -24,9 +24,9 @@ export const getPlayerIColor = (playerI) => {
 }
 
 export const keyDiv = (key, extraClasses = "") => {
-  if (key.length > 6) return <div className={keyClass + " " + extraClasses} style={keyStyleXL}>{key}</div>
-  else if (key.length > 1) return <div className={keyClass + " " + extraClasses} style={keyStyleL}>{key}</div>
-  else return <div className={keyClass + " " + extraClasses} style={keyStyle}>{key}</div>
+  if (key.length > 6) return <div key={key} className={keyClass + " " + extraClasses} style={keyStyleXL}>{key}</div>
+  else if (key.length > 1) return <div key={key} className={keyClass + " " + extraClasses} style={keyStyleL}>{key}</div>
+  else return <div key={key} className={keyClass + " " + extraClasses} style={keyStyle}>{key}</div>
 }
 
 export const keysDiv = (keysString, extraClasses = "") => {

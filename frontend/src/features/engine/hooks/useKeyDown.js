@@ -83,8 +83,12 @@ export const useKeyDown = () => {
             }
         }
 
+        const gameDefTokenHotkeys = gameDef?.hotkeys?.token || [];
+        const gameDefCardHotkeys = gameDef?.hotkeys?.card || [];
+        const gameDefGameHotkeys = gameDef?.hotkeys?.game || [];
+
         var hotkeyTokenType = null;
-        for (var keyObj of gameDef?.hotkeys.token) {
+        for (var keyObj of gameDefTokenHotkeys) {
             var increment = 0;
             if (keyMatch(keyObj.key, dictKey)) increment = 1;
             if (keyMatch("Ctrl+"+keyObj.key, dictKey)) increment = 5;
@@ -106,13 +110,13 @@ export const useKeyDown = () => {
             sendLocalMessage(`The selected hotkey attempted to add a token that is not valid for this card type.`);
             return;
         }
-        for (var keyObj of gameDef?.hotkeys.game) {
+        for (var keyObj of gameDefGameHotkeys) {
             if (keyMatch(keyObj.key, dictKey)) {
                 doActionList(keyObj.actionList)
                 return;
             }
         }
-        for (var keyObj of gameDef?.hotkeys.card) {
+        for (var keyObj of gameDefCardHotkeys) {
             if (keyMatch(keyObj.key, dictKey)) {
                 if (!activeCardId) {
                     sendLocalMessage(`You must hover over a card to use the "${dictKey}" hotkey.`);

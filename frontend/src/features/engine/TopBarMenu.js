@@ -243,7 +243,7 @@ export const TopBarMenu = React.memo(({}) => {
     const items = [];
     for (let i = gameDef.minPlayers; i <= gameDef.maxPlayers; i++) {
       items.push(
-        <li key={"set_num_players"} onClick={() => handleMenuClick({action:"set_num_players", value: i})}>{i}</li>
+        <li key={i} onClick={() => handleMenuClick({action:"set_num_players", value: i})}>{i}</li>
       );
     }
     return items;

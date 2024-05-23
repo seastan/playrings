@@ -70,7 +70,7 @@ export const Alert = React.memo(({
       }}>
       <div className={`m-3 p-1 ${alertColor} rounded`} style={promptStyle}>
         <div className="">{alertText}</div>
-        <div style={{ position: 'relative', height: '4px', marginTop: '4px' }}>
+        <div style={{ position: 'relative', height: '2px', marginTop: '2px' }}>
           <div style={{
             width: `${progress}%`,
             height: '100%',

@@ -59,7 +59,15 @@ defmodule DragnCardsWeb.RoomChannel do
 
     # If round changed, save replay
     if get_in(new_state, ["game", "roundNumber"]) != get_in(old_state, ["game", "roundNumber"]) do
-      GameUI.save_replay(new_state, user_id, options)
+      alert_text = case GameUI.save_replay(new_state, user_id, options) do
+        {:ok, message} -> message
+        _ -> "Failed to save game."
+      end
+
+      notify_alert(socket, room_slug, user_id, %{
+        "level" => "success",
+        "text" => alert_text
+      })
     end
 
     notify_update(socket, room_slug, user_id, old_state)
@@ -78,14 +86,15 @@ defmodule DragnCardsWeb.RoomChannel do
 
     new_state = GameUIServer.state(room_slug)
 
-    GameUI.save_replay(new_state, user_id, options)
+    alert_text = case GameUI.save_replay(new_state, user_id, options) do
+      {:ok, message} -> message
+      _ -> "Failed to save game."
+    end
 
-    payload = %{
+    notify_alert(socket, room_slug, user_id, %{
       "level" => "success",
-      "text" => "Game saved"
-    }
-
-    notify_alert(socket, room_slug, user_id, payload)
+      "text" => alert_text
+    })
 
     {:reply, {:ok, "save_replay"}, socket}
   end

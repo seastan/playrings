@@ -131,7 +131,13 @@ export const useDoDragnHotkey = () => {
           if (!isSpectator) {
             return sendLocalMessage("Only omniscient spectators cannot peek at facedown cards. The host can grant this permission in the chat section of the messages panel.");
           } else {
-            return dispatch(setSpectatorModePeekingAll(!store.getState().playerUi?.spectatorMode?.peekingAll));
+            const isPeekingAll = store.getState().playerUi.spectatorMode.peekingAll;
+            if (isPeekingAll) {
+              sendLocalMessage("You are no longer peeking at all facedown cards.");
+            } else {
+              sendLocalMessage("You are now peeking at all facedown cards.");
+            }
+            return dispatch(setSpectatorModePeekingAll(!isPeekingAll));
           }
       case "undo":
           return gameBroadcast("step_through", {options: {size: "single", direction: "undo"}});

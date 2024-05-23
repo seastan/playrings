@@ -23,7 +23,7 @@ export const LogMessageDiv = ({ delta, deltaIndex }) => {
         </div>}
         <div className="text-white pl-1" style={{width: "100%"}}>
           {delta._delta_metadata?.log_messages.map((m, i) => {
-            return <div>{messageTextToHtml(m)}</div>
+            return <div key={i}>{messageTextToHtml(m)}</div>
           })}
         </div>
       </div>

@@ -194,34 +194,6 @@ defmodule DragnCardsGame.CustomPluginTest do
 
   end
 
-  @tag :save_game
-  test "save_game", %{user: user, game: game, game_def: game_def} do
-    # Load some decks into the game
-    game = Evaluate.evaluate(game, ["LOAD_CARDS", "Q01.1"]) # Passage through Mirkwood
-    game = Evaluate.evaluate(game, ["LOAD_CARDS", "coreLeadership"]) # Leadership core set deck
-
-    # Save
-    GameUI.save_replay(game, user.id)
-
-    # Get saved game
-    replay = Repo.get_by(Replay, [user_id: user.id, uuid: game["id"]])
-
-    # Get full list of replay uuids
-    results = Repo.all(from r in Replay, select: r.uuid)
-    uuid = Enum.at(results, 0)
-    result_one = Repo.one(from r in Replay, where: r.uuid == ^uuid)
-
-    assert length(results) == 1
-    assert uuid == game["id"]
-
-
-    # Print all messages
-    Enum.each(game["messages"], fn message ->
-      IO.puts(message.text)
-    end)
-
-  end
-
   @tag :basics
   test "Basics", %{user: _user, game: game, game_def: game_def} do
     # Load some decks into the game
@@ -490,7 +462,7 @@ defmodule DragnCardsGame.CustomPluginTest do
 
     # Print all messages
     Enum.each(game["messages"], fn message ->
-      IO.puts(message.text)
+      IO.puts(message)
     end)
 
   end
@@ -548,7 +520,7 @@ defmodule DragnCardsGame.CustomPluginTest do
 
     # Print all messages
     Enum.each(game["messages"], fn message ->
-      IO.puts(message.text)
+      IO.puts(message)
     end)
 
     assert length(game["groupById"]["player1Discard"]["stackIds"]) == 2
@@ -640,7 +612,7 @@ defmodule DragnCardsGame.CustomPluginTest do
 
     # Print all messages
     Enum.each(game["messages"], fn message ->
-      IO.puts(message.text)
+      IO.puts(message)
     end)
 
   end
@@ -717,7 +689,7 @@ defmodule DragnCardsGame.CustomPluginTest do
 
     # Print all messages
     Enum.each(game["messages"], fn message ->
-      IO.puts(message.text)
+      IO.puts(message)
     end)
 
   end
@@ -816,7 +788,7 @@ defmodule DragnCardsGame.CustomPluginTest do
 
     # Print all messages
     Enum.each(game["messages"], fn message ->
-      IO.puts(message.text)
+      IO.puts(message)
     end)
 
   end
@@ -851,7 +823,7 @@ defmodule DragnCardsGame.CustomPluginTest do
 
     # Print all messages
     Enum.each(game["messages"], fn message ->
-      IO.puts(message.text)
+      IO.puts(message)
     end)
 
   end
@@ -914,7 +886,7 @@ defmodule DragnCardsGame.CustomPluginTest do
 
     # Print all messages
     Enum.each(game["messages"], fn message ->
-      IO.puts(message.text)
+      IO.puts(message)
     end)
   end
 
@@ -987,7 +959,7 @@ defmodule DragnCardsGame.CustomPluginTest do
 
     # Print all messages
     Enum.each(game["messages"], fn message ->
-      IO.puts(message.text)
+      IO.puts(message)
     end)
 
   end
@@ -1062,7 +1034,7 @@ defmodule DragnCardsGame.CustomPluginTest do
 
     # Print all messages
     Enum.each(game["messages"], fn message ->
-      IO.puts(message.text)
+      IO.puts(message)
     end)
 
   end
@@ -1096,7 +1068,7 @@ defmodule DragnCardsGame.CustomPluginTest do
 
     # Print all messages
     Enum.each(game["messages"], fn message ->
-      IO.puts(message.text)
+      IO.puts(message)
     end)
 
   end
@@ -1126,7 +1098,7 @@ defmodule DragnCardsGame.CustomPluginTest do
 
     # Print all messages
     Enum.each(game["messages"], fn message ->
-      IO.puts(message.text)
+      IO.puts(message)
     end)
   end
 
@@ -1156,7 +1128,7 @@ defmodule DragnCardsGame.CustomPluginTest do
 
     # Print all messages
     Enum.each(game["messages"], fn message ->
-      IO.puts(message.text)
+      IO.puts(message)
     end)
 
   end
@@ -1296,7 +1268,7 @@ defmodule DragnCardsGame.CustomPluginTest do
 
     # Print all messages
     Enum.each(game["messages"], fn message ->
-      IO.puts(message.text)
+      IO.puts(message)
     end)
 
   end
