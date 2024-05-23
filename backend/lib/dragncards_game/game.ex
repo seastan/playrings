@@ -19,14 +19,14 @@
   def load(room_slug, user_id, game_def, options) do
     Logger.debug("Loading Game")
 
-    game_data =
+    #game_data =
       case options["replayUuid"] do
         nil -> new_game(room_slug, user_id, game_def, options)
         replay_uuid -> load_replay_game(replay_uuid, room_slug, user_id, game_def, options)
       end
 
-    # Refresh id so that replay does not get overwritten
-    put_in(game_data.game["id"], Ecto.UUID.generate())
+    # Refresh id if we don't want replay to be overwritten
+    # put_in(game_data.game["id"], Ecto.UUID.generate())
   end
 
   defp new_game(room_slug, user_id, game_def, options) do

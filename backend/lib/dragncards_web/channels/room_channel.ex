@@ -5,6 +5,7 @@ defmodule DragnCardsWeb.RoomChannel do
   use DragnCardsWeb, :channel
   alias DragnCardsGame.{GameUIServer, GameUI}
   alias DragnCardsChat.{ChatMessage}
+  alias DragnCards.Users
   intercept ["send_update", "send_state"]
 
   require Logger
@@ -77,7 +78,16 @@ defmodule DragnCardsWeb.RoomChannel do
   ) do
 
     new_state = GameUIServer.state(room_slug)
-    GameUI.save_replay(new_state, user_id, options)
+    user = Users.get_user(user_id)
+    supporter_level = if user do
+      user.supporter_level
+    else
+      0
+    end
+    save_deltas = supporter_level >= 3
+    IO.puts("save_deltas: #{supporter_level}")
+
+    GameUI.save_replay(new_state, user_id, save_deltas, options)
 
     payload = %{
       "level" => "info",

@@ -894,7 +894,7 @@ defmodule DragnCardsGame.GameUI do
     end
   end
 
-  def save_replay(gameui, user_id, options) do
+  def save_replay(gameui, user_id, save_deltas, options) do
     game = gameui["game"]
     game = game
       |> put_in(["playerUi"], options["player_ui"])
@@ -911,7 +911,7 @@ defmodule DragnCardsGame.GameUI do
       game_json: game,
       metadata: if save_metadata == nil do nil else Evaluate.evaluate(game, ["PROCESS_MAP", save_metadata], ["save_replay"]) end,
       plugin_id: game["pluginId"],
-      deltas: deltas,
+      deltas: if save_deltas == true do deltas else [] end,
     }
 
     result = case Repo.get_by(Replay, [user_id: user_id, uuid: game_uuid]) do
