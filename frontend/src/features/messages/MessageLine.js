@@ -1,21 +1,30 @@
 import React from "react";
-import UserName from "../user/UserName";
-import { useSelector } from "react-redux";
-import { usePlayerIList } from "../engine/hooks/usePlayerIList";
 import { useGameDefinition } from "../engine/hooks/useGameDefinition";
 import useProfile from "../../hooks/useProfile";
 import { getPlayerIColor } from "../engine/functions/common";
 
-export const useMessageTextToHtml = () => {
+export const useFormatLabelsInText = () => {
   const gameDef = useGameDefinition();
   const user = useProfile();
   const language = user?.language || "English";
 
   return (text) => {
-    // Format labels first
-    const labelsFormatted = text.replace(/id:([a-zA-Z0-9_\-]+(\.[a-zA-Z0-9_\-]+)*)/g, function(match, p1) {
+    if (!text) return "";
+    return text.replace(/id:([a-zA-Z0-9_\-]+(\.[a-zA-Z0-9_\-]+)*)/g, function(match, p1) {
       return gameDef?.labels?.[p1]?.[language] || p1;
     });
+  }
+}
+
+export const useMessageTextToHtml = () => {
+  const gameDef = useGameDefinition();
+  const user = useProfile();
+  const language = user?.language || "English";
+  const formatLabelsInText = useFormatLabelsInText();
+
+  return (text) => {
+    // Format labels first
+    const labelsFormatted = formatLabelsInText(text);
 
     const regex = /\[player\d+\/[^\]]+\]/g; // Regex to match the pattern [playerN Name]
     const parts = labelsFormatted.split(regex); // Split the text by these patterns

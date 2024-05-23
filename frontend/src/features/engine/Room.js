@@ -5,7 +5,7 @@ import {useSetMessages} from '../../contexts/MessagesContext';
 import useChannel from "../../hooks/useChannel";
 import { applyDeltaRedo, appendDelta, setGameUi, setPlayerInfo, setSockets, setDeltas } from "../store/gameUiSlice";
 import useProfile from "../../hooks/useProfile";
-import { resetPlayerUi, setActiveCardId, setAlertMessage, setPreHotkeyActiveCardGroupId, setReplayStep } from "../store/playerUiSlice";
+import { resetPlayerUi, setActiveCardId, setAlert, setPreHotkeyActiveCardGroupId, setReplayStep } from "../store/playerUiSlice";
 import { PluginProvider } from "../../contexts/PluginContext";
 import store from "../../store";
 import ReactModal from "react-modal";
@@ -67,31 +67,36 @@ export const Room = ({ slug }) => {
       //delayBroadcast = setTimeout(function() {
       console.log("onChannelMessage: dispatching to game", game_ui)
       dispatch(setGameUi(game_ui));
-      const messageByTimestamp = game_ui?.game?.messageByTimestamp;
-      if (messageByTimestamp) {
-        // Get sorted messages
-        const messages = Object.keys(messageByTimestamp).sort().map(key => messageByTimestamp[key]);
-        console.log("setmessages2", messages)
-        setMessages(messages);
-      }
+      
       //setMessages(game_ui.logMessages);
       dispatch(setReplayStep(game_ui.replayStep));
 
-      // If the active card's group has changed due to a hotkey, reset the active card id
-      const state = store.getState();
-      const activeCardId = state?.playerUi?.activeCardId;
-      const preHotkeyActiveCardGroupId = state?.playerUi?.preHotkeyActiveCardGroupId;
-      const activeCardGroupId = state?.gameUi?.game?.cardById[activeCardId]?.groupId;
-      if (preHotkeyActiveCardGroupId !== null && preHotkeyActiveCardGroupId !== activeCardGroupId) {
-        dispatch(setActiveCardId(null));
-        dispatch(setPreHotkeyActiveCardGroupId(null));
-      }
+      // // If the active card's group has changed due to a hotkey, reset the active card id
+      // const state = store.getState();
+      // const activeCardId = state?.playerUi?.activeCardId;
+      // const preHotkeyActiveCardGroupId = state?.playerUi?.preHotkeyActiveCardGroupId;
+      // const activeCardGroupId = state?.gameUi?.game?.cardById[activeCardId]?.groupId;
+      // if (preHotkeyActiveCardGroupId !== null && preHotkeyActiveCardGroupId !== activeCardGroupId) {
+      //   dispatch(setActiveCardId(null));
+      //   dispatch(setPreHotkeyActiveCardGroupId(null));
+      // }
+    } else if (event === "send_alert" && payload !== null) {
+      dispatch(setAlert({
+        ...payload,
+        timestamp: Date.now()
+      }));
     } else if (event === "seats_changed" && payload !== null) {
       dispatch(setPlayerInfo(payload));
     } else if (event === "users_changed" && payload !== null) {
       dispatch(setSockets(payload));
     } else if (event === "phx_error") {
-      dispatch(setAlertMessage({text: "The server encountered an error. If the issue persists, download the game state JSON file and upload it in a new room.", timestamp: Date.now()}));
+      dispatch(setAlert({
+        level: "crash",
+        text: "Your room has closed or timed out. If you were in the middle of playing, it may have crashed. \
+          If so, please go to the Menu and download the game state file. \
+          Then, create a new room and upload that file to continue where you left off.",
+        timestamp: Date.now()
+      }));
       //setRoomClosed(true);
     }
 

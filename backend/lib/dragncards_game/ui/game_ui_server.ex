@@ -70,6 +70,14 @@ defmodule DragnCardsGame.GameUIServer do
   end
 
   @doc """
+  reset_game/2: Process an update to the state.
+  """
+  @spec reset_game(String.t(), integer) :: GameUI.t()
+  def reset_game(game_name, user_id) do
+    game_exists?(game_name) && GenServer.call(via_tuple(game_name), {:reset_game, user_id})
+  end
+
+  @doc """
   game_action/4: Perform given action on a card.
   """
   @spec game_action(String.t(), integer, String.t(), Map.t()) :: GameUI.t()
@@ -211,6 +219,13 @@ defmodule DragnCardsGame.GameUIServer do
 
     gameui
     |> save_and_reply()
+  end
+
+  def handle_call({:reset_game, user_id}, _from, gameui) do
+
+    GameUI.new(gameui["roomSlug"], user_id, gameui["options"])
+    |> save_and_reply()
+
   end
 
   def handle_call({:step_through, options}, _from, gameui) do

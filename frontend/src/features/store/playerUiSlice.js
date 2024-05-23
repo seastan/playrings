@@ -20,7 +20,7 @@ const draggingDefault = {
 };
 
 const initialState = {
-  alertMessage: null,
+  alert: null,
   playerN: "player1",
   keypress: {
     Control: 0,
@@ -73,8 +73,8 @@ const playerUiSlice = createSlice({
     setPlayerN: (state, { payload }) => {
       state.playerN = payload;
     },
-    setAlertMessage: (state, { payload }) => {
-      state.alertMessage = payload;
+    setAlert: (state, { payload }) => {
+      state.alert = payload;
     },
     setKeypress: (state, { payload }) => {
       state.keypress = payload;
@@ -266,7 +266,7 @@ export const {
   setDraggingHoverOverDirection,
   setDraggingHoverOverDroppableId,
   setUserSettings,
-  setAlertMessage,
+  setAlert,
   setAutoLoadedDecks,
   setDroppableRefs,
   setTempDragStack,

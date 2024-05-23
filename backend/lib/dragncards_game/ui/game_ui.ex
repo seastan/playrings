@@ -894,7 +894,23 @@ defmodule DragnCardsGame.GameUI do
     end
   end
 
-  def save_replay(gameui, user_id, save_deltas, options) do
+  def trim_saved_deltas(deltas, user_id) do
+    supporter_level = Users.get_supporter_level(user_id)
+    trim_deltas = supporter_level < 3
+    if trim_deltas do
+      start_index = if Enum.count(deltas) > 5 do
+        Enum.count(deltas)-5
+      else
+        0
+      end
+      Enum.slice(deltas, start_index..-1)
+    else
+      deltas
+    end
+  end
+
+  def save_replay(gameui, user_id, options) do
+
     game = gameui["game"]
     game = game
       |> put_in(["playerUi"], options["player_ui"])
@@ -902,7 +918,7 @@ defmodule DragnCardsGame.GameUI do
 
     game_uuid = game["id"]
 
-    deltas = gameui["deltas"]
+    deltas = gameui["deltas"] |> trim_saved_deltas(user_id)
 
     game_def = Plugins.get_game_def(game["options"]["pluginId"])
     save_metadata = get_in(game_def, ["saveGame", "metadata"])
@@ -911,7 +927,7 @@ defmodule DragnCardsGame.GameUI do
       game_json: game,
       metadata: if save_metadata == nil do nil else Evaluate.evaluate(game, ["PROCESS_MAP", save_metadata], ["save_replay"]) end,
       plugin_id: game["pluginId"],
-      deltas: if save_deltas == true do deltas else [] end,
+      deltas: deltas,
     }
 
     result = case Repo.get_by(Replay, [user_id: user_id, uuid: game_uuid]) do
@@ -977,10 +993,6 @@ defmodule DragnCardsGame.GameUI do
     game = Evaluate.evaluate_with_timeout(game, action_list)
     #game = save_replay(game, user_id)
     game = Game.new(game["roomSlug"], user_id, game_def, game["options"])
-    Evaluate.evaluate(game, [
-      ["LOG", get_alias_n(game_old), " saved the game."],
-      ["LOG", get_alias_n(game_old), " reset the game."]
-    ])
   end
 
   def close_room(game, user_id, action_list) do

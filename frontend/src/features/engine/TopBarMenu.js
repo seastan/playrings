@@ -54,7 +54,10 @@ export const TopBarMenu = React.memo(({}) => {
       var playerUi = store.getState().playerUi;
       // Drop the droppableRefs from the playerUi object
       playerUi = {...playerUi, droppableRefs: {}}
-      gameBroadcast("game_action", {action: "reset_game", options: {player_ui: playerUi, action_list: data.actionList}});
+      doActionList(data.actionList);
+
+      gameBroadcast("reset_game", {options: {player_ui: playerUi}});
+      //gameBroadcast("game_action", {action: "reset_game", options: {player_ui: playerUi, action_list: data.actionList}});
       //doActionList(["LOG", "$ALIAS_N", " reset the game."]);
     } else if (data.action === "close_room") {
       // Mark status
@@ -63,11 +66,12 @@ export const TopBarMenu = React.memo(({}) => {
       // Drop the droppableRefs from the playerUi object
       playerUi = {...playerUi, droppableRefs: {}}
       // Save replay
-      gameBroadcast("game_action", {action: "close_room", options: {player_ui: playerUi, action_list: data.actionList}});
+      doActionList(data.actionList);
+      //gameBroadcast("game_action", {action: "close_room", options: {player_ui: playerUi, action_list: data.actionList}});
       // Close room
       history.push("/profile");
       //doActionList(["LOG", "$ALIAS_N", " closed the room."]);
-      gameBroadcast("close_room", {});
+      gameBroadcast("close_room",  {options: {player_ui: playerUi}});
     } else if (data.action === "load_deck") {
       loadFileDeck();
     } else if (data.action === "load_url") {

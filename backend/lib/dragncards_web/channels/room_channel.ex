@@ -78,20 +78,12 @@ defmodule DragnCardsWeb.RoomChannel do
   ) do
 
     new_state = GameUIServer.state(room_slug)
-    user = Users.get_user(user_id)
-    supporter_level = if user do
-      user.supporter_level
-    else
-      0
-    end
-    save_deltas = supporter_level >= 3
-    IO.puts("save_deltas: #{supporter_level}")
 
-    GameUI.save_replay(new_state, user_id, save_deltas, options)
+    GameUI.save_replay(new_state, user_id, options)
 
     payload = %{
-      "level" => "info",
-      "message" => "Game saved"
+      "level" => "success",
+      "text" => "Game saved"
     }
 
     notify_alert(socket, room_slug, user_id, payload)
@@ -151,10 +143,30 @@ defmodule DragnCardsWeb.RoomChannel do
   end
 
   def handle_in(
-    "close_room",
-    %{},
+    "reset_game",
+    %{
+      "options" => options,
+    },
     %{assigns: %{room_slug: room_slug, user_id: user_id}} = socket
   ) do
+    gameui = GameUIServer.state(room_slug)
+    GameUI.save_replay(gameui, user_id, options)
+    GameUIServer.reset_game(room_slug, user_id)
+
+    notify_state(socket, room_slug, user_id)
+
+    {:reply, {:ok, "reset_game"}, socket}
+  end
+
+  def handle_in(
+    "close_room",
+    %{
+      "options" => options,
+    },
+    %{assigns: %{room_slug: room_slug, user_id: user_id}} = socket
+  ) do
+    gameui = GameUIServer.state(room_slug)
+    GameUI.save_replay(gameui, user_id, options)
     GameUIServer.close_room(room_slug, user_id)
 
     notify_state(socket, room_slug, user_id)

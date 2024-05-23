@@ -28,4 +28,13 @@ defmodule DragnCards.Users do
   Returns nil if that user does not exist.
   """
   def get_user(id), do: Repo.get(User, id)
+
+  def get_supporter_level(user_id) do
+    user = get_user(user_id)
+    if user == nil or user.supporter_level == nil do
+      0
+    else
+      user.supporter_level
+    end
+  end
 end
