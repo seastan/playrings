@@ -101,7 +101,15 @@ export const Hotkeys = React.memo(({}) => {
         <div className="w-full p-3 overflow-y-scroll">
           <div className="w-1/4 float-left p-1">
             <h2 className="mb-2">{siteL10n("tokenHotkeys")}</h2>
-            {siteL10n("hoverOverTopBottom")}
+            <div
+              className="w-full flex justify-center"
+            >
+            <img
+              style={{
+                width: "30vh"
+              }}
+              src="https://dragncards-shared.s3.amazonaws.com/graphics/hover_mouse_tokens.png"/>
+            </div>
             <HotkeyTable hotkeyList={gameDef?.hotkeys?.token} l10n={gameL10n}/>
             {siteL10n("holdCtrl")}
           </div>
