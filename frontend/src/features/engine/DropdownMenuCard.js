@@ -314,7 +314,7 @@ export const DropdownMenuCard = React.memo(({
               rightIcon={menuCard.rotation===dir ? <FontAwesomeIcon icon={faCheck}/> : null}
               action={dragnActionLists.setAttachmentDirection(dir)} // TODO: put actionId here that links to common actionid file
               clickCallback={handleDropdownClick}>
-              {useSiteL10n(dir)}
+              {siteL10n(dir)}
             </DropdownItem>
           ))}
         </div>}

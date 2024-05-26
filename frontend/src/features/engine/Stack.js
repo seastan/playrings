@@ -51,7 +51,7 @@ export const Stack = React.memo(({
             height: "3vh",
             top: "calc(100% - 1.5vh)",
             zIndex: DEFAULT_CARD_Z_INDEX,
-            opacity: 0.8,
+            opacity: 0.85,
           }}>
             <div
               className={"flex bg-gray-500 rounded p-0.5 px-1 hover:bg-gray-400 cursor-default text-white"}
