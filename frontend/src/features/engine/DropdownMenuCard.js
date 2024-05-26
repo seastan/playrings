@@ -144,6 +144,13 @@ export const DropdownMenuCard = React.memo(({
               clickCallback={handleDropdownClick}>
                 {l10n("detach")}
             </DropdownItem> : null}
+          {menuCard.cardIndex>0 ? 
+            <DropdownItem
+              rightIcon={<FontAwesomeIcon icon={faChevronRight}/>}
+              goToMenu="attachmentDirection"
+              clickCallback={handleDropdownClick}>
+              {l10n("attachmentDirection")}
+            </DropdownItem>: null}
           <DropdownItem 
             action= {dragnActionLists.flipCard(menuCard)} 
             clickCallback={handleDropdownClick}>
@@ -295,6 +302,19 @@ export const DropdownMenuCard = React.memo(({
               action={dragnActionLists.setRotation(rot)} // TODO: put actionId here that links to common actionid file
               clickCallback={handleDropdownClick}>
               {rot}
+            </DropdownItem>
+          ))}
+        </div>}
+
+      {activeMenu === "attachmentDirection" &&
+        <div className="menu">
+          <GoBack goToMenu="main" clickCallback={handleDropdownClick}/>
+          {["right", "left", "top", "bottom", "behind"].map((dir, _rotIndex) => (
+            <DropdownItem
+              rightIcon={menuCard.rotation===dir ? <FontAwesomeIcon icon={faCheck}/> : null}
+              action={dragnActionLists.setAttachmentDirection(dir)} // TODO: put actionId here that links to common actionid file
+              clickCallback={handleDropdownClick}>
+              {useSiteL10n(dir)}
             </DropdownItem>
           ))}
         </div>}

@@ -4,11 +4,12 @@ import { Draggable } from "react-beautiful-dnd";
 import { useLayout } from "./hooks/useLayout";
 import useWindowDimensions from "../../hooks/useWindowDimensions";
 import store from "../../store";
-import { ATTACHMENT_OFFSET, convertToPercentage, getOffsetTotalsAndAmounts } from "./functions/common";
+import { ATTACHMENT_OFFSET, convertToPercentage } from "./functions/common";
 import NaturalDragAnimation from 'natural-drag-animation-rbdnd';
 import styled from "@emotion/styled";
 import { Stack } from "./Stack";
 import { getGroupIdAndRegionType } from "./Reorder";
+import { useOffsetTotalsAndAmounts } from "./hooks/useOffsetTotalsAndAmounts";
 
 const StackContainerFree = styled.div`
   position: absolute;
@@ -53,7 +54,7 @@ export const StackDraggable = React.memo(({
     const cardSize = layout?.cardSize;
     const playerN = useSelector(state => state?.playerUi?.playerN);
     const [isMousedOver, setIsMousedOver] = useState(false);
-    console.log('Rendering Stack isCombined ', {isCombined});
+    console.log('Rendering Stack in region ', region);
     var spacingFactor = touchMode ? 1.5 : 1;
     const { height, width } = useWindowDimensions();
     const aspectRatio = width/height;
@@ -62,7 +63,7 @@ export const StackDraggable = React.memo(({
     const numCards = cardIds.length;
     const card0 = store.getState().gameUi.game.cardById[cardIds[0]];
     // Calculate size of stack for proper spacing. Changes base on group type and number of stack in group.
-    const {offsetTotals, offsetAmounts} = getOffsetTotalsAndAmounts(stackId, store.getState());
+    const {offsetTotals, offsetAmounts} = useOffsetTotalsAndAmounts(stackId);
 
     const numStacksNonZero = Math.max(numStacksVisible, 1);
     const regionWidthPercent = convertToPercentage(region.width);
@@ -79,7 +80,6 @@ export const StackDraggable = React.memo(({
     const regionHeightInt = parseInt(regionHeightPercent.substring(0, regionHeightPercent.length - 1))
     const fanSpacingVert = (regionHeightInt-cardSize)/numStacksNonZero;
     const stackHeightFan = Math.min(fanSpacingVert, cardHeight*cardSize*zoomFactor);
-    console.log("log1", stackWidth, stackWidthFan, region.type, region.direction);
 
     if (tempDragStackId === stackId) {
       return null;

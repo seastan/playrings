@@ -1,10 +1,16 @@
 import { ca, el } from "date-fns/locale";
 
 export const dragnActionLists = {
-    setRotation: (deg) => (
+  setRotation: (deg) => (
     [
       ["LOG", "$ALIAS_N", " set rotation of ", "$ACTIVE_FACE.name", " to ", deg, "."],
       ["SET", "/cardById/$ACTIVE_CARD_ID/rotation", deg]
+    ]
+  ),
+  setAttachmentDirection: (dir) => (
+    [
+      ["LOG", "$ALIAS_N", " set the attachment direction of ", "$ACTIVE_FACE.name", " to ", dir, "."],
+      ["SET", "/cardById/$ACTIVE_CARD_ID/attachmentDirection", dir]
     ]
   ),
   toggleTrigger: (stepId) => (

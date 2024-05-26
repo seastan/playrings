@@ -1,4 +1,28 @@
 export const siteL10n = {
+  "right": {
+    "English": "Right",
+    "Chinese": "右"
+  },
+  "left": {
+    "English": "Left",
+    "Chinese": "左"
+  },
+  "top": {
+    "English": "Top",
+    "Chinese": "上"
+  },
+  "bottom": {
+    "English": "Bottom",
+    "Chinese": "下"
+  },
+  "behind": {
+    "English": "Behind",
+    "Chinese": "后"
+  },
+  "attachmentDirection": {
+    "English": "Attachment direction",
+    "Chinese": "附着方向"
+  },
   "peekAtAllFacedownCards": {
     "English": "Peek at all face-down cards (omniscient mode only)",
     "Chinese": "查看所有背面朝上的卡牌（仅限旁观者模式）"

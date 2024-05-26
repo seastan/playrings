@@ -1,11 +1,10 @@
 import React from "react";
 import { useSelector } from 'react-redux';
 import { Card } from "./Card";
-import store from "../../store";
-import { useGameDefinition } from "./hooks/useGameDefinition";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faLink } from "@fortawesome/free-solid-svg-icons";
-import { getOffsetTotalsAndAmounts } from "./functions/common";
+import { faArrowDown, faChevronDown, faEye, faLink } from "@fortawesome/free-solid-svg-icons";
+import { useOffsetTotalsAndAmounts } from "./hooks/useOffsetTotalsAndAmounts";
+import { DEFAULT_CARD_Z_INDEX } from "./functions/common";
 
 //left: ${props => props.left || 0}vh;
 // background: ${props => (props.hidden) ? "red" : "blue"};
@@ -22,7 +21,9 @@ export const Stack = React.memo(({
   if (!stack) return null;
   const cardIds = stack?.cardIds;
 
-  const {offsetTotals, offsetAmounts} = getOffsetTotalsAndAmounts(stackId, store.getState());
+  const {offsetTotals, offsetAmounts} = useOffsetTotalsAndAmounts(stackId);
+
+  const numBehind = offsetTotals.behind;
 
   return(
     <>
@@ -41,6 +42,34 @@ export const Stack = React.memo(({
           />
         )
       })}
+      {numBehind > 0 &&
+        <div
+          className="flex items-center justify-center"
+          style={{
+            position: "absolute", 
+            width: "100%",
+            height: "3vh",
+            top: "calc(100% - 1.5vh)",
+            zIndex: DEFAULT_CARD_Z_INDEX,
+            opacity: 0.8,
+          }}>
+            <div
+              className={"flex bg-gray-500 rounded p-0.5 px-1 hover:bg-gray-400 cursor-default text-white"}
+              onClick={() => console.log("Show Cards")}
+            >
+              <div
+                className="flex items-center justify-center"
+              >
+                {numBehind}
+              </div>
+              <div
+                className="flex items-center justify-center pl-1"
+              >
+                <FontAwesomeIcon icon={faArrowDown}/> 
+              </div>
+            </div>
+        </div>
+      }
     </>
   );
 });
