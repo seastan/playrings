@@ -41,17 +41,12 @@ defmodule DragnCardsGame.Evaluate.Functions.LOG do
   """
   def execute(game, code, trace) do
     statements = Enum.slice(code, 1, Enum.count(code))
-    message = try do
-      Evaluate.message_list_to_string(game, statements, trace ++ ["message_list_to_string"])
-    rescue
-      _ ->
-        Enum.join(statements, "")
-    end
-    # Get unix ms timestamp
-    timestamp = System.system_time(:millisecond)
-    # Create a new chat message
-    message_obj = ChatMessage.new(message, -1)
-    game = put_in(game, ["messageByTimestamp", timestamp], message_obj)
+    #message = try do
+    message = Evaluate.message_list_to_string(game, statements, trace ++ ["message_list_to_string"])
+    #rescue
+    #  _ ->
+    #    Enum.join(statements, "")
+    #end
     put_in(game["messages"], game["messages"] ++ [message])
   end
 

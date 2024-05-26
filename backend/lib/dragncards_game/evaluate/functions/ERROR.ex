@@ -33,7 +33,7 @@ defmodule DragnCardsGame.Evaluate.Functions.ERROR do
     backend_message = "in #{game["pluginName"]} triggered by #{alias_n}#{message}"
     Logger.error(backend_message)
     frontend_message = "Error " <> backend_message
-    Evaluate.evaluate(game, ["LOG", frontend_message], trace ++ ["log"])
+    put_in(game["messages"], game["messages"] ++ [frontend_message])
   end
 
 

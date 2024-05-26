@@ -2,13 +2,10 @@ import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from 'react-redux';
 import styled from "@emotion/styled";
 import { Droppable } from "react-beautiful-dnd";
-import { PileImage } from "./PileImage"
+import { PileImage } from "./PileImage";
 import { useLayout } from "./hooks/useLayout";
-import { setDraggingHoverOverDirection, setDraggingHoverOverStackId, setDraggingRectangles, setDroppableRefs } from "../store/playerUiSlice";
+import { setDroppableRefs } from "../store/playerUiSlice";
 import { StackDraggable } from "./StackDraggable";
-import { getStackDimensions } from "./functions/common";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faLink } from "@fortawesome/free-solid-svg-icons";
 import { getGroupIdAndRegionType } from "./Reorder";
 
 const Container = styled.div`
@@ -32,7 +29,7 @@ const Container = styled.div`
 export const DropZone = styled.div`
   /* stop the list collapsing when empty */
   position: absolute;
-  display: ${props => props.direction === "vertical" ? "" : "block"};
+  display: ${props => props.direction === "vertical" ? "" : "flex"};
   white-space: nowrap;
   width: calc(100% - ${props => props.margin}vh);
   height: 100%;

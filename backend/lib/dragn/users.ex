@@ -60,6 +60,7 @@ defmodule DragnCards.Users do
   end
 
   def get_replay_save_permission(user_id) do
+    IO.puts("Checking replay save permission for user #{user_id}")
     user = get_user(user_id)
     if user == nil do
       false

@@ -9,14 +9,14 @@ import { useDoActionList } from "./hooks/useDoActionList";
 
 const lookUnderActionList = (stackId) => {
   return ([
-    ["LOG", "{{$ALIAS}} fanned out the cards under ", ["FACEUP_NAME_FROM_STACK_ID", stackId], "."],
+    ["LOG", "{{$ALIAS_N}} fanned out the cards under ", ["FACEUP_NAME_FROM_STACK_ID", stackId], "."],
     ["SET", `/stackById/${stackId}/lookingUnder`, true]
   ])
 }
 
 const hideUnderActionList = (stackId) => {
   return ([
-    ["LOG", "{{$ALIAS}} hid the cards under ", ["FACEUP_NAME_FROM_STACK_ID", stackId], "."],
+    ["LOG", "{{$ALIAS_N}} hid the cards under ", ["FACEUP_NAME_FROM_STACK_ID", stackId], "."],
     ["SET", `/stackById/${stackId}/lookingUnder`, false]
   ])
 }
