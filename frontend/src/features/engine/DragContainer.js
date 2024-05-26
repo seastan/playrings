@@ -122,6 +122,7 @@ export const DragContainer = React.memo(({}) => {
     const centerY = draggableRect.top + draggableRect.height / 2;
 
     const hoverData = getHoverStackIdAndDirection(centerX, centerY, draggableRect, store.getState()?.playerUi?.dragging?.stackRectangles, store.getState()?.playerUi?.dragging?.groupRectangle, hoverOverDroppableId);
+    
     if (hoverData.stackId) {
       dispatch(setDraggingHoverOverStackId(hoverData.stackId));
       dispatch(setDraggingHoverOverDirection(hoverData.direction));
@@ -298,6 +299,8 @@ export const DragContainer = React.memo(({}) => {
       const destStackCardIds = destStack.cardIds;
       const card0 = game.cardById[destStackCardIds[0]];
       const stackIndex = card0.stackIndex;
+      const controlPressed = store.getState()?.playerUi?.keypress?.Control;
+      if (controlPressed) result.combine.direction = "behind";
       //const newDestStackCardIds = destStackCardIds.concat(origStackCardIds);
 
       // const newDestStack = {

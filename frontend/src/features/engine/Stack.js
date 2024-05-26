@@ -1,10 +1,25 @@
-import React from "react";
+import React, { useState } from "react";
 import { useSelector } from 'react-redux';
 import { Card } from "./Card";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowDown, faChevronDown, faEye, faLink } from "@fortawesome/free-solid-svg-icons";
+import { faArrowDown, faArrowUp, faChevronDown, faEye, faLink } from "@fortawesome/free-solid-svg-icons";
 import { useOffsetTotalsAndAmounts } from "./hooks/useOffsetTotalsAndAmounts";
 import { DEFAULT_CARD_Z_INDEX } from "./functions/common";
+import { useDoActionList } from "./hooks/useDoActionList";
+
+const lookUnderActionList = (stackId) => {
+  return ([
+    ["LOG", "{{$ALIAS}} fanned out the cards under ", ["FACEUP_NAME_FROM_STACK_ID", stackId], "."],
+    ["SET", `/stackById/${stackId}/lookingUnder`, true]
+  ])
+}
+
+const hideUnderActionList = (stackId) => {
+  return ([
+    ["LOG", "{{$ALIAS}} hid the cards under ", ["FACEUP_NAME_FROM_STACK_ID", stackId], "."],
+    ["SET", `/stackById/${stackId}/lookingUnder`, false]
+  ])
+}
 
 //left: ${props => props.left || 0}vh;
 // background: ${props => (props.hidden) ? "red" : "blue"};
@@ -17,6 +32,8 @@ export const Stack = React.memo(({
   const stack = useSelector(state => state?.gameUi?.game?.stackById[stackId]);
   const isHoveredOver = useSelector(state => state?.playerUi?.dragging.hoverOverStackId === stackId);
   const hoverOverDirection = useSelector(state => isHoveredOver ? state?.playerUi?.dragging.hoverOverDirection : null);
+  const [showingUnder, setShowingUnder] = useState(stack?.lookingUnder);
+  const doActionList = useDoActionList();
   console.log('Rendering StackId ', isHoveredOver, hoverOverDirection)
   if (!stack) return null;
   const cardIds = stack?.cardIds;
@@ -24,6 +41,17 @@ export const Stack = React.memo(({
   const {offsetTotals, offsetAmounts} = useOffsetTotalsAndAmounts(stackId);
 
   const numBehind = offsetTotals.behind;
+
+  const handleShowUnder = () => {
+    if (showingUnder) {
+      console.log("Hiding Under", hideUnderActionList(stackId));
+      doActionList(hideUnderActionList(stackId));
+    } else {
+      console.log("Looking Under", lookUnderActionList(stackId));
+      doActionList(lookUnderActionList(stackId));
+    }
+    setShowingUnder(!showingUnder);
+  }
 
   return(
     <>
@@ -47,15 +75,14 @@ export const Stack = React.memo(({
           className="flex items-center justify-center"
           style={{
             position: "absolute", 
-            width: "100%",
             height: "3vh",
-            top: "calc(100% - 1.5vh)",
+            top: "calc(100% - 3vh)",
             zIndex: DEFAULT_CARD_Z_INDEX,
             opacity: 0.85,
           }}>
             <div
               className={"flex bg-gray-500 rounded p-0.5 px-1 hover:bg-gray-400 cursor-default text-white"}
-              onClick={() => console.log("Show Cards")}
+              onClick={() => handleShowUnder()}
             >
               <div
                 className="flex items-center justify-center"
@@ -65,7 +92,7 @@ export const Stack = React.memo(({
               <div
                 className="flex items-center justify-center pl-1"
               >
-                <FontAwesomeIcon icon={faArrowDown}/> 
+                <FontAwesomeIcon icon={showingUnder ? faArrowUp : faArrowDown}/> 
               </div>
             </div>
         </div>
@@ -81,6 +108,7 @@ const LinkIcon = React.memo(({
   height,
   transform,
 }) => {
+  const controlPressed = useSelector(state => state?.playerUi?.keypress?.Control);
   return(
     <div
       className="flex items-center justify-center"
@@ -104,7 +132,7 @@ const LinkIcon = React.memo(({
           borderRadius: "50%",
         }}
       >
-        <FontAwesomeIcon className="w-full h-full" style={{fontSize: '4vh'}} icon={faLink}/>
+        <FontAwesomeIcon className="w-full h-full" style={{fontSize: '4vh'}} icon={controlPressed ? faArrowDown : faLink}/>
       </div>
     </div>
   );

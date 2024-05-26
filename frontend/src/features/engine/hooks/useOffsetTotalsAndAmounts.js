@@ -3,6 +3,7 @@ import { useSelector } from "react-redux";
 
 export const useOffsetTotalsAndAmounts = (stackId) => {
     const stack = useSelector(state => state?.gameUi?.game?.stackById[stackId]);
+    const lookingUnder = stack.lookingUnder;
     const cardIds = stack?.cardIds;
     const attachmentDirections = useSelector(state => cardIds.map(cardId => state?.gameUi?.game?.cardById[cardId].attachmentDirection));
 
@@ -22,7 +23,12 @@ export const useOffsetTotalsAndAmounts = (stackId) => {
         offsetAmounts.push({top: offsetTotals.bottom, left: 0});
       } else if (attachmentDirection === "behind") {
         offsetTotals.behind++;
-        offsetAmounts.push({top: 0, left: 0});
+        if (lookingUnder) {
+          offsetTotals.bottom += 0.3;
+          offsetAmounts.push({top: offsetTotals.bottom, left: 0});
+        } else {
+          offsetAmounts.push({top: 0, left: 0});
+        }
       } else {
         offsetTotals.right++;
         offsetAmounts.push({top: 0, left: offsetTotals.right});
