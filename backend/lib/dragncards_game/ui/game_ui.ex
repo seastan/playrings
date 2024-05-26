@@ -32,7 +32,6 @@ defmodule DragnCardsGame.GameUI do
       "deltas" => deltas,
       "replayStep" => Enum.count(deltas)-1,
       "sockets" => %{},
-      "logTimestamp" => nil,
       "loadedCardIds" => [],
       "spectators" => %{},
     }
@@ -965,7 +964,7 @@ defmodule DragnCardsGame.GameUI do
       if room do
         updates = %{
           last_update: timestamp,
-          name: gameui["game"]["roomName"],
+          name: gameui["game"]["roomSlug"],
           num_players: gameui["game"]["numPlayers"]
         }
         room

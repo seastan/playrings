@@ -4,7 +4,7 @@ import { useHistory } from "react-router-dom";
 import store from "../../store";
 import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { setRandomNumBetween, setShowModal, setShowDeveloper, setAutoLoadedDecks } from "../store/playerUiSlice";
+import { setRandomNumBetween, setShowModal, setShowDeveloper, setAutoLoadedDecks, setDropdownMenu, setActiveCardId } from "../store/playerUiSlice";
 import { useGameL10n } from "./hooks/useGameL10n";
 import BroadcastContext from "../../contexts/BroadcastContext";
 import { useGameDefinition } from "./hooks/useGameDefinition";
@@ -16,6 +16,7 @@ import { loadMarvelCdb, loadRingsDb, useImportViaUrl } from "./hooks/useImportVi
 import { useIsHost } from "./hooks/useIsHost";
 import { usePlayerN } from "./hooks/usePlayerN";
 import { useCardDb } from "./hooks/useCardDb";
+import useProfile from "../../hooks/useProfile";
 
 
 export const TopBarMenu = React.memo(({}) => {
@@ -29,6 +30,7 @@ export const TopBarMenu = React.memo(({}) => {
   const importViaUrl = useImportViaUrl();
   const importLoadList = useImportLoadList();
   const cardDb = useCardDb();
+  const user = useProfile();
 
   const isHost = useIsHost();
   const playerN = usePlayerN();
@@ -122,6 +124,8 @@ export const TopBarMenu = React.memo(({}) => {
       dispatch(setShowModal("prebuilt_deck"));
     } else if (data.action === "download") {
       downloadGameAsJson();
+    } else if (data.action === "downloadReplay") {
+      downloadReplayAsJson();
     } else if (data.action === "load_game") {
       loadFileGame();
     } else if (data.action === "load_game_def") {
@@ -168,50 +172,30 @@ export const TopBarMenu = React.memo(({}) => {
     inputFileCustom.current.click();
   }
 
-  const uploadGameAsJson = async(event) => {
+  const uploadGameOrReplayJson = async(event) => {
     event.preventDefault();
     const reader = new FileReader();
     reader.onload = async (event) => {
-      var gameObj = null;
+      var replayObj = null;
       try {
-        gameObj = JSON.parse(event.target.result);
+        replayObj = JSON.parse(event.target.result);
       } catch(e) {
-          alert("Game must be a valid JSON file."); // error in the above string (in this case, yes)!
+          alert("Replay must be a valid JSON file."); // error in the above string (in this case, yes)!
       }
-      if (gameObj) {
-        //dispatch(setGame(gameObj));
-        var playerUi = store.getState().playerUi;
-        playerUi = {...playerUi, droppableRefs: {}} // Drop the droppableRefs from the playerUi object
-        gameBroadcast("game_action", {action: "set_game", options: {game: gameObj, player_ui: playerUi}})
+      if (replayObj) {
+        if (replayObj.game && replayObj.deltas) {
+          gameBroadcast("set_replay", {replay: replayObj})
+          gameBroadcast("send_alert", {message: `${user.alias} uploaded a replay.`})
+        } else if (replayObj.roomSlug) {
+          gameBroadcast("game_action", {action: "set_game", options: {game: replayObj}})
+          gameBroadcast("send_alert", {message: `${user.alias} uploaded a game.`})
+        } else {
+          alert("Uploaded JSON file does not look like a valid game or replay.");
+        }
       } 
     }
     reader.readAsText(event.target.files[0]);
     inputFileGame.current.value = "";
-  }
-
-  const uploadGameDef = async(event) => {
-    event.preventDefault();
-    const reader = new FileReader();
-    reader.onload = async (event) => {
-      try {
-        const gameObj = JSON.parse(event.target.result);
-        if (gameObj) {
-          gameBroadcast("set_game_def", {game_def: gameObj}) 
-          //dispatch(setGame(gameObj));
-          chatBroadcast("game_update", {message: "uploaded a game."});
-          if (gameObj?.deltas?.length) {
-            gameBroadcast("game_action", {action: "update_values", options: {updates: [[gameObj]], preserve_undo: true}})            
-          } else {
-            gameBroadcast("game_action", {action: "update_values", options: {updates: [[gameObj]]}})
-            gameBroadcast("game_action", {action: "update_values", options: {updates: [["replayStep", 1]]}})
-          }
-        }
-      } catch(e) {
-          alert("Game must be a valid JSON file."); // error in the above string (in this case, yes)!
-      }
-    }
-    reader.readAsText(event.target.files[0]);
-    inputFileGameDef.current.value = "";
   }
 
   const uploadCustomCards = async(event) => {
@@ -228,7 +212,7 @@ export const TopBarMenu = React.memo(({}) => {
   const downloadGameAsJson = () => {
     const state = store.getState();
     const exportObj = state.gameUi.game;
-    const exportName = state.gameUi.roomName;
+    const exportName = state.gameUi.roomSlug + "_game";
     var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(exportObj));
     var downloadAnchorNode = document.createElement('a');
     downloadAnchorNode.setAttribute("href",     dataStr);
@@ -236,7 +220,32 @@ export const TopBarMenu = React.memo(({}) => {
     document.body.appendChild(downloadAnchorNode); // required for firefox
     downloadAnchorNode.click();
     downloadAnchorNode.remove();
-    chatBroadcast("game_update", {message: "downloaded the game."});
+    gameBroadcast("send_alert", {message: `${user.alias} downloaded the game.`})
+  }
+
+  const downloadReplayAsJson = () => {
+
+    if (user.supporter_level < 3) {
+      dispatch(setShowModal("patreon"))
+      dispatch(setDropdownMenu(null));
+      dispatch(setActiveCardId(null));
+      return;
+    }
+
+    const state = store.getState();
+    const exportObj = {
+      "game": state.gameUi.game,
+      "deltas": state.gameUi.deltas,
+    }
+    const exportName = state.gameUi.roomSlug + "_replay";
+    var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(exportObj));
+    var downloadAnchorNode = document.createElement('a');
+    downloadAnchorNode.setAttribute("href",     dataStr);
+    downloadAnchorNode.setAttribute("download", exportName + ".json");
+    document.body.appendChild(downloadAnchorNode); // required for firefox
+    downloadAnchorNode.click();
+    downloadAnchorNode.remove();
+    gameBroadcast("send_alert", {message: `${user.alias} downloaded the replay.`})
   }
 
   const generatePlayerListItems = () => {
@@ -290,12 +299,8 @@ export const TopBarMenu = React.memo(({}) => {
             <li key={"load_prebuilt_deck"} onClick={() => handleMenuClick({action:"spawn_deck"})}>{siteL10n("Load prebuilt deck")}</li>
             <li key={"load_url"} onClick={() => handleMenuClick({action:"load_url"})}>{siteL10n("Load via URL")}</li>
             <li key={"load_game"} onClick={() => handleMenuClick({action:"load_game"})}>
-              {siteL10n("loadGameJson")}
-              <input type='file' id='file' ref={inputFileGame} style={{display: 'none'}} onChange={uploadGameAsJson} accept=".json"/>
-            </li>
-            <li key={"load_game_def"} onClick={() => handleMenuClick({action:"load_game_def"})}>
-              {siteL10n("loadGameDefinitionJson")}
-              <input type='file' id='file' ref={inputFileGameDef} style={{display: 'none'}} onChange={uploadGameDef} accept=".json"/>
+              {siteL10n("loadGameOrReplayJson")}
+              <input type='file' id='file' ref={inputFileGame} style={{display: 'none'}} onChange={uploadGameOrReplayJson} accept=".json"/>
             </li>
             <li key={"load_custom"} onClick={() => handleMenuClick({action:"load_custom"})}>
               {siteL10n("loadCustomCardsTxt")}
@@ -374,7 +379,8 @@ export const TopBarMenu = React.memo(({}) => {
             {siteL10n("download")}
             <span className="float-right mr-1"><FontAwesomeIcon icon={faChevronRight}/></span>
           <ul className="third-level-menu">        
-            <li key={"download"} onClick={() => handleMenuClick({action:"download"})}>{siteL10n("gameStateJson")}</li>
+            <li key={"download"} onClick={() => handleMenuClick({action:"download"})}>{siteL10n("gameStateJson")}</li>    
+            <li key={"downloadReplay"} onClick={() => handleMenuClick({action:"downloadReplay"})}>{siteL10n("fullReplay")}</li>
           </ul>
         </li>
         {isHost &&

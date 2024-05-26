@@ -79,7 +79,6 @@
     %{
       "id" => Ecto.UUID.generate,
       "roomSlug" => room_slug,
-      "roomName" => room_slug,
       "pluginId" => options["pluginId"],
       "pluginVersion" => options["pluginVersion"],
       "pluginName" => options["pluginName"],

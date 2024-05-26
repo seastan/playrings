@@ -181,6 +181,23 @@ defmodule DragnCardsWeb.RoomChannel do
   end
 
   def handle_in(
+    "send_alert",
+    %{
+      "message" => message,
+    },
+    %{assigns: %{room_slug: room_slug, user_id: user_id}} = socket
+  ) do
+
+    payload = %{
+      "level" => "info",
+      "text" => message
+    }
+    notify_alert(socket, room_slug, user_id, payload)
+
+    {:reply, :ok, socket}
+  end
+
+  def handle_in(
     "reset_game",
     %{
       "options" => options,
@@ -194,6 +211,21 @@ defmodule DragnCardsWeb.RoomChannel do
     notify_state(socket, room_slug, user_id)
 
     {:reply, {:ok, "reset_game"}, socket}
+  end
+
+  def handle_in(
+    "set_replay",
+    %{
+      "replay" => replay,
+    },
+    %{assigns: %{room_slug: room_slug, user_id: user_id}} = socket
+  ) do
+
+    GameUIServer.set_replay(room_slug, user_id, replay)
+
+    notify_state(socket, room_slug, user_id)
+
+    {:reply, {:ok, "set_replay"}, socket}
   end
 
   def handle_in(

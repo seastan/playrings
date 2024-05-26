@@ -79,6 +79,14 @@ defmodule DragnCardsGame.GameUIServer do
   end
 
   @doc """
+  set_replay/3: Upload a replay.
+  """
+  @spec set_replay(String.t(), integer, Map.t()) :: GameUI.t()
+  def set_replay(game_name, user_id, replay) do
+    game_exists?(game_name) && GenServer.call(via_tuple(game_name), {:set_replay, user_id, replay})
+  end
+
+  @doc """
   game_action/4: Perform given action on a card.
   """
   @spec game_action(String.t(), integer, String.t(), Map.t()) :: GameUI.t()
@@ -191,7 +199,6 @@ defmodule DragnCardsGame.GameUIServer do
     # IO.inspect(:code.priv_dir(:dragncards))
     # gameui = put_in(gameui["pypid"], :erlang.pid_to_list(pypid))
     GameRegistry.add(gameui["roomSlug"], gameui)
-    # GameRegistry.add(gameui["roomName"]<>"-pypid", pypid)
     {:ok, gameui, timeout(gameui)}
   end
 
@@ -246,6 +253,18 @@ defmodule DragnCardsGame.GameUIServer do
   def handle_call({:reset_game, user_id}, _from, gameui) do
 
     GameUI.new(gameui["roomSlug"], user_id, gameui["options"])
+    |> save_and_reply()
+
+  end
+
+  def handle_call({:set_replay, _user_id, replay}, _from, gameui) do
+    game = replay["game"]
+    deltas = replay["deltas"]
+
+    gameui
+    |> put_in(["game"], game)
+    |> put_in(["deltas"], deltas)
+    |> put_in(["replayStep"], Enum.count(deltas) - 1)
     |> save_and_reply()
 
   end

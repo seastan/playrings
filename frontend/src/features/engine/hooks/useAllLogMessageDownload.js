@@ -8,7 +8,7 @@ import { useMessageTextToHtml } from "../../messages/MessageLine";
 export const useAllLogMessageDownload = () => {
   const messageTextToHtml = useMessageTextToHtml();
   const deltas = useSelector(state => state?.gameUi?.deltas);
-  const roomName = useSelector(state => state?.gameUi?.game?.roomName);
+  const roomSlug = useSelector(state => state?.gameUi?.game?.roomSlug);
 
   // Function to generate HTML string
   const generateHTMLString = () => {
@@ -38,7 +38,7 @@ export const useAllLogMessageDownload = () => {
     const blob = new Blob([htmlString], { type: 'text/html' });
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
-    link.download = roomName + "_log.html";
+    link.download = roomSlug + "_log.html";
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);

@@ -1,4 +1,16 @@
 export const siteL10n = {
+  "loadGameOrReplayJson": {
+    "English": "Upload game or replay (.json)",
+    "Chinese": "加载游戏或回放（.json）"
+  },
+  "loadReplayJson": {
+    "English": "Load replay (.json)",
+    "Chinese": "加载回放（.json）"
+  },
+  "fullReplay": {
+    "English": "Full replay (.json)",
+    "Chinese": "完整回放（.json）"
+  },
   "right": {
     "English": "Right",
     "Chinese": "右"
