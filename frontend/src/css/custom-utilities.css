@@ -180,6 +180,8 @@ padding: 0;
     padding: 0;
     margin: 0;
     display: none;
+    overflow-y: scroll;
+    max-height: 50vh;
 }
 
 .third-level-menu > li
