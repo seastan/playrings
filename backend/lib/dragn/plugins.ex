@@ -92,6 +92,18 @@ defmodule DragnCards.Plugins do
     end
   end
 
+  def get_author_id(id) do
+    query = from p in Plugin,
+    where: [id: ^id],
+    select: {
+      p.author_id
+    }
+    case Repo.one(query) do
+      nil -> nil
+      query_result -> elem(query_result, 0)
+    end
+  end
+
   def get_card_db(id) do
     query = from p in Plugin,
     where: [id: ^id],

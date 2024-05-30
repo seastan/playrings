@@ -93,24 +93,27 @@ export const EditPluginModal = ({ plugin, closeModal, doFetchHash}) => {
 
     var res;
 
+    
     if (plugin === null) {
-
+      // Create new plugin
       const updateData = {
         plugin: {
           name: inputs.gameDef.pluginName,
           author_id: user?.id,
           game_def: inputs.gameDef,
           card_db: inputs.cardDb,
+          repo_url: inputs.repoUrl,
           public: inputs.public || false,
           version: 1,
         }
       }
       res = await axios.post("/be/api/myplugins", updateData, authOptions);
-
     } else {
+      // Update existing plugin
       const newPlugin = {
         id: plugin.id,
         version: plugin.version + 1,
+        repo_url: inputs.repoUrl,
         public: inputs.public,
       }
       if (inputs.gameDef) newPlugin.game_def = inputs.gameDef;
@@ -316,7 +319,7 @@ export const EditPluginModal = ({ plugin, closeModal, doFetchHash}) => {
             ))
           )}
           <label className="block text-sm font-bold mb-2 mt-4 text-white">
-          {siteL10n("Card database (.tsv)")}
+            {siteL10n("Card database (.tsv)")}
           </label>
           <label className="block text-xs mb-2 text-white">
             {siteL10n("You may upload multiple tab-separated-value (.tsv) files at once that define different cards and they will be merged automatically. Each file must share the same header information. A valid game definition must be uploaded first.")}
@@ -325,6 +328,18 @@ export const EditPluginModal = ({ plugin, closeModal, doFetchHash}) => {
             {plugin ? siteL10n("(Optional) Update card database (.tsv)") : siteL10n("Upload card database (.tsv)")}
             <input type='file' multiple id='file' ref={inputFileCardDb} style={{display: 'none'}} onChange={uploadCardDbTsv} accept=".tsv"/>
           </Button>
+          <label className="block text-sm font-bold mb-2 mt-4 text-white">
+            {siteL10n("GitHub Repository URL")}
+          </label>
+          <label className="block text-xs mb-2 text-white">
+            {siteL10n("Optional. See documentation for how you can use this to get immediate feedback during plugin development.")}
+          </label>
+          <input
+            name="repoUrl"
+            className="form-control w-full mb-2"
+            onChange={handleInputChange}
+            value={inputs.repoUrl || ""}
+          />
           {successMessageCardDb && (
             <div className="alert alert-info mt-1 text-xs p-1 pl-3">{successMessageCardDb}</div>
           )}

@@ -20,7 +20,11 @@ const draggingDefault = {
 };
 
 const initialState = {
-  alert: null,
+  alert: {
+    text: null,
+    level: null,
+    autoClose: true,
+  },
   playerN: "player1",
   keypress: {
     Control: 0,
@@ -49,6 +53,8 @@ const initialState = {
   spectatorMode: {
     peekingAll: false,
   },
+  pluginRepoUpdateGameDef: null,
+  pluginRepoUpdateAutoRefresh: false,
   tempDragStack: {
     stackId: null,
     toGroupId: null,
@@ -215,6 +221,12 @@ const playerUiSlice = createSlice({
     },
     setSpectatorModePeekingAll: (state, { payload }) => {
       state.spectatorMode.peekingAll = payload;
+    },
+    setPluginRepoUpdateGameDef: (state, { payload }) => {
+      state.pluginRepoUpdateGameDef = payload;
+    },
+    setPluginRepoUpdateAutoRefresh: (state, { payload }) => {
+      state.pluginRepoUpdateAutoRefresh = payload;
     }
   }
 });
@@ -270,6 +282,8 @@ export const {
   setDroppableRefs,
   setTempDragStack,
   setSpectatorModeEnabled,
-  setSpectatorModePeekingAll
+  setSpectatorModePeekingAll,
+  setPluginRepoUpdateGameDef,
+  setPluginRepoUpdateAutoRefresh
  } = playerUiSlice.actions;
 export default playerUiSlice.reducer;

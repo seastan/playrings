@@ -32,7 +32,6 @@ defmodule DragnCardsGame.GameUI do
       "deltas" => deltas,
       "replayStep" => Enum.count(deltas)-1,
       "sockets" => %{},
-      "loadedCardIds" => [],
       "spectators" => %{},
     }
     Logger.debug("Made new GameUI")

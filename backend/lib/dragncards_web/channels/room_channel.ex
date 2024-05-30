@@ -36,6 +36,12 @@ defmodule DragnCardsWeb.RoomChannel do
     {:noreply, socket}
   end
 
+  def handle_info({:plugin_repo_update, {:ok, files}}, socket) do
+
+    push(socket, "plugin_repo_update", %{"files" => files})
+    {:noreply, socket}
+  end
+
   def handle_in("request_state", _payload, %{assigns: %{room_slug: room_slug}} = socket) do
     client_state = client_state(socket)
     push(socket, "current_state", client_state)
@@ -205,7 +211,9 @@ defmodule DragnCardsWeb.RoomChannel do
     %{assigns: %{room_slug: room_slug, user_id: user_id}} = socket
   ) do
     gameui = GameUIServer.state(room_slug)
-    GameUI.save_replay(gameui, user_id, options)
+    if options["save"] == true or options["save"] == nil do
+      GameUI.save_replay(gameui, user_id, options)
+    end
     GameUIServer.reset_game(room_slug, user_id)
 
     notify_state(socket, room_slug, user_id)

@@ -4,11 +4,15 @@ import { setAlert } from '../../store/playerUiSlice';
 
 export const useSendLocalMessage = () => {
     const dispatch = useDispatch();
-    return (message) => {
+    return (message, level="info", autoClose="true") => {
+        if (level === "crash") {
+            autoClose = false;
+        }
         dispatch(setAlert({
             "timestamp": Date.now(),
             "text": message,
-            "level": "info"
+            "level": level,
+            "autoClose": autoClose
         }))
     }
 }

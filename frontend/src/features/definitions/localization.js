@@ -1,4 +1,12 @@
 export const siteL10n = {
+  "refreshPluginIfAuthor": {
+    "English": "Refresh plugin (if you are the author)",
+    "Chinese": "刷新插件（如果你是作者）"
+  },
+  "refreshPluginIfAuthorAuto": {
+    "English": "Toggle automatic plugin refresh (if you are the author)",
+    "Chinese": "切换自动插件刷新（如果你是作者）"
+  },
   "loadGameOrReplayJson": {
     "English": "Upload game or replay (.json)",
     "Chinese": "加载游戏或回放（.json）"

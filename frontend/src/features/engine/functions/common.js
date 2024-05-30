@@ -156,3 +156,10 @@ export const getStackDimensions = (stackId, layout, state) => {
 
   return {height: stackHeight, width: stackWidth, parentHeight: cardHeight, parentWidth: cardWidth};
 }
+
+export const getBackEndPlayerUi = (state) => {
+  var playerUi = state.playerUi;
+  // Drop the droppableRefs from the playerUi object
+  playerUi = {...playerUi, droppableRefs: {}, pluginRepoUpdateGameDef: null};
+  return playerUi;
+}

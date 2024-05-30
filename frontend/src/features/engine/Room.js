@@ -5,21 +5,26 @@ import {useSetMessages} from '../../contexts/MessagesContext';
 import useChannel from "../../hooks/useChannel";
 import { applyDeltaRedo, appendDelta, setGameUi, setPlayerInfo, setSockets, setDeltas, setSpectators } from "../store/gameUiSlice";
 import useProfile from "../../hooks/useProfile";
-import { resetPlayerUi, setActiveCardId, setAlert, setPreHotkeyActiveCardGroupId, setReplayStep } from "../store/playerUiSlice";
+import { resetPlayerUi, setAlert, setPluginRepoUpdateGameDef, setReplayStep } from "../store/playerUiSlice";
 import { PluginProvider } from "../../contexts/PluginContext";
 import store from "../../store";
-import ReactModal from "react-modal";
+import { mergeObjects } from "../myplugins/uploadPluginFunctions";
+import { getGameDefSchema } from "../myplugins/validate/getGameDefSchema";
+import { useSendLocalMessage } from "./hooks/useSendLocalMessage";
+import { validateSchema } from "../myplugins/validate/validateGameDef";
+import { useIsPluginAuthor } from "./hooks/isPluginAuthor";
+import { useRefreshPlugin } from "./hooks/useRefreshPlugin";
 
 export const Room = ({ slug }) => {
   const dispatch = useDispatch();
   const roomSlug = useSelector(state => state.gameUi.roomSlug);
   const setMessages = useSetMessages();
   const myUser = useProfile();
-  const [roomClosed, setRoomClosed] = useState(false);
+  const sendLocalMessage = useSendLocalMessage();
   const [outOfSync, setOutOfSync] = useState(false);
   const myUserId = myUser?.id;
+  const isPluginAuthor = useIsPluginAuthor();
   //const plugin = usePlugin();
-  const [isClosed, setIsClosed] = useState(false);
 
   const onChannelMessage = useCallback((event, payload) => {
     console.log("onChannelMessage: Got new payload: ", event, payload);
@@ -100,6 +105,26 @@ export const Room = ({ slug }) => {
         timestamp: Date.now()
       }));
       //setRoomClosed(true);
+    } else if (event === "plugin_repo_update" && payload !== null && isPluginAuthor) {
+      const parsedFiles = payload.files;
+      var mergedJSONs;
+      try {
+        mergedJSONs = mergeObjects(parsedFiles);
+        console.log("mergedJSONs", mergedJSONs)
+  
+        const errors = []
+        validateSchema(mergedJSONs, "gameDef", mergedJSONs, getGameDefSchema(mergedJSONs), errors);
+        
+        if (errors.length === 0) {
+          sendLocalMessage(`Detected plugin repository update with valid JSON files. Press Ctrl+Shift+L to update the plugin and start a new game.`, "info", false);
+          dispatch(setPluginRepoUpdateGameDef(mergedJSONs));
+
+        } else {
+          sendLocalMessage(`Invalid JSON file(s): ${errors.join("\n\n")}`, "crash", false);
+        }
+      } catch (error) {
+        sendLocalMessage(`Invalid JSON file(s): ${error.message}`, "crash", false);
+      }
     }
 
   }, [roomSlug]);
@@ -137,22 +162,6 @@ export const Room = ({ slug }) => {
   else {
     return (
       <PluginProvider>
-        <ReactModal
-          closeTimeoutMS={200}
-          isOpen={roomClosed}
-          onRequestClose={() => setRoomClosed(false)}
-          contentLabel="Room Closed"
-          overlayClassName="fixed inset-0 bg-black-50  z-10000"
-          className="insert-auto p-5 bg-gray-700 border mx-auto rounded-lg my-12 outline-none text-white"
-          style={{
-            overlay: {
-            },
-            content: {
-              width: '400px',
-            }
-          }}>
-            Your room has closed or timed out. If you were in the middle of playing, it may have crashed. If so, please go to the Menu and download the game state file. Then, create a new room and upload that file to continue where you left off.
-        </ReactModal>
         <RoomProviders 
           gameBroadcast={gameBroadcast} 
           chatBroadcast={chatBroadcast}/>

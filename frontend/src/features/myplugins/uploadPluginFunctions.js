@@ -53,11 +53,19 @@ for (var p in obj2) {
 } 
 
 export const mergeJSONs = (jsonList) => {
-const json0 = JSON.parse(jsonList[0]);
-for (var i = 1; i < jsonList.length; i++) {
-  deepMerge(json0, JSON.parse(jsonList[i]));
+  // Convert to list of objects
+  const objList = jsonList.map(json => JSON.parse(json));
+  // Merge the objects
+  const mergedObj = mergeObjects(objList);
+  return mergedObj;
 }
-return json0;
+
+export const mergeObjects = (objList) => {
+  const obj0 = objList[0];
+  for (var i = 1; i < objList.length; i++) {
+    deepMerge(obj0, objList[i]);
+  }
+  return obj0;
 }
 
 export const stringTo2DArray = (inputString) => {

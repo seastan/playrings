@@ -5,8 +5,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronLeft, faChevronRight, faDownload, faPlay, faSave, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { useAuthOptions } from "../../hooks/useAuthOptions";
 import axios from "axios";
-import { useDispatch, useSelector } from "react-redux";
-import BroadcastContext from "../../contexts/BroadcastContext";
+import { useSelector } from "react-redux";
 import { RotatingLines } from "react-loader-spinner";
 import { keyClass } from "./functions/common";
 import { keyStyle } from "./functions/common";
@@ -16,8 +15,6 @@ import { useImportLoadList } from "./hooks/useImportLoadList";
 export const DeckbuilderCurrent = React.memo(({currentGroupId, setCurrentGroupId, numChanges, setNumChanges, doFetchHash, setHoverCardDetails, modifyDeckList, currentDeck, setCurrentDeck}) => {
   const gameDef = useGameDefinition();
   const playerN = useSelector(state => state?.playerUi?.playerN)
-  const {gameBroadcast, chatBroadcast} = useContext(BroadcastContext);
-  const dispatch = useDispatch();
   const authOptions = useAuthOptions();
   const deckbuilder = gameDef.deckbuilder;
   const spawnGroups = deckbuilder.spawnGroups;

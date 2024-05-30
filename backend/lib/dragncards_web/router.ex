@@ -33,6 +33,12 @@ defmodule DragnCardsWeb.Router do
     resources("/rooms", RoomController, except: [:new, :edit])
   end
 
+  # Plugin Repo Update
+  scope "/api", DragnCardsWeb do
+    pipe_through(:api)
+    post("/plugin-repo-update", PluginRepoUpdateController, :update)
+  end
+
   scope "/api", DragnCardsWeb do
     pipe_through(:api)
 

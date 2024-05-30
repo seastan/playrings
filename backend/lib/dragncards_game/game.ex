@@ -75,11 +75,13 @@
       game_def
       |> Map.get("stepOrder", [])
       |> Enum.at(0, nil)
+    plugin_author_id = Plugins.get_author_id(options["pluginId"])
     base = try do
     %{
       "id" => Ecto.UUID.generate,
       "roomSlug" => room_slug,
       "pluginId" => options["pluginId"],
+      "pluginAuthorId" => plugin_author_id,
       "pluginVersion" => options["pluginVersion"],
       "pluginName" => options["pluginName"],
       "numPlayers" => default_layout_info["numPlayers"] || 1,

@@ -10,7 +10,7 @@ import BroadcastContext from "../../contexts/BroadcastContext";
 import { useGameDefinition } from "./hooks/useGameDefinition";
 import { useDoActionList } from "./hooks/useDoActionList";
 import { useSiteL10n } from "../../hooks/useSiteL10n";
-import { getRandomIntInclusive, keysDiv } from "./functions/common";
+import { getBackEndPlayerUi, getRandomIntInclusive, keysDiv } from "./functions/common";
 import { useImportLoadList } from "./hooks/useImportLoadList";
 import { loadMarvelCdb, loadRingsDb, useImportViaUrl } from "./hooks/useImportViaUrl";
 import { useIsHost } from "./hooks/useIsHost";
@@ -53,23 +53,15 @@ export const TopBarMenu = React.memo(({}) => {
     }
     if (data.action === "clear_table") {
       // Reset game
-      var playerUi = store.getState().playerUi;
-      // Drop the droppableRefs from the playerUi object
-      playerUi = {...playerUi, droppableRefs: {}}
+      var playerUi = getBackEndPlayerUi(store.getState());
       doActionList(data.actionList);
-
       gameBroadcast("reset_game", {options: {player_ui: playerUi}});
-      //gameBroadcast("game_action", {action: "reset_game", options: {player_ui: playerUi, action_list: data.actionList}});
-      //doActionList(["LOG", "$ALIAS_N", " reset the game."]);
+      
     } else if (data.action === "close_room") {
       // Mark status
-      //doActionList(data.actionList);
-      var playerUi = store.getState().playerUi;
-      // Drop the droppableRefs from the playerUi object
-      playerUi = {...playerUi, droppableRefs: {}}
+      var playerUi = getBackEndPlayerUi(store.getState());
       // Save replay
       doActionList(data.actionList);
-      //gameBroadcast("game_action", {action: "close_room", options: {player_ui: playerUi, action_list: data.actionList}});
       // Close room
       history.push("/profile");
       //doActionList(["LOG", "$ALIAS_N", " closed the room."]);

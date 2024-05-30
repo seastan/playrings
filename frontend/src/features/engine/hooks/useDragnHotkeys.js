@@ -5,12 +5,14 @@ import { useDoActionList } from "./useDoActionList";
 import { dragnActionLists } from "../functions/dragnActionLists";
 import { useDispatch } from "react-redux";
 import { useImportViaUrl } from "./useImportViaUrl";
-import { setShowModal, setSpectatorModePeekingAll } from "../../store/playerUiSlice";
+import { setPluginRepoUpdateAutoRefresh, setShowModal, setSpectatorModePeekingAll } from "../../store/playerUiSlice";
 import { useActiveCardId } from "./useActiveCardId";
 import { useSendLocalMessage } from "./useSendLocalMessage";
 import { useCurrentFace } from "./useCurrentFace";
 import { useCurrentSide } from "./useCurrentSide";
 import useProfile from "../../../hooks/useProfile";
+import { useRefreshPlugin } from "./useRefreshPlugin";
+import { useIsPluginAuthor } from "./isPluginAuthor";
 
 export const dragnHotkeys = [
   {"key": "T", "actionList": "targetCard", "label": "targetCard"},
@@ -28,7 +30,9 @@ export const dragnHotkeys = [
   {"key": "Shift+ArrowLeft", "actionList": "undoMany", "label": "undoManyActions"},
   {"key": "Shift+ArrowRight", "actionList": "redoMany", "label": "redoManyActions"},
   {"key": "ArrowUp", "actionList": "prevStep", "label": "moveToPreviousGameStep"},
-  {"key": "ArrowDown", "actionList": "nextStep", "label": "moveToNextGameStep"}
+  {"key": "ArrowDown", "actionList": "nextStep", "label": "moveToNextGameStep"},
+  {"key": "Ctrl+Shift+L", "actionList": "refreshPlugin", "label": "refreshPluginIfAuthor"},
+  {"key": "Ctrl+Shift+K", "actionList": "refreshPluginAuto", "label": "refreshPluginIfAuthorAuto"}
 ]
 
 export const dragnTouchButtons = {
@@ -100,6 +104,8 @@ export const useDoDragnHotkey = () => {
   const dispatch = useDispatch();
   const importViaUrl = useImportViaUrl();
   const sendLocalMessage = useSendLocalMessage();
+  const refreshPlugin = useRefreshPlugin();
+  const isPluginAuthor = useIsPluginAuthor
   const activeCardId = useActiveCardId();
   const currentSide = useCurrentSide(activeCardId);
   const currentFace = useCurrentFace(activeCardId);
@@ -111,6 +117,26 @@ export const useDoDragnHotkey = () => {
       return;
     }
     switch (actionList) {
+      case "refreshPlugin":
+        if (isPluginAuthor) {
+          refreshPlugin();
+        } else {
+          sendLocalMessage("You must be the author of the plugin to use this hotkey.");
+        }
+        return
+      case "refreshPluginAuto":
+        if (isPluginAuthor) {
+          const pluginRepoUpdateAutoRefresh = store.getState().playerUi.pluginRepoUpdateAutoRefresh;
+          if (pluginRepoUpdateAutoRefresh) {
+            sendLocalMessage("Auto-refreshing plugin updates is now off.");
+          } else {
+            sendLocalMessage("Auto-refreshing plugin updates is now on.");
+          }
+          dispatch(setPluginRepoUpdateAutoRefresh(!pluginRepoUpdateAutoRefresh));
+        } else {
+          sendLocalMessage("You must be the author of the plugin to use this hotkey.");
+        }
+        return 
       case "loadURL":
         return importViaUrl();
       case "loadPrebuilt":
