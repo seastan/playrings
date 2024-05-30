@@ -285,10 +285,13 @@ defmodule DragnCardsGame.GameUI do
     orig_group = get_group(game, orig_group_id)
     dest_group = get_group(game, dest_group_id)
     old_card = get_card(game, card_id)
-    allow_flip = if move_options != nil and move_options["allowFlip"] == false do
-      false
-    else
-      true
+    allow_flip = cond do
+      move_options != nil and move_options["allowFlip"] == false ->
+        false
+      orig_group["onCardEnter"]["inPlay"] == true and dest_group["onCardEnter"]["inPlay"] == true ->
+        false
+      true ->
+        true
     end
     parent_card = get_card_by_group_id_stack_index_card_index(game, [dest_group_id, dest_stack_index, 0])
 
@@ -346,10 +349,11 @@ defmodule DragnCardsGame.GameUI do
     game = if orig_group["onCardLeave"] != nil do
       Enum.reduce(orig_group["onCardLeave"], game, fn({key, val}, acc) ->
         if orig_group["onCardLeave"][key] != orig_group["onCardLeave"][key] do
-          if key == "currentSide" and allow_flip == false do
-            acc
-          else
-            Evaluate.evaluate(acc, ["SET", "/cardById/" <> card_id <> "/" <> key, val], ["update_card_state cardId:#{card_id} #{key}:#{inspect(val)}"])
+          cond do
+            key == "currentSide" and allow_flip == false ->
+              acc
+            true ->
+              Evaluate.evaluate(acc, ["SET", "/cardById/" <> card_id <> "/" <> key, val], ["update_card_state cardId:#{card_id} #{key}:#{inspect(val)}"])
           end
         else
           acc
@@ -363,10 +367,11 @@ defmodule DragnCardsGame.GameUI do
     game = if dest_group["onCardEnter"] != nil do
       Enum.reduce(dest_group["onCardEnter"], game, fn({key, val}, acc) ->
         #if orig_group["onCardEnter"][key] != dest_group["onCardEnter"][key] do
-          if key == "currentSide" and allow_flip == false do
-            acc
-          else
-            Evaluate.evaluate(acc, ["SET", "/cardById/" <> card_id <> "/" <> key, val], ["update_card_state cardId:#{card_id} #{key}:#{inspect(val)}"])
+          cond do
+            key == "currentSide" and allow_flip == false ->
+              acc
+            true ->
+              Evaluate.evaluate(acc, ["SET", "/cardById/" <> card_id <> "/" <> key, val], ["update_card_state cardId:#{card_id} #{key}:#{inspect(val)}"])
           end
         # else
         #   acc
