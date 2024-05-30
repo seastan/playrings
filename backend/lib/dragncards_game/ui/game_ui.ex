@@ -19,12 +19,14 @@ defmodule DragnCardsGame.GameUI do
     Logger.debug("Making new GameUI")
     plugin_id = options["pluginId"]
     game_def = Plugins.get_game_def(plugin_id)
+    plugin_author_id = Plugins.get_author_id(options["pluginId"])
     %{game: game, deltas: deltas} = Game.load(room_slug, user_id, game_def, options)
 
     gameui = %{
       "game" => game,
       "roomSlug" => room_slug,
       "options" => options,
+      "pluginAuthorId" => plugin_author_id,
       "createdAt" => DateTime.utc_now(),
       "createdBy" => user_id,
       "privacyType" => options["privacyType"],

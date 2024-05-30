@@ -20,7 +20,8 @@ defmodule DragnCardsWeb.MyPluginsController do
           :version,
           :num_favorites,
           :public,
-          :updated_at
+          :updated_at,
+          :repo_url
         ]
       Repo.all(query)
     else

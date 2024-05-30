@@ -39,9 +39,10 @@ export const useRefreshPlugin = () => {
     const updateData = {
       plugin: newPlugin
     };
+    dispatch(setPluginRepoUpdateGameDef(null));
+    sendLocalMessage("Updating plugin...", "info", false);
     const res = await Axios.patch("/be/api/myplugins/"+pluginId, updateData, authOptions);
     if (res.status === 200) {
-      dispatch(setPluginRepoUpdateGameDef(null));
       sendLocalMessage("Plugin updated successfully.", "success");
 
       var playerUi = getBackEndPlayerUi(store.getState());

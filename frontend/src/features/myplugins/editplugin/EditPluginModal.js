@@ -28,13 +28,11 @@ export const EditPluginModal = ({ plugin, closeModal, doFetchHash}) => {
     }),
     [authToken]
   );
-  const [checked, setChecked] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
   const [loadingMessage, setLoadingMessage] = useState("");
 
   const [validGameDef, setValidGameDef] = useState(false);
-  const [validCardDb, setValidCardDb] = useState(false);
   const [errorMessagesGameDef, setErrorMessagesGameDef] = useState([]);
   const [warningMessagesGameDef, setWarningMessagesGameDef] = useState([]);
   const [errorMessageCardDb, setErrorMessageCardDb] = useState([]);
@@ -144,7 +142,8 @@ export const EditPluginModal = ({ plugin, closeModal, doFetchHash}) => {
   });
 
   useEffect(() => {
-    if (inputs && plugin && inputs.public !== plugin.public) setInputs({...inputs, public: plugin.public});
+    console.log("plugin 1", plugin)
+    if (inputs && plugin) setInputs({...inputs, public: plugin.public, repoUrl: plugin.repo_url});
   },[])
 
 
@@ -233,7 +232,6 @@ export const EditPluginModal = ({ plugin, closeModal, doFetchHash}) => {
         const cardDb = processArrayOfRows(inputs, plugin, arrayOfRows, errors);
         setSuccessMessageCardDb(`Card database uploaded successfully: ${Object.keys(cardDb).length} cards.`);
         setErrorMessageCardDb(errors);
-        setValidCardDb(true);
         setInputs({...inputs, cardDb: cardDb});
       } catch(err) {
         setErrorMessageCardDb([err.message]);
@@ -260,7 +258,7 @@ export const EditPluginModal = ({ plugin, closeModal, doFetchHash}) => {
     downloadAnchorNode.remove();
   }
 
-  var changesMade = plugin ? ((inputs.public !== plugin.public) || inputs.gameDef || inputs.cardDb) : (inputs.gameDef || inputs.cardDb);
+  var changesMade = plugin ? ((inputs.public !== plugin.public) || (inputs.repoUrl !== plugin.repo_url) || inputs.gameDef || inputs.cardDb) : (inputs.gameDef || inputs.cardDb);
 
   const canSubmit = changesMade && errorMessagesGameDef.length === 0 && errorMessageCardDb.length === 0;
 

@@ -47,9 +47,6 @@ defmodule DragnCardsWeb.PluginRepoUpdateController do
         # Trigger the processing of the JSON files
         files = RefreshPlugin.refresh()
         # Broadcast update message to relevant rooms
-        IO.puts("Broadcasting update with files:")
-        IO.inspect(files)
-        IO.inspect(room_slugs_to_update)
 
         Enum.each(room_slugs_to_update, fn room_slug ->
           PubSub.broadcast(DragnCards.PubSub, "room:#{room_slug}", {:plugin_repo_update, files})

@@ -116,6 +116,30 @@ defmodule DragnCards.Plugins do
     end
   end
 
+  def get_plugin_version(id) do
+    query = from p in Plugin,
+    where: [id: ^id],
+    select: {
+      p.version
+    }
+    case Repo.one(query) do
+      nil -> nil
+      query_result -> elem(query_result, 0)
+    end
+  end
+
+  def get_plugin_name(id) do
+    query = from p in Plugin,
+    where: [id: ^id],
+    select: {
+      p.name
+    }
+    case Repo.one(query) do
+      nil -> nil
+      query_result -> elem(query_result, 0)
+    end
+  end
+
   @doc """
   Gets a single plugin.
 

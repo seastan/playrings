@@ -13,7 +13,6 @@ import { getGameDefSchema } from "../myplugins/validate/getGameDefSchema";
 import { useSendLocalMessage } from "./hooks/useSendLocalMessage";
 import { validateSchema } from "../myplugins/validate/validateGameDef";
 import { useIsPluginAuthor } from "./hooks/isPluginAuthor";
-import { useRefreshPlugin } from "./hooks/useRefreshPlugin";
 
 export const Room = ({ slug }) => {
   const dispatch = useDispatch();

@@ -8,7 +8,7 @@
   import Ecto.Query
   alias ElixirSense.Log
   alias DragnCardsGame.{Groups, Game, PlayerData, GameVariables, Evaluate}
-  alias DragnCards.{Repo, Replay, Plugins, Users}
+  alias DragnCards.{Repo, Replay, Users, Plugins}
 
   @type t :: Map.t()
 
@@ -75,15 +75,16 @@
       game_def
       |> Map.get("stepOrder", [])
       |> Enum.at(0, nil)
-    plugin_author_id = Plugins.get_author_id(options["pluginId"])
+    plugin_id = options["pluginId"]
+    plugin_version = Plugins.get_plugin_version(plugin_id)
+    plugin_name = Plugins.get_plugin_name(plugin_id)
     base = try do
     %{
       "id" => Ecto.UUID.generate,
       "roomSlug" => room_slug,
-      "pluginId" => options["pluginId"],
-      "pluginAuthorId" => plugin_author_id,
-      "pluginVersion" => options["pluginVersion"],
-      "pluginName" => options["pluginName"],
+      "pluginId" => plugin_id,
+      "pluginVersion" => plugin_version,
+      "pluginName" => plugin_name,
       "numPlayers" => default_layout_info["numPlayers"] || 1,
       "roundNumber" => 0,
       "layoutId" => layout_id,

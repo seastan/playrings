@@ -56,7 +56,7 @@ export const PluginProvider = ({ children }) => {
       }
     }
     doFetchHash((new Date()).toISOString());
-  }, [pluginId]);
+  }, [pluginId, pluginVersion]);
 
   useEffect(() => {
     if (data) {//} && !retrievedFromStorage) {  // Check the flag before writing
@@ -71,7 +71,7 @@ export const PluginProvider = ({ children }) => {
       }
     }
     setRetrievedFromStorage(false);  // Reset the flag for the next round
-  }, [data, pluginId]);
+  }, [data, pluginId, pluginVersion]);
 
   return (
     <PluginContext.Provider value={{ plugin: plugin, isLoading, progressEvent: progressEvent }}>
