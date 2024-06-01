@@ -21,12 +21,13 @@ export const Alert = React.memo(({
   alertText = formatLabelsInText(alertText).replace(/\n/g, '<br />');
   alertText = DOMPurify.sanitize(alertText);
   const alertLevel = alert?.level;
-  const autoClose = alert?.autoClose;
+  const autoClose = alert?.autoClose === false ? false : true;
 
   const [progress, setProgress] = useState(0);
 
   // use effect to clear alert after 8 seconds and update progress bar
   useEffect(() => {
+    console.log("alert 1", alert)
 
     if (alert && autoClose) {
       const numWords = alertText.split(' ').length;
