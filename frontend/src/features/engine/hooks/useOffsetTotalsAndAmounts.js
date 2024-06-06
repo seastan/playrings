@@ -3,8 +3,8 @@ import { useSelector } from "react-redux";
 
 export const useOffsetTotalsAndAmounts = (stackId) => {
     const stack = useSelector(state => state?.gameUi?.game?.stackById[stackId]);
-    const lookingUnder = stack.lookingUnder;
-    const cardIds = stack?.cardIds;
+    const lookingUnder = stack?.lookingUnder;
+    const cardIds = stack?.cardIds || [];
     const attachmentDirections = useSelector(state => cardIds.map(cardId => state?.gameUi?.game?.cardById[cardId].attachmentDirection));
 
     if (!stack) return {offsetTotals: {top: 0, left: 0, right: 0, bottom: 0, behind: 0}, offsetAmounts: [{top: 0, left: 0}]};

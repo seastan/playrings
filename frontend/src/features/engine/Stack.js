@@ -35,10 +35,10 @@ export const Stack = React.memo(({
   const [showingUnder, setShowingUnder] = useState(stack?.lookingUnder);
   const doActionList = useDoActionList();
   console.log('Rendering StackId ', isHoveredOver, hoverOverDirection)
-  if (!stack) return null;
   const cardIds = stack?.cardIds;
 
   const {offsetTotals, offsetAmounts} = useOffsetTotalsAndAmounts(stackId);
+  if (!stack) return null;
 
   const numBehind = offsetTotals.behind;
 
