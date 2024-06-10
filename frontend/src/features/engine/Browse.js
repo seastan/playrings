@@ -9,8 +9,7 @@ import { setDropdownMenu, setTyping } from "../store/playerUiSlice";
 import { useGameL10n } from "./hooks/useGameL10n";
 import { useGameDefinition } from "./hooks/useGameDefinition";
 import { useDoActionList } from "./hooks/useDoActionList";
-import { useLayout } from "./hooks/useLayout";
-import { DEFAULT_CARD_Z_INDEX, convertToPercentage, getParentCardsInGroup } from "./functions/common";
+import { DEFAULT_CARD_Z_INDEX, getParentCardsInGroup } from "./functions/common";
 import Draggable from "react-draggable";
 import { useCardScaleFactor } from "./hooks/useCardScaleFactor";
 
@@ -19,19 +18,19 @@ const isNormalInteger = (val) => {
   return n !== Infinity && n === val && n >= 0;
 }
 
+const browseWidth = "98%";
+const browseLeft = "1%";
+
 export const Browse = React.memo(({}) => {
   const dispatch = useDispatch();
   const gameL10n = useGameL10n();
   const gameDef = useGameDefinition();
   const playerN = useSelector(state => state?.playerUi?.playerN);
-  const playerData = useSelector(state => state?.gameUi?.game?.playerData);
   const groupId = useSelector(state => state?.gameUi?.game?.playerData?.[playerN]?.browseGroup?.id);
   const browseGroupTopN = useSelector(state => state?.gameUi?.game?.playerData?.[playerN]?.browseGroup?.topN);
   const group = useSelector(state => state?.gameUi?.game?.groupById?.[groupId]);
-  const layout = useLayout();
   const cardScaleFactor = useCardScaleFactor();
-  var region = layout?.browse;
-  region = {...region, groupId: groupId, layerIndex: 9};
+  const region = {type: "fan", direction: "horizontal", groupId: groupId, layerIndex: 9, left: browseLeft, width: "65%", top: "50%", height: `${cardScaleFactor*1.1 + 3}vh`, top: "50%"};
   const game = useSelector(state => state?.gameUi?.game);
   const parentCards = getParentCardsInGroup(game, groupId);
   const [searchForProperty, setSearchForProperty] = useState('All');
@@ -177,10 +176,10 @@ export const Browse = React.memo(({}) => {
     //<Draggable handle="strong">
     <div className="absolute rounded-lg bg-gray-700 w-full" 
       style={{
-        left: "1%", 
-        width: "98%", 
-        top: "50%", 
-        height: `${cardScaleFactor*1.1 + 3}vh`, 
+        left: region.left,
+        width: browseWidth,
+        top: region.top,
+        height: region.height,
         zIndex: 2*DEFAULT_CARD_Z_INDEX+2,
         boxShadow: "0 0 10px 5px rgba(0,0,0,0.6)"
       }}>

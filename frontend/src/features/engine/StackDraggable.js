@@ -52,7 +52,6 @@ export const StackDraggable = React.memo(({
     const zoomFactor = useSelector(state => state?.playerUi?.userSettings?.zoomPercent)/100;
     const isCombined = useSelector(state => ((state?.playerUi?.dragging?.stackId === stackId) && (state?.playerUi?.dragging?.hoverOverStackId !== null)));
     const playerN = usePlayerN();
-    const isInBrowseGroup = useSelector(state => state?.gameUi?.game?.playerData?.[playerN]?.browseGroup?.id === region.groupId);
 
     const layout = useLayout();
     const rowSpacing = layout?.rowSpacing;
