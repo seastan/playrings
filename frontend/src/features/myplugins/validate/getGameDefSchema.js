@@ -747,35 +747,6 @@ export const getGameDefSchema = (gameDef) => {
               "_required_": true,
             }
           },
-          "browse": {
-            "_type_": "object",
-            "_required_": true,
-            "_strictKeys_": true,
-            "type": {
-              "_type_": "string",
-              "_required_": true,
-            },
-            "direction": {
-              "_type_": "string",
-              "_memberOf_": ["horizontal", "vertical"],
-            },
-            "left": {
-              "_type_": "any",
-              "_required_": true,
-            },
-            "top": {
-              "_type_": "any",
-              "_required_": true,
-            },
-            "width": {
-              "_type_": "any",
-              "_required_": true,
-            },
-            "height": {
-              "_type_": "any",
-              "_required_": true,
-            }
-          },
           "regions": {
             "_type_": "object",
             "_required_": true,
