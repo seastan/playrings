@@ -17,7 +17,7 @@ export const TableRegion = React.memo(({
   const formattedGroupId = formatGroupId(region.groupId);
   const extraStyle = useSelector(state => state?.gameUi?.game?.groupById?.[formattedGroupId]?.extraStyle);
   const formattedRegion = {...region, groupId: formattedGroupId};
-  const hideGroup = (formattedRegion.groupId === browseGroupId) || (browseGroupId && formattedRegion.hideWhileBrowsing);
+  const hideGroup = (formattedRegion.groupId === browseGroupId);
   const draggingStackId = useSelector(state => state?.playerUi?.dragging?.stackId);
   const droppableId = region.groupId + "--" + region.type + "--" + region.direction; 
   const draggingFromThisDroppableId = useSelector(state => state?.playerUi?.dragging?.fromDroppableId === droppableId);
@@ -36,9 +36,6 @@ export const TableRegion = React.memo(({
         left: convertToPercentage(region.left),
         width: convertToPercentage(region.width),
         height: convertToPercentage(region.height),
-        MozBoxShadow: (region.boxShadow) ? '0 10px 10px 5px rgba(0,0,0,0.3)' : "",
-        WebkitBoxShadow: (region.boxShadow) ? '0 10px 10px 5px rgba(0,0,0,0.3)' : "",
-        boxShadow: (region.boxShadow) ? '0 10px 10px 5px rgba(0,0,0,0.3)' : "",
         zIndex: zIndex,
       }}>
       {hideGroup ? null :

@@ -817,9 +817,6 @@ export const getGameDefSchema = (gameDef) => {
                   "_type_": "string",
                 }
               },
-              "hideWhileBrowsing": {
-                "_type_": "boolean",
-              },
               "layerIndex": {
                 "_type_": "integer",
               },
