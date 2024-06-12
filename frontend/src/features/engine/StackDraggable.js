@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { useSelector } from 'react-redux';
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from 'react-redux';
 import { Draggable } from "@seastan/react-beautiful-dnd";
 //import { Draggable } from "seastan-react-beautiful-dnd";
 import { useLayout } from "./hooks/useLayout";
@@ -12,6 +12,7 @@ import { Stack } from "./Stack";
 import { getGroupIdAndRegionType } from "./Reorder";
 import { useOffsetTotalsAndAmounts } from "./hooks/useOffsetTotalsAndAmounts";
 import { usePlayerN } from "./hooks/usePlayerN";
+import { setDraggingEndDelay, setTempDragStack } from "../store/playerUiSlice";
 
 const StackContainerFree = styled.div`
   position: absolute;
@@ -42,16 +43,28 @@ export const StackDraggable = React.memo(({
     numStacksVisible,
     onDragEnd
   }) => {
+    //const dispatch = useDispatch();
     const stack = useSelector(state => state?.gameUi?.game?.stackById[stackId]);
     const numStackIdsInGroup = useSelector(state => state?.gameUi?.game?.groupById?.[region.groupId]?.stackIds.length);
-    const tempDragStackId = useSelector(state => state?.playerUi?.tempDragStack?.stackId);
+    const tempDragStackIdIsThisStackId = useSelector(state => state?.playerUi?.tempDragStack?.stackId === stackId);
     const thisDrag = useSelector(state => state?.playerUi?.dragging?.stackId == stackId);
-    const draggingEnd = useSelector(state => state?.playerUi?.dragging?.end);
-    const draggingEndDelay = useSelector(state => state?.playerUi?.dragging?.endDelay);
+    //const draggingEnd = useSelector(state => state?.playerUi?.dragging?.end);
+    //const draggingEndDelay = useSelector(state => state?.playerUi?.dragging?.endDelay);
     const touchMode = useSelector(state => state?.playerUi?.userSettings?.touchMode);
-    const zoomFactor = useSelector(state => state?.playerUi?.userSettings?.zoomPercent)/100;
+    const regionCardSizeFactor = region.cardSizeFactor || 1;
+    const zoomFactor = useSelector(state => state?.playerUi?.userSettings?.zoomPercent)/100 * regionCardSizeFactor;
     const isCombined = useSelector(state => ((state?.playerUi?.dragging?.stackId === stackId) && (state?.playerUi?.dragging?.hoverOverStackId !== null)));
     const playerN = usePlayerN();
+
+    // console.log("renda 1 ")
+    // useEffect(() => {
+    //   console.log("renda 2 ", tempDragStackIdIsThisStackId)
+    //   if (tempDragStackIdIsThisStackId && setDraggingEndDelay) {
+    //     console.log("renda 3 ")
+    //     // dispatch(setDraggingEndDelay(false));
+    //     // dispatch(setTempDragStack(null));
+    //   }
+    // }, [tempDragStackIdIsThisStackId]);
 
     const layout = useLayout();
     const rowSpacing = layout?.rowSpacing;
@@ -66,6 +79,7 @@ export const StackDraggable = React.memo(({
     const {offsetTotals, offsetAmounts} = useOffsetTotalsAndAmounts(stackId);
 
     if (!stack) return null;
+    //if (tempDragStackIdIsThisStackId) return null;
 
     const numStacksNonZero = Math.max(numStacksVisible, 1);
     const regionWidthPercent = convertToPercentage(region.width);
@@ -83,10 +97,6 @@ export const StackDraggable = React.memo(({
     const fanSpacingVert = (regionHeightInt-cardSize)/numStacksNonZero;
     const stackHeightFan = Math.min(fanSpacingVert, cardHeight*cardSize*zoomFactor);
 
-    if (tempDragStackId === stackId) {
-      return null;
-    }
-
     return (
       <Draggable 
         key={stackId} 
@@ -94,13 +104,14 @@ export const StackDraggable = React.memo(({
         index={stackIndex}
         isDragDisabled={playerN === null}>
         {(dragProvided, dragSnapshot) => {
+          const draggingEnd = store.getState().playerUi?.dragging?.end;
           if (!draggingEnd && dragSnapshot.isDropAnimating && onDragEnd) {
             const fromDroppableId = store.getState().playerUi?.dragging?.fromDroppableId;
             const hoverOverStackId = store.getState().playerUi?.dragging?.hoverOverStackId;
             const hoverOverDirection = store.getState().playerUi?.dragging?.hoverOverDirection;
             const hoverOverDroppableId = store.getState().playerUi?.dragging?.hoverOverDroppableId;
             const [toGroupId, toRegionType, toRegionDirection] = getGroupIdAndRegionType(hoverOverDroppableId);
-            console.log('onDragEnd hoverOverStackId 2:',{hoverOverStackId, draggingEnd, draggingEndDelay});
+            console.log('onDragEnd hoverOverStackId 2:',{hoverOverStackId, draggingEnd});
             if (hoverOverStackId) {
               const result = {
                 "draggableId": "6920565a-6485-4f5b-b0f7-66e36286efee",
@@ -156,10 +167,10 @@ export const StackDraggable = React.memo(({
                 //if (isCombined) updatedStyle.zIndex = 0;
                 if (updatedStyle.transform && dragSnapshot.isDragging) updatedStyle.transform = updatedStyle.transform + " scale(1.1)";
                 if (region.type === "free" && !dragSnapshot.isDragging) updatedStyle.transform = "none";
-                // If isInBrowseGroup, add -50% to transform Y
-                //if (isInBrowseGroup && dragSnapshot.isDragging) updatedStyle.transform = updatedStyle.transform + " translate(0%, -50vh)";
+                if (!dragSnapshot.isDragging) updatedStyle.transform = "scale(" + zoomFactor + ")";
                 updatedStyle.visibility = draggingToFree && ((thisDrag && style.transform === null) || dragSnapshot.isDropAnimating) ? "hidden" : "visible";
                 if (region.direction === "horizontal") updatedStyle.display = "inline-block";
+                if (tempDragStackIdIsThisStackId) updatedStyle.visibility = "hidden";
                 // Check if mouse is within this div
 
                 if (region.type === "free") {

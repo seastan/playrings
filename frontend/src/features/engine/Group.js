@@ -25,6 +25,7 @@ export const Group = React.memo(({
   const playerN = useSelector(state => state?.playerUi?.playerN);
   const tempDragStack = useSelector(state => state?.playerUi?.tempDragStack);
   const iconsVisible = playerN && (region.showMenu || (isPile && region.showMenu !== false)) ;
+  //const regionCardSizeFactor = region.cardSizeFactor || 1.0;
   const browseTopN = useBrowseTopN();
   const doActionList = useDoActionList();
   console.log("Group tempDragStack", tempDragStack)
@@ -92,7 +93,13 @@ export const Group = React.memo(({
       </div>
       <div className="h-full" style={{marginLeft: "1.7vh", width: region.type === "free" ? "100%" : "calc(100% - 1.7vh)"}}>
         {(region.type === "free" && tempDragStack && tempDragStack?.toGroupId === groupId) &&
-          <div style={{left: `${tempDragStack.left}%`, top: `${tempDragStack.top}%`, position: "absolute", zIndex: 1e9, marginLeft: "1.7vh"}}>
+          <div style={{
+            left: `${tempDragStack.left}%`, 
+            top: `${tempDragStack.top}%`, 
+            position: "absolute", 
+            zIndex: 1e9, 
+            marginLeft: "1.7vh"
+          }}>
             <Stack
               stackId={tempDragStack.stackId}
               isDragging={false}

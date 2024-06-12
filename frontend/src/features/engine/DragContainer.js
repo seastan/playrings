@@ -245,7 +245,6 @@ export const DragContainer = React.memo(({}) => {
     const destGroup = groupById[destGroupId];
     const destGroupStackIds = destGroup.stackIds;
 
-    // dispatch(setDraggingEnd(true));
     dispatch(setDraggingDefault());
     dispatch(setDraggingEndDelay(true));
     setTimeout(() => {
@@ -276,6 +275,7 @@ export const DragContainer = React.memo(({}) => {
     }
 
     if (destRegionType === "free") {
+      //alert(`setting left and top to ${stackLeft} and ${stackTop}`)
       dispatch(setTempDragStack({
         stackId: origStackId, 
         toGroupId: destGroupId,
