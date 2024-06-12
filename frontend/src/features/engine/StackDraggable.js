@@ -104,7 +104,9 @@ export const StackDraggable = React.memo(({
         index={stackIndex}
         isDragDisabled={playerN === null}>
         {(dragProvided, dragSnapshot) => {
+          console.log("Attempted drag 1")
           const draggingEnd = store.getState().playerUi?.dragging?.end;
+          console.log("Attempted drag 1", draggingEnd, dragSnapshot.isDropAnimating);
           if (!draggingEnd && dragSnapshot.isDropAnimating && onDragEnd) {
             const fromDroppableId = store.getState().playerUi?.dragging?.fromDroppableId;
             const hoverOverStackId = store.getState().playerUi?.dragging?.hoverOverStackId;
@@ -167,10 +169,11 @@ export const StackDraggable = React.memo(({
                 //if (isCombined) updatedStyle.zIndex = 0;
                 if (updatedStyle.transform && dragSnapshot.isDragging) updatedStyle.transform = updatedStyle.transform + " scale(1.1)";
                 if (region.type === "free" && !dragSnapshot.isDragging) updatedStyle.transform = "none";
-                if (!dragSnapshot.isDragging) updatedStyle.transform = "scale(" + zoomFactor + ")";
+                // If isInBrowseGroup, add -50% to transform Y
+                //if (isInBrowseGroup && dragSnapshot.isDragging) updatedStyle.transform = updatedStyle.transform + " translate(0%, -50vh)";
                 updatedStyle.visibility = draggingToFree && ((thisDrag && style.transform === null) || dragSnapshot.isDropAnimating) ? "hidden" : "visible";
                 if (region.direction === "horizontal") updatedStyle.display = "inline-block";
-                if (tempDragStackIdIsThisStackId) updatedStyle.visibility = "hidden";
+                //if (tempDragStackIdIsThisStackId) updatedStyle.visibility = "hidden";
                 // Check if mouse is within this div
 
                 if (region.type === "free") {
@@ -191,6 +194,7 @@ export const StackDraggable = React.memo(({
                       <Stack
                         stackId={stackId}
                         isDragging={dragSnapshot.isDragging}
+                        stackZoomFactor={zoomFactor}
                       />
                     </StackContainerFree>
                   )
@@ -210,6 +214,7 @@ export const StackDraggable = React.memo(({
                       <Stack
                         stackId={stackId}
                         isDragging={dragSnapshot.isDragging}
+                        stackZoomFactor={zoomFactor}
                       />
                     </StackContainerSorted>
                   )

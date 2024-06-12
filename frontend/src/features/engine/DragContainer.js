@@ -245,6 +245,7 @@ export const DragContainer = React.memo(({}) => {
     const destGroup = groupById[destGroupId];
     const destGroupStackIds = destGroup.stackIds;
 
+    dispatch(setDraggingEnd(true));
     dispatch(setDraggingDefault());
     dispatch(setDraggingEndDelay(true));
     setTimeout(() => {

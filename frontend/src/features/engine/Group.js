@@ -25,7 +25,7 @@ export const Group = React.memo(({
   const playerN = useSelector(state => state?.playerUi?.playerN);
   const tempDragStack = useSelector(state => state?.playerUi?.tempDragStack);
   const iconsVisible = playerN && (region.showMenu || (isPile && region.showMenu !== false)) ;
-  //const regionCardSizeFactor = region.cardSizeFactor || 1.0;
+  const regionCardSizeFactor = region.cardSizeFactor || 1.0;
   const browseTopN = useBrowseTopN();
   const doActionList = useDoActionList();
   console.log("Group tempDragStack", tempDragStack)
@@ -103,6 +103,7 @@ export const Group = React.memo(({
             <Stack
               stackId={tempDragStack.stackId}
               isDragging={false}
+              stackZoomFactor={regionCardSizeFactor}
             />
           </div>
         }
