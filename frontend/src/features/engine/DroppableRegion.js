@@ -41,7 +41,6 @@ const StacksListSorted = React.memo(({
   groupId,
   region,
   stackIds,
-  mouseHere,
   selectedStackIndices,
   onDragEnd
 }) => {
@@ -49,7 +48,7 @@ const StacksListSorted = React.memo(({
   const showTopCard = useSelector((state) => {
     const draggingFromDroppableId = state?.playerUi?.dragging?.fromDroppableId;
     const [draggingFromGroupId, dragginFromRegionType, draggingFromRegionDirection] = getGroupIdAndRegionType(draggingFromDroppableId);
-    return isPile && stackIds.length > 0 && ((mouseHere && draggingFromGroupId === null) || draggingFromGroupId === groupId);
+    return isPile && stackIds.length > 0 && ((draggingFromGroupId === null) || draggingFromGroupId === groupId);
   });
   // Truncate stacked piles
   console.log("Rendering StacksList", {groupId, region});
@@ -89,7 +88,6 @@ export const DroppableRegion = React.memo(({
   const containerRef = useRef(null);
   const dispatch = useDispatch();
   console.log("Rendering Stacks for ",groupId, region);
-  const [mouseHere, setMouseHere] = useState(false);
   const layout = useLayout();
   const rowSpacing = layout?.rowSpacing;
   const group = useSelector(state => state?.gameUi?.game?.groupById?.[groupId]);
@@ -121,8 +119,6 @@ export const DroppableRegion = React.memo(({
             isDraggingFrom={Boolean(dropSnapshot.draggingFromThisWith)}
             {...dropProvided.droppableProps}
             direction={region.direction}
-            onMouseEnter={() => setMouseHere(region.type === "pile" && true)} 
-            //onMouseLeave={() => setMouseHere(region.type === "pile" && false)}
             >
               <PileImage 
                 region={region} 
@@ -148,7 +144,6 @@ export const DroppableRegion = React.memo(({
                       groupId={groupId}
                       region={region} 
                       stackIds={stackIds}
-                      mouseHere={mouseHere}
                       selectedStackIndices={(selectedStackIndices ? selectedStackIndices : [...Array(stackIds.length).keys()])}
                       onDragEnd={onDragEnd}
                     />
