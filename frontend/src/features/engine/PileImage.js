@@ -38,7 +38,10 @@ export const PileImage = React.memo(({
   const card0 = useSelector(state => state?.gameUi?.game?.cardById?.[stack0?.cardIds?.[0]]);
   const card1 = useSelector(state => state?.gameUi?.game?.cardById?.[stack1?.cardIds?.[0]]);  
   const playerN = useSelector(state => state?.playerUi?.playerN);
+
   const cardScaleFactor = useCardScaleFactor();
+  const regionCardSizeFactor = region?.cardSizeFactor || 1;
+  const zoomFactor = useSelector(state => state?.playerUi?.userSettings?.zoomPercent)/100 * regionCardSizeFactor;
 
   // If group is not a pile, then no PileImage should be generated
   if (region.type !== "pile") return null;
@@ -81,11 +84,18 @@ export const PileImage = React.memo(({
       <StackContainerSorted
         stackWidth={stackWidth}
         stackHeight={stackHeight}>
-        <Card
-          key={cardToShow.id}
-          offset={0}
-          cardId={cardToShow.id} 
-          isDragging={false}/>
+          <div
+            style={{
+              transform: `scale(${zoomFactor})`,
+            }}
+          >
+            <Card
+              key={cardToShow.id}
+              offset={0}
+              cardId={cardToShow.id} 
+              isDragging={false}
+            />
+          </div>
       </StackContainerSorted>
     </DropZone>
     )

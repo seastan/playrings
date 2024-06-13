@@ -338,6 +338,9 @@ export const DragContainer = React.memo(({}) => {
       if (destRegionType === "free") {
         dest.index = destGroupStackIds.length;
       }
+      if (destRegionType === "pile") {
+        dest.index = 0; // Fix placement bug when a pile region is wide and a card is placed to the right of the top card
+      }
 
       // // Did not move anywhere - can bail early -- Need to disable this check because free zones can have cards move but stay at same index
       // if (

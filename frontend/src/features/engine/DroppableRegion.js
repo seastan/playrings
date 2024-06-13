@@ -36,7 +36,6 @@ export const DropZone = styled.div`
 `;
 
 const StacksListSorted = React.memo(({
-  isDraggingOver,
   isDraggingFrom,
   groupId,
   region,
