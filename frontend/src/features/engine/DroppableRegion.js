@@ -85,6 +85,7 @@ export const DroppableRegion = React.memo(({
   selectedStackIndices,
   onDragEnd
 }) => {
+  const showPileImage = useSelector(state => state?.playerUi?.dragging?.stackId && region.type === "pile");
   const containerRef = useRef(null);
   const dispatch = useDispatch();
   console.log("Rendering Stacks for ",groupId, region);
@@ -120,12 +121,13 @@ export const DroppableRegion = React.memo(({
             {...dropProvided.droppableProps}
             direction={region.direction}
             >
-              <PileImage 
-                region={region} 
-                stackIds={stackIds} 
-                isDraggingOver={dropSnapshot.isDraggingOver} 
-                isDraggingFrom={Boolean(dropSnapshot.draggingFromThisWith)}>
-              </PileImage>
+              {showPileImage &&
+                <PileImage 
+                  region={region} 
+                  stackIds={stackIds} 
+                  isDraggingFrom={Boolean(dropSnapshot.draggingFromThisWith)}>
+                </PileImage>
+              }
               <DropZone 
                 ref={dropProvided.innerRef} 
                 direction={region.direction}

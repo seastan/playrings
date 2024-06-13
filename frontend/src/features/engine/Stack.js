@@ -56,9 +56,9 @@ export const Stack = React.memo(({
 
   return(
     <div 
-      // style={{
-      //   transform: `scale(${stackZoomFactor})`,
-      // }}
+      style={{
+        transform: `scale(${stackZoomFactor})`,
+      }}
     >
       {isHoveredOver && hoverOverDirection == "top" && <LinkIcon top="0" left="0" width="100%" height="6vh"  transform="translate(0%, -50%)"/>}
       {isHoveredOver && hoverOverDirection == "left" && <LinkIcon top="0" left="0" width="6vh"  height="100%" transform="translate(-50%, 0%)"/>}

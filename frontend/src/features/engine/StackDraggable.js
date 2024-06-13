@@ -173,7 +173,7 @@ export const StackDraggable = React.memo(({
                 //if (isInBrowseGroup && dragSnapshot.isDragging) updatedStyle.transform = updatedStyle.transform + " translate(0%, -50vh)";
                 updatedStyle.visibility = draggingToFree && ((thisDrag && style.transform === null) || dragSnapshot.isDropAnimating) ? "hidden" : "visible";
                 if (region.direction === "horizontal") updatedStyle.display = "inline-block";
-                //if (tempDragStackIdIsThisStackId) updatedStyle.visibility = "hidden";
+                if (tempDragStackIdIsThisStackId) updatedStyle.visibility = "hidden";
                 // Check if mouse is within this div
 
                 if (region.type === "free") {
