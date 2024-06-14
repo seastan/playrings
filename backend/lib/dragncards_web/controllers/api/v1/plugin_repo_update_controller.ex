@@ -45,14 +45,17 @@ defmodule DragnCardsWeb.PluginRepoUpdateController do
     case System.cmd("tar", ["-xzf", "/tmp/jsons.tar.gz", "-C", temp_json_dir]) do
       {_, 0} ->
         # Trigger the processing of the JSON files
-        files = RefreshPlugin.refresh()
-        # Broadcast update message to relevant rooms
+        case RefreshPlugin.refresh() do
+          {:ok, files} ->
+            # Broadcast update message to relevant rooms
+            Enum.each(room_slugs_to_update, fn room_slug ->
+              PubSub.broadcast(DragnCards.PubSub, "room:#{room_slug}", {:plugin_repo_update, files})
+            end)
+            send_resp(conn, :ok, "Files received and extracted successfully\n")
+          {:error, error} ->
+            send_resp(conn, :internal_server_error, error.message)
+        end
 
-        Enum.each(room_slugs_to_update, fn room_slug ->
-          PubSub.broadcast(DragnCards.PubSub, "room:#{room_slug}", {:plugin_repo_update, files})
-        end)
-
-        send_resp(conn, :ok, "Files received and extracted successfully")
       {error, _} ->
         send_resp(conn, :internal_server_error, "Failed to extract files: #{error}")
     end
