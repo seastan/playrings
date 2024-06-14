@@ -42,7 +42,7 @@ defmodule DragnCardsWeb.RefreshPlugin do
     case File.read(file_path) do
       {:ok, content} ->
         case Jason.decode(content) do
-          {:ok, decoded} -> {:ok, decoded}
+          {:ok, decoded} -> decoded
           {:error, %Jason.DecodeError{data: data, position: position}} ->
             line_number = calculate_line_number(data, position)
             raise "JSON parsing error in #{file_path} at line #{line_number}\n"
