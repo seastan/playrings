@@ -9,7 +9,9 @@ import { setDraggingEnd, setDraggingEndDelay, setDraggingStackId, setTempDragSta
 import { Table } from "./Table";
 import { useDoActionList } from "./hooks/useDoActionList";
 import { ArcherContainer } from 'react-archer';
-import { COMBINE_REGION_WIDTH_FACTOR } from "./functions/common";
+import { COMBINE_REGION_WIDTH_FACTOR, getVisibleFace } from "./functions/common";
+import { useGameDefinition } from "./hooks/useGameDefinition";
+import { usePlayerN } from "./hooks/usePlayerN";
 
 let draggableClientRect = null;
 
@@ -106,7 +108,9 @@ const getHoverStackIdAndDirection = (mouseCurrentX, mouseCurrentY, draggingRecta
 export const DragContainer = React.memo(({}) => {
   console.log("Rendering DragContainer");
   const dispatch = useDispatch();
+  const gameDef = useGameDefinition();
   const doActionList = useDoActionList();
+  const playerN = usePlayerN();
   const [isDragging, setIsDragging] = useState(false);
   //const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   //const [mouseDownPosition, setMouseDownPosition] = useState({ x: 0, y: 0 });
@@ -122,8 +126,35 @@ export const DragContainer = React.memo(({}) => {
     const centerY = draggableRect.top + draggableRect.height / 2;
 
     const hoverData = getHoverStackIdAndDirection(centerX, centerY, draggableRect, store.getState()?.playerUi?.dragging?.stackRectangles, store.getState()?.playerUi?.dragging?.groupRectangle, hoverOverDroppableId);
-    
+
+
     if (hoverData.stackId) {
+
+      const draggingTopCardId = store.getState()?.gameUi?.game?.stackById[draggingStackId]?.cardIds[0];
+      const draggingTopCard = store.getState()?.gameUi?.game?.cardById[draggingTopCardId];
+      const draggingTopFace = getVisibleFace(draggingTopCard, playerN);
+      const draggingTopCardType = draggingTopFace?.type;
+      const hoverOverStackId = hoverData.stackId;
+      const canOnlyAttachToTypes = gameDef?.cardTypes?.[draggingTopCardType]?.canOnlyAttachToTypes;
+
+      const hoverOverTopCardId = store.getState()?.gameUi?.game?.stackById[hoverOverStackId]?.cardIds[0];
+      const hoverOverTopCard = store.getState()?.gameUi?.game?.cardById[hoverOverTopCardId];
+      const hoverOverTopFace = getVisibleFace(hoverOverTopCard, playerN);
+      const hoverOverTopCardType = hoverOverTopFace?.type;
+      const canOnlyHaveAttachmentsOfTypes = gameDef?.cardTypes?.[hoverOverTopCardType]?.canOnlyHaveAttachmentsOfTypes;
+      console.log("hoverData", hoverData, {canOnlyAttachToTypes, canOnlyHaveAttachmentsOfTypes, hoverOverTopCardType, draggingTopCardType})
+
+      if (canOnlyAttachToTypes && !canOnlyAttachToTypes.includes(hoverOverTopCardType)) {
+        dispatch(setDraggingHoverOverStackId(null));
+        dispatch(setDraggingHoverOverDirection(null));
+        return;
+      }
+      if (canOnlyHaveAttachmentsOfTypes && !canOnlyHaveAttachmentsOfTypes.includes(draggingTopCardType)) {
+        dispatch(setDraggingHoverOverStackId(null));
+        dispatch(setDraggingHoverOverDirection(null));
+        return;
+      }
+
       dispatch(setDraggingHoverOverStackId(hoverData.stackId));
       dispatch(setDraggingHoverOverDirection(hoverData.direction));
     } else {
