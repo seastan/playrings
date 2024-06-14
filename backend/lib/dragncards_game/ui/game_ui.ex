@@ -767,6 +767,7 @@ defmodule DragnCardsGame.GameUI do
   end
 
   def get_delta(game_old, game_new) do
+    game_old = Map.delete(game_old, "messages")
     diff_map = MapDiff.diff(game_old, game_new)
     delta("game", diff_map)
   end
