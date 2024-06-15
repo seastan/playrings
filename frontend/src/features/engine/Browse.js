@@ -105,13 +105,7 @@ export const Browse = React.memo(({}) => {
   const closeAndShuffle = () => {
     const actionList = [
       ["LOG", "$ALIAS_N", " closed ", gameL10n(group.label)+"."],
-      ["SET", "/playerData/$PLAYER_N/browseGroup/id", null],
-      ["FOR_EACH_VAL", "$STACK_ID", `$GROUP_BY_ID.${groupId}.stackIds`,
-        [
-          ["VAR", "$CARD_ID", "$STACK_BY_ID.$STACK_ID.cardIds.[0]"],
-          ["SET", "/cardById/$CARD_ID/peeking/$PLAYER_N", false]
-        ]
-      ],
+      ["STOP_LOOKING", "$PLAYER_N"],
       ["LOG", "$ALIAS_N", " shuffled ", gameL10n(group.label)+"."],
       ["SHUFFLE_GROUP", groupId]
     ];
@@ -122,13 +116,7 @@ export const Browse = React.memo(({}) => {
   const closeAndOrder = () => {
     const actionList = [
       ["LOG", "$ALIAS_N", " closed ", gameL10n(group.label)+"."],
-      ["SET", "/playerData/$PLAYER_N/browseGroup/id", null],
-      ["FOR_EACH_VAL", "$STACK_ID", `$GROUP_BY_ID.${groupId}.stackIds`,
-        [
-          ["VAR", "$CARD_ID", "$STACK_BY_ID.$STACK_ID.cardIds.[0]"],
-          ["SET", "/cardById/$CARD_ID/peeking/$PLAYER_N", false]
-        ]
-      ]
+      ["STOP_LOOKING", "$PLAYER_N"],
     ];
     doActionList(actionList);
     if (group?.onCardEnter?.currentSide === "B") stopPeekingTopCard();
@@ -136,8 +124,8 @@ export const Browse = React.memo(({}) => {
 
   const closeAndPeeking = () => {
     const actionList = [
-      ["SET", "/playerData/$PLAYER_N/browseGroup/id", null],
       ["LOG", "$ALIAS_N", " is still peeking at ", gameL10n(group.label)+"."],
+      ["STOP_LOOKING", "$PLAYER_N", "keepPeeking"]
     ];
     doActionList(actionList);
   }
