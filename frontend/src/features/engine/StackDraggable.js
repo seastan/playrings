@@ -71,7 +71,7 @@ export const StackDraggable = React.memo(({
     const layout = useLayout();
     const rowSpacing = layout?.rowSpacing;
     const cardSize = layout?.cardSize;
-    console.log('Rendering Stack in region ', region.groupId);
+    console.log('Rendering StackDraggable in ', region.groupId, stack);
     var spacingFactor = touchMode ? 1.5 : 1;
     const { height, width } = useWindowDimensions();
     const aspectRatio = width/height;
@@ -90,9 +90,14 @@ export const StackDraggable = React.memo(({
     const cardWidth = card0?.sides[card0?.currentSide]?.width;
     const cardHeight = card0?.sides[card0?.currentSide]?.height;
     const stackHeight = (cardHeight*cardSize + ATTACHMENT_OFFSET * (offsetTotals.top + offsetTotals.bottom)) * zoomFactor;
+    const stackTopOffset = ATTACHMENT_OFFSET * offsetTotals.top * zoomFactor;
+    const stackTop = region.type === "free" ? `calc(${stack.top} - ${stackTopOffset}vh)` : stack.top;
     //const stackWidth = cardWidth*cardSize + ATTACHMENT_OFFSET * (numCards - 1);
     const stackWidth = (cardWidth*cardSize + ATTACHMENT_OFFSET * (offsetTotals.left + offsetTotals.right)) * zoomFactor;
     const stackWidthFan = Math.min(fanSpacingHoriz, cardWidth*cardSize*zoomFactor);
+    const stackLeftOffset = ATTACHMENT_OFFSET * offsetTotals.left * zoomFactor;
+    const stackLeft = region.type === "free" ? `calc(${stack.left} - ${stackLeftOffset}vh)` : stack.left;
+    console.log("stackLeft", stackLeft, stack.left, stackLeftOffset)
   
     const regionHeightPercent = convertToPercentage(region.height);
     const regionHeightInt = parseInt(regionHeightPercent.substring(0, regionHeightPercent.length - 1))
@@ -189,8 +194,8 @@ export const StackDraggable = React.memo(({
                       isGroupedOver={isCombined}
                       stackWidth={stackWidth}
                       stackHeight={stackHeight}
-                      stackLeft={stack.left}
-                      stackTop={stack.top}
+                      stackLeft={stackLeft}
+                      stackTop={stackTop}
                       margin={0}
                       ref={dragProvided.innerRef}
                       {...dragProvided.draggableProps}
