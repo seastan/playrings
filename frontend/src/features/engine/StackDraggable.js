@@ -13,6 +13,7 @@ import { getGroupIdAndRegionType } from "./Reorder";
 import { useOffsetTotalsAndAmounts } from "./hooks/useOffsetTotalsAndAmounts";
 import { usePlayerN } from "./hooks/usePlayerN";
 import { setDraggingEndDelay, setTempDragStack } from "../store/playerUiSlice";
+import { useGetRegionFromId } from "./hooks/useGetRegionFromId";
 
 const StackContainerFree = styled.div`
   position: absolute;
@@ -55,6 +56,7 @@ export const StackDraggable = React.memo(({
     const zoomFactor = useSelector(state => state?.playerUi?.userSettings?.zoomPercent)/100 * regionCardSizeFactor;
     const isCombined = useSelector(state => ((state?.playerUi?.dragging?.stackId === stackId) && (state?.playerUi?.dragging?.hoverOverStackId !== null)));
     const playerN = usePlayerN();
+    const getRegionFromId = useGetRegionFromId();
 
     // console.log("renda 1 ")
     // useEffect(() => {
@@ -112,7 +114,9 @@ export const StackDraggable = React.memo(({
             const hoverOverStackId = store.getState().playerUi?.dragging?.hoverOverStackId;
             const hoverOverDirection = store.getState().playerUi?.dragging?.hoverOverDirection;
             const hoverOverDroppableId = store.getState().playerUi?.dragging?.hoverOverDroppableId;
-            const [toGroupId, toRegionType, toRegionDirection] = getGroupIdAndRegionType(hoverOverDroppableId);
+            const toRegion = getRegionFromId(hoverOverDroppableId);
+            const toRegionType = toRegion.type;
+            //const [toGroupId, toRegionType, toRegionDirection] = getGroupIdAndRegionType(hoverOverDroppableId);
             console.log('onDragEnd hoverOverStackId 2:',{hoverOverStackId, draggingEnd});
             if (hoverOverStackId) {
               const result = {
@@ -155,7 +159,9 @@ export const StackDraggable = React.memo(({
           const draggingToDroppableId = store.getState().playerUi?.dragging?.hoverOverDroppableId;
           var draggingToFree = false;
           if (draggingToDroppableId) {
-            const [toGroupId, toRegionType, toRegionDirection] = getGroupIdAndRegionType(draggingToDroppableId);
+            const toRegion = getRegionFromId(draggingToDroppableId);
+            const toRegionType = toRegion.type;
+            //const [toGroupId, toRegionType, toRegionDirection] = getGroupIdAndRegionType(draggingToDroppableId);
             draggingToFree = toRegionType === "free";
           }
           return(

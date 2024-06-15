@@ -819,7 +819,7 @@ export const getGameDefSchema = (gameDef) => {
               "cardSizeFactor": {
                 "_type_": "float",
               },
-              "disableDropAttachments": {
+              "disableDroppableAttachments": {
                 "_type_": "boolean",
               }
             }
