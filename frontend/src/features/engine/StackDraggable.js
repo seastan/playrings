@@ -91,12 +91,12 @@ export const StackDraggable = React.memo(({
     const cardHeight = card0?.sides[card0?.currentSide]?.height;
     const stackHeight = (stackEdges.bottom - stackEdges.top) * zoomFactor;
     const stackTopOffset = stackEdges.top * zoomFactor;
-    const stackTop = region.type === "free" ? `calc(${stack.top} - ${stackTopOffset}vh)` : stack.top;
+    const stackTop = region.type === "free" ? `calc(${stack.top} + ${stackTopOffset}vh)` : stack.top;
     //const stackWidth = cardWidth*cardSize + ATTACHMENT_OFFSET * (numCards - 1);
     const stackWidth = (stackEdges.right - stackEdges.left) * zoomFactor;
     const stackWidthFan = Math.min(fanSpacingHoriz, cardWidth*cardSize*zoomFactor);
     const stackLeftOffset = stackEdges.left * zoomFactor;
-    const stackLeft = region.type === "free" ? `calc(${stack.left} - ${stackLeftOffset}vh)` : stack.left;
+    const stackLeft = region.type === "free" ? `calc(${stack.left} + ${stackLeftOffset}vh)` : stack.left;
     console.log("stackLeft", stackLeft, stack.left, stackLeftOffset)
   
     const regionHeightPercent = convertToPercentage(region.height);
