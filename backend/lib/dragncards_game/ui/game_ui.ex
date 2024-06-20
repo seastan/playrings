@@ -108,7 +108,7 @@ defmodule DragnCardsGame.GameUI do
     end
 
     # Submit the player data changes as an action
-    if Enum.count(action_list) > 0 do
+    gameui = if Enum.count(action_list) > 0 do
       options = %{
         "action_list" => action_list,
         "player_ui" => %{"playerN" => player_n}
@@ -117,6 +117,18 @@ defmodule DragnCardsGame.GameUI do
     else
       gameui
     end
+
+    gameui = if game_def["automation"]["postSitDownActionList"] do
+      options = %{
+        "action_list" => game_def["automation"]["postSitDownActionList"],
+        "player_ui" => %{"playerN" => player_n}
+      }
+      game_action(gameui, user_id, "evaluate", options)
+    else
+      gameui
+    end
+
+    gameui
   end
 
   ############################################################

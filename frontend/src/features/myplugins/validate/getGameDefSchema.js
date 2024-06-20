@@ -55,6 +55,9 @@ export const getGameDefSchema = (gameDef) => {
         "postNewGameActionList": {
           "_type_": "actionList",
         },
+        "postSitDownActionList": {
+          "_type_": "actionList",
+        },
         "postLoadActionList": {
           "_type_": "actionList",
         },
