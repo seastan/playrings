@@ -203,6 +203,14 @@ export const getGameDefSchema = (gameDef) => {
             "_memberOfPath_": "gameDef.groups",
           }
         },
+        "suppress": {
+          "_type_": "array",
+          "_itemSchema_": {
+            "_type_": "string",
+            "_memberOf_": ["Detach", "Attachment Direction", "Flip", "Delete", "Move To", "Show To", "Toggle Trigger", "Set Rotation"],
+            "_memberOfPath_": `["Detach", "Attachment Direction", "Flip", "Delete", "Move To", "Show To", "Toggle Trigger", "Set Rotation"]`,
+          }
+        },
         "options": {
           "_type_": "array",
           "_itemSchema_": {
@@ -550,6 +558,14 @@ export const getGameDefSchema = (gameDef) => {
             "_memberOfPath_": "gameDef.groups",
           }
         },
+        "suppress": {
+          "_type_": "array",
+          "_itemSchema_": {
+            "_type_": "string",
+            "_memberOf_": ["Browse", "Look at top", "Look at top X", "Choose Random", "Set Visibility", "Move To"],
+            "_memberOfPath_": `["Browse", "Look at top", "Look at top X", "Choose Random", "Set Visibility", "Move To"]`,
+          }
+        },
         "options": {
           "_type_": "array",
           "_required_": true,
@@ -595,6 +611,21 @@ export const getGameDefSchema = (gameDef) => {
               "_type_": "any",
             }
           },
+          "menuOptions": {
+            "_type_": "array",
+            "_itemSchema_": {
+              "_type_": "object",
+              "_strictKeys_": true,
+              "label": {
+                "_type_": "label",
+                "_required_": true,
+              },
+              "actionList": {
+                "_type_": "actionList",
+                "_required_": true,
+              },
+            }
+          },
           "_itemSchema_": {
             "_type_": "any",
           }
@@ -627,6 +658,21 @@ export const getGameDefSchema = (gameDef) => {
             "_type_": "object",
             "_itemSchema_": {
               "_type_": "any",
+            }
+          },
+          "menuOptions": {
+            "_type_": "array",
+            "_itemSchema_": {
+              "_type_": "object",
+              "_strictKeys_": true,
+              "label": {
+                "_type_": "label",
+                "_required_": true,
+              },
+              "actionList": {
+                "_type_": "actionList",
+                "_required_": true,
+              },
             }
           },
           "_itemSchema_": {
