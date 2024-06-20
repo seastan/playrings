@@ -1056,6 +1056,9 @@ export const getGameDefSchema = (gameDef) => {
           },
           "postLoadActionList": {
             "_type_": "actionList",
+          },
+          "hideFromSearch": {
+            "_type_": "boolean",
           }
         }
       },
