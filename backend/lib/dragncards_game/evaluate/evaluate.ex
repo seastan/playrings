@@ -154,12 +154,11 @@ defmodule DragnCardsGame.Evaluate do
   end
 
   def path_matches_listenpaths?(path, listenpaths, game_new, trace) do
-    false
-    # if Enum.any?(listenpaths, fn(listenpath) -> path_matches_listenpath?(path, listenpath, game_new, trace ++ ["path_matches_listenpath", Jason.encode!(listenpath)]) end) do
-    #   true
-    # else
-    #   false
-    # end
+    if Enum.any?(listenpaths, fn(listenpath) -> path_matches_listenpath?(path, listenpath, game_new, trace ++ ["path_matches_listenpath", Jason.encode!(listenpath)]) end) do
+      true
+    else
+      false
+    end
   end
 
   def path_matches_listenpath?(path, listenpath, game_new, trace) do
