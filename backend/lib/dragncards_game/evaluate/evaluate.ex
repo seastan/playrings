@@ -175,8 +175,13 @@ defmodule DragnCardsGame.Evaluate do
   def message_list_to_string(game, statements, trace) do
     Enum.reduce(Enum.with_index(statements), "", fn({statement, index}, acc) ->
       eval_statement = evaluate(game, statement, trace ++ ["statement #{index}"])
-      str_statement = inspect(eval_statement) |> String.replace("\"","")
-      acc <> str_statement
+      # if eval_statement is not a string, convert it to a string
+      eval_statement = if is_binary(eval_statement) do
+        eval_statement
+      else
+        inspect(eval_statement)
+      end
+      acc <> eval_statement
     end)
   end
 
