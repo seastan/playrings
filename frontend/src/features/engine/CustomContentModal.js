@@ -17,41 +17,52 @@ import { RotatingLines } from "react-loader-spinner";
 
 const RESULTS_LIMIT = 3;
 
-const CardImage = ({url, top, height, leftSide}) => {
-  const gameDef = useGameDefinition();
-  const user = useProfile();
-  var srcDefault = url;
-  var srcLanguage = null;
-  if (!srcDefault.startsWith('http')) {
-      // Just a suffix. Let's see if we have a prefix for this language.
-      const srcBase = srcDefault;
-      srcDefault = gameDef?.imageUrlPrefix?.Default ? gameDef?.imageUrlPrefix?.Default + srcBase : null;
-      srcLanguage = gameDef?.imageUrlPrefix?.[user?.language] ? gameDef?.imageUrlPrefix?.[user?.language] + srcBase : null;
-  }
-  const style = {
-    top,
-    height,
-    borderRadius: '5%',
-    MozBoxShadow: '0 0 50px 20px black',
-    WebkitBoxShadow: '0 0 50px 20px black',
-    boxShadow: '0 0 50px 20px black',
-    zIndex: 1e6,
-    position: 'fixed'
-  };
-  if (leftSide) {
-    style.left = '0%';
-  } else {
-    style.right = '0%';
-  }
-  
-  return (
-    <img 
-      className="fixed"
-      src={srcLanguage || srcDefault} 
-      onError={(e)=>{e.target.onerror = null; e.target.src=srcDefault}}
-      style={style}
-    />
-  );
+const CustomCardSection = ({cardDb, loading}) => {
+  return(
+    <>
+      {Object.keys(cardDb).length === 0 ? 
+        loading ?
+          <div className="flex h-full w-full items-center justify-center" style={{width:"30px", height:"30px"}}>
+            <RotatingLines
+              height={100}
+              width={100}
+              strokeColor="white"/>
+          </div>
+          :
+          <div>
+            No cards found.
+          </div>
+        :
+        <CustomCardList cardDb={cardDb}/>
+      }
+    </>
+  )
+}
+    
+
+const CustomCardList = ({cardDb}) => {
+  return(
+    <div className="overflow-y-scroll bg-gray-600" style={{width: "600px", maxHeight: "300px"}}>
+      <div key={"header"} className="flex bg-gray-900 p-2">
+        <div style={{width:"200px"}}>Database ID</div>
+        <div style={{width:"200px"}}>Side A Name</div>
+        <div style={{width:"200px"}}>Side A Type</div>
+      </div>
+      {Object.keys(cardDb).map((cardId) => {
+        const cardDetails = cardDb[cardId];
+        const databaseId = cardDetails.A.databaseId;
+        // If databaseId is more than 10 characters, truncate it and return ...<last 7 characters>
+        const cardIdDisplay = databaseId.length > 10 ? databaseId.slice(0, 3) + "..." + databaseId.slice(-7) : databaseId;
+        return (
+          <div key={cardId} className="flex p-1">
+            <div style={{width:"200px"}}>{cardIdDisplay}</div>
+            <div style={{width:"200px"}}>{cardDetails.A.name}</div>
+            <div style={{width:"200px"}}>{cardDetails.A.type}</div>
+          </div>
+        )
+      })}
+    </div>
+  )
 }
 
 const createTsv = (gameDef, cardDb) => {
@@ -133,15 +144,19 @@ export const CustomContentModal = React.memo(({}) => {
   const [customCardDbPrivate, setCustomCardDbPrivate] = useState({});
   const [loading, setLoading] = useState(true);
 
-  useEffect(async () => {
-    const res = await Axios.get(`/be/api/custom_content/${user?.id}/${pluginId}`, authOptions);
-    
-    if (res?.data?.success) {
+  useEffect(() => {
+    const fetchCustomContent = async () => {
+      const res = await Axios.get(`/be/api/custom_content/${user?.id}/${pluginId}`, authOptions);
+      
+      if (res?.data?.success) {
+        console.log("custom content 3", res?.data)
 
-      if (res?.data?.public_card_db) setCustomCardDbPublic(res?.data?.public_card_db);
-      if (res?.data?.private_card_db) setCustomCardDbPrivate(res?.data?.private_card_db);
+        if (res?.data?.public_card_db) setCustomCardDbPublic(res?.data?.public_card_db);
+        if (res?.data?.private_card_db) setCustomCardDbPrivate(res?.data?.private_card_db);
+      }
+      setLoading(false);
     }
-    setLoading(false);
+    if (user?.id && pluginId) fetchCustomContent();
   }, [user, pluginId]);
 
   dispatch(setTyping(true));
@@ -252,35 +267,7 @@ export const CustomContentModal = React.memo(({}) => {
       </div>
 
       <h2 className="my-2">Public</h2>
-      {Object.keys(customCardDbPublic).length === 0 ? 
-        loading ?
-          <div className="flex h-full w-full items-center justify-center" style={{width:"30px", height:"30px"}}>
-            <RotatingLines
-              height={100}
-              width={100}
-              strokeColor="white"/>
-          </div>
-          :
-          <div>
-            You currently have no public custom cards for this plugin.
-          </div>
-        :
-        <div className="overflow-y-scroll bg-gray-600" style={{width: "600px", maxHeight: "300px"}}>
-          <div key={"header"} className="flex justify-between bg-gray-900 p-2">
-            <div>Side A Name</div>
-            <div>Side A Type</div>
-          </div>
-          {Object.keys(customCardDbPublic).map((cardId) => {
-            const cardDetails = customCardDbPublic[cardId];
-            return (
-              <div key={cardId} className="flex justify-between p-1">
-                <div>{cardDetails.A.name}</div>
-                <div>{cardDetails.A.type}</div>
-              </div>
-            )
-          })}
-        </div>
-      }
+      <CustomCardSection cardDb={customCardDbPublic} loading={loading}/>
         
       <div className="text-black py-1"style={{width:"300px"}}>
         <Button onClick={() => loadFileCardDbPublic()}>
@@ -292,8 +279,8 @@ export const CustomContentModal = React.memo(({}) => {
       </div>
 
       <h2 className="my-2">Private</h2>
-    
-      You currently have no private custom cards for this plugin.
+      <CustomCardSection cardDb={customCardDbPrivate} loading={loading}/>
+
       {user?.supporter_level < 3 ? (
         <div className="text-black" style={{width:"300px"}}>
           <Button onClick={() => dispatch(setShowModal("patreon"))}>
