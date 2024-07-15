@@ -36,11 +36,12 @@ const CustomCardList = ({cardDb}) => {
   return(
     <div className="overflow-y-scroll bg-gray-600" style={{width: "600px", maxHeight: "300px"}}>
       <div key={"header"} className="flex bg-gray-900 p-2">
-        <div style={{width:"200px"}}>Database ID</div>
+        <div style={{width:"200px"}}>databaseId</div>
         <div style={{width:"200px"}}>Side A Name</div>
-        <div style={{width:"200px"}}>Side A Type</div>
+        <div style={{width:"200px"}}>Type</div>
+        <div style={{width:"70px"}}>Image</div>
       </div>
-      {Object.keys(cardDb).map((cardId) => {
+      {Object.keys(cardDb).sort().map(cardId => {
         const cardDetails = cardDb[cardId];
         const databaseId = cardDetails.A.databaseId;
         // If databaseId is more than 10 characters, truncate it and return ...<last 7 characters>
@@ -50,6 +51,7 @@ const CustomCardList = ({cardDb}) => {
             <div style={{width:"200px"}}>{cardIdDisplay}</div>
             <div style={{width:"200px"}}>{cardDetails.A.name}</div>
             <div style={{width:"200px"}}>{cardDetails.A.type}</div>
+            <div style={{width:"70px"}}><a href={cardDetails.A.imageUrl} target="_blank" rel="noreferrer"><img src={cardDetails.A.imageUrl} style={{width:"50px"}}/></a></div>
           </div>
         )
       })}
@@ -243,7 +245,7 @@ export const CustomContentModal = React.memo(({}) => {
       className="relative insert-auto overflow-auto p-5 bg-gray-800 border mx-auto my-12 rounded-lg outline-none text-white"
       style={{
         content: {
-          width: "92vw",
+          width: "700px",
           height: "85vh",
           maxHeight: "85vh",
           overflowY: "scroll",
@@ -272,11 +274,13 @@ export const CustomContentModal = React.memo(({}) => {
           <div className="text-black py-1"style={{width:"300px"}}>
             <Button onClick={() => loadFileCardDbPublic()}>
               <FontAwesomeIcon icon={faUpload} className="mr-2"/>
-              Upload Public Cards (.tsv)
+              {Object.keys(customCardDbPublic).length === 0 ? "Upload Public Cards (.tsv)" : "Replace Public Cards (.tsv)"}
               <input type='file' multiple id='file' ref={inputFileCardDbPublic} style={{display: 'none'}} onChange={(e) => handleTsvUpload(e, "public")} accept=".tsv"/>
             </Button>
             <StatusMessageBlock successMessages={successMessageCardDbPublic} errorMessages={errorMessageCardDbPublic}/>
           </div>
+          {Object.keys(customCardDbPublic).length > 0 && <div>Note that DragnCards uses the databaseId column to determine what card to load. So if you replace your cards, if any of the databaseIds from the previous upload do not exist in the new upload, any existing decks that have been built using those cards will fail to load properly.</div>}
+
         </>
       }
 
@@ -305,11 +309,13 @@ export const CustomContentModal = React.memo(({}) => {
             <div className="text-black py-1" style={{width:"300px"}}>
               <Button onClick={() => loadFileCardDbPrivate()}>
                 <FontAwesomeIcon icon={faUpload} className="mr-2"/>
-                Upload Private Cards (.tsv)
+                {Object.keys(customCardDbPrivate).length === 0 ? "Upload Private Cards (.tsv)" : "Replace Private Cards (.tsv)"}
                 <input type='file' multiple id='file' ref={inputFileCardDbPrivate} style={{display: 'none'}} onChange={(e) => handleTsvUpload(e, "private")} accept=".tsv"/>
               </Button>
               <StatusMessageBlock successMessages={successMessageCardDbPrivate} errorMessages={errorMessageCardDbPrivate}/>
             </div>
+            {Object.keys(customCardDbPrivate).length > 0 && <div>Note that DragnCards uses the databaseId column to determine what card to load. So if you replace your cards, if any of the databaseIds from the previous upload do not exist in the new upload, any existing decks that have been built using those cards will fail to load properly.</div>}
+
           </>
         
       )}

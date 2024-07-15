@@ -62,7 +62,7 @@ defmodule DragnCardsWeb.CustomContentController do
 
     # Prepend "custom-{author_id} to each key in card_db
     card_db = Enum.reduce(card_db, %{}, fn({database_id, card_details}, acc) ->
-      new_id = "author_id-#{author_id}-public-#{public_bool}-#{database_id}"
+      new_id = "author_id-#{author_id}-#{database_id}"
       acc
       |> put_in([new_id], card_details)
       |> put_in([new_id, "author_id"], author_id)

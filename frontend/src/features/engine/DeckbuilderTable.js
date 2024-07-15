@@ -1,7 +1,7 @@
 import React, {useEffect, useMemo, useState} from "react";
 import { useGameDefinition } from "./hooks/useGameDefinition";
 import { usePlugin } from "./hooks/usePlugin";
-import { keyClass } from "./functions/common";
+import { keyClass, makeLoadListItem } from "./functions/common";
 import { keyStyle } from "./functions/common";
 import { useGameL10n } from "./hooks/useGameL10n";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -41,7 +41,7 @@ export const DeckbuilderTable = React.memo(({currentGroupId, modifyDeckList, set
 
   const columnInfo = (selectedDbString === "official") ? gameDefColumnInfo : [{propName: "author_alias", label: "Author"}, ...gameDefColumnInfo];
 
-  console.log("Rendering DeckbuilderTable", columnInfo);
+  console.log("Rendering DeckbuilderTable", columnInfo, filters);
 
   const changeSelectedDb = (dbString) => {
     const fetchCustomContent = async () => {
@@ -56,6 +56,7 @@ export const DeckbuilderTable = React.memo(({currentGroupId, modifyDeckList, set
     if (dbString !== "official" && !loadedCustomContent) {
       fetchCustomContent();
     }
+    //if (dbString === "official") setFilters({...filters, author_alias: ""});
     setSelectedDbString(dbString);
   }
 
@@ -95,6 +96,7 @@ export const DeckbuilderTable = React.memo(({currentGroupId, modifyDeckList, set
   };
 
   useEffect(() => {
+    console.log("jkl selectedDb", selectedDb)
     setSortedCardIds(Object.keys(selectedDb));
   }, [selectedDb]);
 
@@ -106,9 +108,11 @@ export const DeckbuilderTable = React.memo(({currentGroupId, modifyDeckList, set
   }, []);
 
   useEffect(() => {
+    console.log("jkl sortedCardIds", selectedDb, sortedCardIds)
     // Filter the cardIds
     const filteredCardIds = sortedCardIds.filter(cardId => {
       return Object.entries(filters).every(([propName, filterVal]) => {
+        if (selectedDbString === "official" && propName === "author_alias") return true;
         const sideA = selectedDb[cardId]["A"];
         const sideB = selectedDb[cardId]["B"];
         const matchSideA = (
@@ -125,10 +129,12 @@ export const DeckbuilderTable = React.memo(({currentGroupId, modifyDeckList, set
       });
     });
     setFilteredCardIds(filteredCardIds);
-  }, [filters, sortedCardIds, selectedDb]);
+  }, [filters, sortedCardIds]);
 
   //return;
   if (!selectedDb) return;
+
+  console.log("deckbuilder selectedDb 2", columnInfo)
 
   return(
         <div className="overflow-scroll deckbuilder-table" style={{width:"60%"}}>
@@ -179,6 +185,7 @@ export const DeckbuilderTable = React.memo(({currentGroupId, modifyDeckList, set
                             name="name" 
                             className="m-2 rounded" 
                             placeholder={"Filter "+gameL10n(colDetails.label)} 
+                            value={filters[colDetails.propName] || ""}
                             onChange={(event) => {handleFilterTyping(event, colDetails.propName)}}/>
                         </div>
                       </th>
@@ -192,7 +199,7 @@ export const DeckbuilderTable = React.memo(({currentGroupId, modifyDeckList, set
               const cardDetails = selectedDb?.[cardId];
               if (!cardDetails) return null;
               const sideA = selectedDb?.[cardId]?.["A"];
-              if (selectedDbString !== "official") sideA["author_alias"] = cardDetails?.author_alias;
+              if (selectedDbString !== "official") sideA["author_alias"] = cardDetails.author_alias;
 
               if (cardDetails) return(
                 <tr 
@@ -204,17 +211,19 @@ export const DeckbuilderTable = React.memo(({currentGroupId, modifyDeckList, set
                   onMouseLeave={() => setHoverCardDetails(null)}>
                   <td key={-1} className="p-1">
                     {addButtonsReversed.map((addButtonVal, _index) => {
+                      const loadListItem = makeLoadListItem(cardId, addButtonVal, currentGroupId, sideA.name, cardDetails.author_id)
                       return(
                         <div 
                           className={keyClass + " float-right text-white hover:bg-gray-400 cursor-pointer"} 
                           style={keyStyle}
-                          onClick={()=>modifyDeckList(sideA?.databaseId, addButtonVal, currentGroupId)}>
+                          onClick={()=>modifyDeckList(loadListItem)}>
                             +{addButtonVal}
                         </div>
                       )
                     })}
                   </td>
                   {columnInfo?.map((colDetails, colindex) => {
+                    console.log("deckbuilder colDetails", colDetails)
                     const content = sideA[colDetails.propName];
                     // Determine if the content should be centered
                     const isCenteredContent = (typeof content === 'string' && content.length === 1) || !isNaN(+content);
