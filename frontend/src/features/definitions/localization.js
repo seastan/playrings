@@ -1,4 +1,16 @@
 export const siteL10n = {
+  "public": {
+    "English": "Public",
+    "Chinese": "公开"
+  },
+  "isNowPublic": {
+    "English": "is now public. Press this button again to make it private.",
+    "Chinese": "现在是公开的。再次按下此按钮可将其设为私有。"
+  },
+  "isNowPrivate": {
+    "English": "is now private.",
+    "Chinese": "现在是私有的。"
+  },
   "author": {
     "English": "Author",
     "Chinese": "作者"
