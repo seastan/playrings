@@ -100,6 +100,7 @@ defmodule DragnCardsWeb.Router do
     # Decks
     resources("/decks", DeckController)
     get("/decks/:user_id/:plugin_id", DeckController, :get_decks)
+    get("/public_decks/:plugin_id", DeckController, :get_public_decks)
 
     # Testing Junk
     get("/authtest", JunkController, :authtest)

@@ -49,8 +49,8 @@ export const DeckbuilderMyDecks = React.memo(({doFetchHash, myDecks, currentDeck
   return(   
       <div className="flex bg-gray-800" style={{width:"20%"}}>
         <div className="justify-center p-2 m-2 text-white w-full">
-          <div className="relative justify-center mb-2">
-            <div className="float-left text-xl mr-2 mb-2">My Decks</div>
+          <div className="text-xl">{siteL10n("myCustomDecks")}</div>
+          <div className="my-2">
             <div 
               className={keyClass}
               style={keyStyle}

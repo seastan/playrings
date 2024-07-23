@@ -1,4 +1,16 @@
 export const siteL10n = {
+  "myCustomDecks": {
+    "English": "My Custom Decks",
+    "Chinese": "我的自定义牌组"
+  },
+  "loadPrebuiltDeck": {
+    "English": "Load prebuilt deck",
+    "Chinese": "加载预组牌库"
+  },
+  "loadPublicCustomDeck": {
+    "English": "Load public custom deck",
+    "Chinese": "加载公开的自定义牌组"
+  },
   "public": {
     "English": "Public",
     "Chinese": "公开"
