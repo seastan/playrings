@@ -30,6 +30,7 @@ defmodule DragnCardsWeb.Router do
   # Other scopes may use custom stacks.
   scope "/api", DragnCardsWeb do
     pipe_through(:api)
+    post("/rooms/send_alert", RoomController, :send_alert)
     resources("/rooms", RoomController, except: [:new, :edit])
   end
 
