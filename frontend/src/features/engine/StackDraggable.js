@@ -81,6 +81,7 @@ export const StackDraggable = React.memo(({
     const {offsetTotals, offsetAmounts, stackEdges} = useOffsetTotalsAndAmounts(stackId);
 
     if (!stack) return null;
+    console.log("stackEdges", stackEdges)
     //if (tempDragStackIdIsThisStackId) return null;
 
     const numStacksNonZero = Math.max(numStacksVisible, 1);
