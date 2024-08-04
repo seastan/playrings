@@ -106,7 +106,6 @@ export const Group = React.memo(({
             position: "absolute", 
             zIndex: 1e9, 
             marginLeft: "1.7dvh",
-            border: "3px solid red",
           }}>
             <Stack
               stackId={tempDragStack.stackId}

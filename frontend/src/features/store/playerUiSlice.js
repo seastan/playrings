@@ -166,7 +166,7 @@ const playerUiSlice = createSlice({
     },
     setDraggingDefault: (state) => {
       state.dragging = draggingDefault;
-      state.status.text = "null";
+      //state.status.text = "null";
     },
     setDraggingFromDroppableId: (state, { payload }) => {
       state.dragging.fromDroppableId = payload;
@@ -176,7 +176,7 @@ const playerUiSlice = createSlice({
     },
     setDragStep: (state, { payload }) => {
       state.dragging.dragStep = payload;
-      state.status.text = payload;
+      //state.status.text = payload;
     },
     setDraggingStarted: (state, { payload }) => {
       state.dragging.started = payload;
