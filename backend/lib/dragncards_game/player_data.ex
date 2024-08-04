@@ -22,7 +22,6 @@ defmodule DragnCardsGame.PlayerData do
       "drawingArrowFrom" => nil,
       "label" => nil,
       "prompts" => %{},
-      "touchAction" => nil,
       "browseGroup" => %{
         "id" => nil,
         "topN" => 0

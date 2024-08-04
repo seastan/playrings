@@ -5,7 +5,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { setStackIds, setCardIds, setGroupById } from "../store/gameUiSlice";
 import { getGroupIdAndRegionType, reorderGroupStackIds } from "./Reorder";
 import store from "../../store";
-import { setDraggingEnd, setDraggingEndDelay, setDraggingStackId, setTempDragStack, setDraggingMouseCurrentX, setDraggingMouseCurrentY, setDraggingMouseDownX, setDraggingMouseDownY, setDraggingStackRectangles, setDraggingGroupRectangle, setDraggingDefault, setDraggingHoverOverStackId, setDraggingHoverOverDirection, setDraggingHoverOverDroppableId, setDraggingFromDroppableId } from "../store/playerUiSlice";
+import { setDraggingEnd, setDraggingEndDelay, setDraggingStackId, setTempDragStack, setDraggingMouseCurrentX, setDraggingMouseCurrentY, setDraggingMouseDownX, setDraggingMouseDownY, setDraggingStackRectangles, setDraggingGroupRectangle, setDraggingDefault, setDraggingHoverOverStackId, setDraggingHoverOverDirection, setDraggingHoverOverDroppableId, setDraggingFromDroppableId, setStatusText, setDraggingPrevStackId, setDragStep } from "../store/playerUiSlice";
 import { Table } from "./Table";
 import { useDoActionList } from "./hooks/useDoActionList";
 import { ArcherContainer } from 'react-archer';
@@ -132,8 +132,8 @@ export const DragContainer = React.memo(({}) => {
     const droppableId = result.source.droppableId;
     dispatch(setDraggingFromDroppableId(droppableId));
     dispatch(setDraggingStackId(result.draggableId));
-    dispatch(setDraggingEnd(false));
     dispatch(setTempDragStack(null));
+    dispatch(setDragStep("beforeDragStart"));
 
 
     if (!result?.draggableId || !result?.source?.droppableId) return;
@@ -200,12 +200,12 @@ export const DragContainer = React.memo(({}) => {
   }, []);
 
   const onDragEnd = (result) => {
-    if (!isDragging) return;
+    //if (!isDragging) return;
     setIsDragging(false);
-    const draggingEnd = store.getState()?.playerUi?.dragging?.end;
-    if (draggingEnd) return;
-    const draggingEndDelay = store.getState()?.playerUi?.dragging?.endDelay;
-    console.log('log2 onDragEnd:', result, {draggingEnd, draggingEndDelay});
+    // const draggingEnd = store.getState()?.playerUi?.dragging?.end;
+    // if (draggingEnd) return;
+      // const draggingEndDelay = store.getState()?.playerUi?.dragging?.endDelay;
+      // console.log('onDragEnd 1:', result, {draggingEnd, draggingEndDelay});
     const game = store.getState()?.gameUi.game;
     const playerUiDragging = store.getState()?.playerUi?.dragging;
     const keypressShift = store.getState()?.playerUi?.keypress?.Shift;
@@ -214,7 +214,7 @@ export const DragContainer = React.memo(({}) => {
     const origDroppableId = orig.droppableId;
 
     const origRegion = getRegionFromId(origDroppableId);
-    console.log("origRegion", origDroppableId, origRegion)
+    console.log("onDragEnd 2", origDroppableId, origRegion)
     const origGroupId = origRegion.groupId;
     //const [origGroupId, origRegionType, origRegionDirection] = getGroupIdAndRegionType(origDroppableId);
     const origGroup = groupById[origGroupId];
@@ -229,7 +229,7 @@ export const DragContainer = React.memo(({}) => {
     if (!dest) {
       dest = {...orig};
     }
-    console.log("Dest: ", dest)
+    console.log("onDragEnd 3: ", dest)
 
     const destDroppableId = dest?.droppableId;
     const destRegion = getRegionFromId(destDroppableId);
@@ -241,27 +241,28 @@ export const DragContainer = React.memo(({}) => {
     const destGroup = groupById[destGroupId];
     const destGroupStackIds = destGroup.stackIds;
 
-    dispatch(setDraggingEnd(true));
-    dispatch(setDraggingDefault());
-    dispatch(setDraggingEndDelay(true));
-    setTimeout(() => {
-      //dispatch(setDraggingStackId(null));
-      dispatch(setDraggingEndDelay(false));
-      dispatch(setTempDragStack(null));
-    }, 200);
+    // dispatch(setDraggingEnd(true));
+    // dispatch(setDraggingPrevStackId(origStackId));
+    // dispatch(setDraggingDefault());
+    // dispatch(setDraggingEndDelay(true));
+    // setTimeout(() => {
+    //   //dispatch(setDraggingStackId(null));
+    //   dispatch(setDraggingEndDelay(false));
+    //   dispatch(setTempDragStack(null));
+    // }, 800);
 
 
 
     const draggableNode = document.querySelector(`[data-rbd-draggable-id="${result.draggableId}"]`);
 
-    console.log("Dropped in: ", destGroupId, draggableNode)
+    console.log("onDragEnd 4: ", destGroupId, draggableNode)
     var stackLeft = 0;
     var stackTop = 0;
 
     const playerUiDroppableRefs = store.getState()?.playerUi?.droppableRefs;
     if (playerUiDroppableRefs?.[destGroupId]) {
       const droppableRect = playerUiDroppableRefs[destGroupId].getBoundingClientRect();
-      console.log("Droppable Rect: ", droppableRect)
+      console.log("onDragEnd 5: ", droppableRect)
       // const xRelative = mousePosition.x - mouseDownPosition.x - droppableRect.left;
       // const yRelative = mousePosition.y - mouseDownPosition.y - droppableRect.top;
       const xRelative = playerUiDragging.mouseCurrentX - playerUiDragging.mouseDownX - droppableRect.left;
@@ -269,11 +270,10 @@ export const DragContainer = React.memo(({}) => {
       stackLeft = xRelative/droppableRect.width*100 + '%';
       stackTop = yRelative/droppableRect.height*100 + '%';
 
-      console.log("stackPlacement", playerUiDragging.mouseCurrentX, playerUiDragging.mouseDownX, droppableRect.left, xRelative, stackLeft)
+      console.log("onDragEnd 6", playerUiDragging.mouseCurrentX, playerUiDragging.mouseDownX, droppableRect.left, xRelative, stackLeft)
     }
 
     if (destRegionType === "free") {
-      //alert(`setting left and top to ${stackLeft} and ${stackTop}`)
       dispatch(setTempDragStack({
         stackId: origStackId, 
         toGroupId: destGroupId,
