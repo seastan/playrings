@@ -19,7 +19,8 @@ let draggableClientRect = null;
 
 const getAfterDragName = (game, stackId, destGroupId, allowFlip) => {
   const stack = game.stackById[stackId];
-  const cardIds = stack.cardIds;
+  const cardIds = stack?.cardIds;
+  if (!cardIds || cardIds.length === 0) return;
   const cardId = cardIds[0];
   const card = game.cardById[cardId];
 
@@ -211,9 +212,6 @@ export const DragContainer = React.memo(({}) => {
     const origGroup = groupById[origGroupId];
     const origGroupStackIds = origGroup.stackIds;
     const origStackId = origGroupStackIds[orig.index];    
-    const origStack = game.stackById[origStackId];
-    const origStackCardIds = origStack.cardIds;
-    const topOfOrigStackCardId = origStackCardIds[0];
     const allowFlip = keypressShift ? false : true; 
     var dest = result.combine ? result.combine : result.destination;
     if (!dest) {

@@ -39,7 +39,7 @@ export const StackContainerSorted = styled.div`
 //
 
 
-function useHandlePropsChange(props, callback) {
+function useHandlePropsChange(props, callback, doPrint = false) {
   const previousProps = useRef();
 
   useEffect(() => {
@@ -55,7 +55,7 @@ function useHandlePropsChange(props, callback) {
         }
       });
       if (Object.keys(changesObj).length) {
-        console.log('Changed props:', changesObj);
+        if (doPrint) console.log('Changed props:', changesObj);
         callback();
       }
     }
@@ -94,13 +94,15 @@ export const StackDraggable = React.memo(({
     const {offsetTotals, offsetAmounts, stackEdges} = useOffsetTotalsAndAmounts(stackId);
 
     const handlePositionChange = () => {
-      //alert('Position changed');
-      //dispatch(setDragStep(null));
-      dispatch(setDraggingDefault())
-      dispatch(setTempDragStack(null))
+      if (dragStep !== null) {
+        dispatch(setDraggingDefault())
+        dispatch(setTempDragStack(null))
+      }
     }
 
-    useHandlePropsChange({left: stack.left, top: stack.top}, handlePositionChange);
+    //useHandlePropsChange({region, stackIndex, stackId, numStacksVisible, onDragEnd, stack, touchMode, dragStep, regionCardSizeFactor, zoomFactor, isCombined, playerN, layout, rowSpacing, cardSize, spacingFactor, aspectRatio, cardIds, card0, offsetTotals, offsetAmounts, stackEdges}, () => {}, dragStep !== null);
+    useHandlePropsChange({left: stack?.left, top: stack?.top}, handlePositionChange, dragStep !== null);
+
 
     if (!stack) return null;
 
@@ -143,7 +145,7 @@ export const StackDraggable = React.memo(({
           }
             
           const hoverOverDroppableId = store.getState().playerUi?.dragging?.hoverOverDroppableId;
-          const toRegionType = (hoverOverDroppableId === null) ? null : getRegionFromId(hoverOverDroppableId).type;
+          const toRegionType = (hoverOverDroppableId === null) ? null : getRegionFromId(hoverOverDroppableId)?.type;
           // Mouse let go
           if (stackId === draggingStackId && dragStep === "dragging" && dragSnapshot.isDropAnimating && onDragEnd) {
             dispatch(setDragStep("dropAnimating"));
@@ -170,6 +172,7 @@ export const StackDraggable = React.memo(({
                 }
               }
               onDragEnd(result);
+              dispatch(setDraggingDefault());
             } else if (toRegionType == "free") {
               // const result = {
               //   "draggableId": stackId,
@@ -209,6 +212,9 @@ export const StackDraggable = React.memo(({
                 top: newStackTop
               }));
               //onDragEnd(result);
+            } else {
+              alert(toRegionType);
+              dispatch(setDraggingDefault());
             }
           }
 
@@ -221,7 +227,7 @@ export const StackDraggable = React.memo(({
                 var updatedStyle = {...style}
                 if (dragSnapshot.isDropAnimating && toRegionType === "free") updatedStyle.transitionDuration = "0.0001s";
                 //if (isCombined) updatedStyle.zIndex = 0;
-                if (updatedStyle.transform && dragSnapshot.isDragging) updatedStyle.transform = updatedStyle.transform + " scale(1.3)";
+                if (updatedStyle.transform && dragSnapshot.isDragging) updatedStyle.transform = updatedStyle.transform + " scale(1.1)";
                 if (region.type === "free" && !dragSnapshot.isDragging) updatedStyle.transform = "none";
                 if (toRegionType === "free" && (dragStep === "dropAnimating" || dragStep === "doneDropAnimating") ) updatedStyle.opacity = "0.01";
                 //if (updatedStyle.transition !== null) updatedStyle.transition = null;
