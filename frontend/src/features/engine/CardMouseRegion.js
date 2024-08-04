@@ -46,8 +46,9 @@ export const CardMouseRegion = React.memo(({
         console.log("cardaction click", card);
         event.stopPropagation(); 
         if (touchMode) {
-            if (touchAction !== null || isActive) handleTouchAction(card);
-            else {
+            if (touchAction !== null || isActive) {
+                handleTouchAction(card);
+            } else {
                 makeActive(event); 
                 handleSetDropDownMenu();
             }

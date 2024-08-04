@@ -38,28 +38,6 @@ export const StackContainerSorted = styled.div`
 //
 //
 
-function useWhyDidYouUpdate(name, doPrint, props) {
-  const previousProps = useRef();
-
-  useEffect(() => {
-    if (previousProps.current) {
-      const allKeys = Object.keys({ ...previousProps.current, ...props });
-      const changesObj = {};
-      allKeys.forEach(key => {
-        if (previousProps.current[key] !== props[key]) {
-          changesObj[key] = {
-            from: previousProps.current[key],
-            to: props[key]
-          };
-        }
-      });
-      if (Object.keys(changesObj).length) {
-        if (doPrint) console.log(`[${name}] Changed props:`, changesObj);
-      }
-    }
-    previousProps.current = props;
-  });
-}
 
 function useHandlePropsChange(props, callback) {
   const previousProps = useRef();
@@ -77,6 +55,7 @@ function useHandlePropsChange(props, callback) {
         }
       });
       if (Object.keys(changesObj).length) {
+        console.log('Changed props:', changesObj);
         callback();
       }
     }
@@ -113,8 +92,6 @@ export const StackDraggable = React.memo(({
     const card0 = store.getState().gameUi.game.cardById[cardIds[0]];
     // Calculate size of stack for proper spacing. Changes base on group type and number of stack in group.
     const {offsetTotals, offsetAmounts, stackEdges} = useOffsetTotalsAndAmounts(stackId);
-
-    useWhyDidYouUpdate('StackDraggable', dragStep !== null, { stack });
 
     const handlePositionChange = () => {
       //alert('Position changed');
@@ -154,11 +131,8 @@ export const StackDraggable = React.memo(({
         index={stackIndex}
         isDragDisabled={playerN === null}>
         {(dragProvided, dragSnapshot) => {
-          console.log("Attempted drag 1")
-          if (card0.sides["A"].name.includes("Roland Banks")) console.log("Roland drag", {dragSnapshot, dragProvided});
 
           const draggingStackId = store.getState().playerUi?.dragging?.stackId;
-          //const dragStep = store.getState().playerUi?.dragging?.dragStep;
           if (dragStep === "beforeDragStart" && dragSnapshot.isDragging) {
             dispatch(setDragStep("dragging"));
           }
@@ -166,15 +140,12 @@ export const StackDraggable = React.memo(({
           // End of animation
           if (stackId === draggingStackId && dragStep === "dropAnimating" && !dragSnapshot.isDropAnimating) {
             dispatch(setDragStep("doneDropAnimating"));
-            // dispatch(setDraggingDefault())
-            // dispatch(setTempDragStack(null))
           }
             
           const hoverOverDroppableId = store.getState().playerUi?.dragging?.hoverOverDroppableId;
           const toRegionType = (hoverOverDroppableId === null) ? null : getRegionFromId(hoverOverDroppableId).type;
           // Mouse let go
           if (stackId === draggingStackId && dragStep === "dragging" && dragSnapshot.isDropAnimating && onDragEnd) {
-            //alert("mouse let go")
             dispatch(setDragStep("dropAnimating"));
             const fromDroppableId = store.getState().playerUi?.dragging?.fromDroppableId;
             const hoverOverStackId = store.getState().playerUi?.dragging?.hoverOverStackId;
@@ -252,7 +223,7 @@ export const StackDraggable = React.memo(({
                 //if (isCombined) updatedStyle.zIndex = 0;
                 if (updatedStyle.transform && dragSnapshot.isDragging) updatedStyle.transform = updatedStyle.transform + " scale(1.3)";
                 if (region.type === "free" && !dragSnapshot.isDragging) updatedStyle.transform = "none";
-                if (dragStep === "dropAnimating" || dragStep === "doneDropAnimating" ) updatedStyle.opacity = "0.01";
+                if (toRegionType === "free" && (dragStep === "dropAnimating" || dragStep === "doneDropAnimating") ) updatedStyle.opacity = "0.01";
                 //if (updatedStyle.transition !== null) updatedStyle.transition = null;
                 //if (updatedStyle.zIndex === 4500) updatedStyle = {"transform":"none","transition":null}
                 //dispatch(setStatusText(JSON.stringify(dragSnapshot)))
@@ -260,7 +231,7 @@ export const StackDraggable = React.memo(({
                 // If isInBrowseGroup, add -50% to transform Y
                 //if (isInBrowseGroup && dragSnapshot.isDragging) updatedStyle.transform = updatedStyle.transform + " translate(0%, -50dvh)";
                 //updatedStyle.visibility = draggingToFree && ((thisDrag && style.transform === null) || dragSnapshot.isDropAnimating) ? "hidden" : "visible";
-                //if (region.direction === "horizontal") updatedStyle.display = "inline-block";
+                if (region.direction === "horizontal") updatedStyle.display = "inline-block";
                 //if (tempDragStackIdIsThisStackId) updatedStyle.visibility = "hidden";
                 // Check if mouse is within this div
 

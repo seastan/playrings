@@ -54,7 +54,7 @@ export const useHandleTouchAction = () => {
                 }
             } else if (touchAction?.actionType === "card" && touchedCard) {
                 const actionListId = touchAction?.actionList;
-                const actionList = gameDef?.actionLists?.[actionListId];
+                const actionList = [...gameDef?.actionLists?.[actionListId]];
                 if (actionList === null || actionList === undefined) {
                     alert("Action list not found: " + actionListId);
                     return;

@@ -63,7 +63,8 @@ export const DragContainer = React.memo(({}) => {
     const hoverOverDroppableId = store.getState()?.playerUi?.dragging?.hoverOverDroppableId;
     const hoverOverRegion = getRegionFromId(hoverOverDroppableId);  
     const draggableNode = document.querySelector(`[data-rbd-draggable-id="${draggingStackId}"]`);
-    const draggableRect = draggableNode.getBoundingClientRect();
+    const draggableRect = draggableNode?.getBoundingClientRect();
+    if (!draggableRect) return;
     draggableRect.stackId = draggingStackId;
     const centerX = draggableRect.left + draggableRect.width / 2;
     const centerY = draggableRect.top + draggableRect.height / 2;
