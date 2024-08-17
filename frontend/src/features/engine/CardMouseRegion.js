@@ -7,6 +7,8 @@ import { useHandleTouchAction } from "./hooks/useHandleTouchAction";
 import { useCardZIndex } from "./hooks/useCardZIndex";
 import { useVisibleFace } from "./hooks/useVisibleFace";
 import { useTouchAction } from "./hooks/useTouchAction";
+import { useDoActionList } from "./hooks/useDoActionList";
+import { useGetDefaultAction } from "./hooks/useGetDefaultAction";
 
 
 export const CardMouseRegion = React.memo(({
@@ -23,6 +25,8 @@ export const CardMouseRegion = React.memo(({
     const dropdownMenuVisible = useSelector(state => state?.playerUi?.dropdownMenu?.visible);
     const zIndex = useCardZIndex(cardId);
     const handleTouchAction = useHandleTouchAction();
+    const doActionList = useDoActionList();
+    const getDefaultAction = useGetDefaultAction(cardId);
 
     const makeActive = (event) => {
         const screenLeftRight = event.clientX > (window.innerWidth/2) ? "right" : "left";
@@ -43,16 +47,19 @@ export const CardMouseRegion = React.memo(({
     }
 
     const handleClick = (event) => {
-        console.log("cardaction click", card);
+        console.log("cardaction click", {card, touchMode, isActive, touchAction});
         event.stopPropagation(); 
         if (touchMode) {
-            if (touchAction !== null || isActive) {
+            if (isActive) {
+                doActionList(getDefaultAction()?.actionList)
+            } else if (touchAction !== null) {
                 handleTouchAction(card);
             } else {
                 makeActive(event); 
                 handleSetDropDownMenu();
             }
         } else {
+            makeActive(event); 
             handleSetDropDownMenu();
         }
     }
