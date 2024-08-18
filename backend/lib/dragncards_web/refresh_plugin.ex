@@ -2,6 +2,7 @@ defmodule DragnCardsWeb.RefreshPlugin do
   @moduledoc """
   Handle refreshing the plugin.
   """
+  alias DragnCardsUtil.Merger
 
   def refresh do
     file_path = "/tmp/plugin_jsons"
@@ -41,7 +42,7 @@ defmodule DragnCardsWeb.RefreshPlugin do
     case File.read(file_path) do
       {:ok, content} ->
         # Remove comments from the content
-        cleaned_content = remove_comments(content)
+        cleaned_content = Merger.remove_comments(content)
 
         case Jason.decode(cleaned_content) do
           {:ok, decoded} -> decoded
