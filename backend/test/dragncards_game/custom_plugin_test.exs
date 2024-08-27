@@ -694,9 +694,6 @@ defmodule DragnCardsGame.CustomPluginTest do
     assert game["cardById"][dwarf_card_id]["tokens"]["willpower"] == 0
     assert game["cardById"][dwarf_card_id]["tokens"]["attack"] == 0
 
-
-
-
     # Print all messages
     Enum.each(game["messages"], fn message ->
       IO.puts(message)
