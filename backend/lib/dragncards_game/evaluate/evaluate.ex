@@ -390,7 +390,7 @@ defmodule DragnCardsGame.Evaluate do
               raise "Function #{function_name} expects #{Enum.count(func_args)} arguments, but got #{Enum.count(input_args)}."
             end
             # Call VAR on each of the function args
-            game = Enum.reduce(Enum.with_index(func_args), game, fn({func_arg, index}, acc) ->
+            multi_var_command = Enum.reduce(Enum.with_index(func_args), ["MULTI_VAR"], fn({func_arg, index}, acc) ->
               [{func_arg_name, input_arg}] = cond do
                 index >= Enum.count(input_args) -> # If we are beyond the range of input arguments, look for default arguments
                   if is_map(func_arg) do
@@ -408,8 +408,10 @@ defmodule DragnCardsGame.Evaluate do
                     [{func_arg_name, input_arg}]
                   end
               end
-              evaluate(acc, ["VAR", func_arg_name, input_arg], trace ++ ["function arg #{func_arg_name}"])
+              acc ++ [func_arg_name, input_arg]
+              #evaluate(acc, ["VAR", func_arg_name, input_arg], trace ++ ["function arg #{func_arg_name}"])
             end)
+            game = evaluate(game, multi_var_command, trace ++ ["define function args"])
             # Evaluate the function
             evaluate(game, func_code, trace)
 

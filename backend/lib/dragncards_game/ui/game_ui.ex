@@ -1086,17 +1086,17 @@ defmodule DragnCardsGame.GameUI do
   def get_enters_play_condition(side) do
     curr_condition = "$THIS.inPlay"
     curr_condition = if side != nil do
-      curr_condition ++ ["EQUAL", "$THIS.currentSide", side]
+      ["AND", curr_condition , ["EQUAL", "$THIS.currentSide", side]]
     else
-      curr_condition
+      ["AND", curr_condition]
     end
-    prev_condition = ["NOT", ["PREV", "$THIS.inPlay"]]
+    prev_condition = [["NOT", ["PREV", "$THIS.inPlay"]]]
     prev_condition = if side != nil do
-      prev_condition ++ ["NOT_EQUAL", ["PREV", "$THIS.currentSide"], side]
+      prev_condition ++ [["NOT_EQUAL", ["PREV", "$THIS.currentSide"], side]]
     else
       prev_condition
     end
-    ["AND"] ++ curr_condition ++ [["OR"] ++ prev_condition]
+    curr_condition ++ [["OR"] ++ prev_condition]
   end
 
   def get_in_play_condition(side) do
@@ -1264,7 +1264,6 @@ defmodule DragnCardsGame.GameUI do
     load_list = Enum.map(load_list, fn load_list_item ->
       # If the load_list_item has a "cardDetails"
       database_id = get_in(load_list_item, ["databaseId"])
-      IO.puts("processing load_list_item #{inspect(load_list_item)}")
 
       cardDetails =
         cond do
