@@ -1308,7 +1308,7 @@ defmodule DragnCardsGame.GameUI do
     Logger.debug("load_cards 1")
 
     {game_def_time, game_def} = :timer.tc(fn -> DragnCardsGame.PluginCache.get_game_def_cached(game["options"]["pluginId"]) end)
-    #IO.puts("get_game_def execution time: #{game_def_time} microseconds")
+    IO.puts("get_game_def execution time: #{game_def_time} microseconds")
 
     Logger.debug("load_cards 2")
 
@@ -1336,7 +1336,8 @@ defmodule DragnCardsGame.GameUI do
               CustomCardDb.get_card_details_for_user(game["pluginId"], user_id, database_id)
 
             database_id != nil ->
-              case DragnCardsGame.PluginCache.get_card_cached(game["options"]["pluginId"], database_id) do
+              {card_cache_time, card_details} = :timer.tc(fn -> DragnCardsGame.PluginCache.get_card_cached(game["options"]["pluginId"], database_id) end)
+              case card_details do
                 {:ok, card_details} -> card_details
                 :error -> raise "Card with databaseId #{database_id} not found."
               end
@@ -1372,14 +1373,14 @@ defmodule DragnCardsGame.GameUI do
         }
       end)
     end)
-    #IO.puts("load_list processing time: #{load_list_time} microseconds")
+    IO.puts("load_list processing time: #{load_list_time} microseconds")
 
     Logger.debug("load_cards 4")
 
     old_game = game
 
     {evaluate_time, game} = :timer.tc(fn -> Evaluate.evaluate(game, ["SET", "/loadedCardIds", []]) end)
-    #IO.puts("Evaluate.evaluate (clear loadedCardIds) execution time: #{evaluate_time} microseconds")
+    IO.puts("Evaluate.evaluate (clear loadedCardIds) execution time: #{evaluate_time} microseconds")
 
     {reduce_load_list_time, game} = :timer.tc(fn ->
       Enum.reduce(load_list, game, fn load_list_item, acc ->
@@ -1387,13 +1388,13 @@ defmodule DragnCardsGame.GameUI do
         load_card(acc, game_def, load_list_item)
       end)
     end)
-    #IO.puts("Enum.reduce (load_list processing) execution time: #{reduce_load_list_time} microseconds")
+    IO.puts("Enum.reduce (load_list processing) execution time: #{reduce_load_list_time} microseconds")
 
     {sort_game_automation_time, game} = :timer.tc(fn -> Game.sort_game_automation_list(game) end)
-    #IO.puts("Game.sort_game_automation_list execution time: #{sort_game_automation_time} microseconds")
+    IO.puts("Game.sort_game_automation_list execution time: #{sort_game_automation_time} microseconds")
 
     {shuffle_decks_time, game} = :timer.tc(fn -> shuffle_changed_decks(game, old_game, game_def) end)
-    #IO.puts("shuffle_changed_decks execution time: #{shuffle_decks_time} microseconds")
+    IO.puts("shuffle_changed_decks execution time: #{shuffle_decks_time} microseconds")
 
     game
   end
