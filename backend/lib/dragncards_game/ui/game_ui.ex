@@ -1083,6 +1083,51 @@ defmodule DragnCardsGame.GameUI do
 
   end
 
+  # def create_card_in_group(game, game_def, group_id, load_list_item) do
+  #   group_size = Enum.count(get_stack_ids(game, group_id))
+
+  #   new_card = Card.card_from_card_details(load_list_item["cardDetails"], game_def, load_list_item["databaseId"], group_id)
+  #   new_stack = Stack.stack_from_card(new_card)
+
+  #   {update_card_time, game} = :timer.tc(fn -> update_card(game, new_card) end)
+  #   IO.puts("update_card execution time: #{update_card_time} microseconds")
+
+  #   {update_stack_time, game} = :timer.tc(fn -> update_stack(game, new_stack) end)
+  #   IO.puts("update_stack execution time: #{update_stack_time} microseconds")
+
+  #   {insert_stack_time, game} = :timer.tc(fn ->
+  #     insert_stack_in_group(game, group_id, new_stack["id"], group_size)
+  #   end)
+  #   IO.puts("insert_stack_in_group execution time: #{insert_stack_time} microseconds")
+
+  #   {set_stack_left_top_time, game} = :timer.tc(fn ->
+  #     set_stack_left_top(game, new_stack["id"], load_list_item["left"], load_list_item["top"])
+  #   end)
+  #   IO.puts("set_stack_left_top execution time: #{set_stack_left_top_time} microseconds")
+
+  #   {implement_automations_time, game} = :timer.tc(fn ->
+  #     implement_card_automations(game, game_def, new_card)
+  #   end)
+  #   IO.puts("implement_card_automations execution time: #{implement_automations_time} microseconds")
+
+  #   {update_card_state_time, game} = :timer.tc(fn ->
+  #     update_card_state(game, new_card["id"], nil, nil)
+  #   end)
+  #   IO.puts("update_card_state execution time: #{update_card_state_time} microseconds")
+
+  #   {evaluate_time, game} = :timer.tc(fn ->
+  #     Evaluate.evaluate(
+  #       game,
+  #       ["SET", "/loadedCardIds", ["LIST"] ++ game["loadedCardIds"] ++ [new_card["id"]]],
+  #       ["create_card_in_group"]
+  #     )
+  #   end)
+  #   IO.puts("Evaluate.evaluate execution time: #{evaluate_time} microseconds")
+
+  #   game
+  # end
+
+
   def get_enters_play_condition(side) do
     curr_condition = "$THIS.inPlay"
     curr_condition = if side != nil do
@@ -1132,8 +1177,10 @@ defmodule DragnCardsGame.GameUI do
     end
   end
 
-  def preprocess_card_automation_rule(rule) do
+  def preprocess_card_automation_rule(rule, card_id) do
     rule_type = rule["type"]
+    # then = [["MULTI_VAR", "$THIS_ID", card_id, "$THIS", "$GAME.cardById.#{card_id}"]] ++ rule["then"]
+    # rule = Map.put(rule, "then", then)
     case rule_type do
       "entersPlay" ->
         listen_to = ["/cardById/$THIS_ID/inPlay"] |> add_listen_to_side(rule["side"]) |> add_liten_to(rule["listenTo"])
@@ -1149,15 +1196,16 @@ defmodule DragnCardsGame.GameUI do
         |> Map.put("type", "passive")
         |> Map.put("listenTo", listen_to)
         |> Map.put("condition", condition)
+        |> Map.put("this_id", card_id)
       _ ->
         rule
     end
   end
 
-  def preprocess_card_automation_rules(card_rules) do
+  def preprocess_card_automation_rules(card_rules, card_id) do
     Logger.debug("card_rules: #{inspect(card_rules)}")
     rules = Enum.reduce(card_rules, [], fn(rule, acc) ->
-      acc ++ [preprocess_card_automation_rule(rule)]
+      acc ++ [preprocess_card_automation_rule(rule, card_id)]
     end)
     rules
   end
@@ -1169,10 +1217,10 @@ defmodule DragnCardsGame.GameUI do
     game = if card_rules == nil do
       game
     else
+      card_rules = preprocess_card_automation_rules(card_rules, card["id"])
+
       game
-      |> put_in(["automation", card["id"]], card_automation)
-      |> put_in(["automation", card["id"], "rules"], preprocess_card_automation_rules(card_rules))
-      |> put_in(["automation", card["id"], "this_id"], card["id"])
+      |> Map.put("automationList", game["automationList"] ++ card_rules)
     end
 
     Logger.debug("implement_card_automations 2")
@@ -1197,6 +1245,8 @@ defmodule DragnCardsGame.GameUI do
   #     end
   #   end
   # end
+
+
 
   def load_card(game, game_def, load_list_item) do
     quantity = load_list_item["quantity"]
@@ -1254,81 +1304,182 @@ defmodule DragnCardsGame.GameUI do
     if load_list == nil do
       raise "load_list is nil"
     end
+
     Logger.debug("load_cards 1")
-    game_def = Plugins.get_game_def(game["options"]["pluginId"])
+
+    {game_def_time, game_def} = :timer.tc(fn -> Plugins.get_game_def(game["options"]["pluginId"]) end)
+    IO.puts("get_game_def execution time: #{game_def_time} microseconds")
+
     Logger.debug("load_cards 2")
-    card_db = Plugins.get_card_db(game["options"]["pluginId"])
+
+    {card_db_time, card_db} = :timer.tc(fn -> Plugins.get_card_db(game["options"]["pluginId"]) end)
+    IO.puts("get_card_db execution time: #{card_db_time} microseconds")
+
     Logger.debug("load_cards 3")
 
-    # Loop over load list and add a "cardDetails" field to each item
-    load_list = Enum.map(load_list, fn load_list_item ->
-      # If the load_list_item has a "cardDetails"
-      database_id = get_in(load_list_item, ["databaseId"])
+    {load_list_time, load_list} = :timer.tc(fn ->
+      Enum.map(load_list, fn load_list_item ->
+        # If the load_list_item has a "cardDetails"
+        database_id = get_in(load_list_item, ["databaseId"])
 
-      cardDetails =
-        cond do
-          Map.has_key?(load_list_item, "cardDetails") ->
-            load_list_item["cardDetails"]
+        cardDetails =
+          cond do
+            Map.has_key?(load_list_item, "cardDetails") ->
+              load_list_item["cardDetails"]
 
-          Map.has_key?(load_list_item, "authorId") ->
-            IO.puts("'authorId' was found in load_list_item. Attempting to load card from custom database.")
-            CustomCardDb.get_card_details_for_user(game["pluginId"], user_id, database_id)
+            Map.has_key?(load_list_item, "authorId") ->
+              IO.puts("'authorId' was found in load_list_item. Attempting to load card from custom database.")
+              CustomCardDb.get_card_details_for_user(game["pluginId"], user_id, database_id)
 
-          database_id != nil ->
-            case Map.fetch(card_db, database_id) do
-              {:ok, card_details} -> card_details
-              :error -> raise "Card with databaseId #{database_id} not found."
-            end
+            database_id != nil ->
+              case Map.fetch(card_db, database_id) do
+                {:ok, card_details} -> card_details
+                :error -> raise "Card with databaseId #{database_id} not found."
+              end
 
-          true ->
-            raise "Map must contain either 'databaseId' or 'cardDetails'"
+            true ->
+              raise "Map must contain either 'databaseId' or 'cardDetails'"
+          end
+
+        quantity = Map.fetch!(load_list_item, "quantity")
+
+        loadGroupId = Map.fetch!(load_list_item, "loadGroupId")
+
+        loadGroupId =
+          if String.contains?(loadGroupId, "playerN") and player_n == nil do
+            raise "Tried to load a card into player group #{loadGroupId}, but no player was specified. Are you sitting in a seat?"
+          else
+            String.replace(loadGroupId, "playerN", player_n || "")
+          end
+
+        possibleGroupIds = Map.keys(game["groupById"])
+
+        if loadGroupId not in possibleGroupIds do
+          raise "Tried to load a card into a group that doesn't exist: #{loadGroupId}"
         end
 
-      quantity = Map.fetch!(load_list_item, "quantity")
-
-      loadGroupId = Map.fetch!(load_list_item, "loadGroupId")
-
-      loadGroupId =
-      if String.contains?(loadGroupId, "playerN") and player_n == nil do
-        raise "Tried to load a card into player group #{loadGroupId}, but no player was specified. Are you sitting in a seat?"
-      else
-        String.replace(loadGroupId, "playerN", player_n || "")
-      end
-
-      possibleGroupIds = Map.keys(game["groupById"])
-
-      if loadGroupId not in possibleGroupIds do
-        raise "Tried to load a card into a group that doesn't exist: #{loadGroupId}"
-      end
-
-      %{
-        "databaseId" => database_id,
-        "cardDetails" => cardDetails,
-        "quantity" => quantity,
-        "loadGroupId" => loadGroupId,
-        "left" => load_list_item["left"],
-        "top" => load_list_item["top"]
-      }
+        %{
+          "databaseId" => database_id,
+          "cardDetails" => cardDetails,
+          "quantity" => quantity,
+          "loadGroupId" => loadGroupId,
+          "left" => load_list_item["left"],
+          "top" => load_list_item["top"]
+        }
+      end)
     end)
+    IO.puts("load_list processing time: #{load_list_time} microseconds")
+
     Logger.debug("load_cards 4")
 
     old_game = game
 
-    game = Evaluate.evaluate(game, ["SET", "/loadedCardIds", []])
+    {evaluate_time, game} = :timer.tc(fn -> Evaluate.evaluate(game, ["SET", "/loadedCardIds", []]) end)
+    IO.puts("Evaluate.evaluate (clear loadedCardIds) execution time: #{evaluate_time} microseconds")
 
-    game =
+    {reduce_load_list_time, game} = :timer.tc(fn ->
       Enum.reduce(load_list, game, fn load_list_item, acc ->
         Logger.debug("load_card #{load_list_item["cardDetails"]["A"]["name"]} into #{load_list_item["loadGroupId"]}")
         load_card(acc, game_def, load_list_item)
       end)
-    # rescue
-    #   e in RuntimeError ->
-    #     Evaluate.evaluate(game, ["ERROR", "Loading cards: #{Exception.message(e)}"])
-    # end
+    end)
+    IO.puts("Enum.reduce (load_list processing) execution time: #{reduce_load_list_time} microseconds")
 
+    {sort_game_automation_time, game} = :timer.tc(fn -> Game.sort_game_automation_list(game) end)
+    IO.puts("Game.sort_game_automation_list execution time: #{sort_game_automation_time} microseconds")
 
-    shuffle_changed_decks(game, old_game, game_def)
+    {shuffle_decks_time, game} = :timer.tc(fn -> shuffle_changed_decks(game, old_game, game_def) end)
+    IO.puts("shuffle_changed_decks execution time: #{shuffle_decks_time} microseconds")
 
+    game
   end
+
+
+  # def load_cards(game, load_list) do
+  #   player_n = get_player_n(game)
+  #   user_id = get_user_id_from_player_n(game, player_n)
+
+  #   # If load_list is nil, raise an error
+  #   if load_list == nil do
+  #     raise "load_list is nil"
+  #   end
+  #   Logger.debug("load_cards 1")
+  #   game_def = Plugins.get_game_def(game["options"]["pluginId"])
+  #   Logger.debug("load_cards 2")
+  #   card_db = Plugins.get_card_db(game["options"]["pluginId"])
+  #   Logger.debug("load_cards 3")
+
+  #   # Loop over load list and add a "cardDetails" field to each item
+  #   load_list = Enum.map(load_list, fn load_list_item ->
+  #     # If the load_list_item has a "cardDetails"
+  #     database_id = get_in(load_list_item, ["databaseId"])
+
+  #     cardDetails =
+  #       cond do
+  #         Map.has_key?(load_list_item, "cardDetails") ->
+  #           load_list_item["cardDetails"]
+
+  #         Map.has_key?(load_list_item, "authorId") ->
+  #           IO.puts("'authorId' was found in load_list_item. Attempting to load card from custom database.")
+  #           CustomCardDb.get_card_details_for_user(game["pluginId"], user_id, database_id)
+
+  #         database_id != nil ->
+  #           case Map.fetch(card_db, database_id) do
+  #             {:ok, card_details} -> card_details
+  #             :error -> raise "Card with databaseId #{database_id} not found."
+  #           end
+
+  #         true ->
+  #           raise "Map must contain either 'databaseId' or 'cardDetails'"
+  #       end
+
+  #     quantity = Map.fetch!(load_list_item, "quantity")
+
+  #     loadGroupId = Map.fetch!(load_list_item, "loadGroupId")
+
+  #     loadGroupId =
+  #     if String.contains?(loadGroupId, "playerN") and player_n == nil do
+  #       raise "Tried to load a card into player group #{loadGroupId}, but no player was specified. Are you sitting in a seat?"
+  #     else
+  #       String.replace(loadGroupId, "playerN", player_n || "")
+  #     end
+
+  #     possibleGroupIds = Map.keys(game["groupById"])
+
+  #     if loadGroupId not in possibleGroupIds do
+  #       raise "Tried to load a card into a group that doesn't exist: #{loadGroupId}"
+  #     end
+
+  #     %{
+  #       "databaseId" => database_id,
+  #       "cardDetails" => cardDetails,
+  #       "quantity" => quantity,
+  #       "loadGroupId" => loadGroupId,
+  #       "left" => load_list_item["left"],
+  #       "top" => load_list_item["top"]
+  #     }
+  #   end)
+  #   Logger.debug("load_cards 4")
+
+  #   old_game = game
+
+  #   game = Evaluate.evaluate(game, ["SET", "/loadedCardIds", []])
+
+  #   game =
+  #     Enum.reduce(load_list, game, fn load_list_item, acc ->
+  #       Logger.debug("load_card #{load_list_item["cardDetails"]["A"]["name"]} into #{load_list_item["loadGroupId"]}")
+  #       load_card(acc, game_def, load_list_item)
+  #     end)
+  #   # rescue
+  #   #   e in RuntimeError ->
+  #   #     Evaluate.evaluate(game, ["ERROR", "Loading cards: #{Exception.message(e)}"])
+  #   # end
+
+  #   game = Game.sort_game_automation_list(game)
+
+
+  #   shuffle_changed_decks(game, old_game, game_def)
+
+  # end
 
 end

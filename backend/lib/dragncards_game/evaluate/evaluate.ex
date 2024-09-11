@@ -54,6 +54,66 @@ defmodule DragnCardsGame.Evaluate do
       else
         game_new
       end
+
+      if is_list(game_new["automationList"]) and game_new["automationEnabled"] == true do
+        Enum.reduce(game_new["automationList"], game_new, fn(rule, acc) ->
+          apply_automation_rule_wrapper(rule, path, game_old, acc, trace ++ ["apply_automation_rules"])
+        end)
+      else
+        game_new
+      end
+  end
+
+
+  def apply_automation_rule_wrapper(rule, path, game_old, game_new, trace) do
+
+    # Save current values of THIS and TARGET
+    prev_this_id = evaluate(game_new, "$THIS_ID", trace ++ ["$THIS_ID"])
+    prev_this = evaluate(game_new, "$THIS", trace ++ ["$THIS"])
+    prev_target_id = evaluate(game_new, "$TARGET_ID", trace ++ ["$TARGET_ID"])
+    prev_target = evaluate(game_new, "$TARGET", trace ++ ["$TARGET"])
+
+    game_new =
+      if rule["this_id"] do
+        game_new |>
+        evaluate(["DEFINE", "$THIS_ID", rule["this_id"]], trace ++ ["game_new"]) |>
+        evaluate(["DEFINE", "$THIS", "$GAME.cardById.$THIS_ID"], trace ++ ["game_new"])
+      else
+        game_new
+      end
+    game_old =
+      if rule["this_id"] do
+        game_old |>
+        evaluate(["DEFINE", "$THIS_ID", rule["this_id"]], trace ++ ["game_old"]) |>
+        evaluate(["DEFINE", "$THIS", "$GAME.cardById.$THIS_ID"], trace ++ ["game_old"])
+      else
+        game_old
+      end
+    game_new =
+      if Enum.count(path) > 2 do
+        game_new |>
+        evaluate(["DEFINE", "$TARGET_ID", Enum.at(path,1)], trace ++ ["game_new"]) |>
+        evaluate(["DEFINE", "$TARGET", "$GAME."<>Enum.at(path,0)<>".$TARGET_ID"], trace ++ ["game_new"])
+      else
+        game_new
+      end
+    game_old =
+      if Enum.count(path) > 2 do
+        game_old |>
+        evaluate(["DEFINE", "$TARGET_ID", Enum.at(path,1)], trace ++ ["game_old"]) |>
+        evaluate(["DEFINE", "$TARGET", "$GAME."<>Enum.at(path,0)<>".$TARGET_ID"], trace ++ ["game_old"])
+      else
+        game_old
+      end
+
+    game_new = apply_automation_rule(rule, path, game_old, game_new, trace)
+
+    # Restore THIS and TARGET
+    game_new |>
+      evaluate(["DEFINE", "$THIS_ID", prev_this_id], trace ++ ["restore"]) |>
+      evaluate(["DEFINE", "$THIS", prev_this], trace ++ ["restore"]) |>
+      evaluate(["DEFINE", "$TARGET_ID", prev_target_id], trace ++ ["restore"]) |>
+      evaluate(["DEFINE", "$TARGET", prev_target], trace ++ ["restore"])
   end
 
   def apply_automation_rules(automation, path, game_old, game_new, trace) do
@@ -96,6 +156,7 @@ defmodule DragnCardsGame.Evaluate do
       else
         game_old
       end
+
     game_new = Enum.reduce(automation["rules"], game_new, fn(rule, acc)->
       #IO.puts("applying rule")
       #IO.inspect(rule)
@@ -269,12 +330,12 @@ defmodule DragnCardsGame.Evaluate do
   def evaluate_with_timeout(game, code, timeout_ms \\ 35_000) do
     trace = [code]
     task = Task.async(fn ->
-      try do
+      #try do
         evaluate(game, code, trace)
-      rescue
-        e ->
-          evaluate(game, ["ERROR", e.message], trace)
-      end
+      # rescue
+      #   e ->
+      #     evaluate(game, ["ERROR", e.message], trace)
+      # end
     end)
 
     case Task.yield(task, timeout_ms) do
@@ -298,7 +359,7 @@ defmodule DragnCardsGame.Evaluate do
     #   #IO.inspect(game)
     #   IO.puts("evaluate 3")
     # end
-    try do
+   # try do
       # Increase scope index
       current_scope_index = game["currentScopeIndex"] + 1
       game = put_in(game, ["currentScopeIndex"], current_scope_index)
@@ -324,22 +385,22 @@ defmodule DragnCardsGame.Evaluate do
         result
       end
 
-    rescue
-      e in RecursiveEvaluationError ->
-        raise RecursiveEvaluationError, message: e.message
-      e ->
-        # Check if e has a message
-        message = if is_map(e) and Map.has_key?(e, :message) do
-          e.message
-        else
-          inspect(e)
-        end
-        if String.starts_with?(message, "ABORT") do
-          raise RecursiveEvaluationError, message: message
-        else
-          raise RecursiveEvaluationError, message: ": #{message} Trace: #{inspect(trace)}"
-        end
-    end
+    # rescue
+    #   e in RecursiveEvaluationError ->
+    #     raise RecursiveEvaluationError, message: e.message
+    #   e ->
+    #     # Check if e has a message
+    #     message = if is_map(e) and Map.has_key?(e, :message) do
+    #       e.message
+    #     else
+    #       inspect(e)
+    #     end
+    #     if String.starts_with?(message, "ABORT") do
+    #       raise RecursiveEvaluationError, message: message
+    #     else
+    #       raise RecursiveEvaluationError, message: ": #{message} Trace: #{inspect(trace)}"
+    #     end
+    # end
   end
 
 

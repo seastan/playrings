@@ -70,7 +70,7 @@
     default_layout_info = Enum.at(game_def["layoutMenu"],0)
     layout_id = default_layout_info["layoutId"]
     groups = Groups.new(game_def)
-    automation = if get_in(game_def, ["automation", "gameRules"]) do %{"_game_" => %{"rules" => game_def["automation"]["gameRules"]}} else %{} end
+    automation_list = get_in(game_def, ["automation", "gameRules"]) || []
     step_id =
       game_def
       |> Map.get("stepOrder", [])
@@ -108,7 +108,7 @@
       "loadedCardIds" => [],
       "variables" => GameVariables.default(),
       "functions" => game_def["functions"] || %{},
-      "automation" => automation,
+      "automationList" => sort_automation_list(automation_list),
       "messageByTimestamp" => %{},
       "messages" => [] # These messages will be delivered to the GameUi parent, which will then relay them to chat
     }
@@ -155,6 +155,15 @@
     else
       IO.puts("Game is healthy")
     end
+  end
+
+  def sort_automation_list(automation_list) do
+    automation_list |> Enum.sort_by(&(&1["priority"] || :infinity))
+  end
+
+  def sort_game_automation_list(game) do
+    automation_list = game["automationList"]
+    game |> put_in(["automationList"], sort_automation_list(automation_list))
   end
 
 end

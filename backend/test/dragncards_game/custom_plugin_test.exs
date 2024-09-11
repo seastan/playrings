@@ -166,6 +166,24 @@ defmodule DragnCardsGame.CustomPluginTest do
     {:ok, %{user: user, game: game, game_def: plugin.game_def, card_db: plugin.card_db}}
   end
 
+
+  @tag :profiling
+  test "profiling create_card_in_group", %{user: _user, game: game, game_def: game_def} do
+    # Load some decks into the game
+    Enum.each(1..30, fn _ ->
+      GameUI.load_cards(game, [%{
+        "databaseId" => "51223bd0-ffd1-11df-a976-0801206c9005",
+        "loadGroupId" => "player1Play1",
+        "quantity" => 1
+      }])
+    end)
+
+    assert true
+  end
+
+
+
+
   @tag :loading
   # These tests are plugin-specific. You will need to overwite them, but they are here as a starting point.
   test "Loading Decks", %{user: user, game: game} do
@@ -1321,7 +1339,6 @@ defmodule DragnCardsGame.CustomPluginTest do
 
   end
 
-
   @tag :to_int
   test "to_int", %{user: _user, game: game, game_def: game_def} do
 
@@ -1435,8 +1452,6 @@ defmodule DragnCardsGame.CustomPluginTest do
       ["LOG_DEV", "$B"]
     ])
     IO.inspect(game["variables"])
-
-
 
   end
 
