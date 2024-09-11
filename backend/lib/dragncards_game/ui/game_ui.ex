@@ -1067,65 +1067,65 @@ defmodule DragnCardsGame.GameUI do
     Evaluate.evaluate(game, ["LOG", get_alias_n(game_old), " closed the room."])
   end
 
-  def create_card_in_group(game, game_def, group_id, load_list_item) do
-    group_size = Enum.count(get_stack_ids(game, group_id))
-    # Can't insert a card directly into a group need to make a stack first
-    new_card = Card.card_from_card_details(load_list_item["cardDetails"], game_def, load_list_item["databaseId"], group_id)
-    new_stack = Stack.stack_from_card(new_card)
-    game
-    |> update_card(new_card)
-    |> update_stack(new_stack)
-    |> insert_stack_in_group(group_id, new_stack["id"], group_size)
-    |> set_stack_left_top(new_stack["id"], load_list_item["left"], load_list_item["top"])
-    |> implement_card_automations(game_def, new_card)
-    |> update_card_state(new_card["id"], nil, nil)
-    |> Evaluate.evaluate(["SET", "/loadedCardIds", ["LIST"] ++ game["loadedCardIds"] ++ [new_card["id"]]], ["create_card_in_group"])
-
-  end
-
   # def create_card_in_group(game, game_def, group_id, load_list_item) do
   #   group_size = Enum.count(get_stack_ids(game, group_id))
-
+  #   # Can't insert a card directly into a group need to make a stack first
   #   new_card = Card.card_from_card_details(load_list_item["cardDetails"], game_def, load_list_item["databaseId"], group_id)
   #   new_stack = Stack.stack_from_card(new_card)
-
-  #   {update_card_time, game} = :timer.tc(fn -> update_card(game, new_card) end)
-  #   IO.puts("update_card execution time: #{update_card_time} microseconds")
-
-  #   {update_stack_time, game} = :timer.tc(fn -> update_stack(game, new_stack) end)
-  #   IO.puts("update_stack execution time: #{update_stack_time} microseconds")
-
-  #   {insert_stack_time, game} = :timer.tc(fn ->
-  #     insert_stack_in_group(game, group_id, new_stack["id"], group_size)
-  #   end)
-  #   IO.puts("insert_stack_in_group execution time: #{insert_stack_time} microseconds")
-
-  #   {set_stack_left_top_time, game} = :timer.tc(fn ->
-  #     set_stack_left_top(game, new_stack["id"], load_list_item["left"], load_list_item["top"])
-  #   end)
-  #   IO.puts("set_stack_left_top execution time: #{set_stack_left_top_time} microseconds")
-
-  #   {implement_automations_time, game} = :timer.tc(fn ->
-  #     implement_card_automations(game, game_def, new_card)
-  #   end)
-  #   IO.puts("implement_card_automations execution time: #{implement_automations_time} microseconds")
-
-  #   {update_card_state_time, game} = :timer.tc(fn ->
-  #     update_card_state(game, new_card["id"], nil, nil)
-  #   end)
-  #   IO.puts("update_card_state execution time: #{update_card_state_time} microseconds")
-
-  #   {evaluate_time, game} = :timer.tc(fn ->
-  #     Evaluate.evaluate(
-  #       game,
-  #       ["SET", "/loadedCardIds", ["LIST"] ++ game["loadedCardIds"] ++ [new_card["id"]]],
-  #       ["create_card_in_group"]
-  #     )
-  #   end)
-  #   IO.puts("Evaluate.evaluate execution time: #{evaluate_time} microseconds")
-
   #   game
+  #   |> update_card(new_card)
+  #   |> update_stack(new_stack)
+  #   |> insert_stack_in_group(group_id, new_stack["id"], group_size)
+  #   |> set_stack_left_top(new_stack["id"], load_list_item["left"], load_list_item["top"])
+  #   |> implement_card_automations(game_def, new_card)
+  #   |> update_card_state(new_card["id"], nil, nil)
+  #   |> Evaluate.evaluate(["SET", "/loadedCardIds", ["LIST"] ++ game["loadedCardIds"] ++ [new_card["id"]]], ["create_card_in_group"])
+
   # end
+
+  def create_card_in_group(game, game_def, group_id, load_list_item) do
+    group_size = Enum.count(get_stack_ids(game, group_id))
+
+    new_card = Card.card_from_card_details(load_list_item["cardDetails"], game_def, load_list_item["databaseId"], group_id)
+    new_stack = Stack.stack_from_card(new_card)
+
+    {update_card_time, game} = :timer.tc(fn -> update_card(game, new_card) end)
+    IO.puts("update_card execution time: #{update_card_time} microseconds")
+
+    {update_stack_time, game} = :timer.tc(fn -> update_stack(game, new_stack) end)
+    IO.puts("update_stack execution time: #{update_stack_time} microseconds")
+
+    {insert_stack_time, game} = :timer.tc(fn ->
+      insert_stack_in_group(game, group_id, new_stack["id"], group_size)
+    end)
+    IO.puts("insert_stack_in_group execution time: #{insert_stack_time} microseconds")
+
+    {set_stack_left_top_time, game} = :timer.tc(fn ->
+      set_stack_left_top(game, new_stack["id"], load_list_item["left"], load_list_item["top"])
+    end)
+    IO.puts("set_stack_left_top execution time: #{set_stack_left_top_time} microseconds")
+
+    {implement_automations_time, game} = :timer.tc(fn ->
+      implement_card_automations(game, game_def, new_card)
+    end)
+    IO.puts("implement_card_automations execution time: #{implement_automations_time} microseconds")
+
+    {update_card_state_time, game} = :timer.tc(fn ->
+      update_card_state(game, new_card["id"], nil, nil)
+    end)
+    IO.puts("update_card_state execution time: #{update_card_state_time} microseconds")
+
+    {evaluate_time, game} = :timer.tc(fn ->
+      Evaluate.evaluate(
+        game,
+        ["SET", "/loadedCardIds", ["LIST"] ++ game["loadedCardIds"] ++ [new_card["id"]]],
+        ["create_card_in_group"]
+      )
+    end)
+    IO.puts("Evaluate.evaluate execution time: #{evaluate_time} microseconds")
+
+    game
+  end
 
 
   def get_enters_play_condition(side) do
@@ -1315,8 +1315,8 @@ defmodule DragnCardsGame.GameUI do
     # {card_db_time, card_db} = :timer.tc(fn -> Plugins.get_card_db(game["options"]["pluginId"]) end)
     # IO.puts("get_card_db execution time: #{card_db_time} microseconds")
 
-    # {card_db_time, card_db} = :timer.tc(fn -> DragnCardsGame.CardCache.get_card_db_cached(game["options"]["pluginId"]) end)
-    # IO.puts("get_card_db_cached execution time: #{card_db_time} microseconds")
+    {card_db_time, card_db} = :timer.tc(fn -> DragnCardsGame.PluginCache.get_card_db_cached(game["options"]["pluginId"]) end)
+    IO.puts("get_card_db_cached execution time: #{card_db_time} microseconds")
 
 
     Logger.debug("load_cards 3")
@@ -1336,7 +1336,8 @@ defmodule DragnCardsGame.GameUI do
               CustomCardDb.get_card_details_for_user(game["pluginId"], user_id, database_id)
 
             database_id != nil ->
-              {card_cache_time, card_details} = :timer.tc(fn -> DragnCardsGame.PluginCache.get_card_cached(game["options"]["pluginId"], database_id) end)
+              {card_cache_time, card_details} = :timer.tc(fn -> {:ok, card_db[database_id]} end)
+              IO.puts("get_card_cached execution time: #{card_cache_time} microseconds")
               case card_details do
                 {:ok, card_details} -> card_details
                 :error -> raise "Card with databaseId #{database_id} not found."

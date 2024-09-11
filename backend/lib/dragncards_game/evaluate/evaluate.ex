@@ -57,7 +57,11 @@ defmodule DragnCardsGame.Evaluate do
 
       if is_list(game_new["automationList"]) and game_new["automationEnabled"] == true do
         Enum.reduce(game_new["automationList"], game_new, fn(rule, acc) ->
-          apply_automation_rule_wrapper(rule, path, game_old, acc, trace ++ ["apply_automation_rules"])
+          {apply_automation_rule_wrapper_time, acc} = :timer.tc(fn ->
+            apply_automation_rule_wrapper(rule, path, game_old, acc, trace ++ ["apply_automation_rules"])
+          end)
+          IO.puts("apply_automation_rule_wrapper_time: #{apply_automation_rule_wrapper_time} microseconds")
+          acc
         end)
       else
         game_new
@@ -67,7 +71,11 @@ defmodule DragnCardsGame.Evaluate do
 
   def apply_automation_rule_wrapper(rule, path, game_old, game_new, trace) do
 
-    # Save current values of THIS and TARGET
+    # # Save current values of THIS and TARGET
+    # {prev_this_id_time, prev_this_id} = :timer.tc(fn ->
+    #   evaluate(game_new, "$THIS_ID", trace ++ ["$THIS_ID"])
+    # end)
+    # IO.puts("prev_this_id execution time: #{prev_this_id_time} microseconds")
     prev_this_id = evaluate(game_new, "$THIS_ID", trace ++ ["$THIS_ID"])
     prev_this = evaluate(game_new, "$THIS", trace ++ ["$THIS"])
     prev_target_id = evaluate(game_new, "$TARGET_ID", trace ++ ["$TARGET_ID"])
@@ -81,6 +89,7 @@ defmodule DragnCardsGame.Evaluate do
       else
         game_new
       end
+
     game_old =
       if rule["this_id"] do
         game_old |>
@@ -106,14 +115,19 @@ defmodule DragnCardsGame.Evaluate do
         game_old
       end
 
-    game_new = apply_automation_rule(rule, path, game_old, game_new, trace)
+    #game_new = apply_automation_rule(rule, path, game_old, game_new, trace) # 7000 us
 
     # Restore THIS and TARGET
-    game_new |>
-      evaluate(["DEFINE", "$THIS_ID", prev_this_id], trace ++ ["restore"]) |>
-      evaluate(["DEFINE", "$THIS", prev_this], trace ++ ["restore"]) |>
-      evaluate(["DEFINE", "$TARGET_ID", prev_target_id], trace ++ ["restore"]) |>
-      evaluate(["DEFINE", "$TARGET", prev_target], trace ++ ["restore"])
+    # game_new |>
+    #   put_in(["variables", "$THIS_ID"], prev_this_id) |>
+    #   put_in(["variables", "$THIS"], prev_this) |>
+    #   put_in(["variables", "$TARGET_ID"], prev_target_id) |>
+    #   put_in(["variables", "$TARGET"], prev_target)
+    # game_new |>
+    #   evaluate(["DEFINE", "$THIS_ID", prev_this_id], trace ++ ["restore"]) |>
+    #   evaluate(["DEFINE", "$THIS", prev_this], trace ++ ["restore"]) |>
+    #   evaluate(["DEFINE", "$TARGET_ID", prev_target_id], trace ++ ["restore"]) |>
+    #   evaluate(["DEFINE", "$TARGET", prev_target], trace ++ ["restore"])
   end
 
   def apply_automation_rules(automation, path, game_old, game_new, trace) do

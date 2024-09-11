@@ -42,7 +42,11 @@ defmodule DragnCardsGame.Evaluate.Functions.SET do
   def execute(game, code, trace) do
     path = Evaluate.evaluate(game, Enum.at(code, 1), trace ++ ["path"])
     value = Evaluate.evaluate(game, Enum.at(code, 2), trace ++ ["value"])
-    Evaluate.put_by_path(game, path, value, trace ++ ["put_by_path"])
+    {put_by_path_time, game} = :timer.tc(fn ->
+      Evaluate.put_by_path(game, path, value, trace ++ ["put_by_path"])
+    end)
+    IO.puts("put_by_path_time: #{put_by_path_time} microseconds")
+    game
   end
 
 

@@ -170,7 +170,7 @@ defmodule DragnCardsGame.CustomPluginTest do
   @tag :profiling
   test "profiling create_card_in_group", %{user: _user, game: game, game_def: game_def} do
     # Load some decks into the game
-    Enum.each(1..30, fn _ ->
+    Enum.each(1..2, fn _ ->
       GameUI.load_cards(game, [%{
         "databaseId" => "51223bd0-ffd1-11df-a976-0801206c9005",
         "loadGroupId" => "player1Play1",
