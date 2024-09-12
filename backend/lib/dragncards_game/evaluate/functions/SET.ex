@@ -45,7 +45,7 @@ defmodule DragnCardsGame.Evaluate.Functions.SET do
     {put_by_path_time, game} = :timer.tc(fn ->
       Evaluate.put_by_path(game, path, value, trace ++ ["put_by_path"])
     end)
-    IO.puts("put_by_path_time: #{put_by_path_time} microseconds")
+    #IO.puts("put_by_path_time: #{put_by_path_time} microseconds #{path}")
     game
   end
 

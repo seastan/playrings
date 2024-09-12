@@ -6,6 +6,13 @@ defmodule DragnCardsGame.Evaluate do
   alias DragnCardsGame.{GameUI}
   alias DragnCards.{Rooms, Plugins}
 
+  def print_card_status(game) do
+    IO.puts("Card status:")
+    Enum.reduce(game["cardById"], nil, fn {card_id, card}, _acc ->
+      IO.puts('Card #{card["sides"]["A"]["name"]}: #{card["inPlay"]}')
+    end)
+  end
+
 
   def put_by_path(game_old, path, val_new, trace) do
     #if Enum.member?(path, "arkhamEventCustomBeforeDraw") do
@@ -40,6 +47,7 @@ defmodule DragnCardsGame.Evaluate do
           val_old ->
             # Check if val_old is a map
             if is_map(val_old) do
+              #IO.puts("Changing #{inspect(path)} from #{inspect(val_old[key])} to #{inspect(val_new)}")
               put_in(game_old, path, val_new)
             else
               raise("Tried to set a key (#{key}) at a path that does not point to a map: #{inspect(path_minus_key)} = #{inspect(val_old)}")
@@ -57,11 +65,7 @@ defmodule DragnCardsGame.Evaluate do
 
       if is_list(game_new["automationList"]) and game_new["automationEnabled"] == true do
         Enum.reduce(game_new["automationList"], game_new, fn(rule, acc) ->
-          {apply_automation_rule_wrapper_time, acc} = :timer.tc(fn ->
-            apply_automation_rule_wrapper(rule, path, game_old, acc, trace ++ ["apply_automation_rules"])
-          end)
-          IO.puts("apply_automation_rule_wrapper_time: #{apply_automation_rule_wrapper_time} microseconds")
-          acc
+          apply_automation_rule_wrapper(rule, path, game_old, acc, trace ++ ["apply_automation_rules"])
         end)
       else
         game_new
@@ -76,16 +80,16 @@ defmodule DragnCardsGame.Evaluate do
     #   evaluate(game_new, "$THIS_ID", trace ++ ["$THIS_ID"])
     # end)
     # IO.puts("prev_this_id execution time: #{prev_this_id_time} microseconds")
-    prev_this_id = evaluate(game_new, "$THIS_ID", trace ++ ["$THIS_ID"])
-    prev_this = evaluate(game_new, "$THIS", trace ++ ["$THIS"])
-    prev_target_id = evaluate(game_new, "$TARGET_ID", trace ++ ["$TARGET_ID"])
-    prev_target = evaluate(game_new, "$TARGET", trace ++ ["$TARGET"])
+    # prev_this_id = evaluate(game_new, "$THIS_ID", trace ++ ["$THIS_ID"])
+    # prev_this = evaluate(game_new, "$THIS", trace ++ ["$THIS"])
+    # prev_target_id = evaluate(game_new, "$TARGET_ID", trace ++ ["$TARGET_ID"])
+    # prev_target = evaluate(game_new, "$TARGET", trace ++ ["$TARGET"])
 
     game_new =
       if rule["this_id"] do
         game_new |>
-        evaluate(["DEFINE", "$THIS_ID", rule["this_id"]], trace ++ ["game_new"]) |>
-        evaluate(["DEFINE", "$THIS", "$GAME.cardById.$THIS_ID"], trace ++ ["game_new"])
+        evaluate(["VAR", "$THIS_ID", rule["this_id"]], trace ++ ["game_new"]) |>
+        evaluate(["VAR", "$THIS", "$GAME.cardById.$THIS_ID"], trace ++ ["game_new"])
       else
         game_new
       end
@@ -93,29 +97,29 @@ defmodule DragnCardsGame.Evaluate do
     game_old =
       if rule["this_id"] do
         game_old |>
-        evaluate(["DEFINE", "$THIS_ID", rule["this_id"]], trace ++ ["game_old"]) |>
-        evaluate(["DEFINE", "$THIS", "$GAME.cardById.$THIS_ID"], trace ++ ["game_old"])
+        evaluate(["VAR", "$THIS_ID", rule["this_id"]], trace ++ ["game_old"]) |>
+        evaluate(["VAR", "$THIS", "$GAME.cardById.$THIS_ID"], trace ++ ["game_old"])
       else
         game_old
       end
     game_new =
       if Enum.count(path) > 2 do
         game_new |>
-        evaluate(["DEFINE", "$TARGET_ID", Enum.at(path,1)], trace ++ ["game_new"]) |>
-        evaluate(["DEFINE", "$TARGET", "$GAME."<>Enum.at(path,0)<>".$TARGET_ID"], trace ++ ["game_new"])
+        evaluate(["VAR", "$TARGET_ID", Enum.at(path,1)], trace ++ ["game_new"]) |>
+        evaluate(["VAR", "$TARGET", "$GAME."<>Enum.at(path,0)<>".$TARGET_ID"], trace ++ ["game_new"])
       else
         game_new
       end
     game_old =
       if Enum.count(path) > 2 do
         game_old |>
-        evaluate(["DEFINE", "$TARGET_ID", Enum.at(path,1)], trace ++ ["game_old"]) |>
-        evaluate(["DEFINE", "$TARGET", "$GAME."<>Enum.at(path,0)<>".$TARGET_ID"], trace ++ ["game_old"])
+        evaluate(["VAR", "$TARGET_ID", Enum.at(path,1)], trace ++ ["game_old"]) |>
+        evaluate(["VAR", "$TARGET", "$GAME."<>Enum.at(path,0)<>".$TARGET_ID"], trace ++ ["game_old"])
       else
         game_old
       end
 
-    #game_new = apply_automation_rule(rule, path, game_old, game_new, trace) # 7000 us
+    game_new = apply_automation_rule(rule, path, game_old, game_new, trace) # 7000 us
 
     # Restore THIS and TARGET
     # game_new |>
@@ -128,6 +132,7 @@ defmodule DragnCardsGame.Evaluate do
     #   evaluate(["DEFINE", "$THIS", prev_this], trace ++ ["restore"]) |>
     #   evaluate(["DEFINE", "$TARGET_ID", prev_target_id], trace ++ ["restore"]) |>
     #   evaluate(["DEFINE", "$TARGET", prev_target], trace ++ ["restore"])
+    #game_new
   end
 
   def apply_automation_rules(automation, path, game_old, game_new, trace) do
@@ -190,11 +195,6 @@ defmodule DragnCardsGame.Evaluate do
       comment = rule["_comment"]
       case rule["type"] do
         "trigger" ->
-          if Enum.member?(path, "arkhamEventCustomBeforeDraw") do
-            IO.puts("apply_automation_rule 1 ===================================================================================================")
-            IO.inspect(path)
-            IO.puts("apply_automation_rule 2 =======================================================================================================================")
-          end
           apply_trigger_rule(rule, game_old, game_new, trace ++ ["apply_trigger_rule #{comment}"])
         "passive" ->
           apply_passive_rule(rule, game_old, game_new, trace ++ ["apply_passive_rule #{comment}"])

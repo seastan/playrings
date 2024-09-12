@@ -1177,6 +1177,14 @@ defmodule DragnCardsGame.GameUI do
     end
   end
 
+  def replace_this_id_with_card_id(rule, card_id) do
+    listen_to = Enum.map(rule["listenTo"], fn path ->
+      String.replace(path, "$THIS_ID", card_id)
+    end)
+
+    Map.put(rule, "listenTo", listen_to)
+  end
+
   def preprocess_card_automation_rule(rule, card_id) do
     rule_type = rule["type"]
     # then = [["MULTI_VAR", "$THIS_ID", card_id, "$THIS", "$GAME.cardById.#{card_id}"]] ++ rule["then"]
@@ -1196,10 +1204,11 @@ defmodule DragnCardsGame.GameUI do
         |> Map.put("type", "passive")
         |> Map.put("listenTo", listen_to)
         |> Map.put("condition", condition)
-        |> Map.put("this_id", card_id)
       _ ->
         rule
     end
+    |> Map.put("this_id", card_id)
+    |> replace_this_id_with_card_id(card_id)
   end
 
   def preprocess_card_automation_rules(card_rules, card_id) do
