@@ -322,6 +322,7 @@ defmodule DragnCardsGame.GameUI do
   # Update a card state
   # Modify the card orientation/tokens based on where it is now
   def update_card_state(game, card_id, orig_group_id \\ nil, move_options \\ nil) do
+    IO.puts("update_card_state 1 ---------------------------------------------")
     {gsc_time, {dest_group_id, dest_stack_index, dest_card_index}} = :timer.tc(fn ->
       gsc(game, card_id)
     end)
@@ -459,6 +460,7 @@ defmodule DragnCardsGame.GameUI do
     end)
     IO.puts("token removal time: #{token_removal_time} microseconds")
 
+    IO.puts("update_card_state 2 ---------------------------------------------")
     game
   end
 
