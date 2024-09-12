@@ -3,7 +3,7 @@ defmodule DragnCardsGame.PluginCache do
   alias DragnCards.{Plugins}
 
   @table_name :card_db_cache
-  @cache_ttl 30_000 # Cache TTL in milliseconds
+  @cache_ttl 10_000 # Cache TTL in milliseconds (10 seconds)
 
   # Start the GenServer and initialize the ETS table
   def start_link(_) do
@@ -19,15 +19,17 @@ defmodule DragnCardsGame.PluginCache do
   # Public function to get cached card_db, or fetch if not present or expired
   def get_plugin_cached(plugin_id) do
     case :ets.lookup(@table_name, plugin_id) do
-      [{^plugin_id, {plugin, timestamp}}] when fresh?(timestamp) ->
-        # If found in cache and fresh, return it
-        plugin
+      [{^plugin_id, {plugin, timestamp}}] ->
+        # Move the freshness check outside the guard
+        if fresh?(timestamp) do
+          plugin
+        else
+          refresh_plugin(plugin_id)
+        end
 
-      _ ->
-        # If not in cache or expired, fetch and store it
-        plugin = Plugins.get_plugin!(plugin_id)
-        :ets.insert(@table_name, {plugin_id, {plugin, current_timestamp()}})
-        plugin
+      [] ->
+        # If not in cache, fetch and store it
+        refresh_plugin(plugin_id)
     end
   end
 
@@ -44,6 +46,13 @@ defmodule DragnCardsGame.PluginCache do
   def get_card_cached(plugin_id, card_db_id) do
     card_db = get_card_db_cached(plugin_id)
     {:ok, card_db[card_db_id]}
+  end
+
+  # Refresh the plugin and store it in the cache with a new timestamp
+  defp refresh_plugin(plugin_id) do
+    plugin = Plugins.get_plugin!(plugin_id)
+    :ets.insert(@table_name, {plugin_id, {plugin, current_timestamp()}})
+    plugin
   end
 
   # Helper function to check if the cache is still fresh
