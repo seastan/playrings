@@ -322,120 +322,261 @@ defmodule DragnCardsGame.GameUI do
   # Update a card state
   # Modify the card orientation/tokens based on where it is now
   def update_card_state(game, card_id, orig_group_id \\ nil, move_options \\ nil) do
-    {dest_group_id, dest_stack_index, dest_card_index} = gsc(game, card_id)
-    orig_group = get_group(game, orig_group_id)
-    dest_group = get_group(game, dest_group_id)
-    old_card = get_card(game, card_id)
-    allow_flip = cond do
-      move_options != nil and move_options["allowFlip"] == false ->
-        false
-      orig_group["onCardEnter"]["inPlay"] == true and dest_group["onCardEnter"]["inPlay"] == true ->
-        false
-      true ->
-        true
-    end
-    parent_card = get_card_by_group_id_stack_index_card_index(game, [dest_group_id, dest_stack_index, 0])
-    stack_ids = game["groupById"][dest_group_id]["stackIds"]
-    stack_id = Enum.at(stack_ids, dest_stack_index)
+    {gsc_time, {dest_group_id, dest_stack_index, dest_card_index}} = :timer.tc(fn ->
+      gsc(game, card_id)
+    end)
+    IO.puts("gsc execution time: #{gsc_time} microseconds")
 
+    {get_groups_time, {orig_group, dest_group}} = :timer.tc(fn ->
+      {get_group(game, orig_group_id), get_group(game, dest_group_id)}
+    end)
+    IO.puts("get_group (orig_group and dest_group) execution time: #{get_groups_time} microseconds")
 
-    # Assign the prev group's onCardLeave values
-    game = if orig_group["onCardLeave"] != nil do
-      Enum.reduce(orig_group["onCardLeave"], game, fn({key, val}, acc) ->
-        #if orig_group["onCardLeave"][key] != dest_group["onCardLeave"][key] do
+    {get_old_card_time, old_card} = :timer.tc(fn ->
+      get_card(game, card_id)
+    end)
+    IO.puts("get_card execution time: #{get_old_card_time} microseconds")
+
+    {allow_flip_time, allow_flip} = :timer.tc(fn ->
+      cond do
+        move_options != nil and move_options["allowFlip"] == false ->
+          false
+        orig_group["onCardEnter"]["inPlay"] == true and dest_group["onCardEnter"]["inPlay"] == true ->
+          false
+        true ->
+          true
+      end
+    end)
+    IO.puts("allow_flip computation time: #{allow_flip_time} microseconds")
+
+    {get_parent_card_time, parent_card} = :timer.tc(fn ->
+      get_card_by_group_id_stack_index_card_index(game, [dest_group_id, dest_stack_index, 0])
+    end)
+    IO.puts("get_card_by_group_id_stack_index_card_index execution time: #{get_parent_card_time} microseconds")
+
+    {stack_ids_time, stack_id} = :timer.tc(fn ->
+      stack_ids = game["groupById"][dest_group_id]["stackIds"]
+      Enum.at(stack_ids, dest_stack_index)
+    end)
+    IO.puts("stack_ids retrieval time: #{stack_ids_time} microseconds")
+
+    {on_card_leave_time, game} = :timer.tc(fn ->
+      if orig_group["onCardLeave"] != nil do
+        Enum.reduce(orig_group["onCardLeave"], game, fn {key, val}, acc ->
           cond do
             key == "currentSide" and allow_flip == false ->
               acc
             true ->
               Evaluate.evaluate(acc, ["SET", "/cardById/" <> card_id <> "/" <> key, val], ["update_card_state cardId:#{card_id} #{key}:#{inspect(val)}"])
           end
-        # else
-        #   acc
-        # end
-      end)
-    else
+        end)
+      else
+        game
+      end
+    end)
+    IO.puts("onCardLeave processing time: #{on_card_leave_time} microseconds")
+
+    {location_update_time, game} = :timer.tc(fn ->
       game
-    end
+      |> Evaluate.evaluate(["SET", "/cardById/" <> card_id <> "/groupId", dest_group_id], ["update_card_state cardId:#{card_id} groupId:#{dest_group_id}"])
+      |> Evaluate.evaluate(["SET", "/cardById/" <> card_id <> "/stackId", stack_id], ["update_card_state cardId:#{card_id} stackId:#{stack_id}"])
+      |> Evaluate.evaluate(["SET", "/cardById/" <> card_id <> "/stackIndex", dest_stack_index], ["update_card_state cardId:#{card_id} stackIndex:#{dest_stack_index}"])
+      |> Evaluate.evaluate(["SET", "/cardById/" <> card_id <> "/cardIndex", dest_card_index], ["update_card_state cardId:#{card_id} cardIndex:#{dest_card_index}"])
+      |> Evaluate.evaluate(["SET", "/cardById/" <> card_id <> "/parentCardId", parent_card["id"]], ["update_card_state cardId:#{card_id} stackParentCardId:#{parent_card["id"]}"])
+    end)
+    IO.puts("location update time: #{location_update_time} microseconds")
 
-    # Update location of card
-    game = Evaluate.evaluate(game, ["SET", "/cardById/" <> card_id <> "/groupId", dest_group_id], ["update_card_state cardId:#{card_id} groupId:#{dest_group_id}"])
-    game = Evaluate.evaluate(game, ["SET", "/cardById/" <> card_id <> "/stackId", stack_id], ["update_card_state cardId:#{card_id} stackId:#{stack_id}"])
-    game = Evaluate.evaluate(game, ["SET", "/cardById/" <> card_id <> "/stackIndex", dest_stack_index], ["update_card_state cardId:#{card_id} stackIndex:#{dest_stack_index}"])
-    game = Evaluate.evaluate(game, ["SET", "/cardById/" <> card_id <> "/cardIndex", dest_card_index], ["update_card_state cardId:#{card_id} cardIndex:#{dest_card_index}"])
-    game = Evaluate.evaluate(game, ["SET", "/cardById/" <> card_id <> "/parentCardId", parent_card["id"]], ["update_card_state cardId:#{card_id} stackParentCardId:#{parent_card["id"]}"])
+    {attachment_update_time, game} = :timer.tc(fn ->
+      if move_options != nil and move_options["combine"] != nil do
+        attachment_direction = move_options["combine"]
+        Evaluate.evaluate(game, ["SET", "/cardById/" <> card_id <> "/attachmentDirection", attachment_direction], ["update_card_state cardId:#{card_id} attahment_direction:#{attachment_direction}"])
+      else
+        game
+      end
+    end)
+    IO.puts("attachment update time: #{attachment_update_time} microseconds")
 
-    # Update attachment direction
-    game = if move_options != nil and move_options["combine"] != nil do
-      attachment_direction = move_options["combine"]
-      Evaluate.evaluate(game, ["SET", "/cardById/" <> card_id <> "/attachmentDirection", attachment_direction], ["update_card_state cardId:#{card_id} attahment_direction:#{attachment_direction}"])
-    else
-      game
-    end
+    {orig_group_update_time, game} = :timer.tc(fn ->
+      if orig_group_id != nil do
+        Enum.reduce(Enum.with_index(orig_group["stackIds"]), game, fn {stack_id, stack_index}, acc ->
+          stack = get_stack(game, stack_id)
+          Enum.reduce(Enum.with_index(stack["cardIds"]), acc, fn {card_id, card_index}, acc2 ->
+            put_in(acc2["cardById"][card_id]["stackIndex"], stack_index)
+            |> put_in(["cardById", card_id, "cardIndex"], card_index)
+          end)
+        end)
+      else
+        game
+      end
+    end)
+    IO.puts("orig_group update time: #{orig_group_update_time} microseconds")
 
-    # Update stackIndex and cardIndex of every card in the orig/dest group- This turned out to be very slow, becuase each SET triggered the loop through automations. Now we do do this directly, not through SET.
-    # I think I need to to have some kind of flag to see if any of the automations rely on stackIndex or cardIndex
-    game = if orig_group_id != nil do
-      Enum.reduce(Enum.with_index(orig_group["stackIds"]), game, fn({stack_id, stack_index}, acc) ->
+    {dest_group_update_time, game} = :timer.tc(fn ->
+      Enum.reduce(Enum.with_index(dest_group["stackIds"]), game, fn {stack_id, stack_index}, acc ->
         stack = get_stack(game, stack_id)
-        Enum.reduce(Enum.with_index(stack["cardIds"]), acc, fn({card_id, card_index}, acc2) ->
+        Enum.reduce(Enum.with_index(stack["cardIds"]), acc, fn {card_id, card_index}, acc2 ->
           put_in(acc2["cardById"][card_id]["stackIndex"], stack_index)
           |> put_in(["cardById", card_id, "cardIndex"], card_index)
-          #Evaluate.evaluate(acc2, ["SET", "/cardById/" <> card_id <> "/stackIndex", stack_index], ["update_card_state orig_group stack_index:#{stack_index}"])
-          #|> Evaluate.evaluate(["SET", "/cardById/" <> card_id <> "/cardIndex", card_index], ["update_card_state orig_group card_index:#{card_index}"])
         end)
       end)
-    else
-      game
-    end
-
-    game = Enum.reduce(Enum.with_index(dest_group["stackIds"]), game, fn({stack_id, stack_index}, acc) ->
-      stack = get_stack(game, stack_id)
-      Enum.reduce(Enum.with_index(stack["cardIds"]), acc, fn({card_id, card_index}, acc2) ->
-        put_in(acc2["cardById"][card_id]["stackIndex"], stack_index)
-        |> put_in(["cardById", card_id, "cardIndex"], card_index)
-        #Evaluate.evaluate(acc2, ["SET", "/cardById/" <> card_id <> "/stackIndex", stack_index], ["update_card_state dest_group stack_index:#{stack_index}"])
-        #|> Evaluate.evaluate(["SET", "/cardById/" <> card_id <> "/cardIndex", card_index], ["update_card_state dest_group card_index:#{card_index}"])
-      end)
     end)
+    IO.puts("dest_group update time: #{dest_group_update_time} microseconds")
 
-    # If card gets moved to a facedown pile, or gets flipped up, erase peeking
-    moving_to_facedown = dest_group["onCardEnter"]["currentSide"] == "B" and orig_group_id != dest_group_id
-    will_flip = old_card["currentSide"] == "B" and dest_group["onCardEnter"]["currentSide"] == "A" and allow_flip
+    {peeking_update_time, game} = :timer.tc(fn ->
+      moving_to_facedown = dest_group["onCardEnter"]["currentSide"] == "B" and orig_group_id != dest_group_id
+      will_flip = old_card["currentSide"] == "B" and dest_group["onCardEnter"]["currentSide"] == "A" and allow_flip
 
-    game = if moving_to_facedown or will_flip do
-      Evaluate.evaluate(game, ["SET", "/cardById/" <> card_id <> "/peeking", %{}], ["update_card_state cardId:#{card_id} peeking:empty"])
-    else
-      game
-    end
+      if moving_to_facedown or will_flip do
+        Evaluate.evaluate(game, ["SET", "/cardById/" <> card_id <> "/peeking", %{}], ["update_card_state cardId:#{card_id} peeking:empty"])
+      else
+        game
+      end
+    end)
+    IO.puts("peeking update time: #{peeking_update_time} microseconds")
 
-
-    # Assign the group's onCardEnter values
-    game = if dest_group["onCardEnter"] != nil do
-      Enum.reduce(dest_group["onCardEnter"], game, fn({key, val}, acc) ->
-        #if orig_group["onCardEnter"][key] != dest_group["onCardEnter"][key] do
+    {on_card_enter_time, game} = :timer.tc(fn ->
+      if dest_group["onCardEnter"] != nil do
+        Enum.reduce(dest_group["onCardEnter"], game, fn {key, val}, acc ->
           cond do
             key == "currentSide" and allow_flip == false ->
               acc
             true ->
               Evaluate.evaluate(acc, ["SET", "/cardById/" <> card_id <> "/" <> key, val], ["update_card_state cardId:#{card_id} #{key}:#{inspect(val)}"])
           end
-        # else
-        #   acc
-        # end
-      end)
-    else
-      game
-    end
+        end)
+      else
+        game
+      end
+    end)
+    IO.puts("onCardEnter processing time: #{on_card_enter_time} microseconds")
 
-    game = if orig_group["canHaveTokens"] != false and dest_group["canHaveTokens"] == false do
-      Evaluate.evaluate(game, ["SET", "/cardById/" <> card_id <> "/tokens", %{}], ["update_card_state cardId:#{card_id} tokens:empty"])
-    else
-      game
-    end
+    {token_removal_time, game} = :timer.tc(fn ->
+      if orig_group["canHaveTokens"] != false and dest_group["canHaveTokens"] == false do
+        Evaluate.evaluate(game, ["SET", "/cardById/" <> card_id <> "/tokens", %{}], ["update_card_state cardId:#{card_id} tokens:empty"])
+      else
+        game
+      end
+    end)
+    IO.puts("token removal time: #{token_removal_time} microseconds")
 
     game
-
   end
+
+  # def update_card_state(game, card_id, orig_group_id \\ nil, move_options \\ nil) do
+  #   {dest_group_id, dest_stack_index, dest_card_index} = gsc(game, card_id)
+  #   orig_group = get_group(game, orig_group_id)
+  #   dest_group = get_group(game, dest_group_id)
+  #   old_card = get_card(game, card_id)
+  #   allow_flip = cond do
+  #     move_options != nil and move_options["allowFlip"] == false ->
+  #       false
+  #     orig_group["onCardEnter"]["inPlay"] == true and dest_group["onCardEnter"]["inPlay"] == true ->
+  #       false
+  #     true ->
+  #       true
+  #   end
+  #   parent_card = get_card_by_group_id_stack_index_card_index(game, [dest_group_id, dest_stack_index, 0])
+  #   stack_ids = game["groupById"][dest_group_id]["stackIds"]
+  #   stack_id = Enum.at(stack_ids, dest_stack_index)
+
+
+  #   # Assign the prev group's onCardLeave values
+  #   game = if orig_group["onCardLeave"] != nil do
+  #     Enum.reduce(orig_group["onCardLeave"], game, fn({key, val}, acc) ->
+  #       #if orig_group["onCardLeave"][key] != dest_group["onCardLeave"][key] do
+  #         cond do
+  #           key == "currentSide" and allow_flip == false ->
+  #             acc
+  #           true ->
+  #             Evaluate.evaluate(acc, ["SET", "/cardById/" <> card_id <> "/" <> key, val], ["update_card_state cardId:#{card_id} #{key}:#{inspect(val)}"])
+  #         end
+  #       # else
+  #       #   acc
+  #       # end
+  #     end)
+  #   else
+  #     game
+  #   end
+
+  #   # Update location of card
+  #   game = Evaluate.evaluate(game, ["SET", "/cardById/" <> card_id <> "/groupId", dest_group_id], ["update_card_state cardId:#{card_id} groupId:#{dest_group_id}"])
+  #   game = Evaluate.evaluate(game, ["SET", "/cardById/" <> card_id <> "/stackId", stack_id], ["update_card_state cardId:#{card_id} stackId:#{stack_id}"])
+  #   game = Evaluate.evaluate(game, ["SET", "/cardById/" <> card_id <> "/stackIndex", dest_stack_index], ["update_card_state cardId:#{card_id} stackIndex:#{dest_stack_index}"])
+  #   game = Evaluate.evaluate(game, ["SET", "/cardById/" <> card_id <> "/cardIndex", dest_card_index], ["update_card_state cardId:#{card_id} cardIndex:#{dest_card_index}"])
+  #   game = Evaluate.evaluate(game, ["SET", "/cardById/" <> card_id <> "/parentCardId", parent_card["id"]], ["update_card_state cardId:#{card_id} stackParentCardId:#{parent_card["id"]}"])
+
+  #   # Update attachment direction
+  #   game = if move_options != nil and move_options["combine"] != nil do
+  #     attachment_direction = move_options["combine"]
+  #     Evaluate.evaluate(game, ["SET", "/cardById/" <> card_id <> "/attachmentDirection", attachment_direction], ["update_card_state cardId:#{card_id} attahment_direction:#{attachment_direction}"])
+  #   else
+  #     game
+  #   end
+
+  #   # Update stackIndex and cardIndex of every card in the orig/dest group- This turned out to be very slow, becuase each SET triggered the loop through automations. Now we do do this directly, not through SET.
+  #   # I think I need to to have some kind of flag to see if any of the automations rely on stackIndex or cardIndex
+  #   game = if orig_group_id != nil do
+  #     Enum.reduce(Enum.with_index(orig_group["stackIds"]), game, fn({stack_id, stack_index}, acc) ->
+  #       stack = get_stack(game, stack_id)
+  #       Enum.reduce(Enum.with_index(stack["cardIds"]), acc, fn({card_id, card_index}, acc2) ->
+  #         put_in(acc2["cardById"][card_id]["stackIndex"], stack_index)
+  #         |> put_in(["cardById", card_id, "cardIndex"], card_index)
+  #         #Evaluate.evaluate(acc2, ["SET", "/cardById/" <> card_id <> "/stackIndex", stack_index], ["update_card_state orig_group stack_index:#{stack_index}"])
+  #         #|> Evaluate.evaluate(["SET", "/cardById/" <> card_id <> "/cardIndex", card_index], ["update_card_state orig_group card_index:#{card_index}"])
+  #       end)
+  #     end)
+  #   else
+  #     game
+  #   end
+
+  #   game = Enum.reduce(Enum.with_index(dest_group["stackIds"]), game, fn({stack_id, stack_index}, acc) ->
+  #     stack = get_stack(game, stack_id)
+  #     Enum.reduce(Enum.with_index(stack["cardIds"]), acc, fn({card_id, card_index}, acc2) ->
+  #       put_in(acc2["cardById"][card_id]["stackIndex"], stack_index)
+  #       |> put_in(["cardById", card_id, "cardIndex"], card_index)
+  #       #Evaluate.evaluate(acc2, ["SET", "/cardById/" <> card_id <> "/stackIndex", stack_index], ["update_card_state dest_group stack_index:#{stack_index}"])
+  #       #|> Evaluate.evaluate(["SET", "/cardById/" <> card_id <> "/cardIndex", card_index], ["update_card_state dest_group card_index:#{card_index}"])
+  #     end)
+  #   end)
+
+  #   # If card gets moved to a facedown pile, or gets flipped up, erase peeking
+  #   moving_to_facedown = dest_group["onCardEnter"]["currentSide"] == "B" and orig_group_id != dest_group_id
+  #   will_flip = old_card["currentSide"] == "B" and dest_group["onCardEnter"]["currentSide"] == "A" and allow_flip
+
+  #   game = if moving_to_facedown or will_flip do
+  #     Evaluate.evaluate(game, ["SET", "/cardById/" <> card_id <> "/peeking", %{}], ["update_card_state cardId:#{card_id} peeking:empty"])
+  #   else
+  #     game
+  #   end
+
+
+  #   # Assign the group's onCardEnter values
+  #   game = if dest_group["onCardEnter"] != nil do
+  #     Enum.reduce(dest_group["onCardEnter"], game, fn({key, val}, acc) ->
+  #       #if orig_group["onCardEnter"][key] != dest_group["onCardEnter"][key] do
+  #         cond do
+  #           key == "currentSide" and allow_flip == false ->
+  #             acc
+  #           true ->
+  #             Evaluate.evaluate(acc, ["SET", "/cardById/" <> card_id <> "/" <> key, val], ["update_card_state cardId:#{card_id} #{key}:#{inspect(val)}"])
+  #         end
+  #       # else
+  #       #   acc
+  #       # end
+  #     end)
+  #   else
+  #     game
+  #   end
+
+  #   game = if orig_group["canHaveTokens"] != false and dest_group["canHaveTokens"] == false do
+  #     Evaluate.evaluate(game, ["SET", "/cardById/" <> card_id <> "/tokens", %{}], ["update_card_state cardId:#{card_id} tokens:empty"])
+  #   else
+  #     game
+  #   end
+
+  #   game
+
+  # end
 
   # Delete card from game
   def delete_card(game, card_id) do
