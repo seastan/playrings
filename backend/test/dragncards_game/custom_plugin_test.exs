@@ -820,6 +820,20 @@ defmodule DragnCardsGame.CustomPluginTest do
 
   end
 
+
+  # Automation stress test
+  @tag :ethirs
+  test "ethirs", %{user: _user, game: game, game_def: _game_def} do
+    # Load Ethirs
+    game = Evaluate.evaluate(game, ["LOAD_CARDS", ["LIST", %{"databaseId" => "1c149f93-9e3b-42fa-878c-80b29563a283", "loadGroupId" => "player1Play1", "quantity" => 50}]])
+
+    # Move ally to the table
+    ethir_1_card_id = Evaluate.evaluate(game, ["GET_CARD_ID", "player1Play1", 0, 0])
+    assert length(game["groupById"]["player1Play1"]["stackIds"]) == 50
+    assert game["cardById"][ethir_1_card_id]["tokens"]["willpower"] == 50
+
+  end
+
   # Border color
   @tag :border_color
   test "Border Color", %{user: _user, game: game, game_def: _game_def} do

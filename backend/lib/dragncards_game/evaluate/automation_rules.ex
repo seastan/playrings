@@ -124,7 +124,6 @@ defmodule DragnCardsGame.AutomationRules do
     if card_rules == nil do
       game
     else
-      IO.puts("card_rules 0: #{inspect(card_rules)}")
       preprocess_card_automation_rules(card_rules, card["id"])
       |> Enum.reduce(game, fn ({rule_id, rule}, acc) ->
 
