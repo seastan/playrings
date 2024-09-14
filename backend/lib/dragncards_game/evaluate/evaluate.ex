@@ -3,7 +3,7 @@ defmodule DragnCardsGame.Evaluate do
   Module that defines and evaluates the LISP-like language used to modify the game state.
   """
   require Logger
-  alias DragnCardsGame.{GameUI}
+  alias DragnCardsGame.{GameUI, AutomationRules, RuleMap}
   alias DragnCards.{Rooms, Plugins}
 
   def print_card_status(game) do
@@ -12,7 +12,6 @@ defmodule DragnCardsGame.Evaluate do
       IO.puts('Card #{card["sides"]["A"]["name"]}: #{card["inPlay"]}')
     end)
   end
-
 
   def put_by_path(game_old, path, val_new, trace) do
     #if Enum.member?(path, "arkhamEventCustomBeforeDraw") do
@@ -63,27 +62,17 @@ defmodule DragnCardsGame.Evaluate do
         game_new
       end
 
-      if is_list(game_new["automationList"]) and game_new["automationEnabled"] == true do
-        Enum.reduce(game_new["automationList"], game_new, fn(rule, acc) ->
-          apply_automation_rule_wrapper(rule, path, game_old, acc, trace ++ ["apply_automation_rules"])
+      if is_map(game_new["ruleMap"]) and game_new["automationEnabled"] == true do
+        RuleMap.get_ids_by_path(game_new["ruleMap"], path)
+        |> Enum.map(fn id -> get_in(game_new["ruleById"], [id]) end)
+        |> Enum.sort_by(&(&1["priority"] || :infinity))
+        |> Enum.reduce(game_new, fn rule, acc ->
+          apply_automation_rule_wrapper(rule, path, game_old, acc, trace ++ ["apply automation rule"])
         end)
-      else
-        game_new
       end
   end
 
-
   def apply_automation_rule_wrapper(rule, path, game_old, game_new, trace) do
-
-    # # Save current values of THIS and TARGET
-    # {prev_this_id_time, prev_this_id} = :timer.tc(fn ->
-    #   evaluate(game_new, "$THIS_ID", trace ++ ["$THIS_ID"])
-    # end)
-    # IO.puts("prev_this_id execution time: #{prev_this_id_time} microseconds")
-    # prev_this_id = evaluate(game_new, "$THIS_ID", trace ++ ["$THIS_ID"])
-    # prev_this = evaluate(game_new, "$THIS", trace ++ ["$THIS"])
-    # prev_target_id = evaluate(game_new, "$TARGET_ID", trace ++ ["$TARGET_ID"])
-    # prev_target = evaluate(game_new, "$TARGET", trace ++ ["$TARGET"])
 
     game_new =
       if rule["this_id"] do
@@ -119,20 +108,14 @@ defmodule DragnCardsGame.Evaluate do
         game_old
       end
 
-    game_new = apply_automation_rule(rule, path, game_old, game_new, trace) # 7000 us
-
-    # Restore THIS and TARGET
-    # game_new |>
-    #   put_in(["variables", "$THIS_ID"], prev_this_id) |>
-    #   put_in(["variables", "$THIS"], prev_this) |>
-    #   put_in(["variables", "$TARGET_ID"], prev_target_id) |>
-    #   put_in(["variables", "$TARGET"], prev_target)
-    # game_new |>
-    #   evaluate(["DEFINE", "$THIS_ID", prev_this_id], trace ++ ["restore"]) |>
-    #   evaluate(["DEFINE", "$THIS", prev_this], trace ++ ["restore"]) |>
-    #   evaluate(["DEFINE", "$TARGET_ID", prev_target_id], trace ++ ["restore"]) |>
-    #   evaluate(["DEFINE", "$TARGET", prev_target], trace ++ ["restore"])
-    #game_new
+    case rule["type"] do
+      "trigger" ->
+        apply_trigger_rule(rule, game_old, game_new, trace ++ ["apply_trigger_rule #{rule['id']}"])
+      "passive" ->
+        apply_passive_rule(rule, game_old, game_new, trace ++ ["apply_passive_rule #{rule['id']}"])
+      _ ->
+        game_new
+    end
   end
 
   def apply_automation_rules(automation, path, game_old, game_new, trace) do

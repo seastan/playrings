@@ -8,7 +8,7 @@ defmodule DragnCardsGame.GameUI do
   alias DragnCards.Plugins.CustomCardDb
   alias ElixirSense.Providers.Eval
   alias DragnCardsGame.GameVariables
-  alias DragnCardsGame.{Game, GameUI, Stack, Card, PlayerInfo, Evaluate, GameVariables, Evaluate.Variables.ALIAS_N}
+  alias DragnCardsGame.{Game, GameUI, Stack, Card, PlayerInfo, Evaluate, GameVariables, Evaluate.Variables.ALIAS_N, AutomationRules}
 
   alias DragnCards.{Repo, Replay, Plugins, Plugins.CustomCardDb, Users}
   alias DragnCards.Rooms.Room
@@ -1249,7 +1249,7 @@ defmodule DragnCardsGame.GameUI do
     IO.puts("set_stack_left_top execution time: #{set_stack_left_top_time} microseconds")
 
     {implement_automations_time, game} = :timer.tc(fn ->
-      implement_card_automations(game, game_def, new_card)
+      AutomationRules.implement_card_rules(game, game_def, new_card)
     end)
     IO.puts("implement_card_automations execution time: #{implement_automations_time} microseconds")
 
@@ -1267,115 +1267,6 @@ defmodule DragnCardsGame.GameUI do
     end)
     IO.puts("Evaluate.evaluate execution time: #{evaluate_time} microseconds")
 
-    game
-  end
-
-
-  def get_enters_play_condition(side) do
-    curr_condition = "$THIS.inPlay"
-    curr_condition = if side != nil do
-      ["AND", curr_condition , ["EQUAL", "$THIS.currentSide", side]]
-    else
-      ["AND", curr_condition]
-    end
-    prev_condition = [["NOT", ["PREV", "$THIS.inPlay"]]]
-    prev_condition = if side != nil do
-      prev_condition ++ [["NOT_EQUAL", ["PREV", "$THIS.currentSide"], side]]
-    else
-      prev_condition
-    end
-    curr_condition ++ [["OR"] ++ prev_condition]
-  end
-
-  def get_in_play_condition(side) do
-    curr_condition = "$THIS.inPlay"
-    curr_condition = if side != nil do
-      ["AND", curr_condition, ["EQUAL", "$THIS.currentSide", side]]
-    else
-      curr_condition
-    end
-  end
-
-  def add_liten_to(listeners, listen_to) do
-    if listen_to != nil do
-      listeners ++ listen_to
-    else
-      listeners
-    end
-  end
-
-  def add_condition(condition, new_condition) do
-    if new_condition != nil do
-      ["AND", condition, new_condition]
-    else
-      condition
-    end
-  end
-
-  def add_listen_to_side(listen_to, side) do
-    if side != nil do
-      listen_to ++ ["/cardById/$THIS_ID/currentSide"]
-    else
-      listen_to
-    end
-  end
-
-  def replace_this_id_with_card_id(rule, card_id) do
-    listen_to = Enum.map(rule["listenTo"], fn path ->
-      String.replace(path, "$THIS_ID", card_id)
-    end)
-
-    Map.put(rule, "listenTo", listen_to)
-  end
-
-  def preprocess_card_automation_rule(rule, card_id) do
-    rule_type = rule["type"]
-    # then = [["MULTI_VAR", "$THIS_ID", card_id, "$THIS", "$GAME.cardById.#{card_id}"]] ++ rule["then"]
-    # rule = Map.put(rule, "then", then)
-    case rule_type do
-      "entersPlay" ->
-        listen_to = ["/cardById/$THIS_ID/inPlay"] |> add_listen_to_side(rule["side"]) |> add_liten_to(rule["listenTo"])
-        condition = get_enters_play_condition(rule["side"]) |> add_condition(rule["condition"])
-        rule
-        |> Map.put("type", "trigger")
-        |> Map.put("listenTo", listen_to)
-        |> Map.put("condition", condition)
-      "whileInPlay" ->
-        listen_to = ["/cardById/$THIS_ID/inPlay"] |> add_listen_to_side(rule["side"]) |> add_liten_to(rule["listenTo"])
-        condition = get_in_play_condition(rule["side"]) |> add_condition(rule["condition"])
-        rule
-        |> Map.put("type", "passive")
-        |> Map.put("listenTo", listen_to)
-        |> Map.put("condition", condition)
-      _ ->
-        rule
-    end
-    |> Map.put("this_id", card_id)
-    |> replace_this_id_with_card_id(card_id)
-  end
-
-  def preprocess_card_automation_rules(card_rules, card_id) do
-    Logger.debug("card_rules: #{inspect(card_rules)}")
-    rules = Enum.reduce(card_rules, [], fn(rule, acc) ->
-      acc ++ [preprocess_card_automation_rule(rule, card_id)]
-    end)
-    rules
-  end
-
-  def implement_card_automations(game, game_def, card) do
-    Logger.debug("implement_card_automations 1")
-    card_automation = game_def["automation"]["cards"][card["databaseId"]]
-    card_rules = get_in(card_automation, ["rules"])
-    game = if card_rules == nil do
-      game
-    else
-      card_rules = preprocess_card_automation_rules(card_rules, card["id"])
-
-      game
-      |> Map.put("automationList", game["automationList"] ++ card_rules)
-    end
-
-    Logger.debug("implement_card_automations 2")
     game
   end
 
@@ -1542,9 +1433,6 @@ defmodule DragnCardsGame.GameUI do
       end)
     end)
     IO.puts("Enum.reduce (load_list processing) execution time: #{reduce_load_list_time} microseconds")
-
-    {sort_game_automation_time, game} = :timer.tc(fn -> Game.sort_game_automation_list(game) end)
-    IO.puts("Game.sort_game_automation_list execution time: #{sort_game_automation_time} microseconds")
 
     {shuffle_decks_time, game} = :timer.tc(fn -> shuffle_changed_decks(game, old_game, game_def) end)
     IO.puts("shuffle_changed_decks execution time: #{shuffle_decks_time} microseconds")

@@ -7,7 +7,7 @@
   require Logger
   import Ecto.Query
   alias ElixirSense.Log
-  alias DragnCardsGame.{Groups, Game, PlayerData, GameVariables, Evaluate}
+  alias DragnCardsGame.{Groups, Game, PlayerData, GameVariables, Evaluate, AutomationRules}
   alias DragnCards.{Repo, Replay, Users, Plugins}
 
   @type t :: Map.t()
@@ -70,7 +70,6 @@
     default_layout_info = Enum.at(game_def["layoutMenu"],0)
     layout_id = default_layout_info["layoutId"]
     groups = Groups.new(game_def)
-    automation_list = get_in(game_def, ["automation", "gameRules"]) || []
     step_id =
       game_def
       |> Map.get("stepOrder", [])
@@ -108,7 +107,8 @@
       "loadedCardIds" => [],
       "variables" => GameVariables.default(),
       "functions" => game_def["functions"] || %{},
-      "automationList" => sort_automation_list(automation_list),
+      "ruleById" => %{},
+      "ruleMap" => %{},
       "messageByTimestamp" => %{},
       "messages" => [] # These messages will be delivered to the GameUi parent, which will then relay them to chat
     }
@@ -119,6 +119,7 @@
         IO.puts("Error detected")
     end
     Logger.debug("Made new Game")
+
     # Add player data
     player_data = %{}
     player_data = Enum.reduce(1..game_def["maxPlayers"], player_data, fn(i, acc) ->
@@ -127,11 +128,15 @@
     end)
     Logger.debug("Made player data")
     base = put_in(base["playerData"], player_data)
+
     # Add custom properties
     game = Enum.reduce(Map.get(game_def, "gameProperties", %{}), base, fn({key,val}, acc) ->
       put_in(acc[key], val["default"])
     end)
     Logger.debug("Made custom properties")
+
+    # Add rules
+    game = AutomationRules.implement_game_rules(game, game_def["automation"]["gameRules"])
 
     # If the user has some default game settings, apply them
     user = Users.get_user(user_id)
@@ -155,15 +160,6 @@
     else
       IO.puts("Game is healthy")
     end
-  end
-
-  def sort_automation_list(automation_list) do
-    automation_list |> Enum.sort_by(&(&1["priority"] || :infinity))
-  end
-
-  def sort_game_automation_list(game) do
-    automation_list = game["automationList"]
-    game |> put_in(["automationList"], sort_automation_list(automation_list))
   end
 
 end

@@ -1,0 +1,157 @@
+defmodule DragnCardsGame.AutomationRules do
+  @moduledoc """
+  """
+  require Logger
+  alias DragnCardsGame.{GameUI, Evaluate, RuleMap}
+  alias DragnCards.{Rooms, Plugins}
+
+  def add_rule_to_game(game, rule, rule_id) do
+    game
+    |> put_in(["ruleById", rule_id], rule)
+    |> add_rule_id_to_rule_map(rule, rule_id)
+  end
+
+  def add_rule_id_to_rule_map(game, rule, rule_id) do
+    new_rule_map = rule["listenTo"]
+    |> Enum.reduce(game["ruleMap"], fn (listen_to_string, acc) ->
+      listen_to_path = Evaluate.evaluate(game, listen_to_string, ["add_rule_to_game", rule_id]) # Convert "/path/to/listen/to" to ["path", "to", "listen", "to"]
+      RuleMap.add_to_rule_map(acc, listen_to_path, rule_id)
+    end)
+    put_in(game, ["ruleMap"], new_rule_map)
+  end
+
+  def implement_game_rules(game, rules) do
+    Enum.reduce(rules, game, fn ({rule_id, rule}, acc) ->
+      # Generate a unique ID for the rule
+      add_rule_to_game(acc, rule, rule_id)
+    end)
+  end
+
+  def get_enters_play_condition(side) do
+    curr_condition = "$THIS.inPlay"
+    curr_condition = if side != nil do
+      ["AND", curr_condition , ["EQUAL", "$THIS.currentSide", side]]
+    else
+      ["AND", curr_condition]
+    end
+    prev_condition = [["NOT", ["PREV", "$THIS.inPlay"]]]
+    prev_condition = if side != nil do
+      prev_condition ++ [["NOT_EQUAL", ["PREV", "$THIS.currentSide"], side]]
+    else
+      prev_condition
+    end
+    curr_condition ++ [["OR"] ++ prev_condition]
+  end
+
+  def get_in_play_condition(side) do
+    curr_condition = "$THIS.inPlay"
+    curr_condition = if side != nil do
+      ["AND", curr_condition, ["EQUAL", "$THIS.currentSide", side]]
+    else
+      curr_condition
+    end
+  end
+
+  def add_liten_to(listeners, listen_to) do
+    if listen_to != nil do
+      listeners ++ listen_to
+    else
+      listeners
+    end
+  end
+
+  def add_condition(condition, new_condition) do
+    if new_condition != nil do
+      ["AND", condition, new_condition]
+    else
+      condition
+    end
+  end
+
+  def add_listen_to_side(listen_to, side) do
+    if side != nil do
+      listen_to ++ ["/cardById/$THIS_ID/currentSide"]
+    else
+      listen_to
+    end
+  end
+
+  def replace_this_id_with_card_id(rule, card_id) do
+    listen_to = Enum.map(rule["listenTo"], fn path ->
+      String.replace(path, "$THIS_ID", card_id)
+    end)
+
+    Map.put(rule, "listenTo", listen_to)
+  end
+
+  def preprocess_card_automation_rule(rule_id, rule, card_id) do
+    rule_type = rule["type"]
+    # then = [["MULTI_VAR", "$THIS_ID", card_id, "$THIS", "$GAME.cardById.#{card_id}"]] ++ rule["then"]
+    # rule = Map.put(rule, "then", then)
+    case rule_type do
+      "entersPlay" ->
+        listen_to = ["/cardById/$THIS_ID/inPlay"] |> add_listen_to_side(rule["side"]) |> add_liten_to(rule["listenTo"])
+        condition = get_enters_play_condition(rule["side"]) |> add_condition(rule["condition"])
+        rule
+        |> Map.put("type", "trigger")
+        |> Map.put("listenTo", listen_to)
+        |> Map.put("condition", condition)
+      "whileInPlay" ->
+        listen_to = ["/cardById/$THIS_ID/inPlay"] |> add_listen_to_side(rule["side"]) |> add_liten_to(rule["listenTo"])
+        condition = get_in_play_condition(rule["side"]) |> add_condition(rule["condition"])
+        rule
+        |> Map.put("type", "passive")
+        |> Map.put("listenTo", listen_to)
+        |> Map.put("condition", condition)
+      _ ->
+        rule
+    end
+    |> Map.put("this_id", card_id)
+    |> Map.put("id", rule_id)
+    |> replace_this_id_with_card_id(card_id)
+  end
+
+  def preprocess_card_automation_rules(card_rules, card_id) do
+    Enum.reduce(card_rules, %{}, fn({rule_id, rule}, acc) ->
+      Map.put(acc, rule_id, preprocess_card_automation_rule(rule_id, rule, card_id))
+    end)
+  end
+
+  def implement_card_rules(game, game_def, card) do
+    card_automation = game_def["automation"]["cards"][card["databaseId"]]
+    card_rules = get_in(card_automation, ["rules"])
+    if card_rules == nil do
+      game
+    else
+      IO.puts("card_rules 0: #{inspect(card_rules)}")
+      preprocess_card_automation_rules(card_rules, card["id"])
+      |> Enum.reduce(card_rules, game, fn ({rule_id, rule}, acc) ->
+        acc
+        |> add_rule_to_game(rule, rule_id)
+        |> add_rule_id_to_card(card, rule_id)
+      end)
+    end
+  end
+
+  def add_rule_id_to_card(game, card, rule_id) do
+    update_in(game, ["cardById", card["id"], "ruleIds"], fn rule_ids ->
+      case rule_ids do
+        nil -> [rule_id]
+        _ -> [rule_id | rule_ids]
+      end
+    end)
+  end
+
+  def remove_rule_from_game(game, rule_id) do
+    # Remove the rule from the game state
+    update_in(game, ["ruleById"], fn rules -> Map.delete(rules, rule_id) end)
+  end
+
+  def remove_rules_from_game(game, rule_ids) do
+    # Remove multiple rules from the game state
+    Enum.reduce(rule_ids, game, fn rule_id, acc -> remove_rule_from_game(acc, rule_id) end)
+  end
+
+
+
+end
