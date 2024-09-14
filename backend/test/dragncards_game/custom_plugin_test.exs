@@ -450,48 +450,48 @@ defmodule DragnCardsGame.CustomPluginTest do
       acc
     end)
 
-    # # Get a card
-    # card_id_1 = Evaluate.evaluate(game, ["GET_CARD_ID", "player1Play1", 0, 0])
+    # Get a card
+    card_id_1 = Evaluate.evaluate(game, ["GET_CARD_ID", "player1Play1", 0, 0])
 
-    # # Exhaust it
-    # game = Evaluate.evaluate(game, [["DEFINE", "$ACTIVE_CARD_ID", card_id_1], ["ACTION_LIST", "toggleExhaust"]])
-    # assert Evaluate.evaluate(game, "$GAME.cardById." <> card_id_1 <> ".exhausted") == true
+    # Exhaust it
+    game = Evaluate.evaluate(game, [["DEFINE", "$ACTIVE_CARD_ID", card_id_1], ["ACTION_LIST", "toggleExhaust"]])
+    assert Evaluate.evaluate(game, "$GAME.cardById." <> card_id_1 <> ".exhausted") == true
 
-    # # Lock it
-    # game = Evaluate.evaluate(game, [["DEFINE", "$ACTIVE_CARD_ID", card_id_1], ["ACTION_LIST", "togglePreventRefresh"]])
-    # assert Evaluate.evaluate(game, "$GAME.cardById." <> card_id_1 <> ".preventRefresh") == true
+    # Lock it
+    game = Evaluate.evaluate(game, [["DEFINE", "$ACTIVE_CARD_ID", card_id_1], ["ACTION_LIST", "togglePreventRefresh"]])
+    assert Evaluate.evaluate(game, "$GAME.cardById." <> card_id_1 <> ".preventRefresh") == true
 
-    # # Get another card
-    # card_id_2 = Evaluate.evaluate(game, ["GET_CARD_ID", "player2Play1", 0, 0])
+    # Get another card
+    card_id_2 = Evaluate.evaluate(game, ["GET_CARD_ID", "player2Play1", 0, 0])
 
-    # # Exhaust it
-    # game = Evaluate.evaluate(game, [["DEFINE", "$ACTIVE_CARD_ID", card_id_2], ["ACTION_LIST", "toggleExhaust"]])
-    # assert Evaluate.evaluate(game, "$GAME.cardById." <> card_id_2 <> ".exhausted") == true
+    # Exhaust it
+    game = Evaluate.evaluate(game, [["DEFINE", "$ACTIVE_CARD_ID", card_id_2], ["ACTION_LIST", "toggleExhaust"]])
+    assert Evaluate.evaluate(game, "$GAME.cardById." <> card_id_2 <> ".exhausted") == true
 
 
-    # # Call refresh action
-    # game = Evaluate.evaluate(game, [["DEFINE", "$PLAYER_N", "player1"], ["ACTION_LIST", "refresh"]])
-    # game = Evaluate.evaluate(game, [["DEFINE", "$PLAYER_N", "player2"], ["ACTION_LIST", "refresh"]])
+    # Call refresh action
+    game = Evaluate.evaluate(game, [["DEFINE", "$PLAYER_N", "player1"], ["ACTION_LIST", "refresh"]])
+    game = Evaluate.evaluate(game, [["DEFINE", "$PLAYER_N", "player2"], ["ACTION_LIST", "refresh"]])
 
-    # # Check that card 1 is not refreshed
-    # assert Evaluate.evaluate(game, "$GAME.cardById." <> card_id_1 <> ".exhausted") == true
+    # Check that card 1 is not refreshed
+    assert Evaluate.evaluate(game, "$GAME.cardById." <> card_id_1 <> ".exhausted") == true
 
-    # # Check that card 2 is refreshed
-    # assert Evaluate.evaluate(game, "$GAME.cardById." <> card_id_2 <> ".exhausted") == false
+    # Check that card 2 is refreshed
+    assert Evaluate.evaluate(game, "$GAME.cardById." <> card_id_2 <> ".exhausted") == false
 
-    # # Calculate score
-    # card_id = Evaluate.evaluate(game, ["GET_CARD_ID", "player1Play1", 0, 0])
-    # game = Evaluate.evaluate(game, [["DEFINE", "$ACTIVE_CARD_ID", card_id], ["ACTION_LIST", "discardCard"]])
-    # card_id = Evaluate.evaluate(game, ["GET_CARD_ID", "player2Play1", 0, 0])
-    # card = Evaluate.evaluate(game, ["ONE_CARD", "$CARD", ["EQUAL", "$CARD.sides.A.name", "Chieftan Ufthak"]])
-    # game = Evaluate.evaluate(game, [["DEFINE", "$ACTIVE_CARD_ID", card["id"]], ["ACTION_LIST", "addToVictoryDisplay"]])
-    # game = Evaluate.evaluate(game, ["SET", "/cardById/" <> card_id <> "/tokens/damage", 3])
-    # game = Evaluate.evaluate(game, ["ACTION_LIST", "calculateScore"])
+    # Calculate score
+    card_id = Evaluate.evaluate(game, ["GET_CARD_ID", "player1Play1", 0, 0])
+    game = Evaluate.evaluate(game, [["DEFINE", "$ACTIVE_CARD_ID", card_id], ["ACTION_LIST", "discardCard"]])
+    card_id = Evaluate.evaluate(game, ["GET_CARD_ID", "player2Play1", 0, 0])
+    card = Evaluate.evaluate(game, ["ONE_CARD", "$CARD", ["EQUAL", "$CARD.sides.A.name", "Chieftan Ufthak"]])
+    game = Evaluate.evaluate(game, [["DEFINE", "$ACTIVE_CARD_ID", card["id"]], ["ACTION_LIST", "addToVictoryDisplay"]])
+    game = Evaluate.evaluate(game, ["SET", "/cardById/" <> card_id <> "/tokens/damage", 3])
+    game = Evaluate.evaluate(game, ["ACTION_LIST", "calculateScore"])
 
-    # # Print all messages
-    # Enum.each(game["messages"], fn message ->
-    #   IO.puts(message)
-    # end)
+    # Print all messages
+    Enum.each(game["messages"], fn message ->
+      IO.puts(message)
+    end)
 
   end
 
@@ -742,6 +742,8 @@ defmodule DragnCardsGame.CustomPluginTest do
     ethir_2_card_id = Evaluate.evaluate(game, ["GET_CARD_ID", "player1Hand", 0, 0])
     game = Evaluate.evaluate(game, ["MOVE_CARD", ethir_2_card_id, "player1Play1", 0, 0])
     assert length(game["groupById"]["player1Play1"]["stackIds"]) == 2
+    IO.puts("ethir_2")
+    IO.inspect(game["ruleById"])
     assert game["cardById"][ethir_1_card_id]["tokens"]["willpower"] == 2
     assert game["cardById"][ethir_2_card_id]["tokens"]["willpower"] == 2
 

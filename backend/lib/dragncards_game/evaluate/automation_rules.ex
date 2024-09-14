@@ -113,6 +113,7 @@ defmodule DragnCardsGame.AutomationRules do
 
   def preprocess_card_automation_rules(card_rules, card_id) do
     Enum.reduce(card_rules, %{}, fn({rule_id, rule}, acc) ->
+      rule_id = "#{rule_id}_#{card_id}"
       Map.put(acc, rule_id, preprocess_card_automation_rule(rule_id, rule, card_id))
     end)
   end
@@ -125,7 +126,8 @@ defmodule DragnCardsGame.AutomationRules do
     else
       IO.puts("card_rules 0: #{inspect(card_rules)}")
       preprocess_card_automation_rules(card_rules, card["id"])
-      |> Enum.reduce(card_rules, game, fn ({rule_id, rule}, acc) ->
+      |> Enum.reduce(game, fn ({rule_id, rule}, acc) ->
+
         acc
         |> add_rule_to_game(rule, rule_id)
         |> add_rule_id_to_card(card, rule_id)

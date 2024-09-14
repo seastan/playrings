@@ -149,5 +149,39 @@ defmodule DragnCardsGame.RuleMapTest do
 
       assert RuleMap.get_ids_by_path(map, path) == ["rule_123b", "rule_1*3a", "rule_***"]
     end
+
+    test "retrieves ids from multiple paths" do
+      map = %{
+        "level1" => %{
+          "*" => %{
+            "_rule_ids" => ["rule_1*"],
+            "level3" => %{
+              "_rule_ids" => ["rule_1*3a"]
+            }
+          },
+          "level2" => %{
+            "_rule_ids" => ["rule_12"],
+            "level3" => %{
+              "_rule_ids" => ["rule_123b"]
+            }
+          }
+        },
+        "*" => %{
+          "*" => %{
+            "*" => %{
+              "_rule_ids" => ["rule_***"]
+            }
+          }
+        }
+      }
+      path1 = ["level1", "level2", "level3"]
+      path2 = ["level1", "level2"]
+      paths = [path1, path2]
+
+      assert RuleMap.get_ids_by_paths(map, paths) == ["rule_123b", "rule_1*3a", "rule_***", "rule_12", "rule_1*"]
+
+      paths = [path1, path1]
+      assert RuleMap.get_ids_by_paths(map, paths) == ["rule_123b", "rule_1*3a", "rule_***"]
+    end
   end
 end
