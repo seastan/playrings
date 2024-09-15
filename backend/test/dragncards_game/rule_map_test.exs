@@ -178,10 +178,62 @@ defmodule DragnCardsGame.RuleMapTest do
       path2 = ["level1", "level2"]
       paths = [path1, path2]
 
-      assert RuleMap.get_ids_by_paths(map, paths) == ["rule_123b", "rule_1*3a", "rule_***", "rule_12", "rule_1*"]
+      assert RuleMap.get_ids_by_paths(paths, map) == ["rule_123b", "rule_1*3a", "rule_***", "rule_12", "rule_1*"]
 
       paths = [path1, path1]
-      assert RuleMap.get_ids_by_paths(map, paths) == ["rule_123b", "rule_1*3a", "rule_***"]
+      assert RuleMap.get_ids_by_paths(paths, map) == ["rule_123b", "rule_1*3a", "rule_***"]
+
+    end
+
+    test "removes an id" do
+      map = %{
+        "level1" => %{
+          "*" => %{
+            "_rule_ids" => ["rule_1*"],
+            "level3" => %{
+              "_rule_ids" => ["rule_1*3a"]
+            }
+          },
+          "level2" => %{
+            "_rule_ids" => ["rule_12"],
+            "level3" => %{
+              "_rule_ids" => ["rule_123b"]
+            }
+          }
+        },
+        "*" => %{
+          "*" => %{
+            "*" => %{
+              "_rule_ids" => ["rule_12"]
+            }
+          }
+        }
+      }
+
+      assert RuleMap.remove_rule_id_from_rule_map(map, "rule_12") == %{
+        "level1" => %{
+          "*" => %{
+            "_rule_ids" => ["rule_1*"],
+            "level3" => %{
+              "_rule_ids" => ["rule_1*3a"]
+            }
+          },
+          "level2" => %{
+            "_rule_ids" => [],
+            "level3" => %{
+              "_rule_ids" => ["rule_123b"]
+            }
+          }
+        },
+        "*" => %{
+          "*" => %{
+            "*" => %{
+              "_rule_ids" => []
+            }
+          }
+        }
+      }
+
     end
   end
 end

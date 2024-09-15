@@ -5,6 +5,17 @@ defmodule DragnCardsGame.AutomationRules do
   alias DragnCardsGame.{GameUI, Evaluate, RuleMap}
   alias DragnCards.{Rooms, Plugins}
 
+  def split_path_string(path_string) do
+    path_string
+    |> String.split("/")
+    |> Enum.filter(&(&1 != ""))
+  end
+
+  def split_path_strings(path_strings) do
+    paths = Enum.map(path_strings, &split_path_string/1)
+    paths
+  end
+
   def add_rule_to_game(game, rule, rule_id) do
     game
     |> put_in(["ruleById", rule_id], rule)
@@ -19,6 +30,8 @@ defmodule DragnCardsGame.AutomationRules do
     end)
     put_in(game, ["ruleMap"], new_rule_map)
   end
+
+
 
   def implement_game_rules(game, rules) do
     Enum.reduce(rules, game, fn ({rule_id, rule}, acc) ->

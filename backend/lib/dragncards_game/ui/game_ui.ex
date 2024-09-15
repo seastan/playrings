@@ -8,7 +8,7 @@ defmodule DragnCardsGame.GameUI do
   alias DragnCards.Plugins.CustomCardDb
   alias ElixirSense.Providers.Eval
   alias DragnCardsGame.GameVariables
-  alias DragnCardsGame.{Game, GameUI, Stack, Card, PlayerInfo, Evaluate, GameVariables, Evaluate.Variables.ALIAS_N, AutomationRules}
+  alias DragnCardsGame.{Game, GameUI, Stack, Card, PlayerInfo, Evaluate, GameVariables, Evaluate.Variables.ALIAS_N, AutomationRules, RuleMap}
 
   alias DragnCards.{Repo, Replay, Plugins, Plugins.CustomCardDb, Users}
   alias DragnCards.Rooms.Room
@@ -322,47 +322,29 @@ defmodule DragnCardsGame.GameUI do
   # Update a card state
   # Modify the card orientation/tokens based on where it is now
   def update_card_state(game, card_id, orig_group_id \\ nil, move_options \\ nil) do
-    IO.puts("update_card_state 1 ---------------------------------------------")
-    {gsc_time, {dest_group_id, dest_stack_index, dest_card_index}} = :timer.tc(fn ->
-      gsc(game, card_id)
-    end)
-    IO.puts("gsc execution time: #{gsc_time} microseconds")
+    game_old = game
+    {dest_group_id, dest_stack_index, dest_card_index} = gsc(game, card_id)
 
-    {get_groups_time, {orig_group, dest_group}} = :timer.tc(fn ->
-      {get_group(game, orig_group_id), get_group(game, dest_group_id)}
-    end)
-    IO.puts("get_group (orig_group and dest_group) execution time: #{get_groups_time} microseconds")
+    {orig_group, dest_group} = {get_group(game, orig_group_id), get_group(game, dest_group_id)}
 
-    {get_old_card_time, old_card} = :timer.tc(fn ->
-      get_card(game, card_id)
-    end)
-    IO.puts("get_card execution time: #{get_old_card_time} microseconds")
+    old_card = get_card(game, card_id)
 
-    {allow_flip_time, allow_flip} = :timer.tc(fn ->
-      cond do
-        move_options != nil and move_options["allowFlip"] == false ->
-          false
-        orig_group["onCardEnter"]["inPlay"] == true and dest_group["onCardEnter"]["inPlay"] == true ->
-          false
-        true ->
-          true
-      end
-    end)
-    IO.puts("allow_flip computation time: #{allow_flip_time} microseconds")
+    allow_flip = cond do
+      move_options != nil and move_options["allowFlip"] == false ->
+        false
+      orig_group["onCardEnter"]["inPlay"] == true and dest_group["onCardEnter"]["inPlay"] == true ->
+        false
+      true ->
+        true
+    end
 
-    {get_parent_card_time, parent_card} = :timer.tc(fn ->
-      get_card_by_group_id_stack_index_card_index(game, [dest_group_id, dest_stack_index, 0])
-    end)
-    IO.puts("get_card_by_group_id_stack_index_card_index execution time: #{get_parent_card_time} microseconds")
+    parent_card = get_card_by_group_id_stack_index_card_index(game, [dest_group_id, dest_stack_index, 0])
 
-    {stack_ids_time, stack_id} = :timer.tc(fn ->
-      stack_ids = game["groupById"][dest_group_id]["stackIds"]
-      Enum.at(stack_ids, dest_stack_index)
-    end)
-    IO.puts("stack_ids retrieval time: #{stack_ids_time} microseconds")
+    stack_ids = game["groupById"][dest_group_id]["stackIds"]
+    stack_id = Enum.at(stack_ids, dest_stack_index)
 
-    {on_card_leave_time, game} = :timer.tc(fn ->
-      if orig_group["onCardLeave"] != nil do
+    # move to before stackids change during move_card
+    game = if orig_group["onCardLeave"] != nil do
         Enum.reduce(orig_group["onCardLeave"], game, fn {key, val}, acc ->
           cond do
             key == "currentSide" and allow_flip == false ->
@@ -374,93 +356,116 @@ defmodule DragnCardsGame.GameUI do
       else
         game
       end
-    end)
-    IO.puts("onCardLeave processing time: #{on_card_leave_time} microseconds")
 
-    {location_update_time, game} = :timer.tc(fn ->
-      game
-      |> Evaluate.evaluate(["SET", "/cardById/" <> card_id <> "/groupId", dest_group_id], ["update_card_state cardId:#{card_id} groupId:#{dest_group_id}"])
-      |> Evaluate.evaluate(["SET", "/cardById/" <> card_id <> "/stackId", stack_id], ["update_card_state cardId:#{card_id} stackId:#{stack_id}"])
-      |> Evaluate.evaluate(["SET", "/cardById/" <> card_id <> "/stackIndex", dest_stack_index], ["update_card_state cardId:#{card_id} stackIndex:#{dest_stack_index}"])
-      |> Evaluate.evaluate(["SET", "/cardById/" <> card_id <> "/cardIndex", dest_card_index], ["update_card_state cardId:#{card_id} cardIndex:#{dest_card_index}"])
-      |> Evaluate.evaluate(["SET", "/cardById/" <> card_id <> "/parentCardId", parent_card["id"]], ["update_card_state cardId:#{card_id} stackParentCardId:#{parent_card["id"]}"])
-    end)
-    IO.puts("location update time: #{location_update_time} microseconds")
 
-    {attachment_update_time, game} = :timer.tc(fn ->
-      if move_options != nil and move_options["combine"] != nil do
+    update_paths = [
+      "/cardById/#{card_id}/groupId",
+      "/cardById/#{card_id}/stackId",
+      "/cardById/#{card_id}/stackIndex",
+      "/cardById/#{card_id}/cardIndex",
+      "/cardById/#{card_id}/parentCardId"
+    ]
+    game
+      |> put_in(["cardById", card_id, "groupId"], dest_group_id)
+      |> put_in(["cardById", card_id, "stackId"], stack_id)
+      |> put_in(["cardById", card_id, "stackIndex"], dest_stack_index)
+      |> put_in(["cardById", card_id, "cardIndex"], dest_card_index)
+      |> put_in(["cardById", card_id, "parentCardId"], parent_card["id"])
+
+    game = if move_options != nil and move_options["combine"] != nil do
         attachment_direction = move_options["combine"]
-        Evaluate.evaluate(game, ["SET", "/cardById/" <> card_id <> "/attachmentDirection", attachment_direction], ["update_card_state cardId:#{card_id} attahment_direction:#{attachment_direction}"])
+        put_in(game, ["cardById", card_id, "attachmentDirection"], attachment_direction)
       else
         game
       end
-    end)
-    IO.puts("attachment update time: #{attachment_update_time} microseconds")
+    update_paths = if move_options != nil and move_options["combine"] != nil do
+      update_paths ++ ["/cardById/#{card_id}/attachmentDirection"]
+    else
+      update_paths
+    end
 
-    {orig_group_update_time, game} = :timer.tc(fn ->
-      if orig_group_id != nil do
-        Enum.reduce(Enum.with_index(orig_group["stackIds"]), game, fn {stack_id, stack_index}, acc ->
-          stack = get_stack(game, stack_id)
-          Enum.reduce(Enum.with_index(stack["cardIds"]), acc, fn {card_id, card_index}, acc2 ->
-            put_in(acc2["cardById"][card_id]["stackIndex"], stack_index)
-            |> put_in(["cardById", card_id, "cardIndex"], card_index)
-          end)
-        end)
-      else
-        game
-      end
-    end)
-    IO.puts("orig_group update time: #{orig_group_update_time} microseconds")
-
-    {dest_group_update_time, game} = :timer.tc(fn ->
-      Enum.reduce(Enum.with_index(dest_group["stackIds"]), game, fn {stack_id, stack_index}, acc ->
+    game = if orig_group_id != nil do
+      Enum.reduce(Enum.with_index(orig_group["stackIds"]), game, fn {stack_id, stack_index}, acc ->
         stack = get_stack(game, stack_id)
         Enum.reduce(Enum.with_index(stack["cardIds"]), acc, fn {card_id, card_index}, acc2 ->
           put_in(acc2["cardById"][card_id]["stackIndex"], stack_index)
           |> put_in(["cardById", card_id, "cardIndex"], card_index)
         end)
       end)
+    else
+      game
+    end
+
+    game = Enum.reduce(Enum.with_index(dest_group["stackIds"]), game, fn {stack_id, stack_index}, acc ->
+      stack = get_stack(game, stack_id)
+      Enum.reduce(Enum.with_index(stack["cardIds"]), acc, fn {card_id, card_index}, acc2 ->
+        put_in(acc2["cardById"][card_id]["stackIndex"], stack_index)
+        |> put_in(["cardById", card_id, "cardIndex"], card_index)
+      end)
     end)
-    IO.puts("dest_group update time: #{dest_group_update_time} microseconds")
 
-    {peeking_update_time, game} = :timer.tc(fn ->
-      moving_to_facedown = dest_group["onCardEnter"]["currentSide"] == "B" and orig_group_id != dest_group_id
-      will_flip = old_card["currentSide"] == "B" and dest_group["onCardEnter"]["currentSide"] == "A" and allow_flip
+    moving_to_facedown = dest_group["onCardEnter"]["currentSide"] == "B" and orig_group_id != dest_group_id
+    will_flip = old_card["currentSide"] == "B" and dest_group["onCardEnter"]["currentSide"] == "A" and allow_flip
+    game = if moving_to_facedown or will_flip do
+      put_in(game, ["cardById", card_id, "peeking"], %{})
+    else
+      game
+    end
+    update_paths = if moving_to_facedown or will_flip do
+      update_paths ++ ["/cardById/#{card_id}/peeking"]
+    else
+      update_paths
+    end
 
-      if moving_to_facedown or will_flip do
-        Evaluate.evaluate(game, ["SET", "/cardById/" <> card_id <> "/peeking", %{}], ["update_card_state cardId:#{card_id} peeking:empty"])
-      else
-        game
-      end
-    end)
-    IO.puts("peeking update time: #{peeking_update_time} microseconds")
+    game = if dest_group["onCardEnter"] != nil do
+      Enum.reduce(dest_group["onCardEnter"], game, fn {key, val}, acc ->
+        cond do
+          key == "currentSide" and allow_flip == false ->
+            acc
+          true ->
+            put_in(acc, ["cardById", card_id, key], val)
+            #Evaluate.evaluate(acc, ["SET", "/cardById/" <> card_id <> "/" <> key, val], ["update_card_state cardId:#{card_id} #{key}:#{inspect(val)}"])
+        end
+      end)
+    else
+      game
+    end
 
-    {on_card_enter_time, game} = :timer.tc(fn ->
-      if dest_group["onCardEnter"] != nil do
-        Enum.reduce(dest_group["onCardEnter"], game, fn {key, val}, acc ->
-          cond do
-            key == "currentSide" and allow_flip == false ->
-              acc
-            true ->
-              Evaluate.evaluate(acc, ["SET", "/cardById/" <> card_id <> "/" <> key, val], ["update_card_state cardId:#{card_id} #{key}:#{inspect(val)}"])
-          end
-        end)
-      else
-        game
-      end
-    end)
-    IO.puts("onCardEnter processing time: #{on_card_enter_time} microseconds")
+    update_paths = if dest_group["onCardEnter"] != nil do
+      Enum.reduce(dest_group["onCardEnter"], update_paths, fn {key, _val}, acc ->
+        if key == "currentSide" and allow_flip == false do
+          acc
+        else
+          acc ++ ["/cardById/#{card_id}/#{key}"]
+        end
+      end)
+    else
+      update_paths
+    end
 
-    {token_removal_time, game} = :timer.tc(fn ->
-      if orig_group["canHaveTokens"] != false and dest_group["canHaveTokens"] == false do
-        Evaluate.evaluate(game, ["SET", "/cardById/" <> card_id <> "/tokens", %{}], ["update_card_state cardId:#{card_id} tokens:empty"])
-      else
-        game
-      end
-    end)
-    IO.puts("token removal time: #{token_removal_time} microseconds")
+    game = if orig_group["canHaveTokens"] != false and dest_group["canHaveTokens"] == false do
+      put_in(game, ["cardById", card_id, "tokens"], %{})
+    else
+      game
+    end
+    update_paths = if orig_group["canHaveTokens"] != false and dest_group["canHaveTokens"] == false do
+      update_paths ++ ["/cardById/#{card_id}/tokens"]
+    else
+      update_paths
+    end
 
-    IO.puts("update_card_state 2 ---------------------------------------------")
+    game = if is_map(game["ruleMap"]) and game["automationEnabled"] == true do
+      update_paths
+      |> AutomationRules.split_path_strings()
+      |> RuleMap.get_ids_by_paths(game["ruleMap"])
+      |> Enum.map(fn id -> get_in(game["ruleById"], [id]) end)
+      |> Enum.sort_by(&(&1["priority"] || :infinity))
+      |> Enum.reduce(game, fn rule, acc ->
+        path = ["cardById", card_id, :dummy]
+        Evaluate.apply_automation_rule_wrapper(rule, path, game_old, acc, ["update_card_state"])
+      end)
+    end
+
     game
   end
 
@@ -584,9 +589,17 @@ defmodule DragnCardsGame.GameUI do
   def delete_card(game, card_id) do
     card = get_card(game, card_id)
     game
+    |> delete_card_from_rules_map(card_id)
     |> delete_card_from_card_by_id(card_id)
     |> remove_from_stack(card_id)
     |> refresh_stack_indices_in_group(card["groupId"])
+  end
+
+  def delete_card_from_rules_map(game, card_id) do
+    card = get_card(game, card_id)
+    old_rule_map = game["ruleMap"]
+    new_rule_map = RuleMap.remove_rule_ids_from_map(old_rule_map, card["ruleIds"])
+    Evaluate.evaluate(game, ["SET", "/ruleMap", new_rule_map], ["delete_card_from_rules_map cardId:#{card_id}"])
   end
 
   def delete_card_from_card_by_id(game, card_id) do
@@ -1232,43 +1245,27 @@ defmodule DragnCardsGame.GameUI do
     new_card = Card.card_from_card_details(load_list_item["cardDetails"], game_def, load_list_item["databaseId"], group_id)
     new_stack = Stack.stack_from_card(new_card)
 
-    {update_card_time, game} = :timer.tc(fn -> update_card(game, new_card) end)
-    IO.puts("update_card execution time: #{update_card_time} microseconds")
+    game = update_card(game, new_card)
 
-    {update_stack_time, game} = :timer.tc(fn -> update_stack(game, new_stack) end)
-    IO.puts("update_stack execution time: #{update_stack_time} microseconds")
+    game = update_stack(game, new_stack)
 
-    {insert_stack_time, game} = :timer.tc(fn ->
-      insert_stack_in_group(game, group_id, new_stack["id"], group_size)
-    end)
-    IO.puts("insert_stack_in_group execution time: #{insert_stack_time} microseconds")
+    game = insert_stack_in_group(game, group_id, new_stack["id"], group_size)
 
-    {set_stack_left_top_time, game} = :timer.tc(fn ->
-      set_stack_left_top(game, new_stack["id"], load_list_item["left"], load_list_item["top"])
-    end)
-    IO.puts("set_stack_left_top execution time: #{set_stack_left_top_time} microseconds")
+    game = set_stack_left_top(game, new_stack["id"], load_list_item["left"], load_list_item["top"])
 
-    {implement_automations_time, game} = :timer.tc(fn ->
-      AutomationRules.implement_card_rules(game, game_def, new_card)
-    end)
-    IO.puts("implement_card_automations execution time: #{implement_automations_time} microseconds")
+    game = AutomationRules.implement_card_rules(game, game_def, new_card)
 
-    {update_card_state_time, game} = :timer.tc(fn ->
-      update_card_state(game, new_card["id"], nil, nil)
-    end)
-    IO.puts("update_card_state execution time: #{update_card_state_time} microseconds")
+    game = update_card_state(game, new_card["id"], nil, nil)
 
-    {evaluate_time, game} = :timer.tc(fn ->
-      Evaluate.evaluate(
-        game,
-        ["SET", "/loadedCardIds", ["LIST"] ++ game["loadedCardIds"] ++ [new_card["id"]]],
-        ["create_card_in_group"]
-      )
-    end)
-    IO.puts("Evaluate.evaluate execution time: #{evaluate_time} microseconds")
+    game = Evaluate.evaluate(
+      game,
+      ["SET", "/loadedCardIds", ["LIST"] ++ game["loadedCardIds"] ++ [new_card["id"]]],
+      ["create_card_in_group"]
+    )
 
     game
   end
+
 
   # def tba() do
   #   if rule["type"] == "onChange" do
@@ -1350,81 +1347,74 @@ defmodule DragnCardsGame.GameUI do
 
     Logger.debug("load_cards 1")
 
-    {game_def_time, game_def} = :timer.tc(fn -> DragnCardsGame.PluginCache.get_game_def_cached(game["options"]["pluginId"]) end)
-    IO.puts("get_game_def execution time: #{game_def_time} microseconds")
+    game_def = DragnCardsGame.PluginCache.get_game_def_cached(game["options"]["pluginId"])
 
     Logger.debug("load_cards 2")
 
     # {card_db_time, card_db} = :timer.tc(fn -> Plugins.get_card_db(game["options"]["pluginId"]) end)
     # IO.puts("get_card_db execution time: #{card_db_time} microseconds")
 
-    {card_db_time, card_db} = :timer.tc(fn -> DragnCardsGame.PluginCache.get_card_db_cached(game["options"]["pluginId"]) end)
-    IO.puts("get_card_db_cached execution time: #{card_db_time} microseconds")
+    card_db = DragnCardsGame.PluginCache.get_card_db_cached(game["options"]["pluginId"])
 
 
     Logger.debug("load_cards 3")
 
-    {load_list_time, load_list} = :timer.tc(fn ->
-      Enum.map(load_list, fn load_list_item ->
-        # If the load_list_item has a "cardDetails"
-        database_id = get_in(load_list_item, ["databaseId"])
+    load_list = Enum.map(load_list, fn load_list_item ->
+      # If the load_list_item has a "cardDetails"
+      database_id = get_in(load_list_item, ["databaseId"])
 
-        cardDetails =
-          cond do
-            Map.has_key?(load_list_item, "cardDetails") ->
-              load_list_item["cardDetails"]
+      cardDetails =
+        cond do
+          Map.has_key?(load_list_item, "cardDetails") ->
+            load_list_item["cardDetails"]
 
-            Map.has_key?(load_list_item, "authorId") ->
-              IO.puts("'authorId' was found in load_list_item. Attempting to load card from custom database.")
-              CustomCardDb.get_card_details_for_user(game["pluginId"], user_id, database_id)
+          Map.has_key?(load_list_item, "authorId") ->
+            IO.puts("'authorId' was found in load_list_item. Attempting to load card from custom database.")
+            CustomCardDb.get_card_details_for_user(game["pluginId"], user_id, database_id)
 
-            database_id != nil ->
-              {card_cache_time, card_details} = :timer.tc(fn -> {:ok, card_db[database_id]} end)
-              IO.puts("get_card_cached execution time: #{card_cache_time} microseconds")
-              case card_details do
-                {:ok, card_details} -> card_details
-                :error -> raise "Card with databaseId #{database_id} not found."
-              end
+          database_id != nil ->
+            card_details = {:ok, card_db[database_id]}
+            case card_details do
+              {:ok, card_details} -> card_details
+              :error -> raise "Card with databaseId #{database_id} not found."
+            end
 
-            true ->
-              raise "Map must contain either 'databaseId' or 'cardDetails'"
-          end
-
-        quantity = Map.fetch!(load_list_item, "quantity")
-
-        loadGroupId = Map.fetch!(load_list_item, "loadGroupId")
-
-        loadGroupId =
-          if String.contains?(loadGroupId, "playerN") and player_n == nil do
-            raise "Tried to load a card into player group #{loadGroupId}, but no player was specified. Are you sitting in a seat?"
-          else
-            String.replace(loadGroupId, "playerN", player_n || "")
-          end
-
-        possibleGroupIds = Map.keys(game["groupById"])
-
-        if loadGroupId not in possibleGroupIds do
-          raise "Tried to load a card into a group that doesn't exist: #{loadGroupId}"
+          true ->
+            raise "Map must contain either 'databaseId' or 'cardDetails'"
         end
 
-        %{
-          "databaseId" => database_id,
-          "cardDetails" => cardDetails,
-          "quantity" => quantity,
-          "loadGroupId" => loadGroupId,
-          "left" => load_list_item["left"],
-          "top" => load_list_item["top"]
-        }
-      end)
+      quantity = Map.fetch!(load_list_item, "quantity")
+
+      loadGroupId = Map.fetch!(load_list_item, "loadGroupId")
+
+      loadGroupId =
+        if String.contains?(loadGroupId, "playerN") and player_n == nil do
+          raise "Tried to load a card into player group #{loadGroupId}, but no player was specified. Are you sitting in a seat?"
+        else
+          String.replace(loadGroupId, "playerN", player_n || "")
+        end
+
+      possibleGroupIds = Map.keys(game["groupById"])
+
+      if loadGroupId not in possibleGroupIds do
+        raise "Tried to load a card into a group that doesn't exist: #{loadGroupId}"
+      end
+
+      %{
+        "databaseId" => database_id,
+        "cardDetails" => cardDetails,
+        "quantity" => quantity,
+        "loadGroupId" => loadGroupId,
+        "left" => load_list_item["left"],
+        "top" => load_list_item["top"]
+      }
     end)
-    IO.puts("load_list processing time: #{load_list_time} microseconds")
 
     Logger.debug("load_cards 4")
 
     old_game = game
 
-    {evaluate_time, game} = :timer.tc(fn -> Evaluate.evaluate(game, ["SET", "/loadedCardIds", []]) end)
-    IO.puts("Evaluate.evaluate (clear loadedCardIds) execution time: #{evaluate_time} microseconds")
+    game = Evaluate.evaluate(game, ["SET", "/loadedCardIds", []])
 
     {reduce_load_list_time, game} = :timer.tc(fn ->
       Enum.reduce(load_list, game, fn load_list_item, acc ->
@@ -1434,8 +1424,7 @@ defmodule DragnCardsGame.GameUI do
     end)
     IO.puts("Enum.reduce (load_list processing) execution time: #{reduce_load_list_time} microseconds")
 
-    {shuffle_decks_time, game} = :timer.tc(fn -> shuffle_changed_decks(game, old_game, game_def) end)
-    IO.puts("shuffle_changed_decks execution time: #{shuffle_decks_time} microseconds")
+    game = shuffle_changed_decks(game, old_game, game_def)
 
     game
   end
