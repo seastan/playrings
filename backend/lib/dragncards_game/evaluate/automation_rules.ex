@@ -31,8 +31,6 @@ defmodule DragnCardsGame.AutomationRules do
     put_in(game, ["ruleMap"], new_rule_map)
   end
 
-
-
   def implement_game_rules(game, rules) do
     Enum.reduce(rules, game, fn ({rule_id, rule}, acc) ->
       # Generate a unique ID for the rule
@@ -167,5 +165,85 @@ defmodule DragnCardsGame.AutomationRules do
   end
 
 
+  def apply_automation_rules_for_update_paths(game, game_old, update_paths, target_path, trace) do
+    update_paths
+    |> RuleMap.get_ids_by_paths(game["ruleMap"])
+    |> Enum.map(fn id -> get_in(game["ruleById"], [id]) end)
+    |> Enum.sort_by(&(&1["priority"] || :infinity))
+    |> Enum.reduce(game, fn rule, acc ->
+      apply_automation_rule_wrapper(rule, target_path, game_old, acc, trace ++ ["apply_automation_rule_wrapper #{rule["id"]}"])
+    end)
+  end
+
+  def apply_automation_rule_wrapper(rule, target_path, game_old, game_new, trace) do
+
+    game_new =
+      if rule["this_id"] do
+        game_new |>
+        Evaluate.evaluate(["VAR", "$THIS_ID", rule["this_id"]], trace ++ ["game_new"]) |>
+        Evaluate.evaluate(["VAR", "$THIS", "$GAME.cardById.$THIS_ID"], trace ++ ["game_new"])
+      else
+        game_new
+      end
+
+    game_old =
+      if rule["this_id"] do
+        game_old |>
+        Evaluate.evaluate(["VAR", "$THIS_ID", rule["this_id"]], trace ++ ["game_old"]) |>
+        Evaluate.evaluate(["VAR", "$THIS", "$GAME.cardById.$THIS_ID"], trace ++ ["game_old"])
+      else
+        game_old
+      end
+    game_new =
+      if is_list(target_path) do
+        game_new |>
+        Evaluate.evaluate(["VAR", "$TARGET_ID", Enum.at(target_path,1)], trace ++ ["game_new"]) |>
+        Evaluate.evaluate(["VAR", "$TARGET", "$GAME."<>Enum.at(target_path,0)<>".$TARGET_ID"], trace ++ ["game_new"])
+      else
+        game_new
+      end
+    game_old =
+      if is_list(target_path) do
+        game_old |>
+        Evaluate.evaluate(["VAR", "$TARGET_ID", Enum.at(target_path,1)], trace ++ ["game_old"]) |>
+        Evaluate.evaluate(["VAR", "$TARGET", "$GAME."<>Enum.at(target_path,0)<>".$TARGET_ID"], trace ++ ["game_old"])
+      else
+        game_old
+      end
+
+    case rule["type"] do
+      "trigger" ->
+        apply_trigger_rule(rule, game_old, game_new, trace ++ ["apply_trigger_rule #{rule['id']}"])
+      "passive" ->
+        apply_passive_rule(rule, game_old, game_new, trace ++ ["apply_passive_rule #{rule['id']}"])
+      _ ->
+        game_new
+    end
+  end
+
+  def apply_trigger_rule(rule, game_old, game_new, trace) do
+    # Stringify the rule
+    game_new = put_in(game_new["prev_game"], game_old)
+    game_new = if Evaluate.evaluate(game_new, rule["condition"], trace ++ [Jason.encode!(rule["condition"])]) do
+      Evaluate.evaluate(game_new, rule["then"], trace ++ [Jason.encode!("THEN")])
+    else
+      game_new
+    end
+    put_in(game_new["prev_game"], nil)
+  end
+
+  def apply_passive_rule(rule, game_old, game_new, trace) do
+    onBefore = Evaluate.evaluate(game_old, rule["condition"], trace ++ ["game_old", Jason.encode!(rule["condition"])])
+    onAfter = Evaluate.evaluate(game_new, rule["condition"], trace ++ ["game_new", Jason.encode!(rule["condition"])])
+
+    cond do
+      !onBefore && onAfter ->
+        Evaluate.evaluate(game_new, rule["onDo"], trace ++ ["ON_DO"])
+      onBefore && !onAfter ->
+        Evaluate.evaluate(game_new, rule["offDo"], trace ++ ["OFF_DO"])
+      true ->
+        game_new
+    end
+  end
 
 end
