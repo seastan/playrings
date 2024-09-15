@@ -344,18 +344,34 @@ defmodule DragnCardsGame.GameUI do
     stack_id = Enum.at(stack_ids, dest_stack_index)
 
     # move to before stackids change during move_card
+    update_paths = []
     game = if orig_group["onCardLeave"] != nil do
         Enum.reduce(orig_group["onCardLeave"], game, fn {key, val}, acc ->
           cond do
             key == "currentSide" and allow_flip == false ->
               acc
             true ->
-              Evaluate.evaluate(acc, ["SET", "/cardById/" <> card_id <> "/" <> key, val], ["update_card_state cardId:#{card_id} #{key}:#{inspect(val)}"])
+              put_in(acc, ["cardById", card_id, key], val)
           end
         end)
       else
         game
       end
+    update_paths = if orig_group["onCardLeave"] != nil do
+      Enum.reduce(orig_group["onCardLeave"], update_paths, fn {key, _val}, acc ->
+        if key == "currentSide" and allow_flip == false do
+          acc
+        else
+          acc ++ ["/cardById/#{card_id}/#{key}"]
+        end
+      end)
+    else
+      update_paths
+    end
+    game = if is_map(game["ruleMap"]) and game["automationEnabled"] == true do
+      update_paths = AutomationRules.split_path_strings(update_paths)
+      AutomationRules.apply_automation_rules_for_update_paths(game, game_old, update_paths, ["cardById", card_id], ["update_card_state cardId:#{card_id}"])
+    end
 
     update_paths = [
       "/cardById/#{card_id}/groupId",
