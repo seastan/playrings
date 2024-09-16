@@ -321,86 +321,50 @@ defmodule DragnCardsGame.GameUI do
 
   # Update a card state
   # Modify the card orientation/tokens based on where it is now
-  def update_card_state(game, card_id, orig_group_id \\ nil, move_options \\ nil) do
-    game_old = game
-    {dest_group_id, dest_stack_index, dest_card_index} = gsc(game, card_id)
-
-    {orig_group, dest_group} = {get_group(game, orig_group_id), get_group(game, dest_group_id)}
-
-    old_card = get_card(game, card_id)
-
-    allow_flip = cond do
-      move_options != nil and move_options["allowFlip"] == false ->
-        false
-      orig_group["onCardEnter"]["inPlay"] == true and dest_group["onCardEnter"]["inPlay"] == true ->
-        false
-      true ->
-        true
-    end
-
-    parent_card = get_card_by_group_id_stack_index_card_index(game, [dest_group_id, dest_stack_index, 0])
-
-    stack_ids = game["groupById"][dest_group_id]["stackIds"]
-    stack_id = Enum.at(stack_ids, dest_stack_index)
-
-    # move to before stackids change during move_card
-    update_paths = []
-    game = if orig_group["onCardLeave"] != nil do
-        Enum.reduce(orig_group["onCardLeave"], game, fn {key, val}, acc ->
-          cond do
-            key == "currentSide" and allow_flip == false ->
-              acc
-            true ->
-              put_in(acc, ["cardById", card_id, key], val)
-          end
-        end)
-      else
-        game
-      end
-    update_paths = if orig_group["onCardLeave"] != nil do
-      Enum.reduce(orig_group["onCardLeave"], update_paths, fn {key, _val}, acc ->
+  def ucs_apply_dict(game, card_id, dict, allow_flip \\ true) do
+    if dict != nil do
+      Enum.reduce(dict, {game, []}, fn {key, val}, {acc_game, acc_paths} ->
         if key == "currentSide" and allow_flip == false do
-          acc
+          {acc_game, acc_paths}
         else
-          acc ++ ["/cardById/#{card_id}/#{key}"]
+          new_game = put_in(acc_game, ["cardById", card_id, key], val)
+          new_paths = acc_paths ++ ["/cardById/#{card_id}/#{key}"]
+          {new_game, new_paths}
         end
       end)
     else
-      update_paths
+      {game, []}
     end
-    game = if is_map(game["ruleMap"]) and game["automationEnabled"] == true do
-      update_paths = AutomationRules.split_path_strings(update_paths)
-      AutomationRules.apply_automation_rules_for_update_paths(game, game_old, update_paths, ["cardById", card_id], ["update_card_state cardId:#{card_id}"])
-    end
+  end
 
-    update_paths = [
+  def ucs_card_position(game, card_id, dest_group_id, stack_id, dest_stack_index, dest_card_index, parent_card, move_options) do
+    update_pathstrings = [
       "/cardById/#{card_id}/groupId",
       "/cardById/#{card_id}/stackId",
       "/cardById/#{card_id}/stackIndex",
       "/cardById/#{card_id}/cardIndex",
       "/cardById/#{card_id}/parentCardId"
     ]
-    game
+    game = game
       |> put_in(["cardById", card_id, "groupId"], dest_group_id)
       |> put_in(["cardById", card_id, "stackId"], stack_id)
       |> put_in(["cardById", card_id, "stackIndex"], dest_stack_index)
       |> put_in(["cardById", card_id, "cardIndex"], dest_card_index)
       |> put_in(["cardById", card_id, "parentCardId"], parent_card["id"])
 
-    game = if move_options != nil and move_options["combine"] != nil do
-        attachment_direction = move_options["combine"]
-        put_in(game, ["cardById", card_id, "attachmentDirection"], attachment_direction)
-      else
-        game
-      end
-    update_paths = if move_options != nil and move_options["combine"] != nil do
-      update_paths ++ ["/cardById/#{card_id}/attachmentDirection"]
+    if move_options != nil and move_options["combine"] != nil do
+      attachment_direction = move_options["combine"]
+      game = put_in(game, ["cardById", card_id, "attachmentDirection"], attachment_direction)
+      update_pathstrings = update_pathstrings ++ ["/cardById/#{card_id}/attachmentDirection"]
+      {game, update_pathstrings}
     else
-      update_paths
+      {game, update_pathstrings}
     end
+  end
 
-    game = if orig_group_id != nil do
-      Enum.reduce(Enum.with_index(orig_group["stackIds"]), game, fn {stack_id, stack_index}, acc ->
+  def ucs_group_refresh(game, group_id, group) do
+    if group_id != nil do
+      Enum.reduce(Enum.with_index(group["stackIds"]), game, fn {stack_id, stack_index}, acc ->
         stack = get_stack(game, stack_id)
         Enum.reduce(Enum.with_index(stack["cardIds"]), acc, fn {card_id, card_index}, acc2 ->
           put_in(acc2["cardById"][card_id]["stackIndex"], stack_index)
@@ -410,68 +374,77 @@ defmodule DragnCardsGame.GameUI do
     else
       game
     end
+  end
 
-    game = Enum.reduce(Enum.with_index(dest_group["stackIds"]), game, fn {stack_id, stack_index}, acc ->
-      stack = get_stack(game, stack_id)
-      Enum.reduce(Enum.with_index(stack["cardIds"]), acc, fn {card_id, card_index}, acc2 ->
-        put_in(acc2["cardById"][card_id]["stackIndex"], stack_index)
-        |> put_in(["cardById", card_id, "cardIndex"], card_index)
-      end)
-    end)
-
+  def ucs_set_peeking(game, card_id, orig_group_id, dest_group_id, dest_group, old_card, allow_flip) do
     moving_to_facedown = dest_group["onCardEnter"]["currentSide"] == "B" and orig_group_id != dest_group_id
     will_flip = old_card["currentSide"] == "B" and dest_group["onCardEnter"]["currentSide"] == "A" and allow_flip
-    game = if moving_to_facedown or will_flip do
-      put_in(game, ["cardById", card_id, "peeking"], %{})
+    if moving_to_facedown or will_flip do
+      game = put_in(game, ["cardById", card_id, "peeking"], %{})
+      update_pathstrings = ["/cardById/#{card_id}/peeking"]
+      {game, update_pathstrings}
     else
-      game
+      {game, []}
     end
-    update_paths = if moving_to_facedown or will_flip do
-      update_paths ++ ["/cardById/#{card_id}/peeking"]
-    else
-      update_paths
-    end
+  end
 
-    game = if dest_group["onCardEnter"] != nil do
-      Enum.reduce(dest_group["onCardEnter"], game, fn {key, val}, acc ->
-        cond do
-          key == "currentSide" and allow_flip == false ->
-            acc
-          true ->
-            put_in(acc, ["cardById", card_id, key], val)
-            #Evaluate.evaluate(acc, ["SET", "/cardById/" <> card_id <> "/" <> key, val], ["update_card_state cardId:#{card_id} #{key}:#{inspect(val)}"])
-        end
+  def ucs_remove_tokens(game, card_id, card, orig_group, dest_group) do
+    if orig_group["canHaveTokens"] != false and dest_group["canHaveTokens"] == false do
+      Enum.reduce(card["tokens"], {game, []}, fn {key, _val}, {acc_game, acc_paths} ->
+        new_game = put_in(acc_game, ["cardById", card_id, "tokens", key], 0)
+        new_paths = acc_paths ++ ["/cardById/#{card_id}/tokens/#{key}"]
+        {new_game, new_paths}
       end)
     else
-      game
+      {game, []}
     end
+  end
 
-    update_paths = if dest_group["onCardEnter"] != nil do
-      Enum.reduce(dest_group["onCardEnter"], update_paths, fn {key, _val}, acc ->
-        if key == "currentSide" and allow_flip == false do
-          acc
-        else
-          acc ++ ["/cardById/#{card_id}/#{key}"]
-        end
-      end)
-    else
-      update_paths
+  def ucs_compute_allow_flip(move_options, orig_group, dest_group) do
+    cond do
+      move_options != nil and move_options["allowFlip"] == false ->
+        false
+      orig_group["onCardEnter"]["inPlay"] == true and dest_group["onCardEnter"]["inPlay"] == true ->
+        false
+      true ->
+        true
     end
+  end
 
-    game = if orig_group["canHaveTokens"] != false and dest_group["canHaveTokens"] == false do
-      put_in(game, ["cardById", card_id, "tokens"], %{})
-    else
-      game
-    end
-    update_paths = if orig_group["canHaveTokens"] != false and dest_group["canHaveTokens"] == false do
-      update_paths ++ ["/cardById/#{card_id}/tokens"]
-    else
-      update_paths
-    end
+  def update_card_state(game, card_id, orig_group_id \\ nil, move_options \\ nil) do
+    # Set up some variables
+    game_old = game
+    {dest_group_id, dest_stack_index, dest_card_index} = gsc(game, card_id)
+    {orig_group, dest_group} = {get_group(game, orig_group_id), get_group(game, dest_group_id)}
+    old_card = get_card(game, card_id)
+    card_name = old_card["sides"]["A"]["name"]
+    allow_flip = ucs_compute_allow_flip(move_options, orig_group, dest_group)
+    parent_card = get_card_by_group_id_stack_index_card_index(game, [dest_group_id, dest_stack_index, 0])
+    stack_ids = game["groupById"][dest_group_id]["stackIds"]
+    stack_id = Enum.at(stack_ids, dest_stack_index)
+
+    # Apply onCardLeave first and resolve any triggers
+    {game, cardleave_pathstrings} = ucs_apply_dict(game, card_id, orig_group["onCardLeave"], allow_flip)
+    AutomationRules.apply_automation_rules_for_update_pathstrings(game, game_old, cardleave_pathstrings, ["cardById", card_id], ["cardleave_pathstrings:#{card_name}"])
+
+
+    {game, position_pathstrings} = ucs_card_position(game, card_id, dest_group_id, stack_id, dest_stack_index, dest_card_index, parent_card, move_options)
+
+    game = ucs_group_refresh(game, orig_group_id, orig_group)
+    game = ucs_group_refresh(game, dest_group_id, dest_group)
+
+    {game, peeking_pathstrings} = ucs_set_peeking(game, card_id, orig_group_id, dest_group_id, dest_group, old_card, allow_flip)
+
+    {game, cardenter_pathstrings} = ucs_apply_dict(game, card_id, dest_group["onCardEnter"], allow_flip)
+
+    {game, token_pathstrings} = ucs_remove_tokens(game, card_id, old_card, orig_group, dest_group)
+
+    update_pathstrings = cardleave_pathstrings ++ position_pathstrings ++ peeking_pathstrings ++ cardenter_pathstrings ++ token_pathstrings
 
     game = if is_map(game["ruleMap"]) and game["automationEnabled"] == true do
-      update_paths = AutomationRules.split_path_strings(update_paths)
-      AutomationRules.apply_automation_rules_for_update_paths(game, game_old, update_paths, ["cardById", card_id], ["update_card_state cardId:#{card_id}"])
+      AutomationRules.apply_automation_rules_for_update_pathstrings(game, game_old, update_pathstrings, ["cardById", card_id], ["apply_automation_rules_for_update_pathstrings:#{card_name}"])
+    else
+      game
     end
 
     game

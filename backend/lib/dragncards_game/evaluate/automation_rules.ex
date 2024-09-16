@@ -164,19 +164,26 @@ defmodule DragnCardsGame.AutomationRules do
     Enum.reduce(rule_ids, game, fn rule_id, acc -> remove_rule_from_game(acc, rule_id) end)
   end
 
+  def apply_automation_rules_for_update_pathstrings(game, game_old, update_pathstrings, target_path, trace) do
+    update_paths = split_path_strings(update_pathstrings)
+    apply_automation_rules_for_update_paths(game, game_old, update_paths, target_path, trace)
+  end
 
   def apply_automation_rules_for_update_paths(game, game_old, update_paths, target_path, trace) do
-    update_paths
-    |> RuleMap.get_ids_by_paths(game["ruleMap"])
-    |> Enum.map(fn id -> get_in(game["ruleById"], [id]) end)
-    |> Enum.sort_by(&(&1["priority"] || :infinity))
-    |> Enum.reduce(game, fn rule, acc ->
-      apply_automation_rule_wrapper(rule, target_path, game_old, acc, trace ++ ["apply_automation_rule_wrapper #{rule["id"]}"])
-    end)
+    if is_map(game["ruleMap"]) and game["automationEnabled"] == true do
+      update_paths
+      |> RuleMap.get_ids_by_paths(game["ruleMap"])
+      |> Enum.map(fn id -> get_in(game["ruleById"], [id]) end)
+      |> Enum.sort_by(&(&1["priority"] || :infinity))
+      |> Enum.reduce(game, fn rule, acc ->
+        apply_automation_rule_wrapper(rule, target_path, game_old, acc, trace ++ ["apply_automation_rule_wrapper #{rule["id"]}"])
+      end)
+    else
+      game
+    end
   end
 
   def apply_automation_rule_wrapper(rule, target_path, game_old, game_new, trace) do
-
     game_new =
       if rule["this_id"] do
         game_new |>
@@ -195,7 +202,7 @@ defmodule DragnCardsGame.AutomationRules do
         game_old
       end
     game_new =
-      if is_list(target_path) do
+      if is_list(target_path) and Enum.count(target_path) >= 2 do
         game_new |>
         Evaluate.evaluate(["VAR", "$TARGET_ID", Enum.at(target_path,1)], trace ++ ["game_new"]) |>
         Evaluate.evaluate(["VAR", "$TARGET", "$GAME."<>Enum.at(target_path,0)<>".$TARGET_ID"], trace ++ ["game_new"])
@@ -203,7 +210,7 @@ defmodule DragnCardsGame.AutomationRules do
         game_new
       end
     game_old =
-      if is_list(target_path) do
+      if is_list(target_path) and Enum.count(target_path) >= 2 do
         game_old |>
         Evaluate.evaluate(["VAR", "$TARGET_ID", Enum.at(target_path,1)], trace ++ ["game_old"]) |>
         Evaluate.evaluate(["VAR", "$TARGET", "$GAME."<>Enum.at(target_path,0)<>".$TARGET_ID"], trace ++ ["game_old"])

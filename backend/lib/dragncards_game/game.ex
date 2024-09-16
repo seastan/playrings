@@ -136,7 +136,11 @@
     Logger.debug("Made custom properties")
 
     # Add rules
-    game = AutomationRules.implement_game_rules(game, game_def["automation"]["gameRules"])
+    game = if is_map(game_def["automation"]["gameRules"]) do
+      AutomationRules.implement_game_rules(game, game_def["automation"]["gameRules"])
+    else
+      game
+    end
 
     # If the user has some default game settings, apply them
     user = Users.get_user(user_id)
