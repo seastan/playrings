@@ -12,10 +12,11 @@ export const Status = React.memo(({
   const formatLabelsInText = useFormatLabelsInText();
   const status = useSelector(state => state?.playerUi?.status);
   var statusText = status?.text;
+  //var statusText = useSelector(state => state?.playerUi?.dragging?.dragStep);
   statusText = formatLabelsInText(statusText).replace(/\n/g, '<br />');
   statusText = DOMPurify.sanitize(statusText);
 
-  if (status === null || status.text == null) return null;
+  if (statusText == null) return null;
 
   return (
     <div className="absolute text-white" 
