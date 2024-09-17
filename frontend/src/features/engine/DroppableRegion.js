@@ -49,16 +49,15 @@ const StacksListSorted = React.memo(({
     const draggingFromDroppableId = state?.playerUi?.dragging?.fromDroppableId;
     const draggingFromRegion = getRegionFromId(draggingFromDroppableId);
     const draggingFromGroupId = draggingFromRegion?.groupId;
-    const notDragging = state?.playerUi?.dragging?.dragStep === null;
-    
     //const [draggingFromGroupId, dragginFromRegionType, draggingFromRegionDirection] = getGroupIdAndRegionType(draggingFromDroppableId);
-    return isPile && stackIds.length > 0 && (notDragging || (draggingFromGroupId === groupId));
+    return isPile && stackIds.length > 0 && ((!draggingFromGroupId) || draggingFromGroupId === groupId);
   });
   // Truncate stacked piles
   console.log("Rendering StacksList", {groupId, region});
   var stackIdsToShow = stackIds;
   if (isPile) stackIdsToShow = [];
   if (showTopCard) stackIdsToShow = [stackIds[0]];
+
 
   if (!stackIdsToShow) return null;
   return (

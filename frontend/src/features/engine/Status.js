@@ -15,8 +15,8 @@ export const Status = React.memo(({
   //var statusText = useSelector(state => state?.playerUi?.dragging?.dragStep);
   statusText = formatLabelsInText(statusText).replace(/\n/g, '<br />');
   statusText = DOMPurify.sanitize(statusText);
-
-  if (statusText == null) return null;
+  console.log("Rendering Status", {statusText});
+  if (statusText == null || statusText === "") return null;
 
   return (
     <div className="absolute text-white" 
