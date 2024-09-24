@@ -210,7 +210,22 @@ export const loadArkhamDb = (importLoadList, doActionList, playerN, arkhamDbType
     var loadList = [];
 
     if (jsonData?.investigator_code) {
-      loadList.push({'databaseId': jsonData?.investigator_code, 'quantity': 1, 'loadGroupId': "playerNInvestigator"});
+      var ic = jsonData?.investigator_code;
+      var af = jsonData?.meta?.alternate_front;
+      var ab = jsonData?.meta?.alternate_back;
+      var afl = af ? af.length : 0;
+      var abl = ab ? ab.length : 0;
+      if (afl > 0 && abl > 0 && af === ab) {
+        loadList.push({'databaseId': af, 'quantity': 1, 'loadGroupId': "playerNInvestigator"});
+      } else if (afl > 0 && abl > 0) {
+        loadList.push({'databaseId': af + ab, 'quantity': 1, 'loadGroupId': "playerNInvestigator"});
+      } else if (afl > 0) {
+        loadList.push({'databaseId': af + ic, 'quantity': 1, 'loadGroupId': "playerNInvestigator"});
+      } else if (abl > 0) {
+        loadList.push({'databaseId': ic + ab, 'quantity': 1, 'loadGroupId': "playerNInvestigator"});
+      } else {
+        loadList.push({'databaseId': ic, 'quantity': 1, 'loadGroupId': "playerNInvestigator"});
+      }
     }
     const slots = jsonData.slots;
     for (const [slot, quantity] of Object.entries(slots)) {
