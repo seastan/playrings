@@ -55,14 +55,16 @@ const importViaUrlRingsDb = async (importLoadList, doActionList, playerN) => {
 }
 
 const importViaUrlArkhamDb = async (importLoadList, doActionList, playerN) => {
-  const arkhamDbUrl = prompt("Paste full ArkhamDB URL","");
-  if (!arkhamDbUrl.includes("arkhamdb.com")) {
-    alert("Only importing from ArkhamDB is supported at this time.");
+  const arkhamDbUrl = prompt("Paste full ArkhamDB/arkham.build URL","");
+  if (!arkhamDbUrl.includes("arkhamdb.com") && !arkhamDbUrl.includes("arkham.build")) {
+    alert("Only importing from ArkhamDB or arkhamdb.com is supported at this time.");
     return;
   }
   var arkhamDbType;
-  if (arkhamDbUrl.includes("/decklist/")) arkhamDbType = "decklist";
-  else if (arkhamDbUrl.includes("/deck/")) arkhamDbType = "deck";
+  if (arkhamDbUrl.includes("arkhamdb.com") && arkhamDbUrl.includes("/decklist/")) arkhamDbType = "decklist";
+  else if (arkhamDbUrl.includes("arkhamdb.com") && arkhamDbUrl.includes("/deck/")) arkhamDbType = "deck";
+  else if (arkhamDbUrl.includes("arkham.build") && arkhamDbUrl.includes("/deck/view/")) arkhamDbType = "view";
+  else if (arkhamDbUrl.includes("arkham.build") && arkhamDbUrl.includes("/share/")) arkhamDbType = "share";
   if (!arkhamDbType) {
     alert("Invalid URL");
     return;
@@ -191,9 +193,10 @@ export const loadRingsDb = (importLoadList, doActionList, playerN, ringsDbDomain
 }
 
 export const loadArkhamDb = (importLoadList, doActionList, playerN, arkhamDbType, arkhamDbId) => {
-  doActionList(["LOG", "$ALIAS_N", " is importing a deck from ArkhamDB."]);
-  const urlBase = "https://arkhamdb.com/api/"
-  const url = arkhamDbType === "decklist" ? urlBase+"public/decklist/"+arkhamDbId : urlBase+"public/deck/"+arkhamDbId;
+  const arkhamBuild = arkhamDbType === "view" || arkhamDbType === "share";
+  doActionList(["LOG", "$ALIAS_N", " is importing a deck from " + (arkhamBuild ? "arkham.build" : "ArkhamDB") + "."]);
+  const urlBase = arkhamBuild ? "https://api.arkham.build/v1/public/share/" : "https://arkhamdb.com/api/public/";
+  const url = urlBase + (arkhamBuild ? arkhamDbId : arkhamDbType + "/" + arkhamDbId);
   console.log("Fetching ", url);
   fetch(url, {
     method: "GET",
@@ -233,20 +236,24 @@ export const loadArkhamDb = (importLoadList, doActionList, playerN, arkhamDbType
         loadList.push({'databaseId': ic, 'quantity': 1, 'loadGroupId': "playerNInvestigator"});
       }
     }
-    const slots = jsonData.slots;
-    for (const [slot, quantity] of Object.entries(slots)) {
-      loadList.push({'databaseId': slot, 'quantity': quantity, 'loadGroupId': "playerNDeck"});
+    const slots = jsonData?.slots;
+    if (slots) {
+      for (const [slot, quantity] of Object.entries(slots)) {
+        loadList.push({'databaseId': slot, 'quantity': quantity, 'loadGroupId': "playerNDeck"});
+      }
     }
-    const sideSlots = jsonData.sideSlots;
-    for (const [slot, quantity] of Object.entries(sideSlots)) {
-      loadList.push({'databaseId': slot, 'quantity': quantity, 'loadGroupId': "playerNSideDeck"});
+    const sideSlots = jsonData?.sideSlots;
+    if (sideSlots) {
+      for (const [slot, quantity] of Object.entries(sideSlots)) {
+        loadList.push({'databaseId': slot, 'quantity': quantity, 'loadGroupId': "playerNSideDeck"});
+      }
     }
     
     importLoadList(loadList);
   })
   .catch((error) => {
     // handle your errors here
-    alert("Error loading deck. If you are attempting to load an unpublished deck, make sure you have link sharing turned on in your ArkhamDB profile settings.")
+    alert("Error loading deck. If you are attempting to load an unpublished deck, make sure you have sharing turned on in your " + (arkhamBuild ? "arkham.build deck" : "ArkhamDB profile") + " settings.")
   })
 }
 
