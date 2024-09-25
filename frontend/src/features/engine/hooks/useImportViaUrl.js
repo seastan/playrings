@@ -207,12 +207,18 @@ export const loadArkhamDb = (importLoadList, doActionList, playerN, arkhamDbType
   .then((jsonData) => {
     // jsonData is parsed json object received from url
 
+    var meta = null;
+
+    if (jsonData?.meta && jsonData?.meta?.length > 0) {
+      meta = JSON.parse(jsonData?.meta);
+    }
+
     var loadList = [];
 
     if (jsonData?.investigator_code) {
       var ic = jsonData?.investigator_code;
-      var af = jsonData?.meta?.alternate_front;
-      var ab = jsonData?.meta?.alternate_back;
+      var af = meta?.alternate_front;
+      var ab = meta?.alternate_back;
       var afl = af ? af.length : 0;
       var abl = ab ? ab.length : 0;
       if (afl > 0 && abl > 0 && af === ab) {
