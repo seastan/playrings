@@ -1240,6 +1240,7 @@ defmodule DragnCardsGame.GameUI do
           database_id != nil ->
             card_details = {:ok, card_db[database_id]}
             case card_details do
+              {:ok, nil} -> raise "Card with databaseId #{database_id} not found."
               {:ok, card_details} -> card_details
               :error -> raise "Card with databaseId #{database_id} not found."
             end
@@ -1283,7 +1284,6 @@ defmodule DragnCardsGame.GameUI do
 
     {reduce_load_list_time, game} = :timer.tc(fn ->
       Enum.reduce(load_list, game, fn load_list_item, acc ->
-        Logger.debug("load_card #{load_list_item["cardDetails"]["A"]["name"]} into #{load_list_item["loadGroupId"]}")
         load_card(acc, game_def, load_list_item)
       end)
     end)
