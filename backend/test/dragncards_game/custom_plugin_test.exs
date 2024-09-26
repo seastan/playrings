@@ -624,9 +624,9 @@ defmodule DragnCardsGame.CustomPluginTest do
     lookout_card_id = Evaluate.evaluate(game, ["GET_CARD_ID", "player1Hand", 0, 0])
     game = Evaluate.evaluate(game, ["MOVE_CARD", lookout_card_id, "player1Play1", 1, 0])
     assert length(game["groupById"]["player1Play1"]["stackIds"]) == 3
-    assert game["cardById"][lookout_card_id]["tokens"]["willpower"] == nil
-    assert game["cardById"][lookout_card_id]["tokens"]["attack"] == nil
-    assert game["cardById"][lookout_card_id]["tokens"]["defense"] == nil
+    assert game["cardById"][lookout_card_id]["tokens"]["willpower"] == 0
+    assert game["cardById"][lookout_card_id]["tokens"]["attack"] == 0
+    assert game["cardById"][lookout_card_id]["tokens"]["defense"] == 0
 
     # New Round
     game = Evaluate.evaluate(game, ["ACTION_LIST", "newRound"])
@@ -675,9 +675,9 @@ defmodule DragnCardsGame.CustomPluginTest do
     lookout_card_id = Evaluate.evaluate(game, ["GET_CARD_ID", "player1Hand", 0, 0])
     game = Evaluate.evaluate(game, ["MOVE_CARD", lookout_card_id, "player1Play1", 1, 0])
     assert length(game["groupById"]["player1Play1"]["stackIds"]) == 3
-    assert game["cardById"][lookout_card_id]["tokens"]["willpower"] == nil
-    assert game["cardById"][lookout_card_id]["tokens"]["attack"] == nil
-    assert game["cardById"][lookout_card_id]["tokens"]["defense"] == nil
+    assert game["cardById"][lookout_card_id]["tokens"]["willpower"] == 0
+    assert game["cardById"][lookout_card_id]["tokens"]["attack"] == 0
+    assert game["cardById"][lookout_card_id]["tokens"]["defense"] == 0
 
     # Exhaust Dain
     assert game["cardById"][dain_card_id]["exhausted"] == false
@@ -739,7 +739,6 @@ defmodule DragnCardsGame.CustomPluginTest do
     game = Evaluate.evaluate(game, optionYes["code"])
 
     assert Evaluate.evaluate(game, "$GAME.groupById.player1Play1.parentCards.[0].tokens.resource") == 1
-
 
     # Print all messages
     Enum.each(game["messages"], fn message ->
@@ -1377,7 +1376,9 @@ defmodule DragnCardsGame.CustomPluginTest do
     game = Evaluate.evaluate(game, ["LOAD_CARDS", "Q06.6"])
     game = Evaluate.evaluate(game, ["LOAD_CARDS", "coreLeadership"]) # Leadership core set deck
 
-    # Load Stargazer
+    # Move all cards in hand to deck
+    game = Evaluate.evaluate(game, ["MOVE_STACKS", "player1Hand", "player1Deck", "all", "bottom"])
+
     res = Evaluate.evaluate(game, ["SORT_OBJ_LIST", "$GAME.groupById.player1Deck.parentCards", "$CARD", "$CARD.sides.A.name"])
 
     assert Enum.at(res, 0)["sides"]["A"]["name"] == "Brok Ironfist"

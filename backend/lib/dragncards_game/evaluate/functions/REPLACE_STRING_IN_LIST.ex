@@ -32,7 +32,7 @@ defmodule DragnCardsGame.Evaluate.Functions.REPLACE_STRING_IN_LIST do
   end
 
   def execute(game, code, trace) do
-    Evaluate.argc?(code, 3)
+    Evaluate.argc(code, 3)
     input_string = Evaluate.evaluate(game, Enum.at(code, 1), trace ++ ["inputString"])
     string_to_replace = Evaluate.evaluate(game, Enum.at(code, 2), trace ++ ["stringToReplace"])
     replacement_string = Evaluate.evaluate(game, Enum.at(code, 3), trace ++ ["replacementString"])

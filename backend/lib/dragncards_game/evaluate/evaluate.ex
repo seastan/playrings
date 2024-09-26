@@ -48,16 +48,20 @@ defmodule DragnCardsGame.Evaluate do
     end
   end
 
-  def argc?(code, expected_argc) do
-    if Enum.count(code)-1 != expected_argc do
+  def argc(code, expected_argc) do
+    argc = Enum.count(code)-1
+    if argc != expected_argc do
       raise "#{Enum.at(code,0)} expected #{expected_argc} arguments, but got #{Enum.count(code)-1}."
     end
+    argc
   end
 
-  def argc?(code, min_expected_argc, max_expected_argc) do
-    if Enum.count(code)-1 < min_expected_argc or Enum.count(code)-1 > max_expected_argc do
+  def argc(code, min_expected_argc, max_expected_argc) do
+    argc = Enum.count(code)-1
+    if argc < min_expected_argc or argc > max_expected_argc do
       raise "#{Enum.at(code,0)} expected between #{min_expected_argc} and #{max_expected_argc} arguments, but got #{Enum.count(code)-1}."
     end
+    argc
   end
 
   def card_match?(game, var_name, card, condition, trace) do
