@@ -735,8 +735,10 @@ defmodule DragnCardsGame.CustomPluginTest do
 
     prompt_id = Enum.at(Map.keys(game["playerData"]["player1"]["prompts"]), 0)
     prompt = game["playerData"]["player1"]["prompts"][prompt_id]
-    option0 = Enum.at(prompt["options"], 0)
-    game = Evaluate.evaluate(game, option0["code"])
+    optionYes = Enum.at(prompt["options"], 1)
+    game = Evaluate.evaluate(game, optionYes["code"])
+
+    assert Evaluate.evaluate(game, "$GAME.groupById.player1Play1.parentCards.[0].tokens.resource") == 1
 
 
     # Print all messages
