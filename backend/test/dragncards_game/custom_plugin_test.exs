@@ -729,6 +729,7 @@ defmodule DragnCardsGame.CustomPluginTest do
     # Load Dain
     game = Evaluate.evaluate(game, ["LOAD_CARDS", ["LIST", %{"databaseId" => "c266126d-cf2d-4a61-aac7-28bac2d1ea0d", "loadGroupId" => "player1Play1", "quantity" => 1}]])
     assert length(game["groupById"]["player1Play1"]["stackIds"]) == 1
+    game = Evaluate.evaluate(game, ["SET", "/stepId", "1.R"])
 
     IO.inspect(game["playerData"]["player1"]["prompts"])
 
