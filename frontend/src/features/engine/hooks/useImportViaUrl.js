@@ -61,21 +61,22 @@ const importViaUrlArkhamDb = async (importLoadList, doActionList, playerN) => {
     return;
   }
   var arkhamDbType;
+  var typeIndexMod = 2;
   if (arkhamDbUrl.includes("arkhamdb.com") && arkhamDbUrl.includes("/decklist/")) arkhamDbType = "decklist";
   else if (arkhamDbUrl.includes("arkhamdb.com") && arkhamDbUrl.includes("/deck/")) arkhamDbType = "deck";
-  else if (arkhamDbUrl.includes("arkham.build") && arkhamDbUrl.includes("/deck/view/")) arkhamDbType = "view";
-  else if (arkhamDbUrl.includes("arkham.build") && arkhamDbUrl.includes("/share/")) arkhamDbType = "share";
+  else if (arkhamDbUrl.includes("arkham.build") && arkhamDbUrl.includes("/view/")) { arkhamDbType = "view"; typeIndexMod = 1; }
+  else if (arkhamDbUrl.includes("arkham.build") && arkhamDbUrl.includes("/share/")) { arkhamDbType = "share"; typeIndexMod = 1; }
   if (!arkhamDbType) {
     alert("Invalid URL");
     return;
   }
   var splitUrl = arkhamDbUrl.split( '/' );
   const typeIndex = splitUrl.findIndex((e) => e === arkhamDbType)
-  if (splitUrl && splitUrl.length <= typeIndex + 2) {
+  if (splitUrl && splitUrl.length <= typeIndex + typeIndexMod) {
     alert("Invalid URL");
     return;
   }
-  const arkhamDbId = splitUrl[typeIndex + 2];
+  const arkhamDbId = splitUrl[typeIndex + typeIndexMod];
   return loadArkhamDb(importLoadList, doActionList, playerN, arkhamDbType, arkhamDbId);
 }
 
@@ -251,7 +252,7 @@ export const loadArkhamDb = (importLoadList, doActionList, playerN, arkhamDbType
     var metaActionList = [];
     const extraDeck = meta?.extra_deck;
     if (extraDeck) {
-      metaActionList.push(["INCREASE_VAL", "/playerData/" + playerN + "/arkhamShowExtraDeck", 1]);
+      metaActionList.push(["INCREASE_VAL", "/playerData/" + playerN + "/arkham/showExtraDeck", 1]);
       for (const slot of extraDeck.split(',')) {
         loadList.push({'databaseId': slot, 'quantity': 1, 'loadGroupId': "playerNExtraDeck"});
       }
@@ -262,13 +263,16 @@ export const loadArkhamDb = (importLoadList, doActionList, playerN, arkhamDbType
       for (const [key, value] of Object.entries(meta)) {
         if (key.startsWith("cus_")) {
           metaActionList.push(["SET", "/playerData/" + playerN + "/arkhamDeckCustomizable/" + key.substring(4), {}]);
-          for (const cutomization of value.split(',')) {
+          for (const customization of value.split(',')) {
             const customizationValues = customization.split('|');
             const customizationKey = customizationValues.shift();
+            customizationValues.unshift("LIST");
             metaActionList.push(["SET", "/playerData/" + playerN + "/arkhamDeckCustomizable/" + key.substring(4) + "/" + customizationKey, customizationValues]);
           }
         } else if (key.startsWith("attachments_")) {
-          metaActionList.push(["SET", "/playerData/" + playerN + "/arkhamDeckAttachments/" + key.substring(12), value.split(',')]);
+          const attachments = value.split(',');
+          attachments.unshift("LIST");
+          metaActionList.push(["SET", "/playerData/" + playerN + "/arkhamDeckAttachments/" + key.substring(12), attachments]);
         }
       }
     }    
