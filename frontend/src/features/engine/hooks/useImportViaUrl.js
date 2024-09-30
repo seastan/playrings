@@ -257,22 +257,22 @@ export const loadArkhamDb = (importLoadList, doActionList, playerN, arkhamDbType
         loadList.push({'databaseId': slot, 'quantity': 1, 'loadGroupId': "playerNExtraDeck"});
       }
     }
-    metaActionList.push(["SET", "/playerData/" + playerN + "/arkhamDeckCustomizable", {}]);
-    metaActionList.push(["SET", "/playerData/" + playerN + "/arkhamDeckAttachments", {}]);
+    metaActionList.push(["SET", "/playerData/" + playerN + "/arkham/deckCustomizable", {}]);
+    metaActionList.push(["SET", "/playerData/" + playerN + "/arkham/deckAttachments", {}]);
     if (meta) {
       for (const [key, value] of Object.entries(meta)) {
         if (key.startsWith("cus_")) {
-          metaActionList.push(["SET", "/playerData/" + playerN + "/arkhamDeckCustomizable/" + key.substring(4), {}]);
+          metaActionList.push(["SET", "/playerData/" + playerN + "/arkham/deckCustomizable/" + key.substring(4), {}]);
           for (const customization of value.split(',')) {
             const customizationValues = customization.split('|');
             const customizationKey = customizationValues.shift();
             customizationValues.unshift("LIST");
-            metaActionList.push(["SET", "/playerData/" + playerN + "/arkhamDeckCustomizable/" + key.substring(4) + "/" + customizationKey, customizationValues]);
+            metaActionList.push(["SET", "/playerData/" + playerN + "/arkham/deckCustomizable/" + key.substring(4) + "/" + customizationKey, customizationValues]);
           }
         } else if (key.startsWith("attachments_")) {
           const attachments = value.split(',');
           attachments.unshift("LIST");
-          metaActionList.push(["SET", "/playerData/" + playerN + "/arkhamDeckAttachments/" + key.substring(12), attachments]);
+          metaActionList.push(["SET", "/playerData/" + playerN + "/arkham/deckAttachments/" + key.substring(12), attachments]);
         }
       }
     }    
