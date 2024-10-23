@@ -31,6 +31,13 @@ defmodule DragnCardsGame.Evaluate.Functions.NEXT_STEP do
         ["TRUE"],
         ["DEFINE", "$NEW_STEP_INDEX", ["ADD", "$OLD_STEP_INDEX", 1]]
       ],
+      ["COND",
+        ["EQUAL", "$NEW_STEP_INDEX", 0],
+        [
+          ["LOG", "{{$ALIAS_N}} increased the round number by 1."],
+          ["INCREASE_VAL", "$GAME.roundNumber", 1]
+        ]
+      ],
       ["VAR", "$STEP_ID", "$GAME.stepOrder.[$NEW_STEP_INDEX]"],
       ["LOG", "$ALIAS_N", " advanced the round step to ", "$GAME.steps.$STEP_ID.label", "."],
       ["SET", "/stepId", "$STEP_ID"]
