@@ -773,6 +773,32 @@ defmodule DragnCardsGame.CustomPluginTest do
 
   end
 
+  # Gandalf
+  @tag :gandalf
+  test "Gandalf", %{user: _user, game: game, game_def: _game_def} do
+    # Select 1 player
+    prompt_id = Enum.at(Map.keys(game["playerData"]["player1"]["prompts"]), 0)
+    prompt = game["playerData"]["player1"]["prompts"][prompt_id]
+    option1 = Enum.at(prompt["options"], 0)
+    game = Evaluate.evaluate(game, option1["code"])
+
+    # Load Gandalf
+    game = Evaluate.evaluate(game, ["LOAD_CARDS", ["LIST", %{"databaseId" => "51223bd0-ffd1-11df-a976-0801200c9073", "loadGroupId" => "player1Play1", "quantity" => 1}]])
+    assert length(game["groupById"]["player1Play1"]["stackIds"]) == 1
+
+    # Advance to resouce phase
+    game = Evaluate.evaluate(game, ["ACTION_LIST", "advanceRound"])
+
+    # Advance again, should halt ar end of round
+    game = Evaluate.evaluate(game, ["ACTION_LIST", "advanceRound"])
+
+    # Print all messages
+    Enum.each(game["messages"], fn message ->
+      IO.puts(message)
+    end)
+
+  end
+
 
   # Outlands
   @tag :outlands
