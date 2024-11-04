@@ -1608,6 +1608,24 @@ defmodule DragnCardsGame.CustomPluginTest do
 
   end
 
+
+  # Post move
+  @tag :post_move
+  test "post move", %{user: _user, game: game, game_def: _game_def} do
+    game = Evaluate.evaluate(game, ["LOAD_CARDS", "coreLeadership"]) # Leadership core set deck
+    stack_ids = game["groupById"]["player1Play1"]["stackIds"]
+    stack_id_0 = Enum.at(stack_ids, 0)
+
+    {post_move_time, game} = :timer.tc(fn ->
+      Enum.reduce(1..100, game, fn _, acc ->
+        Evaluate.evaluate(acc, ["MOVE_STACK", stack_id_0, "player1Deck", 0])
+      end)
+    end)
+    IO.puts("Post move time: #{post_move_time / 1000}ms")
+
+
+
+
   # # temp
   # @tag :temp
   # test "temp", %{user: _user, game: game, game_def: _game_def} do
@@ -1616,6 +1634,8 @@ defmodule DragnCardsGame.CustomPluginTest do
   #   res = Evaluate.evaluate(game, ["DEFINED", "$GAME.stackById/123abc"])
   #   IO.inspect(res)
   # end
+
+  end
 
 
 end
