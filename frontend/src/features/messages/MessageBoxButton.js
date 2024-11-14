@@ -8,7 +8,7 @@ export const MessageBoxButton = React.memo(({ selected, clickCallback, icon, bli
     if (blink) {
       const intervalId = setInterval(() => {
         setBlinking(prev => !prev);
-      }, 100);
+      }, 500);
       return () => clearInterval(intervalId); // Clean up on unmount
     }
   }, [blink]);
