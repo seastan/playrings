@@ -1,14 +1,10 @@
-version: '3.8'
-
 services:
-  db:
-    image: postgres:14
+  postgres:
+    image: postgres
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: dragncards_dev
-    volumes:
-      - db_data:/var/lib/postgresql/data
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=postgres
     ports:
       - "5432:5432"
     volumes:
@@ -24,7 +20,13 @@ services:
     entrypoint: /app/scripts/local-dev.sh
     working_dir: /app
     environment:
-      DATABASE_URL: postgres://postgres:postgres@db:5432/dragncards_dev
+      - DB_HOSTNAME=postgres
+  frontend:
+    image: node:20
+    depends_on: 
+      - backend
+    ports:
+      - "3000:3000"
     volumes:
       - ./frontend:/app
     entrypoint: /app/scripts/local-dev.sh
