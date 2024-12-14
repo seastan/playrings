@@ -137,6 +137,11 @@ export const Lobby: React.FC = () => {
           {isLoading && <div className="text-white text-center">Connecting to server...</div>}
           {isError && <div className="text-white text-center">Error communicating with server...</div>}
           <div className="flex justify-center w-full" style={{maxWidth: "600px"}}>
+            <div className="w-full h-24 py-2 text-lg text-white bg-red-600">
+              DragnCards will be down on 2025-01-01 for a transition to DragnCards 2.0. Any games saved in DragnCards 1.0 will be inaccessible after this transition. Join the discord for details. 
+            </div>
+          </div>
+          <div className="flex justify-center w-full" style={{maxWidth: "600px"}}>
             <div className="w-full h-24 py-2 text-3xl">
               <a className={lobbyButtonClass} target="_blank" href="https://www.youtube.com/watch?v=mshb1EDsnB8&list=PLuyP-hlzlHjd-XADfU-kqJaGpSE9RWHRa&index=1">
                 Tutorial
