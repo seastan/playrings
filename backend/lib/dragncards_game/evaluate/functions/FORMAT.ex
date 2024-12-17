@@ -5,7 +5,7 @@ defmodule DragnCardsGame.Evaluate.Functions.FORMAT do
   1. `formatString` (string)
   2. Any number of arguments
 
-  Returns a formatted string using `formatString` and additional arguments converted using the `TO_STRING` operation.
+  Returns a formatted string using `formatString` and additional arguments converted using the `LABEL` operation.
 
   Placeholders to insert additional arguments are in the `{index}` format, for example `{0}`.
 
@@ -31,7 +31,7 @@ defmodule DragnCardsGame.Evaluate.Functions.FORMAT do
     end
     list = Enum.slice(code, 2, Enum.count(code))
     Enum.reduce(Enum.with_index(list), formatString, fn({item, index}, acc)->
-      String.replace(acc, "{#{index}}", DragnCardsGame.Evaluate.Functions.TO_STRING.to_string(game, item, trace ++ ["index #{index}"]))
+      String.replace(acc, "{#{index}}", DragnCardsGame.Evaluate.Functions.LABEL.to_string(game, item, trace ++ ["index #{index}"]))
     end)
   end
 

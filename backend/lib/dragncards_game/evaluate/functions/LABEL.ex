@@ -1,4 +1,4 @@
-defmodule DragnCardsGame.Evaluate.Functions.TO_STRING do
+defmodule DragnCardsGame.Evaluate.Functions.LABEL do
   alias DragnCardsGame.Evaluate
   @moduledoc """
   *Arguments*:
@@ -17,15 +17,15 @@ defmodule DragnCardsGame.Evaluate.Functions.TO_STRING do
   """
 
   @doc """
-  Executes the 'TO_STRING' operation with the given argument.
+  Executes the 'LABEL' operation with the given argument.
 
   ## Parameters
 
-    - `args`: The argument required for the 'TO_STRING' operation.
+    - `args`: The argument required for the 'LABEL' operation.
 
   ## Returns
 
-  The result of the 'TO_STRING' operation.
+  The result of the 'LABEL' operation.
   """
   def to_string(game, input, trace) do
     v = Evaluate.evaluate(game, input, trace ++ ["to_string"])
