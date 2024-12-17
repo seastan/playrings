@@ -7,7 +7,7 @@ defmodule DragnCardsGame.Evaluate.Functions.TYPE_OF do
   Returns the type of `input`.
 
   *Returns*:
-  (string) Type of `input` as string, one of: `null`, `boolean`, `integer`, `float`, `string`, `list`, `card`, `group`, `player`, `game`, `object`, `unknown`.
+  (string) Type of `input` as string, one of: `null`, `boolean`, `integer`, `float`, `cardId`, `groupId`, `playerId`, `string`, `list`, `face`, `card`, `group`, `player`, `game`, `object`, `unknown`.
   """
 
   @doc """
@@ -29,10 +29,20 @@ defmodule DragnCardsGame.Evaluate.Functions.TYPE_OF do
       is_boolean(input) -> "boolean"
       is_integer(input) -> "integer"
       is_float(input) -> "float"
-      is_binary(input) -> "string"
+      is_binary(input) ->
+        cardById = Map.get(game, "cardById")
+        groupById = Map.get(game, "groupById")
+        playerData = Map.get(game, "playerData")
+        cond do
+          Map.has_key?(cardById, input) -> "cardId"
+          Map.has_key?(groupById, input) -> "groupId"
+          Map.has_key?(playerData, input) -> "playerId"
+          true -> "string"
+        end
       is_list(input) -> "list"
       is_map(input) ->
         cond do
+          Map.has_key?(input, "imageUrl") -> "face"
           Map.has_key?(input, "sides") -> "card"
           Map.has_key?(input, "stackIds") -> "group"
           Map.has_key?(input, "user_id") -> "player"
