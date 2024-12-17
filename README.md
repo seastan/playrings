@@ -14,7 +14,7 @@ To quickly iterate a development environment included is a `docker compose` file
 
 ```
 docker compose up -d backend
-#first time this will create a new user in the DB.
+#first time this will create a new user in the DB. The user's alias is "dev_user" and the password is "password"
 docker compose exec backend mix run /app/priv/create_user.exs
 
 docker compose run --rm --service-ports frontend

@@ -918,6 +918,76 @@ defmodule DragnCardsGame.CustomPluginTest do
 
   end
 
+  # Round Advancement
+  @tag :round_advancement
+  test "Round Advancement", %{user: _user, game: game, game_def: _game_def} do
+
+    # Select 1 player
+    prompt_id = Enum.at(Map.keys(game["playerData"]["player1"]["prompts"]), 0)
+    prompt = game["playerData"]["player1"]["prompts"][prompt_id]
+    option1 = Enum.at(prompt["options"], 0)
+    game = Evaluate.evaluate(game, option1["code"])
+
+    # Load player deck
+    game = Evaluate.evaluate(game, ["LOAD_CARDS", "starterElves"])
+
+    # Load Passage through Mirkwood
+    game = Evaluate.evaluate(game, ["LOAD_CARDS", "Q01.1"])
+
+    # Advance to planning phase
+    game = Evaluate.evaluate(game, ["ACTION_LIST", "advanceThroughRoundStopAtTriggers"])
+
+    assert game["roundNumber"] == 1
+    assert game["stepId"] == "2.P"
+
+    # Advance will, halt at 6.2
+    game = Evaluate.evaluate(game, ["ACTION_LIST", "advanceThroughRoundStopAtTriggers"])
+
+    assert game["roundNumber"] == 1
+    assert game["stepId"] == "5.2"
+
+    # Advance will, halt at 6.3
+    game = Evaluate.evaluate(game, ["ACTION_LIST", "advanceThroughRoundStopAtTriggers"])
+
+    assert game["roundNumber"] == 1
+    assert game["stepId"] == "5.3"
+
+    # Advance will, halt at planning
+    game = Evaluate.evaluate(game, ["ACTION_LIST", "advanceThroughRoundStopAtTriggers"])
+
+    assert game["roundNumber"] == 2
+    assert game["stepId"] == "2.P"
+
+    # Advance will, halt at 6.2
+    game = Evaluate.evaluate(game, ["ACTION_LIST", "advanceThroughRoundStopAtTriggers"])
+
+    assert game["roundNumber"] == 2
+    assert game["stepId"] == "5.2"
+
+    # Engage an enemy
+    enemy_card_id = Evaluate.evaluate(game, ["GET_CARD_ID", "sharedStagingArea", 1, 0])
+    game = Evaluate.evaluate(game, ["MOVE_CARD", enemy_card_id, "player1Engaged", 0])
+
+    # Advance to combat phase
+    game = Evaluate.evaluate(game, ["ACTION_LIST", "advanceThroughRoundStopAtTriggers"])
+
+    assert game["roundNumber"] == 2
+    assert game["stepId"] == "6.2"
+
+
+    assert Evaluate.evaluate(game, ["MIN", ["LIST", 1, 2, 3, 4, 5]]) == 1
+    assert Evaluate.evaluate(game, ["MIN", ["LIST", 5, 4, 3, 2, 1]]) == 1
+    assert Evaluate.evaluate(game, ["MIN", ["LIST", 1, 2, 3, 4, 5, 6, 7, 8, -1]]) == -1
+
+
+    # Print all messages
+    Enum.each(game["messages"], fn message ->
+      IO.puts(message)
+    end)
+
+  end
+
+
 
   # Outlands
   @tag :outlands
@@ -1586,6 +1656,22 @@ defmodule DragnCardsGame.CustomPluginTest do
     res = Evaluate.evaluate(game, ["SORT_OBJ_LIST", "$GAME.groupById.player1Deck.parentCards", "$CARD", "$CARD.sides.A.name"])
 
     assert Enum.at(res, 0)["sides"]["A"]["name"] == "Brok Ironfist"
+
+  end
+
+  @tag :adv_button
+  test "adv_button", %{user: _user, game: game, game_def: game_def} do
+
+    # Load some decks into the game
+    game = Evaluate.evaluate(game, ["LOAD_CARDS", "Q06.6"])
+    game = Evaluate.evaluate(game, ["LOAD_CARDS", "coreLeadership"]) # Leadership core set deck
+
+    # Move all cards in hand to deck
+    game = Evaluate.evaluate(game, ["MOVE_STACKS", "player1Hand", "player1Deck", "all", "bottom"])
+
+    res = Evaluate.evaluate(game, ["SORT_OBJ_LIST", "$GAME.groupById.player1Deck.parentCards", "$CARD", "$CARD.sides.A.name"])
+
+    assert game["layout"]["tableButtons"]["advanceButton"]["label"] == "Shift+V: Advance to next planning phase."
 
   end
 
