@@ -6,7 +6,7 @@ import { faCircleRight } from "@fortawesome/free-regular-svg-icons";
 import BroadcastContext from "../../contexts/BroadcastContext";
 
 // Audio file for "shuffled" sound effect
-const shuffleSound = new Audio("https://www.soundjay.com/misc/shuffling-cards-6.mp3");
+//const shuffleSound = new Audio("https://www.soundjay.com/misc/shuffling-cards-6.mp3");
 
 export const LogMessageDiv = ({ delta, deltaIndex }) => {
   const { gameBroadcast, chatBroadcast } = useContext(BroadcastContext);
@@ -14,15 +14,15 @@ export const LogMessageDiv = ({ delta, deltaIndex }) => {
   const messageTextToHtml = useMessageTextToHtml();
   const [hover, setHover] = useState(false);
 
-  useEffect(() => {
-    shuffleSound.load();
-  }, []);
+  // useEffect(() => {
+  //   shuffleSound.load();
+  // }, []);
 
-  const handlePlaySound = (message) => {
-    if (message.includes("shuffled")) {
-      shuffleSound.play();
-    }
-  };
+  // const handlePlaySound = (message) => {
+  //   if (message.includes("shuffled")) {
+  //     shuffleSound.play();
+  //   }
+  // };
 
   return (
     <div
@@ -39,7 +39,7 @@ export const LogMessageDiv = ({ delta, deltaIndex }) => {
         )}
         <div className="text-white pl-1" style={{ width: "100%" }}>
           {delta._delta_metadata?.log_messages.map((m, i) => {
-            handlePlaySound(m); // Play sound if "shuffled" is in the message
+            //handlePlaySound(m); // Play sound if "shuffled" is in the message
             return <div key={i}>{messageTextToHtml(m)}</div>;
           })}
         </div>
