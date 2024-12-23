@@ -1661,17 +1661,127 @@ defmodule DragnCardsGame.CustomPluginTest do
 
   @tag :adv_button
   test "adv_button", %{user: _user, game: game, game_def: game_def} do
+    # Select 1 player
+    prompt_id = Enum.at(Map.keys(game["playerData"]["player1"]["prompts"]), 0)
+    prompt = game["playerData"]["player1"]["prompts"][prompt_id]
+    option1 = Enum.at(prompt["options"], 0)
+    game = Evaluate.evaluate(game, option1["code"])
+
 
     # Load some decks into the game
-    game = Evaluate.evaluate(game, ["LOAD_CARDS", "Q06.6"])
+    game = Evaluate.evaluate(game, ["LOAD_CARDS", "Q01.1"]) # Passage through Mirkwood
+    assert game["questProgress"] == -3
     game = Evaluate.evaluate(game, ["LOAD_CARDS", "coreLeadership"]) # Leadership core set deck
 
-    # Move all cards in hand to deck
-    game = Evaluate.evaluate(game, ["MOVE_STACKS", "player1Hand", "player1Deck", "all", "bottom"])
+    # Setup
+    assert game["playerData"]["player1"]["threat"] == 29
+    assert game["advanceButtonFunction"] == "readyForNextPlanning"
+    assert game["layout"]["tableButtons"]["advanceButton"]["label"] == "W: Advance to next planning phase."
 
-    res = Evaluate.evaluate(game, ["SORT_OBJ_LIST", "$GAME.groupById.player1Deck.parentCards", "$CARD", "$CARD.sides.A.name"])
+    # Only 1 quest card
+    # game = Evaluate.evaluate(game, ["DO_ADVANCE_BUTTON"])
+    # assert game["advanceButtonFunction"] == "selectCurrentQuest"
 
-    assert game["layout"]["tableButtons"]["advanceButton"]["label"] == "Shift+V: Advance to next planning phase."
+    # Advance to commit characters
+    game = Evaluate.evaluate(game, ["DO_ADVANCE_BUTTON"])
+    assert game["advanceButtonFunction"] == "commitCharacters"
+
+    # Commit no characters, just advance to staging step
+    game = Evaluate.evaluate(game, ["DO_ADVANCE_BUTTON"])
+    assert game["stepId"] == "3.3"
+    assert game["advanceButtonFunction"] == "resolveQuest"
+
+    # Reveal no cards, resolve the quest
+    game = Evaluate.evaluate(game, ["DO_ADVANCE_BUTTON"])
+    # Failed by 3
+    assert game["playerData"]["player1"]["threat"] == 32
+
+    # Next step is to advance to travel phase
+    assert game["advanceButtonFunction"] == "advanceToTravel"
+    game = Evaluate.evaluate(game, ["DO_ADVANCE_BUTTON"])
+
+    # Decide not to travel next step is to advance to optional engagement
+    assert game["advanceButtonFunction"] == "advanceToOptionalEngagement"
+    game = Evaluate.evaluate(game, ["DO_ADVANCE_BUTTON"])
+
+    # Don't optionally engage, next step is to resolve engagement checks
+    assert game["advanceButtonFunction"] == "resolveEngagementChecks"
+    assert game["stagingThreat"] == 3
+
+    # Resolve engagement checks
+    game = Evaluate.evaluate(game, ["DO_ADVANCE_BUTTON"])
+    assert game["stagingThreat"] == 1
+
+    # 1 engaged enemy
+    # Advance to combat
+    assert game["advanceButtonFunction"] == "advanceToCombat"
+    game = Evaluate.evaluate(game, ["DO_ADVANCE_BUTTON"])
+
+
+    # Shadow card should be dealt
+    assert Evaluate.evaluate(game, ["DEFINED", ["GET_CARD_ID", "player1Engaged", 0, 1]])
+
+    # Go to turn 2 planning
+    assert game["advanceButtonFunction"] == "readyForNextPlanning"
+    game = Evaluate.evaluate(game, ["DO_ADVANCE_BUTTON"])
+    assert game["playerData"]["player1"]["threat"] == 33
+
+    # Should be prompted to commit characters
+    assert game["advanceButtonFunction"] == "commitCharacters"
+
+    # Play a side quest
+    game = Evaluate.evaluate(game, ["LOAD_CARDS", ["LIST", %{"databaseId" => "f4d94f3d-d3af-44d6-9896-764484302bb1", "loadGroupId" => "sharedStagingArea", "quantity" => 1}]])
+
+    # Should now be prompted to select the side quest
+    assert game["advanceButtonFunction"] == "selectCurrentQuest"
+
+    # Select the side quest
+    game = Evaluate.evaluate(game, [
+      ["DEFINE", "$ACTIVE_CARD_ID", "$GAME.groupById.sharedStagingArea.parentCardIds.[-1]"],
+      ["ACTION_LIST", "toggleCommit"]
+    ])
+
+    # Should now be prompted to commit characters
+    assert game["advanceButtonFunction"] == "commitCharacters"
+    game = Evaluate.evaluate(game, [
+      ["DEFINE", "$ACTIVE_CARD_ID", "$GAME.groupById.player1Play1.parentCardIds.[0]"],
+      ["ACTION_LIST", "toggleCommit"]
+    ])
+    # Should now be prompted to advance to staging
+    assert game["advanceButtonFunction"] == "advanceToStaging"
+    # But we commit more characters
+    game = Evaluate.evaluate(game, [
+      ["DEFINE", "$ACTIVE_CARD_ID", "$GAME.groupById.player1Play1.parentCardIds.[1]"],
+      ["ACTION_LIST", "toggleCommit"]
+    ])
+    assert game["advanceButtonFunction"] == "advanceToStaging"
+    game = Evaluate.evaluate(game, [
+      ["DEFINE", "$ACTIVE_CARD_ID", "$GAME.groupById.player1Play1.parentCardIds.[2]"],
+      ["ACTION_LIST", "toggleCommit"]
+    ])
+    assert game["advanceButtonFunction"] == "advanceToStaging"
+
+    # 5 vs 1
+    assert game["questProgress"] == 4
+
+    # Advance to staging
+    game = Evaluate.evaluate(game, ["DO_ADVANCE_BUTTON"])
+
+    # Resolve the quest, put 2 progress on the side quest
+    assert game["currentQuestCardId"] != nil
+    assert game["advanceButtonFunction"] == "resolveQuest"
+    game = Evaluate.evaluate(game, ["DO_ADVANCE_BUTTON"])
+    assert Evaluate.evaluate(game, "$GAME.groupById.sharedStagingArea.parentCards.[-1].tokens.progress") == 4
+
+    # Advance to travel
+    assert game["advanceButtonFunction"] == "advanceToTravel"
+    game = Evaluate.evaluate(game, ["DO_ADVANCE_BUTTON"])
+
+    # No optional engagement or engagement checks - straight to combat
+    assert game["advanceButtonFunction"] == "advanceToCombat"
+    game = Evaluate.evaluate(game, ["DO_ADVANCE_BUTTON"])
+
+
 
   end
 
