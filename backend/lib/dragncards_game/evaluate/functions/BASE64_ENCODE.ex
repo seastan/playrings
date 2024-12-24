@@ -4,7 +4,7 @@ defmodule DragnCardsGame.Evaluate.Functions.BASE64_ENCODE do
   *Arguments*:
   1. `inputString` (string)
 
-  Encodes the given inputString into a Base64 encoded string (without padding).
+  Encodes the given inputString into a Base64 encoded string (URL safe, without padding).
 
   *Returns*:
   (string) The result of the operation.
@@ -27,7 +27,7 @@ defmodule DragnCardsGame.Evaluate.Functions.BASE64_ENCODE do
     if !is_binary(inputString) do
       raise "BASE64_ENCODE: inputString must be a string"
     end
-    Base.encode64(inputString, padding: false)
+    Base.url_encode64(inputString, padding: false)
   end
 
 

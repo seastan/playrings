@@ -4,7 +4,7 @@ defmodule DragnCardsGame.Evaluate.Functions.BASE64_DECODE do
   *Arguments*:
   1. `inputString` (string)
 
-  Decodes the given Base64 encoded (without padding) inputString into a string.
+  Decodes the given Base64 encoded (URL safe, without padding) inputString into a string.
 
   *Returns*:
   (string) The result of the operation.
@@ -27,9 +27,9 @@ defmodule DragnCardsGame.Evaluate.Functions.BASE64_DECODE do
     if !is_binary(inputString) do
       raise "BASE64_DECODE: inputString must be a string"
     end
-    case Base.decode64(inputString, padding: false) do
+    case Base.url_decode64(inputString, padding: false) do
       {:ok, decodedString} -> decodedString
-      :error -> raise "BASE64_DECODE: inputString must be a valid Base64 string (without padding)"
+      :error -> raise "BASE64_DECODE: inputString must be a valid Base64 string (URL safe, without padding)"
     end
   end
 
