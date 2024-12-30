@@ -138,7 +138,7 @@ export const Lobby: React.FC = () => {
           {isError && <div className="text-white text-center">Error communicating with server...</div>}
           <div className="flex justify-center w-full" style={{maxWidth: "600px"}}>
             <div className="w-full h-24 py-2 text-lg text-white bg-red-600">
-              DragnCards will be down on 2025-01-01 for a transition to DragnCards 2.0. Any games saved in DragnCards 1.0 will be inaccessible after this transition. Join the discord for details. 
+              (Update rescheduled) DragnCards will be down on 2025-02-01 for a transition to DragnCards 2.0. Any games saved in DragnCards 1.0 will be inaccessible after this transition. Join the discord for details. 
             </div>
           </div>
           <div className="flex justify-center w-full" style={{maxWidth: "600px"}}>
