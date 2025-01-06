@@ -1566,10 +1566,6 @@ defmodule DragnCardsGame.CustomPluginTest do
     res = Evaluate.evaluate(game, ["LOCATION_NAMES_TO_PROMPT_OPTIONS", ["LIST", "testLocation1", "testLocation2"]])
 
 
-
-    IO.inspect(res)
-
-    # ]])
   end
 
 
