@@ -5,9 +5,9 @@ defmodule DragnCardsGame.Evaluate.Functions.FORMAT do
   1. `formatString` (string)
   2. Any number of arguments
 
-  Returns a formatted string using `formatString` and additional arguments converted using the `LABEL` operation.
+  Returns a formatted string using `formatString` and additional arguments converted using the `INSPECT` operation.
 
-  Placeholders to insert additional arguments are in the `{index}` format, for example `{0}`.
+  Placeholders to insert additional arguments are in the `{index}` format, for example `{0}`. Hint for the `INSPECT` operation can be provided after a colon, for example `{0:A}`.
 
   `formatString` can be a label itself, for example `id:messageA`. Multiple labels inside `formatString` are not supported.
 
@@ -44,8 +44,14 @@ defmodule DragnCardsGame.Evaluate.Functions.FORMAT do
       formatString
     end
     list = Enum.slice(code, 2, Enum.count(code))
-    Enum.reduce(Enum.with_index(list), formatStringResolved, fn({item, index}, acc)->
-      String.replace(acc, "{#{index}}", DragnCardsGame.Evaluate.Functions.LABEL.to_string(game, item, "currentSide", trace ++ ["index #{index}"]))
+    nlist = Regex.scan(~r/{(?<idx>[0-9]+)(:(?<hint>[A-Za-z0-9_-]+))?}/, formatStringResolved, capture: :all_names)
+    Enum.reduce(Enum.uniq(nlist), formatStringResolved, fn item, acc ->
+      idx = String.to_integer(Enum.at(item, 1))
+      hint = Enum.at(item, 0)
+      cond do
+        hint !== "" -> String.replace(acc, "{#{idx}:#{hint}}", DragnCardsGame.Evaluate.Functions.INSPECT.to_string(game, Enum.at(list, idx), hint, trace ++ ["idx #{idx}"]))
+        true -> String.replace(acc, "{#{idx}}", DragnCardsGame.Evaluate.Functions.INSPECT.to_string(game, Enum.at(list, idx), "currentSide", trace ++ ["idx #{idx}"]))
+      end
     end)
   end
 

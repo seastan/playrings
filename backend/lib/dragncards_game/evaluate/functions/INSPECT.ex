@@ -1,9 +1,9 @@
-defmodule DragnCardsGame.Evaluate.Functions.LABEL do
+defmodule DragnCardsGame.Evaluate.Functions.INSPECT do
   alias DragnCardsGame.Evaluate
   @moduledoc """
   *Arguments*:
   1. `input` (anything)
-  2. `hint` (string optional, defaults to "currentSide")
+  2. `hint` (string, optional, defaults to "currentSide")
 
   Returns best-effort string representation of `input`.
 
@@ -20,15 +20,15 @@ defmodule DragnCardsGame.Evaluate.Functions.LABEL do
   """
 
   @doc """
-  Executes the 'LABEL' operation with the given argument.
+  Executes the 'INSPECT' operation with the given argument.
 
   ## Parameters
 
-    - `args`: The argument required for the 'LABEL' operation.
+    - `args`: The argument required for the 'INSPECT' operation.
 
   ## Returns
 
-  The result of the 'LABEL' operation.
+  The result of the 'INSPECT' operation.
   """
   def to_string(game, input, hint, trace) do
     v = Evaluate.evaluate(game, input, trace ++ ["to_string"])
