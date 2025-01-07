@@ -9,6 +9,8 @@ defmodule DragnCardsGame.Evaluate.Functions.FORMAT do
 
   Placeholders to insert additional arguments are in the `{index}` format, for example `{0}`.
 
+  `formatString` can be a label itself, for example `id:messageA`. Multiple labels inside `formatString` are not supported.
+
   *Returns*:
   (string) The result of the operation.
   """
@@ -29,9 +31,21 @@ defmodule DragnCardsGame.Evaluate.Functions.FORMAT do
     if !is_binary(formatString) do
       raise "FORMAT: formatString must be a string"
     end
+    formatStringResolved =
+      if String.starts_with?(formatString, "id:") do
+        labelId = String.replace_leading(formatString, "id:", "")
+        label = Evaluate.evaluate(game, "$GAME_DEF.labels.#{labelId}.{{$GAME.options.language}}", trace ++ ["label"])
+        if is_binary(label) do
+          label
+        else
+          formatString
+        end
+    else
+      formatString
+    end
     list = Enum.slice(code, 2, Enum.count(code))
-    Enum.reduce(Enum.with_index(list), formatString, fn({item, index}, acc)->
-      String.replace(acc, "{#{index}}", DragnCardsGame.Evaluate.Functions.LABEL.to_string(game, item, trace ++ ["index #{index}"]))
+    Enum.reduce(Enum.with_index(list), formatStringResolved, fn({item, index}, acc)->
+      String.replace(acc, "{#{index}}", DragnCardsGame.Evaluate.Functions.LABEL.to_string(game, item, "currentSide", trace ++ ["index #{index}"]))
     end)
   end
 
