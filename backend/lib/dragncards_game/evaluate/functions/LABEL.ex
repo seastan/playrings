@@ -39,7 +39,12 @@ defmodule DragnCardsGame.Evaluate.Functions.LABEL do
       try do
         lc = Evaluate.evaluate(game, "$GAME_DEF.labels.#{labelId}.#{l}-#{pluralIndex}", trace ++ ["evaluate"])
         if is_nil(lc) or lc == "" do
-          "#{labelId}.#{l}-#{pluralIndex}"
+          lcf = Evaluate.evaluate(game, "$GAME_DEF.labels.#{labelId}.#{l}", trace ++ ["evaluate"])
+          if is_nil(lcf) or lcf == "" do
+            "#{labelId}.#{l}-#{pluralIndex}"
+          else
+            lcf
+          end
         else
           lc
         end
