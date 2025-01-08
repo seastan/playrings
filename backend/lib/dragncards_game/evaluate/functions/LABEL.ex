@@ -8,7 +8,7 @@ defmodule DragnCardsGame.Evaluate.Functions.LABEL do
 
   Returns the contents of a label for given `labelId`, `languageString`, and `pluralIndex`. If such label cannot be found returns its "technical" key as placeholder.
 
-  This operation handles `labelId` with or without the `"id:"` prefix. It is also able to fall back from a `pluralIndex` version to one without it, in case the first is missing.
+  This operation handles `labelId` with or without the `"id:"` prefix. It is also able to fall back from a `pluralIndex` version to one without it, in case the first is missing. In addition, it is able to fall back from any language version to English, in case the first is missing. Since plural indices are not compatible between languages the order of fall back is `labelId.languageString-pluralIndex` to `labelId.languageString` to `labelId.English`.
 
   *Returns*:
   (string) The result of the operation.
@@ -30,7 +30,12 @@ defmodule DragnCardsGame.Evaluate.Functions.LABEL do
       try do
         lc = Evaluate.evaluate(game, "$GAME_DEF.labels.#{labelId}.#{l}", trace ++ ["evaluate"])
         if is_nil(lc) or lc == "" do
-          "#{labelId}.#{l}"
+          lcf = Evaluate.evaluate(game, "$GAME_DEF.labels.#{labelId}.English", trace ++ ["evaluate"])
+          if is_nil(lcf) or lcf == "" do
+            "#{labelId}.#{l}"
+          else
+            lcf
+          end
         else
           lc
         end
@@ -41,11 +46,16 @@ defmodule DragnCardsGame.Evaluate.Functions.LABEL do
       try do
         lc = Evaluate.evaluate(game, "$GAME_DEF.labels.#{labelId}.#{l}-#{pluralIndex}", trace ++ ["evaluate"])
         if is_nil(lc) or lc == "" do
-          lcf = Evaluate.evaluate(game, "$GAME_DEF.labels.#{labelId}.#{l}", trace ++ ["evaluate"])
-          if is_nil(lcf) or lcf == "" do
-            "#{labelId}.#{l}-#{pluralIndex}"
+          lcf1 = Evaluate.evaluate(game, "$GAME_DEF.labels.#{labelId}.#{l}", trace ++ ["evaluate"])
+          if is_nil(lcf1) or lcf1 == "" do
+            lcf2 = Evaluate.evaluate(game, "$GAME_DEF.labels.#{labelId}.English", trace ++ ["evaluate"])
+            if is_nil(lcf2) or lcf2 == "" do
+              "#{labelId}.#{l}-#{pluralIndex}"
+            else
+              lcf2
+            end
           else
-            lcf
+            lcf1
           end
         else
           lc
