@@ -3,7 +3,7 @@ defmodule DragnCardsGame.Evaluate.Functions.INSPECT do
   @moduledoc """
   *Arguments*:
   1. `input` (anything)
-  2. `hint` (string, optional, defaults to "currentSide")
+  2. `hintString` (string, optional)
 
   Returns best-effort string representation of `input`.
 
@@ -13,26 +13,27 @@ defmodule DragnCardsGame.Evaluate.Functions.INSPECT do
 
   Uses the following labels for default/missing values: `id:null`, `id:true`, `id:false`, `id:face`, `id:card`, `id:group`, `id:player`, `id:plugin`, `id:object`, `id:unknown`.
 
-  `hint` can be used to force return of a name from a specific side `name` for cards/cardIds.
+  `hint` can be used to change the representation returned. `INT` forces the operation to return integer representation of input (see `INSPECT_INT`) as string. `S` returns `"s"` when integer representation of input is different than 1, otherwise an empty string (simple plurals for English language). For cards/cardIds `hint` can be a face designator. If it's valid, then the `name` of that face will be returned instead of the default one.
 
   *Returns*:
   (string) The result of the operation.
   """
 
   @doc """
-  Executes the 'INSPECT' operation with the given argument.
+  Executes the 'INSPECT' operation with the given arguments.
 
   ## Parameters
 
-    - `args`: The argument required for the 'INSPECT' operation.
+    - `args`: The arguments required for the 'INSPECT' operation.
 
   ## Returns
 
   The result of the 'INSPECT' operation.
   """
-  def to_string(game, input, hint, trace) do
-    v = Evaluate.evaluate(game, input, trace ++ ["to_string"])
+  def to_string(game, v, h, trace) do
     cond do
+      h == "INT" -> Integer.to_string(DragnCardsGame.Evaluate.Functions.INSPECT_INT.to_int(game, v, trace ++ ["to_int"]))
+      h == "S" -> if DragnCardsGame.Evaluate.Functions.INSPECT_INT.to_int(game, v, trace ++ ["to_int"]) == 1 do "" else "s" end
       is_nil(v) -> "id:null"
       is_boolean(v) -> if v === true do "id:true" else "id:false" end
       is_integer(v) -> Integer.to_string(v)
@@ -42,20 +43,20 @@ defmodule DragnCardsGame.Evaluate.Functions.INSPECT do
         groupById = Map.get(game, "groupById")
         playerData = Map.get(game, "playerData")
         cond do
-          Map.has_key?(cardById, v) -> to_string(game, Map.get(cardById, v), hint, trace ++ ["cardById"])
-          Map.has_key?(groupById, v) -> to_string(game, Map.get(groupById, v), hint, trace ++ ["groupById"])
-          Map.has_key?(playerData, v) -> to_string(game, Map.get(playerData, v), hint, trace ++ ["playerData"])
+          Map.has_key?(cardById, v) -> to_string(game, Map.get(cardById, v), h, trace ++ ["cardById"])
+          Map.has_key?(groupById, v) -> to_string(game, Map.get(groupById, v), h, trace ++ ["groupById"])
+          Map.has_key?(playerData, v) -> to_string(game, Map.get(playerData, v), h, trace ++ ["playerData"])
           true -> v
         end
-      is_list(v) -> "(" <> Enum.join(Enum.map(v, fn vv -> to_string(game, vv, hint, trace ++ ["vv"]) end), ", ") <> ")"
+      is_list(v) -> "(" <> Enum.join(Enum.map(v, fn vv -> to_string(game, vv, h, trace ++ ["vv"]) end), ", ") <> ")"
       is_map(v) ->
         cond do
           Map.has_key?(v, "imageUrl") -> Map.get(v, "name", "id:face")
-          Map.has_key?(v, "sides") -> 
+          Map.has_key?(v, "sides") ->
             sides = Map.get(v, "sides")
             currentSide = Map.get(v, "currentSide")
             cond do
-              hint !== "currentSide" and is_map(sides) and Map.has_key?(sides, hint) -> Map.get(Map.get(sides, hint), "name", "id:card")
+              h !== nil and is_map(sides) and Map.has_key?(sides, h) -> Map.get(Map.get(sides, h), "name", "id:card")
               is_map(sides) and is_binary(currentSide) and Map.has_key?(sides, currentSide) -> Map.get(Map.get(sides, currentSide), "name", "id:card")
               is_map(sides) and Map.has_key?(sides, "A") -> Map.get(Map.get(sides, "A"), "name", "id:card")
               true -> "id:card"
@@ -71,12 +72,16 @@ defmodule DragnCardsGame.Evaluate.Functions.INSPECT do
 
   def execute(game, code, trace) do
     argc = Evaluate.argc(code, 1, 2)
-    hint = if argc > 1 do
-      Evaluate.evaluate(game, Enum.at(code, 2), trace ++ ["hint"])
+    input = Evaluate.evaluate(game, Enum.at(code, 1), trace ++ ["input"])
+    hintString = if argc > 1 do
+      Evaluate.evaluate(game, Enum.at(code, 2), trace ++ ["hintString"])
     else
-      "currentSide"
+      nil
     end
-    to_string(game, Enum.at(code, 1), hint, trace ++ ["input"])
+    if !is_nil(hintString) and !is_binary(hintString) do
+      raise "INSPECT: hintString must be a string"
+    end
+    to_string(game, input, hintString, trace ++ ["to_string"])
   end
 
 
