@@ -8,6 +8,8 @@ defmodule DragnCardsGame.Evaluate.Functions.LABEL do
 
   Returns the contents of a label for given `labelId`, `languageString`, and `pluralIndex`. If such label cannot be found returns its "technical" key as placeholder.
 
+  This operation handles `labelId` with or without the `"id:"` prefix. It is also able to fall back from a `pluralIndex` version to one without it, in case the first is missing.
+
   *Returns*:
   (string) The result of the operation.
   """
@@ -81,7 +83,7 @@ defmodule DragnCardsGame.Evaluate.Functions.LABEL do
     if !is_nil(pluralIndex) and !is_integer(pluralIndex) do
       raise "LABEL: pluralIndex must be an integer"
     end
-    get_label(game, labelId, languageString, pluralIndex, trace ++ ["get_label"])
+    get_label(game, String.replace_leading(labelId, "id:", ""), languageString, pluralIndex, trace ++ ["get_label"])
   end
 
 
