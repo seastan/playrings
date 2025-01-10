@@ -1,5 +1,6 @@
 defmodule DragnCardsGame.Evaluate.Functions.LABEL do
   alias DragnCardsGame.Evaluate
+  alias DragnCardsGame.{PluginCache}
   @moduledoc """
   *Arguments*:
   1. `labelId` (string)
@@ -25,12 +26,13 @@ defmodule DragnCardsGame.Evaluate.Functions.LABEL do
 
   The result of the 'LABEL' operation.
   """
-  def get_label_l(game, labelId, l, pluralIndex, trace) do
+  def get_label_l(game, labelId, l, pluralIndex, _trace) do
+    labels = PluginCache.get_game_def_cached(game["options"]["pluginId"])["labels"]
     if is_nil(pluralIndex) do
       try do
-        lc = Evaluate.evaluate(game, "$GAME_DEF.labels.#{labelId}.#{l}", trace ++ ["evaluate"])
+        lc = labels[labelId][l]
         if is_nil(lc) or lc == "" do
-          lcf = Evaluate.evaluate(game, "$GAME_DEF.labels.#{labelId}.English", trace ++ ["evaluate"])
+          lcf = labels[labelId]["English"]
           if is_nil(lcf) or lcf == "" do
             "#{labelId}.#{l}"
           else
@@ -44,11 +46,11 @@ defmodule DragnCardsGame.Evaluate.Functions.LABEL do
       end
     else
       try do
-        lc = Evaluate.evaluate(game, "$GAME_DEF.labels.#{labelId}.#{l}-#{pluralIndex}", trace ++ ["evaluate"])
+        lc = labels[labelId]["#{l}-#{pluralIndex}"]
         if is_nil(lc) or lc == "" do
-          lcf1 = Evaluate.evaluate(game, "$GAME_DEF.labels.#{labelId}.#{l}", trace ++ ["evaluate"])
+          lcf1 = labels[labelId][l]
           if is_nil(lcf1) or lcf1 == "" do
-            lcf2 = Evaluate.evaluate(game, "$GAME_DEF.labels.#{labelId}.English", trace ++ ["evaluate"])
+            lcf2 = labels[labelId]["English"]
             if is_nil(lcf2) or lcf2 == "" do
               "#{labelId}.#{l}-#{pluralIndex}"
             else

@@ -23,12 +23,12 @@ defmodule DragnCardsGame.Evaluate.Functions.LANGUAGE do
 
   The result of the 'LANGUAGE' operation.
   """
-  def to_language(game, v, trace) do
+  def to_language(game, v, _trace) do
     if (v in ["Arabic", "Bahasa Indonesian", "Belarusian", "Brazilian Portuguese", "Bulgarian", "Croatian", "Czech", "Danish", "Dutch", "Esperanto", "Estonian", "Faroese", "Finnish", "French", "German", "Greek", "Hebrew", "Hungarian", "Irish", "Italian", "Japanese", "Korean", "Latvian", "Lithuanian", "Norwegian", "Polish", "Portuguese", "Romanian", "Russian", "Serbian", "Slovak", "Slovenian", "Spanish", "Swedish", "Thai", "Turkish", "Ukrainian", "Vietnamese"]) do
       v
     else
       try do
-        language = Evaluate.evaluate(game, "$GAME.options.language", trace ++ ["language"])
+        language = game["options"]["language"]
         if (language in ["Arabic", "Bahasa Indonesian", "Belarusian", "Brazilian Portuguese", "Bulgarian", "Croatian", "Czech", "Danish", "Dutch", "Esperanto", "Estonian", "Faroese", "Finnish", "French", "German", "Greek", "Hebrew", "Hungarian", "Irish", "Italian", "Japanese", "Korean", "Latvian", "Lithuanian", "Norwegian", "Polish", "Portuguese", "Romanian", "Russian", "Serbian", "Slovak", "Slovenian", "Spanish", "Swedish", "Thai", "Turkish", "Ukrainian", "Vietnamese"]) do
           language
         else
